@@ -3,8 +3,8 @@ package fr.sii.notification.core.filler;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.sii.notification.core.exception.BeanException;
-import fr.sii.notification.core.exception.FillMessageException;
+import fr.sii.notification.core.exception.filler.FillMessageException;
+import fr.sii.notification.core.exception.template.BeanException;
 import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.util.BeanUtils;
 

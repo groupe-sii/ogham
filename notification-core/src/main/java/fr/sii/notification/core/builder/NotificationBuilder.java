@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import fr.sii.notification.core.exception.BuildException;
+import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.service.ChainNotificationService;
 import fr.sii.notification.core.service.NotificationService;
+import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.email.builder.EmailBuilder;
 import fr.sii.notification.sms.builder.SmsBuilder;
 
@@ -32,9 +33,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	}
 
 	public NotificationBuilder withAllDefaults() {
-		withEmailDefaults();
-		withSmsDefaults();
-		return this;
+		return withAllDefaults(BuilderUtil.getDefaultProperties());
 	}
 
 	public NotificationBuilder withAllDefaults(Properties properties) {
@@ -44,33 +43,25 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	}
 
 	public NotificationBuilder withEmailDefaults() {
-		withEmail();
-		emailBuilder.registerDefaultImplementations();
-		emailBuilder.withConfigurationFiller();
-		return this;
+		return withEmailDefaults(BuilderUtil.getDefaultProperties());
 	}
 
 	public NotificationBuilder withEmailDefaults(Properties properties) {
 		withEmail();
-		emailBuilder.registerDefaultImplementations();
-		emailBuilder.withConfigurationFiller(properties);
+		emailBuilder.withDefaults(properties);
 		return this;
 	}
 
 	public NotificationBuilder withSmsDefaults() {
-		withSms();
-		smsBuilder.registerDefaultImplementations();
-		smsBuilder.withConfigurationFiller();
-		return this;
+		return withSmsDefaults(BuilderUtil.getDefaultProperties());
 	}
 
 	public NotificationBuilder withSmsDefaults(Properties properties) {
 		withSms();
-		smsBuilder.registerDefaultImplementations(properties);
-		smsBuilder.withConfigurationFiller(properties);
+		smsBuilder.withDefaults(properties);
 		return this;
 	}
-	
+
 	public NotificationBuilder withEmail() {
 		emailBuilder = new EmailBuilder();
 		builders.add(emailBuilder);
@@ -82,7 +73,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 		builders.add(smsBuilder);
 		return this;
 	}
-	
+
 	public SmsBuilder getSmsBuilder() {
 		return smsBuilder;
 	}

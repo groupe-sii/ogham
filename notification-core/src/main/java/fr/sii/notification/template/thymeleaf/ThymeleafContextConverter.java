@@ -1,6 +1,6 @@
 package fr.sii.notification.template.thymeleaf;
 
-import fr.sii.notification.core.exception.ContextException;
+import fr.sii.notification.core.exception.template.ContextException;
 import fr.sii.notification.core.template.context.Context;
 
 public class ThymeleafContextConverter {

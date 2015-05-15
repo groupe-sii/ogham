@@ -8,7 +8,7 @@ public class FillerSender implements ConditionalSender {
 
 	private MessageFiller filler;
 	
-	private ConditionalSender delegate;
+	private NotificationSender delegate;
 	
 	public FillerSender(MessageFiller filler, ConditionalSender delegate) {
 		super();
@@ -26,7 +26,7 @@ public class FillerSender implements ConditionalSender {
 
 	@Override
 	public boolean supports(Message message) {
-		return delegate.supports(message);
+		return delegate instanceof ConditionalSender ? ((ConditionalSender) delegate).supports(message) : true;
 	}
 
 }

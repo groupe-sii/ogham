@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.sii.notification.core.exception.TemplateResolutionException;
+import fr.sii.notification.core.exception.template.TemplateResolutionException;
 
 public class ThymeleafLookupMappingResolver<R> {
 

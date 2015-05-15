@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.sii.notification.core.exception.BeanException;
+import fr.sii.notification.core.exception.template.BeanException;
 
 public class BeanUtils {
 	public static Map<String, Object> convert(Object bean) throws BeanException {

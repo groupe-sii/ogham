@@ -1,6 +1,6 @@
 package fr.sii.notification.core.template.parser;
 
-import fr.sii.notification.core.exception.ParseException;
+import fr.sii.notification.core.exception.template.ParseException;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.template.context.Context;
 

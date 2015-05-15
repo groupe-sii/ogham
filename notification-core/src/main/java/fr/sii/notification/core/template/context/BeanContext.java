@@ -2,9 +2,9 @@ package fr.sii.notification.core.template.context;
 
 import java.util.Map;
 
-import fr.sii.notification.core.exception.BeanContextException;
-import fr.sii.notification.core.exception.BeanException;
-import fr.sii.notification.core.exception.ContextException;
+import fr.sii.notification.core.exception.template.BeanContextException;
+import fr.sii.notification.core.exception.template.BeanException;
+import fr.sii.notification.core.exception.template.ContextException;
 import fr.sii.notification.core.util.BeanUtils;
 
 public class BeanContext implements Context {

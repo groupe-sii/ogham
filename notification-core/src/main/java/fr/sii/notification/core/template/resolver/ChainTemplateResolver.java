@@ -3,7 +3,7 @@ package fr.sii.notification.core.template.resolver;
 import java.util.Arrays;
 import java.util.List;
 
-import fr.sii.notification.core.exception.TemplateResolutionException;
+import fr.sii.notification.core.exception.template.TemplateResolutionException;
 import fr.sii.notification.core.template.Template;
 
 public class ChainTemplateResolver implements TemplateResolver {

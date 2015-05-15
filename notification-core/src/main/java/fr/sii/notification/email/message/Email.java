@@ -36,6 +36,10 @@ public class Email implements Message {
 		this(subject, content, new ArrayList<>(Arrays.asList(toRecipient(to))));
 	}
 	
+	public Email(String subject, Content content, String... to) {
+		this(subject, content, new ArrayList<>(Arrays.asList(toRecipient(to))));
+	}
+	
 	public Email(String subject, String content, EmailAddress from, String... recipients) {
 		this(subject, new StringContent(content), from, toRecipient(recipients));
 	}

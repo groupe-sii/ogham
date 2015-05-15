@@ -7,16 +7,19 @@ import java.util.Properties;
 import fr.sii.notification.core.builder.NotificationSenderBuilder;
 import fr.sii.notification.core.condition.Condition;
 import fr.sii.notification.core.condition.RequiredPropertyCondition;
-import fr.sii.notification.core.exception.BuildException;
+import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.filler.PropertiesFiller;
 import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.sender.FillerSender;
 import fr.sii.notification.core.sender.NotificationSender;
+import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.sms.sender.SmsSender;
 import fr.sii.notification.sms.sender.impl.OvhSmsSender;
 
 public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> {
+
+	private static final String PROPERTIES_PREFIX = "notification.sms";
 
 	private ConditionalSender sender;
 	
@@ -30,6 +33,16 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	@Override
 	public List<ConditionalSender> build() throws BuildException {
 		return Arrays.asList(sender);
+	}
+	
+	public SmsBuilder withDefaults() {
+		return withDefaults(BuilderUtil.getDefaultProperties());
+	}
+
+	public SmsBuilder withDefaults(Properties properties) {
+		registerDefaultImplementations(properties);
+		withConfigurationFiller(properties);
+		return null;
 	}
 
 	public SmsBuilder registerImplementation(Condition<Message> condition, NotificationSender implementation) {
@@ -56,12 +69,12 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	}
 	
 	public SmsBuilder withConfigurationFiller(Properties props) {
-		sender = new FillerSender(new PropertiesFiller(props, "notification.sms"), sender);
+		sender = new FillerSender(new PropertiesFiller(props, PROPERTIES_PREFIX), sender);
 		return this;
 	}
 	
 	public SmsBuilder withConfigurationFiller() {
-		withConfigurationFiller(System.getProperties());
+		withConfigurationFiller(BuilderUtil.getDefaultProperties());
 		return this;
 	}
 }

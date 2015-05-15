@@ -7,7 +7,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
 import fr.sii.notification.core.builder.TemplateParserBuilder;
-import fr.sii.notification.core.exception.BuildException;
+import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.template.parser.TemplateParser;
 import fr.sii.notification.template.thymeleaf.ThymeleafLookupMappingResolver;
 import fr.sii.notification.template.thymeleaf.ThymeleafParser;
@@ -74,5 +74,9 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 			}
 		}
 		return this;
+	}
+	
+	public ThymeleafBuilder withDefaults() {
+		return withDefaultLookupMappings().withPrefix("").withSuffix("");
 	}
 }

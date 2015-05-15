@@ -1,13 +1,13 @@
 package fr.sii.notification.core.sender;
 
 import fr.sii.notification.core.exception.MessageException;
-import fr.sii.notification.core.exception.ParseException;
+import fr.sii.notification.core.exception.template.ParseException;
 import fr.sii.notification.core.message.Message;
-import fr.sii.notification.core.message.TemplatedMessage;
 import fr.sii.notification.core.message.content.Content;
+import fr.sii.notification.core.message.content.TemplateContent;
 import fr.sii.notification.core.template.parser.TemplateParser;
 
-public class TemplateSender extends AbstractSpecializedSender<TemplatedMessage> implements ConditionalSender {
+public class TemplateSender implements ConditionalSender {
 
 	private NotificationSender delegate;
 	
@@ -21,22 +21,24 @@ public class TemplateSender extends AbstractSpecializedSender<TemplatedMessage> 
 
 	@Override
 	public boolean supports(Message message) {
-		return message instanceof TemplatedMessage;
+		return delegate instanceof ConditionalSender ? ((ConditionalSender) delegate).supports(message) : true;
 	}
 
 	@Override
-	public void send(TemplatedMessage message) throws MessageException {
+	public void send(Message message) throws MessageException {
 		try {
-			// parse template
-			Content content = parser.parse(message.getTemplateName(), message.getContext());
-			// update message with parsed content
-			message.setContent(content);
+			if(message.getContent() instanceof TemplateContent) {
+				TemplateContent template = (TemplateContent) message.getContent();
+				// parse template
+				Content content = parser.parse(template.getPath(), template.getContext());
+				// update message with parsed content
+				message.setContent(content);
+			}
 			// send message
-			delegate.send(message.getMessage());
+			delegate.send(message);
 		} catch(MessageException | ParseException e) {
 			throw new MessageException("Failed to send templated message", message, e);
 		}
 	}
-
 
 }
