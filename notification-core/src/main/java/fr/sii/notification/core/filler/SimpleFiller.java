@@ -8,15 +8,42 @@ import fr.sii.notification.core.exception.template.BeanException;
 import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.util.BeanUtils;
 
+/**
+ * A simple filler that add values on the message. It adds all values defined in
+ * a map into the message. The keys can use dot character '.' to set nested
+ * properties. The map is indexed by the name of the property of the message to
+ * set.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class SimpleFiller implements MessageFiller {
 
+	/**
+	 * The map that contains the values to set. The map is indexed by the name
+	 * of the property of the message to set.
+	 */
 	private Map<String, Object> values;
-	
+
+	/**
+	 * Initialize the filler with a single property with the value to set.
+	 * 
+	 * @param key
+	 *            the name of the property to set on the message
+	 * @param value
+	 *            the value to set
+	 */
 	public SimpleFiller(String key, Object value) {
 		this(new HashMap<String, Object>());
 		values.put(key, value);
 	}
-	
+
+	/**
+	 * Initialize the filler with several pairs of property/value to set.
+	 * 
+	 * @param values
+	 *            the map of property/value to set on the message
+	 */
 	public SimpleFiller(Map<String, Object> values) {
 		super();
 		this.values = values;
