@@ -18,9 +18,10 @@ public class AssertEmail {
 		Object content = actualEmail.getContent();
 		Assert.assertTrue("should be multipart message", content instanceof Multipart);
 		Multipart mp = (Multipart) content;
-		Assert.assertEquals("should have "+expectedEmail.getBodies().length+" parts", expectedEmail.getBodies().length, mp.getCount());
-		for(int i=0 ; i<expectedEmail.getBodies().length ; i++) {
-			assertBody(expectedEmail.getBodies()[i], GreenMailUtil.getBody(mp.getBodyPart(i)), strict);
+		Assert.assertEquals("should have "+expectedEmail.getExpectedContents().length+" parts", expectedEmail.getExpectedContents().length, mp.getCount());
+		for(int i=0 ; i<expectedEmail.getExpectedContents().length ; i++) {
+			assertBody(expectedEmail.getExpectedContents()[i].getBody(), GreenMailUtil.getBody(mp.getBodyPart(i)), strict);
+			assertMimetype(expectedEmail.getExpectedContents()[i], mp.getBodyPart(i).getContentType());
 		}
 	}
 	
@@ -56,10 +57,19 @@ public class AssertEmail {
 	
 	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail, boolean strict) throws MessagingException {
 		assertHeaders(expectedEmail, actualEmail);
-		assertBody(expectedEmail.getBody(), GreenMailUtil.getBody(actualEmail), strict);
+		assertBody(expectedEmail.getExpectedContent().getBody(), GreenMailUtil.getBody(actualEmail), strict);
+		assertMimetype(expectedEmail.getExpectedContent(), actualEmail);
+	}
+
+
+	
+	private static void assertMimetype(ExpectedContent expectedContent, Message actualEmail) throws MessagingException {
+		assertMimetype(expectedContent, actualEmail.getContentType());
 	}
 	
-
+	private static void assertMimetype(ExpectedContent expectedContent, String contentType) throws MessagingException {
+		Assert.assertTrue("mimetype should be "+expectedContent.getMimetype()+" instead of "+contentType, contentType.matches(expectedContent.getMimetype()));
+	}
 	
 	private static void assertBody(String expectedBody, String actualBody, boolean strict) {
 		Assert.assertEquals("body should be '"+expectedBody+"'", strict ? expectedBody : sanitize(expectedBody), strict ? actualBody : sanitize(actualBody));
