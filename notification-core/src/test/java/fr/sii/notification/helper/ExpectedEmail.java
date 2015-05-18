@@ -6,15 +6,9 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 
 
-public class ExpectedEmail {
-	private String subject;
-	
+public class ExpectedEmail extends ExpectedEmailHeader {
 	private String body;
 	
-	private String from;
-	
-	private String[] to;
-
 	public ExpectedEmail(String subject, String body, String from, String... to) {
 		super();
 		this.subject = subject;
@@ -27,19 +21,7 @@ public class ExpectedEmail {
 		this(subject, IOUtils.toString(body), from, to);
 	}
 
-	public String getSubject() {
-		return subject;
-	}
-
 	public String getBody() {
 		return body;
-	}
-
-	public String getFrom() {
-		return from;
-	}
-
-	public String[] getTo() {
-		return to;
 	}
 }

@@ -31,7 +31,7 @@ public class JavaMailSmtpTest {
 		Properties props = new Properties(System.getProperties());
 		props.put("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
 		props.put("mail.smtp.port", ServerSetupTest.SMTP.getPort());
-		sender = new JavaMailBuilder().withDefaults(props).build();
+		sender = new JavaMailBuilder().useDefaults(props).build();
 	}
 	
 	@Test

@@ -19,7 +19,7 @@ public class ManualSmsTest {
 	public void setUp() throws IOException {
 		Properties props = new Properties(System.getProperties());
 		props.load(getClass().getResourceAsStream("/application.properties"));
-		notificationService = new NotificationBuilder().withAllDefaults(props).build();
+		notificationService = new NotificationBuilder().useAllDefaults(props).build();
 	}
 	@Test
 	public void simple() throws NotificationException {

@@ -12,8 +12,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import fr.sii.notification.core.exception.MessageException;
-import fr.sii.notification.core.exception.sender.ContentHandlerException;
 import fr.sii.notification.core.sender.AbstractSpecializedSender;
+import fr.sii.notification.email.exception.javamail.ContentHandlerException;
 import fr.sii.notification.email.message.Email;
 import fr.sii.notification.email.message.EmailAddress;
 import fr.sii.notification.email.message.Recipient;

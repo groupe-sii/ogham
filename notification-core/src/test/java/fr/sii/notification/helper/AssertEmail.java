@@ -1,7 +1,10 @@
 package fr.sii.notification.helper;
 
+import java.io.IOException;
+
+import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.junit.Assert;
@@ -9,33 +12,60 @@ import org.junit.Assert;
 import com.icegreen.greenmail.util.GreenMailUtil;
 
 public class AssertEmail {
-	public static void assertEquals(ExpectedEmail expectedEmail, MimeMessage[] actualEmails) throws MessagingException {
-		assertEquals(new ExpectedEmail[] { expectedEmail }, actualEmails);
+	
+	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail, boolean strict) throws MessagingException, IOException {
+		assertHeaders(expectedEmail, actualEmail);
+		Object content = actualEmail.getContent();
+		Assert.assertTrue("should be multipart message", content instanceof Multipart);
+		Multipart mp = (Multipart) content;
+		Assert.assertEquals("should have "+expectedEmail.getBodies().length+" parts", expectedEmail.getBodies().length, mp.getCount());
+		for(int i=0 ; i<expectedEmail.getBodies().length ; i++) {
+			assertBody(expectedEmail.getBodies()[i], GreenMailUtil.getBody(mp.getBodyPart(i)), strict);
+		}
+	}
+	
+	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+		assertEquals(expectedEmail, actualEmail, false);
 	}
 
-	public static void assertEquals(ExpectedEmail[] expectedEmail, MimeMessage[] actualEmails) throws MessagingException {
+	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+		assertEquals(new ExpectedMultiPartEmail[] { expectedEmail }, actualEmails);
+	}
+
+	public static void assertEquals(ExpectedMultiPartEmail[] expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
 		Assert.assertEquals("should have "+expectedEmail.length+" email", expectedEmail.length, actualEmails.length);
 		for(int i=0 ; i<expectedEmail.length ; i++) {
 			assertEquals(expectedEmail[i], actualEmails[i]);
 		}
 	}
 
-	public static void assertEquals(ExpectedEmail expectedEmail, MimeMessage actualEmail) throws MessagingException {
-		assertHeaders(expectedEmail, actualEmail);
-		assertBody(sanitize(expectedEmail.getBody()), sanitize(GreenMailUtil.getBody(actualEmail)));
-	}
-	
-	public static void assertStrictEquals(ExpectedEmail expectedEmail, MimeMessage actualEmail) throws MessagingException {
-		assertHeaders(expectedEmail, actualEmail);
-		assertBody(expectedEmail.getBody(), GreenMailUtil.getBody(actualEmail));
+	public static void assertEquals(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessagingException {
+		assertEquals(new ExpectedEmail[] { expectedEmail }, actualEmails);
 	}
 
-	
-	private static void assertBody(String expectedBody, String actualBody) {
-		Assert.assertEquals("body should be '"+expectedBody+"'", expectedBody, actualBody);
+	public static void assertEquals(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException {
+		Assert.assertEquals("should have "+expectedEmail.length+" email", expectedEmail.length, actualEmails.length);
+		for(int i=0 ; i<expectedEmail.length ; i++) {
+			assertEquals(expectedEmail[i], actualEmails[i]);
+		}
 	}
 
-	private static void assertHeaders(ExpectedEmail expectedEmail, MimeMessage actualEmail) throws MessagingException {
+	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException {
+		assertEquals(expectedEmail, actualEmail, false);
+	}
+	
+	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail, boolean strict) throws MessagingException {
+		assertHeaders(expectedEmail, actualEmail);
+		assertBody(expectedEmail.getBody(), GreenMailUtil.getBody(actualEmail), strict);
+	}
+	
+
+	
+	private static void assertBody(String expectedBody, String actualBody, boolean strict) {
+		Assert.assertEquals("body should be '"+expectedBody+"'", strict ? expectedBody : sanitize(expectedBody), strict ? actualBody : sanitize(actualBody));
+	}
+
+	private static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail) throws MessagingException {
 		Assert.assertEquals("subject should be '"+expectedEmail.getSubject()+"'", expectedEmail.getSubject(), actualEmail.getSubject());
 		Assert.assertEquals("should have only one from", 1, actualEmail.getFrom().length);
 		Assert.assertEquals("should have only "+expectedEmail.getTo().length+" to", expectedEmail.getTo().length, actualEmail.getRecipients(RecipientType.TO).length);

@@ -1,8 +1,5 @@
 package fr.sii.notification.template.thymeleaf;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
@@ -33,10 +30,14 @@ public class ThymeleafParser implements TemplateParser {
 	@Override
 	public Content parse(String templateName, Context ctx) throws ParseException {
 		try {
-			engine.setTemplateResolver(lookupResolver.getResolver(templateName));
-			// TODO: handle mimetype and charset (need to read template content ?)
-			return new StringContent(engine.process(lookupResolver.getTemplateName(templateName), contextConverter.convert(ctx)), new MimeType("text/html"));
-		} catch (ContextException | TemplateResolutionException | MimeTypeParseException e) {
+			// TODO: how to use multiple resolvers ?? Need to have one engine by resolver ??
+			if(!engine.isInitialized()) {
+				engine.setTemplateResolver(lookupResolver.getResolver(templateName));
+			}
+			String resolvedTemplateName = lookupResolver.getTemplateName(templateName);
+			String result = engine.process(resolvedTemplateName, contextConverter.convert(ctx));
+			return new StringContent(result);
+		} catch (ContextException | TemplateResolutionException e) {
 			throw new ParseException("failed to parse template with thymeleaf", templateName, ctx);
 		}
 	}

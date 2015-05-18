@@ -27,4 +27,15 @@ public class RelativeTemplateResolver implements TemplateResolver {
 		return delegate.getTemplate(templateName.startsWith("/") ? templateName : (prefix+templateName+suffix));
 	}
 
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public TemplateResolver getDelegate() {
+		return delegate;
+	}
 }

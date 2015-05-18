@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import fr.sii.notification.core.builder.TemplateBuilder;
 import fr.sii.notification.core.exception.template.ParseException;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
@@ -20,14 +21,26 @@ public class ThymeleafParserTest {
 	
 	@Before
 	public void setUp() {
-		parser = new ThymeleafBuilder().withDefaultLookupMappings().withPrefix("template/thymeleaf/source/").withSuffix(".html").build();
+		parser = new TemplateBuilder()
+					.registerTemplateParser(new ThymeleafBuilder())
+					.useDefaultLookupResolvers()
+					.withPrefix("/template/thymeleaf/source/")
+					.build();
 	}
 	
 	@Test
-	public void simple() throws ParseException, IOException {
-		Content content = parser.parse("classpath:simple", new BeanContext(new SimpleBean("foo", 42)));
+	public void html() throws ParseException, IOException {
+		Content content = parser.parse("classpath:simple.html", new BeanContext(new SimpleBean("foo", 42)));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertEquals("/template/thymeleaf/expected/simple_foo_42.html", "text/html", (StringContent) content);
+		AssertTemplate.assertEquals("/template/thymeleaf/expected/simple_foo_42.html", content);
+	}
+	
+	@Test
+	public void text() throws ParseException, IOException {
+		Content content = parser.parse("classpath:simple.txt", new BeanContext(new SimpleBean("foo", 42)));
+		Assert.assertNotNull("content should not be null", content);
+		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
+		AssertTemplate.assertEquals("/template/thymeleaf/expected/simple_foo_42.txt", content);
 	}
 }

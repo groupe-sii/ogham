@@ -1,6 +1,7 @@
 package fr.sii.notification.it.email;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -20,6 +21,7 @@ import fr.sii.notification.core.service.NotificationService;
 import fr.sii.notification.email.message.Email;
 import fr.sii.notification.helper.AssertEmail;
 import fr.sii.notification.helper.ExpectedEmail;
+import fr.sii.notification.helper.ExpectedMultiPartEmail;
 import fr.sii.notification.mock.context.SimpleBean;
 
 public class ManualEmailTest {
@@ -35,7 +37,7 @@ public class ManualEmailTest {
 		props.load(getClass().getResourceAsStream("/application.properties"));
 		props.put("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
 		props.put("mail.smtp.port", ServerSetupTest.SMTP.getPort());
-		notificationService = new NotificationBuilder().withAllDefaults(props).build();
+		notificationService = new NotificationBuilder().useAllDefaults(props).build();
 	}
 	
 	@Test
@@ -46,16 +48,22 @@ public class ManualEmailTest {
 
 	@Test
 	public void withThymeleaf() throws NotificationException, MessagingException, IOException {
-		notificationService.send(new Email("Template", new TemplateContent("classpath:template/thymeleaf/source/simple.html", new SimpleBean("foo", 42)), "recipient@sii.fr"));
+		notificationService.send(new Email("Template", new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("foo", 42)), "recipient@sii.fr"));
 		AssertEmail.assertEquals(new ExpectedEmail("Template", getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		// TODO: check mimetype
 	}
 
 	@Test
-	public void fallback() throws NotificationException {
+	public void fallback() throws NotificationException, MessagingException, IOException {
 		notificationService.send(new Email("Multi", new MultiContent(
-										new TemplateContent("classpath:/email/test.html", new SimpleBean("bar", 12)),
-										new TemplateContent("classpath:/email/test.txt", new SimpleBean("bar", 12))), "recipient@sii.fr"));
+										new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("bar", 12)),
+										new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("bar", 12))), "recipient@sii.fr"));
 //		notificationService.send(new Email("Multi", new MultiTemplateContent("classpath:/email/test", new SimpleBean("bar", 12))), "recipient@sii.fr"));
+		AssertEmail.assertEquals(new ExpectedMultiPartEmail("Multi", new InputStream[] {
+				getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.html"),
+				getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.txt")
+		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		// TODO: check mimetype
 	}
 
 	@Test

@@ -35,11 +35,11 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 		return Arrays.asList(sender);
 	}
 	
-	public SmsBuilder withDefaults() {
-		return withDefaults(BuilderUtil.getDefaultProperties());
+	public SmsBuilder useDefaults() {
+		return useDefaults(BuilderUtil.getDefaultProperties());
 	}
 
-	public SmsBuilder withDefaults(Properties properties) {
+	public SmsBuilder useDefaults(Properties properties) {
 		registerDefaultImplementations(properties);
 		withConfigurationFiller(properties);
 		return null;

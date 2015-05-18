@@ -32,33 +32,33 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 		return new ChainNotificationService(senders);
 	}
 
-	public NotificationBuilder withAllDefaults() {
-		return withAllDefaults(BuilderUtil.getDefaultProperties());
+	public NotificationBuilder useAllDefaults() {
+		return useAllDefaults(BuilderUtil.getDefaultProperties());
 	}
 
-	public NotificationBuilder withAllDefaults(Properties properties) {
-		withEmailDefaults(properties);
-		withSmsDefaults(properties);
+	public NotificationBuilder useAllDefaults(Properties properties) {
+		useEmailDefaults(properties);
+		useSmsDefaults(properties);
 		return this;
 	}
 
-	public NotificationBuilder withEmailDefaults() {
-		return withEmailDefaults(BuilderUtil.getDefaultProperties());
+	public NotificationBuilder useEmailDefaults() {
+		return useEmailDefaults(BuilderUtil.getDefaultProperties());
 	}
 
-	public NotificationBuilder withEmailDefaults(Properties properties) {
+	public NotificationBuilder useEmailDefaults(Properties properties) {
 		withEmail();
-		emailBuilder.withDefaults(properties);
+		emailBuilder.useDefaults(properties);
 		return this;
 	}
 
-	public NotificationBuilder withSmsDefaults() {
-		return withSmsDefaults(BuilderUtil.getDefaultProperties());
+	public NotificationBuilder useSmsDefaults() {
+		return useSmsDefaults(BuilderUtil.getDefaultProperties());
 	}
 
-	public NotificationBuilder withSmsDefaults(Properties properties) {
+	public NotificationBuilder useSmsDefaults(Properties properties) {
 		withSms();
-		smsBuilder.withDefaults(properties);
+		smsBuilder.useDefaults(properties);
 		return this;
 	}
 

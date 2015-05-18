@@ -1,4 +1,4 @@
-package fr.sii.notification.core.exception.sender;
+package fr.sii.notification.email.exception.javamail;
 
 import fr.sii.notification.core.message.content.Content;
 
