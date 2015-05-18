@@ -1,7 +1,5 @@
 package fr.sii.notification.sms.builder;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import fr.sii.notification.core.builder.NotificationSenderBuilder;
@@ -31,8 +29,8 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	}
 	
 	@Override
-	public List<ConditionalSender> build() throws BuildException {
-		return Arrays.asList(sender);
+	public ConditionalSender build() throws BuildException {
+		return sender;
 	}
 	
 	public SmsBuilder useDefaults() {

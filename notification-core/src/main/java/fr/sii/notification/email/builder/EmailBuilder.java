@@ -1,7 +1,5 @@
 package fr.sii.notification.email.builder;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.beanutils.ConvertUtils;
@@ -40,8 +38,8 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	}
 	
 	@Override
-	public List<ConditionalSender> build() throws BuildException {
-		return Arrays.asList(sender);
+	public ConditionalSender build() throws BuildException {
+		return sender;
 	}
 
 	public EmailBuilder useDefaults() {

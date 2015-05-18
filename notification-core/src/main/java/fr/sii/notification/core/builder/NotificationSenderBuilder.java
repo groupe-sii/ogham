@@ -1,9 +1,16 @@
 package fr.sii.notification.core.builder;
 
-import java.util.List;
-
 import fr.sii.notification.core.sender.NotificationSender;
 
 
-public interface NotificationSenderBuilder<N extends NotificationSender> extends Builder<List<N>> {
+/**
+ * Base interface acting as a marker for builders that help to construct a
+ * notification sender.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param <S>
+ *            the type of the sender
+ */
+public interface NotificationSenderBuilder<S extends NotificationSender> extends Builder<S> {
 }
