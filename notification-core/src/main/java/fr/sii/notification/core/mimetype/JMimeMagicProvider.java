@@ -16,9 +16,26 @@ import org.apache.commons.io.IOUtils;
 
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
 
+/**
+ * Mime Type detection based on JMimeMagic. This library is really simple,
+ * efficient and based on a simple configuration file. It is able to detect
+ * mimetype using magic number mechanism.
+ * 
+ * @author Aurélien Baudet
+ * @see https://github.com/arimus/jmimemagic
+ * @see http://sourceforge.net/projects/jmimemagic/
+ *
+ */
 public class JMimeMagicProvider implements MimeTypeProvider {
 
+	/**
+	 * only try to get mime type, no submatches are processed when true
+	 */
 	private boolean onlyMimeMatch;
+
+	/**
+	 * whether or not to use extension to optimize order of content tests
+	 */
 	private boolean extensionHints;
 
 	@Override
@@ -26,7 +43,7 @@ public class JMimeMagicProvider implements MimeTypeProvider {
 		try {
 			return new MimeType(Magic.getMagicMatch(file, extensionHints, onlyMimeMatch).getMimeType());
 		} catch (MagicParseException | MagicMatchNotFoundException | MagicException e) {
-			throw new MimeTypeDetectionException("Failed to get the mimetype for the file "+file, e);
+			throw new MimeTypeDetectionException("Failed to get the mimetype for the file " + file, e);
 		} catch (MimeTypeParseException e) {
 			throw new MimeTypeDetectionException("Invalid mimetype", e);
 		}

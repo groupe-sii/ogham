@@ -21,7 +21,8 @@ public class StringContentHandler implements JavaMailContentHandler {
 	@Override
 	public void setContent(MimePart message, Content content) throws ContentHandlerException {
 		try {
-			message.setContent(((StringContent) content).getContent(), mimetypeProvider.detect(content.toString()).toString());
+			String strContent = ((StringContent) content).getContent();
+			message.setContent(strContent, mimetypeProvider.detect(strContent).toString());
 		} catch (MessagingException e) {
 			throw new ContentHandlerException("failed to set content on mime message", content, e);
 		} catch (MimeTypeDetectionException e) {

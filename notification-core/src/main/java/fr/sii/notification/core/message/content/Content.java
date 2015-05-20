@@ -8,4 +8,10 @@ package fr.sii.notification.core.message.content;
  *
  */
 public interface Content {
+	/**
+	 * Use the toString method to provide the content as String.
+	 * 
+	 * @return the content as String
+	 */
+	public String toString();
 }

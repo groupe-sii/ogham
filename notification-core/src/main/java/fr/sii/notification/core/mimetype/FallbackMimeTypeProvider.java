@@ -14,10 +14,19 @@ import org.apache.commons.io.IOUtils;
 
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
 
+/**
+ * Implementation that will try several delegate implementations until one is
+ * able to provide the Mime Type.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class FallbackMimeTypeProvider implements MimeTypeProvider {
-
+	/**
+	 * The list of delegate implementations to try
+	 */
 	private List<MimeTypeProvider> providers;
-	
+
 	public FallbackMimeTypeProvider(MimeTypeProvider... providers) {
 		this(new ArrayList<>(Arrays.asList(providers)));
 	}
@@ -29,26 +38,26 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 
 	@Override
 	public MimeType getMimeType(File file) throws MimeTypeDetectionException {
-		for(MimeTypeProvider provider : providers) {
+		for (MimeTypeProvider provider : providers) {
 			try {
 				return provider.getMimeType(file);
-			} catch(MimeTypeDetectionException e) {
+			} catch (MimeTypeDetectionException e) {
 				// nothing to do => try next one
 			}
 		}
-		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype for the file "+file);
+		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype for the file " + file);
 	}
 
 	@Override
 	public MimeType getMimeType(String fileName) throws MimeTypeDetectionException {
-		for(MimeTypeProvider provider : providers) {
+		for (MimeTypeProvider provider : providers) {
 			try {
 				return provider.getMimeType(fileName);
-			} catch(MimeTypeDetectionException e) {
+			} catch (MimeTypeDetectionException e) {
 				// nothing to do => try next one
 			}
 		}
-		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype for the file "+fileName);
+		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype for the file " + fileName);
 	}
 
 	@Override
@@ -56,10 +65,10 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 		try {
 			ByteArrayInputStream copy = new ByteArrayInputStream(IOUtils.toByteArray(stream));
 			copy.mark(Integer.MAX_VALUE);
-			for(MimeTypeProvider provider : providers) {
+			for (MimeTypeProvider provider : providers) {
 				try {
 					return provider.detect(copy);
-				} catch(MimeTypeDetectionException e) {
+				} catch (MimeTypeDetectionException e) {
 					// try next one => move read cursor to beginning
 					copy.reset();
 				}
@@ -72,16 +81,23 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 
 	@Override
 	public MimeType detect(String content) throws MimeTypeDetectionException {
-		for(MimeTypeProvider provider : providers) {
+		for (MimeTypeProvider provider : providers) {
 			try {
 				return provider.detect(content);
-			} catch(MimeTypeDetectionException e) {
+			} catch (MimeTypeDetectionException e) {
 				// nothing to do => try next one
 			}
 		}
 		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");
 	}
-	
+
+	/**
+	 * Register a new Mime Type detection implementation. The implementation is
+	 * added at the end of the list so it will be called at last.
+	 * 
+	 * @param provider
+	 *            the implementation to register
+	 */
 	public void addProvider(MimeTypeProvider provider) {
 		providers.add(provider);
 	}

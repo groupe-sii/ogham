@@ -3,7 +3,7 @@ package fr.sii.notification.core.builder;
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.core.translator.ChainContentTranslator;
+import fr.sii.notification.core.translator.EveryContentTranslator;
 import fr.sii.notification.core.translator.ContentTranslator;
 import fr.sii.notification.core.translator.MultiContentTranslator;
 import fr.sii.notification.core.translator.TemplateContentTranslator;
@@ -23,11 +23,11 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * A simple translator that delegates the translation to all of the provided
 	 * implementations.
 	 */
-	private ChainContentTranslator translator;
+	private EveryContentTranslator translator;
 
 	public ContentTranslatorBuilder() {
 		super();
-		translator = new ChainContentTranslator();
+		translator = new EveryContentTranslator();
 	}
 
 	/**
@@ -51,10 +51,10 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * This method is automatically called when calling {@link #useDefaults()}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see TemplateBuilder#useDefaults() for more information about the default
+	 * @see TemplateBuilder#useDefaults() More information about the default
 	 *      behaviors.
-	 * @see TemplateContentTranslator for more information about the translator
-	 *      for templates
+	 * @see TemplateContentTranslator More information about the translator for
+	 *      templates
 	 */
 	public ContentTranslatorBuilder withTemplate() {
 		return withTemplate(new TemplateBuilder().useDefaults());
@@ -68,10 +68,10 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * This method is automatically called when calling {@link #useDefaults()}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see TemplateContentTranslator for more information about the translator
-	 *      for templates
-	 * @see TemplateParser for more information about the parser implementation
-	 *      to use
+	 * @see TemplateContentTranslator More information about the translator for
+	 *      templates
+	 * @see TemplateParser More information about the parser implementation to
+	 *      use
 	 */
 	public ContentTranslatorBuilder withTemplate(TemplateParser parser) {
 		translator.addTranslator(new TemplateContentTranslator(parser));
@@ -87,9 +87,9 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * This method is automatically called when calling {@link #useDefaults()}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see TemplateContentTranslator for more information about the translator
-	 *      for templates
-	 * @see TemplateBuilder for more information about the builder to use for
+	 * @see TemplateContentTranslator More information about the translator for
+	 *      templates
+	 * @see TemplateBuilder More information about the builder to use for
 	 *      helping to construct the template parser
 	 */
 	public ContentTranslatorBuilder withTemplate(TemplateBuilder builder) {
@@ -106,7 +106,7 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * This method is automatically called when calling {@link #useDefaults()}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see MultiContentTranslator for more information about multi content
+	 * @see MultiContentTranslator More information about multi content
 	 *      management
 	 */
 	public ContentTranslatorBuilder withMultiContentSupport() {
@@ -119,9 +119,8 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * default template management and default multi-content support management.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see #withTemplate() for more information about default template
-	 *      management
-	 * @see #withMultiContentSupport() for more information about default
+	 * @see #withTemplate() More information about default template management
+	 * @see #withMultiContentSupport() More information about default
 	 *      multi-content management
 	 */
 	public ContentTranslatorBuilder useDefaults() {

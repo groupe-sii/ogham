@@ -9,10 +9,17 @@ import javax.activation.MimetypesFileTypeMap;
 
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
 
+/**
+ * Mime Type detection implementation based on Java {@link MimetypesFileTypeMap}.
+ * This implementation is only able to handle file extension mechanism.
+ * 
+ * @author Aurélien Baudet
+ * @see MimetypesFileTypeMap
+ */
 public class JavaActivationProvider implements MimeTypeProvider {
 
 	private MimetypesFileTypeMap map;
-	
+
 	public JavaActivationProvider(MimetypesFileTypeMap map) {
 		super();
 		this.map = map;
@@ -21,14 +28,14 @@ public class JavaActivationProvider implements MimeTypeProvider {
 	public JavaActivationProvider() {
 		this(new MimetypesFileTypeMap());
 	}
-	
+
 	@Override
 	public MimeType getMimeType(File file) throws MimeTypeDetectionException {
 		try {
 			String contentType = map.getContentType(file);
 			return new MimeType(contentType);
 		} catch (MimeTypeParseException e) {
-			throw new MimeTypeDetectionException("Failed to detect mimetype for "+file, e);
+			throw new MimeTypeDetectionException("Failed to detect mimetype for " + file, e);
 		}
 	}
 
@@ -39,13 +46,13 @@ public class JavaActivationProvider implements MimeTypeProvider {
 
 	@Override
 	public MimeType detect(InputStream stream) throws MimeTypeDetectionException {
-		// TODO delegate to another mimetype engine capable of detecting or throw UnsupportedOperationException ?
+		// TODO delegate to another mimetype engine capable of detecting
 		return null;
 	}
 
 	@Override
 	public MimeType detect(String content) throws MimeTypeDetectionException {
-		// TODO delegate to another mimetype engine capable of detecting or throw UnsupportedOperationException ?
+		// TODO delegate to another mimetype engine capable of detecting
 		return null;
 	}
 

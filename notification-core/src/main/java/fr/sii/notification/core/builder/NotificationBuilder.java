@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.sender.ConditionalSender;
-import fr.sii.notification.core.service.ChainNotificationService;
+import fr.sii.notification.core.service.EverySupportingNotificationService;
 import fr.sii.notification.core.service.NotificationService;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.email.builder.EmailBuilder;
@@ -64,7 +64,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 		for (NotificationSenderBuilder<ConditionalSender> builder : builders) {
 			senders.add(builder.build());
 		}
-		return new ChainNotificationService(senders);
+		return new EverySupportingNotificationService(senders);
 	}
 
 	/**
@@ -79,9 +79,9 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * </ul>
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see EmailBuilder#useDefaults() for more information about created email
+	 * @see EmailBuilder#useDefaults() More information about created email
 	 *      sender
-	 * @see SmsBuilder#useDefaults() for more information about created SMS
+	 * @see SmsBuilder#useDefaults() More information about created SMS
 	 *      sender
 	 */
 	public NotificationBuilder useAllDefaults() {
@@ -104,9 +104,9 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 *            indicate which properties to use instead of using the system
 	 *            ones
 	 * @return this builder instance for fluent use
-	 * @see EmailBuilder#useDefaults() for more information about created email
+	 * @see EmailBuilder#useDefaults() More information about created email
 	 *      sender
-	 * @see SmsBuilder#useDefaults() for more information about created SMS
+	 * @see SmsBuilder#useDefaults() More information about created SMS
 	 *      sender
 	 */
 	public NotificationBuilder useAllDefaults(Properties properties) {
@@ -122,7 +122,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * This method is automatically called when using {@link #useAllDefaults()}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see EmailBuilder#useDefaults() for more information about created email
+	 * @see EmailBuilder#useDefaults() More information about created email
 	 *      sender
 	 */
 	public NotificationBuilder useEmailDefaults() {
@@ -141,7 +141,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 *            indicate which properties to use instead of using the system
 	 *            ones
 	 * @return this builder instance for fluent use
-	 * @see EmailBuilder#useDefaults() for more information about created email
+	 * @see EmailBuilder#useDefaults() More information about created email
 	 *      sender
 	 */
 	public NotificationBuilder useEmailDefaults(Properties properties) {
@@ -157,7 +157,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * This method is automatically called when using {@link #useAllDefaults()}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see SmsBuilder#useDefaults() for more information about created SMS
+	 * @see SmsBuilder#useDefaults() More information about created SMS
 	 *      sender
 	 */
 	public NotificationBuilder useSmsDefaults() {
@@ -175,7 +175,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 *            indicate which properties to use instead of using the system
 	 *            ones
 	 * @return this builder instance for fluent use
-	 * @see SmsBuilder#useDefaults() for more information about created SMS
+	 * @see SmsBuilder#useDefaults() More information about created SMS
 	 *      sender
 	 */
 	public NotificationBuilder useSmsDefaults(Properties properties) {
