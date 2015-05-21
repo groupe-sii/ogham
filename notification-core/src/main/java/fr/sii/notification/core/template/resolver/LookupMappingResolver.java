@@ -20,6 +20,7 @@ import fr.sii.notification.core.template.Template;
  * The lookup can also be empty in order to define a kind of default resolver if
  * no lookup is provided. The template path could then be "/email/hello.html".
  * The resolver associated to empty string lookup will be used in this case.
+ * </p>
  * <p>
  * This resolver is a conditional resolver. The template path is supported only
  * if there exists a resolver for the provided lookup. Moreover, if the resolver

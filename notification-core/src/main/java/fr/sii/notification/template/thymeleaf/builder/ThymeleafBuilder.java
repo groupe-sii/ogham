@@ -7,7 +7,7 @@ import fr.sii.notification.core.builder.TemplateParserBuilder;
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.template.parser.TemplateParser;
 import fr.sii.notification.core.template.resolver.TemplateResolver;
-import fr.sii.notification.template.exception.NoResolverAdapter;
+import fr.sii.notification.template.exception.NoResolverAdapterException;
 import fr.sii.notification.template.thymeleaf.ThymeleafLookupMappingResolver;
 import fr.sii.notification.template.thymeleaf.ThymeleafParser;
 import fr.sii.notification.template.thymeleaf.adapter.ClassPathResolverAdapter;
@@ -75,7 +75,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	public TemplateParserBuilder withLookupResolver(String lookup, TemplateResolver resolver) {
 		try {
 			return withLookupResolver(lookup, resolverAdapter.adapt(resolver));
-		} catch (NoResolverAdapter e) {
+		} catch (NoResolverAdapterException e) {
 			throw new IllegalArgumentException("Can't register resolver", e);
 		}
 	}

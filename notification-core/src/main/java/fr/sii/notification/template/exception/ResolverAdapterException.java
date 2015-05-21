@@ -3,7 +3,7 @@ package fr.sii.notification.template.exception;
 import fr.sii.notification.core.exception.NotificationException;
 import fr.sii.notification.core.template.resolver.TemplateResolver;
 
-public class NoResolverAdapter extends NotificationException {
+public class ResolverAdapterException extends NotificationException {
 
 	/**
 	 * 
@@ -12,15 +12,15 @@ public class NoResolverAdapter extends NotificationException {
 
 	private TemplateResolver resolver;
 	
-	public NoResolverAdapter(String message, TemplateResolver resolver, Throwable cause) {
+	public ResolverAdapterException(String message, TemplateResolver resolver, Throwable cause) {
 		super(message, cause);
 	}
 
-	public NoResolverAdapter(String message, TemplateResolver resolver) {
+	public ResolverAdapterException(String message, TemplateResolver resolver) {
 		super(message);
 	}
 
-	public NoResolverAdapter(TemplateResolver resolver, Throwable cause) {
+	public ResolverAdapterException(TemplateResolver resolver, Throwable cause) {
 		super(cause);
 	}
 

@@ -7,7 +7,7 @@ import java.util.List;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.notification.core.template.resolver.TemplateResolver;
-import fr.sii.notification.template.exception.NoResolverAdapter;
+import fr.sii.notification.template.exception.NoResolverAdapterException;
 
 /**
  * Decorator that will ask each resolver adapter if it is able to handle the
@@ -56,13 +56,13 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 	}
 
 	@Override
-	public ITemplateResolver adapt(TemplateResolver resolver) throws NoResolverAdapter {
+	public ITemplateResolver adapt(TemplateResolver resolver) throws NoResolverAdapterException {
 		for (ThymeleafResolverAdapter adapter : adapters) {
 			if (adapter.supports(resolver)) {
 				return adapter.adapt(resolver);
 			}
 		}
-		throw new NoResolverAdapter("No resolver adapter found for the provided resolver: " + resolver.getClass().getSimpleName(), resolver);
+		throw new NoResolverAdapterException("No resolver adapter found for the provided resolver: " + resolver.getClass().getSimpleName(), resolver);
 	}
 
 	/**
