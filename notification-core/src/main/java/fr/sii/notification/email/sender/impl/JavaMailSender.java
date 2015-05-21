@@ -18,17 +18,39 @@ import fr.sii.notification.email.message.Email;
 import fr.sii.notification.email.message.EmailAddress;
 import fr.sii.notification.email.message.Recipient;
 import fr.sii.notification.email.sender.impl.javamail.JavaMailContentHandler;
+import fr.sii.notification.email.sender.impl.javamail.JavaMailInterceptor;
 
+/**
+ * Java mail API implementation.
+ * 
+ * @author Aurélien Baudet
+ * @see JavaMailContentHandler
+ */
 public class JavaMailSender extends AbstractSpecializedSender<Email> {
-
+	/**
+	 * Properties that is used to initialize the session
+	 */
 	private Properties properties;
 	
+	/**
+	 * The content handler used to add message content
+	 */
 	private JavaMailContentHandler contentHandler;
 	
+	/**
+	 * Extra operations to apply on the message
+	 */
+	private JavaMailInterceptor interceptor;
+	
 	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler) {
+		this(properties, contentHandler, null);
+	}
+	
+	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailInterceptor interceptor) {
 		super();
 		this.properties = properties;
 		this.contentHandler = contentHandler;
+		this.interceptor = interceptor;
 	}
 
 	@Override
@@ -48,6 +70,10 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 			// delegate content management to specialized classes
 			contentHandler.setContent(mimeMsg, email.getContent());
 			// TODO: manage attachments
+			// default behavior is done => message is ready but let possibility to add extra operations to do on the message
+			if(interceptor!=null) {
+				interceptor.intercept(mimeMsg, email);
+			}
 			// message is ready => send it
 			Transport.send(mimeMsg);
 		} catch (UnsupportedEncodingException | MessagingException | ContentHandlerException e) {

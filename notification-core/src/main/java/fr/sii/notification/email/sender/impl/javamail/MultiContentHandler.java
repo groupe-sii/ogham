@@ -10,10 +10,20 @@ import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.email.exception.javamail.ContentHandlerException;
 
+/**
+ * Handle multiple contents. It adds several parts to the mail. It creates a
+ * part for each sub content. It delegates the management of each sub content to
+ * another content handler.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class MultiContentHandler implements JavaMailContentHandler {
-
+	/**
+	 * The content handler used for each sub content
+	 */
 	JavaMailContentHandler delegate;
-	
+
 	public MultiContentHandler(JavaMailContentHandler delegate) {
 		super();
 		this.delegate = delegate;
@@ -24,13 +34,13 @@ public class MultiContentHandler implements JavaMailContentHandler {
 		try {
 			MultiContent fallbackContent = (MultiContent) content;
 			Multipart mp = new MimeMultipart();
-			for(Content c : fallbackContent.getContents()) {
+			for (Content c : fallbackContent.getContents()) {
 				MimeBodyPart part = new MimeBodyPart();
 				delegate.setContent(part, c);
 				mp.addBodyPart(part);
 			}
 			message.setContent(mp);
-		} catch(MessagingException e) {
+		} catch (MessagingException e) {
 			throw new ContentHandlerException("Failed to create multi content", content, e);
 		}
 	}

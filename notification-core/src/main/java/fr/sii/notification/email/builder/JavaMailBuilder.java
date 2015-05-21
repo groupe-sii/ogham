@@ -2,6 +2,7 @@ package fr.sii.notification.email.builder;
 
 import java.util.Properties;
 
+import fr.sii.notification.core.builder.Builder;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.message.content.StringContent;
@@ -11,27 +12,80 @@ import fr.sii.notification.core.mimetype.MimeTypeProvider;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.email.sender.impl.JavaMailSender;
 import fr.sii.notification.email.sender.impl.javamail.JavaMailContentHandler;
+import fr.sii.notification.email.sender.impl.javamail.JavaMailInterceptor;
 import fr.sii.notification.email.sender.impl.javamail.MapContentHandler;
 import fr.sii.notification.email.sender.impl.javamail.MultiContentHandler;
 import fr.sii.notification.email.sender.impl.javamail.StringContentHandler;
 
-public class JavaMailBuilder {
+/**
+ * Builder that helps to construct the Java mail API implementation.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class JavaMailBuilder implements Builder<JavaMailSender> {
+	/**
+	 * The properties to use
+	 */
 	private Properties properties;
+
+	/**
+	 * The content handler to use. By default, it uses a
+	 * {@link MapContentHandler}.
+	 */
 	private JavaMailContentHandler contentHandler;
+
+	/**
+	 * The content handler that associates the content class to the content
+	 * handler implementation
+	 */
 	private MapContentHandler mapContentHandler;
+
+	/**
+	 * The provider for Mime Type detection
+	 */
 	private FallbackMimeTypeProvider mimetypeProvider;
-	
+
+	/**
+	 * Extra operations to apply on the message
+	 */
+	private JavaMailInterceptor interceptor;
+
 	public JavaMailBuilder() {
 		super();
 		contentHandler = mapContentHandler = new MapContentHandler();
 		mimetypeProvider = new FallbackMimeTypeProvider();
 	}
-	
+
+	/**
+	 * Tells the builder to use all default behaviors and values:
+	 * <ul>
+	 * <li>Use the system properties</li>
+	 * <li>Register Mime Type detection using MimeMagic library</li>
+	 * <li>Handle {@link MultiContent}</li>
+	 * <li>Handle {@link StringContent}</li>
+	 * </ul>
+	 * 
+	 * @return this instance for fluent use
+	 */
 	public JavaMailBuilder useDefaults() {
 		useDefaults(BuilderUtil.getDefaultProperties());
 		return this;
 	}
-	
+
+	/**
+	 * Tells the builder to use all default behaviors and values:
+	 * <ul>
+	 * <li>Use the provided properties</li>
+	 * <li>Register Mime Type detection using MimeMagic library</li>
+	 * <li>Handle {@link MultiContent}</li>
+	 * <li>Handle {@link StringContent}</li>
+	 * </ul>
+	 * 
+	 * @param props
+	 *            the properties to use
+	 * @return this instance for fluent use
+	 */
 	public JavaMailBuilder useDefaults(Properties props) {
 		withProperties(props);
 		registerMimeTypeProvider(new JMimeMagicProvider());
@@ -39,23 +93,68 @@ public class JavaMailBuilder {
 		registerContentHandler(StringContent.class, new StringContentHandler(mimetypeProvider));
 		return this;
 	}
-	
+
+	/**
+	 * Set the properties to use for Java mail API implementation.
+	 * 
+	 * @param props
+	 *            the properties to use
+	 * @return this instance for fluent use
+	 */
 	public JavaMailBuilder withProperties(Properties props) {
 		properties = props;
 		return this;
 	}
-	
+
+	/**
+	 * Register a new handler for a specific content.
+	 * 
+	 * @param clazz
+	 *            the class of the content to handle
+	 * @param handler
+	 *            the handler
+	 * @return this instance for fluent use
+	 */
 	public JavaMailBuilder registerContentHandler(Class<? extends Content> clazz, JavaMailContentHandler handler) {
 		mapContentHandler.addContentHandler(clazz, handler);
 		return this;
 	}
-	
+
+	/**
+	 * <p>
+	 * Register a new Mime Type provider. Registering several providers allows
+	 * to try detecting using the first one. If it can't detect the mimetype, it
+	 * tries with the next one until one detects successfully the Mime Type.
+	 * </p>
+	 * <p>
+	 * The provider is added at the end so any previously registered provider
+	 * that is able to provide a Mime Type prevents to use this provider.
+	 * </p>
+	 * 
+	 * @param provider
+	 *            the provider to register
+	 * @return this instance for fluent use
+	 */
 	public JavaMailBuilder registerMimeTypeProvider(MimeTypeProvider provider) {
 		mimetypeProvider.addProvider(provider);
 		return this;
 	}
-	
+
+	/**
+	 * Set an interceptor used to customize the message before sending it. It is
+	 * called at the really end and just before sending the message.
+	 * 
+	 * @param interceptor
+	 *            the interceptor to use
+	 * @return this instance for fluent use
+	 */
+	public JavaMailBuilder setInterceptor(JavaMailInterceptor interceptor) {
+		this.interceptor = interceptor;
+		return this;
+	}
+
+	@Override
 	public JavaMailSender build() {
-		return new JavaMailSender(properties, contentHandler);
+		return new JavaMailSender(properties, contentHandler, interceptor);
 	}
 }

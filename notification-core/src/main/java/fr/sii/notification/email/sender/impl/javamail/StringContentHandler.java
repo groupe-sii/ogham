@@ -9,10 +9,19 @@ import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.mimetype.MimeTypeProvider;
 import fr.sii.notification.email.exception.javamail.ContentHandlerException;
 
+/**
+ * Content handler that adds string contents (HTML, text, ...). It needs to
+ * detect Mime Type for indicating the type of the added content.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class StringContentHandler implements JavaMailContentHandler {
-
+	/**
+	 * The Mime Type detector
+	 */
 	private MimeTypeProvider mimetypeProvider;
-	
+
 	public StringContentHandler(MimeTypeProvider mimetypeProvider) {
 		super();
 		this.mimetypeProvider = mimetypeProvider;
