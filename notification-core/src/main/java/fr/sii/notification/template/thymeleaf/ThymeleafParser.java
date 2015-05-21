@@ -1,7 +1,6 @@
 package fr.sii.notification.template.thymeleaf;
 
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.notification.core.exception.template.ContextException;
 import fr.sii.notification.core.exception.template.ParseException;
@@ -13,17 +12,17 @@ import fr.sii.notification.core.template.parser.TemplateParser;
 
 public class ThymeleafParser implements TemplateParser {
 	private TemplateEngine engine;
-	private ThymeleafLookupMappingResolver<ITemplateResolver> lookupResolver;
+	private ThymeleafLookupMappingResolver lookupResolver;
 	private ThymeleafContextConverter contextConverter;
 	
-	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver<ITemplateResolver> lookupResolver, ThymeleafContextConverter contextConverter) {
+	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver lookupResolver, ThymeleafContextConverter contextConverter) {
 		super();
 		this.engine = engine;
 		this.lookupResolver = lookupResolver;
 		this.contextConverter = contextConverter;
 	}
 
-	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver<ITemplateResolver> lookupResolver) {
+	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver lookupResolver) {
 		this(engine, lookupResolver, new ThymeleafContextConverter());
 	}
 	

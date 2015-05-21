@@ -5,26 +5,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.thymeleaf.templateresolver.ITemplateResolver;
+
 import fr.sii.notification.core.exception.template.TemplateResolutionException;
 
-public class ThymeleafLookupMappingResolver<R> {
+public class ThymeleafLookupMappingResolver {
 
-	private Map<String, R> mapping;
+	private Map<String, ITemplateResolver> mapping;
 	
 	public ThymeleafLookupMappingResolver() {
-		this(new HashMap<String, R>());
+		this(new HashMap<String, ITemplateResolver>());
 	}
 
-	public ThymeleafLookupMappingResolver(Map<String, R> mapping) {
+	public ThymeleafLookupMappingResolver(Map<String, ITemplateResolver> mapping) {
 		super();
 		this.mapping = mapping;
 	}
 	
-	public void addMapping(String lookup, R resolver) {
+	public void addMapping(String lookup, ITemplateResolver resolver) {
 		mapping.put(lookup, resolver);
 	}
 
-	public R getResolver(String templateName) throws TemplateResolutionException {
+	public ITemplateResolver getResolver(String templateName) throws TemplateResolutionException {
 		return mapping.get(getLookupType(templateName));
 	}
 	
@@ -43,7 +45,7 @@ public class ThymeleafLookupMappingResolver<R> {
 		return idx>0 ? templateName.substring(0, idx) : null;
 	}
 	
-	public List<R> getResolvers() {
-		return new ArrayList<R>(mapping.values());
+	public List<ITemplateResolver> getResolvers() {
+		return new ArrayList<ITemplateResolver>(mapping.values());
 	}
 }

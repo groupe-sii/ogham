@@ -10,15 +10,15 @@ import fr.sii.notification.core.template.resolver.TemplateResolver;
 import fr.sii.notification.template.exception.NoResolverAdapter;
 import fr.sii.notification.template.thymeleaf.ThymeleafLookupMappingResolver;
 import fr.sii.notification.template.thymeleaf.ThymeleafParser;
-import fr.sii.notification.template.thymeleaf.adapter.FirstSupportingResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.ClassPathResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.FileResolverAdapter;
+import fr.sii.notification.template.thymeleaf.adapter.FirstSupportingResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.ThymeleafResolverAdapter;
 
 public class ThymeleafBuilder implements TemplateParserBuilder {
 
 	private TemplateEngine engine;
-	private ThymeleafLookupMappingResolver<ITemplateResolver> lookupResolver;
+	private ThymeleafLookupMappingResolver lookupResolver;
 	private FirstSupportingResolverAdapter resolverAdapter;
 	private String prefix;
 	private String suffix;
@@ -26,7 +26,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	public ThymeleafBuilder() {
 		super();
 		engine = new TemplateEngine();
-		lookupResolver = new ThymeleafLookupMappingResolver<ITemplateResolver>();
+		lookupResolver = new ThymeleafLookupMappingResolver();
 		resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter());
 		prefix = "";
 		suffix = "";
@@ -54,11 +54,13 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 		return this;
 	}
 	
+	@Override
 	public ThymeleafBuilder withPrefix(String prefix) {
 		this.prefix = prefix;
 		return this;
 	}
 	
+	@Override
 	public ThymeleafBuilder withSuffix(String suffix) {
 		this.suffix = suffix;
 		return this;

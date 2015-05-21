@@ -134,7 +134,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * </ul>
 	 * 
 	 * It will also use the default template resolvers (by calling
-	 * {@link #useDefaultLookupResolvers()}):
+	 * {@link #useDefaultResolvers()}):
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
 	 * {@link ClassPathTemplateResolver})</li>
@@ -154,7 +154,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	public TemplateBuilder useDefaults(Properties properties) {
 		withThymeleaf();
-		useDefaultLookupResolvers();
+		useDefaultResolvers();
 		withPrefix(properties.getProperty(PREFIX_PROPERTY, ""));
 		withSuffix(properties.getProperty(SUFFIX_PROPERTY, ""));
 		return this;
@@ -192,7 +192,9 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * Tells the builder to use the default template resolvers:
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathTemplateResolver})</li>
+	 * {@link ClassPathTemplateResolver}). The lookup prefix is "classpath:"</li>
+	 * <li>Resolver that is able to handle file resolution (
+	 * {@link FileTemplateResolver})</li>
 	 * <li>Resolver that is able to handle file resolution (
 	 * {@link FileTemplateResolver})</li>
 	 * </ul>
@@ -202,9 +204,10 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * 
 	 * @return this builder instance for fluent use
 	 */
-	public TemplateBuilder useDefaultLookupResolvers() {
+	public TemplateBuilder useDefaultResolvers() {
 		withLookupResolver("classpath", new ClassPathTemplateResolver());
 		withLookupResolver("file", new FileTemplateResolver());
+		withLookupResolver("", new ClassPathTemplateResolver());
 		return this;
 	}
 

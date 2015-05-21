@@ -24,7 +24,7 @@ public class ThymeleafParserTest {
 	public void setUp() {
 		parser = new TemplateBuilder()
 					.registerTemplateParser(new ThymeleafBuilder())
-					.useDefaultLookupResolvers()
+					.useDefaultResolvers()
 					.withPrefix("/template/thymeleaf/source/")
 					.build();
 	}
