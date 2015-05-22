@@ -180,6 +180,9 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * 
 	 * @param builder
 	 *            the builder to register
+	 * @param detector
+	 *            the detector that indicates if the engine can handle the
+	 *            provided template at runtime
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder registerTemplateParser(TemplateParserBuilder builder, TemplateEngineDetector detector) {
@@ -298,6 +301,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * 
 	 * @param clazz
 	 *            the class of the parser builder to get
+	 * @param <B>
+	 *            the type of the class to get
 	 * @return the template parser builder instance
 	 */
 	@SuppressWarnings("unchecked")

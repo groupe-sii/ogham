@@ -31,8 +31,8 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 	 * Initialize the decorator with none, one or several resolver adapter
 	 * implementations. The registration order may be important.
 	 * 
-	 * @param resolvers
-	 *            the resolvers to register
+	 * @param adapters
+	 *            the adapters to register
 	 */
 	public FirstSupportingResolverAdapter(ThymeleafResolverAdapter... adapters) {
 		this(new ArrayList<>(Arrays.asList(adapters)));
@@ -42,8 +42,8 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 	 * Initialize the decorator with the provided resolver adapter
 	 * implementations. The registration order may be important.
 	 * 
-	 * @param resolvers
-	 *            the resolvers to register
+	 * @param adapters
+	 *            the adapters to register
 	 */
 	public FirstSupportingResolverAdapter(List<ThymeleafResolverAdapter> adapters) {
 		super();

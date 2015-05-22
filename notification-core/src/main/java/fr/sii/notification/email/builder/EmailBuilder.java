@@ -26,7 +26,6 @@ import fr.sii.notification.email.sender.EmailSender;
  * <p>
  * Specialized builder for email sender.
  * </p>
- * <p>
  * There exists several implementations to send an email:
  * <ul>
  * <li>Using pure Java mail API</li>
@@ -35,6 +34,7 @@ import fr.sii.notification.email.sender.EmailSender;
  * <li>Through a WebService</li>
  * <li>...</li>
  * </ul>
+ * <p>
  * This builder provides a {@link MultiImplementationSender}. The aim of the
  * {@link MultiImplementationSender} is to choose the best implementation for
  * sending the email according to the runtime environement (detection of
@@ -115,6 +115,8 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * Configuration values come from provided properties.
 	 * </p>
 	 * 
+	 * @param properties
+	 *            the properties to use instead of default ones
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder useDefaults(Properties properties) {

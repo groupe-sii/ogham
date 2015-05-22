@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.TemplateResolution;
 
 /**
  * <p>
@@ -26,7 +28,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
  * @author Aurélien Baudet
  *
  */
-public class ThymeleafLookupMappingResolver {
+public class ThymeleafLookupMappingResolver implements ITemplateResolver {
 
 	private Map<String, ITemplateResolver> mapping;
 
@@ -40,7 +42,8 @@ public class ThymeleafLookupMappingResolver {
 	}
 
 	/**
-	 * Add a resolver for the associated lookup.
+	 * Add a resolver for the associated lookup. If a resolver already exists
+	 * with the same lookup, the new provided resolver will replace it.
 	 * 
 	 * @param lookup
 	 *            the lookup string without the ':' character (example:
@@ -75,6 +78,28 @@ public class ThymeleafLookupMappingResolver {
 		return idx > 0 ? templateName.substring(idx + 1) : templateName;
 	}
 
+	@Override
+	public String getName() {
+		return "LookupMappingResolver";
+	}
+
+	@Override
+	public Integer getOrder() {
+		return 0;
+	}
+
+	@Override
+	public TemplateResolution resolveTemplate(TemplateProcessingParameters templateProcessingParameters) {
+		return getResolver(templateProcessingParameters.getTemplateName()).resolveTemplate(templateProcessingParameters);
+	}
+
+	@Override
+	public void initialize() {
+		for (ITemplateResolver resolver : getResolvers()) {
+			resolver.initialize();
+		}
+	}
+
 	private String getLookupType(String templateName) {
 		int idx = templateName.indexOf(":");
 		return idx > 0 ? templateName.substring(0, idx) : "";
@@ -83,4 +108,5 @@ public class ThymeleafLookupMappingResolver {
 	public List<ITemplateResolver> getResolvers() {
 		return new ArrayList<ITemplateResolver>(mapping.values());
 	}
+
 }

@@ -1,4 +1,4 @@
-package fr.sii.notification.helper;
+package fr.sii.notification.helper.template;
 
 import java.io.IOException;
 

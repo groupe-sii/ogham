@@ -22,8 +22,8 @@ import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
  * mimetype using magic number mechanism.
  * 
  * @author Aurélien Baudet
- * @see https://github.com/arimus/jmimemagic
- * @see http://sourceforge.net/projects/jmimemagic/
+ * @see <a href="https://github.com/arimus/jmimemagic">JMimeMagic (Github)</a>
+ * @see <a href="http://sourceforge.net/projects/jmimemagic/">JMimeMagic (SourceForge)</a>
  *
  */
 public class JMimeMagicProvider implements MimeTypeProvider {

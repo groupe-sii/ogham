@@ -12,7 +12,7 @@ import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.template.context.BeanContext;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.helper.AssertTemplate;
+import fr.sii.notification.helper.template.AssertTemplate;
 import fr.sii.notification.mock.context.NestedBean;
 import fr.sii.notification.mock.context.SimpleBean;
 import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;

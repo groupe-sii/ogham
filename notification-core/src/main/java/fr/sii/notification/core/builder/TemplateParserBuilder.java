@@ -27,7 +27,7 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 * </ul>
 	 * 
 	 * So you can set the prefix to
-	 * <code>/notification/template/<code> and then reference
+	 * <pre>/notification/template/</pre> and then reference
 	 * the templates using the file name:
 	 * <ul>
 	 * <li>createAccount.html</li>
@@ -55,7 +55,7 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 * </ul>
 	 * 
 	 * So you can set the prefix to
-	 * <code>/notification/template/<code>, the suffix to <code>.html<code> and then reference
+	 * <pre>/notification/template/</pre>, the suffix to <pre>.html</pre> and then reference
 	 * the templates using the file name:
 	 * <ul>
 	 * <li>createAccount</li>
@@ -74,9 +74,9 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 * 
 	 * For example:
 	 * <ul>
-	 * <li><code>"classpath:/notification"</code> indicates that the provided
+	 * <li><pre>"classpath:/notification"</pre> indicates that the provided
 	 * path represents a classpath entry.</li>
-	 * <li><code>"file:/tmp"</code> indicates that the provided path represents
+	 * <li><pre>"file:/tmp"</pre> indicates that the provided path represents
 	 * a file located on the system.</li>
 	 * </ul>
 	 * 

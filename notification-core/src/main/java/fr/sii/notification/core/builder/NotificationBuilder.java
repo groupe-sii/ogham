@@ -81,8 +81,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * @return this builder instance for fluent use
 	 * @see EmailBuilder#useDefaults() More information about created email
 	 *      sender
-	 * @see SmsBuilder#useDefaults() More information about created SMS
-	 *      sender
+	 * @see SmsBuilder#useDefaults() More information about created SMS sender
 	 */
 	public NotificationBuilder useAllDefaults() {
 		return useAllDefaults(BuilderUtil.getDefaultProperties());
@@ -106,8 +105,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * @return this builder instance for fluent use
 	 * @see EmailBuilder#useDefaults() More information about created email
 	 *      sender
-	 * @see SmsBuilder#useDefaults() More information about created SMS
-	 *      sender
+	 * @see SmsBuilder#useDefaults() More information about created SMS sender
 	 */
 	public NotificationBuilder useAllDefaults(Properties properties) {
 		useEmailDefaults(properties);
@@ -119,7 +117,9 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * Tells the builder to use default behaviors and values for email sender.
 	 * The configuration values will be read from the provided properties.
 	 * 
-	 * This method is automatically called when using {@link #useAllDefaults()}.
+	 * This method is automatically called when using
+	 * {@link #useAllDefaults(Properties)}.
+	 * 
 	 * 
 	 * @return this builder instance for fluent use
 	 * @see EmailBuilder#useDefaults() More information about created email
@@ -135,7 +135,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * properties.
 	 * 
 	 * This method is automatically called when using
-	 * {@link #useAllDefaults(properties)}.
+	 * {@link #useAllDefaults(Properties)}.
 	 * 
 	 * @param properties
 	 *            indicate which properties to use instead of using the system
@@ -154,11 +154,11 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * Tells the builder to use default behaviors and values for SMS sender. The
 	 * configuration values will be read from the provided properties.
 	 * 
-	 * This method is automatically called when using {@link #useAllDefaults()}.
+	 * This method is automatically called when using
+	 * {@link #useAllDefaults(Properties)}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see SmsBuilder#useDefaults() More information about created SMS
-	 *      sender
+	 * @see SmsBuilder#useDefaults() More information about created SMS sender
 	 */
 	public NotificationBuilder useSmsDefaults() {
 		return useSmsDefaults(BuilderUtil.getDefaultProperties());
@@ -169,14 +169,13 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * The configuration values will be read from the provided properties.
 	 * 
 	 * This method is automatically called when using
-	 * {@link #useAllDefaults(properties)}.
+	 * {@link #useAllDefaults(Properties)}.
 	 * 
 	 * @param properties
 	 *            indicate which properties to use instead of using the system
 	 *            ones
 	 * @return this builder instance for fluent use
-	 * @see SmsBuilder#useDefaults() More information about created SMS
-	 *      sender
+	 * @see SmsBuilder#useDefaults() More information about created SMS sender
 	 */
 	public NotificationBuilder useSmsDefaults(Properties properties) {
 		withSms();
@@ -188,8 +187,8 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * Tells the builder to activate the email sender.
 	 * 
 	 * This method is automatically called when using {@link #useAllDefaults()},
-	 * {@link #useAllDefaults(properties)}, {@link #useEmailDefaults()} or
-	 * {@link #useEmailDefaults(properties)}.
+	 * {@link #useAllDefaults(Properties)}, {@link #useEmailDefaults()} or
+	 * {@link #useEmailDefaults(Properties)}.
 	 * 
 	 * 
 	 * @return this builder instance for fluent use
@@ -204,8 +203,8 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * Tells the builder to activate the sms sender.
 	 * 
 	 * This method is automatically called when using {@link #useAllDefaults()},
-	 * {@link #useAllDefaults(properties)}, {@link #useEmailDefaults()} or
-	 * {@link #useEmailDefaults(properties)}.
+	 * {@link #useAllDefaults(Properties)}, {@link #useEmailDefaults()} or
+	 * {@link #useEmailDefaults(Properties)}.
 	 * 
 	 * @return this builder instance for fluent use
 	 */

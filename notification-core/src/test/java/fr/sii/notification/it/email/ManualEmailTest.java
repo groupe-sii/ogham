@@ -19,10 +19,10 @@ import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.message.content.TemplateContent;
 import fr.sii.notification.core.service.NotificationService;
 import fr.sii.notification.email.message.Email;
-import fr.sii.notification.helper.AssertEmail;
-import fr.sii.notification.helper.ExpectedContent;
-import fr.sii.notification.helper.ExpectedEmail;
-import fr.sii.notification.helper.ExpectedMultiPartEmail;
+import fr.sii.notification.helper.email.AssertEmail;
+import fr.sii.notification.helper.email.ExpectedContent;
+import fr.sii.notification.helper.email.ExpectedEmail;
+import fr.sii.notification.helper.email.ExpectedMultiPartEmail;
 import fr.sii.notification.mock.context.SimpleBean;
 
 public class ManualEmailTest {

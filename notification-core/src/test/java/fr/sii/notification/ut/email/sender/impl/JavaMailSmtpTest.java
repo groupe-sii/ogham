@@ -17,8 +17,8 @@ import fr.sii.notification.email.builder.JavaMailBuilder;
 import fr.sii.notification.email.message.Email;
 import fr.sii.notification.email.message.EmailAddress;
 import fr.sii.notification.email.sender.impl.JavaMailSender;
-import fr.sii.notification.helper.AssertEmail;
-import fr.sii.notification.helper.ExpectedEmail;
+import fr.sii.notification.helper.email.AssertEmail;
+import fr.sii.notification.helper.email.ExpectedEmail;
 
 public class JavaMailSmtpTest {
 	private JavaMailSender sender;

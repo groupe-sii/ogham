@@ -36,6 +36,7 @@ public class ThymeleafParser implements TemplateParser {
 		this.engine = engine;
 		this.lookupResolver = lookupResolver;
 		this.contextConverter = contextConverter;
+		engine.setTemplateResolver(lookupResolver);
 	}
 
 	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver lookupResolver) {
@@ -45,10 +46,6 @@ public class ThymeleafParser implements TemplateParser {
 	@Override
 	public Content parse(String templateName, Context ctx) throws ParseException {
 		try {
-			// TODO: how to use multiple resolvers ?? Need to have one engine by resolver ??
-			if(!engine.isInitialized()) {
-				engine.setTemplateResolver(lookupResolver.getResolver(templateName));
-			}
 			String resolvedTemplateName = lookupResolver.getTemplateName(templateName);
 			String result = engine.process(resolvedTemplateName, contextConverter.convert(ctx));
 			return new StringContent(result);

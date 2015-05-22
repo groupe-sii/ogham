@@ -67,6 +67,8 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * 
 	 * This method is automatically called when calling {@link #useDefaults()}.
 	 * 
+	 * @param parser
+	 *            the template parser to add
 	 * @return this builder instance for fluent use
 	 * @see TemplateContentTranslator More information about the translator for
 	 *      templates
@@ -86,6 +88,8 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * 
 	 * This method is automatically called when calling {@link #useDefaults()}.
 	 * 
+	 * @param builder
+	 *            the builder that helps to construct the parser to add
 	 * @return this builder instance for fluent use
 	 * @see TemplateContentTranslator More information about the translator for
 	 *      templates

@@ -89,7 +89,8 @@ public class LookupMappingResolver implements ConditionalResolver {
 	}
 
 	/**
-	 * Add a resolver for the associated lookup.
+	 * Add a resolver for the associated lookup. If a resolver already exists
+	 * with the same lookup, the new provided resolver will replace it.
 	 * 
 	 * @param lookup
 	 *            the lookup string without the ':' character (example:

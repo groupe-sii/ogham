@@ -20,6 +20,7 @@ import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
  * <li>- Same extension corresponds to different Mime Types</li>
  * <li>- Can't be used on stream or string because the extension is unknown</li>
  * </ul>
+ * </li>
  * <li>Detection based on magic numbers (read the first bytes of the file):
  * <ul>
  * <li>+ Based on the real content</li>
@@ -28,7 +29,8 @@ import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
  * <li>- Fast but not as fast as file extension detection</li>
  * <li>- Need also a long list of mappings</li>
  * </ul>
- * </li> </li>
+ * </li>
+ * </ul>
  * 
  * This interface reconcile both approaches. It let the implementation choose
  * which approach to use. Some implementations can't handle both approaches so
