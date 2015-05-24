@@ -2,6 +2,8 @@ package fr.sii.notification.email.builder;
 
 import java.util.Properties;
 
+import javax.mail.Authenticator;
+
 import fr.sii.notification.core.builder.Builder;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.MultiContent;
@@ -10,11 +12,13 @@ import fr.sii.notification.core.mimetype.FallbackMimeTypeProvider;
 import fr.sii.notification.core.mimetype.JMimeMagicProvider;
 import fr.sii.notification.core.mimetype.MimeTypeProvider;
 import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.email.EmailConstants;
 import fr.sii.notification.email.sender.impl.JavaMailSender;
 import fr.sii.notification.email.sender.impl.javamail.JavaMailContentHandler;
 import fr.sii.notification.email.sender.impl.javamail.JavaMailInterceptor;
 import fr.sii.notification.email.sender.impl.javamail.MapContentHandler;
 import fr.sii.notification.email.sender.impl.javamail.MultiContentHandler;
+import fr.sii.notification.email.sender.impl.javamail.PropertiesUsernamePasswordAuthenticator;
 import fr.sii.notification.email.sender.impl.javamail.StringContentHandler;
 
 /**
@@ -50,6 +54,11 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 * Extra operations to apply on the message
 	 */
 	private JavaMailInterceptor interceptor;
+
+	/**
+	 * Authentication mechanism
+	 */
+	private Authenticator authenticator;
 
 	public JavaMailBuilder() {
 		super();
@@ -88,6 +97,9 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 */
 	public JavaMailBuilder useDefaults(Properties props) {
 		withProperties(props);
+		if(props.containsKey(EmailConstants.AUTHENTICATOR_PROPERTIES_USERNAME_KEY)) {
+			setAuthenticator(new PropertiesUsernamePasswordAuthenticator(props));
+		}
 		registerMimeTypeProvider(new JMimeMagicProvider());
 		registerContentHandler(MultiContent.class, new MultiContentHandler(mapContentHandler));
 		registerContentHandler(StringContent.class, new StringContentHandler(mimetypeProvider));
@@ -153,8 +165,20 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 		return this;
 	}
 
+	/**
+	 * Set the authentication mechanism to use for sending email.
+	 * 
+	 * @param authenticator
+	 *            the authentication mechanism
+	 * @return this instance for fluent use
+	 */
+	public JavaMailBuilder setAuthenticator(Authenticator authenticator) {
+		this.authenticator = authenticator;
+		return this;
+	}
+
 	@Override
 	public JavaMailSender build() {
-		return new JavaMailSender(properties, contentHandler, interceptor);
+		return new JavaMailSender(properties, contentHandler, authenticator, interceptor);
 	}
 }

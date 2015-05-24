@@ -77,4 +77,8 @@ public class BeanContext implements Context {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return bean.toString();
+	}
 }

@@ -19,6 +19,9 @@
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
 		<greenmail.version>1.4.1</greenmail.version>
+		<slf4j.version>1.7.12</slf4j.version>
+		<logback.version>1.0.13</logback.version>
+		<jmimemagic.version>0.1.4</jmimemagic.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -31,6 +34,7 @@
 	<modules>
 		<module>notification-core</module>
 		<module>notification-spring</module>
+		<module>sample-standard-usage</module>
 	</modules>
 
 	<dependencyManagement>
@@ -64,6 +68,25 @@
 				<groupId>org.thymeleaf</groupId>
 				<artifactId>thymeleaf</artifactId>
 				<version>${thymeleaf.version}</version>
+			</dependency>
+
+			<!-- MimeType detection -->
+			<dependency>
+				<groupId>net.sf.jmimemagic</groupId>
+				<artifactId>jmimemagic</artifactId>
+				<version>${jmimemagic.version}</version>
+			</dependency>
+
+			<!-- Logs -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
 			</dependency>
 
 			<!-- Tests -->
@@ -142,7 +165,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- Code coverage -->
 			<plugin>
 				<groupId>org.jacoco</groupId>

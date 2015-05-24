@@ -55,4 +55,11 @@ public class TemplateContent implements Content {
 	public Context getContext() {
 		return context;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("TemplateContent [path=").append(path).append(", context=").append(context).append("]");
+		return builder.toString();
+	}
 }

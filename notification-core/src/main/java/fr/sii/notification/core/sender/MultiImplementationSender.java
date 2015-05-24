@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.condition.Condition;
 import fr.sii.notification.core.exception.MessageException;
 import fr.sii.notification.core.message.Message;
@@ -28,6 +31,7 @@ import fr.sii.notification.core.message.Message;
  * @see Condition
  */
 public class MultiImplementationSender<M extends Message> implements ConditionalSender {
+	private static final Logger LOG = LoggerFactory.getLogger(MultiImplementationSender.class);
 
 	/**
 	 * The map of possible implementations indexed by the associated condition
@@ -94,12 +98,18 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 		sender = null;
 		boolean supports = message.getClass().isAssignableFrom(getManagedClass());
 		if (supports) {
+			LOG.debug("Can handle the message type {}. Is there any implementation available to send it ?", message.getClass());
 			for (Entry<Condition<Message>, NotificationSender> entry : implementations.entrySet()) {
 				if (entry.getKey().accept(message)) {
 					sender = entry.getValue();
 					break;
 				}
 			}
+			if(sender!=null) {
+				LOG.debug("The implementation {} can handle the message {}", sender, message);
+			}
+		} else {
+			LOG.debug("Can't handle the message type {}", message.getClass());
 		}
 		return supports && sender != null;
 	}
@@ -115,6 +125,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 
 	@Override
 	public void send(Message message) throws MessageException {
+		LOG.debug("Sending message {} using {} implementation", message, sender);
 		sender.send(message);
 	}
 

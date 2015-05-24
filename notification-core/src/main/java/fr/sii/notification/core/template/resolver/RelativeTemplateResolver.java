@@ -1,5 +1,8 @@
 package fr.sii.notification.core.template.resolver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.template.TemplateResolutionException;
 import fr.sii.notification.core.template.Template;
 
@@ -22,6 +25,8 @@ import fr.sii.notification.core.template.Template;
  *
  */
 public class RelativeTemplateResolver implements TemplateResolver {
+	private static final Logger LOG = LoggerFactory.getLogger(RelativeTemplateResolver.class);
+
 	/**
 	 * The prefix to add to the template name (or path)
 	 */
@@ -70,7 +75,14 @@ public class RelativeTemplateResolver implements TemplateResolver {
 
 	@Override
 	public Template getTemplate(String templateName) throws TemplateResolutionException {
-		return delegate.getTemplate(templateName.startsWith("/") ? templateName : (prefix + templateName + suffix));
+		boolean absolute = templateName.startsWith("/");
+		if(absolute) {
+			LOG.trace("Absolute template path {} => do not add prefix/suffix", templateName);
+			return delegate.getTemplate(templateName);
+		} else {
+			LOG.debug("Adding prefix ({}) and suffix ({}) to the template path {}", prefix, suffix, templateName);
+			return delegate.getTemplate(prefix + templateName + suffix);
+		}
 	}
 
 	public String getPrefix() {

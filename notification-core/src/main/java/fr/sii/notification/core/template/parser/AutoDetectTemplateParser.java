@@ -3,6 +3,9 @@ package fr.sii.notification.core.template.parser;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.template.EngineDetectionException;
 import fr.sii.notification.core.exception.template.NoEngineDetectionException;
 import fr.sii.notification.core.exception.template.ParseException;
@@ -25,6 +28,8 @@ import fr.sii.notification.core.template.resolver.TemplateResolver;
  *
  */
 public class AutoDetectTemplateParser implements TemplateParser {
+	private static final Logger LOG = LoggerFactory.getLogger(AutoDetectTemplateParser.class);
+	
 	/**
 	 * The template resolver used to find the template
 	 */
@@ -44,17 +49,22 @@ public class AutoDetectTemplateParser implements TemplateParser {
 	@Override
 	public Content parse(String templateName, Context ctx) throws ParseException {
 		try {
+			LOG.info("Start template engine automatic detection for {}", templateName);
 			Template template = resolver.getTemplate(templateName);
 			TemplateParser parser = null;
 			for (Entry<TemplateEngineDetector, TemplateParser> entry : detectors.entrySet()) {
 				if (entry.getKey().canParse(templateName, ctx, template)) {
+					LOG.debug("Template engine {} is used for {}", parser, templateName);
 					parser = entry.getValue();
 					break;
+				} else {
+					LOG.debug("Template engine {} can't be used for {}", parser, templateName);
 				}
 			}
 			if (parser == null) {
 				throw new NoEngineDetectionException("Auto detection couldn't find any parser able to handle the template " + templateName);
 			}
+			LOG.info("Parse the template {} using template engine {}", templateName, parser);
 			return parser.parse(templateName, ctx);
 		} catch (TemplateResolutionException e) {
 			throw new ParseException("Failed to automatically detect parser because the template couldn't be resolved", templateName, ctx, e);

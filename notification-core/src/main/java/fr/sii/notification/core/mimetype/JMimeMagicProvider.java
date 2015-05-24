@@ -13,6 +13,8 @@ import net.sf.jmimemagic.MagicMatchNotFoundException;
 import net.sf.jmimemagic.MagicParseException;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
 
@@ -23,10 +25,12 @@ import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
  * 
  * @author Aurélien Baudet
  * @see <a href="https://github.com/arimus/jmimemagic">JMimeMagic (Github)</a>
- * @see <a href="http://sourceforge.net/projects/jmimemagic/">JMimeMagic (SourceForge)</a>
+ * @see <a href="http://sourceforge.net/projects/jmimemagic/">JMimeMagic
+ *      (SourceForge)</a>
  *
  */
 public class JMimeMagicProvider implements MimeTypeProvider {
+	private static final Logger LOG = LoggerFactory.getLogger(JMimeMagicProvider.class);
 
 	/**
 	 * only try to get mime type, no submatches are processed when true
@@ -41,7 +45,10 @@ public class JMimeMagicProvider implements MimeTypeProvider {
 	@Override
 	public MimeType getMimeType(File file) throws MimeTypeDetectionException {
 		try {
-			return new MimeType(Magic.getMagicMatch(file, extensionHints, onlyMimeMatch).getMimeType());
+			LOG.debug("Detect mime type for file {} with extensionHints={} and onlyMimeMatch={}", file, extensionHints, onlyMimeMatch);
+			String mimetype = Magic.getMagicMatch(file, extensionHints, onlyMimeMatch).getMimeType();
+			LOG.debug("Detect mime type for file {} with extensionHints={} and onlyMimeMatch={}: {}", file, extensionHints, onlyMimeMatch, mimetype);
+			return new MimeType(mimetype);
 		} catch (MagicParseException | MagicMatchNotFoundException | MagicException e) {
 			throw new MimeTypeDetectionException("Failed to get the mimetype for the file " + file, e);
 		} catch (MimeTypeParseException e) {
@@ -57,7 +64,10 @@ public class JMimeMagicProvider implements MimeTypeProvider {
 	@Override
 	public MimeType detect(InputStream stream) throws MimeTypeDetectionException {
 		try {
-			return new MimeType(Magic.getMagicMatch(IOUtils.toByteArray(stream)).getMimeType());
+			LOG.debug("Detect mime type from stream");
+			String mimetype = Magic.getMagicMatch(IOUtils.toByteArray(stream)).getMimeType();
+			LOG.debug("Detected mime type from stream: {}", mimetype);
+			return new MimeType(mimetype);
 		} catch (MagicParseException | MagicMatchNotFoundException | MagicException e) {
 			throw new MimeTypeDetectionException("Failed to detect the mimetype from the content", e);
 		} catch (MimeTypeParseException e) {
@@ -70,7 +80,10 @@ public class JMimeMagicProvider implements MimeTypeProvider {
 	@Override
 	public MimeType detect(String content) throws MimeTypeDetectionException {
 		try {
-			return new MimeType(Magic.getMagicMatch(content.getBytes()).getMimeType());
+			LOG.debug("Detect mime type from string content");
+			String mimetype = Magic.getMagicMatch(content.getBytes()).getMimeType();
+			LOG.debug("Detected mime type from string content: {}", mimetype);
+			return new MimeType(mimetype);
 		} catch (MagicParseException | MagicMatchNotFoundException | MagicException e) {
 			throw new MimeTypeDetectionException("Failed to detect the mimetype from the content", e);
 		} catch (MimeTypeParseException e) {
@@ -78,4 +91,10 @@ public class JMimeMagicProvider implements MimeTypeProvider {
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("JMimeMagicProvider [onlyMimeMatch=").append(onlyMimeMatch).append(", extensionHints=").append(extensionHints).append("]");
+		return builder.toString();
+	}
 }

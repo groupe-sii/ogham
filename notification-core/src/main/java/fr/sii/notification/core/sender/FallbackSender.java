@@ -3,6 +3,9 @@ package fr.sii.notification.core.sender;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.MessageException;
 import fr.sii.notification.core.message.Message;
 
@@ -16,6 +19,7 @@ import fr.sii.notification.core.message.Message;
  *
  */
 public class FallbackSender implements NotificationSender {
+	private static final Logger LOG = LoggerFactory.getLogger(FallbackSender.class);
 
 	/**
 	 * The list of senders to try one by one until one succeeds
@@ -49,10 +53,12 @@ public class FallbackSender implements NotificationSender {
 	public void send(Message message) throws MessageException {
 		for (NotificationSender sender : senders) {
 			try {
+				LOG.debug("Try to send message {} using sender {}", message, sender);
 				sender.send(message);
+				LOG.debug("Message {} sent using sender {}", message, sender);
 				return;
 			} catch (Throwable e) {
-				// TODO: log
+				LOG.debug("Message {} couldn't be sent using sender {}. Cause: {}", message, sender, e);
 			}
 		}
 		throw new MessageException("No sender could handle the message", message);

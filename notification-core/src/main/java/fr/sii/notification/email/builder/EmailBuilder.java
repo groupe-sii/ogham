@@ -2,13 +2,12 @@ package fr.sii.notification.email.builder;
 
 import java.util.Properties;
 
-import org.apache.commons.beanutils.ConvertUtils;
+import javax.mail.Authenticator;
 
 import fr.sii.notification.core.builder.ContentTranslatorBuilder;
 import fr.sii.notification.core.builder.NotificationSenderBuilder;
 import fr.sii.notification.core.condition.Condition;
 import fr.sii.notification.core.condition.RequiredClassCondition;
-import fr.sii.notification.core.converter.EmailAddressConverter;
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.filler.PropertiesFiller;
 import fr.sii.notification.core.message.Message;
@@ -19,7 +18,7 @@ import fr.sii.notification.core.sender.MultiImplementationSender;
 import fr.sii.notification.core.sender.NotificationSender;
 import fr.sii.notification.core.translator.ContentTranslator;
 import fr.sii.notification.core.util.BuilderUtil;
-import fr.sii.notification.email.message.EmailAddress;
+import fr.sii.notification.email.EmailConstants;
 import fr.sii.notification.email.sender.EmailSender;
 
 /**
@@ -51,11 +50,6 @@ import fr.sii.notification.email.sender.EmailSender;
  * @see JavaMailBuilder
  */
 public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender> {
-	/**
-	 * The prefix for email properties
-	 */
-	private static final String PROPERTIES_PREFIX = "notification.email";
-
 	/**
 	 * The sender instance constructed by this builder
 	 */
@@ -178,7 +172,6 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withConfigurationFiller(Properties props, String baseKey) {
-		ConvertUtils.register(new EmailAddressConverter(), EmailAddress.class);
 		sender = new FillerSender(new PropertiesFiller(props, baseKey), sender);
 		return this;
 	}
@@ -197,7 +190,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withConfigurationFiller(Properties props) {
-		return withConfigurationFiller(props, PROPERTIES_PREFIX);
+		return withConfigurationFiller(props, EmailConstants.PROPERTIES_PREFIX);
 	}
 
 	/**
@@ -267,5 +260,31 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	public EmailBuilder setJavaMailBuilder(JavaMailBuilder javaMailBuilder) {
 		this.javaMailBuilder = javaMailBuilder;
 		return this;
+	}
+
+	/**
+	 * Set the authentication mechanism to use for sending email. In case that
+	 * you want to provide your own Java mail API builder, this method MUST be
+	 * called after calling {@link #setJavaMailBuilder(JavaMailBuilder)}. If you
+	 * call {@link #setJavaMailBuilder(JavaMailBuilder)} after, then the
+	 * authentication mechanism will not be transmitted to the builder.
+	 * 
+	 * @param authenticator
+	 *            the authentication mechanism
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder setAuthenticator(Authenticator authenticator) {
+		javaMailBuilder.setAuthenticator(authenticator);
+		return this;
+	}
+
+	/**
+	 * Get reference to the specialized builder for Java mail API builder in
+	 * order to fine tuning it.
+	 * 
+	 * @return the builder for Java mail API
+	 */
+	public JavaMailBuilder getJavaMailBuilder() {
+		return javaMailBuilder;
 	}
 }

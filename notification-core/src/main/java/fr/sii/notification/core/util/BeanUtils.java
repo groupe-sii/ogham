@@ -9,7 +9,11 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.beanutils.ConvertUtils;
+
+import fr.sii.notification.core.converter.EmailAddressConverter;
 import fr.sii.notification.core.exception.template.BeanException;
+import fr.sii.notification.email.message.EmailAddress;
 
 /**
  * <p>
@@ -28,6 +32,13 @@ import fr.sii.notification.core.exception.template.BeanException;
  *
  */
 public class BeanUtils {
+
+	static {
+		// Add converter for being able to convert string address into
+		// EmailAddress
+		ConvertUtils.register(new EmailAddressConverter(), EmailAddress.class);
+	}
+
 	/**
 	 * <p>
 	 * Convert a Java object into a map. Each property of the bean is added to

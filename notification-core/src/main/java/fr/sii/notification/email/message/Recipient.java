@@ -30,7 +30,7 @@ public class Recipient {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Recipient [address=").append(address).append(", type=").append(type).append("]");
+		builder.append(address).append("(").append(type).append(")");
 		return builder.toString();
 	}
 }

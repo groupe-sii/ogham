@@ -1,5 +1,8 @@
 package fr.sii.notification.core.translator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.handler.ContentTranslatorException;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.MultiContent;
@@ -28,6 +31,7 @@ import fr.sii.notification.core.message.content.MultiContent;
  *
  */
 public class MultiContentTranslator implements ContentTranslator {
+	private static final Logger LOG = LoggerFactory.getLogger(MultiContentTranslator.class);
 
 	/**
 	 * The content translator to apply on each sub content
@@ -44,12 +48,19 @@ public class MultiContentTranslator implements ContentTranslator {
 		if (content instanceof MultiContent) {
 			MultiContent result = new MultiContent();
 			for (Content c : ((MultiContent) content).getContents()) {
+				LOG.debug("Translate the sub content {} using {}", c, delegate);
 				result.addContent(delegate.translate(c));
 			}
 			return result;
 		} else {
+			LOG.trace("Not a MultiContent => skip it");
 			return content;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "MultiContentTranslator";
 	}
 
 }

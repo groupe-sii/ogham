@@ -22,4 +22,11 @@ public class EmailSender extends MultiImplementationSender<Email> implements Con
 	public EmailSender(Map<Condition<Message>, NotificationSender> implementations) {
 		super(implementations);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("EmailSender ").append(implementations.values());
+		return builder.toString();
+	}
 }

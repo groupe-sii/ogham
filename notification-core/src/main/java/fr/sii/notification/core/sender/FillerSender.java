@@ -1,5 +1,8 @@
 package fr.sii.notification.core.sender;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.MessageException;
 import fr.sii.notification.core.filler.MessageFiller;
 import fr.sii.notification.core.message.Message;
@@ -14,6 +17,7 @@ import fr.sii.notification.core.message.Message;
  *
  */
 public class FillerSender implements ConditionalSender {
+	private static final Logger LOG = LoggerFactory.getLogger(FillerSender.class);
 
 	/**
 	 * The filler that will add additional information to the message before
@@ -44,8 +48,10 @@ public class FillerSender implements ConditionalSender {
 
 	@Override
 	public void send(Message message) throws MessageException {
+		LOG.debug("Filling message {} with {} filler", message, filler);
 		// fill message with automatic values
 		filler.fill(message);
+		LOG.debug("Message {} is filled, send it using {}", message, delegate);
 		// send message
 		delegate.send(message);
 	}
@@ -55,4 +61,10 @@ public class FillerSender implements ConditionalSender {
 		return delegate instanceof ConditionalSender ? ((ConditionalSender) delegate).supports(message) : true;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("FillerSender [filler=").append(filler).append(", delegate=").append(delegate).append("]");
+		return builder.toString();
+	}
 }

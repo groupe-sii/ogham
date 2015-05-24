@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.template.EngineDetectionException;
 import fr.sii.notification.core.template.Template;
 import fr.sii.notification.core.template.context.Context;
@@ -20,6 +23,8 @@ import fr.sii.notification.core.template.detector.TemplateEngineDetector;
  *
  */
 public class ThymeleafTemplateDetector implements TemplateEngineDetector {
+	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafTemplateDetector.class);
+
 	/**
 	 * The pattern to search into the template
 	 */
@@ -27,6 +32,7 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 
 	@Override
 	public boolean canParse(String templateName, Context ctx, Template template) throws EngineDetectionException {
+		LOG.debug("Checking if Thymeleaf can handle the template {}", templateName);
 		try (InputStream stream = template.getInputStream()) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 			String line;
@@ -35,6 +41,11 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 				line = br.readLine();
 				containsThymeleafNamespace = NAMESPACE_PATTERN.matcher(line).find();
 			} while (line != null && !containsThymeleafNamespace);
+			if(containsThymeleafNamespace) {
+				LOG.debug("The template {} contains the namespace http://www.thymeleaf.org. Thymeleaf can be used", templateName);
+			} else {
+				LOG.debug("The template {} doesn't contain the namespace http://www.thymeleaf.org. Thymeleaf can't be used", templateName);
+			}
 			return containsThymeleafNamespace;
 		} catch (IOException e) {
 			throw new EngineDetectionException("Failed to detect if template can be read by thymeleaf", e);

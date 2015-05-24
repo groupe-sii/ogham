@@ -2,6 +2,9 @@ package fr.sii.notification.core.template.resolver;
 
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.template.TemplateResolutionException;
 import fr.sii.notification.core.template.SimpleTemplate;
 import fr.sii.notification.core.template.Template;
@@ -18,12 +21,16 @@ import fr.sii.notification.core.template.Template;
  * @see SimpleTemplate
  */
 public class ClassPathTemplateResolver implements TemplateResolver {
+	private static final Logger LOG = LoggerFactory.getLogger(ClassPathTemplateResolver.class);
+
 	@Override
 	public Template getTemplate(String templatePath) throws TemplateResolutionException {
+		LOG.debug("Loading template {} from classpath...", templatePath);
 		InputStream stream = getClass().getClassLoader().getResourceAsStream(templatePath.startsWith("/") ? templatePath.substring(1) : templatePath);
 		if (stream == null) {
 			throw new TemplateResolutionException("Template " + templatePath + " not found in the classpath", templatePath);
 		}
+		LOG.debug("Template {} available in the classpath...", templatePath);
 		return new SimpleTemplate(stream);
 	}
 

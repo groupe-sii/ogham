@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.handler.ContentTranslatorException;
 import fr.sii.notification.core.message.content.Content;
 
@@ -17,6 +20,7 @@ import fr.sii.notification.core.message.content.Content;
  *
  */
 public class EveryContentTranslator implements ContentTranslator {
+	private static final Logger LOG = LoggerFactory.getLogger(EveryContentTranslator.class);
 
 	/**
 	 * The list of translators used to update the message content
@@ -50,6 +54,7 @@ public class EveryContentTranslator implements ContentTranslator {
 	public Content translate(Content content) throws ContentTranslatorException {
 		Content result = content;
 		for (ContentTranslator translator : translators) {
+			LOG.debug("Applying translator {} on content {}", translator, content);
 			result = translator.translate(result);
 		}
 		return result;
@@ -63,5 +68,12 @@ public class EveryContentTranslator implements ContentTranslator {
 	 */
 	public void addTranslator(ContentTranslator translator) {
 		translators.add(translator);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("EveryContentTranslator [translators=").append(translators).append("]");
+		return builder.toString();
 	}
 }

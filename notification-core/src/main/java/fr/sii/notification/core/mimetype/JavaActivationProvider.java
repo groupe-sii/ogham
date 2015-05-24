@@ -7,6 +7,9 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.activation.MimetypesFileTypeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
 
 /**
@@ -17,6 +20,7 @@ import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
  * @see MimetypesFileTypeMap
  */
 public class JavaActivationProvider implements MimeTypeProvider {
+	private static final Logger LOG = LoggerFactory.getLogger(JavaFilesProvider.class);
 
 	private MimetypesFileTypeMap map;
 
@@ -32,7 +36,9 @@ public class JavaActivationProvider implements MimeTypeProvider {
 	@Override
 	public MimeType getMimeType(File file) throws MimeTypeDetectionException {
 		try {
+			LOG.debug("Detect mime type for file {}", file);
 			String contentType = map.getContentType(file);
+			LOG.debug("Detected mime type for file {}: {}", file, contentType);
 			return new MimeType(contentType);
 		} catch (MimeTypeParseException e) {
 			throw new MimeTypeDetectionException("Failed to detect mimetype for " + file, e);

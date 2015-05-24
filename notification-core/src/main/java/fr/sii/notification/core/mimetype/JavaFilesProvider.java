@@ -9,6 +9,9 @@ import java.nio.file.spi.FileTypeDetector;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
 
 /**
@@ -21,12 +24,15 @@ import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
  * @see Files#probeContentType(java.nio.file.Path)
  */
 public class JavaFilesProvider implements MimeTypeProvider {
+	private static final Logger LOG = LoggerFactory.getLogger(JavaFilesProvider.class);
 
 	@Override
 	public MimeType getMimeType(File file) throws MimeTypeDetectionException {
 		try {
+			LOG.debug("Detect mime type for file {}", file);
 			String contentType = Files.probeContentType(file.toPath());
 			if (contentType == null) {
+				LOG.debug("Detected mime type for file {} is null", file);
 				throw new MimeTypeDetectionException("Can't determine mimetype for file " + file);
 			}
 			return new MimeType(contentType);

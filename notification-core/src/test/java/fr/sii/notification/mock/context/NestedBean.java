@@ -11,4 +11,11 @@ public class NestedBean {
 	public Object getNested() {
 		return nested;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("{\"nested\": ").append(nested).append("}");
+		return builder.toString();
+	}
 }

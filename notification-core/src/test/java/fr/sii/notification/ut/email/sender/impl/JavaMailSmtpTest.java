@@ -19,9 +19,13 @@ import fr.sii.notification.email.message.EmailAddress;
 import fr.sii.notification.email.sender.impl.JavaMailSender;
 import fr.sii.notification.helper.email.AssertEmail;
 import fr.sii.notification.helper.email.ExpectedEmail;
+import fr.sii.notification.helper.rule.LoggingTestRule;
 
 public class JavaMailSmtpTest {
 	private JavaMailSender sender;
+	
+	@Rule
+	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	@Rule
 	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);

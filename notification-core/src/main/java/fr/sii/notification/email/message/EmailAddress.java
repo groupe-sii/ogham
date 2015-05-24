@@ -27,7 +27,10 @@ public class EmailAddress {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("EmailAddress [address=").append(address).append(", personal=").append(personal).append("]");
+		if(personal!=null && !personal.isEmpty()) {
+			builder.append(personal).append(" ");
+		}
+		builder.append("<").append(address).append(">");
 		return builder.toString();
 	}
 }

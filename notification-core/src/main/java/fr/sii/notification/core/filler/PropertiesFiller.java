@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Fill the message using properties. It adds all the values defined in the
  * properties that starts with the base key. The keys can use dot character '.'
@@ -13,6 +16,7 @@ import java.util.Properties;
  *
  */
 public class PropertiesFiller extends SimpleFiller {
+	private static final Logger LOG = LoggerFactory.getLogger(PropertiesFiller.class);
 
 	/**
 	 * Initialize the filler with the system properties. Only the keys starting
@@ -49,15 +53,28 @@ public class PropertiesFiller extends SimpleFiller {
 	 * @return the properties as map
 	 */
 	private static Map<String, Object> toMap(Properties properties, String baseKey) {
+		LOG.debug("Convert properties starting with {} into map", baseKey);
 		Map<String, Object> values = new HashMap<String, Object>();
 		// search for properties that contain base key
 		for (String key : properties.stringPropertyNames()) {
 			if (key.startsWith(baseKey)) {
-				values.put(key.replaceFirst(baseKey + "[.]?", ""), properties.getProperty(key));
+				String k = key.replaceFirst(baseKey + "[.]?", "");
+				String value = properties.getProperty(key);
+				LOG.debug("Property {} starts with {} => add {}/{} pair into map", key, baseKey, k, value);
+				values.put(k, value);
+			} else {
+				LOG.trace("Property {} doesn't start with {} => skip it", key, baseKey);
 			}
 		}
 		// TODO: if nested props => create a bean object
 		return values;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("PropertiesFiller ").append(values);
+		return builder.toString();
 	}
 
 }

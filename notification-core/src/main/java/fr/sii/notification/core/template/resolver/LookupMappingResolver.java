@@ -3,6 +3,9 @@ package fr.sii.notification.core.template.resolver;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.template.TemplateResolutionException;
 import fr.sii.notification.core.template.Template;
 
@@ -38,6 +41,7 @@ import fr.sii.notification.core.template.Template;
  * @see FileTemplateResolver
  */
 public class LookupMappingResolver implements ConditionalResolver {
+	private static final Logger LOG = LoggerFactory.getLogger(LookupMappingResolver.class);
 
 	/**
 	 * The map that associates a lookup with a resolver
@@ -73,17 +77,27 @@ public class LookupMappingResolver implements ConditionalResolver {
 
 	@Override
 	public Template getTemplate(String templateName) throws TemplateResolutionException {
-		return getResolver(templateName).getTemplate(getTemplateName(templateName));
+		TemplateResolver resolver = getResolver(templateName);
+		LOG.debug("Loading template {} using resolver {}...", templateName, resolver);
+		return resolver.getTemplate(getTemplateName(templateName));
 	}
 
 	@Override
 	public boolean supports(String templateName) {
+		LOG.debug("Finding resolver for template {}...", templateName);
 		String lookupType = getLookupType(templateName);
 		boolean hasResolver = mapping.containsKey(lookupType);
 		if (hasResolver) {
 			TemplateResolver resolver = mapping.get(lookupType);
-			return (resolver instanceof ConditionalResolver ? ((ConditionalResolver) resolver).supports(templateName) : true);
+			boolean supports = resolver instanceof ConditionalResolver ? ((ConditionalResolver) resolver).supports(templateName) : true;
+			if(supports) {
+				LOG.debug("{} can be used for resolving lookup '{}' and can handle template {}", resolver, lookupType, templateName);
+			} else {
+				LOG.debug("{} can be used for resolving lookup '{}' but can't handle template {}", resolver, lookupType, templateName);
+			}
+			return supports;
 		} else {
+			LOG.debug("No resolver can handle lookup '{}'", lookupType);
 			return false;
 		}
 	}
@@ -118,7 +132,9 @@ public class LookupMappingResolver implements ConditionalResolver {
 
 	private String getLookupType(String templateName) {
 		int idx = templateName.indexOf(":");
-		return idx > 0 ? templateName.substring(0, idx) : "";
+		String lookup = idx > 0 ? templateName.substring(0, idx) : "";
+		LOG.trace("Lookup {} found for template path {}", lookup, templateName);
+		return lookup;
 	}
 
 	private String getTemplateName(String templateName) {

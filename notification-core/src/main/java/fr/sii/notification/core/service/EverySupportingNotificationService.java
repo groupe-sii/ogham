@@ -3,6 +3,9 @@ package fr.sii.notification.core.service;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.MessageNotSentException;
 import fr.sii.notification.core.exception.NotificationException;
 import fr.sii.notification.core.message.Message;
@@ -20,6 +23,7 @@ import fr.sii.notification.core.sender.ConditionalSender;
  * @see ConditionalSender
  */
 public class EverySupportingNotificationService implements NotificationService {
+	private static final Logger LOG = LoggerFactory.getLogger(EverySupportingNotificationService.class);
 
 	/**
 	 * The list of senders used to handle messages
@@ -66,14 +70,24 @@ public class EverySupportingNotificationService implements NotificationService {
 	 */
 	@Override
 	public void send(Message message) throws NotificationException {
+		LOG.info("Sending message...");
+		LOG.debug("{}", message);
+		LOG.debug("Find senders that is able to send the message {}", message);
 		boolean sent = false;
 		for (ConditionalSender sender : senders) {
 			if (sender.supports(message)) {
+				LOG.debug("Sending message {} using sender {}...", message, sender);
 				sender.send(message);
+				LOG.debug("Message {} sent using sender {}", message, sender);
 				sent = true;
+			} else {
+				LOG.debug("Sender {} can't handle the message {}", sender, message);
 			}
 		}
-		if (!sent) {
+		if(sent) {
+			LOG.info("Message sent");
+			LOG.debug("{}", message);
+		} else {
 			throw new MessageNotSentException("No sender available to send the message", message);
 		}
 	}

@@ -1,5 +1,8 @@
 package fr.sii.notification.core.translator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.handler.ContentTranslatorException;
 import fr.sii.notification.core.exception.template.ParseException;
 import fr.sii.notification.core.message.content.Content;
@@ -23,6 +26,8 @@ import fr.sii.notification.core.template.parser.TemplateParser;
  *
  */
 public class TemplateContentTranslator implements ContentTranslator {
+	private static final Logger LOG = LoggerFactory.getLogger(TemplateContentTranslator.class);
+
 	/**
 	 * The parser to use for finding, loading and evaluating the template
 	 */
@@ -38,13 +43,21 @@ public class TemplateContentTranslator implements ContentTranslator {
 		if (content instanceof TemplateContent) {
 			try {
 				TemplateContent template = (TemplateContent) content;
+				LOG.info("Parse template {} using context {}", template.getPath(), template.getContext());
+				LOG.debug("Parse template content {} using {}", template, parser);
 				return parser.parse(template.getPath(), template.getContext());
 			} catch (ParseException e) {
 				throw new ContentTranslatorException("failed to translate templated content", e);
 			}
 		} else {
+			LOG.trace("Not a TemplateContent => skip it");
 			return content;
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "TemplateContentTranslator";
+	}
+	
 }

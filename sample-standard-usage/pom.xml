@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.sii.notification</groupId>
+	<artifactId>sample-standard-usage</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Sample for standard usage</name>
+	<description>Shows how to integrate and use the library with no framework and using default behaviors</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.sii.notification</groupId>
+			<artifactId>notification-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

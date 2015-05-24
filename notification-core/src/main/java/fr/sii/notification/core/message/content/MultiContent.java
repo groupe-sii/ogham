@@ -54,4 +54,11 @@ public class MultiContent implements Content {
 	public void addContent(Content content) {
 		contents.add(content);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MultiContent [contents=").append(contents).append("]");
+		return builder.toString();
+	}
 }

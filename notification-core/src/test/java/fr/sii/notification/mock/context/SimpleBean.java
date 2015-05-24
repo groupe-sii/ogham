@@ -43,4 +43,13 @@ public class SimpleBean {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("{\"name\": \"").append(name).append("\", \"value\": ").append(value).append(", \"date\": \"").append(date).append("\"}");
+		return builder.toString();
+	}
+	
+	
 }

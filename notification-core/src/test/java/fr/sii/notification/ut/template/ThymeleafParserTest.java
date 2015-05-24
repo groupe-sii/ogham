@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import fr.sii.notification.core.builder.TemplateBuilder;
@@ -12,6 +13,7 @@ import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.template.context.BeanContext;
 import fr.sii.notification.core.template.parser.TemplateParser;
+import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.helper.template.AssertTemplate;
 import fr.sii.notification.mock.context.NestedBean;
 import fr.sii.notification.mock.context.SimpleBean;
@@ -19,6 +21,9 @@ import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
 
 public class ThymeleafParserTest {
 	private TemplateParser parser;
+	
+	@Rule
+	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	@Before
 	public void setUp() {

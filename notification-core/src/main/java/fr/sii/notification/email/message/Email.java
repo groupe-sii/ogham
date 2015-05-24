@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.message.attachment.Attachment;
 import fr.sii.notification.core.message.content.Content;
@@ -11,11 +13,11 @@ import fr.sii.notification.core.message.content.StringContent;
 
 public class Email implements Message {
 	private String subject;
-	
+
 	private Content content;
-	
+
 	private EmailAddress from;
-	
+
 	private List<Recipient> recipients;
 
 	private List<Attachment> attachments;
@@ -23,11 +25,11 @@ public class Email implements Message {
 	public Email(String subject, String content, String... recipients) {
 		this(subject, new StringContent(content), toRecipient(recipients));
 	}
-	
+
 	public Email(String subject, Content content, Recipient... recipients) {
 		this(subject, content, new ArrayList<>(Arrays.asList(recipients)));
 	}
-	
+
 	public Email(String subject, Content content, List<Recipient> recipients) {
 		this(subject, content, recipients, new ArrayList<Attachment>());
 	}
@@ -35,19 +37,19 @@ public class Email implements Message {
 	public Email(String subject, Content content, EmailAddress... to) {
 		this(subject, content, new ArrayList<>(Arrays.asList(toRecipient(to))));
 	}
-	
+
 	public Email(String subject, Content content, String... to) {
 		this(subject, content, new ArrayList<>(Arrays.asList(toRecipient(to))));
 	}
-	
+
 	public Email(String subject, String content, EmailAddress from, String... recipients) {
 		this(subject, new StringContent(content), from, toRecipient(recipients));
 	}
-	
+
 	public Email(String subject, Content content, EmailAddress from, Recipient... recipients) {
 		this(subject, content, from, new ArrayList<>(Arrays.asList(recipients)));
 	}
-	
+
 	public Email(String subject, Content content, EmailAddress from, List<Recipient> recipients) {
 		this(subject, content, from, recipients, new ArrayList<Attachment>());
 	}
@@ -55,7 +57,7 @@ public class Email implements Message {
 	public Email(String subject, Content content, EmailAddress from, EmailAddress... to) {
 		this(subject, content, from, new ArrayList<>(Arrays.asList(toRecipient(to))));
 	}
-	
+
 	public Email(String subject, String content, List<String> to, Attachment... attachments) {
 		this(subject, new StringContent(content), new ArrayList<>(Arrays.asList(toRecipient(to.toArray(new String[to.size()])))), attachments);
 	}
@@ -85,40 +87,40 @@ public class Email implements Message {
 		attachments.add(attachment);
 		return this;
 	}
-	
+
 	public Email addRecipient(Recipient recipient) {
 		recipients.add(recipient);
 		return this;
 	}
-	
+
 	public Email addRecipient(String recipient) {
 		addRecipient(new Recipient(recipient));
 		return this;
 	}
-	
+
 	public Email addRecipient(EmailAddress recipient) {
 		addRecipient(new Recipient(recipient));
 		return this;
 	}
-	
+
 	public Email addRecipient(EmailAddress recipient, RecipientType type) {
 		addRecipient(new Recipient(recipient, type));
 		return this;
 	}
-	
+
 	public static Recipient[] toRecipient(EmailAddress[] to) {
 		Recipient[] addresses = new Recipient[to.length];
 		int i = 0;
-		for(EmailAddress t : to) {
+		for (EmailAddress t : to) {
 			addresses[i++] = new Recipient(t);
 		}
 		return addresses;
 	}
-	
+
 	public static Recipient[] toRecipient(String[] to) {
 		Recipient[] addresses = new Recipient[to.length];
 		int i = 0;
-		for(String t : to) {
+		for (String t : to) {
 			addresses[i++] = new Recipient(t);
 		}
 		return addresses;
@@ -127,7 +129,7 @@ public class Email implements Message {
 	public Content getContent() {
 		return content;
 	}
-	
+
 	@Override
 	public void setContent(Content content) {
 		this.content = content;
@@ -140,7 +142,7 @@ public class Email implements Message {
 	public void setFrom(EmailAddress from) {
 		this.from = from;
 	}
-	
+
 	public void setFrom(String from) {
 		setFrom(new EmailAddress(from));
 	}
@@ -172,7 +174,25 @@ public class Email implements Message {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Email [subject=").append(subject).append(", content=").append(content).append(", from=").append(from).append(", recipients=").append(recipients).append(", attachments=").append(attachments).append("]");
+		builder.append("Email message\r\nFrom: ").append(from);
+		for(RecipientType type : RecipientType.values()) {
+			List<EmailAddress> addresses = new ArrayList<>();
+			for(Recipient recipient : recipients) {
+				if(type.equals(recipient.getType())) {
+					addresses.add(recipient.getAddress());
+				}
+			}
+			if(!addresses.isEmpty()) {
+				builder.append("\r\n");
+				builder.append(type).append(": ");
+				builder.append(StringUtils.join(addresses, ", "));
+			}
+		}
+		builder.append("\r\nSubject: ").append(subject).append("\r\n----------------------------------\r\n").append(content);
+		if(attachments!=null && !attachments.isEmpty()) {
+			builder.append("\r\n----------------------------------").append("\r\nAttachments: ").append(attachments);
+		}
+		builder.append("\r\n==================================\r\n");
 		return builder.toString();
 	}
 }

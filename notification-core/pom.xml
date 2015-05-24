@@ -41,7 +41,16 @@
 		<dependency>
 			<groupId>net.sf.jmimemagic</groupId>
 			<artifactId>jmimemagic</artifactId>
-			<version>0.1.4</version>
+		</dependency>
+
+		<!-- Logs -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
 		</dependency>
 
 		<!-- Tests -->

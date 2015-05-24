@@ -1,5 +1,8 @@
 package fr.sii.notification.core.sender;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.MessageException;
 import fr.sii.notification.core.exception.MessageNotSentException;
 import fr.sii.notification.core.exception.handler.ContentTranslatorException;
@@ -16,6 +19,8 @@ import fr.sii.notification.core.translator.ContentTranslator;
  * @see ContentTranslator
  */
 public class ContentTranslatorSender implements ConditionalSender {
+	private static final Logger LOG = LoggerFactory.getLogger(ContentTranslatorSender.class);
+
 	/**
 	 * The translator that transforms the content of the message
 	 */
@@ -51,10 +56,20 @@ public class ContentTranslatorSender implements ConditionalSender {
 	@Override
 	public void send(Message message) throws MessageException {
 		try {
+			LOG.debug("Translate the message content {} using {}", message.getContent(), translator);
 			message.setContent(translator.translate(message.getContent()));
+			LOG.debug("Message content {} translated using {}", message.getContent(), translator);
+			LOG.debug("Sending translated message {} using {}", message, delegate);
 			delegate.send(message);
 		} catch (ContentTranslatorException e) {
 			throw new MessageNotSentException("Failed to send message due to content handler", message, e);
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ContentTranslatorSender [translator=").append(translator).append(", delegate=").append(delegate).append("]");
+		return builder.toString();
 	}
 }

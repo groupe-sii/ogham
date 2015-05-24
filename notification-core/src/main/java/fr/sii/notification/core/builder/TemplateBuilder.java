@@ -197,9 +197,9 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * <li>Resolver that is able to handle classpath resolution (
 	 * {@link ClassPathTemplateResolver}). The lookup prefix is "classpath:"</li>
 	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileTemplateResolver})</li>
-	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileTemplateResolver})</li>
+	 * {@link FileTemplateResolver}). The lookup is "file:"</li>
+	 * <li>Default resolver if no lookup is used (
+	 * {@link ClassPathTemplateResolver})</li>
 	 * </ul>
 	 * 
 	 * This method is automatically called by {@link #useDefaults()} or

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -14,11 +15,15 @@ import fr.sii.notification.core.template.Template;
 import fr.sii.notification.core.template.resolver.ConditionalResolver;
 import fr.sii.notification.core.template.resolver.LookupMappingResolver;
 import fr.sii.notification.core.template.resolver.TemplateResolver;
+import fr.sii.notification.helper.rule.LoggingTestRule;
 
 public class LookupMappingResolverTest {
 	private LookupMappingResolver lookupResolver;
 	private Map<String, TemplateResolver> resolvers;
 
+	@Rule
+	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	
 	@Before
 	public void setUp() throws TemplateResolutionException {
 		resolvers = new HashMap<>();

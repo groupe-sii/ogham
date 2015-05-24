@@ -23,11 +23,15 @@ import fr.sii.notification.helper.email.AssertEmail;
 import fr.sii.notification.helper.email.ExpectedContent;
 import fr.sii.notification.helper.email.ExpectedEmail;
 import fr.sii.notification.helper.email.ExpectedMultiPartEmail;
+import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.mock.context.SimpleBean;
 
 public class ManualEmailTest {
 
 	private NotificationService notificationService;
+	
+	@Rule
+	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	@Rule
 	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);

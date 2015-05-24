@@ -3,6 +3,9 @@ package fr.sii.notification.core.filler;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.filler.FillMessageException;
 import fr.sii.notification.core.exception.template.BeanException;
 import fr.sii.notification.core.message.Message;
@@ -18,12 +21,13 @@ import fr.sii.notification.core.util.BeanUtils;
  *
  */
 public class SimpleFiller implements MessageFiller {
+	private static final Logger LOG = LoggerFactory.getLogger(SimpleFiller.class);
 
 	/**
 	 * The map that contains the values to set. The map is indexed by the name
 	 * of the property of the message to set.
 	 */
-	private Map<String, Object> values;
+	protected Map<String, Object> values;
 
 	/**
 	 * Initialize the filler with a single property with the value to set.
@@ -52,10 +56,17 @@ public class SimpleFiller implements MessageFiller {
 	@Override
 	public void fill(Message message) throws FillMessageException {
 		try {
+			LOG.debug("Filling message {} with map {}", message, values);
 			BeanUtils.populate(message, values);
 		} catch (BeanException e) {
 			throw new FillMessageException("Failed to fill message with provided values", message, e);
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SimpleFiller ").append(values);
+		return builder.toString();
+	}
 }

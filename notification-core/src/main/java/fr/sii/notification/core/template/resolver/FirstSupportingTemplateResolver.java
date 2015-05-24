@@ -3,6 +3,9 @@ package fr.sii.notification.core.template.resolver;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.template.NoTemplateResolverException;
 import fr.sii.notification.core.exception.template.TemplateResolutionException;
 import fr.sii.notification.core.template.Template;
@@ -18,6 +21,7 @@ import fr.sii.notification.core.template.Template;
  * @see ConditionalResolver
  */
 public class FirstSupportingTemplateResolver implements TemplateResolver {
+	private static final Logger LOG = LoggerFactory.getLogger(FirstSupportingTemplateResolver.class);
 
 	/**
 	 * The list of resolvers used to resolve the template according to the
@@ -50,9 +54,13 @@ public class FirstSupportingTemplateResolver implements TemplateResolver {
 
 	@Override
 	public Template getTemplate(String lookup) throws TemplateResolutionException {
+		LOG.debug("Finding a resolver able to handle the lookup {}...", lookup);
 		for (ConditionalResolver resolver : resolvers) {
 			if (resolver.supports(lookup)) {
+				LOG.debug("{} can handle lookup {}. Loading template using this resolver...", resolver, lookup);
 				return resolver.getTemplate(lookup);
+			} else {
+				LOG.trace("{} can't handle lookup {}", resolver, lookup);
 			}
 		}
 		throw new NoTemplateResolverException("No template resolver available to find template", lookup);
