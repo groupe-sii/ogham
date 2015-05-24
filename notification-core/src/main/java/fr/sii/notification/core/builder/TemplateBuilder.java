@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.template.detector.FixedEngineDetector;
 import fr.sii.notification.core.template.detector.TemplateEngineDetector;
@@ -46,6 +49,8 @@ import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
  *
  */
 public class TemplateBuilder implements TemplateParserBuilder {
+	private static final Logger LOG = LoggerFactory.getLogger(TemplateBuilder.class);
+	
 	/**
 	 * The prefix for properties used by the template engines
 	 */
@@ -285,12 +290,20 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		if (detectors.isEmpty() || builders.size() == 1) {
 			// TODO: if no template parser available => exception or default
 			// parser that does nothing ?
-			return builders.get(0).build();
+			TemplateParser parser = builders.get(0).build();
+			LOG.info("Using single template engine: {}", parser);
+			LOG.debug("Using prefix {} and suffix {} for template resolution", prefix, suffix);
+			LOG.debug("Using lookup mapping resolver: {}", resolvers);
+			return parser;
 		} else {
 			Map<TemplateEngineDetector, TemplateParser> map = new HashMap<>();
 			for (Entry<TemplateEngineDetector, TemplateParserBuilder> entry : detectors.entrySet()) {
 				map.put(entry.getKey(), entry.getValue().build());
 			}
+			LOG.info("Using auto detection mechanism");
+			LOG.debug("Auto detection mechanisms: {}", map);
+			LOG.debug("Using prefix {} and suffix {} for template resolution", prefix, suffix);
+			LOG.debug("Using lookup mapping resolver: {}", resolvers);
 			return new AutoDetectTemplateParser(new LookupMappingResolver(resolvers), map);
 		}
 	}

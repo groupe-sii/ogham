@@ -14,13 +14,19 @@ public class LoggingTestRule implements TestRule {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				LOG.info("Starting test {}.{}", description.getClassName(), description.getMethodName());
+				LOG.info("┌──────────────────────────{}─{}────────────┐", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
+				LOG.info("│            Starting test {}.{}            │", description.getClassName(), description.getMethodName());
+				LOG.info("└──────────────────────────{}─{}────────────┘", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
 				try {
 					base.evaluate();
 				} catch(Throwable e) {
-					LOG.info("Test {}.{} has failed. Cause: {}", description.getClassName(), description.getMethodName(), e);
+					LOG.info("┌─────────────────{}─{}────────────────────{}────────────┐", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"), e.toString().replaceAll(".", "─"));
+					LOG.info("│            Test {}.{} has failed. Cause: {}            │", description.getClassName(), description.getMethodName(), e);
+					LOG.info("└─────────────────{}─{}────────────────────{}────────────┘\r\n\r\n", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"), e.toString().replaceAll(".", "─"));
 				} finally {
-					LOG.info("Test {}.{} successfully done", description.getClassName(), description.getMethodName());
+					LOG.info("┌─────────────────{}─{}──────────────────────────────┐", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
+					LOG.info("│            Test {}.{} successfully done            │", description.getClassName(), description.getMethodName());
+					LOG.info("└─────────────────{}─{}──────────────────────────────┘\r\n\r\n", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
 				}
 			}
 		};

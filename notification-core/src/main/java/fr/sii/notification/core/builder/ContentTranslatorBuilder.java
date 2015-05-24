@@ -1,10 +1,13 @@
 package fr.sii.notification.core.builder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.core.translator.EveryContentTranslator;
 import fr.sii.notification.core.translator.ContentTranslator;
+import fr.sii.notification.core.translator.EveryContentTranslator;
 import fr.sii.notification.core.translator.MultiContentTranslator;
 import fr.sii.notification.core.translator.TemplateContentTranslator;
 
@@ -19,6 +22,8 @@ import fr.sii.notification.core.translator.TemplateContentTranslator;
  *
  */
 public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
+	private static final Logger LOG = LoggerFactory.getLogger(ContentTranslatorBuilder.class);
+	
 	/**
 	 * A simple translator that delegates the translation to all of the provided
 	 * implementations.
@@ -40,6 +45,8 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 */
 	@Override
 	public ContentTranslator build() throws BuildException {
+		LOG.info("Using translator that calls all registered translators");
+		LOG.debug("Registered translators: {}", translator.getTranslators());
 		return translator;
 	}
 

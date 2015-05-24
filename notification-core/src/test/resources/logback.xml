@@ -7,8 +7,10 @@
 		</encoder>
 	</appender>
 
+	<!-- 
 	<logger name="org.thymeleaf" level="WARN" />
 	<logger name="com.icegreen.greenmail" level="WARN" />
+	-->
 	
 	<root level="debug">
 		<appender-ref ref="STDOUT" />

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.service.EverySupportingNotificationService;
@@ -24,7 +27,8 @@ import fr.sii.notification.sms.builder.SmsBuilder;
  *
  */
 public class NotificationBuilder implements NotificationServiceBuilder {
-
+	private static final Logger LOG = LoggerFactory.getLogger(NotificationBuilder.class);
+	
 	/**
 	 * The list of general builders used to construct senders. The constructed
 	 * senders will be used by the notification service.
@@ -64,6 +68,8 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 		for (NotificationSenderBuilder<ConditionalSender> builder : builders) {
 			senders.add(builder.build());
 		}
+		LOG.info("Using service that calls all registered senders");
+		LOG.debug("Registered senders: {}", senders);
 		return new EverySupportingNotificationService(senders);
 	}
 

@@ -70,6 +70,15 @@ public class EveryContentTranslator implements ContentTranslator {
 		translators.add(translator);
 	}
 
+	/**
+	 * Get the registered translators.
+	 * 
+	 * @return the list of translators
+	 */
+	public List<ContentTranslator> getTranslators() {
+		return translators;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
