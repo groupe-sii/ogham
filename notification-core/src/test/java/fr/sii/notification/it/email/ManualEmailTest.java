@@ -1,7 +1,6 @@
 package fr.sii.notification.it.email;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -16,6 +15,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import fr.sii.notification.core.builder.NotificationBuilder;
 import fr.sii.notification.core.exception.NotificationException;
 import fr.sii.notification.core.message.content.MultiContent;
+import fr.sii.notification.core.message.content.MultiTemplateContent;
 import fr.sii.notification.core.message.content.TemplateContent;
 import fr.sii.notification.core.service.NotificationService;
 import fr.sii.notification.email.message.Email;
@@ -62,7 +62,16 @@ public class ManualEmailTest {
 		notificationService.send(new Email("Multi", new MultiContent(
 										new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("bar", 12)),
 										new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("bar", 12))), "recipient@sii.fr"));
-//		notificationService.send(new Email("Multi", new MultiTemplateContent("classpath:/email/test", new SimpleBean("bar", 12))), "recipient@sii.fr"));
+		AssertEmail.assertEquals(new ExpectedMultiPartEmail("Multi", new ExpectedContent[] {
+				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.html"), "text/html.*"),
+				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.txt"), "text/plain.*")
+		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+	}
+
+
+	@Test
+	public void fallbackShortcut() throws NotificationException, MessagingException, IOException {
+		notificationService.send(new Email("Multi", new MultiTemplateContent("classpath:/template/thymeleaf/source/simple", new SimpleBean("bar", 12)), "recipient@sii.fr"));
 		AssertEmail.assertEquals(new ExpectedMultiPartEmail("Multi", new ExpectedContent[] {
 				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.html"), "text/html.*"),
 				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.txt"), "text/plain.*")
