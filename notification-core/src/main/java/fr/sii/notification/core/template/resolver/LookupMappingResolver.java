@@ -44,6 +44,11 @@ public class LookupMappingResolver implements ConditionalResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(LookupMappingResolver.class);
 
 	/**
+	 * Lookup delimiter
+	 */
+	private static final String DELIMITER = ":";
+
+	/**
 	 * The map that associates a lookup with a resolver
 	 */
 	private Map<String, TemplateResolver> mapping;
@@ -89,7 +94,7 @@ public class LookupMappingResolver implements ConditionalResolver {
 		boolean hasResolver = mapping.containsKey(lookupType);
 		if (hasResolver) {
 			TemplateResolver resolver = mapping.get(lookupType);
-			boolean supports = resolver instanceof ConditionalResolver ? ((ConditionalResolver) resolver).supports(templateName) : true;
+			boolean supports = resolver instanceof ConditionalResolver ? ((ConditionalResolver) resolver).supports(getTemplateName(templateName)) : true;
 			if(supports) {
 				LOG.debug("{} can be used for resolving lookup '{}' and can handle template {}", resolver, lookupType, templateName);
 			} else {
@@ -131,14 +136,14 @@ public class LookupMappingResolver implements ConditionalResolver {
 	}
 
 	private String getLookupType(String templateName) {
-		int idx = templateName.indexOf(":");
+		int idx = templateName.indexOf(DELIMITER);
 		String lookup = idx > 0 ? templateName.substring(0, idx) : "";
 		LOG.trace("Lookup {} found for template path {}", lookup, templateName);
 		return lookup;
 	}
 
 	private String getTemplateName(String templateName) {
-		int idx = templateName.indexOf(":");
+		int idx = templateName.indexOf(DELIMITER);
 		return templateName.substring(idx + 1);
 	}
 }

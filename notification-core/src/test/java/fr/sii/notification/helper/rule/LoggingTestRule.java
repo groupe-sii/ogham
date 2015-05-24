@@ -19,14 +19,14 @@ public class LoggingTestRule implements TestRule {
 				LOG.info("└──────────────────────────{}─{}────────────┘", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
 				try {
 					base.evaluate();
+					LOG.info("┌─────────────────{}─{}──────────────────────────────┐", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
+					LOG.info("│            Test {}.{} successfully done            │", description.getClassName(), description.getMethodName());
+					LOG.info("└─────────────────{}─{}──────────────────────────────┘\r\n\r\n", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
 				} catch(Throwable e) {
 					LOG.info("┌─────────────────{}─{}────────────────────{}────────────┐", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"), e.toString().replaceAll(".", "─"));
 					LOG.info("│            Test {}.{} has failed. Cause: {}            │", description.getClassName(), description.getMethodName(), e);
 					LOG.info("└─────────────────{}─{}────────────────────{}────────────┘\r\n\r\n", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"), e.toString().replaceAll(".", "─"));
-				} finally {
-					LOG.info("┌─────────────────{}─{}──────────────────────────────┐", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
-					LOG.info("│            Test {}.{} successfully done            │", description.getClassName(), description.getMethodName());
-					LOG.info("└─────────────────{}─{}──────────────────────────────┘\r\n\r\n", description.getClassName().replaceAll(".", "─"), description.getMethodName().replaceAll(".", "─"));
+					throw e;
 				}
 			}
 		};

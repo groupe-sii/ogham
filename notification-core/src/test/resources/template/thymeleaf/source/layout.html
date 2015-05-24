@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/header.html :: header">&nbsp;</head>
+    <body>
+        <h1 class="title" th:text="${nested.name}"></h1>
+        <p class="text" th:text="${nested.value}"></p>
+    </body>
+</html>

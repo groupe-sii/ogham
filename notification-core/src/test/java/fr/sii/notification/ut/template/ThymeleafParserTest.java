@@ -57,4 +57,12 @@ public class ThymeleafParserTest {
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertEquals("/template/thymeleaf/expected/nested_foo_42.html", content);
 	}
+	
+	@Test
+	public void layout() throws ParseException, IOException {
+		Content content = parser.parse("classpath:layout.html", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
+		Assert.assertNotNull("content should not be null", content);
+		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
+		AssertTemplate.assertEquals("/template/thymeleaf/expected/layout_foo_42.html", content);
+	}
 }
