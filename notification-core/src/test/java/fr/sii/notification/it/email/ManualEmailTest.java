@@ -58,7 +58,7 @@ public class ManualEmailTest {
 	}
 
 	@Test
-	public void fallback() throws NotificationException, MessagingException, IOException {
+	public void multiContent() throws NotificationException, MessagingException, IOException {
 		notificationService.send(new Email("Multi", new MultiContent(
 										new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("bar", 12)),
 										new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("bar", 12))), "recipient@sii.fr"));
@@ -70,7 +70,7 @@ public class ManualEmailTest {
 
 
 	@Test
-	public void fallbackShortcut() throws NotificationException, MessagingException, IOException {
+	public void multiContentShortcut() throws NotificationException, MessagingException, IOException {
 		notificationService.send(new Email("Multi", new MultiTemplateContent("classpath:/template/thymeleaf/source/simple", new SimpleBean("bar", 12)), "recipient@sii.fr"));
 		AssertEmail.assertEquals(new ExpectedMultiPartEmail("Multi", new ExpectedContent[] {
 				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.html"), "text/html.*"),

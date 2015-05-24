@@ -772,6 +772,18 @@ public class Email implements Message {
 	}
 
 	/**
+	 * Set the content of the message.
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent use
+	 */
+	public Email withContent(Content content) {
+		setContent(content);
+		return this;
+	}
+
+	/**
 	 * Get the sender address
 	 * 
 	 * @return the sender address
@@ -785,11 +797,34 @@ public class Email implements Message {
 	 * 
 	 * @param from
 	 *            the sender address
+	 */
+	public void setFrom(EmailAddress from) {
+		this.from = from;
+	}
+
+	/**
+	 * Set the sender address.
+	 * 
+	 * @param from
+	 *            the sender address
 	 * @return this instance for fluent use
 	 */
-	public Email setFrom(EmailAddress from) {
-		this.from = from;
+	public Email withFrom(EmailAddress from) {
+		setFrom(from);
 		return this;
+	}
+
+	/**
+	 * Set the sender address as string (typical address syntax is of the form
+	 * "user@host.domain" or "Personal Name &lt;user@host.domain&gt;").
+	 * 
+	 * @param from
+	 *            the sender address string (typical address syntax is of the
+	 *            form "user@host.domain" or
+	 *            "Personal Name &lt;user@host.domain&gt;").
+	 */
+	public void setFrom(String from) {
+		setFrom(new EmailAddress(from));
 	}
 
 	/**
@@ -802,8 +837,9 @@ public class Email implements Message {
 	 *            "Personal Name &lt;user@host.domain&gt;").
 	 * @return this instance for fluent use
 	 */
-	public Email setFrom(String from) {
-		return setFrom(new EmailAddress(from));
+	public Email withFrom(String from) {
+		setFrom(from);
+		return this;
 	}
 
 	/**
@@ -820,10 +856,20 @@ public class Email implements Message {
 	 * 
 	 * @param recipients
 	 *            the list of recipients
+	 */
+	public void setRecipients(List<Recipient> recipients) {
+		this.recipients = recipients;
+	}
+
+	/**
+	 * Set the whole list of recipients.
+	 * 
+	 * @param recipients
+	 *            the list of recipients
 	 * @return this instance for fluent use
 	 */
-	public Email setRecipients(List<Recipient> recipients) {
-		this.recipients = recipients;
+	public Email withRecipients(List<Recipient> recipients) {
+		setRecipients(recipients);
 		return this;
 	}
 
@@ -841,10 +887,20 @@ public class Email implements Message {
 	 * 
 	 * @param subject
 	 *            the subject of the mail
+	 */
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	/**
+	 * Set the subject of the mail.
+	 * 
+	 * @param subject
+	 *            the subject of the mail
 	 * @return this instance for fluent use
 	 */
-	public Email setSubject(String subject) {
-		this.subject = subject;
+	public Email withSubject(String subject) {
+		setSubject(subject);
 		return this;
 	}
 
@@ -862,10 +918,20 @@ public class Email implements Message {
 	 * 
 	 * @param attachments
 	 *            the list of attachments
+	 */
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
 	 * @return this instance for fluent use
 	 */
-	public Email setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
+	public Email withAttachments(List<Attachment> attachments) {
+		setAttachments(attachments);
 		return this;
 	}
 
