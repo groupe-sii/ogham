@@ -21,6 +21,8 @@ It also provides templating support and integrates natively several template eng
 
 It provides bridges for integration with frameworks and it is framework and library agnostic. It can be used with any framework (Spring, JSF, ...).
 
+When using the module to send email based on an HTML template, the templating system let you design your HTML like a standard HTML page. It automatically transforms the associated resources (images, css files...) to be usable in an email context (automatic inline css, embed images...). You don't need to write your HTML specifically for email.
+
 
 # Features
 
@@ -192,6 +194,22 @@ public class HtmlTemplateEmailSample {
 	}
 
 }
+```
+
+Here is the content of the template:
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Thymeleaf simple</title>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <h1 class="title" th:text="${name}"></h1>
+        <p class="text" th:text="${value}"></p>
+    </body>
+</html>
 ```
 
 ## sending email with attachments
