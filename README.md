@@ -1,7 +1,17 @@
 # notification-module
-Reusable Java library for sending any kind of message (email, SMS, tweet, SNMP...). The content of the message can comes from any templating engine (Thymeleaf, Freemarker, Velocity, ...). It also provides bridges for inclusion into frameworks (Spring, JSF, ...). It is designed to be easily extended.
+Reusable Java library for sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can comes from any templating engine (Thymeleaf, Freemarker, Velocity, ...). It also provides bridges for inclusion into frameworks (Spring, JSF, ...). It is designed to be easily extended.
 
 # Why ?
+
+There already exists several libraries for sending email ([Apache Commons Email](https://commons.apache.org/proper/commons-email/), [Simple Java Mail/Vesijama](https://github.com/bbottema/simple-java-mail), [Spring Email Integration](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html)...). These libraries helps you to send an email but you have to manually write the content. So if you want to use a template for the email content, you have to manually integrate a template engine.
+These libraries also provide only implementations based on Java Mail API. But in some environments, it is possible that you don't want to send the email directly but use a web service for sending the email.
+Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
+These libraries are stick to frameworks or libraries so you can't use the same code if you don't use the same framework or libraries.
+
+This library is designed for handling any kind of message the same way. It can provide several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can add your own implementation.
+It also provides templating support. It integrates natively several template engines. You can also add your own.
+It provides bridges for integration with frameworks.
+
 
 # Features
 
@@ -12,15 +22,18 @@ Reusable Java library for sending any kind of message (email, SMS, tweet, SNMP..
 - send a SMS
   - basic SMS
   - SMS with templated content
+- managing lookup prefix like JNDI
+  - for templates
+  - for attachments
 - automatic configuration
   - automatically detect email implementation to use
   - automatically detect SMS implementation to use
-  - automatically detect template engine
+  - automatically detect template engine to use
 
 
 # Standard usage
 
-This section describes how to use the library for usage with no framework and default bahvior. 
+This section describes how to use the library for usage with no framework and default behavior. 
 
 ## Maven integration
 
@@ -42,6 +55,15 @@ Add the dependency to your pom.xml:
 ## Sending email
 
 ### General
+
+This sample shows how to send a basic email.
+
+The first lines configure the properties that will be used by the sender.
+Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
+
+See other examples for advanced usages (using a template or adding attachments).
+
 
 ```java
 package fr.sii.notification.sample.standard;
@@ -73,9 +95,18 @@ public class BasicEmailSample {
 ```
 
 
-### Through Gmail
+#### Through Gmail
 
-#### SSL
+##### SSL
+
+This sample shows how to send a basic email through GMail.
+
+The first lines configure the properties that will be used by the sender.
+Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
+
+See other examples for advanced usages (using a template or adding attachments).
+
 
 ```java
 package fr.sii.notification.sample.standard;
@@ -114,6 +145,14 @@ public class BasicGmailSSLSample {
 
 ## Sending email with template
 
+This sample shows how to send an email with a content that provides from a template.
+
+The first lines configure the properties that will be used by the sender.
+Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the content based on a template available in the classpath, a bean to use as source of variable substitutions and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
+
+See other examples for advanced usages (adding attachments).
+
 
 ```java
 package fr.sii.notification.sample.standard;
@@ -146,7 +185,16 @@ public class HtmlTemplateEmailSample {
 }
 ```
 
-### sending email with attachments
+## sending email with attachments
+
+This sample shows how to send an email with attached file.
+
+The first lines configure the properties that will be used by the sender.
+Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the textual content, the receiver address and the attachment file that is available in the classpath. The sender address is automatically added to the email by the service based on configuration properties.
+
+See other examples for advanced usages (adding attachments).
+
 
 ```java
 package fr.sii.notification.sample.standard;
@@ -194,13 +242,7 @@ public class EmailWithAttachmentSample {
 
 # Advanced usage
 
-## Auto detection feature
-
-## Choose email implementation
-
-## Choose SMS implementation
-
-## Choose template engine
+This section describes how to configure the library to customize its behavior.
 
 ## Configuration
 
@@ -210,6 +252,34 @@ public class EmailWithAttachmentSample {
 
 #### Sender address
 
+### Configure Thymeleaf template engine
+
+## Lookup resolvers
+
+### Available lookups
+
+## Auto detection feature
+
+## Choose email implementation
+
+## Choose SMS implementation
+
+## Choose template engine
+
+
+# Extend the library
+
+## Add new email implementation
+
+## Add new SMS implementation
+
+## Add new template engine
+
+## Add new lookup resolver
+
+## Add new Message sender
+
+## Add custom message interceptor
 
 
 # Appendix
