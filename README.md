@@ -1,16 +1,25 @@
 # notification-module
-Reusable Java library for sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can comes from any templating engine (Thymeleaf, Freemarker, Velocity, ...). It also provides bridges for inclusion into frameworks (Spring, JSF, ...). It is designed to be easily extended.
+Reusable Java library for sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can comes from any templating engine (Thymeleaf, Freemarker, Velocity, ...). It also provides bridges the inclusion into frameworks (Spring, JSF, ...). It is designed to be easily extended.
 
 # Why ?
 
-There already exists several libraries for sending email ([Apache Commons Email](https://commons.apache.org/proper/commons-email/), [Simple Java Mail/Vesijama](https://github.com/bbottema/simple-java-mail), [Spring Email Integration](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html)...). These libraries helps you to send an email but you have to manually write the content. So if you want to use a template for the email content, you have to manually integrate a template engine.
+## Existing libraries
+
+There already exists several libraries for sending email ([Apache Commons Email](https://commons.apache.org/proper/commons-email/), [Simple Java Mail/Vesijama](https://github.com/bbottema/simple-java-mail), [Spring Email Integration](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html)...). These libraries help you to send an email but you have to manually write the content. So if you want to use a template for the email content, you have to manually integrate a template engine.
+
 These libraries also provide only implementations based on Java Mail API. But in some environments, it is possible that you don't want to send the email directly but use a web service for sending the email.
+
 Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
+
 These libraries are stick to frameworks or libraries so you can't use the same code if you don't use the same framework or libraries.
 
-This library is designed for handling any kind of message the same way. It can provide several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can add your own implementation.
-It also provides templating support. It integrates natively several template engines. You can also add your own.
-It provides bridges for integration with frameworks.
+## The notification-module
+
+This module is designed for handling any kind of message the same way. It can provide several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can add your own implementation.
+
+It also provides templating support and integrates natively several template engines. You can also add your own.
+
+It provides bridges for integration with frameworks and it is framework and library agnostic. It can be used with any framework (Spring, JSF, ...).
 
 
 # Features
@@ -22,7 +31,7 @@ It provides bridges for integration with frameworks.
 - send a SMS
   - basic SMS
   - SMS with templated content
-- managing lookup prefix like JNDI
+- managing lookup prefixes like JNDI
   - for templates
   - for attachments
 - automatic configuration
