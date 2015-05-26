@@ -43,4 +43,15 @@ public class JavaMailSmtpTest {
 		sender.send(new Email("Subject", "Body", new EmailAddress("custom.sender@sii.fr"), "recipient@sii.fr"));
 		AssertEmail.assertEquals(new ExpectedEmail("Subject", "Body", "custom.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
+	
+	@Test
+	public void attachment() throws MessageException, MessagingException {
+//		sender.send(new Email("Subject", "Body", new EmailAddress("custom.sender@sii.fr"), "recipient@sii.fr", new ));
+//		AssertEmail.assertEquals(new ExpectedEmail("Subject", "Body", "custom.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void invalid() throws MessageException {
+		sender.send(new Email("subject", "content"));
+	}
 }

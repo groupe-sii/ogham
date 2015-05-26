@@ -16,14 +16,17 @@ import fr.sii.notification.core.exception.template.BeanException;
 import fr.sii.notification.email.message.EmailAddress;
 
 /**
+ * Helper class for bean management:
+ * <ul>
+ * <li>Converts an object into a map</li>
+ * <li>Fills a bean with values provided in a map</li>
+ * </ul>
  * <p>
- * Helper class for bean management. It converts an object into a map. It also
- * fill a bean with values provided in a map. This work can be done by several
- * libraries. The aim of this class is to be able to change the implementation
- * easily to use another library for example.
+ * This work can be done by several libraries. The aim of this class is to be
+ * able to change the implementation easily to use another library for example.
  * </p>
  * <p>
- * For example, we could read which library is available in the classpath and
+ * For example, we could find which library is available in the classpath and
  * use this library instead of forcing users to include Apache Commons BeanUtils
  * library.
  * </p>
@@ -92,5 +95,9 @@ public class BeanUtils {
 		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw new BeanException("failed to populate bean", bean, e);
 		}
+	}
+
+	private BeanUtils() {
+		super();
 	}
 }

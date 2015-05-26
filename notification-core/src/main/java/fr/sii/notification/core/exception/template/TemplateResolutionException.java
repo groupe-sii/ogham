@@ -13,14 +13,17 @@ public class TemplateResolutionException extends NotificationException {
 	
 	public TemplateResolutionException(String message, String lookup, Throwable cause) {
 		super(message, cause);
+		this.lookup = lookup;
 	}
 
 	public TemplateResolutionException(String message, String lookup) {
 		super(message);
+		this.lookup = lookup;
 	}
 
 	public TemplateResolutionException(String lookup, Throwable cause) {
 		super(cause);
+		this.lookup = lookup;
 	}
 
 	public String getLookup() {

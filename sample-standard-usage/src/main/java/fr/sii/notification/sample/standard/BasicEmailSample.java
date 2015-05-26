@@ -20,7 +20,7 @@ public class BasicEmailSample {
 		// provided properties
 		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
 		// send the email
-		service.send(new Email("test", "email content", "<recipient address>"));
+		service.send(new Email("subject", "email content", "<recipient address>"));
 	}
 
 }

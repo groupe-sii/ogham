@@ -9,7 +9,6 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	@Override
 	public void send(Sms message) throws MessageException {
 		// TODO Auto-generated method stub
-		System.out.println("TODO implement ovh "+message);
 	}
 
 }

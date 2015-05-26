@@ -24,6 +24,11 @@ public class StringContent implements Content {
 		this.content = content;
 	}
 
+	/**
+	 * Get the content as string.
+	 * 
+	 * @return the content as string
+	 */
 	public String getContent() {
 		return content;
 	}

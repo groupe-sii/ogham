@@ -1,5 +1,6 @@
 package fr.sii.notification.core.template.resolver;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.slf4j.Logger;
@@ -25,13 +26,17 @@ public class ClassPathTemplateResolver implements TemplateResolver {
 
 	@Override
 	public Template getTemplate(String templatePath) throws TemplateResolutionException {
-		LOG.debug("Loading template {} from classpath...", templatePath);
-		InputStream stream = getClass().getClassLoader().getResourceAsStream(templatePath.startsWith("/") ? templatePath.substring(1) : templatePath);
-		if (stream == null) {
-			throw new TemplateResolutionException("Template " + templatePath + " not found in the classpath", templatePath);
+		try {
+			LOG.debug("Loading template {} from classpath...", templatePath);
+			InputStream stream = getClass().getClassLoader().getResourceAsStream(templatePath.startsWith("/") ? templatePath.substring(1) : templatePath);
+			if (stream == null) {
+				throw new TemplateResolutionException("Template " + templatePath + " not found in the classpath", templatePath);
+			}
+			LOG.debug("Template {} available in the classpath...", templatePath);
+			return new SimpleTemplate(stream);
+		} catch (IOException e) {
+			throw new TemplateResolutionException("The template "+templatePath+" is not readable", templatePath, e);
 		}
-		LOG.debug("Template {} available in the classpath...", templatePath);
-		return new SimpleTemplate(stream);
 	}
 
 }

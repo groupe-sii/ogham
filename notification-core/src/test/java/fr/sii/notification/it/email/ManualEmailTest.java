@@ -1,10 +1,12 @@
 package fr.sii.notification.it.email;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,13 +15,17 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.notification.core.builder.NotificationBuilder;
+import fr.sii.notification.core.exception.MessageNotSentException;
 import fr.sii.notification.core.exception.NotificationException;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.message.content.MultiTemplateContent;
 import fr.sii.notification.core.message.content.TemplateContent;
 import fr.sii.notification.core.service.NotificationService;
+import fr.sii.notification.email.attachment.Attachment;
 import fr.sii.notification.email.message.Email;
+import fr.sii.notification.helper.email.AssertAttachment;
 import fr.sii.notification.helper.email.AssertEmail;
+import fr.sii.notification.helper.email.ExpectedAttachment;
 import fr.sii.notification.helper.email.ExpectedContent;
 import fr.sii.notification.helper.email.ExpectedEmail;
 import fr.sii.notification.helper.email.ExpectedMultiPartEmail;
@@ -78,10 +84,29 @@ public class ManualEmailTest {
 		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
 
+	@Test(expected=MessageNotSentException.class)
+	public void invalidTemplate() throws NotificationException, MessagingException, IOException {
+		notificationService.send(new Email("Multi", new TemplateContent("classpath:/template/thymeleaf/source/invalid.html", new SimpleBean("bar", 12)), "recipient@sii.fr"));
+	}
+
 	@Test
-	public void attachment() {
-//		notificationService.send(new Email("aurelien.baudet@gmail.com", "recipient@sii.fr", "Test", "body", new FileAttachment(new File("toto.pdf"))));
-//		notificationService.send(new Email("aurelien.baudet@gmail.com", "recipient@sii.fr", "Test", "body", new FileAttachment("classpath:/toto.pdf")));
-//		notificationService.send(new Email("aurelien.baudet@gmail.com", "recipient@sii.fr", "Test", "body", new FileAttachment("toto.pdf", getClass().getResourceAsStream(""))));
+	public void attachmentLookup() throws NotificationException, MessagingException, IOException {
+		notificationService.send(new Email("Test", "body", "recipient@sii.fr", new Attachment("classpath:/attachment/04-Java-OOP-Basics.pdf")));
+		AssertEmail.assertEquals(new ExpectedEmail("Test", "body", "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		AssertAttachment.assertEquals(new ExpectedAttachment("/attachment/04-Java-OOP-Basics.pdf", "application/pdf.*"), greenMail.getReceivedMessages());
+	}
+
+	@Test
+	public void attachmentFile() throws NotificationException, IOException, MessagingException {
+		notificationService.send(new Email("Test", "body", "recipient@sii.fr", new Attachment(new File(getClass().getResource("/attachment/04-Java-OOP-Basics.pdf").getFile()))));
+		AssertEmail.assertEquals(new ExpectedEmail("Test", "body", "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		AssertAttachment.assertEquals(new ExpectedAttachment("/attachment/04-Java-OOP-Basics.pdf", "application/pdf.*"), greenMail.getReceivedMessages());
+	}
+
+	@Test
+	public void attachmentStream() throws NotificationException, IOException, MessagingException {
+		notificationService.send(new Email("Test", "body", "recipient@sii.fr", new Attachment("toto.pdf", getClass().getResourceAsStream("/attachment/04-Java-OOP-Basics.pdf"))));
+		AssertEmail.assertEquals(new ExpectedEmail("Test", "body", "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		AssertAttachment.assertEquals(new ExpectedAttachment("toto.pdf", "application/pdf.*", IOUtils.toByteArray(getClass().getResourceAsStream("/attachment/04-Java-OOP-Basics.pdf"))), greenMail.getReceivedMessages());
 	}
 }

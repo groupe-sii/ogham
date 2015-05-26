@@ -63,7 +63,7 @@ public class FirstSupportingTemplateResolver implements TemplateResolver {
 				LOG.trace("{} can't handle lookup {}", resolver, lookup);
 			}
 		}
-		throw new NoTemplateResolverException("No template resolver available to find template", lookup);
+		throw new NoTemplateResolverException("No template resolver available to find template "+lookup, lookup);
 	}
 
 	/**

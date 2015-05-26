@@ -2,6 +2,7 @@ package fr.sii.notification.core.template.resolver;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,8 @@ public class FileTemplateResolver implements TemplateResolver {
 			return template;
 		} catch (FileNotFoundException e) {
 			throw new TemplateResolutionException("Template " + templatePath + " not found on file system", templatePath, e);
+		} catch (IOException e) {
+			throw new TemplateResolutionException("Template " + templatePath + " is not readable", templatePath, e);
 		}
 	}
 

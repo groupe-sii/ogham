@@ -3,6 +3,7 @@ package fr.sii.notification.email.sender.impl.javamail;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.Multipart;
 import javax.mail.internet.MimePart;
 
 import fr.sii.notification.core.message.content.Content;
@@ -40,12 +41,12 @@ public class MapContentHandler implements JavaMailContentHandler {
 	}
 
 	@Override
-	public void setContent(MimePart message, Content content) throws ContentHandlerException {
+	public void setContent(MimePart message, Multipart multipart, Content content) throws ContentHandlerException {
 		JavaMailContentHandler contentHandler = map.get(content.getClass());
 		if (contentHandler == null) {
 			throw new NoContentHandlerException("there is no content handler defined for managing " + content.getClass().getSimpleName() + " content class", content);
 		}
-		contentHandler.setContent(message, content);
+		contentHandler.setContent(message, multipart, content);
 	}
 
 	/**

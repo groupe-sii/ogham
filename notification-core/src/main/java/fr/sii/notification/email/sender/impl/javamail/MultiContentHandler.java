@@ -1,9 +1,6 @@
 package fr.sii.notification.email.sender.impl.javamail;
 
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 
 import fr.sii.notification.core.message.content.Content;
@@ -30,18 +27,10 @@ public class MultiContentHandler implements JavaMailContentHandler {
 	}
 
 	@Override
-	public void setContent(MimePart message, Content content) throws ContentHandlerException {
-		try {
-			MultiContent fallbackContent = (MultiContent) content;
-			Multipart mp = new MimeMultipart();
-			for (Content c : fallbackContent.getContents()) {
-				MimeBodyPart part = new MimeBodyPart();
-				delegate.setContent(part, c);
-				mp.addBodyPart(part);
-			}
-			message.setContent(mp);
-		} catch (MessagingException e) {
-			throw new ContentHandlerException("Failed to create multi content", content, e);
+	public void setContent(MimePart message, Multipart multipart, Content content) throws ContentHandlerException {
+		MultiContent multiContent = (MultiContent) content;
+		for (Content c : multiContent.getContents()) {
+			delegate.setContent(message, multipart, c);
 		}
 	}
 

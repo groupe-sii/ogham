@@ -8,6 +8,7 @@ import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Part;
 
 import org.junit.Assert;
 
@@ -274,8 +275,8 @@ public class AssertEmail {
 	 */
 	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail, boolean strict) throws MessagingException {
 		assertHeaders(expectedEmail, actualEmail);
-		assertBody(expectedEmail.getExpectedContent().getBody(), GreenMailUtil.getBody(actualEmail), strict);
-		assertMimetype(expectedEmail.getExpectedContent(), actualEmail);
+		assertBody(expectedEmail.getExpectedContent().getBody(), getBody(actualEmail), strict);
+		assertMimetype(expectedEmail.getExpectedContent(), getBodyMimetype(actualEmail));
 	}
 
 	/**
@@ -290,7 +291,7 @@ public class AssertEmail {
 	 * @throws MessagingException
 	 *             when accessing the received email fails
 	 */
-	private static void assertMimetype(ExpectedContent expectedContent, Message actualEmail) throws MessagingException {
+	public static void assertMimetype(ExpectedContent expectedContent, Message actualEmail) throws MessagingException {
 		assertMimetype(expectedContent, actualEmail.getContentType());
 	}
 
@@ -403,5 +404,30 @@ public class AssertEmail {
 	 */
 	private static String sanitize(String str) {
 		return str.replaceAll("\r|\n", "");
+	}
+
+	private static Part getBodyPart(Part actualEmail) throws MessagingException {
+		try {
+			Object content = actualEmail.getContent();
+			if(content instanceof Multipart) {
+				return ((Multipart) content).getBodyPart(0);
+			} else {
+				return actualEmail;
+			}
+		} catch (IOException e) {
+			throw new MessagingException("Failed to access content of the mail", e);
+		}
+	}
+
+	private static String getBody(Part actualEmail) throws MessagingException {
+		try {
+			return getBodyPart(actualEmail).getContent().toString();
+		} catch (IOException e) {
+			throw new MessagingException("Failed to access content of the mail", e);
+		}
+	}
+
+	private static String getBodyMimetype(Part actualEmail) throws MessagingException {
+		return getBodyPart(actualEmail).getContentType();
 	}
 }

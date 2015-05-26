@@ -22,4 +22,8 @@ public class ClasspathHelper {
 			return false;
 		}
 	}
+	
+	private ClasspathHelper() {
+		super();
+	}
 }

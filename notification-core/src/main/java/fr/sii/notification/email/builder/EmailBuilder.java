@@ -19,6 +19,8 @@ import fr.sii.notification.core.sender.NotificationSender;
 import fr.sii.notification.core.translator.ContentTranslator;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.email.EmailConstants;
+import fr.sii.notification.email.attachment.translator.AttachmentSourceTranslator;
+import fr.sii.notification.email.sender.AttachmentSourceTranslatorSender;
 import fr.sii.notification.email.sender.EmailSender;
 
 /**
@@ -85,6 +87,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * <li>Enables automatic filling of message based on configuration
 	 * properties</li>
 	 * <li>Enables templating support</li>
+	 * <li>Enables attachment features (see {@link #withAttachmentFeatures()})</li>
 	 * </ul>
 	 * <p>
 	 * Configuration values come from system properties.
@@ -104,6 +107,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * <li>Enables automatic filling of message based on configuration
 	 * properties</li>
 	 * <li>Enables templating support</li>
+	 * <li>Enables attachment features (see {@link #withAttachmentFeatures()})</li>
 	 * </ul>
 	 * <p>
 	 * Configuration values come from provided properties.
@@ -118,6 +122,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 		registerDefaultImplementations();
 		withConfigurationFiller(properties);
 		withTemplate();
+		withAttachmentFeatures();
 		return this;
 	}
 
@@ -248,6 +253,57 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 */
 	public EmailBuilder withTemplate(ContentTranslatorBuilder builder) {
 		return withTemplate(builder.build());
+	}
+
+	/**
+	 * Enable attachment features like attachment resolution based on lookup
+	 * mapping. It delegates to {@link AttachmentSourceTranslatorBuilder} with
+	 * the default behavior and values (see
+	 * {@link AttachmentSourceTranslatorBuilder#useDefaults()}).
+	 * 
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withAttachmentFeatures() {
+		return withAttachmentFeatures(new AttachmentSourceTranslatorBuilder().useDefaults());
+	}
+
+	/**
+	 * Enable attachment features like attachment resolution based on lookup
+	 * mapping.
+	 * 
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param builder
+	 *            the builder to use instead of the default one
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withAttachmentFeatures(AttachmentSourceTranslatorBuilder builder) {
+		return withAttachmentFeatures(builder.build());
+	}
+
+	/**
+	 * Enable attachment features using the provided translator.
+	 * 
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param translator
+	 *            the translator to use instead of the default one
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withAttachmentFeatures(AttachmentSourceTranslator translator) {
+		sender = new AttachmentSourceTranslatorSender(translator, sender);
+		return this;
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package fr.sii.notification.email.sender.impl.javamail;
 
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimePart;
 
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
@@ -28,10 +30,12 @@ public class StringContentHandler implements JavaMailContentHandler {
 	}
 
 	@Override
-	public void setContent(MimePart message, Content content) throws ContentHandlerException {
+	public void setContent(MimePart message, Multipart multipart, Content content) throws ContentHandlerException {
 		try {
+			MimeBodyPart part = new MimeBodyPart();
 			String strContent = ((StringContent) content).getContent();
-			message.setContent(strContent, mimetypeProvider.detect(strContent).toString());
+			part.setContent(strContent, mimetypeProvider.detect(strContent).toString());
+			multipart.addBodyPart(part);
 		} catch (MessagingException e) {
 			throw new ContentHandlerException("failed to set content on mime message", content, e);
 		} catch (MimeTypeDetectionException e) {

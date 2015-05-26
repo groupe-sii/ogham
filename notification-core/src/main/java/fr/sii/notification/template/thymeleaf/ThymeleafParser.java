@@ -3,6 +3,7 @@ package fr.sii.notification.template.thymeleaf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.exceptions.TemplateEngineException;
 
 import fr.sii.notification.core.exception.template.ContextException;
 import fr.sii.notification.core.exception.template.ParseException;
@@ -56,8 +57,10 @@ public class ThymeleafParser implements TemplateParser {
 			LOG.debug("Template {} successfully parsed with context {}. Result:", templateName);
 			LOG.debug(result);
 			return new StringContent(result);
+		} catch (TemplateEngineException e) {
+			throw new ParseException("Failed to parse template with thymeleaf", templateName, ctx, e);
 		} catch (ContextException e) {
-			throw new ParseException("failed to parse template with thymeleaf", templateName, ctx);
+			throw new ParseException("Failed to parse template with thymeleaf due to conversion error", templateName, ctx, e);
 		}
 	}
 

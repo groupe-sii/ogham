@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import fr.sii.notification.core.message.Message;
-import fr.sii.notification.core.message.attachment.Attachment;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
+import fr.sii.notification.core.util.ArrayUtils;
+import fr.sii.notification.core.util.StringUtils;
+import fr.sii.notification.email.attachment.Attachment;
 import fr.sii.notification.email.builder.EmailBuilder;
 
 /**
@@ -73,7 +73,7 @@ public class Email implements Message {
 	 * {@link #setFrom(String)} methods.
 	 * </p>
 	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
+	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
 	 * {@link #addAttachment(Attachment)}.
 	 * </p>
@@ -88,7 +88,7 @@ public class Email implements Message {
 	public Email(String subject, String content, String... to) {
 		this(subject, new StringContent(content), toRecipient(to));
 	}
-
+	
 	/**
 	 * Initialize the email with the following information:
 	 * <ul>
@@ -96,7 +96,7 @@ public class Email implements Message {
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
 	 * information</li>
 	 * <li>The sender address</li>
-	 * <li>None, one or several recipients</li>
+	 * <li>Array of recipients</li>
 	 * </ul>
 	 * 
 	 * <p>
@@ -107,7 +107,7 @@ public class Email implements Message {
 	 * {@link #setFrom(String)} methods.
 	 * </p>
 	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
+	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
 	 * {@link #addAttachment(Attachment)}.
 	 * </p>
@@ -117,9 +117,46 @@ public class Email implements Message {
 	 * @param content
 	 *            the body of the mail
 	 * @param recipients
+	 *            the array of recipients of the mail
+	 */
+	public Email(String subject, Content content, Recipient[] recipients) {
+		this(subject, content, new ArrayList<>(Arrays.asList(recipients)));
+	}
+
+	/**
+	 * Initialize the email with the following information:
+	 * <ul>
+	 * <li>The subject of the mail</li>
+	 * <li>The body of the mail (see {@link Content} and sub classes for more
+	 * information</li>
+	 * <li>The sender address</li>
+	 * <li>One or several recipients</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * No sender address is specified. This information can be automatically
+	 * added according to the behaviors you have selected see
+	 * {@link EmailBuilder} for more information). Alternatively, you can
+	 * manually add it using {@link #setFrom(EmailAddress)} or
+	 * {@link #setFrom(String)} methods.
+	 * </p>
+	 * <p>
+	 * No attachment is added to the email. You can add attachments later by
+	 * calling {@link #setAttachments(List)} or
+	 * {@link #addAttachment(Attachment)}.
+	 * </p>
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 * @param content
+	 *            the body of the mail
+	 * @param recipient
+	 *            the first recipient of the mail (force to have at least one
+	 *            recipient)
+	 * @param recipients
 	 *            the list of recipients of the mail
 	 */
-	public Email(String subject, Content content, Recipient... recipients) {
+	public Email(String subject, Content content, Recipient recipient, Recipient... recipients) {
 		this(subject, content, new ArrayList<>(Arrays.asList(recipients)));
 	}
 
@@ -142,7 +179,7 @@ public class Email implements Message {
 	 * {@link #setFrom(String)} methods.
 	 * </p>
 	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
+	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
 	 * {@link #addAttachment(Attachment)}.
 	 * </p>
@@ -165,19 +202,12 @@ public class Email implements Message {
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
 	 * information</li>
 	 * <li>The sender address</li>
-	 * <li>None, one or several "to" recipient addresses, it will create a list
-	 * of {@link Recipient} with {@link RecipientType#TO} for you</li>
+	 * <li>None, one or several "to" recipient addresses, it will create a list of
+	 * {@link Recipient} with {@link RecipientType#TO} for you</li>
 	 * </ul>
 	 * 
 	 * <p>
-	 * No sender address is specified. This information can be automatically
-	 * added according to the behaviors you have selected see
-	 * {@link EmailBuilder} for more information). Alternatively, you can
-	 * manually add it using {@link #setFrom(EmailAddress)} or
-	 * {@link #setFrom(String)} methods.
-	 * </p>
-	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
+	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
 	 * {@link #addAttachment(Attachment)}.
 	 * </p>
@@ -186,11 +216,13 @@ public class Email implements Message {
 	 *            the subject of the mail
 	 * @param content
 	 *            the body of the mail
+	 * @param from
+	 *            the sender address
 	 * @param to
 	 *            the list of "to" recipients of the mail
 	 */
-	public Email(String subject, Content content, EmailAddress... to) {
-		this(subject, content, new ArrayList<>(Arrays.asList(toRecipient(to))));
+	public Email(String subject, Content content, EmailAddress from, EmailAddress... to) {
+		this(subject, content, from, new ArrayList<>(Arrays.asList(toRecipient(to))));
 	}
 
 	/**
@@ -212,7 +244,7 @@ public class Email implements Message {
 	 * {@link #setFrom(String)} methods.
 	 * </p>
 	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
+	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
 	 * {@link #addAttachment(Attachment)}.
 	 * </p>
@@ -242,7 +274,7 @@ public class Email implements Message {
 	 * </ul>
 	 * 
 	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
+	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
 	 * {@link #addAttachment(Attachment)}.
 	 * </p>
@@ -267,11 +299,11 @@ public class Email implements Message {
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
 	 * information</li>
 	 * <li>The sender address</li>
-	 * <li>None, one or several recipients</li>
+	 * <li>Array of recipients</li>
 	 * </ul>
 	 * 
 	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
+	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
 	 * {@link #addAttachment(Attachment)}.
 	 * </p>
@@ -283,10 +315,41 @@ public class Email implements Message {
 	 * @param from
 	 *            the sender address
 	 * @param recipients
+	 *            the array of recipients of the mail
+	 */
+	public Email(String subject, Content content, EmailAddress from, Recipient[] recipients) {
+		this(subject, content, from, new ArrayList<>(Arrays.asList(recipients)));
+	}
+
+	/**
+	 * Initialize the email with the following information:
+	 * <ul>
+	 * <li>The subject of the mail</li>
+	 * <li>The body of the mail (see {@link Content} and sub classes for more
+	 * information</li>
+	 * <li>The sender address</li>
+	 * <li>One or several recipients</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * No attachment is added to the email. You can add attachments later by
+	 * calling {@link #setAttachments(List)} or
+	 * {@link #addAttachment(Attachment)}.
+	 * </p>
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 * @param content
+	 *            the body of the mail
+	 * @param from
+	 *            the sender address
+	 * @param recipient
+	 *            the first recipient (force to have at least one recipient)
+	 * @param recipients
 	 *            the list of recipients of the mail
 	 */
-	public Email(String subject, Content content, EmailAddress from, Recipient... recipients) {
-		this(subject, content, from, new ArrayList<>(Arrays.asList(recipients)));
+	public Email(String subject, Content content, EmailAddress from, Recipient recipient, Recipient... recipients) {
+		this(subject, content, from, new ArrayList<>(Arrays.asList(ArrayUtils.concat(recipient, recipients))));
 	}
 
 	/**
@@ -300,7 +363,7 @@ public class Email implements Message {
 	 * </ul>
 	 * 
 	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
+	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
 	 * {@link #addAttachment(Attachment)}.
 	 * </p>
@@ -322,42 +385,12 @@ public class Email implements Message {
 	 * Initialize the email with the following information:
 	 * <ul>
 	 * <li>The subject of the mail</li>
-	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
-	 * <li>The sender address</li>
-	 * <li>None, one or several "to" recipient addresses, it will create a list
-	 * of {@link Recipient} with {@link RecipientType#TO} for you</li>
-	 * </ul>
-	 * 
-	 * <p>
-	 * No attachment are added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
-	 * </p>
-	 * 
-	 * @param subject
-	 *            the subject of the mail
-	 * @param content
-	 *            the body of the mail
-	 * @param from
-	 *            the sender address
-	 * @param to
-	 *            the list of "to" recipients of the mail
-	 */
-	public Email(String subject, Content content, EmailAddress from, EmailAddress... to) {
-		this(subject, content, from, new ArrayList<>(Arrays.asList(toRecipient(to))));
-	}
-
-	/**
-	 * Initialize the email with the following information:
-	 * <ul>
-	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail as string, it will create a
 	 * {@link StringContent} for you</li>
 	 * <li>The single address used in to field (typical address syntax is of the
 	 * form "user@host.domain" or "Personal Name &lt;user@host.domain&gt;"), it
 	 * will create a {@link Recipient} with {@link RecipientType#TO} for you</li>
-	 * <li>None, one or several attachments to join to the mail</li>
+	 * <li>One or several attachments to join to the mail</li>
 	 * </ul>
 	 * 
 	 * <p>
@@ -374,11 +407,14 @@ public class Email implements Message {
 	 *            the body of the mail
 	 * @param to
 	 *            the address of the single "to" recipient of the mail
+	 * @param attachment
+	 *            one required attachment (force to have at least one
+	 *            attachment)
 	 * @param attachments
-	 *            the list of attachments
+	 *            the list of other attachments
 	 */
-	public Email(String subject, String content, String to, Attachment... attachments) {
-		this(subject, new StringContent(content), new Recipient(to), attachments);
+	public Email(String subject, String content, String to, Attachment attachment, Attachment... attachments) {
+		this(subject, new StringContent(content), new Recipient(to), ArrayUtils.concat(attachment, attachments));
 	}
 
 	/**
@@ -422,7 +458,7 @@ public class Email implements Message {
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
 	 * information</li>
 	 * <li>A single recipient with its type (to, cc, bcc)</li>
-	 * <li>None, one or several attachments to join to the mail</li>
+	 * <li>Array of attachments to join to the mail</li>
 	 * </ul>
 	 * 
 	 * <p>
@@ -440,10 +476,43 @@ public class Email implements Message {
 	 * @param recipient
 	 *            the recipient of the mail
 	 * @param attachments
+	 *            the array of attachments
+	 */
+	public Email(String subject, Content content, Recipient recipient, Attachment[] attachments) {
+		this(subject, content, recipient, new ArrayList<>(Arrays.asList(attachments)));
+	}
+
+	/**
+	 * Initialize the email with the following information:
+	 * <ul>
+	 * <li>The subject of the mail</li>
+	 * <li>The body of the mail (see {@link Content} and sub classes for more
+	 * information</li>
+	 * <li>A single recipient with its type (to, cc, bcc)</li>
+	 * <li>One or several attachments to join to the mail</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * No sender address is specified. This information can be automatically
+	 * added according to the behaviors you have selected see
+	 * {@link EmailBuilder} for more information). Alternatively, you can
+	 * manually add it using {@link #setFrom(EmailAddress)} or
+	 * {@link #setFrom(String)} methods.
+	 * </p>
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 * @param content
+	 *            the body of the mail
+	 * @param recipient
+	 *            the recipient of the mail
+	 * @param attachment
+	 *            the first attachment (force to have at least one attachment)
+	 * @param attachments
 	 *            the list of attachments
 	 */
-	public Email(String subject, Content content, Recipient recipient, Attachment... attachments) {
-		this(subject, content, recipient, new ArrayList<>(Arrays.asList(attachments)));
+	public Email(String subject, Content content, Recipient recipient, Attachment attachment, Attachment... attachments) {
+		this(subject, content, recipient, new ArrayList<>(Arrays.asList(ArrayUtils.concat(attachment, attachments))));
 	}
 
 	/**
@@ -639,8 +708,8 @@ public class Email implements Message {
 	 *            the recipient address
 	 * @return this instance for fluent use
 	 */
-	public Email addTo(EmailAddress recipient) {
-		addRecipient(recipient, RecipientType.TO);
+	public Email addTo(EmailAddress to) {
+		addRecipient(to, RecipientType.TO);
 		return this;
 	}
 

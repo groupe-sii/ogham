@@ -22,4 +22,8 @@ public class BuilderUtil {
 	public static Properties getDefaultProperties() {
 		return System.getProperties();
 	}
+	
+	private BuilderUtil() {
+		super();
+	}
 }

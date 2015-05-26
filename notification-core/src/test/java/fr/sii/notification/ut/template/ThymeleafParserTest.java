@@ -65,4 +65,9 @@ public class ThymeleafParserTest {
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertEquals("/template/thymeleaf/expected/layout_foo_42.html", content);
 	}
+	
+	@Test(expected=ParseException.class)
+	public void invalid() throws ParseException, IOException {
+		parser.parse("classpath:invalid.html", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
+	}
 }

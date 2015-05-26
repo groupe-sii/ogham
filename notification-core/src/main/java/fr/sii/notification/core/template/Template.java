@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Interface that defines the behavior of a template. THe most basic feature is
+ * Interface that defines the behavior of a template. The most basic feature is
  * to provide access to the template content. The template content can be
  * anything to read that's why it provides an {@link InputStream}.
  * 
@@ -13,7 +13,9 @@ import java.io.InputStream;
 public interface Template {
 	/**
 	 * Stream that contains the template content. The input stream MUST be
-	 * readable several times. You MUST close the input stream after using it.
+	 * readable several times so every time this method is called, a new
+	 * {@link InputStream} is created. You MUST close the input stream after
+	 * using it.
 	 * 
 	 * @return an input stream that points to the template content
 	 * @throws IOException
