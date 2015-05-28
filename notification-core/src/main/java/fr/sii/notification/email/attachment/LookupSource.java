@@ -85,11 +85,11 @@ public class LookupSource implements Source {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(name).append(path).hashCode();
+		return new HashCodeBuilder().append(name).append(path).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("name", "path").equals();
+		return new EqualsBuilder(this, obj).appendFields("name", "path").isEqual();
 	}
 }

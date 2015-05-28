@@ -86,11 +86,11 @@ public class BeanContext implements Context {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(bean).hashCode();
+		return new HashCodeBuilder().append(bean).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("bean").equals();
+		return new EqualsBuilder(this, obj).appendFields("bean").isEqual();
 	}
 }

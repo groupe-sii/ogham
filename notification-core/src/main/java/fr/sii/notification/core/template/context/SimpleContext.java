@@ -63,11 +63,11 @@ public class SimpleContext implements Context {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(variables).hashCode();
+		return new HashCodeBuilder().append(variables).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("variables").equals();
+		return new EqualsBuilder(this, obj).appendFields("variables").isEqual();
 	}
 }

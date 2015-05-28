@@ -54,11 +54,11 @@ public class ByteSource implements Source {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(name).append(bytes).hashCode();
+		return new HashCodeBuilder().append(name).append(bytes).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("name", "bytes").equals();
+		return new EqualsBuilder(this, obj).appendFields("name", "bytes").isEqual();
 	}
 }

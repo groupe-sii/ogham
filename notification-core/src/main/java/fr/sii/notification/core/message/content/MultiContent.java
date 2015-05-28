@@ -67,11 +67,11 @@ public class MultiContent implements Content {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(contents).hashCode();
+		return new HashCodeBuilder().append(contents).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("contents").equals();
+		return new EqualsBuilder(this, obj).appendFields("contents").isEqual();
 	}
 }

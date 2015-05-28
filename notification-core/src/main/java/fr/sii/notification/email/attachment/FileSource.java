@@ -72,11 +72,11 @@ public class FileSource implements Source {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(name).append(file).hashCode();
+		return new HashCodeBuilder().append(name).append(file).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("name", "file").equals();
+		return new EqualsBuilder(this, obj).appendFields("name", "file").isEqual();
 	}
 }

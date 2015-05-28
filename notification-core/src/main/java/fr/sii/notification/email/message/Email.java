@@ -1033,12 +1033,12 @@ public class Email implements Message {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(subject).append(content).append(from).append(recipients).append(attachments).hashCode();
+		return new HashCodeBuilder().append(subject).append(content).append(from).append(recipients).append(attachments).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("subject", "content", "from", "recipients", "attachments").equals();
+		return new EqualsBuilder(this, obj).appendFields("subject", "content", "from", "recipients", "attachments").isEqual();
 	}
 	
 	

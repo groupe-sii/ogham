@@ -79,11 +79,11 @@ public class Recipient {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(address).append(type).hashCode();
+		return new HashCodeBuilder().append(address).append(type).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("address", "type").equals();
+		return new EqualsBuilder(this, obj).appendFields("address", "type").isEqual();
 	}
 }

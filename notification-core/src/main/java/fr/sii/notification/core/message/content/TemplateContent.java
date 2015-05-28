@@ -67,11 +67,11 @@ public class TemplateContent implements Content {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(path).append(context).hashCode();
+		return new HashCodeBuilder().append(path).append(context).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("path", "context").equals();
+		return new EqualsBuilder(this, obj).appendFields("path", "context").isEqual();
 	}
 }

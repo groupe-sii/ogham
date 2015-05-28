@@ -49,12 +49,12 @@ public class StringContent implements Content {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(content).hashCode();
+		return new HashCodeBuilder().append(content).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("content").equals(obj);
+		return new EqualsBuilder(this, obj).appendFields("content").isEqual();
 	}
 
 	

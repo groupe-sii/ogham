@@ -390,11 +390,11 @@ public class Attachment {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(source).append(description).append(disposition).hashCode();
+		return new HashCodeBuilder().append(source).append(description).append(disposition).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("source", "description", "disposition").equals();
+		return new EqualsBuilder(this, obj).appendFields("source", "description", "disposition").isEqual();
 	}
 }

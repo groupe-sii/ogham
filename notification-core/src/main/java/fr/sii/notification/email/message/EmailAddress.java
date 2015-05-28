@@ -68,11 +68,11 @@ public class EmailAddress {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().appendSuper(super.hashCode()).append(address).append(personal).hashCode();
+		return new HashCodeBuilder().append(address).append(personal).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("address", "personal").equals();
+		return new EqualsBuilder(this, obj).appendFields("address", "personal").isEqual();
 	}
 }
