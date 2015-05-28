@@ -36,7 +36,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	/**
 	 * The map of possible implementations indexed by the associated condition
 	 */
-	protected Map<Condition<Message>, NotificationSender> implementations;
+	private Map<Condition<Message>, NotificationSender> implementations;
 
 	/**
 	 * The selected sender implementation
@@ -69,7 +69,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	 * 
 	 * @param implementations
 	 *            the map of possible implementations indexed by the condition
-	 *            that indicates if the implentation is elligible at runtime
+	 *            that indicates if the implementation is eligible at runtime
 	 */
 	public MultiImplementationSender(Map<Condition<Message>, NotificationSender> implementations) {
 		super();
@@ -129,4 +129,11 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 		sender.send(message);
 	}
 
+	public Map<Condition<Message>, NotificationSender> getImplementations() {
+		return implementations;
+	}
+
+	public NotificationSender getSender() {
+		return sender;
+	}
 }

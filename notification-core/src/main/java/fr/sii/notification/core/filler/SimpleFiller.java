@@ -27,7 +27,7 @@ public class SimpleFiller implements MessageFiller {
 	 * The map that contains the values to set. The map is indexed by the name
 	 * of the property of the message to set.
 	 */
-	protected Map<String, Object> values;
+	private Map<String, Object> values;
 
 	/**
 	 * Initialize the filler with a single property with the value to set.
@@ -68,5 +68,9 @@ public class SimpleFiller implements MessageFiller {
 		StringBuilder builder = new StringBuilder();
 		builder.append("SimpleFiller ").append(values);
 		return builder.toString();
+	}
+
+	public Map<String, Object> getValues() {
+		return values;
 	}
 }

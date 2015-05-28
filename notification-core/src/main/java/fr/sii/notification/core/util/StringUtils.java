@@ -18,7 +18,7 @@ package fr.sii.notification.core.util;
  * @author Aurélien Baudet
  *
  */
-public class StringUtils {
+public final class StringUtils {
 
 	/**
 	 * <p>

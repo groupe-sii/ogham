@@ -72,11 +72,11 @@ public class LookupSource implements Source {
 
 	private static String extractName(String path) {
 		String name;
-		int lastSlashIdx = path.lastIndexOf("/");
+		int lastSlashIdx = path.lastIndexOf('/');
 		if (lastSlashIdx >= 0) {
 			name = path.substring(lastSlashIdx + 1);
 		} else {
-			int colonIdx = path.indexOf(":");
+			int colonIdx = path.indexOf(':');
 			name = colonIdx > 0 ? path.substring(colonIdx + 1) : path;
 		}
 		return name;

@@ -25,8 +25,7 @@ public class FileResolverAdapter implements ThymeleafResolverAdapter {
 	@Override
 	public ITemplateResolver adapt(TemplateResolver resolver) {
 		// TODO: manage all other options
-		FileTemplateResolver thymeleafResolver = new FileTemplateResolver();
-		return thymeleafResolver;
+		return new FileTemplateResolver();
 	}
 
 }

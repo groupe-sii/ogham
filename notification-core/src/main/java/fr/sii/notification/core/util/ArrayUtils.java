@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * Utility class for manipulating arrays.
  */
-public class ArrayUtils {
+public final class ArrayUtils {
 	/**
 	 * Create an array starting with first element and followed by others.
 	 * <p>

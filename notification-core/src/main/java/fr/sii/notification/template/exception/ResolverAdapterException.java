@@ -14,14 +14,17 @@ public class ResolverAdapterException extends NotificationException {
 	
 	public ResolverAdapterException(String message, TemplateResolver resolver, Throwable cause) {
 		super(message, cause);
+		this.resolver = resolver;
 	}
 
 	public ResolverAdapterException(String message, TemplateResolver resolver) {
 		super(message);
+		this.resolver = resolver;
 	}
 
 	public ResolverAdapterException(TemplateResolver resolver, Throwable cause) {
 		super(cause);
+		this.resolver = resolver;
 	}
 
 	public TemplateResolver getResolver() {

@@ -2,7 +2,6 @@ package fr.sii.notification.template.thymeleaf;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
@@ -33,8 +32,7 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 	@Override
 	public boolean canParse(String templateName, Context ctx, Template template) throws EngineDetectionException {
 		LOG.debug("Checking if Thymeleaf can handle the template {}", templateName);
-		try (InputStream stream = template.getInputStream()) {
-			BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(template.getInputStream()))) {
 			String line;
 			boolean containsThymeleafNamespace;
 			do {

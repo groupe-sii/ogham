@@ -17,7 +17,7 @@ public abstract class CompositeTemplateDetector implements TemplateEngineDetecto
 	/**
 	 * The list of real detectors
 	 */
-	protected List<TemplateEngineDetector> detectors;
+	private List<TemplateEngineDetector> detectors;
 
 	/**
 	 * Initialize the composite detector with none, one or several detector
@@ -54,4 +54,7 @@ public abstract class CompositeTemplateDetector implements TemplateEngineDetecto
 		detectors.add(detector);
 	}
 
+	public List<TemplateEngineDetector> getDetectors() {
+		return detectors;
+	}
 }

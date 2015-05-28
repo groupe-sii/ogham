@@ -55,7 +55,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	public SmsBuilder registerDefaultImplementations(Properties properties) {
 		try {
 			registerImplementation(new RequiredPropertyCondition<Message>("notification.sms.ovh.app.key", properties), new OvhSmsSender());
-		} catch(Throwable e) {
+		} catch(Exception e) {
 			// nothing to do
 		}
 		return this;

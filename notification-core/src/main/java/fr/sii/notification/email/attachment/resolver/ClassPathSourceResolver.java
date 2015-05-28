@@ -42,7 +42,7 @@ public class ClassPathSourceResolver implements SourceResolver {
 	
 	private static String extractName(String path) {
 		String name;
-		int lastSlashIdx = path.lastIndexOf("/");
+		int lastSlashIdx = path.lastIndexOf('/');
 		if(lastSlashIdx>=0) {
 			name = path.substring(lastSlashIdx+1);
 		} else {

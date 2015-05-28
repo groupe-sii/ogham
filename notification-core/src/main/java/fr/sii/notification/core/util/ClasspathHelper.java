@@ -6,7 +6,7 @@ package fr.sii.notification.core.util;
  * @author Aurélien Baudet
  *
  */
-public class ClasspathHelper {
+public final class ClasspathHelper {
 	/**
 	 * Test if the class name is defined in the classpath.
 	 * 

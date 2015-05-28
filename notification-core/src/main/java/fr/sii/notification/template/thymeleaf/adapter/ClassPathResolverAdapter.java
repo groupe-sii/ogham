@@ -24,8 +24,7 @@ public class ClassPathResolverAdapter implements ThymeleafResolverAdapter {
 	@Override
 	public ITemplateResolver adapt(TemplateResolver resolver) {
 		// TODO: manage all other options
-		FixClassLoaderTemplateResolver thymeleafResolver = new FixClassLoaderTemplateResolver();
-		return thymeleafResolver;
+		return new FixClassLoaderTemplateResolver();
 	}
 
 }

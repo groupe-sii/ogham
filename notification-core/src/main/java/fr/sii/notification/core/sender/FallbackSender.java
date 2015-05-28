@@ -57,7 +57,7 @@ public class FallbackSender implements NotificationSender {
 				sender.send(message);
 				LOG.debug("Message {} sent using sender {}", message, sender);
 				return;
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				LOG.debug("Message {} couldn't be sent using sender {}. Cause: {}", message, sender, e);
 			}
 		}

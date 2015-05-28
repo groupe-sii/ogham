@@ -19,7 +19,7 @@ public class MultiContentHandler implements JavaMailContentHandler {
 	/**
 	 * The content handler used for each sub content
 	 */
-	JavaMailContentHandler delegate;
+	private JavaMailContentHandler delegate;
 
 	public MultiContentHandler(JavaMailContentHandler delegate) {
 		super();

@@ -21,7 +21,7 @@ import java.io.InputStream;
  * @author Aurélien Baudet
  *
  */
-public class IOUtils {
+public final class IOUtils {
 	/**
 	 * Get the contents of an InputStream as a byte[].
 	 * 

@@ -34,7 +34,7 @@ import fr.sii.notification.email.message.EmailAddress;
  * @author Aurélien Baudet
  *
  */
-public class BeanUtils {
+public final class BeanUtils {
 
 	static {
 		// Add converter for being able to convert string address into

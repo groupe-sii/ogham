@@ -23,6 +23,7 @@ public class SourceResolutionException extends NotificationException {
 
 	public SourceResolutionException(String path, Throwable cause) {
 		super(cause);
+		this.path = path;
 	}
 
 	public String getPath() {

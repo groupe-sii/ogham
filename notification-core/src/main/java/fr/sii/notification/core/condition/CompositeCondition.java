@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class CompositeCondition<T> implements Condition<T> {
-	protected List<Condition<T>> conditions;
+	private List<Condition<T>> conditions;
 
 	public CompositeCondition(List<Condition<T>> conditions) {
 		super();

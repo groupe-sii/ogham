@@ -74,7 +74,7 @@ public class ThymeleafLookupMappingResolver implements ITemplateResolver {
 	 * @return the name of the template without lookup
 	 */
 	public String getTemplateName(String templateName) {
-		int idx = templateName.indexOf(":");
+		int idx = templateName.indexOf(':');
 		return idx > 0 ? templateName.substring(idx + 1) : templateName;
 	}
 
@@ -101,7 +101,7 @@ public class ThymeleafLookupMappingResolver implements ITemplateResolver {
 	}
 
 	private String getLookupType(String templateName) {
-		int idx = templateName.indexOf(":");
+		int idx = templateName.indexOf(':');
 		return idx > 0 ? templateName.substring(0, idx) : "";
 	}
 
