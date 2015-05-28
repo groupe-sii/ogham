@@ -6,8 +6,10 @@ import javax.mail.Authenticator;
 
 import fr.sii.notification.core.builder.ContentTranslatorBuilder;
 import fr.sii.notification.core.builder.NotificationSenderBuilder;
+import fr.sii.notification.core.condition.AndCondition;
 import fr.sii.notification.core.condition.Condition;
 import fr.sii.notification.core.condition.RequiredClassCondition;
+import fr.sii.notification.core.condition.RequiredPropertyCondition;
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.filler.PropertiesFiller;
 import fr.sii.notification.core.message.Message;
@@ -119,7 +121,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 */
 	public EmailBuilder useDefaults(Properties properties) {
 		setJavaMailBuilder(new JavaMailBuilder().useDefaults(properties));
-		registerDefaultImplementations();
+		registerDefaultImplementations(properties);
 		withConfigurationFiller(properties);
 		withTemplate();
 		withAttachmentFeatures();
@@ -151,6 +153,9 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * <li>Java mail API implementation</li>
 	 * </ul>
 	 * <p>
+	 * Configuration values come from system properties.
+	 * </p>
+	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
 	 * {@link #useDefaults(Properties)}
 	 * </p>
@@ -158,7 +163,27 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder registerDefaultImplementations() {
-		registerImplementation(new RequiredClassCondition<Message>("javax.mail.Transport"), javaMailBuilder.build());
+		return registerDefaultImplementations(BuilderUtil.getDefaultProperties());
+	}
+
+	/**
+	 * Register all default implementations:
+	 * <ul>
+	 * <li>Java mail API implementation</li>
+	 * </ul>
+	 * <p>
+	 * Configuration values come from provided properties.
+	 * </p>
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder registerDefaultImplementations(Properties properties) {
+		// Java Mail API can be used only if the property "mail.smtp.host" is provided and also if the class "javax.mail.Transport" is defined in the classpath
+		registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>("mail.smtp.host", properties), new RequiredClassCondition<Message>("javax.mail.Transport")), javaMailBuilder.build());
 		return this;
 	}
 
