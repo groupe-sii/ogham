@@ -33,7 +33,7 @@ public class EmailSender extends MultiImplementationSender<Email> implements Con
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("EmailSender ").append(implementations.values());
+		builder.append("EmailSender ").append(getImplementations().values());
 		return builder.toString();
 	}
 }

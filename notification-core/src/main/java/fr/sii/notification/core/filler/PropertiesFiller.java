@@ -73,7 +73,7 @@ public class PropertiesFiller extends SimpleFiller {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("PropertiesFiller ").append(values);
+		builder.append("PropertiesFiller ").append(getValues());
 		return builder.toString();
 	}
 
