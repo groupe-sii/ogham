@@ -91,7 +91,7 @@ public class HashCodeBuilder {
 	 *            an odd number used as the initial value
 	 * @param multiplierOddNumber
 	 *            an odd number used as the multiplier
-	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 *             if the number is even
 	 */
 	public HashCodeBuilder(int initialOddNumber, int multiplierOddNumber) {

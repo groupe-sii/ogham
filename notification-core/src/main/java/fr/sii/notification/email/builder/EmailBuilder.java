@@ -40,7 +40,7 @@ import fr.sii.notification.email.sender.EmailSender;
  * <p>
  * This builder provides a {@link MultiImplementationSender}. The aim of the
  * {@link MultiImplementationSender} is to choose the best implementation for
- * sending the email according to the runtime environement (detection of
+ * sending the email according to the runtime environment (detection of
  * libraries in the classpath, availability of a particular property, ...).
  * </p>
  * <p>
@@ -179,11 +179,16 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * {@link #useDefaults(Properties)}
 	 * </p>
 	 * 
+	 * @param properties
+	 *            the properties to use
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder registerDefaultImplementations(Properties properties) {
-		// Java Mail API can be used only if the property "mail.smtp.host" is provided and also if the class "javax.mail.Transport" is defined in the classpath
-		registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>("mail.smtp.host", properties), new RequiredClassCondition<Message>("javax.mail.Transport")), javaMailBuilder.build());
+		// Java Mail API can be used only if the property "mail.smtp.host" is
+		// provided and also if the class "javax.mail.Transport" is defined in
+		// the classpath
+		registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>("mail.smtp.host", properties), new RequiredClassCondition<Message>("javax.mail.Transport")),
+				javaMailBuilder.build());
 		return this;
 	}
 

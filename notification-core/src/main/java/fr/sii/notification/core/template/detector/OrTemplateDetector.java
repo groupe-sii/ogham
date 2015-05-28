@@ -42,7 +42,7 @@ public class OrTemplateDetector extends CompositeTemplateDetector {
 
 	@Override
 	public boolean canParse(String templateName, Context ctx, Template template) throws EngineDetectionException {
-		for (TemplateEngineDetector detector : detectors) {
+		for (TemplateEngineDetector detector : getDetectors()) {
 			if (detector.canParse(templateName, ctx, template)) {
 				return true;
 			}
