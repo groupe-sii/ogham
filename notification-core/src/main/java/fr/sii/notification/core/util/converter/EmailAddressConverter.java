@@ -1,4 +1,4 @@
-package fr.sii.notification.core.converter;
+package fr.sii.notification.core.util.converter;
 
 import org.apache.commons.beanutils.converters.AbstractConverter;
 import org.slf4j.Logger;

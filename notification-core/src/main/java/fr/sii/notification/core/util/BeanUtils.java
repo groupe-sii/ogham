@@ -11,8 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.ConvertUtils;
 
-import fr.sii.notification.core.converter.EmailAddressConverter;
 import fr.sii.notification.core.exception.template.BeanException;
+import fr.sii.notification.core.util.converter.EmailAddressConverter;
 import fr.sii.notification.email.message.EmailAddress;
 
 /**
