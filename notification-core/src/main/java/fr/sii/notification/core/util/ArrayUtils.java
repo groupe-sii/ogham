@@ -18,6 +18,8 @@ public class ArrayUtils {
 	 *            the first element
 	 * @param others
 	 *            the other elements
+	 * @param <T>
+	 *            the type of each element in the array
 	 * @return the combined array
 	 */
 	public static <T> T[] concat(T first, T[] others) {
@@ -35,6 +37,8 @@ public class ArrayUtils {
 	 *            the first array
 	 * @param second
 	 *            the second array
+	 * @param <T>
+	 *            the type of each element in the array
 	 * @return the combined array
 	 */
 	public static <T> T[] concat(T[] first, T[] second) {

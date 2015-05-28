@@ -58,6 +58,8 @@ public class ExpectedContent {
 	 *            the expected body to read from the stream
 	 * @param mimetype
 	 *            the expected Mime Type pattern
+	 * @throws IOException
+	 *             when the expected content stream is not readable
 	 */
 	public ExpectedContent(InputStream body, String mimetype) throws IOException {
 		this(IOUtils.toString(body), mimetype);

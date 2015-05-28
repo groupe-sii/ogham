@@ -181,6 +181,8 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 * @param disposition
 	 *            the disposition of the attachment
+	 * @throws IOException
+	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream, String description, String disposition) throws IOException {
 		this(new ByteSource(name, stream), description, disposition);
@@ -201,6 +203,8 @@ public class Attachment {
 	 *            the content of the attachment accessible trough the stream
 	 * @param description
 	 *            the description of the attachment (may be null)
+	 * @throws IOException
+	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream, String description) throws IOException {
 		this(new ByteSource(name, stream), description);
@@ -221,6 +225,8 @@ public class Attachment {
 	 *            the name of the attachment
 	 * @param stream
 	 *            the content of the attachment accessible trough the stream
+	 * @throws IOException
+	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream) throws IOException {
 		this(new ByteSource(name, stream));
@@ -240,7 +246,7 @@ public class Attachment {
 	 * @param disposition
 	 *            the disposition of the attachment
 	 */
-	public Attachment(String name, byte[] content, String description, String disposition) throws IOException {
+	public Attachment(String name, byte[] content, String description, String disposition) {
 		this(new ByteSource(name, content), description, disposition);
 	}
 
@@ -260,7 +266,7 @@ public class Attachment {
 	 * @param description
 	 *            the description of the attachment (may be null)
 	 */
-	public Attachment(String name, byte[] content, String description) throws IOException {
+	public Attachment(String name, byte[] content, String description) {
 		this(new ByteSource(name, content), description);
 	}
 
@@ -280,7 +286,7 @@ public class Attachment {
 	 * @param content
 	 *            the content of the attachment
 	 */
-	public Attachment(String name, byte[] content) throws IOException {
+	public Attachment(String name, byte[] content) {
 		this(new ByteSource(name, content));
 	}
 
@@ -372,7 +378,7 @@ public class Attachment {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("<").append(source.getName());
-		if(description!=null) {
+		if (description != null) {
 			builder.append(" )").append(description).append(")");
 		}
 		builder.append("[").append(disposition).append("]>");

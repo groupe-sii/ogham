@@ -42,7 +42,7 @@ public class ExpectedEmail extends ExpectedEmailHeader {
 	 * 
 	 * @param subject
 	 *            the expected subject of the email
-	 * @param body
+	 * @param expectedContent
 	 *            the expected body of the email with the expected Mime Type
 	 * @param from
 	 *            the expected email sender address

@@ -99,8 +99,7 @@ public class AssertEmail {
 	 * <p>
 	 * Shortcut to simplify unit testing with GreenMail. See
 	 * {@link #assertEquals(ExpectedMultiPartEmail[], Message[])}.
-	 * <p>
-	 * <p>
+	 * </p>
 	 * Assert that the fields of the received email are equal to the expected
 	 * values. The expected email contains several parts (several contents). The
 	 * received email should also have the equivalent parts. It will check that:
@@ -114,14 +113,13 @@ public class AssertEmail {
 	 * <li>Each received part Mime Type equals the expected one (order is
 	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * The checking of the body ignores the new line characters.
 	 * </p>
 	 * 
 	 * @param expectedEmail
 	 *            all the fields with their expected values
-	 * @param actualEmail
+	 * @param actualEmails
 	 *            the received email
 	 * @throws MessagingException
 	 *             when accessing the received email fails
@@ -158,8 +156,7 @@ public class AssertEmail {
 	 * <p>
 	 * Shortcut to simplify unit testing with GreenMail. See
 	 * {@link #assertEquals(ExpectedEmail[], Message[])}.
-	 * <p>
-	 * <p>
+	 * </p>
 	 * Assert that the fields of the received email are equal to the expected
 	 * values. The expected email contains only one part (only one content). It
 	 * will check that:
@@ -171,7 +168,6 @@ public class AssertEmail {
 	 * <li>The Mime Type equals the expected one (order is important). See
 	 * {@link #assertMimetype(ExpectedContent, String)}</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * The checking of the body ignores the new line characters.
 	 * </p>
@@ -179,12 +175,10 @@ public class AssertEmail {
 	 * 
 	 * @param expectedEmail
 	 *            all the fields with their expected values
-	 * @param actualEmail
-	 *            the received email
+	 * @param actualEmails
+	 *            the received emails
 	 * @throws MessagingException
 	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
 	 */
 	public static void assertEquals(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessagingException {
 		assertEquals(new ExpectedEmail[] { expectedEmail }, actualEmails);
@@ -196,14 +190,12 @@ public class AssertEmail {
 	 * Then for each email it calls
 	 * {@link #assertEquals(ExpectedEmail, Message)} .
 	 * 
-	 * @param expectedEmails
-	 *            the list of expected emails
+	 * @param expectedEmail
+	 *            the expected email
 	 * @param actualEmails
 	 *            the received emails
 	 * @throws MessagingException
 	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
 	 */
 	public static void assertEquals(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException {
 		Assert.assertEquals("should have " + expectedEmail.length + " email", expectedEmail.length, actualEmails.length);
@@ -232,13 +224,8 @@ public class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmail
 	 *            the received email
-	 * @param strict
-	 *            true for strict checking (totally equals) or false to ignore
-	 *            new line characters in body contents
 	 * @throws MessagingException
 	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
 	 */
 	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException {
 		assertEquals(expectedEmail, actualEmail, false);
@@ -270,8 +257,6 @@ public class AssertEmail {
 	 *            new line characters in body contents
 	 * @throws MessagingException
 	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
 	 */
 	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail, boolean strict) throws MessagingException {
 		assertHeaders(expectedEmail, actualEmail);
