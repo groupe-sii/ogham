@@ -2,6 +2,8 @@ package fr.sii.notification.core.message.content;
 
 import fr.sii.notification.core.template.context.BeanContext;
 import fr.sii.notification.core.template.context.Context;
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
 
 /**
  * Content that points to a template. The template contains variables. The
@@ -61,5 +63,15 @@ public class TemplateContent implements Content {
 		StringBuilder builder = new StringBuilder();
 		builder.append("TemplateContent [path=").append(path).append(", context=").append(context).append("]");
 		return builder.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(path).append(context).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("path", "context").equals();
 	}
 }

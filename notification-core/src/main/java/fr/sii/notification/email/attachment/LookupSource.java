@@ -1,5 +1,8 @@
 package fr.sii.notification.email.attachment;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 /**
  * <p>
  * Source that is able to handle string path prefixed by a lookup string. The
@@ -79,4 +82,14 @@ public class LookupSource implements Source {
 		return name;
 	}
 
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(name).append(path).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("name", "path").equals();
+	}
 }

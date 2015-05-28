@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
 import fr.sii.notification.core.util.IOUtils;
 
 
@@ -48,5 +50,15 @@ public class ByteSource implements Source {
 
 	public byte[] getBytes() {
 		return bytes;
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(name).append(bytes).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("name", "bytes").equals();
 	}
 }

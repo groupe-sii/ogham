@@ -6,6 +6,8 @@ import fr.sii.notification.core.exception.template.BeanContextException;
 import fr.sii.notification.core.exception.template.BeanException;
 import fr.sii.notification.core.exception.template.ContextException;
 import fr.sii.notification.core.util.BeanUtils;
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
 
 /**
  * Template context that provides variable values using a Java object. Each
@@ -80,5 +82,15 @@ public class BeanContext implements Context {
 	@Override
 	public String toString() {
 		return bean.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(bean).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("bean").equals();
 	}
 }

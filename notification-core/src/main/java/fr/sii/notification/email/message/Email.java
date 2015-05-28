@@ -8,6 +8,8 @@ import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.util.ArrayUtils;
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
 import fr.sii.notification.core.util.StringUtils;
 import fr.sii.notification.email.attachment.Attachment;
 import fr.sii.notification.email.builder.EmailBuilder;
@@ -1028,4 +1030,16 @@ public class Email implements Message {
 		builder.append("\r\n==================================\r\n");
 		return builder.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(subject).append(content).append(from).append(recipients).append(attachments).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("subject", "content", "from", "recipients", "attachments").equals();
+	}
+	
+	
 }

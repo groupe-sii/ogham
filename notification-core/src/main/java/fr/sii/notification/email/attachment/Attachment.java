@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 /**
  * Represents a content to attach to the email. Typically a file to join to the
  * email. An attachment is represented with the following information:
@@ -383,5 +386,15 @@ public class Attachment {
 		}
 		builder.append("[").append(disposition).append("]>");
 		return builder.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(source).append(description).append(disposition).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("source", "description", "disposition").equals();
 	}
 }

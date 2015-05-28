@@ -1,5 +1,8 @@
 package fr.sii.notification.email.message;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 /**
  * Represents an email recipient. The recipient contains:
  * <ul>
@@ -72,5 +75,15 @@ public class Recipient {
 		StringBuilder builder = new StringBuilder();
 		builder.append(address).append("(").append(type).append(")");
 		return builder.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(address).append(type).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("address", "type").equals();
 	}
 }

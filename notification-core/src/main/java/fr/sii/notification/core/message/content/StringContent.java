@@ -1,5 +1,8 @@
 package fr.sii.notification.core.message.content;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 /**
  * Represent a string content. This implementation is the most basic one. It
  * just wraps a string into a {@link Content}.
@@ -44,4 +47,15 @@ public class StringContent implements Content {
 		return content;
 	}
 
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(content).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("content").equals(obj);
+	}
+
+	
 }

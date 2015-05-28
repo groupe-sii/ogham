@@ -3,6 +3,9 @@ package fr.sii.notification.core.template.context;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 /**
  * Simple context that stores variable substitutions into a map. This map in
  * then provided directly when calling {@link #getVariables()}.
@@ -58,4 +61,13 @@ public class SimpleContext implements Context {
 		return variables;
 	}
 
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(variables).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("variables").equals();
+	}
 }

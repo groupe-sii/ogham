@@ -2,6 +2,9 @@ package fr.sii.notification.email.attachment;
 
 import java.io.File;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 /**
  * Source that provide access to a file.
  * 
@@ -65,5 +68,15 @@ public class FileSource implements Source {
 
 	public String getName() {
 		return name;
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(name).append(file).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("name", "file").equals();
 	}
 }

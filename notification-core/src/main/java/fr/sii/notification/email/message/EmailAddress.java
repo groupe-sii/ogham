@@ -2,6 +2,9 @@ package fr.sii.notification.email.message;
 
 import javax.mail.internet.InternetAddress;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 /**
  * Represents an email address. {@link InternetAddress} also provides the same
  * feature but we don't want to be sticked to a particular implementation.
@@ -61,5 +64,15 @@ public class EmailAddress {
 		}
 		builder.append("<").append(address).append(">");
 		return builder.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(address).append(personal).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("address", "personal").equals();
 	}
 }

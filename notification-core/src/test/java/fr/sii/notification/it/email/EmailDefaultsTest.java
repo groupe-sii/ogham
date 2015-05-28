@@ -32,7 +32,7 @@ import fr.sii.notification.helper.email.ExpectedMultiPartEmail;
 import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.mock.context.SimpleBean;
 
-public class ManualEmailTest {
+public class EmailDefaultsTest {
 
 	private NotificationService notificationService;
 	

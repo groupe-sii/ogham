@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 /**
  * Decorator content that provide ability to handle several sub contents. The
  * aim is to be able to handle messages with several distinct contents like
@@ -60,5 +63,15 @@ public class MultiContent implements Content {
 		StringBuilder builder = new StringBuilder();
 		builder.append("MultiContent [contents=").append(contents).append("]");
 		return builder.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().appendSuper(super.hashCode()).append(contents).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendSuper(super.equals(obj)).append("contents").equals();
 	}
 }

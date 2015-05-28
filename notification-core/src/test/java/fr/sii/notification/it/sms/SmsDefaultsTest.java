@@ -13,7 +13,7 @@ import fr.sii.notification.core.service.NotificationService;
 import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.sms.message.Sms;
 
-public class ManualSmsTest {
+public class SmsDefaultsTest {
 
 	private NotificationService notificationService;
 
