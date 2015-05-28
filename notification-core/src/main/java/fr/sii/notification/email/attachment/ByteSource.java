@@ -4,7 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
+import fr.sii.notification.core.util.IOUtils;
+
 
 /**
  * Basic implementation of a Source that simply stores a reference to the

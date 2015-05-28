@@ -10,10 +10,9 @@ import javax.mail.MessagingException;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.IOUtils;
-
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.notification.core.mimetype.MimeTypeProvider;
+import fr.sii.notification.core.util.IOUtils;
 import fr.sii.notification.email.attachment.Attachment;
 import fr.sii.notification.email.attachment.ByteSource;
 import fr.sii.notification.email.attachment.Source;

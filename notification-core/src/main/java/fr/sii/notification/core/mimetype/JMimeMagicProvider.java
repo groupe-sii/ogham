@@ -12,11 +12,11 @@ import net.sf.jmimemagic.MagicException;
 import net.sf.jmimemagic.MagicMatchNotFoundException;
 import net.sf.jmimemagic.MagicParseException;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.notification.core.util.IOUtils;
 
 /**
  * Mime Type detection based on JMimeMagic. This library is really simple,

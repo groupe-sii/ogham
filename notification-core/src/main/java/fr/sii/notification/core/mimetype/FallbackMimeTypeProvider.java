@@ -10,11 +10,11 @@ import java.util.List;
 
 import javax.activation.MimeType;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.notification.core.util.IOUtils;
 
 /**
  * Implementation that will try several delegate implementations until one is
