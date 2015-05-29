@@ -30,6 +30,10 @@
 		<jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
 		<skip.integration.tests>false</skip.integration.tests>
 		<skip.unit.tests>false</skip.unit.tests>
+
+		<!-- SCM -->
+		<git.url>https://github.com/groupe-sii/notification-module.git</git.url>
+		<github.global.server>github</github.global.server>
 	</properties>
 
 
@@ -297,6 +301,22 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.9</version>
+				<configuration>
+					<message>Creating site for ${project.version}</message>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>site</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -311,4 +331,9 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
+	<scm>
+		<url>${git.url}</url>
+		<connection>scm:git:${git.url}</connection>
+	</scm>
 </project>
