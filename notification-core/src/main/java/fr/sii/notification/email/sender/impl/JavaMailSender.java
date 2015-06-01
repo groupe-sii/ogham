@@ -97,7 +97,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 			// set subject and content
 			mimeMsg.setSubject(email.getSubject());
 			LOG.debug("Add message content for email {}", email);
-			MimeMultipart multipart = new MimeMultipart();
+			MimeMultipart multipart = new MimeMultipart("related");
 			// delegate content management to specialized classes
 			contentHandler.setContent(mimeMsg, multipart, email.getContent());
 			// add attachments

@@ -40,6 +40,33 @@ public class Attachment {
 	private String disposition;
 
 	/**
+	 * The ID of the content
+	 */
+	private String contentId;
+
+	/**
+	 * Initialize the attachment with the provided source (content and name),
+	 * the description of the attachment and the disposition (how to include the
+	 * attachment into the mail).
+	 * 
+	 * @param source
+	 *            the source of the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 * @param contentId
+	 *            the unique id of the content (may not null)
+	 */
+	public Attachment(Source source, String description, String disposition, String contentId) {
+		super();
+		this.source = source;
+		this.description = description;
+		this.disposition = disposition;
+		this.contentId = contentId;
+	}
+
+	/**
 	 * Initialize the attachment with the provided source (content and name),
 	 * the description of the attachment and the disposition (how to include the
 	 * attachment into the mail).
@@ -52,10 +79,7 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(Source source, String description, String disposition) {
-		super();
-		this.source = source;
-		this.description = description;
-		this.disposition = disposition;
+		this(source, description, disposition, null);
 	}
 
 	/**
@@ -377,6 +401,14 @@ public class Attachment {
 		this.source = source;
 	}
 
+	public String getContentId() {
+		return contentId;
+	}
+
+	public void setContentId(String contentId) {
+		this.contentId = contentId;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -384,17 +416,20 @@ public class Attachment {
 		if (description != null) {
 			builder.append(" )").append(description).append(")");
 		}
+		if(contentId!=null) {
+			builder.append("{").append(contentId).append("}>");
+		}
 		builder.append("[").append(disposition).append("]>");
 		return builder.toString();
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(source).append(description).append(disposition).hashCode();
+		return new HashCodeBuilder().append(source).append(description).append(disposition).append(contentId).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendFields("source", "description", "disposition").isEqual();
+		return new EqualsBuilder(this, obj).appendFields("source", "description", "disposition", "contentId").isEqual();
 	}
 }

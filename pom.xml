@@ -24,6 +24,8 @@
 		<jmimemagic.version>0.1.4</jmimemagic.version>
 		<commons-lang.version>3.4</commons-lang.version>
 		<equalsverifier.version>1.7.2</equalsverifier.version>
+		<jsoup.version>1.8.2</jsoup.version>
+		<commons-codec.version>1.10</commons-codec.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -69,6 +71,11 @@
 				<artifactId>commons-lang3</artifactId>
 				<version>${commons-lang.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec.version}</version>
+			</dependency>
 
 			<!-- Template parsers -->
 			<dependency>
@@ -82,6 +89,13 @@
 				<groupId>net.sf.jmimemagic</groupId>
 				<artifactId>jmimemagic</artifactId>
 				<version>${jmimemagic.version}</version>
+			</dependency>
+
+			<!-- CSS inliners -->
+			<dependency>
+				<groupId>org.jsoup</groupId>
+				<artifactId>jsoup</artifactId>
+				<version>${jsoup.version}</version>
 			</dependency>
 
 			<!-- Logs -->
