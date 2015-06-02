@@ -24,7 +24,7 @@ public class TemplateContent implements Content {
 	private Context context;
 
 	/**
-	 * Initialize the content with the template and the context.
+	 * Initialize the content with the path to the template and the context.
 	 * 
 	 * @param path
 	 *            the path to the template
@@ -64,7 +64,7 @@ public class TemplateContent implements Content {
 		builder.append("TemplateContent [path=").append(path).append(", context=").append(context).append("]");
 		return builder.toString();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(path).append(context).hashCode();

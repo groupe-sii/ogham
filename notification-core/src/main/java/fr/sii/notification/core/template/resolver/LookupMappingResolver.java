@@ -39,6 +39,7 @@ import fr.sii.notification.core.template.Template;
  * @author Aurélien Baudet
  * @see ClassPathTemplateResolver
  * @see FileTemplateResolver
+ * @see StringTemplateResolver
  */
 public class LookupMappingResolver implements ConditionalResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(LookupMappingResolver.class);

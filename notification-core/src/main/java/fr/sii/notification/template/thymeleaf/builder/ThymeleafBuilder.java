@@ -14,6 +14,7 @@ import fr.sii.notification.template.thymeleaf.ThymeleafParser;
 import fr.sii.notification.template.thymeleaf.adapter.ClassPathResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.FileResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.FirstSupportingResolverAdapter;
+import fr.sii.notification.template.thymeleaf.adapter.StringResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.ThymeleafResolverAdapter;
 
 /**
@@ -55,7 +56,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 		super();
 		engine = new TemplateEngine();
 		lookupResolver = new ThymeleafLookupMappingResolver();
-		resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter());
+		resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter(), new StringResolverAdapter());
 		prefix = "";
 		suffix = "";
 	}

@@ -19,6 +19,7 @@ import fr.sii.notification.core.exception.MessageNotSentException;
 import fr.sii.notification.core.exception.NotificationException;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.message.content.MultiTemplateContent;
+import fr.sii.notification.core.message.content.StringTemplateContent;
 import fr.sii.notification.core.message.content.TemplateContent;
 import fr.sii.notification.core.service.NotificationService;
 import fr.sii.notification.email.attachment.Attachment;
@@ -61,6 +62,13 @@ public class EmailDefaultsTest {
 	public void withThymeleaf() throws NotificationException, MessagingException, IOException {
 		notificationService.send(new Email("Template", new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("foo", 42)), "recipient@sii.fr"));
 		AssertEmail.assertEquals(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+	}
+
+	@Test
+	public void withThymeleafString() throws NotificationException, MessagingException, IOException {
+		String template = "<!DOCTYPE html><html xmlns:th=\"http://www.thymeleaf.org\"><head><title>Thymeleaf simple</title><meta charset=\"utf-8\" /></head><body><h1 class=\"title\" th:text=\"${name}\"></h1><p class=\"text\" th:text=\"${value}\"></p></body></html>";
+		notificationService.send(new Email("Template", new StringTemplateContent(template, new SimpleBean("foo", 42)), "recipient@sii.fr"));
+		AssertEmail.assertEquals(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_string_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
 
 	@Test

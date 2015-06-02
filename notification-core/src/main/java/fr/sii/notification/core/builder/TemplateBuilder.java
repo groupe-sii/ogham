@@ -19,6 +19,7 @@ import fr.sii.notification.core.template.resolver.ClassPathTemplateResolver;
 import fr.sii.notification.core.template.resolver.FileTemplateResolver;
 import fr.sii.notification.core.template.resolver.LookupMappingResolver;
 import fr.sii.notification.core.template.resolver.RelativeTemplateResolver;
+import fr.sii.notification.core.template.resolver.StringTemplateResolver;
 import fr.sii.notification.core.template.resolver.TemplateResolver;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.template.thymeleaf.ThymeleafParser;
@@ -39,6 +40,8 @@ import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
  * {@link ClassPathTemplateResolver})</li>
  * <li>Resolver that is able to handle file resolution (
  * {@link FileTemplateResolver})</li>
+ * <li>Resolver that is able to handle string directly (
+ * {@link StringTemplateResolver})</li>
  * </ul>
  * 
  * This builder is also able to register a prefix and a suffix for template
@@ -50,7 +53,7 @@ import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
  */
 public class TemplateBuilder implements TemplateParserBuilder {
 	private static final Logger LOG = LoggerFactory.getLogger(TemplateBuilder.class);
-	
+
 	/**
 	 * The prefix for properties used by the template engines
 	 */
@@ -117,6 +120,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link ClassPathTemplateResolver})</li>
 	 * <li>Resolver that is able to handle file resolution (
 	 * {@link FileTemplateResolver})</li>
+	 * <li>Resolver that is able to handle string directly (
+	 * {@link StringTemplateResolver})</li>
 	 * </ul>
 	 * 
 	 * If the system properties provide values for prefix (
@@ -145,6 +150,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link ClassPathTemplateResolver})</li>
 	 * <li>Resolver that is able to handle file resolution (
 	 * {@link FileTemplateResolver})</li>
+	 * <li>Resolver that is able to handle string directly (
+	 * {@link StringTemplateResolver})</li>
 	 * </ul>
 	 * 
 	 * If the provided properties provide values for prefix (
@@ -203,6 +210,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link ClassPathTemplateResolver}). The lookup prefix is "classpath:"</li>
 	 * <li>Resolver that is able to handle file resolution (
 	 * {@link FileTemplateResolver}). The lookup is "file:"</li>
+	 * <li>Resolver that is able to handle string directly (
+	 * {@link StringTemplateResolver}). The lookup is "string:"</li>
 	 * <li>Default resolver if no lookup is used (
 	 * {@link ClassPathTemplateResolver})</li>
 	 * </ul>
@@ -215,6 +224,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	public TemplateBuilder useDefaultResolvers() {
 		withLookupResolver("classpath", new ClassPathTemplateResolver());
 		withLookupResolver("file", new FileTemplateResolver());
+		withLookupResolver("string", new StringTemplateResolver());
 		withLookupResolver("", new ClassPathTemplateResolver());
 		return this;
 	}

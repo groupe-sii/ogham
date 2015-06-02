@@ -90,7 +90,10 @@ public class ThymeleafLookupMappingResolver implements ITemplateResolver {
 
 	@Override
 	public TemplateResolution resolveTemplate(TemplateProcessingParameters templateProcessingParameters) {
-		return getResolver(templateProcessingParameters.getTemplateName()).resolveTemplate(templateProcessingParameters);
+		return getResolver(templateProcessingParameters.getTemplateName()).resolveTemplate(
+										new TemplateProcessingParameters(templateProcessingParameters.getConfiguration(),
+										getTemplateName(templateProcessingParameters.getTemplateName()),
+										templateProcessingParameters.getContext()));
 	}
 
 	@Override
