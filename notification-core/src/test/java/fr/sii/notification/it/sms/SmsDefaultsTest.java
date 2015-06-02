@@ -28,6 +28,6 @@ public class SmsDefaultsTest {
 	}
 	@Test
 	public void simple() throws NotificationException {
-		notificationService.send(new Sms("0673772257", "test"));
+		notificationService.send(new Sms("test", "0673772257"));
 	}
 }

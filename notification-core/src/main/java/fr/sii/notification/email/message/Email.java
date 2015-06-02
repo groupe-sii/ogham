@@ -764,7 +764,7 @@ public class Email implements Message {
 	}
 
 	/**
-	 * Add a recipient specifying his address and the type (to, cc, bcc).
+	 * Add a recipient specifying its address and the type (to, cc, bcc).
 	 * 
 	 * @param recipient
 	 *            the recipient address

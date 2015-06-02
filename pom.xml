@@ -24,6 +24,7 @@
 		<jmimemagic.version>0.1.4</jmimemagic.version>
 		<commons-lang.version>3.4</commons-lang.version>
 		<equalsverifier.version>1.7.2</equalsverifier.version>
+		<cloudhopper.version>5.0.8</cloudhopper.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -51,6 +52,13 @@
 				<groupId>javax.mail</groupId>
 				<artifactId>javax.mail-api</artifactId>
 				<version>${javamail.version}</version>
+			</dependency>
+
+			<!-- SMS -->
+			<dependency>
+				<groupId>com.cloudhopper</groupId>
+				<artifactId>ch-smpp</artifactId>
+				<version>${cloudhopper.version}</version>
 			</dependency>
 
 			<!-- Utility -->

@@ -21,6 +21,12 @@
 			<artifactId>javax.mail-api</artifactId>
 		</dependency>
 
+		<!-- SMS -->
+		<dependency>
+			<groupId>com.cloudhopper</groupId>
+			<artifactId>ch-smpp</artifactId>
+		</dependency>
+
 		<!-- Utility -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>

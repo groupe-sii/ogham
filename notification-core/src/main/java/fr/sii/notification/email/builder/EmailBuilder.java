@@ -44,7 +44,7 @@ import fr.sii.notification.email.sender.EmailSender;
  * libraries in the classpath, availability of a particular property, ...).
  * </p>
  * <p>
- * This builder let you the possibility to register any new implementation. It
+ * This builder lets you the possibility to register any new implementation. It
  * allows you to enable or not templating support and automatic filling of
  * message values (like sender address for example).
  * </p>
