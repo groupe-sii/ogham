@@ -3,9 +3,25 @@ package fr.sii.notification.sms.message;
 import fr.sii.notification.core.util.EqualsBuilder;
 import fr.sii.notification.core.util.HashCodeBuilder;
 
+/**
+ * Represents a phone number. It wraps a simple string. The aim is to abstracts
+ * the concept and to be able to provide other fields latter if needed.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class PhoneNumber {
+	/**
+	 * The phone number as string
+	 */
 	private String number;
 
+	/**
+	 * Initialize the phone number with the provided number.
+	 * 
+	 * @param number
+	 *            the phone number
+	 */
 	public PhoneNumber(String number) {
 		super();
 		this.number = number;
@@ -23,7 +39,7 @@ public class PhoneNumber {
 	public String toString() {
 		return number;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(number).hashCode();
@@ -33,5 +49,5 @@ public class PhoneNumber {
 	public boolean equals(Object obj) {
 		return new EqualsBuilder(this, obj).appendFields("number").isEqual();
 	}
-	
+
 }

@@ -7,15 +7,15 @@ import org.slf4j.LoggerFactory;
 import fr.sii.notification.email.message.EmailAddress;
 
 /**
- * Converts the provided object into an EmailAddress. This converter is used by
- * Apache Commons BeanUtils library.
+ * Converts the provided object into an {@link EmailAddress}. This converter is
+ * used by Apache Commons BeanUtils library.
  * 
  * @author Aurélien Baudet
  *
  */
 public class EmailAddressConverter extends AbstractConverter {
 	private static final Logger LOG = LoggerFactory.getLogger(EmailAddressConverter.class);
-	
+
 	@Override
 	protected <T> T convertToType(Class<T> type, Object value) throws Throwable {
 		LOG.debug("Converting string email address {} into EmailAddress", value);

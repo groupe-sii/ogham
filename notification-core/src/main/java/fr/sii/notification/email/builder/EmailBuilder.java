@@ -32,7 +32,8 @@ import fr.sii.notification.email.sender.EmailSender;
  * There exists several implementations to send an email:
  * <ul>
  * <li>Using pure Java mail API</li>
- * <li>Using Apache Commons Email</li>
+ * <li>Using <a href="https://commons.apache.org/proper/commons-email/">Apache
+ * Commons Email</a></li>
  * <li>Using any other library</li>
  * <li>Through a WebService</li>
  * <li>...</li>

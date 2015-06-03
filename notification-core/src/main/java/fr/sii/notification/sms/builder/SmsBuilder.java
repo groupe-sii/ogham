@@ -4,7 +4,9 @@ import java.util.Properties;
 
 import fr.sii.notification.core.builder.ContentTranslatorBuilder;
 import fr.sii.notification.core.builder.NotificationSenderBuilder;
+import fr.sii.notification.core.condition.AndCondition;
 import fr.sii.notification.core.condition.Condition;
+import fr.sii.notification.core.condition.RequiredClassCondition;
 import fr.sii.notification.core.condition.RequiredPropertyCondition;
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.filler.PropertiesFiller;
@@ -27,8 +29,10 @@ import fr.sii.notification.sms.sender.impl.OvhSmsSender;
  * </p>
  * There exists several implementations to send an SMS:
  * <ul>
- * <li>Using cloudhopper (SMPP library)</li>
- * <li>Using jsmpp (SMPP library)</li>
+ * <li>Using <a
+ * href="https://github.com/twitter/cloudhopper-smpp">cloudhopper</a> (SMPP
+ * library)</li>
+ * <li>Using <a href="http://jsmpp.org/">jsmpp</a> (SMPP library)</li>
  * <li>Using any other library</li>
  * <li>Using HTTP request to drive <a href="http://guides.ovh.com/Http2Sms">OVH
  * API</a></li>
@@ -175,6 +179,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	public SmsBuilder registerDefaultImplementations(Properties properties) {
 		try {
 			registerImplementation(new RequiredPropertyCondition<Message>("notification.sms.ovh.app.key", properties), new OvhSmsSender());
+			registerImplementation(new AndCondition<>(new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient"), new RequiredPropertyCondition<Message>("notification.sms.smpp.host", properties)), new CloudhopperSMPPSender());
 		} catch (Exception e) {
 			// nothing to do
 		}

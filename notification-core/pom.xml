@@ -84,6 +84,11 @@
 			<artifactId>equalsverifier</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jsmpp</groupId>
+			<artifactId>jsmpp</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>
