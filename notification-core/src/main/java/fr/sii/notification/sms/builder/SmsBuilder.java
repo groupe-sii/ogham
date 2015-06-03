@@ -22,6 +22,7 @@ import fr.sii.notification.sms.SmsConstants;
 import fr.sii.notification.sms.sender.SmsSender;
 import fr.sii.notification.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.notification.sms.sender.impl.OvhSmsSender;
+import fr.sii.notification.sms.sender.impl.SmsglobalRestSender;
 
 /**
  * <p>
@@ -177,12 +178,18 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder registerDefaultImplementations(Properties properties) {
-		try {
-			registerImplementation(new RequiredPropertyCondition<Message>("notification.sms.ovh.app.key", properties), new OvhSmsSender());
-			registerImplementation(new AndCondition<>(new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient"), new RequiredPropertyCondition<Message>("notification.sms.smpp.host", properties)), new CloudhopperSMPPSender());
-		} catch (Exception e) {
-			// nothing to do
-		}
+		// FIXME: use builders instead to avoid errors at runtime if the classes used in each sender are not available in the classpath
+		
+		// Use OVH implementation only if SmsConstants.OVH_APP_KEY_PROPERTY is
+		// set
+		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.OVH_APP_KEY_PROPERTY, properties), new OvhSmsSender());
+		// Use smsglobal REST API only if
+		// SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY is set
+		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY, properties), new SmsglobalRestSender());
+		// Use Cloudhopper SMPP implementation only if SmppClient class is in
+		// the classpath and the SmsConstants.SMPP_HOST_PROPERTY property is set
+		registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SmsConstants.SMPP_HOST_PROPERTY, properties), new RequiredClassCondition<Message>(
+				"com.cloudhopper.smpp.SmppClient")), new CloudhopperSMPPSender());
 		return this;
 	}
 

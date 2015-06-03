@@ -39,21 +39,21 @@ public class SmsSMPPDefaultsTest {
 	}
 
 	@Test
-	@Ignore
+	@Ignore // TODO: don't ignore
 	public void simple() throws NotificationException, IOException {
 		notificationService.send(new Sms("sms content", "0000000000"));
 		AssertSms.assertEquals(new ExpectedSms("sms content", "010203040506", "0000000000"), smppServer.getReceivedMessages());
 	}
 
 	@Test
-	@Ignore
+	@Ignore // TODO: don't ignore
 	public void longMessage() throws NotificationException, IOException {
 		notificationService.send(new Sms("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split", "0000000000"));
 		AssertSms.assertEquals(new SplitSms("010203040506", "0000000000", "sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender whe", "n message has to be split"), smppServer.getReceivedMessages());
 	}
 
 	@Test
-	@Ignore
+	@Ignore // TODO: don't ignore
 	public void withThymeleaf() throws NotificationException, IOException {
 		notificationService.send(new Sms(new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("foo", 42)), "0000000000"));
 		AssertSms.assertEquals(new ExpectedSms("foo 42", "010203040506", "0000000000"), smppServer.getReceivedMessages());
