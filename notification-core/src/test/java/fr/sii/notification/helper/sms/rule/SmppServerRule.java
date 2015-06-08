@@ -2,7 +2,6 @@ package fr.sii.notification.helper.sms.rule;
 
 import java.util.List;
 
-import org.jsmpp.bean.SubmitSm;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -10,11 +9,8 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.notification.helper.sms.SMPPServerSimulator;
-
 /**
  * JUnit {@link Rule} for starting a local SMPP server for integration tests.
- * The server used is based on <a href="http://jsmpp.org/">jsmpp</a>.
  * 
  * <p>
  * The rule starts the server before every test, execute the test and stops the
@@ -25,10 +21,13 @@ import fr.sii.notification.helper.sms.SMPPServerSimulator;
  * available in testing through {@link #getReceivedMessages()}.
  * </p>
  * 
+ * @param <M>
+ *            The type of the received messages
+ * 
  * @author Aurélien Baudet
  *
  */
-public class SmppServerRule implements TestRule {
+public class SmppServerRule<M> implements TestRule {
 	private static final Logger LOG = LoggerFactory.getLogger(SmppServerRule.class);
 
 	/**
@@ -40,12 +39,7 @@ public class SmppServerRule implements TestRule {
 	 * The server simulator based on <a href="http://jsmpp.org/">jsmpp</a>
 	 * samples.
 	 */
-	private final SMPPServerSimulator server;
-
-	/**
-	 * The port used by the server
-	 */
-	private final int port;
+	private final SmppServerSimulator<M> server;
 
 	/**
 	 * Initialize the server with the provided port.
@@ -53,17 +47,9 @@ public class SmppServerRule implements TestRule {
 	 * @param port
 	 *            the port used by the server
 	 */
-	public SmppServerRule(int port) {
+	public SmppServerRule(SmppServerSimulator<M> server) {
 		super();
-		this.port = port;
-		server = new SMPPServerSimulator(port);
-	}
-
-	/**
-	 * Initialize the server with the default port.
-	 */
-	public SmppServerRule() {
-		this(DEFAULT_PORT);
+		this.server = server;
 	}
 
 	@Override
@@ -71,41 +57,18 @@ public class SmppServerRule implements TestRule {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				LOG.info("starting SMPP server on port {}...", port);
-				Thread t = new ServerThread(server);
-				t.start();
+				LOG.info("starting SMPP server on port {}...", getPort());
+				server.start();
+				LOG.info("SMPP server started on port {}", getPort());
 				try {
 					base.evaluate();
 				} finally {
 					LOG.info("stopping SMPP server...");
-					t.interrupt();
+					server.stop();
+					LOG.info("SMPP server stopped");
 				}
 			}
 		};
-	}
-
-	/**
-	 * A thread for starting and stopping the server. Needs a dedicated
-	 * implementation to be able to stop the simulator loop when calling
-	 * interrupt method of the thread.
-	 * 
-	 * @author Aurélien Baudet
-	 *
-	 */
-	private static class ServerThread extends Thread {
-
-		private SMPPServerSimulator server;
-
-		public ServerThread(SMPPServerSimulator target) {
-			super(target);
-			this.server = target;
-		}
-
-		@Override
-		public void interrupt() {
-			server.stop();
-			super.interrupt();
-		}
 	}
 
 	/**
@@ -114,7 +77,7 @@ public class SmppServerRule implements TestRule {
 	 * @return the port used by the server
 	 */
 	public int getPort() {
-		return port;
+		return server.getPort();
 	}
 
 	/**
@@ -122,8 +85,7 @@ public class SmppServerRule implements TestRule {
 	 * 
 	 * @return the list of received messages
 	 */
-	public List<SubmitSm> getReceivedMessages() {
+	public List<M> getReceivedMessages() {
 		return server.getReceivedMessages();
 	}
-
 }

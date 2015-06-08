@@ -3,8 +3,8 @@ package fr.sii.notification.it.sms;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jsmpp.bean.SubmitSm;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -16,6 +16,7 @@ import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.helper.sms.AssertSms;
 import fr.sii.notification.helper.sms.ExpectedSms;
 import fr.sii.notification.helper.sms.SplitSms;
+import fr.sii.notification.helper.sms.rule.JsmppServerRule;
 import fr.sii.notification.helper.sms.rule.SmppServerRule;
 import fr.sii.notification.mock.context.SimpleBean;
 import fr.sii.notification.sms.message.Sms;
@@ -27,7 +28,7 @@ public class SmsSMPPDefaultsTest {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	@Rule
-	public final SmppServerRule smppServer = new SmppServerRule();
+	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
 
 	@Before
 	public void setUp() throws IOException {
@@ -39,21 +40,18 @@ public class SmsSMPPDefaultsTest {
 	}
 
 	@Test
-	@Ignore // TODO: don't ignore
 	public void simple() throws NotificationException, IOException {
 		notificationService.send(new Sms("sms content", "0000000000"));
 		AssertSms.assertEquals(new ExpectedSms("sms content", "010203040506", "0000000000"), smppServer.getReceivedMessages());
 	}
 
 	@Test
-	@Ignore // TODO: don't ignore
 	public void longMessage() throws NotificationException, IOException {
 		notificationService.send(new Sms("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split", "0000000000"));
 		AssertSms.assertEquals(new SplitSms("010203040506", "0000000000", "sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender whe", "n message has to be split"), smppServer.getReceivedMessages());
 	}
 
 	@Test
-	@Ignore // TODO: don't ignore
 	public void withThymeleaf() throws NotificationException, IOException {
 		notificationService.send(new Sms(new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("foo", 42)), "0000000000"));
 		AssertSms.assertEquals(new ExpectedSms("foo 42", "010203040506", "0000000000"), smppServer.getReceivedMessages());
