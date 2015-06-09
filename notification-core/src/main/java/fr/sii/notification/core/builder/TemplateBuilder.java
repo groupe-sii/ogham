@@ -1,8 +1,6 @@
 package fr.sii.notification.core.builder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -86,12 +84,6 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	private String suffix;
 
 	/**
-	 * The list of delegate builders for each template engine. Each builder is
-	 * specialized for constructing the real template parser.
-	 */
-	private List<TemplateParserBuilder> builders;
-
-	/**
 	 * A map that stores the engine detector and the associated engine. Each
 	 * detector will indicate if the engine is able to parse the template.
 	 */
@@ -102,7 +94,6 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		resolvers = new HashMap<>();
 		prefix = "";
 		suffix = "";
-		builders = new ArrayList<>();
 		detectors = new HashMap<>();
 	}
 
@@ -198,7 +189,6 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder registerTemplateParser(TemplateParserBuilder builder, TemplateEngineDetector detector) {
-		builders.add(builder);
 		detectors.put(detector, builder);
 		return this;
 	}
@@ -255,7 +245,12 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder withThymeleaf() {
-		registerTemplateParser(new ThymeleafBuilder(), new ThymeleafTemplateDetector());
+		// The try/catch clause
+		try {
+			registerTemplateParser(new ThymeleafBuilder(), new ThymeleafTemplateDetector());
+		} catch(Throwable e) {
+			LOG.debug("Can't register Thymeleaf template engine", e);
+		}
 		return this;
 	}
 
@@ -285,7 +280,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	@Override
 	public TemplateParser build() throws BuildException {
-		for (TemplateParserBuilder builder : builders) {
+		for (TemplateParserBuilder builder : detectors.values()) {
 			// set prefix and suffix for each implementation
 			builder.withPrefix(prefix);
 			builder.withSuffix(suffix);
@@ -294,18 +289,19 @@ public class TemplateBuilder implements TemplateParserBuilder {
 				builder.withLookupResolver(entry.getKey(), new RelativeTemplateResolver(entry.getValue(), prefix, suffix));
 			}
 		}
-		// if no detector defined or only one available parser => do not use
-		// auto detection
-		// use auto detection if more than one parser available
-		if (detectors.isEmpty() || builders.size() == 1) {
-			// TODO: if no template parser available => exception or default
-			// parser that does nothing ?
-			TemplateParser parser = builders.get(0).build();
+		if(detectors.isEmpty()) {
+			// if no template parser available => exception
+			throw new BuildException("No parser available. Either disable template features or register a template engine");
+		} else if (detectors.size() == 1) {
+			// if no detector defined or only one available parser => do not use
+			// auto detection
+			TemplateParser parser = detectors.values().iterator().next().build();
 			LOG.info("Using single template engine: {}", parser);
 			LOG.debug("Using prefix {} and suffix {} for template resolution", prefix, suffix);
 			LOG.debug("Using lookup mapping resolver: {}", resolvers);
 			return parser;
 		} else {
+			// use auto detection if more than one parser available
 			Map<TemplateEngineDetector, TemplateParser> map = new HashMap<>();
 			for (Entry<TemplateEngineDetector, TemplateParserBuilder> entry : detectors.entrySet()) {
 				map.put(entry.getKey(), entry.getValue().build());
@@ -327,10 +323,12 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @param <B>
 	 *            the type of the class to get
 	 * @return the template parser builder instance
+	 * @throws IllegalArgumentException
+	 *             when provided class references an nonexistent builder
 	 */
 	@SuppressWarnings("unchecked")
 	public <B extends TemplateParserBuilder> B getParserBuilder(Class<B> clazz) {
-		for (TemplateParserBuilder builder : builders) {
+		for (TemplateParserBuilder builder : detectors.values()) {
 			if (clazz.isAssignableFrom(builder.getClass())) {
 				return (B) builder;
 			}

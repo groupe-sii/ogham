@@ -1,9 +1,14 @@
 package fr.sii.notification.email.builder;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.mail.Authenticator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import fr.sii.notification.core.builder.Builder;
 import fr.sii.notification.core.builder.ContentTranslatorBuilder;
 import fr.sii.notification.core.builder.NotificationSenderBuilder;
 import fr.sii.notification.core.condition.AndCondition;
@@ -54,6 +59,8 @@ import fr.sii.notification.email.sender.EmailSender;
  * @see JavaMailBuilder
  */
 public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender> {
+	private static final Logger LOG = LoggerFactory.getLogger(EmailBuilder.class);
+
 	/**
 	 * The sender instance constructed by this builder
 	 */
@@ -65,19 +72,21 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 */
 	private EmailSender emailSender;
 
-	/**
-	 * A builder for implementation based on Java mail API
-	 */
-	private JavaMailBuilder javaMailBuilder;
+	private Map<Condition<Message>, Builder<? extends NotificationSender>> implementations;
 
 	public EmailBuilder() {
 		super();
 		sender = emailSender = new EmailSender();
-		javaMailBuilder = new JavaMailBuilder().useDefaults();
+		implementations = new HashMap<>();
 	}
 
 	@Override
 	public ConditionalSender build() throws BuildException {
+		for (Entry<Condition<Message>, Builder<? extends NotificationSender>> impl : implementations.entrySet()) {
+			NotificationSender s = impl.getValue().build();
+			LOG.debug("Implementation {} registered", s);
+			emailSender.addImplementation(impl.getKey(), s);
+		}
 		return sender;
 	}
 
@@ -120,7 +129,6 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder useDefaults(Properties properties) {
-		setJavaMailBuilder(new JavaMailBuilder().useDefaults(properties));
 		registerDefaultImplementations(properties);
 		withConfigurationFiller(properties);
 		withTemplate();
@@ -144,6 +152,25 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 */
 	public EmailBuilder registerImplementation(Condition<Message> condition, NotificationSender implementation) {
 		emailSender.addImplementation(condition, implementation);
+		return this;
+	}
+
+	/**
+	 * Register a new implementation for sending email. The implementation is
+	 * associated to a condition. If the condition evaluation returns true at
+	 * runtime then it means that the implementation can be used. If several
+	 * implementations are available, only the first implementation is really
+	 * invoked.
+	 * 
+	 * @param condition
+	 *            the condition that indicates at runtime if the implementation
+	 *            can be used or not
+	 * @param implementation
+	 *            the implementation to register
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder registerImplementation(Condition<Message> condition, Builder<? extends NotificationSender> builder) {
+		implementations.put(condition, builder);
 		return this;
 	}
 
@@ -184,11 +211,38 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder registerDefaultImplementations(Properties properties) {
+		withJavaMail(properties);
+		return this;
+	}
+
+	/**
+	 * Enable Java Mail API implementation. This implementation is used only if
+	 * the associated condition indicates that Java Mail API can be used. The
+	 * condition checks if:
+	 * <ul>
+	 * <li>The property <code>mail.smtp.host</code> is set</li>
+	 * <li>The class <code>javax.mail.Transport</code> is available in the
+	 * classpath</li>
+	 * </ul>
+	 * The registration can fail if the javax.mail jar is not in the classpath.
+	 * In this case, the Java Mail API is not registered at all.
+	 * 
+	 * @return this builder instance for fluent use
+	 */
+	public EmailBuilder withJavaMail(Properties properties) {
 		// Java Mail API can be used only if the property "mail.smtp.host" is
 		// provided and also if the class "javax.mail.Transport" is defined in
-		// the classpath
-		registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>("mail.smtp.host", properties), new RequiredClassCondition<Message>("javax.mail.Transport")),
-				javaMailBuilder.build());
+		// the classpath. The try/catch clause is mandatory in order to prevent
+		// failure when javax.mail jar is not in the classpath
+		try {
+			registerImplementation(new AndCondition<>(
+						new RequiredPropertyCondition<Message>("mail.smtp.host", properties),
+						new RequiredClassCondition<Message>("javax.mail.Transport"),
+						new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")),
+					new JavaMailBuilder().useDefaults(properties));
+		} catch (Throwable e) {
+			LOG.debug("Can't register Java Mail implementation", e);
+		}
 		return this;
 	}
 
@@ -337,40 +391,34 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	}
 
 	/**
-	 * Provide your own builder for Java mail API implementation.
+	 * Get reference to the specialized builder. It may be useful to fine tune a
+	 * specific implementation.
 	 * 
-	 * @param javaMailBuilder
-	 *            the builder to use instead of the default one
-	 * @return this instance for fluent use
+	 * @param clazz
+	 *            the class of the builder to get
+	 * @param <B>
+	 *            the type of the class to get
+	 * @return the builder instance for the specific implementation
+	 * @throws IllegalArgumentException
+	 *             when provided class references an nonexistent builder
 	 */
-	public EmailBuilder setJavaMailBuilder(JavaMailBuilder javaMailBuilder) {
-		this.javaMailBuilder = javaMailBuilder;
-		return this;
+	@SuppressWarnings("unchecked")
+	public <B extends Builder<? extends NotificationSender>> B getImplementationBuilder(Class<B> clazz) {
+		for (Builder<? extends NotificationSender> builder : implementations.values()) {
+			if (clazz.isAssignableFrom(builder.getClass())) {
+				return (B) builder;
+			}
+		}
+		throw new IllegalArgumentException("No implementation builder exists for " + clazz.getSimpleName());
 	}
 
 	/**
-	 * Set the authentication mechanism to use for sending email. In case that
-	 * you want to provide your own Java mail API builder, this method MUST be
-	 * called after calling {@link #setJavaMailBuilder(JavaMailBuilder)}. If you
-	 * call {@link #setJavaMailBuilder(JavaMailBuilder)} after, then the
-	 * authentication mechanism will not be transmitted to the builder.
+	 * Get the reference to the specialized builder for Java Mail API. It may be
+	 * useful to fine tune Java Mail API implementation.
 	 * 
-	 * @param authenticator
-	 *            the authentication mechanism
-	 * @return this instance for fluent use
-	 */
-	public EmailBuilder setAuthenticator(Authenticator authenticator) {
-		javaMailBuilder.setAuthenticator(authenticator);
-		return this;
-	}
-
-	/**
-	 * Get reference to the specialized builder for Java mail API builder in
-	 * order to fine tuning it.
-	 * 
-	 * @return the builder for Java mail API
+	 * @return The specialized builder for Java Mail API
 	 */
 	public JavaMailBuilder getJavaMailBuilder() {
-		return javaMailBuilder;
+		return getImplementationBuilder(JavaMailBuilder.class);
 	}
 }
