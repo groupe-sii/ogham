@@ -17,18 +17,15 @@ public class BasicGmailTLSSample {
 		properties.put("mail.smtp.starttls.enable", "true");
 		properties.put("mail.smtp.host", "smtp.gmail.com");
 		properties.put("mail.smtp.port", "587");
-		properties.put("mail.smtp.user", "aurelien.baudet");
-		properties.put("mail.smtp.password", "0r3li1!?B");
-		properties.put("mail.debug", "true");
-		properties.put("notification.email.authenticator.username", "aurelien.baudet");
-		properties.put("notification.email.authenticator.password", "0r3li1!?B");
-		properties.put("notification.email.from", "aurelien.baudet@gmail.com");
-		properties.put("http.proxyHost", "192.168.56.1");
-		properties.put("http.proxyPort", "8888");
+		properties.put("mail.smtp.user", "<your gmail username>");
+		properties.put("mail.smtp.password", "<your gmail password>");
+		properties.put("notification.email.authenticator.username", "<your gmail username>");
+		properties.put("notification.email.authenticator.password", "<your gmail password>");
+		properties.put("notification.email.from", "<your gmail address>");
 		// Instantiate the notification service using default behavior and
 		// provided properties
 		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
-		service.send(new Email("subject", "email content", "aurelien.baudet@gmail.com"));
+		service.send(new Email("subject", "email content", "<recipient address>"));
 	}
 
 }
