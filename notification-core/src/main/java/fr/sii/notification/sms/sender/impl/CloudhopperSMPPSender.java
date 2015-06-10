@@ -76,6 +76,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 				session.close();
 				session.destroy();
 			}
+			client.destroy();
 		}
 	}
 
@@ -91,10 +92,10 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		List<SubmitSm> messages = new ArrayList<>();
 		// TODO: use automatically the right charset ?
 		byte[] textBytes = CharsetUtil.encode(message.getContent().toString(), CharsetUtil.CHARSET_ISO_8859_15);
-		// TODO: split message when too long ?
 		// generate new reference number
 		byte[] referenceNumber = new byte[1];
 		new Random().nextBytes(referenceNumber);
+		// split message when too long
 		byte[][] msgs = GsmUtil.createConcatenatedBinaryShortMessages(textBytes, referenceNumber[0]);
 		if(msgs==null) {
 			SubmitSm submit = createMessage(message, recipient, textBytes);

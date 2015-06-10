@@ -1,7 +1,14 @@
 package fr.sii.notification.sms.builder;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.notification.core.builder.Builder;
 import fr.sii.notification.core.builder.ContentTranslatorBuilder;
 import fr.sii.notification.core.builder.NotificationSenderBuilder;
 import fr.sii.notification.core.condition.AndCondition;
@@ -60,6 +67,8 @@ import fr.sii.notification.sms.sender.impl.SmsglobalRestSender;
  * @see CloudhopperSMPPSender
  */
 public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> {
+	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);
+	
 	/**
 	 * The sender instance constructed by this builder
 	 */
@@ -71,13 +80,24 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 */
 	private SmsSender smsSender;
 
+	/**
+	 * Map of possible implementations with associated conditions
+	 */
+	private Map<Condition<Message>, Builder<? extends NotificationSender>> implementations;
+	
 	public SmsBuilder() {
 		super();
 		sender = smsSender = new SmsSender();
+		implementations = new HashMap<>();
 	}
 
 	@Override
 	public ConditionalSender build() throws BuildException {
+		for (Entry<Condition<Message>, Builder<? extends NotificationSender>> impl : implementations.entrySet()) {
+			NotificationSender s = impl.getValue().build();
+			LOG.debug("Implementation {} registered", s);
+			smsSender.addImplementation(impl.getKey(), s);
+		}
 		return sender;
 	}
 
@@ -140,6 +160,25 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 		smsSender.addImplementation(condition, implementation);
 		return this;
 	}
+	
+	/**
+	 * Register a new implementation for sending SMS. The implementation is
+	 * associated to a condition. If the condition evaluation returns true at
+	 * runtime then it means that the implementation can be used. If several
+	 * implementations are available, only the first implementation is really
+	 * invoked.
+	 * 
+	 * @param condition
+	 *            the condition that indicates at runtime if the implementation
+	 *            can be used or not
+	 * @param builder
+	 *            the builder for the implementation to register
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder registerImplementation(Condition<Message> condition, Builder<? extends NotificationSender> builder) {
+		implementations.put(condition, builder);
+		return this;
+	}
 
 	/**
 	 * Register all default implementations:
@@ -164,6 +203,8 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * Register all default implementations:
 	 * <ul>
 	 * <li>OVH HTTP API implementation</li>
+	 * <li>smsgloabl REST API implementation</li>
+	 * <li>Cloudhopper SMPP implementation</li>
 	 * </ul>
 	 * <p>
 	 * Configuration values come from provided properties.
@@ -178,22 +219,78 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder registerDefaultImplementations(Properties properties) {
-		// FIXME: use builders instead to avoid errors at runtime if the classes
-		// used in each sender are not available in the classpath
+		withOvhHttpApi(properties);
+		withSmsglobalRestApi(properties);
+		withCloudhopper(properties);
+		return this;
+	}
 
-		// Use OVH implementation only if SmsConstants.OVH_APP_KEY_PROPERTY is
-		// set
-		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.Ovh.OVH_APP_KEY_PROPERTY, properties), new OvhSmsSender());
+	/**
+	 * Enable smsglobal REST API implementation. This implementation is used
+	 * only if the associated condition indicates that smsglobal REST API can be
+	 * used. The condition checks if:
+	 * <ul>
+	 * <li>The property <code>notification.sms.smsglobal.api.key</code> is set</li>
+	 * </ul>
+	 * 
+	 * @param properties
+	 *            the properties to use for checking if property exists
+	 * @return this builder instance for fluent use
+	 */
+	public void withSmsglobalRestApi(Properties properties) {
 		// Use smsglobal REST API only if
 		// SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY is set
 		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY, properties), new SmsglobalRestSender());
-		// Use Cloudhopper SMPP implementation only if SmppClient class is in
-		// the classpath and the SmsConstants.SMPP_HOST_PROPERTY property is set
-		registerImplementation(new AndCondition<>(
-						new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
-						new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
-						new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
-					new CloudhopperSMPPSender(properties));
+	}
+
+	/**
+	 * Enable OVH HTTP API implementation. This implementation is used only if
+	 * the associated condition indicates that OVH HTTP API can be used. The
+	 * condition checks if:
+	 * <ul>
+	 * <li>The property <code>notification.sms.ovh.app.key</code> is set</li>
+	 * </ul>
+	 * 
+	 * @param properties
+	 *            the properties to use for checking if property exists
+	 * @return this builder instance for fluent use
+	 */
+	public void withOvhHttpApi(Properties properties) {
+		// Use OVH implementation only if SmsConstants.OVH_APP_KEY_PROPERTY is
+		// set
+		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.Ovh.OVH_APP_KEY_PROPERTY, properties), new OvhSmsSender());
+	}
+
+	/**
+	 * Enable Cloudhoppder SMPP implementation. This implementation is used only
+	 * if the associated condition indicates that Cloudhopper SMPP can be used.
+	 * The condition checks if:
+	 * <ul>
+	 * <li>The property <code>notification.sms.smpp.host</code> is set</li>
+	 * <li>The property <code>notification.sms.smpp.port</code> is set</li>
+	 * <li>The class <code>com.cloudhopper.smpp.SmppClient</code> is available
+	 * in the classpath</li>
+	 * </ul>
+	 * The registration can fail if the ch-smpp jar is not in the classpath. In
+	 * this case, the Cloudhopper implementation is silently not registered at
+	 * all.
+	 * 
+	 * @param properties
+	 *            the properties to use for checking if property exists
+	 * @return this builder instance for fluent use
+	 */
+	public SmsBuilder withCloudhopper(Properties properties) {
+		try {
+			// Use Cloudhopper SMPP implementation only if SmppClient class is in
+			// the classpath and the SmppConstants.SMPP_HOST_PROPERTY property is set
+			registerImplementation(new AndCondition<>(
+							new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
+							new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
+							new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
+						new CloudhopperSMPPSender(properties));
+		} catch(Throwable e) {
+			LOG.debug("Can't register Cloudhopper implementation", e);
+		}
 		return this;
 	}
 
