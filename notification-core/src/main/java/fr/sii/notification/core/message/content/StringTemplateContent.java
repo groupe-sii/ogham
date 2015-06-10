@@ -7,14 +7,11 @@ import fr.sii.notification.core.template.context.Context;
  * Content that contains a template. The template contains variables. The
  * template will be evaluated with the provided context (variable values).
  * </p>
- * <p>
  * This is a shortcut to:
- * 
  * <pre>
  * new TemplateContent(&quot;string:&lt;template content&gt;&quot;, context);
  * </pre>
  * 
- * </p>
  * 
  * @author Aurélien Baudet
  *

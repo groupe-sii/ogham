@@ -165,8 +165,8 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @param condition
 	 *            the condition that indicates at runtime if the implementation
 	 *            can be used or not
-	 * @param implementation
-	 *            the implementation to register
+	 * @param builder
+	 *            the builder for the implementation to register
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder registerImplementation(Condition<Message> condition, Builder<? extends NotificationSender> builder) {
@@ -221,12 +221,16 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * condition checks if:
 	 * <ul>
 	 * <li>The property <code>mail.smtp.host</code> is set</li>
-	 * <li>The class <code>javax.mail.Transport</code> is available in the
-	 * classpath</li>
+	 * <li>The class <code>javax.mail.Transport</code> (Java Mail API) is
+	 * available in the classpath</li>
+	 * <li>The class <code>com.sun.mail.smtp.SMTPTransport</code> (Java Mail
+	 * implementation) is available in the classpath</li>
 	 * </ul>
-	 * The registration can fail if the javax.mail jar is not in the classpath.
-	 * In this case, the Java Mail API is not registered at all.
+	 * The registration can silently fail if the javax.mail jar is not in the
+	 * classpath. In this case, the Java Mail API is not registered at all.
 	 * 
+	 * @param properties
+	 *            the properties used to check if property exists
 	 * @return this builder instance for fluent use
 	 */
 	public EmailBuilder withJavaMail(Properties properties) {
