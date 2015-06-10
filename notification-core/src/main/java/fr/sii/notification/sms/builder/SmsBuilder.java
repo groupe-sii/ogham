@@ -235,12 +235,14 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * 
 	 * @param properties
 	 *            the properties to use for checking if property exists
+	 * @return 
 	 * @return this builder instance for fluent use
 	 */
-	public void withSmsglobalRestApi(Properties properties) {
+	public SmsBuilder withSmsglobalRestApi(Properties properties) {
 		// Use smsglobal REST API only if
 		// SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY is set
 		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY, properties), new SmsglobalRestSender());
+		return this;
 	}
 
 	/**
@@ -253,12 +255,14 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * 
 	 * @param properties
 	 *            the properties to use for checking if property exists
+	 * @return 
 	 * @return this builder instance for fluent use
 	 */
-	public void withOvhHttpApi(Properties properties) {
+	public SmsBuilder withOvhHttpApi(Properties properties) {
 		// Use OVH implementation only if SmsConstants.OVH_APP_KEY_PROPERTY is
 		// set
 		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.Ovh.OVH_APP_KEY_PROPERTY, properties), new OvhSmsSender());
+		return this;
 	}
 
 	/**
