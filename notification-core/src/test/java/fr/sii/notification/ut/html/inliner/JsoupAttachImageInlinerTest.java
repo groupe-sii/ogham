@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
+import fr.sii.notification.helper.html.AssertHtml;
+import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.html.inliner.ContentWithImages;
 import fr.sii.notification.html.inliner.ImageResource;
 import fr.sii.notification.html.inliner.JsoupAttachImageInliner;
@@ -17,6 +19,9 @@ public class JsoupAttachImageInlinerTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
 	private static String EXPECTED_FOLDER = FOLDER+"expected/";
+	
+	@Rule
+	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	private JsoupAttachImageInliner inliner;
 
@@ -40,6 +45,6 @@ public class JsoupAttachImageInlinerTest {
 		expected = expected.replaceAll("images/left.gif", "cid:images/left.gif");
 		expected = expected.replaceAll("images/right.gif", "cid:images/right.gif");
 		expected = expected.replaceAll("images/tw.gif", "cid:images/tw.gif");
-		Assert.assertEquals("Jsoup image inliner doesn't work as expected", expected, inlined.getContent());
+		AssertHtml.assertSimilar(expected, inlined.getContent());
 	}
 }

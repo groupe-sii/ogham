@@ -3,18 +3,16 @@ package fr.sii.notification.html.inliner;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Entities;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 
 public class JsoupCssInliner implements CssInliner {
 	private static final String SKIP_INLINE = "data-skip-inline";
-	private static final String CSS_STYLE = "data-cssstyle";
+	private static final String TEMP_STYLE_ATTR = "data-cssstyle";
 	private static final String STYLE_ATTR = "style";
 	private static final String STYLE_TAG = "style";
 	private static final String CSS_LINK_TAG = "link";
@@ -52,14 +50,14 @@ public class JsoupCssInliner implements CssInliner {
 			String selector = st.nextToken(), properties = st.nextToken();
 			Elements selectedElements = doc.select(selector);
 			for (Element selElem : selectedElements) {
-				String oldProperties = selElem.attr(CSS_STYLE);
-				selElem.attr(CSS_STYLE, oldProperties.length() > 0 ? concatenateProperties(oldProperties, properties) : properties);
+				String oldProperties = selElem.attr(TEMP_STYLE_ATTR);
+				selElem.attr(TEMP_STYLE_ATTR, oldProperties.length() > 0 ? concatenateProperties(oldProperties, properties) : properties);
 			}
 		}
 	}
 
 	/**
-	 * Replace link tags with style tags in order to keep the same inlusion
+	 * Replace link tags with style tags in order to keep the same inclusion
 	 * order
 	 *
 	 * @param doc
@@ -115,13 +113,13 @@ public class JsoupCssInliner implements CssInliner {
 	 *            the html document
 	 */
 	private void applyStyles(Document doc) {
-		Elements allStyledElements = doc.getElementsByAttribute(CSS_STYLE);
+		Elements allStyledElements = doc.getElementsByAttribute(TEMP_STYLE_ATTR);
 
 		for (Element e : allStyledElements) {
-			String newStyle = e.attr(CSS_STYLE);
+			String newStyle = e.attr(TEMP_STYLE_ATTR);
 			String oldStyle = e.attr(STYLE_ATTR);
-			e.attr(STYLE_ATTR, (newStyle + "; " + oldStyle).replace(";;", ";"));
-			e.removeAttr(CSS_STYLE);
+			e.attr(STYLE_ATTR, (newStyle + "; " + oldStyle).replaceAll(";+", ";").trim());
+			e.removeAttr(TEMP_STYLE_ATTR);
 		}
 	}
 

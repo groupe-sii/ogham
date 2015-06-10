@@ -5,10 +5,10 @@ import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import fr.sii.notification.helper.html.AssertHtml;
 import fr.sii.notification.html.inliner.ContentWithImages;
 import fr.sii.notification.html.inliner.ImageResource;
 import fr.sii.notification.html.inliner.JsoupBase64ImageInliner;
@@ -40,6 +40,6 @@ public class JsoupBase64ImageInlinerTest {
 		expected = expected.replaceAll("images/left.gif", "data:images/gif;base64,"+new Base64().encodeToString(image3.getContent()));
 		expected = expected.replaceAll("images/right.gif", "data:images/gif;base64,"+new Base64().encodeToString(image4.getContent()));
 		expected = expected.replaceAll("images/tw.gif", "data:images/gif;base64,"+new Base64().encodeToString(image5.getContent()));
-		Assert.assertEquals("Jsoup image inliner doesn't work as expected", expected, inlined.getContent());
+		AssertHtml.assertSimilar(expected, inlined.getContent());
 	}
 }
