@@ -1,5 +1,6 @@
 package fr.sii.notification.helper.sms;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jsmpp.bean.SubmitSm;
@@ -31,7 +32,7 @@ public class AssertSms {
 	public static void assertEquals(ExpectedSms expected, SubmitSm actual) {
 		Assert.assertEquals("Sender number should be " + expected.getSenderNumber(), expected.getSenderNumber(), actual.getSourceAddr());
 		Assert.assertEquals("Receiver number should be " + expected.getReceiverNumber(), expected.getReceiverNumber(), actual.getDestAddress());
-		Assert.assertEquals("Message not consistent with expected", expected.getMessage(), new String(actual.getShortMessage()));
+		Assert.assertEquals("Message not consistent with expected", expected.getMessage(), getSmsContent(actual));
 	}
 
 	/**
@@ -116,4 +117,13 @@ public class AssertSms {
 	public static void assertEquals(SplitSms expected, List<SubmitSm> receivedMessages) {
 		assertEquals(expected.getParts(), receivedMessages);
 	}
+
+	private static String getSmsContent(SubmitSm actual) {
+		byte[] shortMessage = actual.getShortMessage();
+		if(actual.isUdhi()) {
+			shortMessage = Arrays.copyOfRange(shortMessage, 6, shortMessage.length);
+		}
+		return new String(shortMessage);
+	}
+
 }

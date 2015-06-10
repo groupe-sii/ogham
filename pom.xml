@@ -25,6 +25,7 @@
 		<commons-lang.version>3.4</commons-lang.version>
 		<equalsverifier.version>1.7.2</equalsverifier.version>
 		<cloudhopper.version>5.0.8</cloudhopper.version>
+		<cloudhopper-gsm.version>3.0.0</cloudhopper-gsm.version>
 		<jsmpp.version>2.2.1</jsmpp.version>
 
 		<!-- Code coverage -->
@@ -60,6 +61,11 @@
 				<groupId>com.cloudhopper</groupId>
 				<artifactId>ch-smpp</artifactId>
 				<version>${cloudhopper.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.cloudhopper</groupId>
+				<artifactId>ch-commons-gsm</artifactId>
+				<version>${cloudhopper-gsm.version}</version>
 			</dependency>
 
 

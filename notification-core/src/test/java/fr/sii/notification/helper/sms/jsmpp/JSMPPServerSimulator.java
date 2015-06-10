@@ -2,6 +2,7 @@ package fr.sii.notification.helper.sms.jsmpp;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -104,7 +105,12 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 
 	public MessageId onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source) throws ProcessRequestException {
 		MessageId messageId = messageIDGenerator.newMessageId();
-		LOG.debug("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
+		byte[] shortMessage = submitSm.getShortMessage();
+		if(submitSm.isUdhi()) {
+			LOG.debug("received message is UDHI");
+			shortMessage = Arrays.copyOfRange(shortMessage, 6, shortMessage.length);
+		}
+		LOG.debug("Receiving submit_sm '{}', and return message id {}", new String(shortMessage), messageId);
 		receivedMessages.add(submitSm);
 		if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));

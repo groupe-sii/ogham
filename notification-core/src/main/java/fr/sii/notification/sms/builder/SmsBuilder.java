@@ -178,18 +178,22 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder registerDefaultImplementations(Properties properties) {
-		// FIXME: use builders instead to avoid errors at runtime if the classes used in each sender are not available in the classpath
-		
+		// FIXME: use builders instead to avoid errors at runtime if the classes
+		// used in each sender are not available in the classpath
+
 		// Use OVH implementation only if SmsConstants.OVH_APP_KEY_PROPERTY is
 		// set
-		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.OVH_APP_KEY_PROPERTY, properties), new OvhSmsSender());
+		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.Ovh.OVH_APP_KEY_PROPERTY, properties), new OvhSmsSender());
 		// Use smsglobal REST API only if
 		// SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY is set
-		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY, properties), new SmsglobalRestSender());
+		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY, properties), new SmsglobalRestSender());
 		// Use Cloudhopper SMPP implementation only if SmppClient class is in
 		// the classpath and the SmsConstants.SMPP_HOST_PROPERTY property is set
-		registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SmsConstants.SMPP_HOST_PROPERTY, properties), new RequiredClassCondition<Message>(
-				"com.cloudhopper.smpp.SmppClient")), new CloudhopperSMPPSender());
+		registerImplementation(new AndCondition<>(
+						new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
+						new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
+						new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
+					new CloudhopperSMPPSender(properties));
 		return this;
 	}
 

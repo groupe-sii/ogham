@@ -46,8 +46,8 @@ public class EmailSMTPDefaultsTest {
 	public void setUp() throws IOException {
 		Properties props = new Properties(System.getProperties());
 		props.load(getClass().getResourceAsStream("/application.properties"));
-		props.put("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		props.put("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
+		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
 		notificationService = new NotificationBuilder().useAllDefaults(props).build();
 	}
 	

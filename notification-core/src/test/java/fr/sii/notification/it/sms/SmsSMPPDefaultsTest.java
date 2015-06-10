@@ -34,8 +34,8 @@ public class SmsSMPPDefaultsTest {
 	public void setUp() throws IOException {
 		Properties props = new Properties(System.getProperties());
 		props.load(getClass().getResourceAsStream("/application.properties"));
-		props.put("notification.sms.smpp.host", "127.0.0.1");
-		props.put("notification.sms.smpp.port", smppServer.getPort());
+		props.setProperty("notification.sms.smpp.host", "127.0.0.1");
+		props.setProperty("notification.sms.smpp.port", String.valueOf(smppServer.getPort()));
 		notificationService = new NotificationBuilder().useAllDefaults(props).build();
 	}
 
@@ -48,7 +48,7 @@ public class SmsSMPPDefaultsTest {
 	@Test
 	public void longMessage() throws NotificationException, IOException {
 		notificationService.send(new Sms("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split", "0000000000"));
-		AssertSms.assertEquals(new SplitSms("010203040506", "0000000000", "sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender whe", "n message has to be split"), smppServer.getReceivedMessages());
+		AssertSms.assertEquals(new SplitSms("010203040506", "0000000000", "sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the beh", "avior of the sender when message has to be split"), smppServer.getReceivedMessages());
 	}
 
 	@Test
