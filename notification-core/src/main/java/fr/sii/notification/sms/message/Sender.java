@@ -1,7 +1,9 @@
 package fr.sii.notification.sms.message;
 
-
-public class Recipient extends Contact {
+/**
+ * Specialization of {@link Contact} that represents the sender of the SMS.
+ */
+public class Sender extends Contact {
 
 	/**
 	 * Initialize the contact with its name and its phone number.
@@ -11,7 +13,7 @@ public class Recipient extends Contact {
 	 * @param phoneNumber
 	 *            the phone number for the contact
 	 */
-	public Recipient(String name, PhoneNumber phoneNumber) {
+	public Sender(String name, PhoneNumber phoneNumber) {
 		super(name, phoneNumber);
 	}
 
@@ -24,7 +26,7 @@ public class Recipient extends Contact {
 	 * @param phoneNumber
 	 *            the phone number for the contact
 	 */
-	public Recipient(PhoneNumber phoneNumber) {
+	public Sender(PhoneNumber phoneNumber) {
 		super(phoneNumber);
 	}
 
@@ -36,7 +38,7 @@ public class Recipient extends Contact {
 	 * @param phoneNumber
 	 *            the phone number for the contact as string
 	 */
-	public Recipient(String name, String phoneNumber) {
+	public Sender(String name, String phoneNumber) {
 		super(name, phoneNumber);
 	}
 
@@ -49,7 +51,8 @@ public class Recipient extends Contact {
 	 * @param phoneNumber
 	 *            the phone number for the contact
 	 */
-	public Recipient(String phoneNumber) {
+	public Sender(String phoneNumber) {
 		super(phoneNumber);
 	}
+
 }

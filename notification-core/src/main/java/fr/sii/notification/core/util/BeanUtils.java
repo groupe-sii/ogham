@@ -13,7 +13,9 @@ import org.apache.commons.beanutils.ConvertUtils;
 
 import fr.sii.notification.core.exception.template.BeanException;
 import fr.sii.notification.core.util.converter.EmailAddressConverter;
+import fr.sii.notification.core.util.converter.SmsSenderConverter;
 import fr.sii.notification.email.message.EmailAddress;
+import fr.sii.notification.sms.message.Sender;
 
 /**
  * Helper class for bean management:
@@ -37,9 +39,13 @@ import fr.sii.notification.email.message.EmailAddress;
 public final class BeanUtils {
 
 	static {
+		// TODO: auto-detect converters in the classpath
 		// Add converter for being able to convert string address into
 		// EmailAddress
 		ConvertUtils.register(new EmailAddressConverter(), EmailAddress.class);
+		// Add converter for being able to convert string into
+		// SMS sender
+		ConvertUtils.register(new SmsSenderConverter(), Sender.class);
 	}
 
 	/**

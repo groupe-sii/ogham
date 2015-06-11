@@ -21,6 +21,16 @@
 			<artifactId>javax.mail-api</artifactId>
 		</dependency>
 
+		<!-- SMS -->
+		<dependency>
+			<groupId>com.cloudhopper</groupId>
+			<artifactId>ch-smpp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.cloudhopper</groupId>
+			<artifactId>ch-commons-gsm</artifactId>
+		</dependency>
+
 		<!-- Utility -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -76,6 +86,11 @@
 		<dependency>
 			<groupId>nl.jqno.equalsverifier</groupId>
 			<artifactId>equalsverifier</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jsmpp</groupId>
+			<artifactId>jsmpp</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

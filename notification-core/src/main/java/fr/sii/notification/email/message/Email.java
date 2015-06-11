@@ -19,7 +19,7 @@ import fr.sii.notification.email.builder.EmailBuilder;
  * <ul>
  * <li>The subject of the mail</li>
  * <li>The body of the mail (see {@link Content} and sub classes for more
- * information</li>
+ * information)</li>
  * <li>The sender address</li>
  * <li>The list of recipient addresses with the type (to, cc, bcc)</li>
  * <li>The list of attachments to join to the mail</li>
@@ -59,7 +59,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>None, one or several "to" recipient addresses (typical address syntax
 	 * is of the form "user@host.domain" or
@@ -96,7 +96,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>Array of recipients</li>
 	 * </ul>
@@ -130,7 +130,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>One or several recipients</li>
 	 * </ul>
@@ -167,7 +167,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>None, one or several "to" recipient addresses, it will create a list
 	 * of {@link Recipient} with {@link RecipientType#TO} for you</li>
@@ -202,7 +202,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>None, one or several "to" recipient addresses, it will create a list of
 	 * {@link Recipient} with {@link RecipientType#TO} for you</li>
@@ -232,7 +232,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>None, one or several "to" recipient addresses, it will create a list
 	 * of {@link Recipient} with {@link RecipientType#TO} for you</li>
@@ -267,7 +267,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>None, one or several "to" recipient addresses (typical address syntax
 	 * is of the form "user@host.domain" or
@@ -299,7 +299,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>Array of recipients</li>
 	 * </ul>
@@ -328,7 +328,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>One or several recipients</li>
 	 * </ul>
@@ -359,7 +359,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>The list of recipients</li>
 	 * </ul>
@@ -489,7 +489,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>A single recipient with its type (to, cc, bcc)</li>
 	 * <li>Array of attachments to join to the mail</li>
 	 * </ul>
@@ -520,7 +520,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>A single recipient with its type (to, cc, bcc)</li>
 	 * <li>One or several attachments to join to the mail</li>
 	 * </ul>
@@ -553,7 +553,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The list of recipient addresses with the type (to, cc, bcc)</li>
 	 * <li>None, one or several attachments to join to the mail</li>
 	 * </ul>
@@ -584,7 +584,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>A single recipient with its type (to, cc, bcc)</li>
 	 * <li>The list of attachments to join to the mail</li>
 	 * </ul>
@@ -615,7 +615,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The list of recipient addresses with the type (to, cc, bcc)</li>
 	 * <li>The list of attachments to join to the mail</li>
 	 * </ul>
@@ -646,7 +646,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>The single address used in to field (typical address syntax is of the
 	 * form "user@host.domain" or "Personal Name &lt;user@host.domain&gt;"), it
@@ -703,7 +703,7 @@ public class Email implements Message {
 	 * <ul>
 	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
-	 * information</li>
+	 * information)</li>
 	 * <li>The sender address</li>
 	 * <li>The list of recipient addresses with the type (to, cc, bcc)</li>
 	 * <li>The list of attachments to join to the mail</li>
@@ -826,7 +826,7 @@ public class Email implements Message {
 	}
 
 	/**
-	 * Add a recipient specifying his address and the type (to, cc, bcc).
+	 * Add a recipient specifying its address and the type (to, cc, bcc).
 	 * 
 	 * @param recipient
 	 *            the recipient address

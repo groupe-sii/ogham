@@ -37,8 +37,8 @@ public class JavaMailSmtpTest {
 	@Before
 	public void setUp() throws IOException {
 		Properties props = new Properties(System.getProperties());
-		props.put("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		props.put("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
+		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
 		sender = new JavaMailBuilder().useDefaults(props).build();
 	}
 	
