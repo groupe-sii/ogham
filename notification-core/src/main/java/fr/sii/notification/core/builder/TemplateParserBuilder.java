@@ -1,7 +1,7 @@
 package fr.sii.notification.core.builder;
 
+import fr.sii.notification.core.resource.resolver.ResourceResolver;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.core.template.resolver.TemplateResolver;
 
 /**
  * Define a builder for a template engine implementation. It provides general
@@ -20,18 +20,17 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 * 
 	 * For example:
 	 * <ul>
-	 * <li>You you have one template located into
-	 * /notification/template/createAccount.html</li>
-	 * <li>You you have one template located into
-	 * /notification/template/resetPassword.html</li>
+	 * <li>You have one template located into
+	 * <code>/notification/template/createAccount.html</code></li>
+	 * <li>You have one template located into
+	 * <code>/notification/template/resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * So you can set the prefix to
-	 * <pre>/notification/template/</pre> and then reference
-	 * the templates using the file name:
+	 * So you can set the prefix to <code>/notification/template/</code> and
+	 * then reference the templates using the file name:
 	 * <ul>
-	 * <li>createAccount.html</li>
-	 * <li>resetPassword.html</li>
+	 * <li><code>createAccount.html</code></li>
+	 * <li><code>resetPassword.html</code></li>
 	 * </ul>
 	 * 
 	 * @param prefix
@@ -48,18 +47,18 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 * 
 	 * For example:
 	 * <ul>
-	 * <li>You you have one template located into
-	 * /notification/template/createAccount.html</li>
-	 * <li>You you have one template located into
-	 * /notification/template/resetPassword.html</li>
+	 * <li>You have one template located into
+	 * <code>/notification/template/createAccount.html</code></li>
+	 * <li>You have one template located into
+	 * <code>/notification/template/resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * So you can set the prefix to
-	 * <pre>/notification/template/</pre>, the suffix to <pre>.html</pre> and then reference
-	 * the templates using the file name:
+	 * So you can set the prefix to <code>/notification/template/</code>, the
+	 * suffix to <code>.html</code> and then reference the templates using the
+	 * file name:
 	 * <ul>
-	 * <li>createAccount</li>
-	 * <li>resetPassword</li>
+	 * <li><code>createAccount</code></li>
+	 * <li><code>resetPassword</code></li>
 	 * </ul>
 	 * 
 	 * @param suffix
@@ -74,9 +73,9 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 * 
 	 * For example:
 	 * <ul>
-	 * <li><pre>"classpath:/notification"</pre> indicates that the provided
+	 * <li><code>"classpath:/notification"</code> indicates that the provided
 	 * path represents a classpath entry.</li>
-	 * <li><pre>"file:/tmp"</pre> indicates that the provided path represents
+	 * <li><code>"file:/tmp"</code> indicates that the provided path represents
 	 * a file located on the system.</li>
 	 * </ul>
 	 * 
@@ -86,5 +85,5 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 *            the resolver implementation
 	 * @return The current builder for fluent use
 	 */
-	public TemplateParserBuilder withLookupResolver(String lookup, TemplateResolver resolver);
+	public TemplateParserBuilder withLookupResolver(String lookup, ResourceResolver resolver);
 }

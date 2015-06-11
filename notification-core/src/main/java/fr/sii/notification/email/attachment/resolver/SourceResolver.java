@@ -23,7 +23,7 @@ public interface SourceResolver {
 	 * Find the attachment using the provided path.
 	 * 
 	 * @param path
-	 *            the path to the template
+	 *            the path to the attachment
 	 * @return the found attachment
 	 * @throws SourceResolutionException
 	 *             when attachment couldn't be found

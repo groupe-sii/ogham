@@ -11,12 +11,12 @@ import fr.sii.notification.email.attachment.ByteSource;
 import fr.sii.notification.email.exception.attachment.resolver.SourceResolutionException;
 
 /**
- * Source resolver that searches for the template into the classpath. This
+ * Source resolver that searches for the attachment into the classpath. This
  * implementation is able to manage path starting or not with '/'. The source
  * resolution needs an absolute class path. The generated source information
  * will only contain a reference to the stream of the found resource. If the
  * path points nowhere, an {@link SourceResolutionException} is thrown to
- * indicate that the template couldn't be found.
+ * indicate that the attachment couldn't be found.
  * 
  * @author Aurélien Baudet
  * @see ByteSource

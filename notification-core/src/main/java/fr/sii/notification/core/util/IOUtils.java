@@ -23,10 +23,13 @@ import java.io.InputStream;
  */
 public final class IOUtils {
 	/**
+	 * <p>
 	 * Get the contents of an InputStream as a byte[].
-	 * 
+	 * </p>
+	 * <p>
 	 * This method buffers the input internally, so there is no need to use a
 	 * BufferedInputStream.
+	 * </p>
 	 * 
 	 * @param stream
 	 *            the InputStream to read from
@@ -38,6 +41,28 @@ public final class IOUtils {
 	 */
 	public static byte[] toByteArray(InputStream stream) throws IOException {
 		return org.apache.commons.io.IOUtils.toByteArray(stream);
+	}
+
+	/**
+	 * <p>
+	 * Get the contents of an InputStream as a String using the default
+	 * character encoding of the platform.
+	 * </p>
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * BufferedInputStream.
+	 * </p>
+	 * 
+	 * @param stream
+	 *            the InputStream to read from
+	 * @return the content of the stream as string
+	 * @throws NullPointerException
+	 *             if the input is null
+	 * @throws IOException
+	 *             when the stream can't be read
+	 */
+	public static String toString(InputStream stream) throws IOException {
+		return org.apache.commons.io.IOUtils.toString(stream);
 	}
 
 	private IOUtils() {

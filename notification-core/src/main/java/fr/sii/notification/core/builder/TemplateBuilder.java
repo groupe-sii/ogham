@@ -9,16 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.builder.BuildException;
+import fr.sii.notification.core.resource.resolver.ClassPathResolver;
+import fr.sii.notification.core.resource.resolver.FileResolver;
+import fr.sii.notification.core.resource.resolver.LookupMappingResolver;
+import fr.sii.notification.core.resource.resolver.ResourceResolver;
 import fr.sii.notification.core.template.detector.FixedEngineDetector;
 import fr.sii.notification.core.template.detector.TemplateEngineDetector;
 import fr.sii.notification.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.core.template.resolver.ClassPathTemplateResolver;
-import fr.sii.notification.core.template.resolver.FileTemplateResolver;
-import fr.sii.notification.core.template.resolver.LookupMappingResolver;
-import fr.sii.notification.core.template.resolver.RelativeTemplateResolver;
-import fr.sii.notification.core.template.resolver.StringTemplateResolver;
-import fr.sii.notification.core.template.resolver.TemplateResolver;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.template.thymeleaf.ThymeleafParser;
 import fr.sii.notification.template.thymeleaf.ThymeleafTemplateDetector;
@@ -35,11 +33,10 @@ import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
  * By default, the builder will use the following template resolvers:
  * <ul>
  * <li>Resolver that is able to handle classpath resolution (
- * {@link ClassPathTemplateResolver})</li>
- * <li>Resolver that is able to handle file resolution (
- * {@link FileTemplateResolver})</li>
+ * {@link ClassPathResolver})</li>
+ * <li>Resolver that is able to handle file resolution ( {@link FileResolver})</li>
  * <li>Resolver that is able to handle string directly (
- * {@link StringTemplateResolver})</li>
+ * {@link StringResourceResolver})</li>
  * </ul>
  * 
  * This builder is also able to register a prefix and a suffix for template
@@ -68,10 +65,9 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	public static final String SUFFIX_PROPERTY = PROPERTIES_PREFIX + ".suffix";
 
 	/**
-	 * The map that temporarily stores the template resolver implementations
-	 * according to the lookup prefix
+	 * The builder used to generate template resolution
 	 */
-	private Map<String, TemplateResolver> resolvers;
+	private LookupMappingResourceResolverBuilder resolverBuilder;
 
 	/**
 	 * The prefix for template resolution
@@ -91,7 +87,6 @@ public class TemplateBuilder implements TemplateParserBuilder {
 
 	public TemplateBuilder() {
 		super();
-		resolvers = new HashMap<>();
 		prefix = "";
 		suffix = "";
 		detectors = new HashMap<>();
@@ -108,11 +103,11 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * It will also use the default template resolvers:
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathTemplateResolver})</li>
+	 * {@link ClassPathResolver})</li>
 	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileTemplateResolver})</li>
+	 * {@link FileResolver})</li>
 	 * <li>Resolver that is able to handle string directly (
-	 * {@link StringTemplateResolver})</li>
+	 * {@link StringResourceResolver})</li>
 	 * </ul>
 	 * 
 	 * If the system properties provide values for prefix (
@@ -138,11 +133,11 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link #useDefaultResolvers()}):
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathTemplateResolver})</li>
+	 * {@link ClassPathResolver})</li>
 	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileTemplateResolver})</li>
+	 * {@link FileResolver})</li>
 	 * <li>Resolver that is able to handle string directly (
-	 * {@link StringTemplateResolver})</li>
+	 * {@link StringResourceResolver})</li>
 	 * </ul>
 	 * 
 	 * If the provided properties provide values for prefix (
@@ -197,43 +192,55 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * Tells the builder to use the default template resolvers:
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathTemplateResolver}). The lookup prefix is "classpath:"</li>
+	 * {@link ClassPathResolver}). The lookup prefix is "classpath:"</li>
 	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileTemplateResolver}). The lookup is "file:"</li>
+	 * {@link FileResolver}). The lookup is "file:"</li>
 	 * <li>Resolver that is able to handle string directly (
-	 * {@link StringTemplateResolver}). The lookup is "string:"</li>
+	 * {@link StringResourceResolver}). The lookup is "string:"</li>
 	 * <li>Default resolver if no lookup is used (
-	 * {@link ClassPathTemplateResolver})</li>
+	 * {@link ClassPathResolver})</li>
 	 * </ul>
 	 * 
 	 * This method is automatically called by {@link #useDefaults()} or
 	 * {@link #useDefaults(Properties)}.
 	 * 
 	 * @return this builder instance for fluent use
+	 * @see ResourceResolverBuilder
 	 */
 	public TemplateBuilder useDefaultResolvers() {
-		withLookupResolver("classpath", new ClassPathTemplateResolver());
-		withLookupResolver("file", new FileTemplateResolver());
-		withLookupResolver("string", new StringTemplateResolver());
-		withLookupResolver("", new ClassPathTemplateResolver());
+		resolverBuilder = new LookupMappingResourceResolverBuilder().useDefaultResolvers();
+		return this;
+	}
+
+	/**
+	 * Tells the builder to use your own builder for template resolution.
+	 * 
+	 * @param resolverBuilder
+	 *            the builder to use instead of default one
+	 * @return this builder instance for fluent use
+	 */
+	public TemplateBuilder withResourceResolverBuilder(LookupMappingResourceResolverBuilder resolverBuilder) {
+		this.resolverBuilder = resolverBuilder;
 		return this;
 	}
 
 	@Override
 	public TemplateBuilder withPrefix(String prefix) {
 		this.prefix = prefix;
+		resolverBuilder.withPrefix(prefix);
 		return this;
 	}
 
 	@Override
 	public TemplateBuilder withSuffix(String suffix) {
 		this.suffix = suffix;
+		resolverBuilder.withPrefix(prefix);
 		return this;
 	}
 
 	@Override
-	public TemplateBuilder withLookupResolver(String lookup, TemplateResolver resolver) {
-		resolvers.put(lookup, resolver);
+	public TemplateBuilder withLookupResolver(String lookup, ResourceResolver resolver) {
+		resolverBuilder.withLookupResolver(lookup, resolver);
 		return this;
 	}
 
@@ -280,13 +287,15 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	@Override
 	public TemplateParser build() throws BuildException {
+		LookupMappingResolver lookupResolver = resolverBuilder.build();
+		Map<String, ResourceResolver> resolvers = lookupResolver.getMapping();
 		for (TemplateParserBuilder builder : detectors.values()) {
 			// set prefix and suffix for each implementation
 			builder.withPrefix(prefix);
 			builder.withSuffix(suffix);
 			// set resolvers for each implementation
-			for (Entry<String, TemplateResolver> entry : resolvers.entrySet()) {
-				builder.withLookupResolver(entry.getKey(), new RelativeTemplateResolver(entry.getValue(), prefix, suffix));
+			for (Entry<String, ResourceResolver> entry : resolvers.entrySet()) {
+				builder.withLookupResolver(entry.getKey(), entry.getValue());
 			}
 		}
 		if(detectors.isEmpty()) {
@@ -310,7 +319,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 			LOG.debug("Auto detection mechanisms: {}", map);
 			LOG.debug("Using prefix {} and suffix {} for template resolution", prefix, suffix);
 			LOG.debug("Using lookup mapping resolver: {}", resolvers);
-			return new AutoDetectTemplateParser(new LookupMappingResolver(resolvers), map);
+			return new AutoDetectTemplateParser(lookupResolver, map);
 		}
 	}
 

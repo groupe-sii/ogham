@@ -3,7 +3,7 @@ package fr.sii.notification.core.template.detector;
 import java.util.List;
 
 import fr.sii.notification.core.exception.template.EngineDetectionException;
-import fr.sii.notification.core.template.Template;
+import fr.sii.notification.core.resource.Resource;
 import fr.sii.notification.core.template.context.Context;
 
 /**
@@ -41,7 +41,7 @@ public class OrTemplateDetector extends CompositeTemplateDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx, Template template) throws EngineDetectionException {
+	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException {
 		for (TemplateEngineDetector detector : getDetectors()) {
 			if (detector.canParse(templateName, ctx, template)) {
 				return true;

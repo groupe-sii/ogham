@@ -10,22 +10,22 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import fr.sii.notification.core.exception.template.TemplateResolutionException;
-import fr.sii.notification.core.template.Template;
-import fr.sii.notification.core.template.resolver.ConditionalResolver;
-import fr.sii.notification.core.template.resolver.LookupMappingResolver;
-import fr.sii.notification.core.template.resolver.TemplateResolver;
+import fr.sii.notification.core.exception.resource.ResourceResolutionException;
+import fr.sii.notification.core.resource.Resource;
+import fr.sii.notification.core.resource.resolver.ConditionalResolver;
+import fr.sii.notification.core.resource.resolver.LookupMappingResolver;
+import fr.sii.notification.core.resource.resolver.ResourceResolver;
 import fr.sii.notification.helper.rule.LoggingTestRule;
 
 public class LookupMappingResolverTest {
 	private LookupMappingResolver lookupResolver;
-	private Map<String, TemplateResolver> resolvers;
+	private Map<String, ResourceResolver> resolvers;
 
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	@Before
-	public void setUp() throws TemplateResolutionException {
+	public void setUp() throws ResourceResolutionException {
 		resolvers = new HashMap<>();
 		addResolver("classpath");
 		addResolver("file");
@@ -36,14 +36,14 @@ public class LookupMappingResolverTest {
 	}
 
 	@Test
-	public void classpath() throws TemplateResolutionException, IOException {
+	public void classpath() throws ResourceResolutionException, IOException {
 		String path = "classpath:/template/resolver/foo/bar.html";
 		Assert.assertTrue("should be able to support template path", lookupResolver.supports(path));
-		TemplateResolver resolver = lookupResolver.getResolver(path);
+		ResourceResolver resolver = lookupResolver.getResolver(path);
 		Assert.assertSame("should be classpath resolver", resolvers.get("classpath"), resolver);
 		Assert.assertNotSame("should not be file resolver", resolvers.get("file"), resolver);
 		Assert.assertNotSame("should not be default resolver", resolvers.get(""), resolver);
-		Template template = lookupResolver.getTemplate(path);
+		Resource template = lookupResolver.getResource(path);
 		Assert.assertNotNull("template should not be null", template);
 	}
 
@@ -51,7 +51,7 @@ public class LookupMappingResolverTest {
 	public void file() {
 		String path = "file:/template/resolver/foo/bar.html";
 		Assert.assertTrue("should be able to support template path", lookupResolver.supports(path));
-		TemplateResolver resolver = lookupResolver.getResolver(path);
+		ResourceResolver resolver = lookupResolver.getResolver(path);
 		Assert.assertNotSame("should not be classpath resolver", resolvers.get("classpath"), resolver);
 		Assert.assertSame("should be file resolver", resolvers.get("file"), resolver);
 		Assert.assertNotSame("should not be default resolver", resolvers.get(""), resolver);
@@ -61,7 +61,7 @@ public class LookupMappingResolverTest {
 	public void none() {
 		String path = "/template/resolver/foo/bar.html";
 		Assert.assertTrue("should be able to support template path", lookupResolver.supports(path));
-		TemplateResolver resolver = lookupResolver.getResolver(path);
+		ResourceResolver resolver = lookupResolver.getResolver(path);
 		Assert.assertNotSame("should not be classpath resolver", resolvers.get("classpath"), resolver);
 		Assert.assertNotSame("should not be file resolver", resolvers.get("file"), resolver);
 		Assert.assertSame("should be default resolver", resolvers.get(""), resolver);
@@ -81,24 +81,24 @@ public class LookupMappingResolverTest {
 		Assert.assertTrue("should be able to support template path", lookupResolver.supports(path));
 	}
 
-	private void addResolver(String lookup) throws TemplateResolutionException {
+	private void addResolver(String lookup) throws ResourceResolutionException {
 		addResolver(lookup, lookup);
 	}
 	
-	private void addResolver(String lookup, String name) throws TemplateResolutionException {
-		TemplateResolver resolver = Mockito.mock(TemplateResolver.class, name);
-		Mockito.when(resolver.getTemplate(Mockito.anyString())).thenReturn(Mockito.mock(Template.class));
+	private void addResolver(String lookup, String name) throws ResourceResolutionException {
+		ResourceResolver resolver = Mockito.mock(ResourceResolver.class, name);
+		Mockito.when(resolver.getResource(Mockito.anyString())).thenReturn(Mockito.mock(Resource.class));
 		resolvers.put(lookup, resolver);
 	}
 	
-	private void addConditionalResolver(String lookup, boolean support) throws TemplateResolutionException {
+	private void addConditionalResolver(String lookup, boolean support) throws ResourceResolutionException {
 		addConditionalResolver(lookup, lookup, support);
 	}
 	
-	private void addConditionalResolver(String lookup, String name, boolean support) throws TemplateResolutionException {
+	private void addConditionalResolver(String lookup, String name, boolean support) throws ResourceResolutionException {
 		ConditionalResolver resolver = Mockito.mock(ConditionalResolver.class, name);
 		Mockito.when(resolver.supports(Mockito.anyString())).thenReturn(support);
-		Mockito.when(resolver.getTemplate(Mockito.anyString())).thenReturn(Mockito.mock(Template.class));
+		Mockito.when(resolver.getResource(Mockito.anyString())).thenReturn(Mockito.mock(Resource.class));
 		resolvers.put(lookup, resolver);
 	}
 

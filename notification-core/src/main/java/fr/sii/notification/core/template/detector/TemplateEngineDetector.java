@@ -1,7 +1,7 @@
 package fr.sii.notification.core.template.detector;
 
 import fr.sii.notification.core.exception.template.EngineDetectionException;
-import fr.sii.notification.core.template.Template;
+import fr.sii.notification.core.resource.Resource;
 import fr.sii.notification.core.template.context.Context;
 
 /**
@@ -31,5 +31,5 @@ public interface TemplateEngineDetector {
 	 * @throws EngineDetectionException
 	 *             when something went wrong during detection
 	 */
-	public boolean canParse(String templateName, Context ctx, Template template) throws EngineDetectionException;
+	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException;
 }
