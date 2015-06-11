@@ -1,28 +1,33 @@
-package fr.sii.notification.ut.html.inliner;
+package fr.sii.notification.ut.html.inliner.impl;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import fr.sii.notification.helper.html.AssertHtml;
+import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.html.inliner.ContentWithImages;
 import fr.sii.notification.html.inliner.ImageResource;
-import fr.sii.notification.html.inliner.JsoupBase64ImageInliner;
+import fr.sii.notification.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+import fr.sii.notification.mock.html.inliner.PassThroughGenerator;
 
-public class JsoupBase64ImageInlinerTest {
+public class JsoupAttachImageInlinerTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
 	private static String EXPECTED_FOLDER = FOLDER+"expected/";
 	
-	private JsoupBase64ImageInliner inliner;
+	@Rule
+	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	
+	private JsoupAttachImageInliner inliner;
 
 	@Before
 	public void setUp() {
-		inliner = new JsoupBase64ImageInliner();
+		inliner = new JsoupAttachImageInliner(new PassThroughGenerator());
 	}
 	
 	@Test
@@ -35,11 +40,11 @@ public class JsoupBase64ImageInlinerTest {
 		ImageResource image5 = new ImageResource("tw.gif", "images/tw.gif", IOUtils.toByteArray(getClass().getResourceAsStream(SOURCE_FOLDER+"images/tw.gif")), "images/gif");
 		ContentWithImages inlined = inliner.inline(source, Arrays.asList(image1, image2, image3, image4, image5));
 		String expected = IOUtils.toString(getClass().getResourceAsStream(EXPECTED_FOLDER+"withImages.html"));
-		expected = expected.replaceAll("images/fb.gif", "data:images/gif;base64,"+new Base64().encodeToString(image1.getContent()));
-		expected = expected.replaceAll("images/h1.gif", "data:images/gif;base64,"+new Base64().encodeToString(image2.getContent()));
-		expected = expected.replaceAll("images/left.gif", "data:images/gif;base64,"+new Base64().encodeToString(image3.getContent()));
-		expected = expected.replaceAll("images/right.gif", "data:images/gif;base64,"+new Base64().encodeToString(image4.getContent()));
-		expected = expected.replaceAll("images/tw.gif", "data:images/gif;base64,"+new Base64().encodeToString(image5.getContent()));
+		expected = expected.replaceAll("images/fb.gif", "cid:images/fb.gif");
+		expected = expected.replaceAll("images/h1.gif", "cid:images/h1.gif");
+		expected = expected.replaceAll("images/left.gif", "cid:images/left.gif");
+		expected = expected.replaceAll("images/right.gif", "cid:images/right.gif");
+		expected = expected.replaceAll("images/tw.gif", "cid:images/tw.gif");
 		AssertHtml.assertSimilar(expected, inlined.getContent());
 	}
 }

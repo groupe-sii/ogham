@@ -1,4 +1,4 @@
-package fr.sii.notification.html.inliner;
+package fr.sii.notification.html.inliner.impl.jsoup;
 
 import java.util.List;
 import java.util.StringTokenizer;
@@ -9,6 +9,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
+
+import fr.sii.notification.html.inliner.CssInliner;
+import fr.sii.notification.html.inliner.ExternalCss;
 
 public class JsoupCssInliner implements CssInliner {
 	private static final String SKIP_INLINE = "data-skip-inline";

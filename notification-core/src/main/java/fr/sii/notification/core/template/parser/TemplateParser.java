@@ -2,8 +2,8 @@ package fr.sii.notification.core.template.parser;
 
 import fr.sii.notification.core.exception.template.ParseException;
 import fr.sii.notification.core.message.content.Content;
+import fr.sii.notification.core.resource.resolver.ResourceResolver;
 import fr.sii.notification.core.template.context.Context;
-import fr.sii.notification.core.template.resolver.TemplateResolver;
 
 /**
  * Interface that defines the general contract for template parsing. Template
@@ -11,11 +11,11 @@ import fr.sii.notification.core.template.resolver.TemplateResolver;
  * all variables that are defined in the template by the values provided by the
  * context.
  * 
- * The parser may rely on a {@link TemplateResolver} for finding and loading
+ * The parser may rely on a {@link ResourceResolver} for finding and loading
  * template.
  * 
  * @author Aurélien Baudet
- * @see TemplateResolver More information about template resolution
+ * @see ResourceResolver More information about template resolution
  */
 public interface TemplateParser {
 	/**

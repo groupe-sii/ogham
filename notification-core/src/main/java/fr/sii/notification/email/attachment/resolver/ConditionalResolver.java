@@ -11,8 +11,8 @@ package fr.sii.notification.email.attachment.resolver;
  */
 public interface ConditionalResolver extends SourceResolver {
 	/**
-	 * Indicates if the template path can be handled by this template resolver
-	 * or not.
+	 * Indicates if the attachment path can be handled by this attachment
+	 * resolver or not.
 	 * 
 	 * @param path
 	 *            the path to the attachment

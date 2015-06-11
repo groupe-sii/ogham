@@ -1,4 +1,4 @@
-package fr.sii.notification.core.template;
+package fr.sii.notification.core.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +10,7 @@ import java.io.InputStream;
  * 
  * @author Aurélien Baudet
  */
-public interface Template {
+public interface Resource {
 	/**
 	 * Stream that contains the template content. The input stream MUST be
 	 * readable several times so every time this method is called, a new

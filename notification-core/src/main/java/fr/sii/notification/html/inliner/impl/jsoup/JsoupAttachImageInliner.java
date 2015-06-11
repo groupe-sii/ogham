@@ -1,4 +1,4 @@
-package fr.sii.notification.html.inliner;
+package fr.sii.notification.html.inliner.impl.jsoup;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -9,9 +9,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import fr.sii.notification.core.id.generator.IdGenerator;
+import fr.sii.notification.core.id.generator.UUIDGenerator;
 import fr.sii.notification.email.attachment.Attachment;
 import fr.sii.notification.email.attachment.ByteSource;
 import fr.sii.notification.email.attachment.ContentDisposition;
+import fr.sii.notification.html.inliner.ContentWithImages;
+import fr.sii.notification.html.inliner.ImageInliner;
+import fr.sii.notification.html.inliner.ImageResource;
 
 /**
  * Image inliner that loads the image and attaches it to the mail. The image is

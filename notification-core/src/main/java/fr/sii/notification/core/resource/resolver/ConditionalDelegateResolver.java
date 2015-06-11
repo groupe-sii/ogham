@@ -1,20 +1,20 @@
-package fr.sii.notification.core.template.resolver;
+package fr.sii.notification.core.resource.resolver;
 
 import fr.sii.notification.core.condition.Condition;
-import fr.sii.notification.core.exception.template.TemplateResolutionException;
-import fr.sii.notification.core.template.Template;
+import fr.sii.notification.core.exception.resource.ResourceResolutionException;
+import fr.sii.notification.core.resource.Resource;
 
 /**
  * <p>
  * Decorator that delegates to other implementations. It acts as bridge between
  * {@link ConditionalResolver} and {@link Condition}. It indicates if the
- * template can be handled by delegating to a {@link Condition}. The template
- * resolution is also delegated to a {@link TemplateResolver}.
+ * resource can be handled by delegating to a {@link Condition}. The resource
+ * resolution is also delegated to a {@link ResourceResolver}.
  * </p>
  * <p>
- * This class may be useful for a template resolver that doesn't implement the
- * {@link ConditionalResolver} interface. It makes a basic template resolver
- * becoming a a conditional template resolver.
+ * This class may be useful for a resource resolver that doesn't implement the
+ * {@link ConditionalResolver} interface. It makes a basic resource resolver
+ * becoming a a conditional resource resolver.
  * </p>
  * 
  * @author Aurélien Baudet
@@ -27,22 +27,22 @@ public class ConditionalDelegateResolver implements ConditionalResolver {
 	private Condition<String> condition;
 
 	/**
-	 * The resolver to call when trying to find the template
+	 * The resolver to call when trying to find the resource
 	 */
-	private TemplateResolver resolver;
+	private ResourceResolver resolver;
 
 	/**
 	 * Initialize with a condition and a resolver.
 	 * 
 	 * @param condition
 	 *            The condition that is evaluated when {@link #supports(String)}
-	 *            is called. The condition receive the template name as
+	 *            is called. The condition receive the resource name as
 	 *            argument
 	 * @param resolver
 	 *            The resolver to call if the condition has indicated that the
-	 *            template is supported
+	 *            resource is supported
 	 */
-	public ConditionalDelegateResolver(Condition<String> condition, TemplateResolver resolver) {
+	public ConditionalDelegateResolver(Condition<String> condition, ResourceResolver resolver) {
 		super();
 		this.condition = condition;
 		this.resolver = resolver;
@@ -54,7 +54,7 @@ public class ConditionalDelegateResolver implements ConditionalResolver {
 	}
 
 	@Override
-	public Template getTemplate(String lookup) throws TemplateResolutionException {
-		return resolver.getTemplate(lookup);
+	public Resource getResource(String lookup) throws ResourceResolutionException {
+		return resolver.getResource(lookup);
 	}
 }

@@ -1,4 +1,4 @@
-package fr.sii.notification.core.template;
+package fr.sii.notification.core.resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -8,22 +8,22 @@ import fr.sii.notification.core.util.IOUtils;
 
 
 /**
- * Basic implementation of a template that simply stores a reference to the
+ * Basic implementation of a resource that simply stores a reference to the
  * provided bytes.
  * 
  * @author Aurélien Baudet
  *
  */
-public class SimpleTemplate implements Template {
+public class SimpleResource implements Resource {
 
 	private byte[] bytes;
 
-	public SimpleTemplate(InputStream stream) throws IOException {
+	public SimpleResource(InputStream stream) throws IOException {
 		super();
 		this.bytes = IOUtils.toByteArray(stream);
 	}
 
-	public SimpleTemplate(byte[] bytes) {
+	public SimpleResource(byte[] bytes) {
 		super();
 		this.bytes = bytes;
 	}

@@ -1,4 +1,4 @@
-package fr.sii.notification.html.inliner;
+package fr.sii.notification.core.id.generator;
 
 import java.util.UUID;
 

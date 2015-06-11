@@ -1,7 +1,7 @@
 package fr.sii.notification.core.template.detector;
 
 import fr.sii.notification.core.exception.template.EngineDetectionException;
-import fr.sii.notification.core.template.Template;
+import fr.sii.notification.core.resource.Resource;
 import fr.sii.notification.core.template.context.Context;
 
 /**
@@ -16,7 +16,7 @@ public class FixedEngineDetector implements TemplateEngineDetector {
 
 	/**
 	 * The value to return every time
-	 * {@link #canParse(String, Context, Template)} is called
+	 * {@link #canParse(String, Context, Resource)} is called
 	 */
 	private boolean canParse;
 
@@ -44,7 +44,7 @@ public class FixedEngineDetector implements TemplateEngineDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx, Template template) throws EngineDetectionException {
+	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException {
 		return canParse;
 	}
 

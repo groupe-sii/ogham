@@ -1,4 +1,4 @@
-package fr.sii.notification.ut.html.inliner;
+package fr.sii.notification.ut.html.inliner.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import org.junit.Test;
 import fr.sii.notification.helper.html.AssertHtml;
 import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.html.inliner.ExternalCss;
-import fr.sii.notification.html.inliner.JsoupCssInliner;
+import fr.sii.notification.html.inliner.impl.jsoup.JsoupCssInliner;
 
 public class JsoupCssInlinerTest {
 	private static String FOLDER = "/inliner/css/jsoup/";

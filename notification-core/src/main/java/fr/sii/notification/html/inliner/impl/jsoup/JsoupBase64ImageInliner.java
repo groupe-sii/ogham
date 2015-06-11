@@ -1,4 +1,4 @@
-package fr.sii.notification.html.inliner;
+package fr.sii.notification.html.inliner.impl.jsoup;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -11,6 +11,9 @@ import org.jsoup.select.Elements;
 
 import fr.sii.notification.core.util.Base64Utils;
 import fr.sii.notification.email.attachment.Attachment;
+import fr.sii.notification.html.inliner.ContentWithImages;
+import fr.sii.notification.html.inliner.ImageInliner;
+import fr.sii.notification.html.inliner.ImageResource;
 
 /**
  * Image inliner that reads the image and converts it into a base64 string. The

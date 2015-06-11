@@ -1,6 +1,6 @@
 package fr.sii.notification.mock.html.inliner;
 
-import fr.sii.notification.html.inliner.IdGenerator;
+import fr.sii.notification.core.id.generator.IdGenerator;
 
 
 public class PassThroughGenerator implements IdGenerator {
