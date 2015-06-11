@@ -46,7 +46,7 @@ public class AssertTemplate {
 	 * @throws IOException
 	 *             when the expected content couldn't be read
 	 */
-	public static void assertEquals(String expectedContentPath, Content content) throws IOException {
+	public static void assertSimilar(String expectedContentPath, Content content) throws IOException {
 		assertEquals(expectedContentPath, content, false);
 	}
 

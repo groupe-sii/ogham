@@ -457,6 +457,37 @@ public class Email implements Message {
 	 * Initialize the email with the following information:
 	 * <ul>
 	 * <li>The subject of the mail</li>
+	 * <li>The body of the mail as string, it will create a
+	 * {@link StringContent} for you</li>
+	 * <li>The sender address</li>
+	 * <li>The single address used in to field (typical address syntax is of the
+	 * form "user@host.domain" or "Personal Name &lt;user@host.domain&gt;"), it
+	 * will create a {@link Recipient} with {@link RecipientType#TO} for you</li>
+	 * <li>One or several attachments to join to the mail</li>
+	 * </ul>
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 * @param content
+	 *            the body of the mail
+	 * @param from
+	 *            the sender address
+	 * @param to
+	 *            the address of the single "to" recipient of the mail
+	 * @param attachment
+	 *            one required attachment (force to have at least one
+	 *            attachment)
+	 * @param attachments
+	 *            the list of other attachments
+	 */
+	public Email(String subject, String content, EmailAddress from, String to, Attachment attachment, Attachment... attachments) {
+		this(subject, new StringContent(content), from, to, attachment, attachments);
+	}
+
+	/**
+	 * Initialize the email with the following information:
+	 * <ul>
+	 * <li>The subject of the mail</li>
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
 	 * information</li>
 	 * <li>A single recipient with its type (to, cc, bcc)</li>
@@ -608,6 +639,37 @@ public class Email implements Message {
 	 */
 	public Email(String subject, Content content, List<Recipient> recipients, List<Attachment> attachments) {
 		this(subject, content, null, recipients, attachments);
+	}
+
+	/**
+	 * Initialize the email with the following information:
+	 * <ul>
+	 * <li>The subject of the mail</li>
+	 * <li>The body of the mail (see {@link Content} and sub classes for more
+	 * information</li>
+	 * <li>The sender address</li>
+	 * <li>The single address used in to field (typical address syntax is of the
+	 * form "user@host.domain" or "Personal Name &lt;user@host.domain&gt;"), it
+	 * will create a {@link Recipient} with {@link RecipientType#TO} for you</li>
+	 * <li>One or several attachments to join to the mail</li>
+	 * </ul>
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 * @param content
+	 *            the body of the mail
+	 * @param from
+	 *            the sender address
+	 * @param to
+	 *            the address of the single "to" recipient of the mail
+	 * @param attachment
+	 *            one required attachment (force to have at least one
+	 *            attachment)
+	 * @param attachments
+	 *            the list of other attachments
+	 */
+	public Email(String subject, Content content, EmailAddress from, String to, Attachment attachment, Attachment... attachments) {
+		this(subject, content, from, new ArrayList<>(Arrays.asList(toRecipient(new String[] { to }))), new ArrayList<>(Arrays.asList(ArrayUtils.concat(attachment, attachments))));
 	}
 
 	/**
