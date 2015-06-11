@@ -3,7 +3,6 @@ package fr.sii.notification.core.builder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.resource.resolver.ClassPathResolver;
@@ -86,12 +85,9 @@ public class LookupMappingResourceResolverBuilder implements Builder<LookupMappi
 	 * <li>Default resolver if no lookup is used ( {@link ClassPathResolver})</li>
 	 * </ul>
 	 * 
-	 * This method is automatically called by {@link #useDefaults()} or
-	 * {@link #useDefaults(Properties)}.
-	 * 
 	 * @return this builder instance for fluent use
 	 */
-	public LookupMappingResourceResolverBuilder useDefaultResolvers() {
+	public LookupMappingResourceResolverBuilder useDefaults() {
 		withLookupResolver("classpath", new ClassPathResolver());
 		withLookupResolver("file", new FileResolver());
 		withLookupResolver("string", new StringResourceResolver());

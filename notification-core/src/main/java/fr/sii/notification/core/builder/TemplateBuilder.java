@@ -13,6 +13,7 @@ import fr.sii.notification.core.resource.resolver.ClassPathResolver;
 import fr.sii.notification.core.resource.resolver.FileResolver;
 import fr.sii.notification.core.resource.resolver.LookupMappingResolver;
 import fr.sii.notification.core.resource.resolver.ResourceResolver;
+import fr.sii.notification.core.resource.resolver.StringResourceResolver;
 import fr.sii.notification.core.template.detector.FixedEngineDetector;
 import fr.sii.notification.core.template.detector.TemplateEngineDetector;
 import fr.sii.notification.core.template.parser.AutoDetectTemplateParser;
@@ -205,10 +206,10 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link #useDefaults(Properties)}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see ResourceResolverBuilder
+	 * @see LookupMappingResourceResolverBuilder
 	 */
 	public TemplateBuilder useDefaultResolvers() {
-		resolverBuilder = new LookupMappingResourceResolverBuilder().useDefaultResolvers();
+		resolverBuilder = new LookupMappingResourceResolverBuilder().useDefaults();
 		return this;
 	}
 

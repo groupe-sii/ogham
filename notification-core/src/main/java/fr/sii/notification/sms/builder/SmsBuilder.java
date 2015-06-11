@@ -235,7 +235,6 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * 
 	 * @param properties
 	 *            the properties to use for checking if property exists
-	 * @return 
 	 * @return this builder instance for fluent use
 	 */
 	public SmsBuilder withSmsglobalRestApi(Properties properties) {
@@ -255,7 +254,6 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * 
 	 * @param properties
 	 *            the properties to use for checking if property exists
-	 * @return 
 	 * @return this builder instance for fluent use
 	 */
 	public SmsBuilder withOvhHttpApi(Properties properties) {

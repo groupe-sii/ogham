@@ -30,7 +30,7 @@ public class InlineCssTranslatorTest {
 	
 	@Before
 	public void setUp() {
-		LookupMappingResolver resourceResolver = new LookupMappingResourceResolverBuilder().useDefaultResolvers().withPrefix(SOURCE_FOLDER).build();
+		LookupMappingResolver resourceResolver = new LookupMappingResourceResolverBuilder().useDefaults().withPrefix(SOURCE_FOLDER).build();
 		translator = new InlineCssTranslator(new JsoupCssInliner(), resourceResolver);
 	}
 	
