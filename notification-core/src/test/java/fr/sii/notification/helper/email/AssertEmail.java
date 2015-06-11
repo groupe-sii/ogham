@@ -36,8 +36,7 @@ public class AssertEmail {
 	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
 	 * </ul>
 	 * <p>
-	 * The checking of the body may be done either strictly (totally equal) or
-	 * not (new line characters are ignored).
+	 * The checking of the body is done strictly (totally equal).
 	 * </p>
 	 * 
 	 * @param expectedEmail
@@ -52,47 +51,8 @@ public class AssertEmail {
 	 * @throws IOException
 	 *             when reading the content of the email fails
 	 */
-	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail, boolean strict) throws MessagingException, IOException {
-		assertHeaders(expectedEmail, actualEmail);
-		Object content = actualEmail.getContent();
-		Assert.assertTrue("should be multipart message", content instanceof Multipart);
-		Multipart mp = (Multipart) content;
-		Assert.assertEquals("should have " + expectedEmail.getExpectedContents().length + " parts", expectedEmail.getExpectedContents().length, mp.getCount());
-		for (int i = 0; i < expectedEmail.getExpectedContents().length; i++) {
-			assertBody(expectedEmail.getExpectedContents()[i].getBody(), GreenMailUtil.getBody(mp.getBodyPart(i)), strict);
-			assertMimetype(expectedEmail.getExpectedContents()[i], mp.getBodyPart(i).getContentType());
-		}
-	}
-
-	/**
-	 * Assert that the fields of the received email are equal to the expected
-	 * values. The expected email contains several parts (several contents). The
-	 * received email should also have the equivalent parts. It will check that:
-	 * <ul>
-	 * <li>The received headers are respected (see
-	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
-	 * <li>The received message is a {@link Multipart} email</li>
-	 * <li>The number of parts are equal</li>
-	 * <li>Each received part body equals the expected one (order is important).
-	 * See {@link #assertBody(String, String, boolean)}</li>
-	 * <li>Each received part Mime Type equals the expected one (order is
-	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
-	 * </ul>
-	 * <p>
-	 * The checking of the body ignores the new line characters.
-	 * </p>
-	 * 
-	 * @param expectedEmail
-	 *            all the fields with their expected values
-	 * @param actualEmail
-	 *            the received email
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 * @throws IOException
-	 *             when reading the content of the email fails
-	 */
 	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
-		assertEquals(expectedEmail, actualEmail, false);
+		assertEquals(expectedEmail, actualEmail, true);
 	}
 
 	/**
@@ -114,7 +74,7 @@ public class AssertEmail {
 	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
 	 * </ul>
 	 * <p>
-	 * The checking of the body ignores the new line characters.
+	 * The checking of the body is done strictly (totally equal).
 	 * </p>
 	 * 
 	 * @param expectedEmail
@@ -169,7 +129,7 @@ public class AssertEmail {
 	 * {@link #assertMimetype(ExpectedContent, String)}</li>
 	 * </ul>
 	 * <p>
-	 * The checking of the body ignores the new line characters.
+	 * The checking of the body is done strictly (totally equal).
 	 * </p>
 	 * 
 	 * 
@@ -217,7 +177,7 @@ public class AssertEmail {
 	 * {@link #assertMimetype(ExpectedContent, String)}</li>
 	 * </ul>
 	 * <p>
-	 * The checking of the body ignores the new line characters.
+	 * The checking of the body is done strictly (totally equal).
 	 * </p>
 	 * 
 	 * @param expectedEmail
@@ -228,7 +188,217 @@ public class AssertEmail {
 	 *             when accessing the received email fails
 	 */
 	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException {
+		assertEquals(expectedEmail, actualEmail, true);
+	}
+	
+	/**
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains several parts (several contents). The
+	 * received email should also have the equivalent parts. It will check that:
+	 * <ul>
+	 * <li>The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
+	 * <li>The received message is a {@link Multipart} email</li>
+	 * <li>The number of parts are equal</li>
+	 * <li>Each received part body equals the expected one (order is important).
+	 * See {@link #assertBody(String, String, boolean)}</li>
+	 * <li>Each received part Mime Type equals the expected one (order is
+	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * </ul>
+	 * <p>
+	 * The checking of the body ignores the new line characters.
+	 * </p>
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmail
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertSimilar(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
 		assertEquals(expectedEmail, actualEmail, false);
+	}
+
+	/**
+	 * <p>
+	 * Shortcut to simplify unit testing with GreenMail. See
+	 * {@link #assertSimilar(ExpectedMultiPartEmail[], Message[])}.
+	 * </p>
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains several parts (several contents). The
+	 * received email should also have the equivalent parts. It will check that:
+	 * <ul>
+	 * <li>The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
+	 * <li>The received message is a {@link Multipart} email</li>
+	 * <li>The number of parts are equal</li>
+	 * <li>Each received part body equals the expected one (order is important).
+	 * See {@link #assertBody(String, String, boolean)}</li>
+	 * <li>Each received part Mime Type equals the expected one (order is
+	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * </ul>
+	 * <p>
+	 * The checking of the body ignores the new line characters.
+	 * </p>
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmails
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertSimilar(ExpectedMultiPartEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+		assertSimilar(new ExpectedMultiPartEmail[] { expectedEmail }, actualEmails);
+	}
+
+	/**
+	 * Assert that each received email content respects the expected one. It
+	 * ensures that the number of received emails equals to the expected number.
+	 * Then for each email it calls
+	 * {@link #assertSimilar(ExpectedMultiPartEmail, Message)} .
+	 * 
+	 * @param expectedEmails
+	 *            the list of expected emails
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertSimilar(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessagingException, IOException {
+		Assert.assertEquals("should have " + expectedEmails.length + " email", expectedEmails.length, actualEmails.length);
+		for (int i = 0; i < expectedEmails.length; i++) {
+			assertSimilar(expectedEmails[i], actualEmails[i]);
+		}
+	}
+
+	/**
+	 * <p>
+	 * Shortcut to simplify unit testing with GreenMail. See
+	 * {@link #assertSimilar(ExpectedEmail[], Message[])}.
+	 * </p>
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains only one part (only one content). It
+	 * will check that:
+	 * <ul>
+	 * <li>The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
+	 * <li>The body equals the expected one (order is important). See
+	 * {@link #assertBody(String, String, boolean)}</li>
+	 * <li>The Mime Type equals the expected one (order is important). See
+	 * {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * </ul>
+	 * <p>
+	 * The checking of the body ignores the new line characters.
+	 * </p>
+	 * 
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 */
+	public static void assertSimilar(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessagingException {
+		assertSimilar(new ExpectedEmail[] { expectedEmail }, actualEmails);
+	}
+
+	/**
+	 * Assert that each received email content respects the expected one. It
+	 * ensures that the number of received emails equals to the expected number.
+	 * Then for each email it calls
+	 * {@link #assertSimilar(ExpectedEmail, Message)} .
+	 * 
+	 * @param expectedEmail
+	 *            the expected email
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 */
+	public static void assertSimilar(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException {
+		Assert.assertEquals("should have " + expectedEmail.length + " email", expectedEmail.length, actualEmails.length);
+		for (int i = 0; i < expectedEmail.length; i++) {
+			assertSimilar(expectedEmail[i], actualEmails[i]);
+		}
+	}
+
+	/**
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains only one part (only one content). It
+	 * will check that:
+	 * <ul>
+	 * <li>The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
+	 * <li>The body equals the expected one (order is important). See
+	 * {@link #assertBody(String, String, boolean)}</li>
+	 * <li>The Mime Type equals the expected one (order is important). See
+	 * {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * </ul>
+	 * <p>
+	 * The checking of the body ignores the new line characters.
+	 * </p>
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmail
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 */
+	public static void assertSimilar(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException {
+		assertEquals(expectedEmail, actualEmail, false);
+	}
+
+	/**
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains several parts (several contents). The
+	 * received email should also have the equivalent parts. It will check that:
+	 * <ul>
+	 * <li>The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
+	 * <li>The received message is a {@link Multipart} email</li>
+	 * <li>The number of parts are equal</li>
+	 * <li>Each received part body equals the expected one (order is important).
+	 * See {@link #assertBody(String, String, boolean)}</li>
+	 * <li>Each received part Mime Type equals the expected one (order is
+	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * </ul>
+	 * <p>
+	 * The checking of the body may be done either strictly (totally equal) or
+	 * not (new line characters are ignored).
+	 * </p>
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmail
+	 *            the received email
+	 * @param strict
+	 *            true for strict checking (totally equals) or false to ignore
+	 *            new line characters in body contents
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail, boolean strict) throws MessagingException, IOException {
+		assertHeaders(expectedEmail, actualEmail);
+		Object content = actualEmail.getContent();
+		Assert.assertTrue("should be multipart message", content instanceof Multipart);
+		Multipart mp = (Multipart) content;
+		Assert.assertEquals("should have " + expectedEmail.getExpectedContents().length + " parts", expectedEmail.getExpectedContents().length, mp.getCount());
+		for (int i = 0; i < expectedEmail.getExpectedContents().length; i++) {
+			assertBody(expectedEmail.getExpectedContents()[i].getBody(), GreenMailUtil.getBody(mp.getBodyPart(i)), strict);
+			assertMimetype(expectedEmail.getExpectedContents()[i], mp.getBodyPart(i).getContentType());
+		}
 	}
 
 	/**

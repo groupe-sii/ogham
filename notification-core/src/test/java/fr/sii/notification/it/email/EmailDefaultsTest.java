@@ -61,14 +61,14 @@ public class EmailDefaultsTest {
 	@Test
 	public void withThymeleaf() throws NotificationException, MessagingException, IOException {
 		notificationService.send(new Email("Template", new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("foo", 42)), "recipient@sii.fr"));
-		AssertEmail.assertEquals(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		AssertEmail.assertSimilar(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
 
 	@Test
 	public void withThymeleafString() throws NotificationException, MessagingException, IOException {
 		String template = "<!DOCTYPE html><html xmlns:th=\"http://www.thymeleaf.org\"><head><title>Thymeleaf simple</title><meta charset=\"utf-8\" /></head><body><h1 class=\"title\" th:text=\"${name}\"></h1><p class=\"text\" th:text=\"${value}\"></p></body></html>";
 		notificationService.send(new Email("Template", new StringTemplateContent(template, new SimpleBean("foo", 42)), "recipient@sii.fr"));
-		AssertEmail.assertEquals(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_string_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		AssertEmail.assertSimilar(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_string_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class EmailDefaultsTest {
 		notificationService.send(new Email("Multi", new MultiContent(
 										new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("bar", 12)),
 										new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("bar", 12))), "recipient@sii.fr"));
-		AssertEmail.assertEquals(new ExpectedMultiPartEmail("Multi", new ExpectedContent[] {
+		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Multi", new ExpectedContent[] {
 				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.html"), "text/html.*"),
 				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.txt"), "text/plain.*")
 		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
@@ -86,7 +86,7 @@ public class EmailDefaultsTest {
 	@Test
 	public void multiContentShortcut() throws NotificationException, MessagingException, IOException {
 		notificationService.send(new Email("Multi", new MultiTemplateContent("classpath:/template/thymeleaf/source/simple", new SimpleBean("bar", 12)), "recipient@sii.fr"));
-		AssertEmail.assertEquals(new ExpectedMultiPartEmail("Multi", new ExpectedContent[] {
+		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Multi", new ExpectedContent[] {
 				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.html"), "text/html.*"),
 				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.txt"), "text/plain.*")
 		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
