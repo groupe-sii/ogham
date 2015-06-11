@@ -3,7 +3,6 @@ package fr.sii.notification.sms.sender.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.commons.gsm.GsmUtil;
-import com.cloudhopper.smpp.SmppBindType;
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.SmppSessionConfiguration;
@@ -26,9 +24,6 @@ import com.cloudhopper.smpp.type.UnrecoverablePduException;
 
 import fr.sii.notification.core.exception.MessageException;
 import fr.sii.notification.core.sender.AbstractSpecializedSender;
-import fr.sii.notification.sms.SmsConstants;
-import fr.sii.notification.sms.SmsConstants.SmppConstants.CloudhopperConstants;
-import fr.sii.notification.sms.SmsConstants.SmppConstants.TimeoutConstants;
 import fr.sii.notification.sms.message.Recipient;
 import fr.sii.notification.sms.message.Sms;
 
@@ -46,13 +41,19 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	private static final int BODY_OFFSET = 6;
 	
 	/**
-	 * Properties that is used to initialize the session
+	 * Configuration to bind an SmppSession as an ESME to an SMSC.
 	 */
-	private Properties properties;
+	private SmppSessionConfiguration smppSessionConfiguration;
+	
+	/**
+	 * Additional options
+	 */
+	private CloudhopperOptions options;
 
-	public CloudhopperSMPPSender(Properties properties) {
+	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options) {
 		super();
-		this.properties = properties;
+		this.smppSessionConfiguration = smppSessionConfiguration;
+		this.options = options;
 	}
 
 	@Override
@@ -61,10 +62,10 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		SmppSession session = null;
 		try {
 			LOG.debug("Creating a new SMPP session...");
-			session = client.bind(getSmppSessionConfiguration());
+			session = client.bind(smppSessionConfiguration);
 			LOG.info("SMPP session bounded");
 			for (SubmitSm msg : createMessages(message)) {
-				session.submit(msg, Integer.parseInt(properties.getProperty(CloudhopperConstants.RESPONSE_TIMEOUT_PROPERTY, String.valueOf(CloudhopperConstants.DEFAULT_RESPONSE_TIMEOUT))));
+				session.submit(msg, options.getResponseTimeout());
 			}
 		} catch (SmppInvalidArgumentException e) {
 			throw new MessageException("Failed to create SMPP message", message, e);
@@ -72,7 +73,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 			throw new MessageException("Failed to initialize SMPP session", message, e);
 		} finally {
 			if (session != null) {
-				session.unbind(Integer.parseInt(properties.getProperty(TimeoutConstants.UNBIND_PROPERTY, String.valueOf(CloudhopperConstants.DEFAULT_UNBIND_TIMEOUT))));
+				session.unbind(options.getUnbindTimeout());
 				session.close();
 				session.destroy();
 			}
@@ -122,41 +123,6 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		submit.setRegisteredDelivery(SmppConstants.REGISTERED_DELIVERY_SMSC_RECEIPT_REQUESTED);
 		submit.setShortMessage(content);
 		return submit;
-	}
-
-	private SmppSessionConfiguration getSmppSessionConfiguration() {
-		SmppSessionConfiguration config = new SmppSessionConfiguration(SmppBindType.TRANSMITTER, properties.getProperty(SmsConstants.SmppConstants.SYSTEMID_PROPERTY), properties.getProperty(SmsConstants.SmppConstants.PASSWORD_PROPERTY));
-		config.setHost(properties.getProperty(SmsConstants.SmppConstants.HOST_PROPERTY));
-		config.setPort(Integer.parseInt(properties.getProperty(SmsConstants.SmppConstants.PORT_PROPERTY)));
-		config.setBindTimeout(Integer.parseInt(properties.getProperty(TimeoutConstants.BIND_PROPERTY, String.valueOf(SmppConstants.DEFAULT_BIND_TIMEOUT))));
-		config.setConnectTimeout(Integer.parseInt(properties.getProperty(TimeoutConstants.CONNECTION_PROPERTY, String.valueOf(SmppConstants.DEFAULT_CONNECT_TIMEOUT))));
-		String version = properties.getProperty(SmsConstants.SmppConstants.INTERFACE_VERSION_PROPERTY, String.valueOf(SmppConstants.VERSION_3_4));
-		switch(version) {
-			case "3.3":
-				config.setInterfaceVersion(SmppConstants.VERSION_3_3);
-			break;
-			case "3.4":
-			default:
-				config.setInterfaceVersion(SmppConstants.VERSION_3_4);
-			break;
-		}
-		config.setName(properties.getProperty(CloudhopperConstants.SESSION_NAME_PROPERTY));
-		config.setRequestExpiryTimeout(Integer.parseInt(properties.getProperty(TimeoutConstants.REQUEST_EXPIRY_PROPERTY, String.valueOf(SmppConstants.DEFAULT_REQUEST_EXPIRY_TIMEOUT))));
-		// TODO: manage ssl properties
-//		config.setSslConfiguration(value);
-//		config.setUseSsl(value);
-		// TODO: allow to configure system type and bind type ?
-//		config.setSystemType(value);
-//		config.setType(bindType);
-		config.setWindowMonitorInterval(Integer.parseInt(properties.getProperty(SmsConstants.SmppConstants.WINDOW_MONITOR_INTERVAL_PROPERTY, String.valueOf(SmppConstants.DEFAULT_WINDOW_MONITOR_INTERVAL))));
-		config.setWindowSize(Integer.parseInt(properties.getProperty(SmsConstants.SmppConstants.WINDOW_SIZE_PROPERTY, String.valueOf(SmppConstants.DEFAULT_WINDOW_SIZE))));
-		config.setWindowWaitTimeout(Integer.parseInt(properties.getProperty(TimeoutConstants.WINDOW_WAIT_PROPERTY, String.valueOf(SmppConstants.DEFAULT_WINDOW_WAIT_TIMEOUT))));
-		config.setWriteTimeout(Integer.parseInt(properties.getProperty(CloudhopperConstants.WRITE_TIMEOUT_PROPERTY, String.valueOf(SmppConstants.DEFAULT_WRITE_TIMEOUT))));
-		
-		// TODO: externalize logs options
-//		config.getLoggingOptions().setLogBytes(false);
-//		config.setCountersEnabled(false);
-		return config;
 	}
 
 	@Override

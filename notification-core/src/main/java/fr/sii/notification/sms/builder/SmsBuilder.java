@@ -275,9 +275,9 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * <li>The class <code>com.cloudhopper.smpp.SmppClient</code> is available
 	 * in the classpath</li>
 	 * </ul>
-	 * The registration can fail if the ch-smpp jar is not in the classpath. In
-	 * this case, the Cloudhopper implementation is silently not registered at
-	 * all.
+	 * The registration can silently fail if the ch-smpp jar is not in the
+	 * classpath. In this case, the Cloudhopper implementation is not registered
+	 * at all.
 	 * 
 	 * @param properties
 	 *            the properties to use for checking if property exists
@@ -291,7 +291,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 							new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
 							new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
 							new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
-						new CloudhopperSMPPSender(properties));
+						new CloudhopperSMPPBuilder().useDefaults(properties));
 		} catch(Throwable e) {
 			LOG.debug("Can't register Cloudhopper implementation", e);
 		}
