@@ -39,6 +39,9 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 
 	@Override
 	public CloudhopperSMPPSender build() throws BuildException {
+		if(options==null) {
+			options = new CloudhopperOptions(CloudhopperConstants.DEFAULT_RESPONSE_TIMEOUT, CloudhopperConstants.DEFAULT_UNBIND_TIMEOUT);
+		}
 		return new CloudhopperSMPPSender(sessionConfiguration, options);
 	}
 
