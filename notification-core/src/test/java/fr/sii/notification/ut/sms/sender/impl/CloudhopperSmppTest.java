@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.jsmpp.bean.SubmitSm;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -52,18 +53,21 @@ public class CloudhopperSmppTest {
 	}
 
 	@Test
+	@Ignore("Not yet implemented")
 	public void severalRecipients() throws NotificationException, IOException {
-		// TODO: test several charsets
+		// TODO: test several recipients
 		Assert.fail("not implemented");
 	}
 
 	@Test
+	@Ignore("Not yet implemented")
 	public void charsets() throws NotificationException, IOException {
 		// TODO: test several charsets
 		Assert.fail("not implemented");
 	}
 
 	@Test
+	@Ignore("Not yet implemented")
 	public void unicode() throws NotificationException, IOException {
 		// TODO: test unicode characters
 		Assert.fail("not implemented");
