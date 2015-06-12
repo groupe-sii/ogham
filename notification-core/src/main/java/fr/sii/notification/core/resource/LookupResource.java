@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import fr.sii.notification.core.util.EqualsBuilder;
 import fr.sii.notification.core.util.HashCodeBuilder;
+import fr.sii.notification.core.util.LookupUtils;
 
 /**
  * <p>
@@ -25,6 +26,8 @@ import fr.sii.notification.core.util.HashCodeBuilder;
  *
  */
 public class LookupResource implements NamedResource {
+	private static final char WINDOWS_SEPARATOR = '\\';
+	private static final char UNIX_SEPARATOR = '/';
 
 	/**
 	 * The path that may contain a lookup prefix
@@ -80,11 +83,11 @@ public class LookupResource implements NamedResource {
 
 	private static String extractName(String path) {
 		String name;
-		int lastSlashIdx = path.lastIndexOf('/');
-		if (lastSlashIdx >= 0) {
-			name = path.substring(lastSlashIdx + 1);
+		int lastSeparatorIdx = Math.max(path.lastIndexOf(UNIX_SEPARATOR), path.lastIndexOf(WINDOWS_SEPARATOR));
+		if (lastSeparatorIdx >= 0) {
+			name = path.substring(lastSeparatorIdx + 1);
 		} else {
-			int colonIdx = path.indexOf(':');
+			int colonIdx = path.indexOf(LookupUtils.DELIMITER);
 			name = colonIdx > 0 ? path.substring(colonIdx + 1) : path;
 		}
 		return name;

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.resource.ResourceResolutionException;
 import fr.sii.notification.core.resource.Resource;
+import fr.sii.notification.core.util.LookupUtils;
 
 /**
  * <p>
@@ -45,11 +46,6 @@ public class LookupMappingResolver implements ConditionalResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(LookupMappingResolver.class);
 
 	/**
-	 * Lookup delimiter
-	 */
-	private static final String DELIMITER = ":";
-
-	/**
 	 * The map that associates a lookup with a resolver
 	 */
 	private Map<String, ResourceResolver> mapping;
@@ -85,17 +81,16 @@ public class LookupMappingResolver implements ConditionalResolver {
 	public Resource getResource(String path) throws ResourceResolutionException {
 		ResourceResolver resolver = getResolver(path);
 		LOG.debug("Loading resource {} using resolver {}...", path, resolver);
-		return resolver.getResource(getResourcePath(path));
+		return resolver.getResource(LookupUtils.getRealPath(mapping, path));
 	}
 
 	@Override
 	public boolean supports(String path) {
 		LOG.debug("Finding resolver for resource {}...", path);
-		String lookupType = getLookupType(path);
-		boolean hasResolver = mapping.containsKey(lookupType);
-		if (hasResolver) {
+		String lookupType = LookupUtils.getLookupType(mapping, path);
+		if (lookupType != null) {
 			ResourceResolver resolver = mapping.get(lookupType);
-			boolean supports = resolver instanceof ConditionalResolver ? ((ConditionalResolver) resolver).supports(getResourcePath(path)) : true;
+			boolean supports = resolver instanceof ConditionalResolver ? ((ConditionalResolver) resolver).supports(LookupUtils.getRealPath(lookupType, path)) : true;
 			if (supports) {
 				LOG.debug("{} can be used for resolving lookup '{}' and can handle resource {}", resolver, lookupType, path);
 			} else {
@@ -130,10 +125,11 @@ public class LookupMappingResolver implements ConditionalResolver {
 	 * @param path
 	 *            the name or the path to the resource that may contain a lookup
 	 *            prefix.
-	 * @return the resolver to use for the resource
+	 * @return the resolver to use for the resource or null if no resolver can
+	 *         handle the lookup provided in the path
 	 */
 	public ResourceResolver getResolver(String path) {
-		return mapping.get(getLookupType(path));
+		return LookupUtils.getResolver(mapping, path);
 	}
 
 	/**
@@ -143,17 +139,5 @@ public class LookupMappingResolver implements ConditionalResolver {
 	 */
 	public Map<String, ResourceResolver> getMapping() {
 		return mapping;
-	}
-
-	private String getLookupType(String path) {
-		int idx = path.indexOf(DELIMITER);
-		String lookup = idx > 0 ? path.substring(0, idx) : "";
-		LOG.trace("Lookup {} found for resource path {}", lookup, path);
-		return lookup;
-	}
-
-	private String getResourcePath(String resource) {
-		int idx = resource.indexOf(DELIMITER);
-		return resource.substring(idx + 1);
 	}
 }
