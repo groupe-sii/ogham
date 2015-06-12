@@ -1,4 +1,4 @@
-package fr.sii.notification.email.attachment;
+package fr.sii.notification.core.resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -8,38 +8,38 @@ import fr.sii.notification.core.util.EqualsBuilder;
 import fr.sii.notification.core.util.HashCodeBuilder;
 import fr.sii.notification.core.util.IOUtils;
 
-
 /**
- * Basic implementation of a Source that simply stores a reference to the
- * provided bytes.
+ * Basic implementation of a {@link NamedResource} that simply stores a
+ * reference to the provided bytes.
  * 
  * @author Aurélien Baudet
  *
  */
-public class ByteSource implements Source {
+public class ByteResource implements NamedResource {
 	/**
-	 * The content of the attachment as array of bytes
+	 * The content of the resource as array of bytes
 	 */
 	private byte[] bytes;
 
 	/**
-	 * The name of the attachment
+	 * The name of the resource
 	 */
 	private String name;
 
-	public ByteSource(String name, InputStream stream) throws IOException {
+	public ByteResource(String name, InputStream stream) throws IOException {
 		super();
 		this.name = name;
 		this.bytes = IOUtils.toByteArray(stream);
 	}
 
-	public ByteSource(String name, byte[] bytes) {
+	public ByteResource(String name, byte[] bytes) {
 		super();
 		this.name = name;
 		this.bytes = bytes;
 	}
 
-	public InputStream getStream() {
+	@Override
+	public InputStream getInputStream() {
 		return new ByteArrayInputStream(bytes);
 	}
 
@@ -51,7 +51,7 @@ public class ByteSource implements Source {
 	public byte[] getBytes() {
 		return bytes;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(name).append(bytes).hashCode();

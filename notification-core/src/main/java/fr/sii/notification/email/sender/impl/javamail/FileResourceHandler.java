@@ -1,0 +1,46 @@
+package fr.sii.notification.email.sender.impl.javamail;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.activation.DataHandler;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.util.ByteArrayDataSource;
+
+import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.notification.core.mimetype.MimeTypeProvider;
+import fr.sii.notification.core.resource.FileResource;
+import fr.sii.notification.core.resource.NamedResource;
+import fr.sii.notification.email.attachment.Attachment;
+import fr.sii.notification.email.exception.javamail.AttachmentResourceHandlerException;
+
+public class FileResourceHandler implements JavaMailAttachmentResourceHandler {
+	/**
+	 * The Mime Type detector
+	 */
+	private MimeTypeProvider mimetypeProvider;
+
+	public FileResourceHandler(MimeTypeProvider mimetypeProvider) {
+		super();
+		this.mimetypeProvider = mimetypeProvider;
+	}
+
+	@Override
+	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
+		try {
+			FileResource fileResource = (FileResource) resource;
+			part.setDataHandler(new DataHandler(new ByteArrayDataSource(new FileInputStream(fileResource.getFile()), mimetypeProvider.getMimeType(fileResource.getFile()).toString())));
+		} catch (MimeTypeDetectionException e) {
+			throw new AttachmentResourceHandlerException("Failed to attach " + resource.getName() + ". Mime type can't be detected", attachment, e);
+		} catch (FileNotFoundException e) {
+			throw new AttachmentResourceHandlerException("Failed to attach " + resource.getName() + ". File doesn't exists", attachment, e);
+		} catch (MessagingException e) {
+			throw new AttachmentResourceHandlerException("Failed to attach " + resource.getName(), attachment, e);
+		} catch (IOException e) {
+			throw new AttachmentResourceHandlerException("Failed to attach " + resource.getName() + ". File can't be read", attachment, e);
+		}
+	}
+
+}

@@ -23,11 +23,11 @@ import fr.sii.notification.core.sender.ContentTranslatorSender;
 import fr.sii.notification.core.sender.FillerSender;
 import fr.sii.notification.core.sender.MultiImplementationSender;
 import fr.sii.notification.core.sender.NotificationSender;
-import fr.sii.notification.core.translator.ContentTranslator;
+import fr.sii.notification.core.translator.content.ContentTranslator;
+import fr.sii.notification.core.translator.resource.AttachmentResourceTranslator;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.email.EmailConstants;
-import fr.sii.notification.email.attachment.translator.AttachmentSourceTranslator;
-import fr.sii.notification.email.sender.AttachmentSourceTranslatorSender;
+import fr.sii.notification.email.sender.AttachmentResourceTranslatorSender;
 import fr.sii.notification.email.sender.EmailSender;
 
 /**
@@ -346,9 +346,9 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 
 	/**
 	 * Enable attachment features like attachment resolution based on lookup
-	 * mapping. It delegates to {@link AttachmentSourceTranslatorBuilder} with
+	 * mapping. It delegates to {@link AttachmentResourceTranslatorBuilder} with
 	 * the default behavior and values (see
-	 * {@link AttachmentSourceTranslatorBuilder#useDefaults()}).
+	 * {@link AttachmentResourceTranslatorBuilder#useDefaults()}).
 	 * 
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
@@ -358,7 +358,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withAttachmentFeatures() {
-		return withAttachmentFeatures(new AttachmentSourceTranslatorBuilder().useDefaults());
+		return withAttachmentFeatures(new AttachmentResourceTranslatorBuilder().useDefaults());
 	}
 
 	/**
@@ -374,7 +374,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 *            the builder to use instead of the default one
 	 * @return this instance for fluent use
 	 */
-	public EmailBuilder withAttachmentFeatures(AttachmentSourceTranslatorBuilder builder) {
+	public EmailBuilder withAttachmentFeatures(AttachmentResourceTranslatorBuilder builder) {
 		return withAttachmentFeatures(builder.build());
 	}
 
@@ -390,8 +390,8 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 *            the translator to use instead of the default one
 	 * @return this instance for fluent use
 	 */
-	public EmailBuilder withAttachmentFeatures(AttachmentSourceTranslator translator) {
-		sender = new AttachmentSourceTranslatorSender(translator, sender);
+	public EmailBuilder withAttachmentFeatures(AttachmentResourceTranslator translator) {
+		sender = new AttachmentResourceTranslatorSender(translator, sender);
 		return this;
 	}
 

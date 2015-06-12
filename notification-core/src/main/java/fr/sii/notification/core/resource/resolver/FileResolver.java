@@ -1,15 +1,13 @@
 package fr.sii.notification.core.resource.resolver;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.resource.ResourceResolutionException;
+import fr.sii.notification.core.resource.FileResource;
 import fr.sii.notification.core.resource.Resource;
-import fr.sii.notification.core.resource.SimpleResource;
 
 /**
  * Resource resolver that searches for the resource on the file system. The
@@ -21,23 +19,21 @@ import fr.sii.notification.core.resource.SimpleResource;
  * couldn't be found.
  * 
  * @author Aurélien Baudet
- *
+ * @see FileResource
  */
 public class FileResolver implements ResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(FileResolver.class);
 
 	@Override
 	public Resource getResource(String path) throws ResourceResolutionException {
-		try {
-			LOG.debug("Loading resource {} from file system", path);
-			SimpleResource resource = new SimpleResource(new FileInputStream(path));
-			LOG.debug("Resource {} found on the file system", path);
-			return resource;
-		} catch (FileNotFoundException e) {
-			throw new ResourceResolutionException("Resource " + path + " not found on file system", path, e);
-		} catch (IOException e) {
-			throw new ResourceResolutionException("Resource " + path + " is not readable", path, e);
+		LOG.debug("Loading resource {} from file system", path);
+		File file = new File(path);
+		if (!file.exists()) {
+			throw new ResourceResolutionException("Resource " + path + " not found on file system", path);
 		}
+		Resource resource = new FileResource(file);
+		LOG.debug("Resource {} found on the file system", path);
+		return resource;
 	}
 
 }

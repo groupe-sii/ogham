@@ -11,21 +11,21 @@ import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.mimetype.FallbackMimeTypeProvider;
 import fr.sii.notification.core.mimetype.JMimeMagicProvider;
 import fr.sii.notification.core.mimetype.MimeTypeProvider;
+import fr.sii.notification.core.resource.ByteResource;
+import fr.sii.notification.core.resource.FileResource;
+import fr.sii.notification.core.resource.NamedResource;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.email.EmailConstants;
-import fr.sii.notification.email.attachment.FileSource;
-import fr.sii.notification.email.attachment.Source;
-import fr.sii.notification.email.attachment.ByteSource;
 import fr.sii.notification.email.sender.impl.JavaMailSender;
-import fr.sii.notification.email.sender.impl.javamail.FileSourceHandler;
-import fr.sii.notification.email.sender.impl.javamail.JavaMailAttachmentSourceHandler;
+import fr.sii.notification.email.sender.impl.javamail.FileResourceHandler;
+import fr.sii.notification.email.sender.impl.javamail.JavaMailAttachmentResourceHandler;
 import fr.sii.notification.email.sender.impl.javamail.JavaMailContentHandler;
 import fr.sii.notification.email.sender.impl.javamail.JavaMailInterceptor;
-import fr.sii.notification.email.sender.impl.javamail.MapAttachmentSourceHandler;
+import fr.sii.notification.email.sender.impl.javamail.MapAttachmentResourceHandler;
 import fr.sii.notification.email.sender.impl.javamail.MapContentHandler;
 import fr.sii.notification.email.sender.impl.javamail.MultiContentHandler;
 import fr.sii.notification.email.sender.impl.javamail.PropertiesUsernamePasswordAuthenticator;
-import fr.sii.notification.email.sender.impl.javamail.StreamSourceHandler;
+import fr.sii.notification.email.sender.impl.javamail.StreamResourceHandler;
 import fr.sii.notification.email.sender.impl.javamail.StringContentHandler;
 
 /**
@@ -53,16 +53,16 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	private MapContentHandler mapContentHandler;
 
 	/**
-	 * The attachment source handler to use. By default, it uses a
-	 * {@link MapAttachmentSourceHandler}.
+	 * The attachment resource handler to use. By default, it uses a
+	 * {@link MapAttachmentResourceHandler}.
 	 */
-	private JavaMailAttachmentSourceHandler attachmentSourceHandler;
+	private JavaMailAttachmentResourceHandler attachmentResourceHandler;
 
 	/**
-	 * The attachment source handler that associates the attachment source class to the
-	 * attachment source handler implementation
+	 * The attachment resource handler that associates the attachment resource class to the
+	 * attachment resource handler implementation
 	 */
-	private MapAttachmentSourceHandler mapAttachmentSourceHandler;
+	private MapAttachmentResourceHandler mapAttachmentResourceHandler;
 
 	/**
 	 * The provider for Mime Type detection
@@ -82,7 +82,7 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	public JavaMailBuilder() {
 		super();
 		contentHandler = mapContentHandler = new MapContentHandler();
-		attachmentSourceHandler = mapAttachmentSourceHandler = new MapAttachmentSourceHandler();
+		attachmentResourceHandler = mapAttachmentResourceHandler = new MapAttachmentResourceHandler();
 		mimetypeProvider = new FallbackMimeTypeProvider();
 	}
 
@@ -93,8 +93,8 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 * <li>Register Mime Type detection using MimeMagic library</li>
 	 * <li>Handle {@link MultiContent}</li>
 	 * <li>Handle {@link StringContent}</li>
-	 * <li>Handle {@link ByteSource}</li>
-	 * <li>Handle {@link FileSource}</li>
+	 * <li>Handle {@link ByteResource}</li>
+	 * <li>Handle {@link FileResource}</li>
 	 * </ul>
 	 * 
 	 * @return this instance for fluent use
@@ -111,8 +111,8 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 * <li>Register Mime Type detection using MimeMagic library</li>
 	 * <li>Handle {@link MultiContent}</li>
 	 * <li>Handle {@link StringContent}</li>
-	 * <li>Handle {@link ByteSource}</li>
-	 * <li>Handle {@link FileSource}</li>
+	 * <li>Handle {@link ByteResource}</li>
+	 * <li>Handle {@link FileResource}</li>
 	 * </ul>
 	 * 
 	 * @param props
@@ -127,8 +127,8 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 		registerMimeTypeProvider(new JMimeMagicProvider());
 		registerContentHandler(MultiContent.class, new MultiContentHandler(mapContentHandler));
 		registerContentHandler(StringContent.class, new StringContentHandler(mimetypeProvider));
-		registerAttachmentSourceHandler(ByteSource.class, new StreamSourceHandler(mimetypeProvider));
-		registerAttachmentSourceHandler(FileSource.class, new FileSourceHandler(mimetypeProvider));
+		registerAttachmentResourceHandler(ByteResource.class, new StreamResourceHandler(mimetypeProvider));
+		registerAttachmentResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));
 		return this;
 	}
 
@@ -159,16 +159,16 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	}
 
 	/**
-	 * Register a new handler for a specific attachment source.
+	 * Register a new handler for a specific attachment resource.
 	 * 
 	 * @param clazz
-	 *            the class of the attachment source to handle
+	 *            the class of the attachment resource to handle
 	 * @param handler
 	 *            the handler
 	 * @return this instance for fluent use
 	 */
-	public JavaMailBuilder registerAttachmentSourceHandler(Class<? extends Source> clazz, JavaMailAttachmentSourceHandler handler) {
-		mapAttachmentSourceHandler.addSourceHandler(clazz, handler);
+	public JavaMailBuilder registerAttachmentResourceHandler(Class<? extends NamedResource> clazz, JavaMailAttachmentResourceHandler handler) {
+		mapAttachmentResourceHandler.addResourceHandler(clazz, handler);
 		return this;
 	}
 
@@ -219,6 +219,6 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 
 	@Override
 	public JavaMailSender build() {
-		return new JavaMailSender(properties, contentHandler, attachmentSourceHandler, authenticator, interceptor);
+		return new JavaMailSender(properties, contentHandler, attachmentResourceHandler, authenticator, interceptor);
 	}
 }

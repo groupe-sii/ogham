@@ -2,7 +2,7 @@ package fr.sii.notification.html.translator;
 
 import fr.sii.notification.core.exception.handler.ContentTranslatorException;
 import fr.sii.notification.core.message.content.Content;
-import fr.sii.notification.core.translator.ContentTranslator;
+import fr.sii.notification.core.translator.content.ContentTranslator;
 
 /**
  * Automatically transform CSS shortcuts to the expanded version. For example,

@@ -9,7 +9,7 @@ import fr.sii.notification.core.exception.resource.ResourceResolutionException;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.resource.resolver.ResourceResolver;
-import fr.sii.notification.core.translator.ContentTranslator;
+import fr.sii.notification.core.translator.content.ContentTranslator;
 import fr.sii.notification.core.util.HtmlUtils;
 import fr.sii.notification.core.util.IOUtils;
 import fr.sii.notification.html.inliner.CssInliner;

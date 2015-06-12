@@ -23,7 +23,7 @@ import fr.sii.notification.core.sender.ContentTranslatorSender;
 import fr.sii.notification.core.sender.FillerSender;
 import fr.sii.notification.core.sender.MultiImplementationSender;
 import fr.sii.notification.core.sender.NotificationSender;
-import fr.sii.notification.core.translator.ContentTranslator;
+import fr.sii.notification.core.translator.content.ContentTranslator;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.sms.SmsConstants;
 import fr.sii.notification.sms.sender.SmsSender;

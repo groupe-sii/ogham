@@ -36,6 +36,7 @@ import fr.sii.notification.core.resource.resolver.StringResourceResolver;
  * 
  * 
  * @author Aurélien Baudet
+ * @see LookupMappingResourceResolverBuilder
  * @see LookupMappingResolver
  *
  */

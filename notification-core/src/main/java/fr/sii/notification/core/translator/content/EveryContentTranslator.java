@@ -1,4 +1,4 @@
-package fr.sii.notification.core.translator;
+package fr.sii.notification.core.translator.content;
 
 import java.util.ArrayList;
 import java.util.Arrays;

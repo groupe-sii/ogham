@@ -11,8 +11,8 @@ import org.jsoup.select.Elements;
 
 import fr.sii.notification.core.id.generator.IdGenerator;
 import fr.sii.notification.core.id.generator.UUIDGenerator;
+import fr.sii.notification.core.resource.ByteResource;
 import fr.sii.notification.email.attachment.Attachment;
-import fr.sii.notification.email.attachment.ByteSource;
 import fr.sii.notification.email.attachment.ContentDisposition;
 import fr.sii.notification.html.inliner.ContentWithImages;
 import fr.sii.notification.html.inliner.ImageInliner;
@@ -48,7 +48,7 @@ public class JsoupAttachImageInliner implements ImageInliner {
 		List<Attachment> attachments = new ArrayList<>(images.size());
 		for (ImageResource image : images) {
 			String contentId = idGenerator.generate(image.getPath());
-			Attachment attachment = new Attachment(new ByteSource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, MessageFormat.format(CONTENT_ID, contentId));
+			Attachment attachment = new Attachment(new ByteResource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, MessageFormat.format(CONTENT_ID, contentId));
 			Elements imgs = doc.select(MessageFormat.format(IMG_SELECTOR, image.getPath()));
 			for(Element img : imgs) {
 				img.attr(SRC_ATTR, MessageFormat.format(SRC_VALUE, contentId));

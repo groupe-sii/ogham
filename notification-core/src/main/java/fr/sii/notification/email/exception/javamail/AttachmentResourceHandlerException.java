@@ -3,7 +3,7 @@ package fr.sii.notification.email.exception.javamail;
 import fr.sii.notification.core.exception.NotificationException;
 import fr.sii.notification.email.attachment.Attachment;
 
-public class AttachmentSourceHandlerException extends NotificationException {
+public class AttachmentResourceHandlerException extends NotificationException {
 
 	/**
 	 * 
@@ -12,17 +12,17 @@ public class AttachmentSourceHandlerException extends NotificationException {
 	
 	private Attachment attachment;
 
-	public AttachmentSourceHandlerException(String message, Attachment attachment, Throwable cause) {
+	public AttachmentResourceHandlerException(String message, Attachment attachment, Throwable cause) {
 		super(message, cause);
 		this.attachment = attachment;
 	}
 
-	public AttachmentSourceHandlerException(String message, Attachment attachment) {
+	public AttachmentResourceHandlerException(String message, Attachment attachment) {
 		super(message);
 		this.attachment = attachment;
 	}
 
-	public AttachmentSourceHandlerException(Throwable cause, Attachment attachment) {
+	public AttachmentResourceHandlerException(Throwable cause, Attachment attachment) {
 		super(cause);
 		this.attachment = attachment;
 	}

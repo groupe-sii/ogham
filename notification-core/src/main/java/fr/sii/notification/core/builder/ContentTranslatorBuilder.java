@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.core.translator.ContentTranslator;
-import fr.sii.notification.core.translator.EveryContentTranslator;
-import fr.sii.notification.core.translator.MultiContentTranslator;
-import fr.sii.notification.core.translator.TemplateContentTranslator;
+import fr.sii.notification.core.translator.content.ContentTranslator;
+import fr.sii.notification.core.translator.content.EveryContentTranslator;
+import fr.sii.notification.core.translator.content.MultiContentTranslator;
+import fr.sii.notification.core.translator.content.TemplateContentTranslator;
 
 /**
  * Builder for constructing a chained translator. Each translator is able to

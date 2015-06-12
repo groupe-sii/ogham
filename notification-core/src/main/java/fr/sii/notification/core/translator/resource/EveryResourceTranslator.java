@@ -1,4 +1,4 @@
-package fr.sii.notification.email.attachment.translator;
+package fr.sii.notification.core.translator.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,25 +7,25 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.notification.email.attachment.Source;
-import fr.sii.notification.email.exception.attachment.translator.SourceTranslatorException;
+import fr.sii.notification.core.resource.Resource;
+import fr.sii.notification.email.exception.attachment.translator.ResourceTranslatorException;
 
 /**
  * Decorator that loop through all delegate translators to transform the
- * attachment source of the message. Every translator will be called to update
- * the source. Each translator receive the source that may be updated by the
+ * attachment resource of the message. Every translator will be called to update
+ * the resource. Each translator receive the resource that may be updated by the
  * previous translator.
  * 
  * @author Aurélien Baudet
  *
  */
-public class EverySourceTranslator implements AttachmentSourceTranslator {
-	private static final Logger LOG = LoggerFactory.getLogger(EverySourceTranslator.class);
+public class EveryResourceTranslator implements AttachmentResourceTranslator {
+	private static final Logger LOG = LoggerFactory.getLogger(EveryResourceTranslator.class);
 
 	/**
 	 * The list of translators used to update the message content
 	 */
-	private List<AttachmentSourceTranslator> translators;
+	private List<AttachmentResourceTranslator> translators;
 
 	/**
 	 * Initialize the decorator with none, one or several translator
@@ -34,7 +34,7 @@ public class EverySourceTranslator implements AttachmentSourceTranslator {
 	 * @param translators
 	 *            the translators to register
 	 */
-	public EverySourceTranslator(AttachmentSourceTranslator... translators) {
+	public EveryResourceTranslator(AttachmentResourceTranslator... translators) {
 		this(new ArrayList<>(Arrays.asList(translators)));
 	}
 
@@ -45,16 +45,16 @@ public class EverySourceTranslator implements AttachmentSourceTranslator {
 	 * @param translators
 	 *            the translators to register
 	 */
-	public EverySourceTranslator(List<AttachmentSourceTranslator> translators) {
+	public EveryResourceTranslator(List<AttachmentResourceTranslator> translators) {
 		super();
 		this.translators = translators;
 	}
 
 	@Override
-	public Source translate(Source source) throws SourceTranslatorException {
-		Source result = source;
-		for (AttachmentSourceTranslator translator : translators) {
-			LOG.debug("Applying translator {} on content {}", translator, source);
+	public Resource translate(Resource resource) throws ResourceTranslatorException {
+		Resource result = resource;
+		for (AttachmentResourceTranslator translator : translators) {
+			LOG.debug("Applying translator {} on resource {}", translator, resource);
 			result = translator.translate(result);
 		}
 		return result;
@@ -66,7 +66,7 @@ public class EverySourceTranslator implements AttachmentSourceTranslator {
 	 * @param translator
 	 *            the translator to register
 	 */
-	public void addTranslator(AttachmentSourceTranslator translator) {
+	public void addTranslator(AttachmentResourceTranslator translator) {
 		translators.add(translator);
 	}
 
@@ -75,14 +75,14 @@ public class EverySourceTranslator implements AttachmentSourceTranslator {
 	 * 
 	 * @return the list of translators
 	 */
-	public List<AttachmentSourceTranslator> getTranslators() {
+	public List<AttachmentResourceTranslator> getTranslators() {
 		return translators;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("EverySourceTranslator [translators=").append(translators).append("]");
+		builder.append("EveryResourceTranslator [translators=").append(translators).append("]");
 		return builder.toString();
 	}
 }

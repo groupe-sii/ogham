@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.resource.ResourceResolutionException;
+import fr.sii.notification.core.resource.ByteResource;
 import fr.sii.notification.core.resource.Resource;
-import fr.sii.notification.core.resource.SimpleResource;
 
 /**
  * Resource resolver that searches for the resource into the classpath. This
@@ -19,7 +19,7 @@ import fr.sii.notification.core.resource.SimpleResource;
  * indicate that the resource couldn't be found.
  * 
  * @author Aurélien Baudet
- * @see SimpleResource
+ * @see ByteResource
  */
 public class ClassPathResolver implements ResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(ClassPathResolver.class);
@@ -33,10 +33,20 @@ public class ClassPathResolver implements ResourceResolver {
 				throw new ResourceResolutionException("Resource " + path + " not found in the classpath", path);
 			}
 			LOG.debug("Resource {} available in the classpath...", path);
-			return new SimpleResource(stream);
+			return new ByteResource(extractName(path), stream);
 		} catch (IOException e) {
 			throw new ResourceResolutionException("The resource "+path+" is not readable", path, e);
 		}
 	}
 
+	private static String extractName(String path) {
+		String name;
+		int lastSlashIdx = path.lastIndexOf('/');
+		if(lastSlashIdx>=0) {
+			name = path.substring(lastSlashIdx+1);
+		} else {
+			name = path;
+		}
+		return name;
+	}
 }
