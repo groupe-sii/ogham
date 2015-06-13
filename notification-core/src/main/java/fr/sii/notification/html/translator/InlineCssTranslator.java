@@ -15,9 +15,25 @@ import fr.sii.notification.core.util.IOUtils;
 import fr.sii.notification.html.inliner.CssInliner;
 import fr.sii.notification.html.inliner.ExternalCss;
 
+/**
+ * Translator that transforms HTML content. If not HTML, the translator has no
+ * effect. The HTML is analyzed in order to find external css files. For each
+ * found image, it uses the resource resolver in order to find the css file.
+ * Once all css files are found, the HTML is transformed in order to inline the
+ * styles.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class InlineCssTranslator implements ContentTranslator {
+	/**
+	 * The CSS inliner
+	 */
 	private CssInliner cssInliner;
 
+	/**
+	 * The resource resolver to find the CSS files
+	 */
 	private ResourceResolver resourceResolver;
 
 	public InlineCssTranslator(CssInliner cssInliner, ResourceResolver resourceResolver) {

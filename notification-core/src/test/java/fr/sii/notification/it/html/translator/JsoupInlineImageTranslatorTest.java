@@ -1,63 +1,66 @@
-package fr.sii.notification.ut.html.inliner.impl;
+package fr.sii.notification.it.html.translator;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import fr.sii.notification.core.builder.LookupMappingResourceResolverBuilder;
+import fr.sii.notification.core.exception.handler.ContentTranslatorException;
+import fr.sii.notification.core.message.content.Content;
+import fr.sii.notification.core.message.content.StringContent;
+import fr.sii.notification.core.mimetype.JMimeMagicProvider;
 import fr.sii.notification.core.resource.ByteResource;
+import fr.sii.notification.core.resource.resolver.LookupMappingResolver;
 import fr.sii.notification.email.attachment.Attachment;
 import fr.sii.notification.email.attachment.ContentDisposition;
+import fr.sii.notification.email.message.content.ContentWithAttachments;
 import fr.sii.notification.helper.html.AssertHtml;
 import fr.sii.notification.helper.rule.LoggingTestRule;
-import fr.sii.notification.html.inliner.ContentWithImages;
 import fr.sii.notification.html.inliner.ImageResource;
 import fr.sii.notification.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+import fr.sii.notification.html.translator.InlineImageTranslator;
 import fr.sii.notification.mock.html.inliner.PassThroughGenerator;
+import fr.sii.notification.ut.html.inliner.impl.JsoupAttachImageInlinerTest;
 
-public class JsoupAttachImageInlinerTest {
+public class JsoupInlineImageTranslatorTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
 	private static String EXPECTED_FOLDER = FOLDER+"expected/";
-	
+
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
-	private JsoupAttachImageInliner inliner;
+	private InlineImageTranslator translator;
 
 	@Before
 	public void setUp() {
-		inliner = new JsoupAttachImageInliner(new PassThroughGenerator());
+		LookupMappingResolver resourceResolver = new LookupMappingResourceResolverBuilder().useDefaults().withPrefix(SOURCE_FOLDER).build();
+		translator = new InlineImageTranslator(new JsoupAttachImageInliner(new PassThroughGenerator()), resourceResolver, new JMimeMagicProvider());
 	}
 	
 	@Test
-	public void withImages() throws IOException {
-		// prepare html and associated images
+	public void withImages() throws IOException, ContentTranslatorException {
+		// prepare the html and associated images
 		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"withImages.html"));
-		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
 		// do the job
-		ContentWithImages inlined = inliner.inline(source, images);
-		// prepare expected result for the html
+		Content result = translator.translate(new StringContent(source));
+		// prepare expected html
 		String expected = generateExpectedHtml("withImages.html", "fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
 		// prepare expected attachments
-		List<Attachment> expectedAttachments = getAttachments(images);
+		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif"));
 		// assertions
-		AssertHtml.assertSimilar(expected, inlined.getContent());
-		Assert.assertEquals("should have 5 attachments", 5, inlined.getAttachments().size());
-		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
-	}
-	
-	@Test
-	@Ignore("Not yet implemented")
-	public void duplicatedImage() {
-		// TODO: when the html contains the same image several times, it should generate only one attachment for it
-		Assert.fail("Not implemented");
+		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
+		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
+		AssertHtml.assertSimilar(expected, contentWithAttachments.getContent().toString());
+		Assert.assertEquals("should have 5 attachments", 5, contentWithAttachments.getAttachments().size());
+		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
 	}
 	
 	
