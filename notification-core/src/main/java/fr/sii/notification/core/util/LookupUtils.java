@@ -75,6 +75,8 @@ public class LookupUtils {
 	 *            the mapping that contains the lookups (without ':' character)
 	 * @param path
 	 *            the path used to get the associated lookup entry
+	 * @param <T>
+	 *            the type for entries
 	 * @return the lookup entry that can handle the path or null if none can
 	 *         handle it
 	 */

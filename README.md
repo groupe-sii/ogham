@@ -212,6 +212,10 @@ Here is the content of the template:
 </html>
 ```
 
+## Sending email with subject from template
+
+
+
 ## sending email with attachments
 
 This sample shows how to send an email with attached file.
@@ -252,6 +256,9 @@ public class EmailWithAttachmentSample {
 
 }
 ```
+
+## Sending an email with text fallback
+
 
 # With Spring
 

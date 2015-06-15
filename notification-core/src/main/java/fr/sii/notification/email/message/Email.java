@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.sii.notification.core.message.Message;
+import fr.sii.notification.core.message.WithSubject;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.util.ArrayUtils;
@@ -28,7 +29,7 @@ import fr.sii.notification.email.builder.EmailBuilder;
  * @author Aurélien Baudet
  *
  */
-public class Email implements Message {
+public class Email implements Message, WithSubject {
 	/**
 	 * The subject
 	 */
