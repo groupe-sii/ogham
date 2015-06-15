@@ -1,6 +1,7 @@
 package fr.sii.notification.ut.sms.sender.impl;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.jsmpp.bean.SubmitSm;
 import org.junit.Assert;
@@ -53,10 +54,22 @@ public class CloudhopperSmppTest {
 	}
 
 	@Test
-	@Ignore("Not yet implemented")
 	public void severalRecipients() throws NotificationException, IOException {
-		// TODO: test several recipients
-		Assert.fail("not implemented");
+		// Given
+		String to1 = "0000000000";
+		String to2 = "0000000001";
+		String from = "010203040506";
+		String content = "sms content";
+		Sms message = new Sms(content,  to1, to2).withFrom( new Sender(from));
+		
+		// When
+		sender.send(message);
+		
+		//Then
+		ExpectedSms expected1 = new ExpectedSms(content, from, to1);
+		ExpectedSms expected2 = new ExpectedSms(content, from, to2);
+
+		AssertSms.assertEquals(Arrays.asList(expected1, expected2), smppServer.getReceivedMessages());
 	}
 
 	@Test
