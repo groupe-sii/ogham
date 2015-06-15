@@ -93,6 +93,13 @@ public class LookupMappingResolverTest {
 		Assert.assertTrue("should be able to support template path", lookupResolver.supports(path));
 	}
 
+	
+	
+	
+	//---------------------------------------------------------------//
+	//                           Utilities                           //
+	//---------------------------------------------------------------//
+
 	private void addResolver(String lookup) throws ResourceResolutionException {
 		addResolver(lookup, lookup);
 	}

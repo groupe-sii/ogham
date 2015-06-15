@@ -18,15 +18,15 @@ import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.notification.html.translator.InlineCssTranslator;
 
-public class InlineCssTranslatorTest {
+public class JsoupInlineCssTranslatorTest {
 	private static String FOLDER = "/inliner/css/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
 	private static String EXPECTED_FOLDER = FOLDER+"expected/";
 	
-	private InlineCssTranslator translator;
-	
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	
+	private InlineCssTranslator translator;
 	
 	@Before
 	public void setUp() {
@@ -35,7 +35,7 @@ public class InlineCssTranslatorTest {
 	}
 	
 	@Test
-	public void simple() throws IOException, ContentTranslatorException {
+	public void externalStyles() throws IOException, ContentTranslatorException {
 		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"externalStyles.html"));
 		String expected = IOUtils.toString(getClass().getResourceAsStream(EXPECTED_FOLDER+"externalStyles.html"));
 		StringContent sourceContent = new StringContent(source);
