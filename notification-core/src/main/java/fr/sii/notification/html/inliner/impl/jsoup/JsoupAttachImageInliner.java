@@ -10,7 +10,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import fr.sii.notification.core.id.generator.IdGenerator;
-import fr.sii.notification.core.id.generator.UUIDGenerator;
 import fr.sii.notification.core.resource.ByteResource;
 import fr.sii.notification.email.attachment.Attachment;
 import fr.sii.notification.email.attachment.ContentDisposition;
@@ -33,10 +32,6 @@ public class JsoupAttachImageInliner implements ImageInliner {
 
 	private IdGenerator idGenerator;
 	
-	public JsoupAttachImageInliner() {
-		this(new UUIDGenerator());
-	}
-
 	public JsoupAttachImageInliner(IdGenerator idGenerator) {
 		super();
 		this.idGenerator = idGenerator;
@@ -47,10 +42,11 @@ public class JsoupAttachImageInliner implements ImageInliner {
 		Document doc = Jsoup.parse(htmlContent);
 		List<Attachment> attachments = new ArrayList<>(images.size());
 		for (ImageResource image : images) {
-			String contentId = idGenerator.generate(image.getPath());
+			String contentId = idGenerator.generate(image.getName());
 			Attachment attachment = new Attachment(new ByteResource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, MessageFormat.format(CONTENT_ID, contentId));
 			Elements imgs = doc.select(MessageFormat.format(IMG_SELECTOR, image.getPath()));
 			for(Element img : imgs) {
+				// TODO: handle skip and skip-attach
 				img.attr(SRC_ATTR, MessageFormat.format(SRC_VALUE, contentId));
 			}
 			attachments.add(attachment);

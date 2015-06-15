@@ -44,22 +44,25 @@ public class InlineCssTranslator implements ContentTranslator {
 
 	@Override
 	public Content translate(Content content) throws ContentTranslatorException {
-		String stringContent = content.toString();
-		if (HtmlUtils.isHtml(stringContent)) {
-			List<String> cssFiles = HtmlUtils.getCssFiles(stringContent);
-			List<ExternalCss> cssResources = new ArrayList<>(cssFiles.size());
-			for (String path : cssFiles) {
-				try {
-					cssResources.add(new ExternalCss(path, IOUtils.toString(resourceResolver.getResource(path).getInputStream())));
-				} catch (IOException e) {
-					throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
-				} catch (ResourceResolutionException e) {
-					throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
+		if (content instanceof StringContent) {
+			String stringContent = content.toString();
+			if (HtmlUtils.isHtml(stringContent)) {
+				List<String> cssFiles = HtmlUtils.getCssFiles(stringContent);
+				if (!cssFiles.isEmpty()) {
+					List<ExternalCss> cssResources = new ArrayList<>(cssFiles.size());
+					for (String path : cssFiles) {
+						try {
+							cssResources.add(new ExternalCss(path, IOUtils.toString(resourceResolver.getResource(path).getInputStream())));
+						} catch (IOException e) {
+							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
+						} catch (ResourceResolutionException e) {
+							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
+						}
+					}
+					return new StringContent(cssInliner.inline(stringContent, cssResources));
 				}
 			}
-			return new StringContent(cssInliner.inline(stringContent, cssResources));
-		} else {
-			return content;
 		}
+		return content;
 	}
 }

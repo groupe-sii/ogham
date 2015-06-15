@@ -17,17 +17,41 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+/**
+ * Utility class for checking HTML content.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class AssertHtml {
 	private static final Logger LOG = LoggerFactory.getLogger(AssertHtml.class);
-	
+
+	/**
+	 * Check if the HTML is identical to the expected. The HTML strings are
+	 * parsed into {@link Document}s. Two documents are considered to be
+	 * "identical" if they contain the same elements and attributes in the same
+	 * order.
+	 * <p>
+	 * For each difference, the difference will be logged with error level. It
+	 * will generate a {@link ComparisonFailure} with the expected string and
+	 * actual string in order to be able to visualize the differences on sources
+	 * directly in the IDE.
+	 * </p>
+	 * 
+	 * @param expected
+	 *            the expected HTML
+	 * @param actual
+	 *            the HTML content to check
+	 */
+	@SuppressWarnings("unchecked")
 	public static void assertIdentical(String expected, String actual) {
 		try {
 			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));
 			Document expectedDoc = builder.parse(expected);
 			Document actualDoc = builder.parse(actual);
 			DetailedDiff diff = new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));
-			if(!diff.identical()) {
-				for(Difference difference : (List<Difference>) diff.getAllDifferences()) {
+			if (!diff.identical()) {
+				for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
 					LOG.error(difference.toString());
 				}
 				throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
@@ -37,15 +61,32 @@ public class AssertHtml {
 		}
 	}
 
+	/**
+	 * Check if the HTML is similar to the expected. The HTML strings are parsed
+	 * into {@link Document}s. Two documents are considered to be "identical" if
+	 * they contain the same elements and attributes regardless of order.
+	 * <p>
+	 * For each difference, the difference will be logged with error level. It
+	 * will generate a {@link ComparisonFailure} with the expected string and
+	 * actual string in order to be able to visualize the differences on sources
+	 * directly in the IDE.
+	 * </p>
+	 * 
+	 * @param expected
+	 *            the expected HTML
+	 * @param actual
+	 *            the HTML content to check
+	 */
+	@SuppressWarnings("unchecked")
 	public static void assertSimilar(String expected, String actual) {
 		try {
 			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));
 			Document expectedDoc = builder.parse(expected);
 			Document actualDoc = builder.parse(actual);
 			DetailedDiff diff = new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));
-			if(!diff.similar()) {
-				for(Difference difference : (List<Difference>) diff.getAllDifferences()) {
-					if(!difference.isRecoverable()) {
+			if (!diff.similar()) {
+				for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
+					if (!difference.isRecoverable()) {
 						LOG.error(difference.toString());
 					}
 				}

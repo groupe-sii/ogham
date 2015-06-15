@@ -9,6 +9,7 @@ import javax.mail.internet.MimePart;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.email.exception.javamail.ContentHandlerException;
 import fr.sii.notification.email.exception.javamail.NoContentHandlerException;
+import fr.sii.notification.email.message.Email;
 
 /**
  * Provides a content handler based on the class of the content.
@@ -41,12 +42,12 @@ public class MapContentHandler implements JavaMailContentHandler {
 	}
 
 	@Override
-	public void setContent(MimePart message, Multipart multipart, Content content) throws ContentHandlerException {
+	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
 		JavaMailContentHandler contentHandler = map.get(content.getClass());
 		if (contentHandler == null) {
 			throw new NoContentHandlerException("there is no content handler defined for managing " + content.getClass().getSimpleName() + " content class", content);
 		}
-		contentHandler.setContent(message, multipart, content);
+		contentHandler.setContent(message, multipart, email, content);
 	}
 
 	/**

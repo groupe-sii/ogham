@@ -167,7 +167,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	public EmailBuilder useDefaults(Properties properties) {
 		registerDefaultImplementations(properties);
 		withAutoFilling(properties);
-		withTemplate();
+		withTemplate(properties);
 		withAttachmentFeatures();
 		return this;
 	}
@@ -376,7 +376,24 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withTemplate() {
-		return withTemplate(new ContentTranslatorBuilder().useDefaults());
+		return withTemplate(BuilderUtil.getDefaultProperties());
+	}
+
+	/**
+	 * Enables templating support using all default behaviors and values. See
+	 * {@link ContentTranslatorBuilder#useDefaults()} for more information.
+	 * 
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param properties
+	 *            the properties to use
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withTemplate(Properties properties) {
+		return withTemplate(new ContentTranslatorBuilder().useDefaults(properties));
 	}
 
 	/**

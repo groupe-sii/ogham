@@ -61,29 +61,32 @@ public class InlineImageTranslator implements ContentTranslator {
 
 	@Override
 	public Content translate(Content content) throws ContentTranslatorException {
-		String stringContent = content.toString();
-		if (HtmlUtils.isHtml(stringContent)) {
-			List<String> images = HtmlUtils.getImages(stringContent);
-			List<ImageResource> imageResources = new ArrayList<>(images.size());
-			for (String path : images) {
-				try {
-					byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
-					String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
-					String imgName = Paths.get(path).getFileName().toString();
-					imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
-				} catch (IOException e) {
-					throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
-				} catch (ResourceResolutionException e) {
-					throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
-				} catch (MimeTypeDetectionException e) {
-					throw new ContentTranslatorException("Failed to inline CSS file " + path + " because mimetype can't be detected", e);
+		if (content instanceof StringContent) {
+			String stringContent = content.toString();
+			if (HtmlUtils.isHtml(stringContent)) {
+				List<String> images = HtmlUtils.getImages(stringContent);
+				if (!images.isEmpty()) {
+					List<ImageResource> imageResources = new ArrayList<>(images.size());
+					for (String path : images) {
+						try {
+							byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
+							String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
+							String imgName = Paths.get(path).getFileName().toString();
+							imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
+						} catch (IOException e) {
+							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
+						} catch (ResourceResolutionException e) {
+							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
+						} catch (MimeTypeDetectionException e) {
+							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because mimetype can't be detected", e);
+						}
+					}
+					ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);
+					return new ContentWithAttachments(new StringContent(contentWithImages.getContent()), contentWithImages.getAttachments());
 				}
 			}
-			ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);
-			return new ContentWithAttachments(new StringContent(contentWithImages.getContent()), contentWithImages.getAttachments());
-		} else {
-			return content;
 		}
+		return content;
 	}
 
 }

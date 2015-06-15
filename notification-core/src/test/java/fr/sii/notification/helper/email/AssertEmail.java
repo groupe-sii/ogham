@@ -1,9 +1,11 @@
 package fr.sii.notification.helper.email;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.mail.Address;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
@@ -11,8 +13,10 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 
 import org.junit.Assert;
+import org.junit.ComparisonFailure;
 
-import com.icegreen.greenmail.util.GreenMailUtil;
+import fr.sii.notification.core.util.HtmlUtils;
+import fr.sii.notification.helper.html.AssertHtml;
 
 /**
  * Utility class for checking if the received email content is as expected.
@@ -190,7 +194,7 @@ public class AssertEmail {
 	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException {
 		assertEquals(expectedEmail, actualEmail, true);
 	}
-	
+
 	/**
 	 * Assert that the fields of the received email are equal to the expected
 	 * values. The expected email contains several parts (several contents). The
@@ -393,11 +397,11 @@ public class AssertEmail {
 		assertHeaders(expectedEmail, actualEmail);
 		Object content = actualEmail.getContent();
 		Assert.assertTrue("should be multipart message", content instanceof Multipart);
-		Multipart mp = (Multipart) content;
-		Assert.assertEquals("should have " + expectedEmail.getExpectedContents().length + " parts", expectedEmail.getExpectedContents().length, mp.getCount());
+		List<Part> bodyParts = getBodyParts(actualEmail);
+		Assert.assertEquals("should have " + expectedEmail.getExpectedContents().length + " parts", expectedEmail.getExpectedContents().length, bodyParts.size());
 		for (int i = 0; i < expectedEmail.getExpectedContents().length; i++) {
-			assertBody(expectedEmail.getExpectedContents()[i].getBody(), GreenMailUtil.getBody(mp.getBodyPart(i)), strict);
-			assertMimetype(expectedEmail.getExpectedContents()[i], mp.getBodyPart(i).getContentType());
+			assertBody(expectedEmail.getExpectedContents()[i].getBody(), bodyParts.get(i).getContent().toString(), strict);
+			assertMimetype(expectedEmail.getExpectedContents()[i], bodyParts.get(i).getContentType());
 		}
 	}
 
@@ -467,8 +471,18 @@ public class AssertEmail {
 	}
 
 	/**
-	 * Checks if the received body equals the expected body. The check can be
-	 * done either strictly (totally equal) or not (ignore new lines).
+	 * Checks if the received body equals the expected body. It handles HTML
+	 * content and pure text content.
+	 * <p>
+	 * For text, the check can be done either strictly (totally equal) or not
+	 * (ignore new lines).
+	 * </p>
+	 * <p>
+	 * For HTML, the string content is parsed and DOM trees are compared. The
+	 * comparison can be done either strictly (DOM trees are totally equals,
+	 * attributes are in the same order) or not (attributes can be in any
+	 * order).
+	 * </p>
 	 * 
 	 * @param expectedBody
 	 *            the expected content as string
@@ -479,7 +493,17 @@ public class AssertEmail {
 	 *            new line characters
 	 */
 	private static void assertBody(String expectedBody, String actualBody, boolean strict) {
-		Assert.assertEquals("body should be '" + expectedBody + "'", strict ? expectedBody : sanitize(expectedBody), strict ? actualBody : sanitize(actualBody));
+		if (HtmlUtils.isHtml(expectedBody)) {
+			if (strict) {
+				AssertHtml.assertIdentical(expectedBody, actualBody);
+			} else {
+				AssertHtml.assertSimilar(expectedBody, actualBody);
+			}
+		} else {
+			if(strict ? !expectedBody.equals(actualBody) : !sanitize(expectedBody).equals(sanitize(actualBody))) {
+				throw new ComparisonFailure("body should be '" + expectedBody + "'", expectedBody, actualBody);
+			}
+		}
 	}
 
 	/**
@@ -540,8 +564,8 @@ public class AssertEmail {
 	 */
 	private static void assertRecipients(List<String> expectedRecipients, Message actualEmail, RecipientType recipientType) throws MessagingException {
 		Address[] actualRecipients = actualEmail.getRecipients(recipientType);
-		if(expectedRecipients.isEmpty()) {
-			Assert.assertTrue("should have no recipients "+recipientType, actualRecipients==null || actualRecipients.length==0);
+		if (expectedRecipients.isEmpty()) {
+			Assert.assertTrue("should have no recipients " + recipientType, actualRecipients == null || actualRecipients.length == 0);
 		} else {
 			Assert.assertEquals("should have only " + expectedRecipients.size() + " " + recipientType, expectedRecipients.size(), actualRecipients.length);
 			for (int i = 0; i < expectedRecipients.size(); i++) {
@@ -562,12 +586,28 @@ public class AssertEmail {
 	}
 
 	private static Part getBodyPart(Part actualEmail) throws MessagingException {
+			return getBodyParts(actualEmail).get(0);
+	}
+
+	private static List<Part> getBodyParts(Part actualEmail) throws MessagingException {
+		List<Part> founds = new ArrayList<>();
+		getBodyParts(actualEmail, founds);
+		return founds;
+	}
+	
+	private static void getBodyParts(Part actualEmail, List<Part> founds) throws MessagingException {
 		try {
 			Object content = actualEmail.getContent();
-			if(content instanceof Multipart) {
-				return ((Multipart) content).getBodyPart(0);
-			} else {
-				return actualEmail;
+			if (content instanceof Multipart) {
+				Multipart mp = (Multipart) content;
+				for(int i=0 ; i<mp.getCount() ; i++) {
+					BodyPart part = mp.getBodyPart(i);
+					if(part.getContentType().startsWith("multipart/")) {
+						getBodyParts(part, founds);
+					} else if(part.getContentType().startsWith("text/")){
+						founds.add(part);
+					}
+				}
 			}
 		} catch (IOException e) {
 			throw new MessagingException("Failed to access content of the mail", e);
