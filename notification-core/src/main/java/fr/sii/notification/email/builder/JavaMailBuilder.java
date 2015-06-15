@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.mail.Authenticator;
 
 import fr.sii.notification.core.builder.Builder;
+import fr.sii.notification.core.charset.FixedCharsetProvider;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.message.content.StringContent;
@@ -16,7 +17,9 @@ import fr.sii.notification.core.resource.FileResource;
 import fr.sii.notification.core.resource.NamedResource;
 import fr.sii.notification.core.util.BuilderUtil;
 import fr.sii.notification.email.EmailConstants;
+import fr.sii.notification.email.message.content.ContentWithAttachments;
 import fr.sii.notification.email.sender.impl.JavaMailSender;
+import fr.sii.notification.email.sender.impl.javamail.ContentWithAttachmentsHandler;
 import fr.sii.notification.email.sender.impl.javamail.FileResourceHandler;
 import fr.sii.notification.email.sender.impl.javamail.JavaMailAttachmentResourceHandler;
 import fr.sii.notification.email.sender.impl.javamail.JavaMailContentHandler;
@@ -126,7 +129,9 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 		}
 		registerMimeTypeProvider(new JMimeMagicProvider());
 		registerContentHandler(MultiContent.class, new MultiContentHandler(mapContentHandler));
-		registerContentHandler(StringContent.class, new StringContentHandler(mimetypeProvider));
+		// TODO: make charset provider configurable
+		registerContentHandler(StringContent.class, new StringContentHandler(mimetypeProvider, new FixedCharsetProvider()));
+		registerContentHandler(ContentWithAttachments.class, new ContentWithAttachmentsHandler(mapContentHandler));
 		registerAttachmentResourceHandler(ByteResource.class, new StreamResourceHandler(mimetypeProvider));
 		registerAttachmentResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));
 		return this;

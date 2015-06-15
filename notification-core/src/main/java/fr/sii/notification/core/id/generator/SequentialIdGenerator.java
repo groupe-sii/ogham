@@ -16,7 +16,7 @@ public class SequentialIdGenerator implements IdGenerator {
 
 	@Override
 	public String generate(String name) {
-		return "name"+(idx++);
+		return name+(idx++);
 	}
 
 }

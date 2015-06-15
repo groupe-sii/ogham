@@ -34,6 +34,7 @@ public class JsoupBase64ImageInliner implements ImageInliner {
 		for (ImageResource image : images) {
 			Elements imgs = doc.select(MessageFormat.format(IMG_SELECTOR, image.getPath()));
 			for(Element img : imgs) {
+				// TODO: handle skip and skip-base64
 				img.attr(SRC_ATTR, MessageFormat.format(BASE64_URI, image.getMimetype(), Base64Utils.encodeToString(image.getContent())));
 			}
 		}

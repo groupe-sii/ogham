@@ -67,7 +67,7 @@ public class JsoupAttachImageInlinerTest {
 	//---------------------------------------------------------------//
 	
 	private static Attachment getAttachment(ImageResource image) {
-		return new Attachment(new ByteResource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, "<images/"+image.getName()+">");
+		return new Attachment(new ByteResource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, "<"+image.getName()+">");
 	}
 	
 	private static List<Attachment> getAttachments(List<ImageResource> images) {
@@ -81,7 +81,7 @@ public class JsoupAttachImageInlinerTest {
 	private static String generateExpectedHtml(String fileName, String... imageNames) throws IOException {
 		String expected = IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
 		for(String imageName : imageNames) {
-			expected = expected.replaceAll("images/"+imageName, "cid:images/"+imageName);
+			expected = expected.replaceAll("images/"+imageName, "cid:"+imageName);
 		}
 		return expected;
 	}

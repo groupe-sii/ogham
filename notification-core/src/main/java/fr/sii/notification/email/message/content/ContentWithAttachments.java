@@ -43,4 +43,9 @@ public class ContentWithAttachments implements Content {
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
 	}
+
+	@Override
+	public String toString() {
+		return content.toString();
+	}
 }

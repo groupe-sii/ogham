@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.notification.core.exception.MessageException;
 import fr.sii.notification.core.sender.AbstractSpecializedSender;
 import fr.sii.notification.email.attachment.Attachment;
+import fr.sii.notification.email.attachment.ContentDisposition;
 import fr.sii.notification.email.exception.javamail.AttachmentResourceHandlerException;
 import fr.sii.notification.email.exception.javamail.ContentHandlerException;
 import fr.sii.notification.email.message.Email;
@@ -97,14 +98,34 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 			// set subject and content
 			mimeMsg.setSubject(email.getSubject());
 			LOG.debug("Add message content for email {}", email);
-			MimeMultipart multipart = new MimeMultipart("related");
+			// create the root as mixed
+			MimeMultipart rootContainer = new MimeMultipart("mixed");
+			// create the container in case of attachments
+			MimeMultipart relatedContainer = new MimeMultipart("related");
+			MimeBodyPart relatedPart = new MimeBodyPart();
+			relatedPart.setContent(relatedContainer);
 			// delegate content management to specialized classes
-			contentHandler.setContent(mimeMsg, multipart, email.getContent());
-			// add attachments
+			contentHandler.setContent(mimeMsg, relatedContainer, email, email.getContent());
+			// add attachments to the root or the related container according to the disposition (inline or attached)
 			for(Attachment attachment : email.getAttachments()) {
-				addAttachment(multipart, attachment);
+				Multipart container = ContentDisposition.ATTACHMENT.equals(attachment.getDisposition()) ? rootContainer : relatedContainer;
+				addAttachment(container, attachment);
 			}
-			mimeMsg.setContent(multipart);
+			// if no attachments (only text) then root is changed to point on related container
+			if(email.getAttachments().isEmpty()) {
+				// if no attachments and several parts => set part type to alternative instead of related
+				// if no attachments and one part => set part type to mixed instead of related
+				rootContainer = relatedContainer;
+				if(relatedContainer.getCount()==1) {
+					rootContainer.setSubType("mixed");
+				} else {
+					rootContainer.setSubType("alternative");
+				}
+			} else {
+				// there are attachments so add the related part to the root
+				rootContainer.addBodyPart(relatedPart);
+			}
+			mimeMsg.setContent(rootContainer);
 			// default behavior is done => message is ready but let possibility to add extra operations to do on the message
 			if(interceptor!=null) {
 				LOG.debug("Executing extra operations for email {}", email);
@@ -124,6 +145,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 			part.setFileName(attachment.getResource().getName());
 			part.setDisposition(attachment.getDisposition());
 			part.setDescription(attachment.getDescription());
+			part.setContentID(attachment.getContentId());
 			attachmentHandler.setData(part, attachment.getResource(), attachment);
 			multipart.addBodyPart(part);
 		} catch (MessagingException e) {
