@@ -7,6 +7,9 @@ import fr.sii.notification.sms.message.PhoneNumber;
 import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
 
 /**
+ * Composite phone number translator, delegating the translation to a list of
+ * handlers to try. It will use the first handler supporting the phone number
+ * format.
  * 
  * @author cdejonghe
  * 

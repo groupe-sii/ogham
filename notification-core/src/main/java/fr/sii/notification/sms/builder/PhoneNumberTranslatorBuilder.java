@@ -10,6 +10,8 @@ import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslat
 import fr.sii.notification.sms.message.addressing.translator.ShortCodeNumberFormatHandler;
 
 /**
+ * Builder that helps to construct the {@link PhoneNumberTranslator}
+ * implementation.
  * 
  * @author cdejonghe
  * 

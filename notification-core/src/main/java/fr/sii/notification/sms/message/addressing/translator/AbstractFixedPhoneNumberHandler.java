@@ -6,8 +6,8 @@ import fr.sii.notification.sms.message.addressing.NumberingPlanIndicator;
 import fr.sii.notification.sms.message.addressing.TypeOfNumber;
 
 /**
- * Extending this abstract class is an easy way to define the different
- * elements) {@link CompositePhoneNumberTranslator}.
+ * Extending this abstract class provides an easy way to define the different
+ * handlers of a {@link CompositePhoneNumberTranslator}.
  * 
  * @author cdejonghe
  * 
