@@ -17,7 +17,7 @@ public class Contact {
 	/**
 	 * The name of the contact
 	 */
-	private String name;
+	private final String name;
 
 	/**
 	 * The phone number for the contact
@@ -83,6 +83,11 @@ public class Contact {
 	public PhoneNumber getPhoneNumber() {
 		return phoneNumber;
 	}
+
+	public void setPhoneNumber(PhoneNumber phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 
 	@Override
 	public String toString() {
