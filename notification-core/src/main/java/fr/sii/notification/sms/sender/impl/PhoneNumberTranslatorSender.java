@@ -30,7 +30,7 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 	private final PhoneNumberTranslator senderTranslator;
 
 	/** The translator that transforms the content of the message. */
-	private final PhoneNumberTranslator receiverTranslator;
+	private final PhoneNumberTranslator recipientTranslator;
 
 
 	/** The decorated sender that will really send the message. */
@@ -45,7 +45,7 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 	 * @param senderTranslator
 	 *            the translator implementation that will transform the sender
 	 *            phone number from the message.
-	 * @param receiverTranslator
+	 * @param recipientTranslator
 	 *            the translator implementation that will transform the
 	 *            receivers phone numbers from the message.
 	 * 
@@ -53,11 +53,11 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 	 *            The decorated sender will really send the message
 	 */
 	public PhoneNumberTranslatorSender(PhoneNumberTranslator senderTranslator,
-			PhoneNumberTranslator receiverTranslator,
+			PhoneNumberTranslator recipientTranslator,
 			NotificationSender delegate) {
 		super();
 		this.senderTranslator = senderTranslator;
-		this.receiverTranslator = receiverTranslator;
+		this.recipientTranslator = recipientTranslator;
 		this.delegate = delegate;
 	}
 
@@ -78,8 +78,8 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 
 				// receivers
 				for (Recipient currentRecipient : sms.getRecipients()) {
-					LOG.debug("Translate the message TO phone number {} using {}", currentRecipient, receiverTranslator);
-					currentRecipient.setPhoneNumber(receiverTranslator.translate(currentRecipient.getPhoneNumber()));
+					LOG.debug("Translate the message TO phone number {} using {}", currentRecipient, recipientTranslator);
+					currentRecipient.setPhoneNumber(recipientTranslator.translate(currentRecipient.getPhoneNumber()));
 				}
 				LOG.debug("Sending translated message {} using {}", sms, delegate);
 				delegate.send(sms);
@@ -95,7 +95,7 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("PhoneNumberTranslatorSender [translators= S:").append(senderTranslator).append(" R:").append(receiverTranslator).append(", delegate=").append(delegate).append("]");
+		sb.append("PhoneNumberTranslatorSender [translators= S:").append(senderTranslator).append(" R:").append(recipientTranslator).append(", delegate=").append(delegate).append("]");
 		return sb.toString();
 	}
 }
