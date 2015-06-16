@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import fr.sii.notification.helper.rule.LoggingTestRule;
-import fr.sii.notification.sms.builder.PhoneNumberTranslatorBuilder;
+import fr.sii.notification.sms.builder.DefaultPhoneNumberTranslatorBuilder;
 import fr.sii.notification.sms.message.PhoneNumber;
 import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
 import fr.sii.notification.sms.message.addressing.NumberingPlanIndicator;
@@ -14,7 +14,7 @@ import fr.sii.notification.sms.message.addressing.TypeOfNumber;
 import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslatorException;
 
-public class PhoneNumberTranslatorTest {
+public class ReceiverPhoneNumberTranslatorTest {
 	private PhoneNumberTranslator translator;
 	private PhoneNumber givenPhoneNumber;
 
@@ -23,7 +23,7 @@ public class PhoneNumberTranslatorTest {
 
 	@Before
 	public void before() {
-		translator = new PhoneNumberTranslatorBuilder().useDefaults().build();
+		translator = new DefaultPhoneNumberTranslatorBuilder().useReceiverDefaults().build();
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -67,8 +67,8 @@ public class PhoneNumberTranslatorTest {
 
 		// then
 		Assert.assertEquals(givenPhoneNumber.getNumber(), result.getNumber());
-		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNpi());
-		Assert.assertEquals(TypeOfNumber.ALPHANUMERIC, result.getTon());
+		Assert.assertEquals(NumberingPlanIndicator.ISDN_TELEPHONE, result.getNpi());
+		Assert.assertEquals(TypeOfNumber.UNKNOWN, result.getTon());
 	}
 
 	@Test
@@ -82,8 +82,8 @@ public class PhoneNumberTranslatorTest {
 
 		// then
 		Assert.assertEquals(givenPhoneNumber.getNumber(), result.getNumber());
-		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNpi());
-		Assert.assertEquals(TypeOfNumber.ALPHANUMERIC, result.getTon());
+		Assert.assertEquals(NumberingPlanIndicator.ISDN_TELEPHONE, result.getNpi());
+		Assert.assertEquals(TypeOfNumber.UNKNOWN, result.getTon());
 	}
 
 	@Test
@@ -97,8 +97,8 @@ public class PhoneNumberTranslatorTest {
 
 		// then
 		Assert.assertEquals(givenPhoneNumber.getNumber(), result.getNumber());
-		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNpi());
-		Assert.assertEquals(TypeOfNumber.ALPHANUMERIC, result.getTon());
+		Assert.assertEquals(NumberingPlanIndicator.ISDN_TELEPHONE, result.getNpi());
+		Assert.assertEquals(TypeOfNumber.INTERNATIONAL, result.getTon());
 	}
 
 	@Test
@@ -112,8 +112,8 @@ public class PhoneNumberTranslatorTest {
 
 		// then
 		Assert.assertEquals(givenPhoneNumber.getNumber(), result.getNumber());
-		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNpi());
-		Assert.assertEquals(TypeOfNumber.ALPHANUMERIC, result.getTon());
+		Assert.assertEquals(NumberingPlanIndicator.ISDN_TELEPHONE, result.getNpi());
+		Assert.assertEquals(TypeOfNumber.UNKNOWN, result.getTon());
 	}
 
 	@Test
@@ -142,8 +142,8 @@ public class PhoneNumberTranslatorTest {
 
 		// then
 		Assert.assertEquals(givenPhoneNumber.getNumber(), result.getNumber());
-		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNpi());
-		Assert.assertEquals(TypeOfNumber.NETWORK_SPECIFIC, result.getTon());
+		Assert.assertEquals(NumberingPlanIndicator.ISDN_TELEPHONE, result.getNpi());
+		Assert.assertEquals(TypeOfNumber.UNKNOWN, result.getTon());
 	}
 
 	@Test
@@ -157,8 +157,8 @@ public class PhoneNumberTranslatorTest {
 
 		// then
 		Assert.assertEquals(givenPhoneNumber.getNumber(), result.getNumber());
-		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNpi());
-		Assert.assertEquals(TypeOfNumber.NETWORK_SPECIFIC, result.getTon());
+		Assert.assertEquals(NumberingPlanIndicator.ISDN_TELEPHONE, result.getNpi());
+		Assert.assertEquals(TypeOfNumber.UNKNOWN, result.getTon());
 	}
 
 	@Test
@@ -172,8 +172,8 @@ public class PhoneNumberTranslatorTest {
 
 		// then
 		Assert.assertEquals(givenPhoneNumber.getNumber(), result.getNumber());
-		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNpi());
-		Assert.assertEquals(TypeOfNumber.NETWORK_SPECIFIC, result.getTon());
+		Assert.assertEquals(NumberingPlanIndicator.ISDN_TELEPHONE, result.getNpi());
+		Assert.assertEquals(TypeOfNumber.INTERNATIONAL, result.getTon());
 	}
 
 	@Test

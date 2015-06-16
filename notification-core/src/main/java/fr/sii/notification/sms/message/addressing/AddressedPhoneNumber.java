@@ -1,5 +1,7 @@
 package fr.sii.notification.sms.message.addressing;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
 import fr.sii.notification.sms.message.PhoneNumber;
 
 
@@ -43,4 +45,24 @@ public class AddressedPhoneNumber extends PhoneNumber {
 	public NumberingPlanIndicator getNpi() {
 		return npi;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		if (getNumber() != null && !getNumber().isEmpty()) {
+			builder.append(getNumber()).append("|TON:").append(ton).append("|NPI:").append(npi);
+		}
+		return builder.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(getNumber()).append(ton).append(npi).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendFields("number").appendFields("ton").appendFields("npi").isEqual();
+	}
+
 }

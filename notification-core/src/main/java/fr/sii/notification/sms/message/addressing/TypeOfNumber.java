@@ -8,23 +8,23 @@ package fr.sii.notification.sms.message.addressing;
  */
 public enum TypeOfNumber {
 	/** Unknown = 0. */
-	UNKNOWN(0),
+	UNKNOWN((byte) 0),
 	/** International = 1. */
-	INTERNATIONAL(1),
+	INTERNATIONAL((byte) 1),
 	/** National = 2. */
-	NATIONAL(2),
+	NATIONAL((byte) 2),
 	/** Network Specific = 3. */
-	NETWORK_SPECIFIC(3),
+	NETWORK_SPECIFIC((byte) 3),
 	/** Subscriber Number = 4. */
-	SUBSCRIBER(4),
+	SUBSCRIBER((byte) 4),
 	/** Alphanumeric = 5. */
-	ALPHANUMERIC(5),
+	ALPHANUMERIC((byte) 5),
 	/** Abbreviated = 6. */
-	ABBREVIATED(6);
+	ABBREVIATED((byte) 6);
 	
-	private int value;
+	private byte value;
     
-	private TypeOfNumber(int value) {
+	private TypeOfNumber(byte value) {
 		this.value = value;
 	}
 	
@@ -33,7 +33,7 @@ public enum TypeOfNumber {
      * 
 	 * @return the byte value.
 	 */
-	public int value() {
+	public byte value() {
 		return value;
 	}
 	
@@ -46,7 +46,7 @@ public enum TypeOfNumber {
      * @throws IllegalArgumentException if there is no enum const associated
      *         with specified int value.
      */
-	public static TypeOfNumber valueOf(int value) {
+	public static TypeOfNumber valueOf(byte value) {
 		for (TypeOfNumber current : values()) {
 			if (current.value == value)
 				return current;

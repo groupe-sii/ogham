@@ -22,6 +22,9 @@ import fr.sii.notification.helper.sms.rule.SmppServerRule;
 import fr.sii.notification.sms.builder.CloudhopperSMPPBuilder;
 import fr.sii.notification.sms.message.Sender;
 import fr.sii.notification.sms.message.Sms;
+import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
+import fr.sii.notification.sms.message.addressing.NumberingPlanIndicator;
+import fr.sii.notification.sms.message.addressing.TypeOfNumber;
 import fr.sii.notification.sms.sender.impl.CloudhopperSMPPSender;
 
 public class CloudhopperSmppTest {
@@ -44,13 +47,22 @@ public class CloudhopperSmppTest {
 	@Test
 	public void simple() throws NotificationException, IOException {
 		sender.send(new Sms("sms content", new Sender("010203040506"), "0000000000"));
-		AssertSms.assertEquals(new ExpectedSms("sms content", "010203040506", "0000000000"), smppServer.getReceivedMessages());
+		AssertSms.assertEquals(new ExpectedSms("sms content", 
+				new AddressedPhoneNumber("010203040506", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				new AddressedPhoneNumber("0000000000", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE)),
+				smppServer.getReceivedMessages());
 	}
 
 	@Test
 	public void longMessage() throws NotificationException, IOException {
-		sender.send(new Sms("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split", new Sender("010203040506"), "0000000000"));
-		AssertSms.assertEquals(new SplitSms("010203040506", "0000000000", "sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the beh", "avior of the sender when message has to be split"), smppServer.getReceivedMessages());
+		sender.send(new Sms("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split",
+				new Sender("010203040506"),
+				"0000000000"));
+		AssertSms.assertEquals(new SplitSms(
+				new AddressedPhoneNumber("010203040506", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				new AddressedPhoneNumber("0000000000", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				"sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the beh", "avior of the sender when message has to be split"),
+				smppServer.getReceivedMessages());
 	}
 
 	@Test
@@ -66,8 +78,12 @@ public class CloudhopperSmppTest {
 		sender.send(message);
 		
 		//Then
-		ExpectedSms expected1 = new ExpectedSms(content, from, to1);
-		ExpectedSms expected2 = new ExpectedSms(content, from, to2);
+		ExpectedSms expected1 = new ExpectedSms(content,
+				new AddressedPhoneNumber(from, TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				new AddressedPhoneNumber(to1, TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE));
+		ExpectedSms expected2 = new ExpectedSms(content,
+				new AddressedPhoneNumber(from, TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				new AddressedPhoneNumber(to2, TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE));
 
 		AssertSms.assertEquals(Arrays.asList(expected1, expected2), smppServer.getReceivedMessages());
 	}

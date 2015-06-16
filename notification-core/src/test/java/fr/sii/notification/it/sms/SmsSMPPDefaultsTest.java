@@ -22,6 +22,9 @@ import fr.sii.notification.helper.sms.rule.JsmppServerRule;
 import fr.sii.notification.helper.sms.rule.SmppServerRule;
 import fr.sii.notification.mock.context.SimpleBean;
 import fr.sii.notification.sms.message.Sms;
+import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
+import fr.sii.notification.sms.message.addressing.NumberingPlanIndicator;
+import fr.sii.notification.sms.message.addressing.TypeOfNumber;
 
 public class SmsSMPPDefaultsTest {
 	private NotificationService notificationService;
@@ -44,19 +47,30 @@ public class SmsSMPPDefaultsTest {
 	@Test
 	public void simple() throws NotificationException, IOException {
 		notificationService.send(new Sms("sms content", "0000000000"));
-		AssertSms.assertEquals(new ExpectedSms("sms content", "010203040506", "0000000000"), smppServer.getReceivedMessages());
+		AssertSms.assertEquals(new ExpectedSms("sms content",
+				new AddressedPhoneNumber("010203040506", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				new AddressedPhoneNumber("0000000000", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE)),
+				smppServer.getReceivedMessages());
 	}
 
 	@Test
 	public void longMessage() throws NotificationException, IOException {
 		notificationService.send(new Sms("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split", "0000000000"));
-		AssertSms.assertEquals(new SplitSms("010203040506", "0000000000", "sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the beh", "avior of the sender when message has to be split"), smppServer.getReceivedMessages());
+		AssertSms.assertEquals(new SplitSms(
+				new AddressedPhoneNumber("010203040506", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				new AddressedPhoneNumber("0000000000", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				"sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the beh",
+				"avior of the sender when message has to be split"),
+				smppServer.getReceivedMessages());
 	}
 
 	@Test
 	public void withThymeleaf() throws NotificationException, IOException {
 		notificationService.send(new Sms(new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("foo", 42)), "0000000000"));
-		AssertSms.assertEquals(new ExpectedSms("foo 42", "010203040506", "0000000000"), smppServer.getReceivedMessages());
+		AssertSms.assertEquals(new ExpectedSms("foo 42",
+				new AddressedPhoneNumber("010203040506", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE),
+				new AddressedPhoneNumber("0000000000", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE)),
+				smppServer.getReceivedMessages());
 	}
 
 	@Test

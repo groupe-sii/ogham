@@ -30,8 +30,14 @@ public class AssertSms {
 	 *            the received SMS
 	 */
 	public static void assertEquals(ExpectedSms expected, SubmitSm actual) {
-		Assert.assertEquals("Sender number should be " + expected.getSenderNumber(), expected.getSenderNumber(), actual.getSourceAddr());
-		Assert.assertEquals("Receiver number should be " + expected.getReceiverNumber(), expected.getReceiverNumber(), actual.getDestAddress());
+		Assert.assertEquals("Sender number should be " + expected.getSenderNumber().getNumber(), expected.getSenderNumber().getNumber(), actual.getSourceAddr());
+		Assert.assertEquals("Sender ton should be " + expected.getSenderNumber().getTon(), expected.getSenderNumber().getTon().value(), actual.getSourceAddrTon());
+		Assert.assertEquals("Sender npi should be " + expected.getSenderNumber().getNpi(), expected.getSenderNumber().getNpi().value(), actual.getSourceAddrNpi());
+
+		Assert.assertEquals("Receiver number should be " + expected.getReceiverNumber().getNumber(), expected.getReceiverNumber().getNumber(), actual.getDestAddress());
+		Assert.assertEquals("Receiver ton should be " + expected.getReceiverNumber().getTon(), expected.getReceiverNumber().getTon().value(), actual.getDestAddrTon());
+		Assert.assertEquals("Receiver npi should be " + expected.getReceiverNumber().getNpi(), expected.getReceiverNumber().getNpi().value(), actual.getDestAddrNpi());
+
 		Assert.assertEquals("Message not consistent with expected", expected.getMessage(), getSmsContent(actual));
 	}
 

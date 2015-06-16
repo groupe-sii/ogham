@@ -139,10 +139,10 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 */
 	public SmsBuilder useDefaults(Properties properties) {
 		registerDefaultImplementations(properties);
+		withPhoneNumberTranslation();
 		withConfigurationFiller(properties);
 		withTemplate();
-		withPhoneNumberTranslation();
-		return null;
+		return this;
 	}
 
 	/**
@@ -403,7 +403,8 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder withPhoneNumberTranslation() {
-		return withPhoneNumberTranslation(new PhoneNumberTranslatorBuilder().build());
+		DefaultPhoneNumberTranslatorBuilder builder = new DefaultPhoneNumberTranslatorBuilder();
+		return withPhoneNumberTranslation(builder.useSenderDefaults().build(), builder.useReceiverDefaults().build());
 	}
 
 	/**
@@ -411,12 +412,13 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * {@link PhoneNumberTranslator}. It decorates the SMS sender with a
 	 * {@link PhoneNumberTranslatorSender}.
 	 * 
-	 * @param translator
+	 * @param senderTranslator
 	 *            the translator to use for addressing strategy
+	 * @param receiverTranslator
 	 * @return this instance for fluent use
 	 */
-	public SmsBuilder withPhoneNumberTranslation(PhoneNumberTranslator translator) {
-		sender = new PhoneNumberTranslatorSender(translator, sender);
+	public SmsBuilder withPhoneNumberTranslation(PhoneNumberTranslator senderTranslator, PhoneNumberTranslator receiverTranslator) {
+		sender = new PhoneNumberTranslatorSender(senderTranslator, receiverTranslator, sender);
 		return this;
 	}
 
@@ -430,7 +432,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 *            instead of using the default one
 	 * @return this instance for fluent use
 	 */
-	public SmsBuilder withPhoneNumberTranslation(Builder<PhoneNumberTranslator> builder) {
-		return withPhoneNumberTranslation(builder.build());
+	public SmsBuilder withPhoneNumberTranslation(PhoneNumberTranslatorBuilder builder) {
+		return withPhoneNumberTranslation(builder.useSenderDefaults().build(), builder.useReceiverDefaults().build());
 	}
 }

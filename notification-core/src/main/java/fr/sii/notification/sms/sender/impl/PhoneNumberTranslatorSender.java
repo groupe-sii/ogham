@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.MessageException;
+import fr.sii.notification.core.exception.MessageNotSentException;
 import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.sender.NotificationSender;
@@ -26,25 +27,37 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 	private static final Logger LOG = LoggerFactory.getLogger(PhoneNumberTranslatorSender.class);
 
 	/** The translator that transforms the content of the message. */
-	private final PhoneNumberTranslator translator;
+	private final PhoneNumberTranslator senderTranslator;
+
+	/** The translator that transforms the content of the message. */
+	private final PhoneNumberTranslator receiverTranslator;
+
 
 	/** The decorated sender that will really send the message. */
 	private final NotificationSender delegate;
 
 	/**
-	 * Initialize the sender with the provided translator and decorated sender.
-	 * The translator implementation will transform the content of the message.
-	 * The decorated sender will really send the message.
+	 * Initializes the sender with the provided translators and decorated
+	 * sender. The translator implementation will transform the sender and
+	 * receivers phone numbers from the message. The decorated sender will
+	 * really send the message.
 	 * 
-	 * @param translator
-	 *            the translator implementation that will transform the content
-	 *            of the message
+	 * @param senderTranslator
+	 *            the translator implementation that will transform the sender
+	 *            phone number from the message.
+	 * @param receiverTranslator
+	 *            the translator implementation that will transform the
+	 *            receivers phone numbers from the message.
+	 * 
 	 * @param delegate
 	 *            The decorated sender will really send the message
 	 */
-	public PhoneNumberTranslatorSender(PhoneNumberTranslator translator, NotificationSender delegate) {
+	public PhoneNumberTranslatorSender(PhoneNumberTranslator senderTranslator,
+			PhoneNumberTranslator receiverTranslator,
+			NotificationSender delegate) {
 		super();
-		this.translator = translator;
+		this.senderTranslator = senderTranslator;
+		this.receiverTranslator = receiverTranslator;
 		this.delegate = delegate;
 	}
 
@@ -58,18 +71,20 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 		if (message instanceof Sms) {
 			Sms sms = (Sms) message;
 			
-			LOG.debug("Translate the message FROM phone number {} using {}", sms.getFrom().getPhoneNumber(), translator);			
 			try {
-				sms.getFrom().setPhoneNumber(translator.translate(sms.getFrom().getPhoneNumber()));
+				LOG.debug("Translate the message FROM phone number {} using {}", sms.getFrom().getPhoneNumber(), senderTranslator);
+				// sender
+				sms.getFrom().setPhoneNumber(senderTranslator.translate(sms.getFrom().getPhoneNumber()));
+
+				// receivers
 				for (Recipient currentRecipient : sms.getRecipients()) {
-					LOG.debug("Translate the message TO phone number {} using {}", currentRecipient, translator);
-					currentRecipient.setPhoneNumber(translator.translate(currentRecipient.getPhoneNumber()));
+					LOG.debug("Translate the message TO phone number {} using {}", currentRecipient, receiverTranslator);
+					currentRecipient.setPhoneNumber(receiverTranslator.translate(currentRecipient.getPhoneNumber()));
 				}
 				LOG.debug("Sending translated message {} using {}", sms, delegate);
 				delegate.send(sms);
-			} catch (PhoneNumberTranslatorException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (PhoneNumberTranslatorException pnte) {
+				throw new MessageNotSentException("Failed to send message due to phone number translater", message, pnte);
 			}
 		} else {
 			LOG.debug("Sending translated message {} using {}", message, delegate);
@@ -79,8 +94,8 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PhoneNumberTranslatorSender [translator=").append(translator).append(", delegate=").append(delegate).append("]");
-		return builder.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("PhoneNumberTranslatorSender [translators= S:").append(senderTranslator).append(" R:").append(receiverTranslator).append(", delegate=").append(delegate).append("]");
+		return sb.toString();
 	}
 }

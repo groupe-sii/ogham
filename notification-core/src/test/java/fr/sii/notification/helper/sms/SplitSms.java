@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
+
 /**
  * Represents a SMS that has been split into several parts in order to be sent.
  * 
@@ -14,7 +16,7 @@ public class SplitSms {
 	/**
 	 * Parts of the message when the message is too long and has to be split
 	 */
-	private List<ExpectedSms> parts;
+	private final List<ExpectedSms> parts;
 
 	/**
 	 * Initialize with the provided parts. Each part MUST contain:
@@ -68,11 +70,11 @@ public class SplitSms {
 	 * @param messages
 	 *            the array of message parts
 	 */
-	public SplitSms(String senderNumber, String receiverNumber, String... messages) {
+	public SplitSms(AddressedPhoneNumber senderNumber, AddressedPhoneNumber receiverNumber, String... messages) {
 		this(toExpectedSms(senderNumber, receiverNumber, messages));
 	}
 
-	private static List<ExpectedSms> toExpectedSms(String senderNumber, String receiverNumber, String[] messages) {
+	private static List<ExpectedSms> toExpectedSms(AddressedPhoneNumber senderNumber, AddressedPhoneNumber receiverNumber, String[] messages) {
 		List<ExpectedSms> parts = new ArrayList<>(messages.length);
 		for (String message : messages) {
 			parts.add(new ExpectedSms(message, senderNumber, receiverNumber));

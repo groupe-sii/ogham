@@ -1,5 +1,7 @@
 package fr.sii.notification.helper.sms;
 
+import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
+
 /**
  * Class used in tests for ensuring that the SMS is respected. It provides the
  * following information:
@@ -15,17 +17,17 @@ public class ExpectedSms {
 	/**
 	 * The expected message
 	 */
-	private String message;
+	private final String message;
 
 	/**
 	 * The expected phone number for the sender
 	 */
-	private String senderNumber;
+	private final AddressedPhoneNumber senderNumber;
 
 	/**
 	 * The expected phone number of the receiver
 	 */
-	private String receiverNumber;
+	private final AddressedPhoneNumber receiverNumber;
 
 	/**
 	 * Initialize the expected SMS with the message, the sender phone number and
@@ -38,7 +40,7 @@ public class ExpectedSms {
 	 * @param receiverNumber
 	 *            the expected phone number of the receiver
 	 */
-	public ExpectedSms(String message, String senderNumber, String receiverNumber) {
+	public ExpectedSms(String message, AddressedPhoneNumber senderNumber, AddressedPhoneNumber receiverNumber) {
 		super();
 		this.message = message;
 		this.senderNumber = senderNumber;
@@ -49,11 +51,11 @@ public class ExpectedSms {
 		return message;
 	}
 
-	public String getSenderNumber() {
+	public AddressedPhoneNumber getSenderNumber() {
 		return senderNumber;
 	}
 
-	public String getReceiverNumber() {
+	public AddressedPhoneNumber getReceiverNumber() {
 		return receiverNumber;
 	}
 }
