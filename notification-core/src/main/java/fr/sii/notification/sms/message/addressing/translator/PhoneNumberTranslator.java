@@ -1,5 +1,6 @@
 package fr.sii.notification.sms.message.addressing.translator;
 
+import fr.sii.notification.sms.exception.message.translator.PhoneNumberTranslatorException;
 import fr.sii.notification.sms.message.PhoneNumber;
 import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
 
@@ -13,14 +14,14 @@ import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
 public interface PhoneNumberTranslator {
 
 	/**
-	 * Translate sa given {@link PhoneNumber} to an {@link AddressedPhoneNumber}
+	 * Translates a given {@link PhoneNumber} to an {@link AddressedPhoneNumber}
 	 * , deducing its TON and NPI.
 	 * 
 	 * @param phoneNumber
+	 *            the phone number to translate
 	 * @return the corresponding number + adressing information
 	 * @throws PhoneNumberTranslatorException
 	 *             when the translation has failed
 	 */
-	AddressedPhoneNumber translate(PhoneNumber phoneNumber)
-			throws PhoneNumberTranslatorException;
+	AddressedPhoneNumber translate(PhoneNumber phoneNumber) throws PhoneNumberTranslatorException;
 }

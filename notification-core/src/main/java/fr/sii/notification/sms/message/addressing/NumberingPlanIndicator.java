@@ -11,9 +11,9 @@ public enum NumberingPlanIndicator {
 	UNKNOWN((byte) 0),
 	/** ISDN/telephone numbering plan (E163/E164) = 1. */
 	ISDN_TELEPHONE((byte) 1),
-	/** Data numbering plan (X.121) = 3. */	
+	/** Data numbering plan (X.121) = 3. */
 	DATA((byte) 3),
-	/** Telex numbering plan (F.69) = 4. */	
+	/** Telex numbering plan (F.69) = 4. */
 	TELEX((byte) 4),
 	/** Land Mobile (E.212) =6. */
 	LAND_MOBILE((byte) 6),
@@ -63,4 +63,3 @@ public enum NumberingPlanIndicator {
 		throw new IllegalArgumentException("Invalid value for NumberingPlanIdentification : " + value);
 	}
 }
-

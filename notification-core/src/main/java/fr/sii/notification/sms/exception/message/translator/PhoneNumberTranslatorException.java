@@ -1,4 +1,4 @@
-package fr.sii.notification.sms.message.addressing.translator;
+package fr.sii.notification.sms.exception.message.translator;
 
 import fr.sii.notification.core.exception.NotificationException;
 

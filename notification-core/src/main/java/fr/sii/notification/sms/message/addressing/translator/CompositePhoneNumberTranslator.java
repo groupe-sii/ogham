@@ -3,6 +3,7 @@ package fr.sii.notification.sms.message.addressing.translator;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.sii.notification.sms.exception.message.translator.PhoneNumberTranslatorException;
 import fr.sii.notification.sms.message.PhoneNumber;
 import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
 
@@ -16,7 +17,7 @@ import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
  */
 public class CompositePhoneNumberTranslator implements PhoneNumberTranslator {
 	private final List<PhoneNumberHandler> handlerList = new ArrayList<PhoneNumberHandler>();
-	
+
 	/**
 	 * Initializes the translator with the given handlers.
 	 * 
@@ -40,8 +41,7 @@ public class CompositePhoneNumberTranslator implements PhoneNumberTranslator {
 	}
 
 	@Override
-	public AddressedPhoneNumber translate(PhoneNumber phoneNumber)
-			throws PhoneNumberTranslatorException {
+	public AddressedPhoneNumber translate(PhoneNumber phoneNumber) throws PhoneNumberTranslatorException {
 		for (PhoneNumberHandler currentHandler : handlerList) {
 			if (currentHandler.supports(phoneNumber)) {
 				return currentHandler.translate(phoneNumber);

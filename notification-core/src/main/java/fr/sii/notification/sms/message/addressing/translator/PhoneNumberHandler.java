@@ -14,6 +14,5 @@ public interface PhoneNumberHandler extends PhoneNumberTranslator {
 	 *         of the given phone number
 	 */
 	boolean supports(PhoneNumber phoneNumber);
-	
-	
+
 }

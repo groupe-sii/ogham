@@ -8,11 +8,10 @@ import fr.sii.notification.core.exception.MessageNotSentException;
 import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.sender.NotificationSender;
+import fr.sii.notification.sms.exception.message.translator.PhoneNumberTranslatorException;
 import fr.sii.notification.sms.message.Recipient;
 import fr.sii.notification.sms.message.Sms;
 import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;
-import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslatorException;
-
 
 /**
  * Decorator sender that transforms the content of the message before really
@@ -31,7 +30,6 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 
 	/** The translator that transforms the content of the message. */
 	private final PhoneNumberTranslator recipientTranslator;
-
 
 	/** The decorated sender that will really send the message. */
 	private final NotificationSender delegate;
@@ -52,9 +50,7 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 	 * @param delegate
 	 *            The decorated sender will really send the message
 	 */
-	public PhoneNumberTranslatorSender(PhoneNumberTranslator senderTranslator,
-			PhoneNumberTranslator recipientTranslator,
-			NotificationSender delegate) {
+	public PhoneNumberTranslatorSender(PhoneNumberTranslator senderTranslator, PhoneNumberTranslator recipientTranslator, NotificationSender delegate) {
 		super();
 		this.senderTranslator = senderTranslator;
 		this.recipientTranslator = recipientTranslator;
@@ -70,7 +66,7 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 	public void send(Message message) throws MessageException {
 		if (message instanceof Sms) {
 			Sms sms = (Sms) message;
-			
+
 			try {
 				LOG.debug("Translate the message FROM phone number {} using {}", sms.getFrom().getPhoneNumber(), senderTranslator);
 				// sender

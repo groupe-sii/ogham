@@ -5,7 +5,7 @@ import fr.sii.notification.sms.message.addressing.NumberingPlanIndicator;
 import fr.sii.notification.sms.message.addressing.TypeOfNumber;
 
 /**
- * Loose International phone number handler. If the sender starts with a �+�,
+ * Loose International phone number handler. If the sender starts with a "+",
  * TON is set to 1, and NPI is set to 1.
  * 
  * @author cdejonghe
@@ -21,7 +21,6 @@ public class InternationalNumberFormatHandler extends AbstractFixedPhoneNumberHa
 
 	@Override
 	public boolean supports(PhoneNumber phoneNumber) {
-		return phoneNumber != null && phoneNumber.getNumber() != null
-				&& phoneNumber.getNumber().startsWith(INTERNATION_NUMBER_PREFIX);
+		return phoneNumber != null && phoneNumber.getNumber() != null && phoneNumber.getNumber().startsWith(INTERNATION_NUMBER_PREFIX);
 	}
 }

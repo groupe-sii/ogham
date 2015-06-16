@@ -22,7 +22,6 @@ public class ShortCodeNumberFormatHandler extends AbstractFixedPhoneNumberHandle
 
 	@Override
 	public boolean supports(PhoneNumber phoneNumber) {
-		return phoneNumber != null && phoneNumber.getNumber() != null
-				&& phoneNumber.getNumber().length() <= SHORTCODE_LENGTH;
+		return phoneNumber != null && phoneNumber.getNumber() != null && phoneNumber.getNumber().length() <= SHORTCODE_LENGTH;
 	}
 }

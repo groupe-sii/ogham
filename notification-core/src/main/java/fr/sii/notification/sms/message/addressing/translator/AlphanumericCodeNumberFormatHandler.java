@@ -22,7 +22,6 @@ public class AlphanumericCodeNumberFormatHandler extends AbstractFixedPhoneNumbe
 
 	@Override
 	public boolean supports(PhoneNumber phoneNumber) {
-		return phoneNumber != null && phoneNumber.getNumber() != null
-				&& !phoneNumber.getNumber().matches(NUMERIC_ONLY_PATTERN);
+		return phoneNumber != null && phoneNumber.getNumber() != null && !phoneNumber.getNumber().matches(NUMERIC_ONLY_PATTERN);
 	}
 }

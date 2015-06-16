@@ -4,7 +4,6 @@ import fr.sii.notification.core.util.EqualsBuilder;
 import fr.sii.notification.core.util.HashCodeBuilder;
 import fr.sii.notification.sms.message.PhoneNumber;
 
-
 /**
  * A phone number plus its addressing information (as described in GSM 03.40).
  * <ul>

@@ -19,7 +19,9 @@ public class FixedPhoneNumberTranslator implements PhoneNumberTranslator {
 	 * Initializes the translator with the given number, TON and NPI.
 	 * 
 	 * @param ton
+	 *            Type of number
 	 * @param npi
+	 *            Numbering plan identification
 	 */
 	public FixedPhoneNumberTranslator(TypeOfNumber ton, NumberingPlanIndicator npi) {
 		super();

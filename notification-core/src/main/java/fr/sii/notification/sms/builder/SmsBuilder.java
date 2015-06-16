@@ -70,7 +70,7 @@ import fr.sii.notification.sms.sender.impl.SmsglobalRestSender;
  */
 public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);
-	
+
 	/**
 	 * The sender instance constructed by this builder
 	 */
@@ -86,7 +86,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * Map of possible implementations with associated conditions
 	 */
 	private final Map<Condition<Message>, Builder<? extends NotificationSender>> implementations;
-	
+
 	public SmsBuilder() {
 		super();
 		sender = smsSender = new SmsSender();
@@ -163,7 +163,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 		smsSender.addImplementation(condition, implementation);
 		return this;
 	}
-	
+
 	/**
 	 * Register a new implementation for sending SMS. The implementation is
 	 * associated to a condition. If the condition evaluation returns true at
@@ -286,14 +286,14 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 */
 	public SmsBuilder withCloudhopper(Properties properties) {
 		try {
-			// Use Cloudhopper SMPP implementation only if SmppClient class is in
-			// the classpath and the SmppConstants.SMPP_HOST_PROPERTY property is set
-			registerImplementation(new AndCondition<>(
-							new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
-							new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
-							new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
-						new CloudhopperSMPPBuilder().useDefaults(properties));
-		} catch(Throwable e) {
+			// Use Cloudhopper SMPP implementation only if SmppClient class is
+			// in
+			// the classpath and the SmppConstants.SMPP_HOST_PROPERTY property
+			// is set
+			registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties), new RequiredPropertyCondition<Message>(
+					SmsConstants.SmppConstants.PORT_PROPERTY, properties), new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
+					new CloudhopperSMPPBuilder().useDefaults(properties));
+		} catch (Throwable e) {
 			LOG.debug("Can't register Cloudhopper implementation", e);
 		}
 		return this;
@@ -413,8 +413,9 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * {@link PhoneNumberTranslatorSender}.
 	 * 
 	 * @param senderTranslator
-	 *            the translator to use for addressing strategy
+	 *            the translator to use for addressing strategy for sender
 	 * @param receiverTranslator
+	 *            the translator to use for addressing strategy for receiver
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder withPhoneNumberTranslation(PhoneNumberTranslator senderTranslator, PhoneNumberTranslator receiverTranslator) {
