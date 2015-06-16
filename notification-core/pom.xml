@@ -108,6 +108,11 @@
 			<artifactId>xmlunit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>uk.com.robust-it</groupId>
+			<artifactId>cloning</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

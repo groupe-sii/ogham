@@ -30,6 +30,7 @@
 		<jsoup.version>1.8.2</jsoup.version>
 		<commons-codec.version>1.10</commons-codec.version>
 		<xmlunit.version>1.6</xmlunit.version>
+		<cloning.version>1.9.2</cloning.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -162,6 +163,11 @@
 				<artifactId>xmlunit</artifactId>
 				<version>${xmlunit.version}</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>uk.com.robust-it</groupId>
+				<artifactId>cloning</artifactId>
+				<version>${cloning.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

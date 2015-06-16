@@ -8,8 +8,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.NestedNullException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.template.BeanException;
 import fr.sii.notification.core.util.converter.EmailAddressConverter;
@@ -37,6 +43,7 @@ import fr.sii.notification.sms.message.Sender;
  *
  */
 public final class BeanUtils {
+	private static final Logger LOG = LoggerFactory.getLogger(BeanUtils.class);
 
 	static {
 		// TODO: auto-detect converters in the classpath
@@ -46,6 +53,7 @@ public final class BeanUtils {
 		// Add converter for being able to convert string into
 		// SMS sender
 		ConvertUtils.register(new SmsSenderConverter(), Sender.class);
+		BeanUtilsBean.getInstance().getConvertUtils().register(true, false, 0);
 	}
 
 	/**
@@ -87,6 +95,109 @@ public final class BeanUtils {
 	 * <p>
 	 * The keys can contain '.' to set nested values.
 	 * </p>
+	 * Override parameter allows to indicate which source has higher priority:
+	 * <ul>
+	 * <li>If true, then all values provided in the map will be always set on
+	 * the bean</li>
+	 * <li>If false then there are two cases:
+	 * <ul>
+	 * <li>If the property value of the bean is null, then the value that comes
+	 * from the map is used</li>
+	 * <li>If the property value of the bean is not null, then this value is
+	 * unchanged and the value in the map is not used</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * Skip unknown parameter allows to indicate if execution should fail or
+	 * not:
+	 * <ul>
+	 * <li>If true and a property provided in the map doesn't exist, then there
+	 * is no failure and no change is applied to the bean</li>
+	 * <li>If false and a property provided in the map doesn't exist, then the
+	 * method fails immediately.</li>
+	 * </ul>
+	 * 
+	 * @param bean
+	 *            the bean to populate
+	 * @param values
+	 *            the name/value pairs
+	 * @param options
+	 *            options used to
+	 * @throws BeanException
+	 *             when the bean couldn't be populated
+	 */
+	public static void populate(Object bean, Map<String, Object> values, Options options) throws BeanException {
+		try {
+			for (Entry<String, Object> entry : values.entrySet()) {
+				try {
+					String property = org.apache.commons.beanutils.BeanUtils.getProperty(bean, entry.getKey());
+					if (options.isOverride() || property == null) {
+						org.apache.commons.beanutils.BeanUtils.setProperty(bean, entry.getKey(), entry.getValue());
+					}
+				} catch (NestedNullException | NoSuchMethodException e) {
+					if (options.isSkipUnknown()) {
+						LOG.debug("skipping property " + entry.getKey() + ": it doesn't exist or is not accessible", e);
+					} else {
+						throw new BeanException("Failed to populate bean due to unknown property", bean, e);
+					}
+				} catch(ConversionException e) {
+					if (options.isSkipUnknown()) {
+						LOG.debug("skipping property " + entry.getKey() + ": can't convert value", e);
+					} else {
+						throw new BeanException("Failed to populate bean due to conversion error", bean, e);
+					}
+				}
+			}
+		} catch (InvocationTargetException | IllegalAccessException e) {
+			throw new BeanException("Failed to populate bean", bean, e);
+		}
+	}
+
+	/**
+	 * <p>
+	 * Fills a Java object with the provided values. The key of the map
+	 * corresponds to the name of the property to set. The value of the map
+	 * corresponds to the value to set on the Java object.
+	 * </p>
+	 * <p>
+	 * The keys can contain '.' to set nested values.
+	 * </p>
+	 * <p>
+	 * It doesn't override the value of properties of the bean that are not
+	 * null. For example, if the bean looks like:
+	 * 
+	 * <pre>
+	 * public class SampleBean {
+	 * 	private String foo = &quot;foo&quot;;
+	 * 	private String bar = null;
+	 * 
+	 * 	// ...
+	 * 	// getters and setters
+	 * 	// ...
+	 * }
+	 * </pre>
+	 * 
+	 * If the map is:
+	 * 
+	 * <pre>
+	 * Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+	 * map.put(&quot;foo&quot;, &quot;newfoo&quot;);
+	 * map.put(&quot;bar&quot;, &quot;newbar&quot;);
+	 * </pre>
+	 * 
+	 * Then the bean will be:
+	 * 
+	 * <pre>
+	 * System.out.println(bean.getFoo());
+	 * // foo
+	 * System.out.println(bean.getBar());
+	 * // newbar
+	 * </pre>
+	 * 
+	 * </p>
+	 * <p>
+	 * It doesn't fail if a property doesn't exist.
+	 * </p>
 	 * 
 	 * @param bean
 	 *            the bean to populate
@@ -96,10 +207,26 @@ public final class BeanUtils {
 	 *             when the bean couldn't be populated
 	 */
 	public static void populate(Object bean, Map<String, Object> values) throws BeanException {
-		try {
-			org.apache.commons.beanutils.BeanUtils.populate(bean, values);
-		} catch (InvocationTargetException | IllegalAccessException e) {
-			throw new BeanException("failed to populate bean", bean, e);
+		populate(bean, values, new Options(false, true));
+	}
+
+	public static class Options {
+		private boolean override;
+
+		private boolean skipUnknown;
+
+		public Options(boolean override, boolean skipUnknown) {
+			super();
+			this.override = override;
+			this.skipUnknown = skipUnknown;
+		}
+
+		public boolean isOverride() {
+			return override;
+		}
+
+		public boolean isSkipUnknown() {
+			return skipUnknown;
 		}
 	}
 
