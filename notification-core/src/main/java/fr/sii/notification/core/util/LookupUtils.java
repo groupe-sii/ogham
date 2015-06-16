@@ -201,6 +201,8 @@ public class LookupUtils {
 	 *            the mapping that contains the lookups (without ':' character)
 	 * @param path
 	 *            the path used to get the associated lookup resolver
+	 * @param <T>
+	 *            the type of the resolver
 	 * @return the lookup resolver that can handle the path or null if none can
 	 *         handle it
 	 */

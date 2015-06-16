@@ -140,7 +140,7 @@ public final class BeanUtils {
 					} else {
 						throw new BeanException("Failed to populate bean due to unknown property", bean, e);
 					}
-				} catch(ConversionException e) {
+				} catch (ConversionException e) {
 					if (options.isSkipUnknown()) {
 						LOG.debug("skipping property " + entry.getKey() + ": can't convert value", e);
 					} else {
@@ -162,7 +162,6 @@ public final class BeanUtils {
 	 * <p>
 	 * The keys can contain '.' to set nested values.
 	 * </p>
-	 * <p>
 	 * It doesn't override the value of properties of the bean that are not
 	 * null. For example, if the bean looks like:
 	 * 
@@ -194,7 +193,6 @@ public final class BeanUtils {
 	 * // newbar
 	 * </pre>
 	 * 
-	 * </p>
 	 * <p>
 	 * It doesn't fail if a property doesn't exist.
 	 * </p>
