@@ -92,9 +92,9 @@ public class BasicEmailSample {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "<your server host>");
-		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("notification.email.from", "<email address to display for the sender user>");
+		properties.setProperty("mail.smtp.host", "<your server host>");
+		properties.setProperty("mail.smtp.port", "<your server port>");
+		properties.setProperty("notification.email.from", "<email address to display for the sender user>");
 		// Instantiate the notification service using default behavior and
 		// provided properties
 		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
@@ -136,14 +136,14 @@ public class BasicGmailSSLSample {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.host", "smtp.gmail.com");
-		properties.put("mail.smtp.port", "465");
-		properties.put("mail.smtp.socketFactory.port", "465");
-		properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		properties.put("notification.email.authenticator.username", "<your gmail account>");
-		properties.put("notification.email.authenticator.password", "<your gmail password>");
-		properties.put("notification.email.from", "<your gmail address>");
+		properties.setProperty("mail.smtp.auth", "true");
+		properties.setProperty("mail.smtp.host", "smtp.gmail.com");
+		properties.setProperty("mail.smtp.port", "465");
+		properties.setProperty("mail.smtp.socketFactory.port", "465");
+		properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		properties.setProperty("notification.email.authenticator.username", "<your gmail account>");
+		properties.setProperty("notification.email.authenticator.password", "<your gmail password>");
+		properties.setProperty("notification.email.from", "<your gmail address>");
 		// Instantiate the notification service using default behavior and
 		// provided properties
 		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
@@ -183,9 +183,9 @@ public class HtmlTemplateEmailSample {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "<your server host>");
-		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("notification.email.from", "<email address to display for the sender user>");
+		properties.setProperty("mail.smtp.host", "<your server host>");
+		properties.setProperty("mail.smtp.port", "<your server port>");
+		properties.setProperty("notification.email.from", "<email address to display for the sender user>");
 		// Instantiate the notification service using default behavior and
 		// provided properties
 		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
@@ -244,9 +244,9 @@ public class EmailWithAttachmentSample {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "<your server host>");
-		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("notification.email.from", "<email address to display for the sender user>");
+		properties.setProperty("mail.smtp.host", "<your server host>");
+		properties.setProperty("mail.smtp.port", "<your server port>");
+		properties.setProperty("notification.email.from", "<email address to display for the sender user>");
 		// Instantiate the notification service using default behavior and
 		// provided properties
 		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
