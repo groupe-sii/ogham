@@ -200,6 +200,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		} else {
 			throw new IllegalStateException("Must provide addressing policy with the phone number or with a fallback phone number translator.");
 		}
+		LOG.debug("Addressing policy applied on {} ", addressedPhoneNumber);
 		address = new Address(addressedPhoneNumber.getTon().value(), addressedPhoneNumber.getNpi().value(), addressedPhoneNumber.getNumber());
 		return address;
 	}
