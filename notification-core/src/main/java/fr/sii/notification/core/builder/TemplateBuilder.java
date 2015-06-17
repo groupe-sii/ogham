@@ -18,7 +18,7 @@ import fr.sii.notification.core.template.detector.FixedEngineDetector;
 import fr.sii.notification.core.template.detector.TemplateEngineDetector;
 import fr.sii.notification.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.template.thymeleaf.ThymeleafParser;
 import fr.sii.notification.template.thymeleaf.ThymeleafTemplateDetector;
 import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
@@ -119,7 +119,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder useDefaults() {
-		return useDefaults(BuilderUtil.getDefaultProperties());
+		return useDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**

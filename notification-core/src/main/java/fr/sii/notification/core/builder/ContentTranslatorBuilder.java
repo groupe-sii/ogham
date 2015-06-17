@@ -15,7 +15,7 @@ import fr.sii.notification.core.translator.content.ContentTranslator;
 import fr.sii.notification.core.translator.content.EveryContentTranslator;
 import fr.sii.notification.core.translator.content.MultiContentTranslator;
 import fr.sii.notification.core.translator.content.TemplateContentTranslator;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.html.inliner.impl.jsoup.JsoupAttachImageInliner;
 import fr.sii.notification.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.notification.html.translator.InlineCssTranslator;
@@ -75,7 +75,7 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 *      templates
 	 */
 	public ContentTranslatorBuilder withTemplate() {
-		return withTemplate(BuilderUtil.getDefaultProperties());
+		return withTemplate(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * @see #withInlining() More information about default inlining management
 	 */
 	public ContentTranslatorBuilder useDefaults() {
-		useDefaults(BuilderUtil.getDefaultProperties());
+		useDefaults(BuilderUtils.getDefaultProperties());
 		return this;
 	}
 

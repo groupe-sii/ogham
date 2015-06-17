@@ -11,7 +11,7 @@ import fr.sii.notification.core.builder.Builder;
  * @author Aurélien Baudet
  * @see Builder
  */
-public final class BuilderUtil {
+public final class BuilderUtils {
 	/**
 	 * Provide the default properties. For now, it provides only
 	 * {@link System#getProperties()}. But according to the environment or the
@@ -23,7 +23,7 @@ public final class BuilderUtil {
 		return System.getProperties();
 	}
 	
-	private BuilderUtil() {
+	private BuilderUtils() {
 		super();
 	}
 }

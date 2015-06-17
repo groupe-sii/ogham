@@ -8,7 +8,7 @@ import com.cloudhopper.smpp.SmppSessionConfiguration;
 
 import fr.sii.notification.core.builder.Builder;
 import fr.sii.notification.core.exception.builder.BuildException;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.sms.SmsConstants;
 import fr.sii.notification.sms.SmsConstants.SmppConstants.CloudhopperConstants;
 import fr.sii.notification.sms.SmsConstants.SmppConstants.TimeoutConstants;
@@ -56,7 +56,7 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 	 * @return this instance for fluent use
 	 */
 	public CloudhopperSMPPBuilder useDefaults() {
-		useDefaults(BuilderUtil.getDefaultProperties());
+		useDefaults(BuilderUtils.getDefaultProperties());
 		return this;
 	}
 
