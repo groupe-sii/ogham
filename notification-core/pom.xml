@@ -79,38 +79,9 @@
 
 		<!-- Tests -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.icegreen</groupId>
-			<artifactId>greenmail</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>nl.jqno.equalsverifier</groupId>
-			<artifactId>equalsverifier</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jsmpp</groupId>
-			<artifactId>jsmpp</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>uk.com.robust-it</groupId>
-			<artifactId>cloning</artifactId>
+			<groupId>fr.sii.notification</groupId>
+			<artifactId>notification-test-utils</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -10,9 +10,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import fr.sii.notification.core.builder.LookupMappingResourceResolverBuilder;
 import fr.sii.notification.core.exception.handler.ContentTranslatorException;
+import fr.sii.notification.core.id.generator.IdGenerator;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.mimetype.JMimeMagicProvider;
@@ -26,9 +31,9 @@ import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.html.inliner.ImageResource;
 import fr.sii.notification.html.inliner.impl.jsoup.JsoupAttachImageInliner;
 import fr.sii.notification.html.translator.InlineImageTranslator;
-import fr.sii.notification.mock.html.inliner.PassThroughGenerator;
 import fr.sii.notification.ut.html.inliner.impl.JsoupAttachImageInlinerTest;
 
+@RunWith(MockitoJUnitRunner.class)
 public class JsoupInlineImageTranslatorTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
@@ -38,11 +43,19 @@ public class JsoupInlineImageTranslatorTest {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	private InlineImageTranslator translator;
+	
+	@Mock
+	private IdGenerator generator;
 
 	@Before
 	public void setUp() {
+		Mockito.when(generator.generate("fb.gif")).thenReturn("fb.gif");
+		Mockito.when(generator.generate("h1.gif")).thenReturn("h1.gif");
+		Mockito.when(generator.generate("left.gif")).thenReturn("left.gif");
+		Mockito.when(generator.generate("right.gif")).thenReturn("right.gif");
+		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
 		LookupMappingResolver resourceResolver = new LookupMappingResourceResolverBuilder().useDefaults().withPrefix(SOURCE_FOLDER).build();
-		translator = new InlineImageTranslator(new JsoupAttachImageInliner(new PassThroughGenerator()), resourceResolver, new JMimeMagicProvider());
+		translator = new InlineImageTranslator(new JsoupAttachImageInliner(generator), resourceResolver, new JMimeMagicProvider());
 	}
 	
 	@Test

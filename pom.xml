@@ -51,6 +51,7 @@
 	<modules>
 		<module>notification-core</module>
 		<module>notification-spring</module>
+		<module>notification-test-utils</module>
 	</modules>
 
 	<dependencyManagement>
@@ -145,31 +146,26 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>${mockito.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail</artifactId>
 				<version>${greenmail.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>nl.jqno.equalsverifier</groupId>
 				<artifactId>equalsverifier</artifactId>
 				<version>${equalsverifier.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>xmlunit</groupId>
 				<artifactId>xmlunit</artifactId>
 				<version>${xmlunit.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>uk.com.robust-it</groupId>

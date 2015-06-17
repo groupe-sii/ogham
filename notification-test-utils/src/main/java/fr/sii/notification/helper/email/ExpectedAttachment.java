@@ -7,8 +7,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
-import fr.sii.notification.email.attachment.ContentDisposition;
-
 /**
  * Class used in tests for ensuring that the attachment is respected. It
  * provides the following information:
@@ -58,7 +56,7 @@ public class ExpectedAttachment {
 	}
 
 	public ExpectedAttachment(String name, Pattern mimetype, byte[] content, String description) {
-		this(name, mimetype, content, description, ContentDisposition.ATTACHMENT);
+		this(name, mimetype, content, description, "attachment");
 	}
 
 	public ExpectedAttachment(String name, Pattern mimetype, byte[] content) {
@@ -70,7 +68,7 @@ public class ExpectedAttachment {
 	}
 
 	public ExpectedAttachment(String name, Pattern mimetype, InputStream content, String description) throws IOException {
-		this(name, mimetype, content, description, ContentDisposition.ATTACHMENT);
+		this(name, mimetype, content, description, "attachment");
 	}
 
 	public ExpectedAttachment(String name, Pattern mimetype, InputStream content) throws IOException {
@@ -82,7 +80,7 @@ public class ExpectedAttachment {
 	}
 
 	public ExpectedAttachment(String expectedContentPath, Pattern mimetype, String description) throws IOException {
-		this(expectedContentPath, mimetype, description, ContentDisposition.ATTACHMENT);
+		this(expectedContentPath, mimetype, description, "attachment");
 	}
 
 	public ExpectedAttachment(String expectedContentPath, Pattern mimetype) throws IOException {
@@ -94,7 +92,7 @@ public class ExpectedAttachment {
 	}
 
 	public ExpectedAttachment(String name, String mimetype, byte[] content, String description) {
-		this(name, mimetype, content, description, ContentDisposition.ATTACHMENT);
+		this(name, mimetype, content, description, "attachment");
 	}
 
 	public ExpectedAttachment(String name, String mimetype, byte[] content) {
@@ -106,7 +104,7 @@ public class ExpectedAttachment {
 	}
 
 	public ExpectedAttachment(String name, String mimetype, InputStream content, String description) throws IOException {
-		this(name, mimetype, content, description, ContentDisposition.ATTACHMENT);
+		this(name, mimetype, content, description, "attachment");
 	}
 
 	public ExpectedAttachment(String name, String mimetype, InputStream content) throws IOException {
@@ -118,7 +116,7 @@ public class ExpectedAttachment {
 	}
 
 	public ExpectedAttachment(String expectedContentPath, String mimetype, String description) throws IOException {
-		this(expectedContentPath, mimetype, description, ContentDisposition.ATTACHMENT);
+		this(expectedContentPath, mimetype, description, "attachment");
 	}
 
 	public ExpectedAttachment(String expectedContentPath, String mimetype) throws IOException {

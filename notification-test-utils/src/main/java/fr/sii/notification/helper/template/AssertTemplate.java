@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 
-import fr.sii.notification.core.message.content.Content;
-
 /**
  * Assertion class that simplifies checking template content.
  * 
@@ -30,7 +28,7 @@ public class AssertTemplate {
 	 * @throws IOException
 	 *             when the expected content couldn't be read
 	 */
-	public static void assertEquals(String expectedContentPath, Content content, boolean strict) throws IOException {
+	public static void assertEquals(String expectedContentPath, Object content, boolean strict) throws IOException {
 		assertEquals(IOUtils.toString(AssertTemplate.class.getResourceAsStream(expectedContentPath)), content.toString(), strict);
 	}
 
@@ -46,7 +44,7 @@ public class AssertTemplate {
 	 * @throws IOException
 	 *             when the expected content couldn't be read
 	 */
-	public static void assertSimilar(String expectedContentPath, Content content) throws IOException {
+	public static void assertSimilar(String expectedContentPath, Object content) throws IOException {
 		assertEquals(expectedContentPath, content, false);
 	}
 

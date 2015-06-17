@@ -10,7 +10,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import fr.sii.notification.core.id.generator.IdGenerator;
 import fr.sii.notification.core.resource.ByteResource;
 import fr.sii.notification.email.attachment.Attachment;
 import fr.sii.notification.email.attachment.ContentDisposition;
@@ -19,8 +24,8 @@ import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.html.inliner.ContentWithImages;
 import fr.sii.notification.html.inliner.ImageResource;
 import fr.sii.notification.html.inliner.impl.jsoup.JsoupAttachImageInliner;
-import fr.sii.notification.mock.html.inliner.PassThroughGenerator;
 
+@RunWith(MockitoJUnitRunner.class)
 public class JsoupAttachImageInlinerTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
 	private static String SOURCE_FOLDER = FOLDER+"source/";
@@ -30,10 +35,18 @@ public class JsoupAttachImageInlinerTest {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	private JsoupAttachImageInliner inliner;
+	
+	@Mock
+	private IdGenerator generator;
 
 	@Before
 	public void setUp() {
-		inliner = new JsoupAttachImageInliner(new PassThroughGenerator());
+		Mockito.when(generator.generate("fb.gif")).thenReturn("fb.gif");
+		Mockito.when(generator.generate("h1.gif")).thenReturn("h1.gif");
+		Mockito.when(generator.generate("left.gif")).thenReturn("left.gif");
+		Mockito.when(generator.generate("right.gif")).thenReturn("right.gif");
+		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
+		inliner = new JsoupAttachImageInliner(generator);
 	}
 	
 	@Test

@@ -1,7 +1,8 @@
 package fr.sii.notification.mock.context;
 
-import fr.sii.notification.core.util.EqualsBuilder;
-import fr.sii.notification.core.util.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 
 
 public class NestedBean {
@@ -25,7 +26,17 @@ public class NestedBean {
 	
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendFields("nested").isEqual();
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		NestedBean rhs = (NestedBean) obj;
+		return new EqualsBuilder().append(nested, rhs.nested).isEquals();
 	}
 	
 	@Override

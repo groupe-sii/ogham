@@ -3,6 +3,7 @@ package fr.sii.notification.helper.email;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
@@ -15,7 +16,6 @@ import javax.mail.Part;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 
-import fr.sii.notification.core.util.HtmlUtils;
 import fr.sii.notification.helper.html.AssertHtml;
 
 /**
@@ -25,6 +25,8 @@ import fr.sii.notification.helper.html.AssertHtml;
  *
  */
 public class AssertEmail {
+	private static final Pattern HTML_PATTERN = Pattern.compile("<html", Pattern.CASE_INSENSITIVE);
+
 	/**
 	 * Assert that the fields of the received email are equal to the expected
 	 * values. The expected email contains several parts (several contents). The
@@ -493,7 +495,7 @@ public class AssertEmail {
 	 *            new line characters
 	 */
 	private static void assertBody(String expectedBody, String actualBody, boolean strict) {
-		if (HtmlUtils.isHtml(expectedBody)) {
+		if (isHtml(expectedBody)) {
 			if (strict) {
 				AssertHtml.assertIdentical(expectedBody, actualBody);
 			} else {
@@ -624,5 +626,9 @@ public class AssertEmail {
 
 	private static String getBodyMimetype(Part actualEmail) throws MessagingException {
 		return getBodyPart(actualEmail).getContentType();
+	}
+	
+	private static boolean isHtml(String expectedBody) {
+		return HTML_PATTERN.matcher(expectedBody).find();
 	}
 }
