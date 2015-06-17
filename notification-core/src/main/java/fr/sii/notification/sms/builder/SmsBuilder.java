@@ -404,7 +404,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 */
 	public SmsBuilder withPhoneNumberTranslation() {
 		DefaultPhoneNumberTranslatorBuilder builder = new DefaultPhoneNumberTranslatorBuilder();
-		return withPhoneNumberTranslation(builder.useSenderDefaults().build(), builder.useReceiverDefaults().build());
+		return withPhoneNumberTranslation(builder.useSenderDefaults().build(), builder.useRecipientDefaults().build());
 	}
 
 	/**
@@ -434,6 +434,6 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder withPhoneNumberTranslation(PhoneNumberTranslatorBuilder builder) {
-		return withPhoneNumberTranslation(builder.useSenderDefaults().build(), builder.useReceiverDefaults().build());
+		return withPhoneNumberTranslation(builder.useSenderDefaults().build(), builder.useRecipientDefaults().build());
 	}
 }

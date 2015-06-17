@@ -9,12 +9,13 @@ import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslat
 import fr.sii.notification.sms.message.addressing.translator.ShortCodeNumberFormatHandler;
 
 /**
- * Builder that helps to construct the {@link PhoneNumberTranslator}
- * implementation.
+ * Builder to construct the {@link PhoneNumberTranslator}implementation in
+ * charge of default addressing policy (TON / NPI).
  * 
  * @author cdejonghe
  * 
  */
+// TODO For the moment each call will instanciate a new translator.
 public class DefaultPhoneNumberTranslatorBuilder implements PhoneNumberTranslatorBuilder {
 	private PhoneNumberTranslator translator;
 
@@ -23,10 +24,6 @@ public class DefaultPhoneNumberTranslatorBuilder implements PhoneNumberTranslato
 		return translator;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	@Override
 	public PhoneNumberTranslatorBuilder useSenderDefaults() {
 		translator = new CompositePhoneNumberTranslator(
@@ -37,15 +34,17 @@ public class DefaultPhoneNumberTranslatorBuilder implements PhoneNumberTranslato
 		return this;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	@Override
-	public PhoneNumberTranslatorBuilder useReceiverDefaults() {
+	public PhoneNumberTranslatorBuilder useRecipientDefaults() {
 		translator = new CompositePhoneNumberTranslator(
 				new InternationalNumberFormatHandler(),
 				new DefaultHandler());
+		return this;
+	}
+
+	@Override
+	public PhoneNumberTranslatorBuilder useFallbackDefaults() {
+		translator = new DefaultHandler();
 		return this;
 	}
 }

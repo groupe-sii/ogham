@@ -23,7 +23,7 @@ public class ReceiverPhoneNumberTranslatorTest {
 
 	@Before
 	public void before() {
-		translator = new DefaultPhoneNumberTranslatorBuilder().useReceiverDefaults().build();
+		translator = new DefaultPhoneNumberTranslatorBuilder().useRecipientDefaults().build();
 	}
 
 	@Test(expected = NullPointerException.class)

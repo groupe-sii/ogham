@@ -12,6 +12,7 @@ import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.sms.SmsConstants;
 import fr.sii.notification.sms.SmsConstants.SmppConstants.CloudhopperConstants;
 import fr.sii.notification.sms.SmsConstants.SmppConstants.TimeoutConstants;
+import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.notification.sms.sender.impl.CloudhopperOptions;
 import fr.sii.notification.sms.sender.impl.CloudhopperSMPPSender;
 
@@ -42,7 +43,8 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 		if(options==null) {
 			options = new CloudhopperOptions(CloudhopperConstants.DEFAULT_RESPONSE_TIMEOUT, CloudhopperConstants.DEFAULT_UNBIND_TIMEOUT);
 		}
-		return new CloudhopperSMPPSender(sessionConfiguration, options);
+		PhoneNumberTranslator fallbackPhoneNumberTranslator = new DefaultPhoneNumberTranslatorBuilder().useFallbackDefaults().build();
+		return new CloudhopperSMPPSender(sessionConfiguration, options, fallbackPhoneNumberTranslator);
 	}
 
 	/**
