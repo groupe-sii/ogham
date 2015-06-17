@@ -76,6 +76,12 @@ public class EmailSMTPDefaultsTest {
 	}
 	
 	@Test
+	public void subjectInTextTemplate() throws NotificationException, MessagingException, IOException {
+		notificationService.send(new Email(null, new TemplateContent("classpath:/template/thymeleaf/source/withSubject.txt", new SimpleBean("foo", 42)), "recipient@sii.fr"));
+		AssertEmail.assertSimilar(new ExpectedEmail("Subject on first line", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.txt"), "text/plain.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+	}
+	
+	@Test
 	public void multiContent() throws NotificationException, MessagingException, IOException {
 		notificationService.send(new Email("Multi", new MultiContent(
 										new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("bar", 12)),
@@ -85,7 +91,6 @@ public class EmailSMTPDefaultsTest {
 				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_bar_12.txt"), "text/plain.*")
 		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
-
 
 	@Test
 	public void multiContentShortcut() throws NotificationException, MessagingException, IOException {
