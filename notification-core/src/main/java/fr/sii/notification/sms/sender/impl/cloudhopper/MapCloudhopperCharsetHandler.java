@@ -3,6 +3,9 @@ package fr.sii.notification.sms.sender.impl.cloudhopper;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.commons.charset.CharsetUtil;
 
@@ -16,6 +19,8 @@ import fr.sii.notification.sms.exception.message.EncodingException;
  * 
  */
 public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
+	private static final Logger LOG = LoggerFactory.getLogger(MapCloudhopperCharsetHandler.class);
+
 	/**
 	 * The map of {@link Charset} indexed by the NIO
 	 * {@link java.nio.charset.Charset} code.
@@ -80,6 +85,7 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 	 *            Cloudhopper charset
 	 */
 	public void addCharset(String nioCharsetName, Charset cloudhopperCharset) {
+		LOG.debug("Added charset mapping nio {} -> {}", nioCharsetName, cloudhopperCharset);
 		mapCloudhopperCharsetByNioCharsetName.put(nioCharsetName, cloudhopperCharset);
 	}
 
@@ -101,6 +107,8 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 			throw new EncodingException("No charset provided for message : \n" + messageStringContent);
 		}
 
-		return CharsetUtil.encode(messageStringContent, get(nioCharset));
+		Charset cloudhopperCharset = get(nioCharset);
+		LOG.debug("Encoding message using mapping nio {} -> {}", nioCharset.name(), cloudhopperCharset);
+		return CharsetUtil.encode(messageStringContent, cloudhopperCharset);
 	}
 }
