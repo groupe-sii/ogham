@@ -125,9 +125,10 @@ public class JsoupCssInliner implements CssInliner {
 	}
 
 	private static String concatenateProperties(String oldProp, String newProp) {
-		if (!oldProp.endsWith(";")) {
-			oldProp += ";";
+		String prop = oldProp;
+		if (!prop.endsWith(";")) {
+			prop += ";";
 		}
-		return oldProp.trim() + " " + newProp.trim() + ";";
+		return prop.trim() + " " + newProp.trim() + ";";
 	}
 }

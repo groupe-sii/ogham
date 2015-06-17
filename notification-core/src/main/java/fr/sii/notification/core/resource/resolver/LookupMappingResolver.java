@@ -116,7 +116,7 @@ public class LookupMappingResolver implements ConditionalResolver {
 	 *            the resolver to call for the lookup string
 	 * @return this instance for fluent use
 	 */
-	public LookupMappingResolver addMapping(String lookup, ResourceResolver resolver) {
+	public final LookupMappingResolver addMapping(String lookup, ResourceResolver resolver) {
 		mapping.put(lookup, resolver);
 		return this;
 	}

@@ -52,7 +52,7 @@ public class SimpleContext implements Context {
 	 * @param value
 	 *            the value of the variable
 	 */
-	public void addValue(String variable, Object value) {
+	public final void addValue(String variable, Object value) {
 		variables.put(variable, value);
 	}
 
