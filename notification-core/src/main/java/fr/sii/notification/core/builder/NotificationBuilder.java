@@ -11,7 +11,7 @@ import fr.sii.notification.core.exception.builder.BuildException;
 import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.service.EverySupportingNotificationService;
 import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.email.builder.EmailBuilder;
 import fr.sii.notification.sms.builder.SmsBuilder;
 
@@ -90,7 +90,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * @see SmsBuilder#useDefaults() More information about created SMS sender
 	 */
 	public NotificationBuilder useAllDefaults() {
-		return useAllDefaults(BuilderUtil.getDefaultProperties());
+		return useAllDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 *      sender
 	 */
 	public NotificationBuilder useEmailDefaults() {
-		return useEmailDefaults(BuilderUtil.getDefaultProperties());
+		return useEmailDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class NotificationBuilder implements NotificationServiceBuilder {
 	 * @see SmsBuilder#useDefaults() More information about created SMS sender
 	 */
 	public NotificationBuilder useSmsDefaults() {
-		return useSmsDefaults(BuilderUtil.getDefaultProperties());
+		return useSmsDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**

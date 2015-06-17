@@ -25,7 +25,7 @@ import fr.sii.notification.core.sender.MultiImplementationSender;
 import fr.sii.notification.core.sender.NotificationSender;
 import fr.sii.notification.core.translator.content.ContentTranslator;
 import fr.sii.notification.core.translator.resource.AttachmentResourceTranslator;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.email.EmailConstants;
 import fr.sii.notification.email.sender.AttachmentResourceTranslatorSender;
 import fr.sii.notification.email.sender.EmailSender;
@@ -108,7 +108,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder useDefaults() {
-		return useDefaults(BuilderUtil.getDefaultProperties());
+		return useDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder registerDefaultImplementations() {
-		return registerDefaultImplementations(BuilderUtil.getDefaultProperties());
+		return registerDefaultImplementations(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -299,7 +299,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withConfigurationFiller() {
-		return withConfigurationFiller(BuilderUtil.getDefaultProperties());
+		return withConfigurationFiller(BuilderUtils.getDefaultProperties());
 	}
 
 	/**

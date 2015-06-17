@@ -24,7 +24,7 @@ import fr.sii.notification.core.sender.FillerSender;
 import fr.sii.notification.core.sender.MultiImplementationSender;
 import fr.sii.notification.core.sender.NotificationSender;
 import fr.sii.notification.core.translator.content.ContentTranslator;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.sms.SmsConstants;
 import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.notification.sms.sender.SmsSender;
@@ -118,7 +118,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder useDefaults() {
-		return useDefaults(BuilderUtil.getDefaultProperties());
+		return useDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -346,7 +346,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder withConfigurationFiller() {
-		withConfigurationFiller(BuilderUtil.getDefaultProperties());
+		withConfigurationFiller(BuilderUtils.getDefaultProperties());
 		return this;
 	}
 

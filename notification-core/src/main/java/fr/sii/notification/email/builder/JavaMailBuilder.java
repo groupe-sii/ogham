@@ -14,7 +14,7 @@ import fr.sii.notification.core.mimetype.MimeTypeProvider;
 import fr.sii.notification.core.resource.ByteResource;
 import fr.sii.notification.core.resource.FileResource;
 import fr.sii.notification.core.resource.NamedResource;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.email.EmailConstants;
 import fr.sii.notification.email.sender.impl.JavaMailSender;
 import fr.sii.notification.email.sender.impl.javamail.FileResourceHandler;
@@ -100,7 +100,7 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 * @return this instance for fluent use
 	 */
 	public JavaMailBuilder useDefaults() {
-		useDefaults(BuilderUtil.getDefaultProperties());
+		useDefaults(BuilderUtils.getDefaultProperties());
 		return this;
 	}
 
