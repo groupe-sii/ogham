@@ -8,7 +8,6 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.commons.gsm.GsmUtil;
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.SmppSession;
@@ -24,12 +23,15 @@ import com.cloudhopper.smpp.type.UnrecoverablePduException;
 
 import fr.sii.notification.core.exception.MessageException;
 import fr.sii.notification.core.sender.AbstractSpecializedSender;
-import fr.sii.notification.sms.exception.message.translator.PhoneNumberTranslatorException;
+import fr.sii.notification.sms.exception.message.EncodingException;
+import fr.sii.notification.sms.exception.message.PhoneNumberTranslatorException;
 import fr.sii.notification.sms.message.PhoneNumber;
 import fr.sii.notification.sms.message.Recipient;
 import fr.sii.notification.sms.message.Sms;
 import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
 import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;
+import fr.sii.notification.sms.sender.impl.cloudhopper.CloudhopperCharsetHandler;
+import fr.sii.notification.sms.sender.impl.cloudhopper.CloudhopperOptions;
 
 
 /**
@@ -60,6 +62,11 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	private PhoneNumberTranslator fallBackPhoneNumberTranslator;
 
 	/**
+	 * Handle sms charset detection.
+	 */
+	private final CloudhopperCharsetHandler charsetHandler;
+
+	/**
 	 * Initializes a CloudhopperSMPPSender with SMPP session configuration, some
 	 * options and a default phone translator to handle addressing policy.
 	 * 
@@ -67,11 +74,14 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	 *            SMPP session configuration
 	 * @param options
 	 *            Dedicated CloudHopper options
+	 * @param charsetHandler
+	 *            Handles charset detection for messages content
 	 */
-	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options) {
+	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options, CloudhopperCharsetHandler charsetHandler) {
 		super();
 		this.smppSessionConfiguration = smppSessionConfiguration;
 		this.options = options;
+		this.charsetHandler = charsetHandler;
 	}
 
 	/**
@@ -87,8 +97,10 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	 */
 	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration,
 			CloudhopperOptions options,
+			 CloudhopperCharsetHandler charsetHandler,
 			PhoneNumberTranslator phoneNumberTranslator) {
-		this(smppSessionConfiguration,  options);
+		this(smppSessionConfiguration, options, charsetHandler);
+
 		this.fallBackPhoneNumberTranslator = phoneNumberTranslator;
 	}
 
@@ -103,7 +115,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 			for (SubmitSm msg : createMessages(message)) {
 				session.submit(msg, options.getResponseTimeout());
 			}
-		} catch (SmppInvalidArgumentException | PhoneNumberTranslatorException e) {
+		} catch (SmppInvalidArgumentException | PhoneNumberTranslatorException | EncodingException e) {
 			throw new MessageException("Failed to create SMPP message", message, e);
 		} catch (SmppTimeoutException | SmppChannelException | UnrecoverablePduException | InterruptedException | RecoverablePduException e) {
 			throw new MessageException("Failed to initialize SMPP session", message, e);
@@ -118,7 +130,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	}
 
 	private List<SubmitSm> createMessages(Sms message)
-			throws SmppInvalidArgumentException, PhoneNumberTranslatorException {
+			throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {
 		List<SubmitSm> messages = new ArrayList<>();
 		for (Recipient recipient : message.getRecipients()) {
 			messages.addAll(createMessages(message, recipient));
@@ -127,10 +139,9 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	}
 
 	private List<SubmitSm> createMessages(Sms message, Recipient recipient)
-			throws SmppInvalidArgumentException, PhoneNumberTranslatorException {
+			throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {
 		List<SubmitSm> messages = new ArrayList<>();
-		// TODO: use automatically the right charset ?
-		byte[] textBytes = CharsetUtil.encode(message.getContent().toString(), CharsetUtil.CHARSET_ISO_8859_15);
+		byte[] textBytes = charsetHandler.encode(message.getContent().toString());
 
 		// generate new reference number
 		byte[] referenceNumber = new byte[1];
@@ -186,9 +197,9 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 			LOG.warn("Fallback addressing policy used for PhoneNumber '{}'. You might decorate your sender with a PhoneNumberTranslatorSender.", phoneNumber);
 				addressedPhoneNumber = fallBackPhoneNumberTranslator.translate(phoneNumber);
 
-		} else
+		} else {
 			throw new IllegalStateException("Must provide addressing policy with the phone number or with a fallback phone number translator.");
-
+		}
 		address = new Address(addressedPhoneNumber.getTon().value(), addressedPhoneNumber.getNpi().value(), addressedPhoneNumber.getNumber());
 		return address;
 	}

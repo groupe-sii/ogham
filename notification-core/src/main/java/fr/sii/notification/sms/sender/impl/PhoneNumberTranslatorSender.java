@@ -8,7 +8,7 @@ import fr.sii.notification.core.exception.MessageNotSentException;
 import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.sender.NotificationSender;
-import fr.sii.notification.sms.exception.message.translator.PhoneNumberTranslatorException;
+import fr.sii.notification.sms.exception.message.PhoneNumberTranslatorException;
 import fr.sii.notification.sms.message.Recipient;
 import fr.sii.notification.sms.message.Sms;
 import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;

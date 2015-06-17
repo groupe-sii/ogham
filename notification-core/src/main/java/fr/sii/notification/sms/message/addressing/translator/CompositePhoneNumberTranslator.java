@@ -3,7 +3,7 @@ package fr.sii.notification.sms.message.addressing.translator;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.sii.notification.sms.exception.message.translator.PhoneNumberTranslatorException;
+import fr.sii.notification.sms.exception.message.PhoneNumberTranslatorException;
 import fr.sii.notification.sms.message.PhoneNumber;
 import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
 
