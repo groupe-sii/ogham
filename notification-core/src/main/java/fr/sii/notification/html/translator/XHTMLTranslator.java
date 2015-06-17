@@ -14,7 +14,7 @@ public class XHTMLTranslator implements ContentTranslator {
 
 	@Override
 	public Content translate(Content content) throws ContentTranslatorException {
-		// TODO Auto-generated method stub
+		// TODO: implement translator
 		return null;
 	}
 

@@ -152,7 +152,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder useDefaults(Properties properties) {
-		// FIXME: order of calls must not be important !!
+		// TODO: order of calls must not be important !!
 		useDefaultResolvers();
 		withPrefix(properties.getProperty(PREFIX_PROPERTY, ""));
 		withSuffix(properties.getProperty(SUFFIX_PROPERTY, ""));

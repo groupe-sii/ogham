@@ -46,7 +46,7 @@ public final class BeanUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(BeanUtils.class);
 
 	static {
-		// TODO: auto-detect converters in the classpath
+		// TODO: auto-detect converters in the classpath ?
 		// Add converter for being able to convert string address into
 		// EmailAddress
 		ConvertUtils.register(new EmailAddressConverter(), EmailAddress.class);

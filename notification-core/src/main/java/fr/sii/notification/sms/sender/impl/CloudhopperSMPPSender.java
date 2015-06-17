@@ -171,7 +171,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		submit.setSourceAddress(toAddress(message.getFrom().getPhoneNumber()));
 		submit.setDestAddress(toAddress(recipient.getPhoneNumber()));
 
-		// TODO: should be parameterized
+		// TODO: should be configurable ?
 		submit.setRegisteredDelivery(SmppConstants.REGISTERED_DELIVERY_SMSC_RECEIPT_REQUESTED);
 		submit.setShortMessage(content);
 		return submit;

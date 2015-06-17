@@ -8,7 +8,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 
 	@Override
 	public void send(Sms message) throws MessageException {
-		// TODO Auto-generated method stub
+		// TODO: implement sender
 	}
 
 }

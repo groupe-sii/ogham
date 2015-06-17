@@ -186,7 +186,7 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 		sessionConfiguration.setWindowWaitTimeout(getProperty(props, TimeoutConstants.WINDOW_WAIT_PROPERTY, SmppConstants.DEFAULT_WINDOW_WAIT_TIMEOUT));
 		sessionConfiguration.setWriteTimeout(getProperty(props, CloudhopperConstants.WRITE_TIMEOUT_PROPERTY, SmppConstants.DEFAULT_WRITE_TIMEOUT));
 		
-		// TODO: externalize logs options
+		// TODO: externalize logs options ?
 //		sessionConfiguration.getLoggingOptions().setLogBytes(false);
 //		sessionConfiguration.setCountersEnabled(false);
 		return this;

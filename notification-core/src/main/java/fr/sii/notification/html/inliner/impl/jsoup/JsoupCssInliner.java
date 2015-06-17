@@ -31,9 +31,6 @@ public class JsoupCssInliner implements CssInliner {
 		extractStyles(doc, stylesheet);
 		applyStyles(doc);
 
-		// TODO: really useful ?
-//		doc.outputSettings(doc.outputSettings().prettyPrint(false).escapeMode(Entities.EscapeMode.xhtml));
-//		return StringEscapeUtils.unescapeHtml3(doc.outerHtml());
 		return doc.outerHtml();
 	}
 
