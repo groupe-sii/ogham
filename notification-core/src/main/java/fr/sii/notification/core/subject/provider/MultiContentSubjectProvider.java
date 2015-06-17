@@ -18,8 +18,7 @@ import fr.sii.notification.core.message.content.MultiContent;
  * the first generated subject is used.</li>
  * <li>If none of the content part could generate a subject then
  * <code>null</code> is returned.</li>
- * <li>If the content is not a {@link MultiContent} then the delegate subject
- * provider is tried directly with the {@link MultiContent}.</li>
+ * <li>If the content is not a {@link MultiContent} then null is returned.</li>
  * </ul>
  * 
  * @author Aurélien Baudet
@@ -48,10 +47,8 @@ public class MultiContentSubjectProvider implements SubjectProvider {
 					return subject;
 				}
 			}
-			return null;
-		} else {
-			return provider.provide(message);
 		}
+		return null;
 	}
 
 }

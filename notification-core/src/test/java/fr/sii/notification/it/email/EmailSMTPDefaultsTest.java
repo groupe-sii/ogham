@@ -70,6 +70,12 @@ public class EmailSMTPDefaultsTest {
 	}
 
 	@Test
+	public void withThymeleafSubject() throws NotificationException, MessagingException, IOException {
+		notificationService.send(new Email(null, new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("foo", 42)), "recipient@sii.fr"));
+		AssertEmail.assertSimilar(new ExpectedEmail("Thymeleaf simple", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+	}
+	
+	@Test
 	public void multiContent() throws NotificationException, MessagingException, IOException {
 		notificationService.send(new Email("Multi", new MultiContent(
 										new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("bar", 12)),

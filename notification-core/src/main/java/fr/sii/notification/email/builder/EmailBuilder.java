@@ -108,20 +108,20 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 			LOG.debug("Implementation {} registered", s);
 			emailSender.addImplementation(impl.getKey(), s);
 		}
-		if(contentTranslatorBuilder!=null) {
-			ContentTranslator contentTranslator = contentTranslatorBuilder.build();
-			LOG.debug("Content translation enabled {}", contentTranslator);
-			sender = new ContentTranslatorSender(contentTranslator, sender);
+		if(messageFillerBuilder!=null) {
+			MessageFiller messageFiller = messageFillerBuilder.build();
+			LOG.debug("Automatic filling of message enabled {}", messageFiller);
+			sender = new FillerSender(messageFiller, sender);
 		}
 		if(resourceTranslatorBuilder!=null) {
 			AttachmentResourceTranslator resourceTranslator = resourceTranslatorBuilder.build();
 			LOG.debug("Resource translation enabled {}", resourceTranslator);
 			sender = new AttachmentResourceTranslatorSender(resourceTranslator, sender);
 		}
-		if(messageFillerBuilder!=null) {
-			MessageFiller messageFiller = messageFillerBuilder.build();
-			LOG.debug("Automatic filling of message enabled {}", messageFiller);
-			sender = new FillerSender(messageFiller, sender);
+		if(contentTranslatorBuilder!=null) {
+			ContentTranslator contentTranslator = contentTranslatorBuilder.build();
+			LOG.debug("Content translation enabled {}", contentTranslator);
+			sender = new ContentTranslatorSender(contentTranslator, sender);
 		}
 		return sender;
 	}

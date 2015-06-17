@@ -1,6 +1,8 @@
 package fr.sii.notification.core.subject.provider;
 
 import fr.sii.notification.core.message.Message;
+import fr.sii.notification.core.message.content.Content;
+import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.util.HtmlUtils;
 
 /**
@@ -16,9 +18,12 @@ public class HtmlTitleSubjectProvider implements SubjectProvider {
 
 	@Override
 	public String provide(Message message) {
-		String content = message.getContent().toString();
-		if (HtmlUtils.isHtml(content)) {
-			return HtmlUtils.getTitle(content);
+		Content content = message.getContent();
+		if(content instanceof StringContent) {
+			String stringContent = content.toString();
+			if (HtmlUtils.isHtml(stringContent)) {
+				return HtmlUtils.getTitle(stringContent);
+			}
 		}
 		return null;
 	}

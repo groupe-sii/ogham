@@ -39,7 +39,7 @@ public class MultiContentSubjectProviderTest {
 	@Test
 	public void single() {
 		String subject = provider.provide(new Email(null, "single content"));
-		Assert.assertEquals("Subject should be 'single subject'", "single subject", subject);
+		Assert.assertNull("Subject should be null", subject);
 	}
 	
 	@Test
