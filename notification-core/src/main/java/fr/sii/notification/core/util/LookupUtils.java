@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * @author Aurélien Baudet
  *
  */
-public class LookupUtils {
+public final class LookupUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(LookupUtils.class);
 
 	/**

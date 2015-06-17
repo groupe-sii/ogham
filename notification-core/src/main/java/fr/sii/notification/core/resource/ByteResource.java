@@ -3,6 +3,7 @@ package fr.sii.notification.core.resource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import fr.sii.notification.core.util.EqualsBuilder;
 import fr.sii.notification.core.util.HashCodeBuilder;
@@ -27,15 +28,22 @@ public class ByteResource implements NamedResource {
 	private String name;
 
 	public ByteResource(String name, InputStream stream) throws IOException {
-		super();
-		this.name = name;
-		this.bytes = IOUtils.toByteArray(stream);
+		this(name, IOUtils.toByteArray(stream));
 	}
 
+	/**
+	 * Initialize the resource with the provided name and bytes. The bytes are
+	 * copied into a new array to prevent security leaks.
+	 * 
+	 * @param name
+	 *            the name of the resource
+	 * @param bytes
+	 *            the bytes of the resource
+	 */
 	public ByteResource(String name, byte[] bytes) {
 		super();
 		this.name = name;
-		this.bytes = bytes;
+		this.bytes = Arrays.copyOf(bytes, bytes.length);
 	}
 
 	@Override

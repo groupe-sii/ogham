@@ -46,7 +46,7 @@ public class Contact {
 	 *            the phone number for the contact as string
 	 */
 	public Contact(String name, String phoneNumber) {
-		this(new PhoneNumber(phoneNumber));
+		this(name, new PhoneNumber(phoneNumber));
 	}
 
 	/**

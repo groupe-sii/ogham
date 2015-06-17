@@ -1,8 +1,8 @@
 package fr.sii.notification.html.translator;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class InlineImageTranslator implements ContentTranslator {
 						try {
 							byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
 							String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
-							String imgName = Paths.get(path).getFileName().toString();
+							String imgName = new File(path).getName().toString();
 							imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
 						} catch (IOException e) {
 							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);

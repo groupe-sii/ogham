@@ -16,7 +16,7 @@ import org.jsoup.select.Elements;
  * @author Aurélien Baudet
  *
  */
-public class HtmlUtils {
+public final class HtmlUtils {
 	private static final Pattern HTML_PATTERN = Pattern.compile("<html", Pattern.CASE_INSENSITIVE);
 	private static final String CSS_LINKS_SELECTOR = "link[rel*=\"stylesheet\"], link[type=\"text/css\"], link[href$=\".css\"]";
 	private static final String HREF_ATTR = "href";

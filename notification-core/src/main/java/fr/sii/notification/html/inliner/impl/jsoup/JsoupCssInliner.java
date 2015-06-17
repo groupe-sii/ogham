@@ -18,9 +18,7 @@ public class JsoupCssInliner implements CssInliner {
 	private static final String TEMP_STYLE_ATTR = "data-cssstyle";
 	private static final String STYLE_ATTR = "style";
 	private static final String STYLE_TAG = "style";
-	private static final String CSS_LINK_TAG = "link";
-	private static final String CSS_REL = "stylesheet";
-	private static final String CSS_TYPE = "text/css";
+	private static final String CSS_LINKS_SELECTOR = "link[rel*=\"stylesheet\"], link[type=\"text/css\"], link[href$=\".css\"]";
 
 	@Override
 	public String inline(String htmlContent, List<ExternalCss> cssContents) {
@@ -69,7 +67,7 @@ public class JsoupCssInliner implements CssInliner {
 	 *            the list of external css files with their content
 	 */
 	private void internStyles(Document doc, List<ExternalCss> cssContents) {
-		Elements els = doc.select(CSS_LINK_TAG);
+		Elements els = doc.select(CSS_LINKS_SELECTOR);
 		for (Element e : els) {
 			if (!e.attr(SKIP_INLINE).equals("true")) {
 				String path = e.attr("href");

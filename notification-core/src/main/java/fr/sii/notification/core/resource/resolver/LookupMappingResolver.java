@@ -98,7 +98,7 @@ public class LookupMappingResolver implements ConditionalResolver {
 			}
 			return supports;
 		} else {
-			LOG.debug("No resolver can handle lookup '{}'", lookupType);
+			LOG.debug("No resolver can handle lookup for path '{}'", path);
 			return false;
 		}
 	}

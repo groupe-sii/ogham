@@ -173,10 +173,10 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 	}
 	
 	private int getProperty(Properties props, String key, int defaultValue) {
-		return Integer.parseInt(properties.getProperty(key, String.valueOf(defaultValue)));
+		return Integer.parseInt(props.getProperty(key, String.valueOf(defaultValue)));
 	}
 	
 	private long getProperty(Properties props, String key, long defaultValue) {
-		return Long.parseLong(properties.getProperty(key, String.valueOf(defaultValue)));
+		return Long.parseLong(props.getProperty(key, String.valueOf(defaultValue)));
 	}
 }
