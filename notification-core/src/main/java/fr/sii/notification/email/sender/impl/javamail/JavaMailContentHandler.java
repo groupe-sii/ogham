@@ -5,6 +5,7 @@ import javax.mail.internet.MimePart;
 
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.email.exception.javamail.ContentHandlerException;
+import fr.sii.notification.email.message.Email;
 import fr.sii.notification.email.sender.impl.JavaMailSender;
 
 /**
@@ -25,10 +26,12 @@ public interface JavaMailContentHandler {
 	 * @param multipart
 	 *            the message is a multipart message, add the content to it
 	 *            before sending the message
+	 * @param email
+	 *            the email message source
 	 * @param content
 	 *            the content to add to the message
 	 * @throws ContentHandlerException
 	 *             when the handler couldn't add the content to the message
 	 */
-	public void setContent(MimePart message, Multipart multipart, Content content) throws ContentHandlerException;
+	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException;
 }

@@ -1,4 +1,4 @@
-package fr.sii.notification.sample.standard;
+package fr.sii.notification.sample.standard.email;
 
 import java.util.Properties;
 

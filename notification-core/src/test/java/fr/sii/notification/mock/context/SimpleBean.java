@@ -2,6 +2,9 @@ package fr.sii.notification.mock.context;
 
 import java.util.Date;
 
+import fr.sii.notification.core.util.EqualsBuilder;
+import fr.sii.notification.core.util.HashCodeBuilder;
+
 public class SimpleBean {
 	private String name;
 	
@@ -17,7 +20,7 @@ public class SimpleBean {
 	}
 
 	public SimpleBean(String name, int value) {
-		this(name, value, new Date());
+		this(name, value, null);
 	}
 
 	public String getName() {
@@ -51,5 +54,13 @@ public class SimpleBean {
 		return builder.toString();
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendFields("name", "value", "date").isEqual();
+	}
 	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(name).append(value).append(date).hashCode();
+	}
 }

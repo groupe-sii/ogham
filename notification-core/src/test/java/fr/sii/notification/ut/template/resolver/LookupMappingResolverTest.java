@@ -30,6 +30,7 @@ public class LookupMappingResolverTest {
 		addResolver("classpath");
 		addResolver("file");
 		addResolver("", "default");
+		addResolver("foo:bar", "multiple");
 		addConditionalResolver("supported", true);
 		addConditionalResolver("unsupported", false);
 		lookupResolver = new LookupMappingResolver(resolvers);
@@ -58,6 +59,17 @@ public class LookupMappingResolverTest {
 	}
 
 	@Test
+	public void multi() {
+		String path = "foo:bar:/template/resolver/foo/bar.html";
+		Assert.assertTrue("should be able to support template path", lookupResolver.supports(path));
+		ResourceResolver resolver = lookupResolver.getResolver(path);
+		Assert.assertNotSame("should not be classpath resolver", resolvers.get("classpath"), resolver);
+		Assert.assertNotSame("should not be file resolver", resolvers.get("file"), resolver);
+		Assert.assertSame("should be multiple resolver", resolvers.get("foo:bar"), resolver);
+		Assert.assertNotSame("should not be default resolver", resolvers.get(""), resolver);
+	}
+
+	@Test
 	public void none() {
 		String path = "/template/resolver/foo/bar.html";
 		Assert.assertTrue("should be able to support template path", lookupResolver.supports(path));
@@ -80,6 +92,13 @@ public class LookupMappingResolverTest {
 		path = "supported:/template/resolver/foo/bar.html";
 		Assert.assertTrue("should be able to support template path", lookupResolver.supports(path));
 	}
+
+	
+	
+	
+	//---------------------------------------------------------------//
+	//                           Utilities                           //
+	//---------------------------------------------------------------//
 
 	private void addResolver(String lookup) throws ResourceResolutionException {
 		addResolver(lookup, lookup);

@@ -1,15 +1,19 @@
 package fr.sii.notification.email.sender.impl.javamail;
 
+import java.nio.charset.Charset;
+
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimePart;
 
+import fr.sii.notification.core.charset.CharsetProvider;
 import fr.sii.notification.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.mimetype.MimeTypeProvider;
 import fr.sii.notification.email.exception.javamail.ContentHandlerException;
+import fr.sii.notification.email.message.Email;
 
 /**
  * Content handler that adds string contents (HTML, text, ...). It needs to
@@ -24,17 +28,25 @@ public class StringContentHandler implements JavaMailContentHandler {
 	 */
 	private MimeTypeProvider mimetypeProvider;
 
-	public StringContentHandler(MimeTypeProvider mimetypeProvider) {
+	/**
+	 * The charset provider
+	 */
+	private CharsetProvider charsetProvider;
+
+	public StringContentHandler(MimeTypeProvider mimetypeProvider, CharsetProvider charsetProvider) {
 		super();
 		this.mimetypeProvider = mimetypeProvider;
+		this.charsetProvider = charsetProvider;
 	}
 
 	@Override
-	public void setContent(MimePart message, Multipart multipart, Content content) throws ContentHandlerException {
+	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
 		try {
 			MimeBodyPart part = new MimeBodyPart();
 			String strContent = ((StringContent) content).getContent();
-			part.setContent(strContent, mimetypeProvider.detect(strContent).toString());
+			Charset charset = charsetProvider.getCharset(strContent);
+			String charsetParam = charset == null ? "" : (";charset=" + charset.name());
+			part.setContent(strContent, mimetypeProvider.detect(strContent).toString() + charsetParam);
 			multipart.addBodyPart(part);
 		} catch (MessagingException e) {
 			throw new ContentHandlerException("failed to set content on mime message", content, e);

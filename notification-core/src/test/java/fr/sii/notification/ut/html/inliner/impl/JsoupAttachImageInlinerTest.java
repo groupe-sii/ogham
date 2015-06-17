@@ -1,13 +1,19 @@
 package fr.sii.notification.ut.html.inliner.impl;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import fr.sii.notification.core.resource.ByteResource;
+import fr.sii.notification.email.attachment.Attachment;
+import fr.sii.notification.email.attachment.ContentDisposition;
 import fr.sii.notification.helper.html.AssertHtml;
 import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.html.inliner.ContentWithImages;
@@ -32,19 +38,59 @@ public class JsoupAttachImageInlinerTest {
 	
 	@Test
 	public void withImages() throws IOException {
+		// prepare html and associated images
 		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"withImages.html"));
-		ImageResource image1 = new ImageResource("fb.gif", "images/fb.gif", IOUtils.toByteArray(getClass().getResourceAsStream(SOURCE_FOLDER+"images/fb.gif")), "images/gif");
-		ImageResource image2 = new ImageResource("h1.gif", "images/h1.gif", IOUtils.toByteArray(getClass().getResourceAsStream(SOURCE_FOLDER+"images/h1.gif")), "images/gif");
-		ImageResource image3 = new ImageResource("left.gif", "images/left.gif", IOUtils.toByteArray(getClass().getResourceAsStream(SOURCE_FOLDER+"images/left.gif")), "images/gif");
-		ImageResource image4 = new ImageResource("right.gif", "images/right.gif", IOUtils.toByteArray(getClass().getResourceAsStream(SOURCE_FOLDER+"images/right.gif")), "images/gif");
-		ImageResource image5 = new ImageResource("tw.gif", "images/tw.gif", IOUtils.toByteArray(getClass().getResourceAsStream(SOURCE_FOLDER+"images/tw.gif")), "images/gif");
-		ContentWithImages inlined = inliner.inline(source, Arrays.asList(image1, image2, image3, image4, image5));
-		String expected = IOUtils.toString(getClass().getResourceAsStream(EXPECTED_FOLDER+"withImages.html"));
-		expected = expected.replaceAll("images/fb.gif", "cid:images/fb.gif");
-		expected = expected.replaceAll("images/h1.gif", "cid:images/h1.gif");
-		expected = expected.replaceAll("images/left.gif", "cid:images/left.gif");
-		expected = expected.replaceAll("images/right.gif", "cid:images/right.gif");
-		expected = expected.replaceAll("images/tw.gif", "cid:images/tw.gif");
+		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
+		// do the job
+		ContentWithImages inlined = inliner.inline(source, images);
+		// prepare expected result for the html
+		String expected = generateExpectedHtml("withImages.html", "fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
+		// prepare expected attachments
+		List<Attachment> expectedAttachments = getAttachments(images);
+		// assertions
 		AssertHtml.assertSimilar(expected, inlined.getContent());
+		Assert.assertEquals("should have 5 attachments", 5, inlined.getAttachments().size());
+		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
+	}
+	
+	@Test
+	@Ignore("Not yet implemented")
+	public void duplicatedImage() {
+		// TODO: when the html contains the same image several times, it should generate only one attachment for it
+		Assert.fail("Not implemented");
+	}
+	
+	
+	
+	//---------------------------------------------------------------//
+	//                           Utilities                           //
+	//---------------------------------------------------------------//
+	
+	private static Attachment getAttachment(ImageResource image) {
+		return new Attachment(new ByteResource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, "<"+image.getName()+">");
+	}
+	
+	private static List<Attachment> getAttachments(List<ImageResource> images) {
+		List<Attachment> attachments = new ArrayList<>(images.size());
+		for(ImageResource image : images) {
+			attachments.add(getAttachment(image));
+		}
+		return attachments;
+	}
+	
+	private static String generateExpectedHtml(String fileName, String... imageNames) throws IOException {
+		String expected = IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
+		for(String imageName : imageNames) {
+			expected = expected.replaceAll("images/"+imageName, "cid:"+imageName);
+		}
+		return expected;
+	}
+	
+	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
+		List<ImageResource> resources = new ArrayList<>(imageNames.length);
+		for(String imageName : imageNames) {
+			resources.add(new ImageResource(imageName, "images/"+imageName, IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER+"images/"+imageName)), "images/gif"));
+		}
+		return resources;
 	}
 }

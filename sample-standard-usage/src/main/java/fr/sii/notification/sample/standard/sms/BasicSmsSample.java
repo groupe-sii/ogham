@@ -1,4 +1,4 @@
-package fr.sii.notification.sample.standard;
+package fr.sii.notification.sample.standard.sms;
 
 import java.util.Properties;
 
@@ -13,9 +13,9 @@ public class BasicSmsSample {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.put("notification.sms.smpp.host", "<your server host>");
-		properties.put("notification.sms.smpp.port", "<your server port>");
-		properties.put("notification.sms.from", "<phone number to display for the sender>");
+		properties.setProperty("notification.sms.smpp.host", "<your server host>");
+		properties.setProperty("notification.sms.smpp.port", "<your server port>");
+		properties.setProperty("notification.sms.from", "<phone number to display for the sender>");
 		// Instantiate the notification service using default behavior and
 		// provided properties
 		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();

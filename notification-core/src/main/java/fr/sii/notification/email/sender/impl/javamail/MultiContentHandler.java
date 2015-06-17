@@ -1,11 +1,15 @@
 package fr.sii.notification.email.sender.impl.javamail;
 
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 
 import fr.sii.notification.core.message.content.Content;
 import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.email.exception.javamail.ContentHandlerException;
+import fr.sii.notification.email.message.Email;
 
 /**
  * Handle multiple contents. It adds several parts to the mail. It creates a
@@ -27,10 +31,18 @@ public class MultiContentHandler implements JavaMailContentHandler {
 	}
 
 	@Override
-	public void setContent(MimePart message, Multipart multipart, Content content) throws ContentHandlerException {
-		MultiContent multiContent = (MultiContent) content;
-		for (Content c : multiContent.getContents()) {
-			delegate.setContent(message, multipart, c);
+	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
+		try {
+			MultiContent multiContent = (MultiContent) content;
+			MimeMultipart mp = new MimeMultipart("alternative");
+			for (Content c : multiContent.getContents()) {
+				delegate.setContent(message, mp, email, c);
+			}
+			MimeBodyPart part = new MimeBodyPart();
+			part.setContent(mp);
+			multipart.addBodyPart(part);
+		} catch (MessagingException e) {
+			throw new ContentHandlerException("Failed to generate alternative content", content, e);
 		}
 	}
 
