@@ -50,11 +50,11 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 			options = new CloudhopperOptions(CloudhopperConstants.DEFAULT_RESPONSE_TIMEOUT, CloudhopperConstants.DEFAULT_UNBIND_TIMEOUT);
 		}
 		
-		// Default cloud hopper charset handler (UTF8)
+		// Default cloud hopper charset handler (UTF8 --> GSM)
 		FixedCharsetProvider defaultCharsetProvider = new FixedCharsetProvider();
 		MapCloudhopperCharsetHandler charsetHandler = new MapCloudhopperCharsetHandler(defaultCharsetProvider);
 		try {
-			charsetHandler.addCharset(DEFAULT_CHARSET, CharsetUtil.NAME_UTF_8);
+			charsetHandler.addCharset(DEFAULT_CHARSET, CharsetUtil.NAME_GSM);
 		} catch (EncodingException e) {
 			throw new BuildException("Unable to build default charset handler", e);
 		}
