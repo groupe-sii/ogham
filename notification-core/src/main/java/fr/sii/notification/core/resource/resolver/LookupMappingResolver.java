@@ -13,12 +13,14 @@ import fr.sii.notification.core.util.LookupUtils;
 /**
  * <p>
  * Decorator resolver that is able to manage lookup prefix. It associates each
- * prefix to a dedicated resolver. The lookup prefix is case sensitive and must
- * end with a ':'. It must not contain another ':' character.
+ * prefix to a dedicated resolver.
  * </p>
  * <p>
- * For example, a resource path could be "classpath:/email/hello.html". The
- * lookup prefix is "classpath:".
+ * The lookup is a prefix that contains at least one ':' character. The lookup
+ * prefix is case sensitive. For example, if the path is
+ * <code>"classpath:/foo/bar.txt"</code> then the lookup prefix is
+ * <code>"classpath:"</code>. If the path is <code>"foo:bar:/foobar.txt"</code>
+ * then the lookup prefix is <code>"foo:bar:"</code>.
  * </p>
  * <p>
  * The lookup can also be empty in order to define a kind of default resolver if
