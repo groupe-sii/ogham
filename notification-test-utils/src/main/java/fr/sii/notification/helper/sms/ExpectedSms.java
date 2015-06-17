@@ -15,17 +15,17 @@ public class ExpectedSms {
 	/**
 	 * The expected message
 	 */
-	private String message;
+	private final String message;
 
 	/**
 	 * The expected phone number for the sender
 	 */
-	private String senderNumber;
+	private final ExpectedAddressedPhoneNumber senderNumber;
 
 	/**
 	 * The expected phone number of the receiver
 	 */
-	private String receiverNumber;
+	private final ExpectedAddressedPhoneNumber receiverNumber;
 
 	/**
 	 * Initialize the expected SMS with the message, the sender phone number and
@@ -38,7 +38,7 @@ public class ExpectedSms {
 	 * @param receiverNumber
 	 *            the expected phone number of the receiver
 	 */
-	public ExpectedSms(String message, String senderNumber, String receiverNumber) {
+	public ExpectedSms(String message, ExpectedAddressedPhoneNumber senderNumber, ExpectedAddressedPhoneNumber receiverNumber) {
 		super();
 		this.message = message;
 		this.senderNumber = senderNumber;
@@ -49,11 +49,11 @@ public class ExpectedSms {
 		return message;
 	}
 
-	public String getSenderNumber() {
+	public ExpectedAddressedPhoneNumber getSenderNumber() {
 		return senderNumber;
 	}
 
-	public String getReceiverNumber() {
+	public ExpectedAddressedPhoneNumber getReceiverNumber() {
 		return receiverNumber;
 	}
 }

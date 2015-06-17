@@ -1,4 +1,4 @@
-package fr.sii.notification.sms.sender.impl;
+package fr.sii.notification.sms.sender.impl.cloudhopper;
 
 public class CloudhopperOptions {
 	private long responseTimeout;

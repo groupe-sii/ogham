@@ -20,9 +20,16 @@ import fr.sii.notification.core.service.NotificationService;
 import fr.sii.notification.helper.rule.LoggingTestRule;
 import fr.sii.notification.sms.message.Sender;
 import fr.sii.notification.sms.message.Sms;
+import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
+import fr.sii.notification.sms.message.addressing.NumberingPlanIndicator;
+import fr.sii.notification.sms.message.addressing.TypeOfNumber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SmsCustomImplTest {
+	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
+
+	private static final String INTERNATIONAL_PHONE_NUMBER = "+330203040506";
+
 	private NotificationService notificationService;
 
 	@Rule
@@ -42,7 +49,9 @@ public class SmsCustomImplTest {
 	
 	@Test
 	public void simple() throws NotificationException {
-		notificationService.send(new Sms("sms content", "0000000000"));
-		Mockito.verify(customSender).send(new Sms("sms content", new Sender("010203040506"), "0000000000"));
+		notificationService.send(new Sms("sms content", NATIONAL_PHONE_NUMBER));
+		Mockito.verify(customSender).send(new Sms("sms content",
+				new Sender(new AddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE)),
+				new AddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.ISDN_TELEPHONE)));
 	}
 }

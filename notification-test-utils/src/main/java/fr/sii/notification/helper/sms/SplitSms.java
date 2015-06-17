@@ -14,7 +14,7 @@ public class SplitSms {
 	/**
 	 * Parts of the message when the message is too long and has to be split
 	 */
-	private List<ExpectedSms> parts;
+	private final List<ExpectedSms> parts;
 
 	/**
 	 * Initialize with the provided parts. Each part MUST contain:
@@ -68,11 +68,11 @@ public class SplitSms {
 	 * @param messages
 	 *            the array of message parts
 	 */
-	public SplitSms(String senderNumber, String receiverNumber, String... messages) {
+	public SplitSms(ExpectedAddressedPhoneNumber senderNumber, ExpectedAddressedPhoneNumber receiverNumber, String... messages) {
 		this(toExpectedSms(senderNumber, receiverNumber, messages));
 	}
 
-	private static List<ExpectedSms> toExpectedSms(String senderNumber, String receiverNumber, String[] messages) {
+	private static List<ExpectedSms> toExpectedSms(ExpectedAddressedPhoneNumber senderNumber, ExpectedAddressedPhoneNumber receiverNumber, String[] messages) {
 		List<ExpectedSms> parts = new ArrayList<>(messages.length);
 		for (String message : messages) {
 			parts.add(new ExpectedSms(message, senderNumber, receiverNumber));

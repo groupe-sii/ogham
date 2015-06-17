@@ -14,7 +14,7 @@ import fr.sii.notification.core.subject.provider.HtmlTitleSubjectProvider;
 import fr.sii.notification.core.subject.provider.MultiContentSubjectProvider;
 import fr.sii.notification.core.subject.provider.SubjectProvider;
 import fr.sii.notification.core.subject.provider.TextPrefixSubjectProvider;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 
 /**
  * Builder that help construct the message fillers. The aim of a message filler
@@ -55,7 +55,7 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * @return this instance for fluent use
 	 */
 	public MessageFillerBuilder useDefaults(String baseKey) {
-		return useDefaults(BuilderUtil.getDefaultProperties(), baseKey);
+		return useDefaults(BuilderUtils.getDefaultProperties(), baseKey);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * @return this instance for fluent use
 	 */
 	public MessageFillerBuilder withConfigurationFiller(String baseKey) {
-		return withConfigurationFiller(BuilderUtil.getDefaultProperties(), baseKey);
+		return withConfigurationFiller(BuilderUtils.getDefaultProperties(), baseKey);
 	}
 
 	/**

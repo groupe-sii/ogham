@@ -2,18 +2,23 @@ package fr.sii.notification.sms.builder;
 
 import java.util.Properties;
 
+import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.smpp.SmppBindType;
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.SmppSessionConfiguration;
 
 import fr.sii.notification.core.builder.Builder;
+import fr.sii.notification.core.charset.FixedCharsetProvider;
 import fr.sii.notification.core.exception.builder.BuildException;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.sms.SmsConstants;
 import fr.sii.notification.sms.SmsConstants.SmppConstants.CloudhopperConstants;
 import fr.sii.notification.sms.SmsConstants.SmppConstants.TimeoutConstants;
-import fr.sii.notification.sms.sender.impl.CloudhopperOptions;
+import fr.sii.notification.sms.exception.message.EncodingException;
+import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.notification.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.notification.sms.sender.impl.cloudhopper.CloudhopperOptions;
+import fr.sii.notification.sms.sender.impl.cloudhopper.MapCloudhopperCharsetHandler;
 
 /**
  * Builder that helps to construct the Cloudhopper SMPP implementation.
@@ -22,6 +27,8 @@ import fr.sii.notification.sms.sender.impl.CloudhopperSMPPSender;
  *
  */
 public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
+	private static final String DEFAULT_CHARSET = "UTF-8";
+
 	/**
 	 * Properties that is used to initialize the session
 	 */
@@ -42,7 +49,20 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 		if(options==null) {
 			options = new CloudhopperOptions(CloudhopperConstants.DEFAULT_RESPONSE_TIMEOUT, CloudhopperConstants.DEFAULT_UNBIND_TIMEOUT);
 		}
-		return new CloudhopperSMPPSender(sessionConfiguration, options);
+		
+		// Default cloud hopper charset handler (UTF8 --> GSM)
+		FixedCharsetProvider defaultCharsetProvider = new FixedCharsetProvider();
+		MapCloudhopperCharsetHandler charsetHandler = new MapCloudhopperCharsetHandler(defaultCharsetProvider);
+		try {
+			charsetHandler.addCharset(DEFAULT_CHARSET, CharsetUtil.NAME_GSM);
+		} catch (EncodingException e) {
+			throw new BuildException("Unable to build default charset handler", e);
+		}
+		
+		// Default phone numbertranslator
+		PhoneNumberTranslator fallbackPhoneNumberTranslator = new DefaultPhoneNumberTranslatorBuilder().useFallbackDefaults().build();
+
+		return new CloudhopperSMPPSender(sessionConfiguration, options, charsetHandler, fallbackPhoneNumberTranslator);
 	}
 
 	/**
@@ -56,7 +76,7 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 	 * @return this instance for fluent use
 	 */
 	public CloudhopperSMPPBuilder useDefaults() {
-		useDefaults(BuilderUtil.getDefaultProperties());
+		useDefaults(BuilderUtils.getDefaultProperties());
 		return this;
 	}
 
@@ -166,7 +186,7 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 		sessionConfiguration.setWindowWaitTimeout(getProperty(props, TimeoutConstants.WINDOW_WAIT_PROPERTY, SmppConstants.DEFAULT_WINDOW_WAIT_TIMEOUT));
 		sessionConfiguration.setWriteTimeout(getProperty(props, CloudhopperConstants.WRITE_TIMEOUT_PROPERTY, SmppConstants.DEFAULT_WRITE_TIMEOUT));
 		
-		// TODO: externalize logs options
+		// TODO: externalize logs options ?
 //		sessionConfiguration.getLoggingOptions().setLogBytes(false);
 //		sessionConfiguration.setCountersEnabled(false);
 		return this;

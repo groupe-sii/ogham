@@ -24,11 +24,13 @@ import fr.sii.notification.core.sender.FillerSender;
 import fr.sii.notification.core.sender.MultiImplementationSender;
 import fr.sii.notification.core.sender.NotificationSender;
 import fr.sii.notification.core.translator.content.ContentTranslator;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.sms.SmsConstants;
+import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.notification.sms.sender.SmsSender;
 import fr.sii.notification.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.notification.sms.sender.impl.OvhSmsSender;
+import fr.sii.notification.sms.sender.impl.PhoneNumberTranslatorSender;
 import fr.sii.notification.sms.sender.impl.SmsglobalRestSender;
 
 /**
@@ -68,7 +70,7 @@ import fr.sii.notification.sms.sender.impl.SmsglobalRestSender;
  */
 public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);
-	
+
 	/**
 	 * The sender instance constructed by this builder
 	 */
@@ -83,8 +85,8 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	/**
 	 * Map of possible implementations with associated conditions
 	 */
-	private Map<Condition<Message>, Builder<? extends NotificationSender>> implementations;
-	
+	private final Map<Condition<Message>, Builder<? extends NotificationSender>> implementations;
+
 	public SmsBuilder() {
 		super();
 		sender = smsSender = new SmsSender();
@@ -116,7 +118,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder useDefaults() {
-		return useDefaults(BuilderUtil.getDefaultProperties());
+		return useDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -137,9 +139,10 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 */
 	public SmsBuilder useDefaults(Properties properties) {
 		registerDefaultImplementations(properties);
+		withPhoneNumberTranslation();
 		withConfigurationFiller(properties);
 		withTemplate();
-		return null;
+		return this;
 	}
 
 	/**
@@ -160,7 +163,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 		smsSender.addImplementation(condition, implementation);
 		return this;
 	}
-	
+
 	/**
 	 * Register a new implementation for sending SMS. The implementation is
 	 * associated to a condition. If the condition evaluation returns true at
@@ -283,14 +286,14 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 */
 	public SmsBuilder withCloudhopper(Properties properties) {
 		try {
-			// Use Cloudhopper SMPP implementation only if SmppClient class is in
-			// the classpath and the SmppConstants.SMPP_HOST_PROPERTY property is set
-			registerImplementation(new AndCondition<>(
-							new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
-							new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
-							new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
-						new CloudhopperSMPPBuilder().useDefaults(properties));
-		} catch(Throwable e) {
+			// Use Cloudhopper SMPP implementation only if SmppClient class is
+			// in
+			// the classpath and the SmppConstants.SMPP_HOST_PROPERTY property
+			// is set
+			registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties), new RequiredPropertyCondition<Message>(
+					SmsConstants.SmppConstants.PORT_PROPERTY, properties), new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
+					new CloudhopperSMPPBuilder().useDefaults(properties));
+		} catch (Throwable e) {
 			LOG.debug("Can't register Cloudhopper implementation", e);
 		}
 		return this;
@@ -343,7 +346,7 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder withConfigurationFiller() {
-		withConfigurationFiller(BuilderUtil.getDefaultProperties());
+		withConfigurationFiller(BuilderUtils.getDefaultProperties());
 		return this;
 	}
 
@@ -381,12 +384,56 @@ public class SmsBuilder implements NotificationSenderBuilder<ConditionalSender> 
 	 * {@link ContentTranslatorSender}.
 	 * 
 	 * @param builder
-	 *            the builder to use for constructing the
-	 *            {@link ContentTranslator} instead of using the default one
+	 *            the builder to use to build the {@link ContentTranslator}
+	 *            instead of using the default one
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder withTemplate(ContentTranslatorBuilder builder) {
 		return withTemplate(builder.build());
 	}
 
+	/**
+	 * Enables Addressing strategy using all default behaviors and values. See
+	 * 
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder withPhoneNumberTranslation() {
+		DefaultPhoneNumberTranslatorBuilder builder = new DefaultPhoneNumberTranslatorBuilder();
+		return withPhoneNumberTranslation(builder.useSenderDefaults().build(), builder.useRecipientDefaults().build());
+	}
+
+	/**
+	 * Enables Addressing strategy using the provided
+	 * {@link PhoneNumberTranslator}. It decorates the SMS sender with a
+	 * {@link PhoneNumberTranslatorSender}.
+	 * 
+	 * @param senderTranslator
+	 *            the translator to use for addressing strategy for sender
+	 * @param receiverTranslator
+	 *            the translator to use for addressing strategy for receiver
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder withPhoneNumberTranslation(PhoneNumberTranslator senderTranslator, PhoneNumberTranslator receiverTranslator) {
+		sender = new PhoneNumberTranslatorSender(senderTranslator, receiverTranslator, sender);
+		return this;
+	}
+
+	/**
+	 * Enables Addressing strategy using the provided
+	 * {@link PhoneNumberTranslatorBuilder}. It decorates the SMS sender with a
+	 * {@link PhoneNumberTranslatorSender}
+	 * 
+	 * @param builder
+	 *            the builder to use to build the {@link PhoneNumberTranslator}
+	 *            instead of using the default one
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder withPhoneNumberTranslation(PhoneNumberTranslatorBuilder builder) {
+		return withPhoneNumberTranslation(builder.useSenderDefaults().build(), builder.useRecipientDefaults().build());
+	}
 }
