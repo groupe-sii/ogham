@@ -23,6 +23,8 @@ import fr.sii.notification.sms.message.Recipient;
 import fr.sii.notification.sms.message.Sender;
 import fr.sii.notification.sms.message.Sms;
 import fr.sii.notification.sms.message.addressing.AddressedPhoneNumber;
+import fr.sii.notification.sms.message.addressing.NumberingPlanIndicator;
+import fr.sii.notification.sms.message.addressing.TypeOfNumber;
 import fr.sii.notification.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.notification.sms.sender.impl.PhoneNumberTranslatorSender;
 
@@ -64,7 +66,7 @@ public class PhoneNumberTranslatorSenderTest {
 
 		AddressedPhoneNumber mockSenderNumber = new AddressedPhoneNumber(null, null, null);
 		AddressedPhoneNumber mockRecipientNumber = new AddressedPhoneNumber(null, null, null);
-		
+
 		BDDMockito.when(senderTranslatorMock.translate(givenSenderNumber)).thenReturn(mockSenderNumber);
 		BDDMockito.when(recipientTranslatorMock.translate(givenRecipientNumber)).thenReturn(mockRecipientNumber);
 
@@ -75,5 +77,29 @@ public class PhoneNumberTranslatorSenderTest {
 		Sms expexctedSms = new Sms(givenContent, new Sender(mockSenderNumber), new Recipient(mockRecipientNumber));
 
 		Mockito.verify(delegateMock).send(expexctedSms);
+	}
+
+	@Test
+	public void alreadyAdressed() throws NotificationException, IOException {
+		// given
+		String givenContent = "sms content";
+		AddressedPhoneNumber givenSenderNumber = new AddressedPhoneNumber("010203040506", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.NATIONAL);
+		AddressedPhoneNumber givenRecipientNumber = new AddressedPhoneNumber("0000000000", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.NATIONAL);
+
+		Sender givenSender = new Sender(givenSenderNumber);
+		Recipient givenRecipient = new Recipient(givenRecipientNumber);
+		Sms givenMessage = new Sms(givenContent, givenSender, givenRecipient);
+
+		// when
+		sender.send(givenMessage);
+
+		// then
+		Sms expectedSms = new Sms(givenContent, new Sender(givenSenderNumber), new Recipient(givenRecipientNumber));
+
+
+		Mockito.verify(delegateMock).send(expectedSms);
+		Mockito.verifyNoMoreInteractions(delegateMock);
+		Mockito.verifyNoMoreInteractions(senderTranslatorMock);
+		Mockito.verifyNoMoreInteractions(recipientTranslatorMock);
 	}
 }
