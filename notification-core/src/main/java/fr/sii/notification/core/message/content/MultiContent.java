@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.sii.notification.core.util.ArrayUtils;
 import fr.sii.notification.core.util.EqualsBuilder;
 import fr.sii.notification.core.util.HashCodeBuilder;
 
@@ -22,6 +23,18 @@ public class MultiContent implements Content {
 	 * The list of sub contents
 	 */
 	private List<Content> contents;
+
+	/**
+	 * Initialize the content with one or several sub contents directly as strings.
+	 * 
+	 * @param content
+	 *            the mandatory content
+	 * @param contents
+	 *            the contents either as array or multiple arguments
+	 */
+	public MultiContent(String content, String... contents) {
+		this(toContent(ArrayUtils.concat(content, contents)));
+	}
 
 	/**
 	 * Initialize the content with none, one or several sub contents.
@@ -73,5 +86,13 @@ public class MultiContent implements Content {
 	@Override
 	public boolean equals(Object obj) {
 		return new EqualsBuilder(this, obj).appendFields("contents").isEqual();
+	}
+	
+	private static Content[] toContent(String[] strs) {
+		Content[] contents = new Content[strs.length];
+		for(int i=0 ; i<strs.length ; i++) {
+			contents[i] = new StringContent(strs[i]);
+		}
+		return contents;
 	}
 }

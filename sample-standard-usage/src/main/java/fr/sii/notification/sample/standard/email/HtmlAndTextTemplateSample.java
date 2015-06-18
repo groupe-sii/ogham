@@ -5,11 +5,11 @@ import java.util.Properties;
 import fr.sii.notification.context.SimpleBean;
 import fr.sii.notification.core.builder.NotificationBuilder;
 import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.message.content.TemplateContent;
+import fr.sii.notification.core.message.content.MultiTemplateContent;
 import fr.sii.notification.core.service.NotificationService;
 import fr.sii.notification.email.message.Email;
 
-public class HtmlTemplateEmailSample {
+public class HtmlAndTextTemplateSample {
 
 	public static void main(String[] args) throws NotificationException {
 		// configure properties (could be stored in a properties file or defined
@@ -22,7 +22,10 @@ public class HtmlTemplateEmailSample {
 		// provided properties
 		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
 		// send the email
-		service.send(new Email("subject", new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42)), "<recipient address>"));
+		// Note that the extension of the template is not given. This version
+		// automatically takes the provided path and adds the '.html' extension
+		// for the HTML template and '.txt' for text template
+		service.send(new Email("subject", new MultiTemplateContent("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42)), "<recipient address>"));
 	}
 
 }
