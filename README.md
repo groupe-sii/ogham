@@ -446,6 +446,81 @@ public class BasicSample {
 
 ### Sending SMS with template
 
+Sending SMS with a template is exactly the same as sending email with a template. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/TemplateSample.java).
+
+The first lines configure the properties that will be used by the sender.
+Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Finally, the last line sends the SMS. The specified SMS is really basic too. It only contains the content based on a template available in the classpath, a bean to use as source of variable substitutions and the receiver number. The sender number is automatically added to the SMS by the service based on configuration properties.
+
+```java
+package fr.sii.notification.sample.standard.sms;
+
+import java.util.Properties;
+
+import fr.sii.notification.context.SimpleBean;
+import fr.sii.notification.core.builder.NotificationBuilder;
+import fr.sii.notification.core.exception.NotificationException;
+import fr.sii.notification.core.message.content.TemplateContent;
+import fr.sii.notification.core.service.NotificationService;
+import fr.sii.notification.sms.message.Sms;
+
+public class TemplateSample {
+
+	public static void main(String[] args) throws NotificationException {
+		// configure properties (could be stored in a properties file or defined
+		// in System properties)
+		Properties properties = new Properties();
+		properties.setProperty("notification.sms.smpp.host", "<your server host>");
+		properties.setProperty("notification.sms.smpp.port", "<your server port>");
+		properties.setProperty("notification.sms.smpp.systemId", "<your server system ID>");
+		properties.setProperty("notification.sms.smpp.password", "<your server password>");
+		properties.setProperty("notification.sms.from", "<phone number to display for the sender>");
+		// Instantiate the notification service using default behavior and
+		// provided properties
+		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		// send the sms
+		service.send(new Sms(new TemplateContent("classpath:/template/thymeleaf/simple.txt", new SimpleBean("foo", 42)), "<recipient phone number>"));
+	}
+
+}
+```
+
+### Sending a long SMS
+
+As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters (depends of char encoding). The library handles for you the split of messages into several parts the right way to be recomposed by clients later. So the code doesn't change at all (the sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/LongMessageSample.java):
+
+```java
+package fr.sii.notification.sample.standard.sms;
+
+import java.util.Properties;
+
+import fr.sii.notification.core.builder.NotificationBuilder;
+import fr.sii.notification.core.exception.NotificationException;
+import fr.sii.notification.core.service.NotificationService;
+import fr.sii.notification.sms.message.Sms;
+
+public class LongMessageSample {
+
+	public static void main(String[] args) throws NotificationException {
+		// configure properties (could be stored in a properties file or defined
+		// in System properties)
+		Properties properties = new Properties();
+		properties.setProperty("notification.sms.smpp.host", "<your server host>");
+		properties.setProperty("notification.sms.smpp.port", "<your server port>");
+		properties.setProperty("notification.sms.smpp.systemId", "<your server system ID>");
+		properties.setProperty("notification.sms.smpp.password", "<your server password>");
+		properties.setProperty("notification.sms.from", "<phone number to display for the sender>");
+		// Instantiate the notification service using default behavior and
+		// provided properties
+		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		// send the sms
+		String longMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+		service.send(new Sms(longMessage, "<recipient phone number>"));
+	}
+
+}
+
+```
 
 # With Spring
 
