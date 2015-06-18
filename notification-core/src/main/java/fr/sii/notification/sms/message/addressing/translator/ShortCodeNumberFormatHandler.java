@@ -7,7 +7,7 @@ import fr.sii.notification.sms.message.addressing.TypeOfNumber;
 /**
  * Phone number handler for short codes. If the sender address is a short code,
  * TON is set to 3, and NPI is set to 0. A number is considered to be a short
- * code if the length of the number is 5 digts or less.
+ * code if the length of the number is 5 digits or less.
  * 
  * @author cdejonghe
  * 

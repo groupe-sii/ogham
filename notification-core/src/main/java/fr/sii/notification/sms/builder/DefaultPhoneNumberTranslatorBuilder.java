@@ -15,7 +15,7 @@ import fr.sii.notification.sms.message.addressing.translator.ShortCodeNumberForm
  * @author cdejonghe
  * 
  */
-// TODO For the moment each call will instanciate a new translator.
+// TODO For the moment each call will instantiate a new translator.
 public class DefaultPhoneNumberTranslatorBuilder implements PhoneNumberTranslatorBuilder {
 	private PhoneNumberTranslator translator;
 
