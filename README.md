@@ -48,7 +48,7 @@ This section describes how to use the library for usage with no framework and de
 
 ## Maven integration
 
-Add the dependency to your pom.xml:
+To include the library in your project, you just have to include the dependency to your pom.xml:
 ```xml
   ...
 	<dependencies>
