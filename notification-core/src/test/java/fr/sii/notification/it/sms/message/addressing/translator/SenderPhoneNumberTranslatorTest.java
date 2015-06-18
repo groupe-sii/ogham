@@ -38,7 +38,7 @@ public class SenderPhoneNumberTranslatorTest {
 		// then
 		Assert.assertNull(result.getNumber());
 		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNpi());
-		Assert.assertEquals(NumberingPlanIndicator.UNKNOWN, result.getNumber());
+		Assert.assertEquals(TypeOfNumber.UNKNOWN, result.getTon());
 	}
 
 	@Test

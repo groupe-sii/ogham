@@ -56,10 +56,10 @@ public enum NumberingPlanIndicator {
 	 */
 	public static NumberingPlanIndicator valueOf(byte value) {
 		for (NumberingPlanIndicator current : values()) {
-			if (current.value == value)
+			if (current.value == value) {
 				return current;
+			}
 		}
-
 		throw new IllegalArgumentException("Invalid value for NumberingPlanIdentification : " + value);
 	}
 }

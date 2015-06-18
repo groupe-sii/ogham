@@ -50,10 +50,10 @@ public enum TypeOfNumber {
 	 */
 	public static TypeOfNumber valueOf(byte value) {
 		for (TypeOfNumber current : values()) {
-			if (current.value == value)
+			if (current.value == value) {
 				return current;
+			}
 		}
-
 		throw new IllegalArgumentException("Invalid value for TypeOfNumber : " + value);
 	}
 }

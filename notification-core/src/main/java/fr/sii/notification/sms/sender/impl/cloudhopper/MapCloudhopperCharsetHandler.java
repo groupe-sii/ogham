@@ -2,6 +2,7 @@ package fr.sii.notification.sms.sender.impl.cloudhopper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +50,8 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 			throws EncodingException {
 		this(charsetProvider);
 
-		for (String nioCharsetName : mapCloudhopperNameByNioName.keySet()) {
-			String cloudhopperCharsetName = mapCloudhopperNameByNioName.get(nioCharsetName);
-			addCharset(nioCharsetName, cloudhopperCharsetName);
+		for (Entry<String, String> nioCharset : mapCloudhopperNameByNioName.entrySet()) {
+			addCharset(nioCharset.getKey(), nioCharset.getValue());
 		}
 	}
 
