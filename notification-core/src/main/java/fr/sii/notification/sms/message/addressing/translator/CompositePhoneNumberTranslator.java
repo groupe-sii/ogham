@@ -22,7 +22,7 @@ public class CompositePhoneNumberTranslator implements PhoneNumberTranslator {
 	 * Initializes the translator with the given handlers.
 	 * 
 	 * @param handlers
-	 *            all the handlers to request whe trying to translate a phone
+	 *            all the handlers to request when trying to translate a phone
 	 *            number
 	 */
 	public CompositePhoneNumberTranslator(PhoneNumberHandler... handlers) {

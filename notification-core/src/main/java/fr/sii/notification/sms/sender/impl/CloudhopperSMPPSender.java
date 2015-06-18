@@ -184,7 +184,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	 *            The given phone number
 	 * @return corresponding address with number, TON and NPI
 	 * @throws PhoneNumberTranslatorException
-	 *             If an error occurs during fallback phon number translation
+	 *             If an error occurs during fallback phone number translation
 	 */
 	private Address toAddress(PhoneNumber phoneNumber)
 			throws PhoneNumberTranslatorException {
