@@ -271,6 +271,8 @@ Here is the content of the template:
 
 ```
 
+You can look directly at the sample codes: [Java](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlTemplateSample.java) and [HTML](sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html).
+
 ## sending email with attachments
 
 This sample shows how to send an email with attached file. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/WithAttachmentSample.java)
