@@ -7,7 +7,7 @@ It is a reusable Java library in charge of sending any kind of message (email, S
 
 ## Existing libraries
 
-Several libraries for sending email already exist ([Apache Commons Email](https://commons.apache.org/proper/commons-email/), [Simple Java Mail/Vesijama](https://github.com/bbottema/simple-java-mail), [Spring Email Integration](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html)...). These libraries help you with sending an email but if you want to use a templated content, you will have to manually integrate a template engine.
+Several libraries for sending email already exist ([Apache Commons Email](https://commons.apache.org/proper/commons-email/), [Simple Java Mail/Vesijama](https://github.com/bbottema/simple-java-mail), [Spring Email Integration](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html)...). These libraries help you send an email but if you want to use a templated content, you will have to manually integrate a template engine.
 
 These libraries also provide only implementations based on Java Mail API. But in some environments, you might NOT want to send the email directly but to use a web service to do it for you. Furthermore, those libraries are bound by design to frameworks or libraries that you might not want to use in your own context.
 
