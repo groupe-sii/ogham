@@ -1,5 +1,5 @@
 # notification-module
-Reusable Java library in charge of sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). Hte librairy also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
+Reusable Java library in charge of sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). The librairy also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
 
 # Why ?
 
@@ -16,11 +16,11 @@ So, now you would want to find a sending library with a high level of abstractio
 
 This module is designed for handling any kind of message the same way. It also provides several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can easily add your own implementation.
 
-It also provides templating support and integrates natively several template engines. You can also add your own.
+It also provides **templating support** and integrates natively several template engines. You can also add your own.
 
-It provides bridges for integration with frameworks and it is framework and library agnostic. It can be used with any framework (Spring, JSF, ...).
+It provides bridges for **common frameworks integration** and is **framework and library agnostic** (Spring, JSF, ...).
 
-When using the module to send email based on an HTML template, the templating system let you design your HTML like a standard HTML page. It automatically transforms the associated resources (images, css files...) to be usable in an email context (automatic inline css, embed images...). You don't need to write your HTML specifically for email.
+When using the module to send email based on an HTML template, the templating system let you **design your HTML like a standard HTML page**. It automatically transforms the associated resources (images, css files...) to be usable in an email context (automatic inline css, embed images...). You don't need to write your HTML specifically for email.
 
 
 # Features
