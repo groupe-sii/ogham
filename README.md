@@ -74,7 +74,7 @@ The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the NotificationBuilder to help you to create the service.
 Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
 
-See other examples for advanced usages (using a template or adding attachments).
+See other examples for advanced usages (using a templated content or adding attachments).
 
 
 ```java
@@ -117,7 +117,7 @@ The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the NotificationBuilder to help you to create the service.
 Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
 
-See other examples for advanced usages (using a template or adding attachments).
+See other examples for advanced usages (using a templated content or adding attachments).
 
 
 ```java
@@ -155,13 +155,13 @@ public class BasicGmailSSLSample {
 
 ```
 
-## Sending email with template
+## Sending email with templated content
 
-This sample shows how to send an email with a content that provides from a template. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlTemplateSample.java).
+This sample shows how to send an email with a content following a template engine language. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlTemplateSample.java).
 
 The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the NotificationBuilder to help you to create the service.
-Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the content based on a template available in the classpath, a bean to use as source of variable substitutions and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
+Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the content based on a templated content available in the classpath, a bean to use as source of variable substitutions and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
 
 See other examples for advanced usages (adding attachments).
 
@@ -218,7 +218,7 @@ The template is available [here](sample-standard-usage/src/main/resources/templa
 
 ## Sending email with subject from template
 
-This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, mutualize the code and avoiding to create a new file just for one line.
+This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to utualize the code and to avoidi to create a new file just for one line.
 
 ```java
 package fr.sii.notification.sample.standard.email;
