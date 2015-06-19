@@ -43,11 +43,11 @@ When using the module to send email based on an HTML template, the templating sy
 
 # Standard usage
 
-This section describes how to use the library for usage with no framework and default behavior. 
+This section describes how to use the library with no framework and default behavior. 
 
 ## Maven integration
 
-To include the library in your project, you just have to include the dependency to your pom.xml:
+To include the library in your project, you just have to add the dependency to your pom.xml:
 ```xml
   ...
 	<dependencies>
