@@ -1,0 +1,64 @@
+package fr.sii.ogham.email.sender.impl.javamail;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.activation.DataHandler;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.util.ByteArrayDataSource;
+
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.resource.ByteResource;
+import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.core.util.IOUtils;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
+
+/**
+ * Implementation that is able to handle {@link ByteResource}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class StreamResourceHandler implements JavaMailAttachmentResourceHandler {
+	/**
+	 * The Mime Type detector
+	 */
+	private MimeTypeProvider mimetypeProvider;
+
+	public StreamResourceHandler(MimeTypeProvider mimetypeProvider) {
+		super();
+		this.mimetypeProvider = mimetypeProvider;
+	}
+
+	@Override
+	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
+		ByteResource streamResource = (ByteResource) resource;
+		try (InputStream stream = streamResource.getInputStream()) {
+			InputStream s = stream;
+			// stream is read twice, if stream can't handle reset => create a
+			// stream that is able to do it
+			if (!stream.markSupported()) {
+				s = new ByteArrayInputStream(IOUtils.toByteArray(stream));
+			}
+			// mark to reset at the start of the stream
+			s.mark(Integer.MAX_VALUE);
+			// detect the mimetype
+			String mimetype = mimetypeProvider.detect(s).toString();
+			// reset the stream
+			s.reset();
+			// set the content
+			part.setDataHandler(new DataHandler(new ByteArrayDataSource(s, mimetype)));
+		} catch (MimeTypeDetectionException e) {
+			throw new AttachmentResourceHandlerException("Failed to attach " + resource.getName() + ". Mime type can't be detected", attachment, e);
+		} catch (MessagingException e) {
+			throw new AttachmentResourceHandlerException("Failed to attach " + resource.getName(), attachment, e);
+		} catch (IOException e) {
+			throw new AttachmentResourceHandlerException("Failed to attach " + resource.getName() + ". Stream can't be read", attachment, e);
+		}
+	}
+
+}

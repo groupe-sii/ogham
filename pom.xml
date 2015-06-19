@@ -1,13 +1,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>fr.sii.notification</groupId>
-	<artifactId>notification</artifactId>
+	<groupId>fr.sii.ogham</groupId>
+	<artifactId>ogham-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Notification module</name>
-	<description>Reusable Java library for sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can comes from any templating engine (Thymeleaf, Freemarker, Velocity, ...). It also provides bridges the inclusion into frameworks (Spring, JSF, ...). It is designed to be easily extended.</description>
-	<url>${project.url}</url>
+	<name>ogham</name>
+	<description>
+		Oen, General and Highly adaptative Messaging library. It is a reusable
+		Java library for sending any kind of message (email, SMS, notification
+		mobile, tweet, SNMP...). The content of the message can comes from any
+		templating engine (Thymeleaf, Freemarker, Velocity, ...). It also
+		provides bridges the inclusion into frameworks (Spring, JSF, ...). It
+		is designed to be easily extended.
+	</description>
+	<url>
+		${project.url}
+	</url>
 
 	<properties>
 		<!-- Java version -->
@@ -40,7 +49,7 @@
 		<jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
 		<skip.integration.tests>false</skip.integration.tests>
 		<skip.unit.tests>false</skip.unit.tests>
-		
+
 		<!-- URL -->
 		<github.url>https://github.com/groupe-sii/notification-module</github.url>
 		<project.url>${github.url}</project.url>
@@ -49,9 +58,9 @@
 
 
 	<modules>
-		<module>notification-core</module>
-		<module>notification-spring</module>
-		<module>notification-test-utils</module>
+		<module>ogham-core</module>
+		<module>ogham-spring</module>
+		<module>ogham-test-utils</module>
 	</modules>
 
 	<dependencyManagement>
