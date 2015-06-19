@@ -87,6 +87,8 @@ public class AssertAttachment {
 	 *             when email can't be read
 	 * @throws MessagingException
 	 *             when email values can't be accessed
+	 * @throws ArrayComparisonFailure
+	 *             when there are unexpected differences
 	 */
 	public static void assertEquals(ExpectedAttachment expected, BodyPart attachment) throws MessagingException, ArrayComparisonFailure, IOException {
 		Assert.assertTrue("attachment " + expected.getName() + " should have mimetype " + expected.getMimetype() + " but was " + attachment.getContentType(),
