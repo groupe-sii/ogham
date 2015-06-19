@@ -66,11 +66,11 @@ To include the library in your project, you just have to add the dependency to y
 
 ## Sending email
 
-The samples are available in the [sample-standard-usage sub-project](https://github.com/groupe-sii/notification-module/tree/master/sample-standard-usage).
+The samples are available in the [sample-standard-usage sub-project](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage).
 
 ### General
 
-This sample shows how to send a basic email. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/BasicSample.java).
+This sample shows how to send a basic email. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java).
 
 The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the MessagingBuilder to help you to create the service.
@@ -113,7 +113,7 @@ public class BasicSample {
 
 ##### SSL
 
-This sample shows how to send a basic email through GMail. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/gmail/BasicGmailSSLSample.java).
+This sample shows how to send a basic email through GMail. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/gmail/BasicGmailSSLSample.java).
 
 The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the MessagingBuilder to help you to create the service.
@@ -159,7 +159,7 @@ public class BasicGmailSSLSample {
 
 ## Sending email with templated content
 
-This sample shows how to send an email with a content following a template engine language. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlTemplateSample.java).
+This sample shows how to send an email with a content following a template engine language. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java).
 
 The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the MessagingBuilder to help you to create the service.
@@ -272,11 +272,11 @@ Here is the templated content :
 
 ```
 
-You can look directly at the sample codes: [Java](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlTemplateSample.java) and [HTML](sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html).
+You can look directly at the sample codes: [Java](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java) and [HTML](sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html).
 
 ## Sending email with attachments
 
-This sample shows how to send an email with attached file. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/WithAttachmentSample.java)
+This sample shows how to send an email with attached file. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java)
 
 The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the MessagingBuilder to help you to create the service.
@@ -317,7 +317,7 @@ public class WithAttachmentSample {
 
 Sending an email with HTML content **and** text content might be really important, at least for smartphones. When a smartphone receives an email, it displays the sender, the subject and also a preview of the message, using the text alternative. If the message is only HTML, the preview might be unreadable.
 
-This sample shows how to provide both HTML content and text content. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlAndTextSample.java).
+This sample shows how to provide both HTML content and text content. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java).
 
 package fr.sii.ogham.sample.standard.email;
 
@@ -351,7 +351,7 @@ public class HtmlAndTextSample {
 }
 ```
 
-This sample shows how to provide both HTML content and text content following a template engine language. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlAndTextTemplateSample.java).
+This sample shows how to provide both HTML content and text content following a template engine language. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java).
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -414,7 +414,7 @@ And the templated content (available [here](sample-standard-usage/src/main/resou
 
 ### General
 
-The [SMPP](https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer) protocol is the standard way to send SMS. This sample defines two properties mandatory (system ID and password) by this protocol in order to use it. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/BasicSample.java).
+The [SMPP](https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer) protocol is the standard way to send SMS. This sample defines two properties mandatory (system ID and password) by this protocol in order to use it. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java).
 
 
 ```java
@@ -450,7 +450,7 @@ public class BasicSample {
 
 ### Sending SMS with templated content
 
-Sending SMS with a templated content is exactly the same as sending email with a templated content. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/TemplateSample.java).
+Sending SMS with a templated content is exactly the same as sending email with a templated content. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java).
 
 The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the MessagingBuilder to help you to create the service.
@@ -491,7 +491,7 @@ public class TemplateSample {
 
 ### Sending a long SMS
 
-As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters (depends of char encoding). If needed, the library will split your messages into several parts the right way to be recomposed by clients later. So the code doesn't change at all (the sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/LongMessageSample.java):
+As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters (depends of char encoding). If needed, the library will split your messages into several parts the right way to be recomposed by clients later. So the code doesn't change at all (the sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java):
 
 ```java
 package fr.sii.ogham.sample.standard.sms;
