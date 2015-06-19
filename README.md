@@ -446,13 +446,13 @@ public class BasicSample {
 }
 ```
 
-### Sending SMS with template
+### Sending SMS with templated content
 
-Sending SMS with a template is exactly the same as sending email with a template. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/TemplateSample.java).
+Sending SMS with a templated content is exactly the same as sending email with a templated content. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/TemplateSample.java).
 
 The first lines configure the properties that will be used by the sender.
 Then you must create the service. You can use the NotificationBuilder to help you to create the service.
-Finally, the last line sends the SMS. The specified SMS is really basic too. It only contains the content based on a template available in the classpath, a bean to use as source of variable substitutions and the receiver number. The sender number is automatically added to the SMS by the service based on configuration properties.
+Finally, the last line sends the SMS. The specified SMS is really basic too. It only contains the templated content available in the classpath, a bean to use as source of variable substitutions and the receiver number. The sender number is automatically added to the SMS by the service based on configuration properties.
 
 ```java
 package fr.sii.notification.sample.standard.sms;
@@ -489,7 +489,7 @@ public class TemplateSample {
 
 ### Sending a long SMS
 
-As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters (depends of char encoding). The library handles for you the split of messages into several parts the right way to be recomposed by clients later. So the code doesn't change at all (the sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/LongMessageSample.java):
+As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters (depends of char encoding). If needed, the library will split your messages into several parts the right way to be recomposed by clients later. So the code doesn't change at all (the sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/LongMessageSample.java):
 
 ```java
 package fr.sii.notification.sample.standard.sms;
