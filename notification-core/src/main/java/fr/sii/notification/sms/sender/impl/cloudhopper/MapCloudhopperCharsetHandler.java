@@ -40,14 +40,15 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 	 * Initializes with the map of {@link Charset} code handlers indexed indexed
 	 * by the NIO {@link java.nio.charset.Charset} code.
 	 * 
-	 * @param map
+	 * @param charsetProvider
+	 *            the charset provider that gives a charset for the message
+	 * @param mapCloudhopperNameByNioName
 	 *            the map of content handlers indexed by the content class
 	 * @throws EncodingException
 	 *             If the map contains any invalid cloudhopper charset name
 	 * 
 	 */
-	public MapCloudhopperCharsetHandler(CharsetProvider charsetProvider, Map<String, String> mapCloudhopperNameByNioName)
-			throws EncodingException {
+	public MapCloudhopperCharsetHandler(CharsetProvider charsetProvider, Map<String, String> mapCloudhopperNameByNioName) throws EncodingException {
 		this(charsetProvider);
 
 		for (Entry<String, String> nioCharset : mapCloudhopperNameByNioName.entrySet()) {
@@ -66,8 +67,7 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 	 * @throws EncodingException
 	 *             If Cloudhopper charset name is invalid
 	 */
-	public void addCharset(String nioCharsetName, String cloudhopperCharsetName)
-			throws EncodingException {
+	public void addCharset(String nioCharsetName, String cloudhopperCharsetName) throws EncodingException {
 		Charset charset = CharsetUtil.map(cloudhopperCharsetName);
 		if (charset != null) {
 			addCharset(nioCharsetName, charset);
@@ -89,8 +89,7 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 		mapCloudhopperCharsetByNioCharsetName.put(nioCharsetName, cloudhopperCharset);
 	}
 
-	private Charset get(java.nio.charset.Charset nioCharset)
-			throws EncodingException {
+	private Charset get(java.nio.charset.Charset nioCharset) throws EncodingException {
 		Charset cloudhopperCharset = mapCloudhopperCharsetByNioCharsetName.get(nioCharset.name());
 		if (cloudhopperCharset == null) {
 			throw new EncodingException("No cloudhopper charset registered for nio charset : " + nioCharset.name());
@@ -100,8 +99,7 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 	}
 
 	@Override
-	public byte[] encode(String messageStringContent)
-			throws EncodingException {
+	public byte[] encode(String messageStringContent) throws EncodingException {
 		java.nio.charset.Charset nioCharset = charsetProvider.getCharset(messageStringContent);
 		if (nioCharset == null) {
 			throw new EncodingException("No charset provided for message : \n" + messageStringContent);
