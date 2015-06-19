@@ -45,10 +45,10 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperSMPPSender.class);
 
 	private static final int BODY_OFFSET = 6;
-	
+
 	/** Configuration to bind an SmppSession as an ESME to an SMSC. */
 	private final SmppSessionConfiguration smppSessionConfiguration;
-	
+
 	/** Additional options. */
 	private final CloudhopperOptions options;
 
@@ -92,13 +92,13 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	 *            SMPP session configuration
 	 * @param options
 	 *            Dedicated CloudHopper options
+	 * @param charsetHandler
+	 *            Handler that is able to provide a charset for the provided
+	 *            message
 	 * @param phoneNumberTranslator
 	 *            Fallback phone translator to handle addressing policy
 	 */
-	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration,
-			CloudhopperOptions options,
-			 CloudhopperCharsetHandler charsetHandler,
-			PhoneNumberTranslator phoneNumberTranslator) {
+	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options, CloudhopperCharsetHandler charsetHandler, PhoneNumberTranslator phoneNumberTranslator) {
 		this(smppSessionConfiguration, options, charsetHandler);
 
 		this.fallBackPhoneNumberTranslator = phoneNumberTranslator;
@@ -129,8 +129,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		}
 	}
 
-	private List<SubmitSm> createMessages(Sms message)
-			throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {
+	private List<SubmitSm> createMessages(Sms message) throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {
 		List<SubmitSm> messages = new ArrayList<>();
 		for (Recipient recipient : message.getRecipients()) {
 			messages.addAll(createMessages(message, recipient));
@@ -138,8 +137,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		return messages;
 	}
 
-	private List<SubmitSm> createMessages(Sms message, Recipient recipient)
-			throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {
+	private List<SubmitSm> createMessages(Sms message, Recipient recipient) throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {
 		List<SubmitSm> messages = new ArrayList<>();
 		byte[] textBytes = charsetHandler.encode(message.getContent().toString());
 
@@ -149,7 +147,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 
 		// split message when too long
 		byte[][] msgs = GsmUtil.createConcatenatedBinaryShortMessages(textBytes, referenceNumber[0]);
-		if(msgs==null) {
+		if (msgs == null) {
 			SubmitSm submit = createMessage(message, recipient, textBytes);
 			LOG.debug("SubmitSm generated with content '{}'", new String(textBytes));
 			messages.add(submit);
@@ -165,8 +163,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		return messages;
 	}
 
-	private SubmitSm createMessage(Sms message, Recipient recipient, byte[] content)
-			throws SmppInvalidArgumentException, PhoneNumberTranslatorException {
+	private SubmitSm createMessage(Sms message, Recipient recipient, byte[] content) throws SmppInvalidArgumentException, PhoneNumberTranslatorException {
 		SubmitSm submit = new SubmitSm();
 		submit.setSourceAddress(toAddress(message.getFrom().getPhoneNumber()));
 		submit.setDestAddress(toAddress(recipient.getPhoneNumber()));
@@ -186,16 +183,15 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	 * @throws PhoneNumberTranslatorException
 	 *             If an error occurs during fallback phone number translation
 	 */
-	private Address toAddress(PhoneNumber phoneNumber)
-			throws PhoneNumberTranslatorException {
+	private Address toAddress(PhoneNumber phoneNumber) throws PhoneNumberTranslatorException {
 		Address address = null;
 		AddressedPhoneNumber addressedPhoneNumber = null;
 
 		if (phoneNumber instanceof AddressedPhoneNumber) {
-			 addressedPhoneNumber = (AddressedPhoneNumber) phoneNumber;
+			addressedPhoneNumber = (AddressedPhoneNumber) phoneNumber;
 		} else if (fallBackPhoneNumberTranslator != null) {
 			LOG.warn("Fallback addressing policy used for PhoneNumber '{}'. You might decorate your sender with a PhoneNumberTranslatorSender.", phoneNumber);
-				addressedPhoneNumber = fallBackPhoneNumberTranslator.translate(phoneNumber);
+			addressedPhoneNumber = fallBackPhoneNumberTranslator.translate(phoneNumber);
 
 		} else {
 			throw new IllegalStateException("Must provide addressing policy with the phone number or with a fallback phone number translator.");

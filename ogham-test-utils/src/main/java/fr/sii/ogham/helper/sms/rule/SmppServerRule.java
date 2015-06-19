@@ -44,8 +44,8 @@ public class SmppServerRule<M> implements TestRule {
 	/**
 	 * Initialize the server with the provided port.
 	 * 
-	 * @param port
-	 *            the port used by the server
+	 * @param server
+	 *            the server implementation to use
 	 */
 	public SmppServerRule(SmppServerSimulator<M> server) {
 		super();

@@ -10,6 +10,10 @@ import fr.sii.ogham.sms.message.PhoneNumber;
  */
 public interface PhoneNumberHandler extends PhoneNumberTranslator {
 	/**
+	 * Indicates if the phone number can be handled by the translator.
+	 * 
+	 * @param phoneNumber
+	 *            the phone number to test if supported
 	 * @return <code>true</code> if the handler knows how to deduce TON and NPI
 	 *         of the given phone number
 	 */

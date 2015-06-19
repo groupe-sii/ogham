@@ -49,9 +49,6 @@ public class AssertEmail {
 	 *            all the fields with their expected values
 	 * @param actualEmail
 	 *            the received email
-	 * @param strict
-	 *            true for strict checking (totally equals) or false to ignore
-	 *            new line characters in body contents
 	 * @throws MessagingException
 	 *             when accessing the received email fails
 	 * @throws IOException

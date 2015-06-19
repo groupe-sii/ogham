@@ -373,6 +373,25 @@
 					<goals>deploy</goals>
 				</configuration>
 			</plugin>
+			
+			<!-- Github site -->
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.9</version>
+				<configuration>
+					<message>Creating site for ${project.version}</message>
+					<server>github</server>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>site</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -442,14 +461,20 @@
 		<developer>
 			<name>Aurélien Baudet</name>
 			<email>aurelien.baudet@gmail.com</email>
+			<url>https://github.com/aurelien-baudet</url>
 			<organization>Groupe SII</organization>
 			<organizationUrl>http://www.groupe-sii.com</organizationUrl>
 		</developer>
 	</developers>
 
 	<scm>
+		<url>${github.url}</url>
 		<connection>scm:git:${scm.url}</connection>
 		<developerConnection>scm:git:${scm.url}</developerConnection>
-		<url>${github.url}</url>
 	</scm>
+	
+	<issueManagement>
+		<url>${github.url}/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 </project>

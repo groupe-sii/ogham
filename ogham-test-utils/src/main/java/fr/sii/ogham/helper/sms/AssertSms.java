@@ -60,8 +60,8 @@ public class AssertSms {
 	 * 
 	 * @param expected
 	 *            all the fields with their expected values
-	 * @param actual
-	 *            the received SMS
+	 * @param receivedMessages
+	 *            the list of received SMS
 	 */
 	public static void assertEquals(ExpectedSms expected, List<SubmitSm> receivedMessages) {
 		Assert.assertEquals("should have received exactly one message", 1, receivedMessages.size());

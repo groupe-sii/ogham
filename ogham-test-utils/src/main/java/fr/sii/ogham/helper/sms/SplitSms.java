@@ -25,8 +25,8 @@ public class SplitSms {
 	 * </ul>
 	 * <p>
 	 * The receiver and sender numbers have to be duplicated. See
-	 * {@link #SplitSms(String, String, String...)} for reusing the receiver and
-	 * sender numbers.
+	 * {@link #SplitSms(ExpectedAddressedPhoneNumber, ExpectedAddressedPhoneNumber, String...)}
+	 * for reusing the receiver and sender numbers.
 	 * </p>
 	 * 
 	 * @param parts
@@ -46,8 +46,8 @@ public class SplitSms {
 	 * </ul>
 	 * <p>
 	 * The receiver and sender numbers have to be duplicated. See
-	 * {@link #SplitSms(String, String, String...)} for reusing the receiver and
-	 * sender numbers.
+	 * {@link #SplitSms(ExpectedAddressedPhoneNumber, ExpectedAddressedPhoneNumber, String...)}
+	 * for reusing the receiver and sender numbers.
 	 * </p>
 	 * 
 	 * @param parts

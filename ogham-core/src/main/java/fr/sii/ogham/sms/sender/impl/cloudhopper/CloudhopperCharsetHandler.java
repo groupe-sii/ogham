@@ -14,10 +14,11 @@ public interface CloudhopperCharsetHandler {
 	 * Encodes the message string content after a charset detection.
 	 * 
 	 * @param messageStringContent
-	 * @return
+	 *            the message as string to encode
+	 * @return the encoded string as byte array
 	 * @throws EncodingException
+	 *             when message can't be encoded
 	 */
-	byte[] encode(String messageStringContent)
-			throws EncodingException;
+	byte[] encode(String messageStringContent) throws EncodingException;
 
 }
