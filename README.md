@@ -1,5 +1,5 @@
 # notification-module
-Reusable Java library in charge of sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). The librairy also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
+Reusable Java library in charge of sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). The library also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
 
 # Why ?
 
@@ -218,7 +218,7 @@ The template is available [here](sample-standard-usage/src/main/resources/templa
 
 ## Sending email with subject from template
 
-This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to utualize the code and to avoidi to create a new file just for one line.
+This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to mutualize the code and to avoid to create a new file just for one line.
 
 ```java
 package fr.sii.notification.sample.standard.email;
