@@ -602,17 +602,17 @@ TODO
 
 ## SMS
 
-There are some tricky implementation constraints for sending a SMS. The library helps you handle these constraints.
+There are some implementation constraints for sending a SMS following SMPP protocol. The library will help you handle these constraints.
 
-### Phone number management
+### Phone number TON and NPI policy
 
-There exists several phone number formats. According to the format, some information about the number ([TON and NPI](https://docs.aerialink.net/api/smpp/ton-npi-settings/)) must be defined when sending the message.
+SMPP defines two main properties related to the sender and recipient phone number formats: [TON and NPI](https://docs.aerialink.net/api/smpp/ton-npi-settings/).
 
-The library helps you to generate this information for you. Just give the phone numbers and the library will guess the TON and NPI. You can also directly provide the TON and NPI in order to prevent this automatic behavior.
+The library provides a default policy : Just pass the phone numbers and the library will guess the TON and NPI. You can also directly provide the TON and NPI in order to prevent this automatic behavior.
 
 ### Character encoding
 
-Sending SMS with the wrong charset will cause your message to be unreadable. The charset resolution is done using a simple mapping between Java charsets and SMPP charsets. By default, Java uses UTF-8 charset and it mapped to the charset [GSM](https://en.wikipedia.org/wiki/GSM_03.38). The library offers you the ability to provide your own charset when sending SMS.
+Sending SMS with the wrong charset might cause your message to be unreadable. But SMPP Charset are quite different from the common charset definition. The charset resolution is done using a simple mapping between Java charsets and SMPP charsets. By default, Java uses UTF-8 charset and the librairy will map to the SMPP charset [GSM](https://en.wikipedia.org/wiki/GSM_03.38). The library offers you the ability to provide your own charset when sending SMS if need.
 
 # Advanced usage
 
