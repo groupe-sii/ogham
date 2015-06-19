@@ -122,8 +122,8 @@ public class HashCodeBuilder {
 	/**
 	 * Append a hashCode for an Object.
 	 * 
-	 * @param objectValue
-	 *            the Object to add to the hashCode
+	 * @param objectValues
+	 *            array of Object to add to the hashCode
 	 * @return used to chain calls
 	 */
 	public HashCodeBuilder append(Object... objectValues) {

@@ -15,11 +15,6 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  *            The type of the object to test for acceptance. Has no effect on
  *            the acceptance
  */
-/**
- * @author Aurélien Baudet
- *
- * @param <T>
- */
 public class RequiredPropertyCondition<T> implements Condition<T> {
 	/**
 	 * The properties to use for checking if property is defined or not

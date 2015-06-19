@@ -11,7 +11,7 @@ import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
  * content contained within the instance, it delegates processing to an injected
  * content handler.
  *
- * @see fr.sii.notification.email.sender.impl.javamail.MultiContentHandler
+ * @see fr.sii.ogham.email.sender.impl.javamail.MultiContentHandler
  */
 public final class MultiContentHandler implements SendGridContentHandler {
 
