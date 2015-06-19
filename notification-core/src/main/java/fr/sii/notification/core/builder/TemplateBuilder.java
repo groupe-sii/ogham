@@ -1,8 +1,6 @@
 package fr.sii.notification.core.builder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -11,16 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.builder.BuildException;
+import fr.sii.notification.core.resource.resolver.ClassPathResolver;
+import fr.sii.notification.core.resource.resolver.FileResolver;
+import fr.sii.notification.core.resource.resolver.LookupMappingResolver;
+import fr.sii.notification.core.resource.resolver.ResourceResolver;
+import fr.sii.notification.core.resource.resolver.StringResourceResolver;
 import fr.sii.notification.core.template.detector.FixedEngineDetector;
 import fr.sii.notification.core.template.detector.TemplateEngineDetector;
 import fr.sii.notification.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.core.template.resolver.ClassPathTemplateResolver;
-import fr.sii.notification.core.template.resolver.FileTemplateResolver;
-import fr.sii.notification.core.template.resolver.LookupMappingResolver;
-import fr.sii.notification.core.template.resolver.RelativeTemplateResolver;
-import fr.sii.notification.core.template.resolver.TemplateResolver;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.template.thymeleaf.ThymeleafParser;
 import fr.sii.notification.template.thymeleaf.ThymeleafTemplateDetector;
 import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
@@ -36,9 +34,10 @@ import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
  * By default, the builder will use the following template resolvers:
  * <ul>
  * <li>Resolver that is able to handle classpath resolution (
- * {@link ClassPathTemplateResolver})</li>
- * <li>Resolver that is able to handle file resolution (
- * {@link FileTemplateResolver})</li>
+ * {@link ClassPathResolver})</li>
+ * <li>Resolver that is able to handle file resolution ( {@link FileResolver})</li>
+ * <li>Resolver that is able to handle string directly (
+ * {@link StringResourceResolver})</li>
  * </ul>
  * 
  * This builder is also able to register a prefix and a suffix for template
@@ -50,7 +49,7 @@ import fr.sii.notification.template.thymeleaf.builder.ThymeleafBuilder;
  */
 public class TemplateBuilder implements TemplateParserBuilder {
 	private static final Logger LOG = LoggerFactory.getLogger(TemplateBuilder.class);
-	
+
 	/**
 	 * The prefix for properties used by the template engines
 	 */
@@ -67,10 +66,9 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	public static final String SUFFIX_PROPERTY = PROPERTIES_PREFIX + ".suffix";
 
 	/**
-	 * The map that temporarily stores the template resolver implementations
-	 * according to the lookup prefix
+	 * The builder used to generate template resolution
 	 */
-	private Map<String, TemplateResolver> resolvers;
+	private LookupMappingResourceResolverBuilder resolverBuilder;
 
 	/**
 	 * The prefix for template resolution
@@ -83,12 +81,6 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	private String suffix;
 
 	/**
-	 * The list of delegate builders for each template engine. Each builder is
-	 * specialized for constructing the real template parser.
-	 */
-	private List<TemplateParserBuilder> builders;
-
-	/**
 	 * A map that stores the engine detector and the associated engine. Each
 	 * detector will indicate if the engine is able to parse the template.
 	 */
@@ -96,10 +88,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 
 	public TemplateBuilder() {
 		super();
-		resolvers = new HashMap<>();
 		prefix = "";
 		suffix = "";
-		builders = new ArrayList<>();
 		detectors = new HashMap<>();
 	}
 
@@ -114,9 +104,11 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * It will also use the default template resolvers:
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathTemplateResolver})</li>
+	 * {@link ClassPathResolver})</li>
 	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileTemplateResolver})</li>
+	 * {@link FileResolver})</li>
+	 * <li>Resolver that is able to handle string directly (
+	 * {@link StringResourceResolver})</li>
 	 * </ul>
 	 * 
 	 * If the system properties provide values for prefix (
@@ -127,7 +119,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder useDefaults() {
-		return useDefaults(BuilderUtil.getDefaultProperties());
+		return useDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -142,9 +134,11 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link #useDefaultResolvers()}):
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathTemplateResolver})</li>
+	 * {@link ClassPathResolver})</li>
 	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileTemplateResolver})</li>
+	 * {@link FileResolver})</li>
+	 * <li>Resolver that is able to handle string directly (
+	 * {@link StringResourceResolver})</li>
 	 * </ul>
 	 * 
 	 * If the provided properties provide values for prefix (
@@ -158,10 +152,11 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder useDefaults(Properties properties) {
-		withThymeleaf();
+		// TODO: order of calls must not be important !!
 		useDefaultResolvers();
 		withPrefix(properties.getProperty(PREFIX_PROPERTY, ""));
 		withSuffix(properties.getProperty(SUFFIX_PROPERTY, ""));
+		withThymeleaf();
 		return this;
 	}
 
@@ -191,7 +186,6 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder registerTemplateParser(TemplateParserBuilder builder, TemplateEngineDetector detector) {
-		builders.add(builder);
 		detectors.put(detector, builder);
 		return this;
 	}
@@ -200,40 +194,55 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * Tells the builder to use the default template resolvers:
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathTemplateResolver}). The lookup prefix is "classpath:"</li>
+	 * {@link ClassPathResolver}). The lookup prefix is "classpath:"</li>
 	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileTemplateResolver}). The lookup is "file:"</li>
+	 * {@link FileResolver}). The lookup is "file:"</li>
+	 * <li>Resolver that is able to handle string directly (
+	 * {@link StringResourceResolver}). The lookup is "string:"</li>
 	 * <li>Default resolver if no lookup is used (
-	 * {@link ClassPathTemplateResolver})</li>
+	 * {@link ClassPathResolver})</li>
 	 * </ul>
 	 * 
 	 * This method is automatically called by {@link #useDefaults()} or
 	 * {@link #useDefaults(Properties)}.
 	 * 
 	 * @return this builder instance for fluent use
+	 * @see LookupMappingResourceResolverBuilder
 	 */
 	public TemplateBuilder useDefaultResolvers() {
-		withLookupResolver("classpath", new ClassPathTemplateResolver());
-		withLookupResolver("file", new FileTemplateResolver());
-		withLookupResolver("", new ClassPathTemplateResolver());
+		resolverBuilder = new LookupMappingResourceResolverBuilder().useDefaults();
+		return this;
+	}
+
+	/**
+	 * Tells the builder to use your own builder for template resolution.
+	 * 
+	 * @param resolverBuilder
+	 *            the builder to use instead of default one
+	 * @return this builder instance for fluent use
+	 */
+	public TemplateBuilder withResourceResolverBuilder(LookupMappingResourceResolverBuilder resolverBuilder) {
+		this.resolverBuilder = resolverBuilder;
 		return this;
 	}
 
 	@Override
 	public TemplateBuilder withPrefix(String prefix) {
 		this.prefix = prefix;
+		resolverBuilder.withPrefix(prefix);
 		return this;
 	}
 
 	@Override
 	public TemplateBuilder withSuffix(String suffix) {
 		this.suffix = suffix;
+		resolverBuilder.withPrefix(prefix);
 		return this;
 	}
 
 	@Override
-	public TemplateBuilder withLookupResolver(String lookup, TemplateResolver resolver) {
-		resolvers.put(lookup, resolver);
+	public TemplateBuilder withLookupResolver(String lookup, ResourceResolver resolver) {
+		resolverBuilder.withLookupResolver(lookup, resolver);
 		return this;
 	}
 
@@ -245,7 +254,12 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder withThymeleaf() {
-		registerTemplateParser(new ThymeleafBuilder(), new ThymeleafTemplateDetector());
+		// The try/catch clause
+		try {
+			registerTemplateParser(new ThymeleafBuilder(), new ThymeleafTemplateDetector());
+		} catch(Throwable e) {
+			LOG.debug("Can't register Thymeleaf template engine", e);
+		}
 		return this;
 	}
 
@@ -275,27 +289,30 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	@Override
 	public TemplateParser build() throws BuildException {
-		for (TemplateParserBuilder builder : builders) {
+		LookupMappingResolver lookupResolver = resolverBuilder.build();
+		Map<String, ResourceResolver> resolvers = lookupResolver.getMapping();
+		for (TemplateParserBuilder builder : detectors.values()) {
 			// set prefix and suffix for each implementation
 			builder.withPrefix(prefix);
 			builder.withSuffix(suffix);
 			// set resolvers for each implementation
-			for (Entry<String, TemplateResolver> entry : resolvers.entrySet()) {
-				builder.withLookupResolver(entry.getKey(), new RelativeTemplateResolver(entry.getValue(), prefix, suffix));
+			for (Entry<String, ResourceResolver> entry : resolvers.entrySet()) {
+				builder.withLookupResolver(entry.getKey(), entry.getValue());
 			}
 		}
-		// if no detector defined or only one available parser => do not use
-		// auto detection
-		// use auto detection if more than one parser available
-		if (detectors.isEmpty() || builders.size() == 1) {
-			// TODO: if no template parser available => exception or default
-			// parser that does nothing ?
-			TemplateParser parser = builders.get(0).build();
+		if(detectors.isEmpty()) {
+			// if no template parser available => exception
+			throw new BuildException("No parser available. Either disable template features or register a template engine");
+		} else if (detectors.size() == 1) {
+			// if no detector defined or only one available parser => do not use
+			// auto detection
+			TemplateParser parser = detectors.values().iterator().next().build();
 			LOG.info("Using single template engine: {}", parser);
 			LOG.debug("Using prefix {} and suffix {} for template resolution", prefix, suffix);
 			LOG.debug("Using lookup mapping resolver: {}", resolvers);
 			return parser;
 		} else {
+			// use auto detection if more than one parser available
 			Map<TemplateEngineDetector, TemplateParser> map = new HashMap<>();
 			for (Entry<TemplateEngineDetector, TemplateParserBuilder> entry : detectors.entrySet()) {
 				map.put(entry.getKey(), entry.getValue().build());
@@ -304,7 +321,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 			LOG.debug("Auto detection mechanisms: {}", map);
 			LOG.debug("Using prefix {} and suffix {} for template resolution", prefix, suffix);
 			LOG.debug("Using lookup mapping resolver: {}", resolvers);
-			return new AutoDetectTemplateParser(new LookupMappingResolver(resolvers), map);
+			return new AutoDetectTemplateParser(lookupResolver, map);
 		}
 	}
 
@@ -317,10 +334,12 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @param <B>
 	 *            the type of the class to get
 	 * @return the template parser builder instance
+	 * @throws IllegalArgumentException
+	 *             when provided class references an nonexistent builder
 	 */
 	@SuppressWarnings("unchecked")
 	public <B extends TemplateParserBuilder> B getParserBuilder(Class<B> clazz) {
-		for (TemplateParserBuilder builder : builders) {
+		for (TemplateParserBuilder builder : detectors.values()) {
 			if (clazz.isAssignableFrom(builder.getClass())) {
 				return (B) builder;
 			}

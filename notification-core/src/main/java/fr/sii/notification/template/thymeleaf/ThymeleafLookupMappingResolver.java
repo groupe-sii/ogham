@@ -9,15 +9,19 @@ import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolution;
 
+import fr.sii.notification.core.util.LookupUtils;
+
 /**
  * <p>
  * Decorator resolver that is able to manage lookup prefix. It associates each
- * prefix to a dedicated resolver. The lookup prefix is case sensitive and must
- * end with a ':'. It must not contain another ':' character.
+ * prefix to a dedicated resolver.
  * </p>
  * <p>
- * For example, a template path could be "classpath:/email/hello.html". The
- * lookup prefix is "classpath:".
+ * The lookup is a prefix that contains at least one ':' character. The lookup
+ * prefix is case sensitive. For example, if the path is
+ * <code>"classpath:/foo/bar.txt"</code> then the lookup prefix is
+ * <code>"classpath:"</code>. If the path is <code>"foo:bar:/foobar.txt"</code>
+ * then the lookup prefix is <code>"foo:bar:"</code>.
  * </p>
  * <p>
  * The lookup can also be empty in order to define a kind of default resolver if
@@ -63,7 +67,7 @@ public class ThymeleafLookupMappingResolver implements ITemplateResolver {
 	 * @return the template resolver to use
 	 */
 	public ITemplateResolver getResolver(String templateName) {
-		return mapping.get(getLookupType(templateName));
+		return LookupUtils.getResolver(mapping, templateName);
 	}
 
 	/**
@@ -74,8 +78,7 @@ public class ThymeleafLookupMappingResolver implements ITemplateResolver {
 	 * @return the name of the template without lookup
 	 */
 	public String getTemplateName(String templateName) {
-		int idx = templateName.indexOf(':');
-		return idx > 0 ? templateName.substring(idx + 1) : templateName;
+		return LookupUtils.getRealPath(mapping, templateName);
 	}
 
 	@Override
@@ -90,7 +93,9 @@ public class ThymeleafLookupMappingResolver implements ITemplateResolver {
 
 	@Override
 	public TemplateResolution resolveTemplate(TemplateProcessingParameters templateProcessingParameters) {
-		return getResolver(templateProcessingParameters.getTemplateName()).resolveTemplate(templateProcessingParameters);
+		return getResolver(templateProcessingParameters.getTemplateName()).resolveTemplate(
+				new TemplateProcessingParameters(templateProcessingParameters.getConfiguration(), getTemplateName(templateProcessingParameters.getTemplateName()), templateProcessingParameters
+						.getContext()));
 	}
 
 	@Override
@@ -98,11 +103,6 @@ public class ThymeleafLookupMappingResolver implements ITemplateResolver {
 		for (ITemplateResolver resolver : getResolvers()) {
 			resolver.initialize();
 		}
-	}
-
-	private String getLookupType(String templateName) {
-		int idx = templateName.indexOf(':');
-		return idx > 0 ? templateName.substring(0, idx) : "";
 	}
 
 	public List<ITemplateResolver> getResolvers() {

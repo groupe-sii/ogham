@@ -4,7 +4,6 @@ import java.util.Map;
 
 import fr.sii.notification.core.condition.Condition;
 import fr.sii.notification.core.message.Message;
-import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.sender.MultiImplementationSender;
 import fr.sii.notification.core.sender.NotificationSender;
 import fr.sii.notification.email.message.Email;
@@ -16,7 +15,7 @@ import fr.sii.notification.email.message.Email;
  * @author Aurélien Baudet
  *
  */
-public class EmailSender extends MultiImplementationSender<Email> implements ConditionalSender {
+public class EmailSender extends MultiImplementationSender<Email> {
 
 	public EmailSender() {
 		super();

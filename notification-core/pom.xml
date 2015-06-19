@@ -21,6 +21,16 @@
 			<artifactId>javax.mail-api</artifactId>
 		</dependency>
 
+		<!-- SMS -->
+		<dependency>
+			<groupId>com.cloudhopper</groupId>
+			<artifactId>ch-smpp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.cloudhopper</groupId>
+			<artifactId>ch-commons-gsm</artifactId>
+		</dependency>
+
 		<!-- Utility -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -33,6 +43,10 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
 		</dependency>
 
 		<!-- Template parsers -->
@@ -47,6 +61,12 @@
 			<artifactId>jmimemagic</artifactId>
 		</dependency>
 
+		<!-- CSS inliners -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+		</dependency>
+
 		<!-- Logs -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -59,24 +79,10 @@
 
 		<!-- Tests -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>fr.sii.notification</groupId>
+			<artifactId>notification-test-utils</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.icegreen</groupId>
-			<artifactId>greenmail</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>nl.jqno.equalsverifier</groupId>
-			<artifactId>equalsverifier</artifactId>
-			<version>${equalsverifier.version}</version>
 		</dependency>
 	</dependencies>
 

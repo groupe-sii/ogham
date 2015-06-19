@@ -1,28 +1,35 @@
 package fr.sii.notification.email.builder;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.mail.Authenticator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import fr.sii.notification.core.builder.Builder;
 import fr.sii.notification.core.builder.ContentTranslatorBuilder;
+import fr.sii.notification.core.builder.MessageFillerBuilder;
 import fr.sii.notification.core.builder.NotificationSenderBuilder;
 import fr.sii.notification.core.condition.AndCondition;
 import fr.sii.notification.core.condition.Condition;
 import fr.sii.notification.core.condition.RequiredClassCondition;
 import fr.sii.notification.core.condition.RequiredPropertyCondition;
 import fr.sii.notification.core.exception.builder.BuildException;
-import fr.sii.notification.core.filler.PropertiesFiller;
+import fr.sii.notification.core.filler.MessageFiller;
+import fr.sii.notification.core.filler.SubjectFiller;
 import fr.sii.notification.core.message.Message;
 import fr.sii.notification.core.sender.ConditionalSender;
 import fr.sii.notification.core.sender.ContentTranslatorSender;
 import fr.sii.notification.core.sender.FillerSender;
 import fr.sii.notification.core.sender.MultiImplementationSender;
 import fr.sii.notification.core.sender.NotificationSender;
-import fr.sii.notification.core.translator.ContentTranslator;
-import fr.sii.notification.core.util.BuilderUtil;
+import fr.sii.notification.core.translator.content.ContentTranslator;
+import fr.sii.notification.core.translator.resource.AttachmentResourceTranslator;
+import fr.sii.notification.core.util.BuilderUtils;
 import fr.sii.notification.email.EmailConstants;
-import fr.sii.notification.email.attachment.translator.AttachmentSourceTranslator;
-import fr.sii.notification.email.sender.AttachmentSourceTranslatorSender;
+import fr.sii.notification.email.sender.AttachmentResourceTranslatorSender;
 import fr.sii.notification.email.sender.EmailSender;
 
 /**
@@ -32,7 +39,8 @@ import fr.sii.notification.email.sender.EmailSender;
  * There exists several implementations to send an email:
  * <ul>
  * <li>Using pure Java mail API</li>
- * <li>Using Apache Commons Email</li>
+ * <li>Using <a href="https://commons.apache.org/proper/commons-email/">Apache
+ * Commons Email</a></li>
  * <li>Using any other library</li>
  * <li>Through a WebService</li>
  * <li>...</li>
@@ -44,7 +52,7 @@ import fr.sii.notification.email.sender.EmailSender;
  * libraries in the classpath, availability of a particular property, ...).
  * </p>
  * <p>
- * This builder let you the possibility to register any new implementation. It
+ * This builder lets you the possibility to register any new implementation. It
  * allows you to enable or not templating support and automatic filling of
  * message values (like sender address for example).
  * </p>
@@ -54,6 +62,8 @@ import fr.sii.notification.email.sender.EmailSender;
  * @see JavaMailBuilder
  */
 public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender> {
+	private static final Logger LOG = LoggerFactory.getLogger(EmailBuilder.class);
+
 	/**
 	 * The sender instance constructed by this builder
 	 */
@@ -64,20 +74,55 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * register new implementations
 	 */
 	private EmailSender emailSender;
+	
+	/**
+	 * The builder for message filler used to add values to the message
+	 */
+	private MessageFillerBuilder messageFillerBuilder;
 
 	/**
-	 * A builder for implementation based on Java mail API
+	 * The builder for the translator that will update the content of the message
 	 */
-	private JavaMailBuilder javaMailBuilder;
+	private ContentTranslatorBuilder contentTranslatorBuilder;
+	
+	/**
+	 * The builder for the resource translator to handle email attachments
+	 */
+	private AttachmentResourceTranslatorBuilder resourceTranslatorBuilder;
+	
+	/**
+	 * Map that stores email implementations indexed by associated condition
+	 */
+	private Map<Condition<Message>, Builder<? extends NotificationSender>> implementations;
 
 	public EmailBuilder() {
 		super();
 		sender = emailSender = new EmailSender();
-		javaMailBuilder = new JavaMailBuilder().useDefaults();
+		implementations = new HashMap<>();
 	}
 
 	@Override
 	public ConditionalSender build() throws BuildException {
+		for (Entry<Condition<Message>, Builder<? extends NotificationSender>> impl : implementations.entrySet()) {
+			NotificationSender s = impl.getValue().build();
+			LOG.debug("Implementation {} registered", s);
+			emailSender.addImplementation(impl.getKey(), s);
+		}
+		if(messageFillerBuilder!=null) {
+			MessageFiller messageFiller = messageFillerBuilder.build();
+			LOG.debug("Automatic filling of message enabled {}", messageFiller);
+			sender = new FillerSender(messageFiller, sender);
+		}
+		if(resourceTranslatorBuilder!=null) {
+			AttachmentResourceTranslator resourceTranslator = resourceTranslatorBuilder.build();
+			LOG.debug("Resource translation enabled {}", resourceTranslator);
+			sender = new AttachmentResourceTranslatorSender(resourceTranslator, sender);
+		}
+		if(contentTranslatorBuilder!=null) {
+			ContentTranslator contentTranslator = contentTranslatorBuilder.build();
+			LOG.debug("Content translation enabled {}", contentTranslator);
+			sender = new ContentTranslatorSender(contentTranslator, sender);
+		}
 		return sender;
 	}
 
@@ -98,7 +143,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder useDefaults() {
-		return useDefaults(BuilderUtil.getDefaultProperties());
+		return useDefaults(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -120,10 +165,9 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder useDefaults(Properties properties) {
-		setJavaMailBuilder(new JavaMailBuilder().useDefaults(properties));
 		registerDefaultImplementations(properties);
-		withConfigurationFiller(properties);
-		withTemplate();
+		withAutoFilling(properties);
+		withTemplate(properties);
 		withAttachmentFeatures();
 		return this;
 	}
@@ -148,6 +192,25 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	}
 
 	/**
+	 * Register a new implementation for sending email. The implementation is
+	 * associated to a condition. If the condition evaluation returns true at
+	 * runtime then it means that the implementation can be used. If several
+	 * implementations are available, only the first implementation is really
+	 * invoked.
+	 * 
+	 * @param condition
+	 *            the condition that indicates at runtime if the implementation
+	 *            can be used or not
+	 * @param builder
+	 *            the builder for the implementation to register
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder registerImplementation(Condition<Message> condition, Builder<? extends NotificationSender> builder) {
+		implementations.put(condition, builder);
+		return this;
+	}
+
+	/**
 	 * Register all default implementations:
 	 * <ul>
 	 * <li>Java mail API implementation</li>
@@ -163,7 +226,7 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder registerDefaultImplementations() {
-		return registerDefaultImplementations(BuilderUtil.getDefaultProperties());
+		return registerDefaultImplementations(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -184,17 +247,67 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder registerDefaultImplementations(Properties properties) {
-		// Java Mail API can be used only if the property "mail.smtp.host" is
-		// provided and also if the class "javax.mail.Transport" is defined in
-		// the classpath
-		registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>("mail.smtp.host", properties), new RequiredClassCondition<Message>("javax.mail.Transport")),
-				javaMailBuilder.build());
+		withJavaMail(properties);
 		return this;
 	}
 
 	/**
-	 * Enables filling of emails with values that comes from provided
-	 * configuration properties.
+	 * Enable Java Mail API implementation. This implementation is used only if
+	 * the associated condition indicates that Java Mail API can be used. The
+	 * condition checks if:
+	 * <ul>
+	 * <li>The property <code>mail.smtp.host</code> is set</li>
+	 * <li>The class <code>javax.mail.Transport</code> (Java Mail API) is
+	 * available in the classpath</li>
+	 * <li>The class <code>com.sun.mail.smtp.SMTPTransport</code> (Java Mail
+	 * implementation) is available in the classpath</li>
+	 * </ul>
+	 * The registration can silently fail if the javax.mail jar is not in the
+	 * classpath. In this case, the Java Mail API is not registered at all.
+	 * 
+	 * @param properties
+	 *            the properties used to check if property exists
+	 * @return this builder instance for fluent use
+	 */
+	public EmailBuilder withJavaMail(Properties properties) {
+		// Java Mail API can be used only if the property "mail.smtp.host" is
+		// provided and also if the class "javax.mail.Transport" is defined in
+		// the classpath. The try/catch clause is mandatory in order to prevent
+		// failure when javax.mail jar is not in the classpath
+		try {
+			registerImplementation(new AndCondition<>(
+						new RequiredPropertyCondition<Message>("mail.smtp.host", properties),
+						new RequiredClassCondition<Message>("javax.mail.Transport"),
+						new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")),
+					new JavaMailBuilder().useDefaults(properties));
+		} catch (Throwable e) {
+			LOG.debug("Can't register Java Mail implementation", e);
+		}
+		return this;
+	}
+
+	/**
+	 * Enables automatic filling of emails with values that come from multiple sources.
+	 * It let you use your own builder instead of using default behaviors.
+	 * 
+	 * @param builder
+	 *            the builder for constructing the message filler
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withAutoFilling(MessageFillerBuilder builder) {
+		messageFillerBuilder = builder;
+		return this;
+	}
+
+	/**
+	 * Enables automatic filling of emails with values that come from multiple sources:
+	 * <ul>
+	 * <li>Fill email with values that come from provided
+	 * configuration properties.</li>
+	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
+	 * </ul>
+	 * See
+	 * {@link MessageFillerBuilder#useDefaults(Properties, String)} for more information.
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
 	 * {@link #useDefaults(Properties)}
@@ -206,15 +319,19 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 *            the prefix for the keys used for filling the message
 	 * @return this instance for fluent use
 	 */
-	public EmailBuilder withConfigurationFiller(Properties props, String baseKey) {
-		sender = new FillerSender(new PropertiesFiller(props, baseKey), sender);
+	public EmailBuilder withAutoFilling(Properties props, String baseKey) {
+		withAutoFilling(new MessageFillerBuilder().useDefaults(props, baseKey));
 		return this;
 	}
 
 	/**
-	 * Enables filling of emails with values that comes from provided
+	 * Enables automatic filling of emails with values that come from multiple sources:
+	 * <ul>
+	 * <li>Fill email with values that come from provided
 	 * configuration properties. It uses the default prefix for the keys
-	 * ("notification.email").
+	 * ("notification.email").</li>
+	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
+	 * </ul>
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
 	 * {@link #useDefaults(Properties)}
@@ -224,14 +341,18 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 *            the properties that contains the values to set on the email
 	 * @return this instance for fluent use
 	 */
-	public EmailBuilder withConfigurationFiller(Properties props) {
-		return withConfigurationFiller(props, EmailConstants.PROPERTIES_PREFIX);
+	public EmailBuilder withAutoFilling(Properties props) {
+		return withAutoFilling(props, EmailConstants.PROPERTIES_PREFIX);
 	}
 
 	/**
-	 * Enables filling of emails with values that comes from system
+	 * Enables automatic filling of emails with values that come from multiple sources:
+	 * <ul>
+	 * <li>Fill email with values that come from system
 	 * configuration properties. It uses the default prefix for the keys
-	 * ("notification.email").
+	 * ("notification.email").</li>
+	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
+	 * </ul>
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
 	 * {@link #useDefaults(Properties)}
@@ -239,8 +360,8 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * 
 	 * @return this instance for fluent use
 	 */
-	public EmailBuilder withConfigurationFiller() {
-		return withConfigurationFiller(BuilderUtil.getDefaultProperties());
+	public EmailBuilder withAutoFilling() {
+		return withAutoFilling(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
@@ -255,20 +376,24 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withTemplate() {
-		return withTemplate(new ContentTranslatorBuilder().useDefaults());
+		return withTemplate(BuilderUtils.getDefaultProperties());
 	}
 
 	/**
-	 * Enables templating support using the provided {@link ContentTranslator}.
-	 * It decorates the email sender with a {@link ContentTranslatorSender}.
+	 * Enables templating support using all default behaviors and values. See
+	 * {@link ContentTranslatorBuilder#useDefaults()} for more information.
 	 * 
-	 * @param translator
-	 *            the translator to use for templating transformations
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param properties
+	 *            the properties to use
 	 * @return this instance for fluent use
 	 */
-	public EmailBuilder withTemplate(ContentTranslator translator) {
-		sender = new ContentTranslatorSender(translator, sender);
-		return this;
+	public EmailBuilder withTemplate(Properties properties) {
+		return withTemplate(new ContentTranslatorBuilder().useDefaults(properties));
 	}
 
 	/**
@@ -282,14 +407,15 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withTemplate(ContentTranslatorBuilder builder) {
-		return withTemplate(builder.build());
+		this.contentTranslatorBuilder = builder;
+		return this;
 	}
 
 	/**
 	 * Enable attachment features like attachment resolution based on lookup
-	 * mapping. It delegates to {@link AttachmentSourceTranslatorBuilder} with
+	 * mapping. It delegates to {@link AttachmentResourceTranslatorBuilder} with
 	 * the default behavior and values (see
-	 * {@link AttachmentSourceTranslatorBuilder#useDefaults()}).
+	 * {@link AttachmentResourceTranslatorBuilder#useDefaults()}).
 	 * 
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
@@ -299,12 +425,11 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withAttachmentFeatures() {
-		return withAttachmentFeatures(new AttachmentSourceTranslatorBuilder().useDefaults());
+		return withAttachmentFeatures(new AttachmentResourceTranslatorBuilder().useDefaults());
 	}
 
 	/**
-	 * Enable attachment features like attachment resolution based on lookup
-	 * mapping.
+	 * Enable attachment features using the provided translator builder.
 	 * 
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
@@ -312,65 +437,43 @@ public class EmailBuilder implements NotificationSenderBuilder<ConditionalSender
 	 * </p>
 	 * 
 	 * @param builder
-	 *            the builder to use instead of the default one
+	 *            the builder for the translator to use instead of the default one
 	 * @return this instance for fluent use
 	 */
-	public EmailBuilder withAttachmentFeatures(AttachmentSourceTranslatorBuilder builder) {
-		return withAttachmentFeatures(builder.build());
-	}
-
-	/**
-	 * Enable attachment features using the provided translator.
-	 * 
-	 * <p>
-	 * Automatically called by {@link #useDefaults()} and
-	 * {@link #useDefaults(Properties)}
-	 * </p>
-	 * 
-	 * @param translator
-	 *            the translator to use instead of the default one
-	 * @return this instance for fluent use
-	 */
-	public EmailBuilder withAttachmentFeatures(AttachmentSourceTranslator translator) {
-		sender = new AttachmentSourceTranslatorSender(translator, sender);
+	public EmailBuilder withAttachmentFeatures(AttachmentResourceTranslatorBuilder builder) {
+		resourceTranslatorBuilder = builder;
 		return this;
 	}
 
 	/**
-	 * Provide your own builder for Java mail API implementation.
+	 * Get reference to the specialized builder. It may be useful to fine tune a
+	 * specific implementation.
 	 * 
-	 * @param javaMailBuilder
-	 *            the builder to use instead of the default one
-	 * @return this instance for fluent use
+	 * @param clazz
+	 *            the class of the builder to get
+	 * @param <B>
+	 *            the type of the class to get
+	 * @return the builder instance for the specific implementation
+	 * @throws IllegalArgumentException
+	 *             when provided class references an nonexistent builder
 	 */
-	public EmailBuilder setJavaMailBuilder(JavaMailBuilder javaMailBuilder) {
-		this.javaMailBuilder = javaMailBuilder;
-		return this;
+	@SuppressWarnings("unchecked")
+	public <B extends Builder<? extends NotificationSender>> B getImplementationBuilder(Class<B> clazz) {
+		for (Builder<? extends NotificationSender> builder : implementations.values()) {
+			if (clazz.isAssignableFrom(builder.getClass())) {
+				return (B) builder;
+			}
+		}
+		throw new IllegalArgumentException("No implementation builder exists for " + clazz.getSimpleName());
 	}
 
 	/**
-	 * Set the authentication mechanism to use for sending email. In case that
-	 * you want to provide your own Java mail API builder, this method MUST be
-	 * called after calling {@link #setJavaMailBuilder(JavaMailBuilder)}. If you
-	 * call {@link #setJavaMailBuilder(JavaMailBuilder)} after, then the
-	 * authentication mechanism will not be transmitted to the builder.
+	 * Get the reference to the specialized builder for Java Mail API. It may be
+	 * useful to fine tune Java Mail API implementation.
 	 * 
-	 * @param authenticator
-	 *            the authentication mechanism
-	 * @return this instance for fluent use
-	 */
-	public EmailBuilder setAuthenticator(Authenticator authenticator) {
-		javaMailBuilder.setAuthenticator(authenticator);
-		return this;
-	}
-
-	/**
-	 * Get reference to the specialized builder for Java mail API builder in
-	 * order to fine tuning it.
-	 * 
-	 * @return the builder for Java mail API
+	 * @return The specialized builder for Java Mail API
 	 */
 	public JavaMailBuilder getJavaMailBuilder() {
-		return javaMailBuilder;
+		return getImplementationBuilder(JavaMailBuilder.class);
 	}
 }

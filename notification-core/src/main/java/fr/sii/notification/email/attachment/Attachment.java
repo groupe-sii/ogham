@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import fr.sii.notification.core.resource.ByteResource;
+import fr.sii.notification.core.resource.FileResource;
+import fr.sii.notification.core.resource.LookupResource;
+import fr.sii.notification.core.resource.NamedResource;
 import fr.sii.notification.core.util.EqualsBuilder;
 import fr.sii.notification.core.util.HashCodeBuilder;
 
@@ -11,9 +15,9 @@ import fr.sii.notification.core.util.HashCodeBuilder;
  * Represents a content to attach to the email. Typically a file to join to the
  * email. An attachment is represented with the following information:
  * <ul>
- * <li>A content (the file to join to the email). See {@link Source} for more
+ * <li>A content (the file to join to the email). See {@link NamedResource} for more
  * information.</li>
- * <li>A name (the name to display for the file). See {@link Source} for more
+ * <li>A name (the name to display for the file). See {@link NamedResource} for more
  * information.</li>
  * <li>An optional description</li>
  * <li>An optional disposition ({@link ContentDisposition#ATTACHMENT} by
@@ -25,9 +29,9 @@ import fr.sii.notification.core.util.HashCodeBuilder;
  */
 public class Attachment {
 	/**
-	 * The source used to access the content of the attachment
+	 * The resource used to access the content of the attachment
 	 */
-	private Source source;
+	private NamedResource resource;
 
 	/**
 	 * The description for the attachment
@@ -40,45 +44,69 @@ public class Attachment {
 	private String disposition;
 
 	/**
-	 * Initialize the attachment with the provided source (content and name),
+	 * The ID of the content
+	 */
+	private String contentId;
+
+	/**
+	 * Initialize the attachment with the provided resource (content and name),
 	 * the description of the attachment and the disposition (how to include the
 	 * attachment into the mail).
 	 * 
-	 * @param source
-	 *            the source of the attachment
+	 * @param resource
+	 *            the resource of the attachment (with name)
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 * @param contentId
+	 *            the unique id of the content (may not null)
+	 */
+	public Attachment(NamedResource resource, String description, String disposition, String contentId) {
+		super();
+		this.resource = resource;
+		this.description = description;
+		this.disposition = disposition;
+		this.contentId = contentId;
+	}
+
+	/**
+	 * Initialize the attachment with the provided resource (content and name),
+	 * the description of the attachment and the disposition (how to include the
+	 * attachment into the mail).
+	 * 
+	 * @param resource
+	 *            the resource of the attachment (with name)
 	 * @param description
 	 *            the description of the attachment (may be null)
 	 * @param disposition
 	 *            the disposition of the attachment
 	 */
-	public Attachment(Source source, String description, String disposition) {
-		super();
-		this.source = source;
-		this.description = description;
-		this.disposition = disposition;
+	public Attachment(NamedResource resource, String description, String disposition) {
+		this(resource, description, disposition, null);
 	}
 
 	/**
 	 * <p>
-	 * Initialize the attachment with the provided source (content and name),
+	 * Initialize the attachment with the provided resource (content and name),
 	 * the description of the attachment.
 	 * </p>
 	 * <p>
 	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
 	 * </p>
 	 * 
-	 * @param source
-	 *            the source of the attachment
+	 * @param resource
+	 *            the resource of the attachment
 	 * @param description
 	 *            the description of the attachment (may be null)
 	 */
-	public Attachment(Source source, String description) {
-		this(source, description, ContentDisposition.ATTACHMENT);
+	public Attachment(NamedResource resource, String description) {
+		this(resource, description, ContentDisposition.ATTACHMENT);
 	}
 
 	/**
 	 * <p>
-	 * Initialize the attachment with the provided source (content and name).
+	 * Initialize the attachment with the provided resource (content and name).
 	 * </p>
 	 * <p>
 	 * The description is not used (set to null)
@@ -87,11 +115,11 @@ public class Attachment {
 	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
 	 * </p>
 	 * 
-	 * @param source
-	 *            the source of the attachment
+	 * @param resource
+	 *            the resource of the attachment
 	 */
-	public Attachment(Source source) {
-		this(source, null);
+	public Attachment(NamedResource resource) {
+		this(resource, null);
 	}
 
 	/**
@@ -116,7 +144,7 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(String path, String description, String disposition) {
-		this(new LookupSource(path), description, disposition);
+		this(new LookupResource(path), description, disposition);
 	}
 
 	/**
@@ -142,7 +170,7 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(String path, String description) {
-		this(new LookupSource(path), description);
+		this(new LookupResource(path), description);
 	}
 
 	/**
@@ -168,7 +196,7 @@ public class Attachment {
 	 *            the path to the attachment
 	 */
 	public Attachment(String path) {
-		this(new LookupSource(path));
+		this(new LookupResource(path));
 	}
 
 	/**
@@ -188,7 +216,7 @@ public class Attachment {
 	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream, String description, String disposition) throws IOException {
-		this(new ByteSource(name, stream), description, disposition);
+		this(new ByteResource(name, stream), description, disposition);
 	}
 
 	/**
@@ -210,7 +238,7 @@ public class Attachment {
 	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream, String description) throws IOException {
-		this(new ByteSource(name, stream), description);
+		this(new ByteResource(name, stream), description);
 	}
 
 	/**
@@ -232,7 +260,7 @@ public class Attachment {
 	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream) throws IOException {
-		this(new ByteSource(name, stream));
+		this(new ByteResource(name, stream));
 	}
 
 	/**
@@ -250,7 +278,7 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(String name, byte[] content, String description, String disposition) {
-		this(new ByteSource(name, content), description, disposition);
+		this(new ByteResource(name, content), description, disposition);
 	}
 
 	/**
@@ -270,7 +298,7 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(String name, byte[] content, String description) {
-		this(new ByteSource(name, content), description);
+		this(new ByteResource(name, content), description);
 	}
 
 	/**
@@ -290,7 +318,7 @@ public class Attachment {
 	 *            the content of the attachment
 	 */
 	public Attachment(String name, byte[] content) {
-		this(new ByteSource(name, content));
+		this(new ByteResource(name, content));
 	}
 
 	/**
@@ -308,7 +336,7 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(File file, String description, String disposition) {
-		this(new FileSource(file), description, disposition);
+		this(new FileResource(file), description, disposition);
 	}
 
 	/**
@@ -329,7 +357,7 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(File file, String description) {
-		this(new FileSource(file), description);
+		this(new FileResource(file), description);
 	}
 
 	/**
@@ -350,7 +378,7 @@ public class Attachment {
 	 *            the file to attach
 	 */
 	public Attachment(File file) {
-		this(new FileSource(file));
+		this(new FileResource(file));
 	}
 
 	public String getDescription() {
@@ -369,32 +397,43 @@ public class Attachment {
 		this.disposition = disposition;
 	}
 
-	public Source getSource() {
-		return source;
+	public NamedResource getResource() {
+		return resource;
 	}
 
-	public void setSource(Source source) {
-		this.source = source;
+	public void setResource(NamedResource resource) {
+		this.resource = resource;
 	}
 
+	public String getContentId() {
+		return contentId;
+	}
+
+	public void setContentId(String contentId) {
+		this.contentId = contentId;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("<").append(source.getName());
+		builder.append("<").append(resource.getName());
 		if (description != null) {
 			builder.append(" )").append(description).append(")");
+		}
+		if(contentId!=null) {
+			builder.append("{").append(contentId).append("}>");
 		}
 		builder.append("[").append(disposition).append("]>");
 		return builder.toString();
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(source).append(description).append(disposition).hashCode();
+		return new HashCodeBuilder().append(resource).append(description).append(disposition).append(contentId).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendFields("source", "description", "disposition").isEqual();
+		return new EqualsBuilder(this, obj).appendFields("resource", "description", "disposition", "contentId").isEqual();
 	}
 }

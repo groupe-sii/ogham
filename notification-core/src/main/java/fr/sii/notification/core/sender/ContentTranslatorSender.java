@@ -7,7 +7,7 @@ import fr.sii.notification.core.exception.MessageException;
 import fr.sii.notification.core.exception.MessageNotSentException;
 import fr.sii.notification.core.exception.handler.ContentTranslatorException;
 import fr.sii.notification.core.message.Message;
-import fr.sii.notification.core.translator.ContentTranslator;
+import fr.sii.notification.core.translator.content.ContentTranslator;
 
 /**
  * Decorator sender that transforms the content of the message before really

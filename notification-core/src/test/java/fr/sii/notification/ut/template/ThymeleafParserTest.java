@@ -39,7 +39,7 @@ public class ThymeleafParserTest {
 		Content content = parser.parse("classpath:simple.html", new BeanContext(new SimpleBean("foo", 42)));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertEquals("/template/thymeleaf/expected/simple_foo_42.html", content);
+		AssertTemplate.assertSimilar("/template/thymeleaf/expected/simple_foo_42.html", content);
 	}
 	
 	@Test
@@ -47,7 +47,7 @@ public class ThymeleafParserTest {
 		Content content = parser.parse("classpath:simple.txt", new BeanContext(new SimpleBean("foo", 42)));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertEquals("/template/thymeleaf/expected/simple_foo_42.txt", content);
+		AssertTemplate.assertSimilar("/template/thymeleaf/expected/simple_foo_42.txt", content);
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ public class ThymeleafParserTest {
 		Content content = parser.parse("classpath:nested.html", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertEquals("/template/thymeleaf/expected/nested_foo_42.html", content);
+		AssertTemplate.assertSimilar("/template/thymeleaf/expected/nested_foo_42.html", content);
 	}
 	
 	@Test
@@ -63,7 +63,7 @@ public class ThymeleafParserTest {
 		Content content = parser.parse("classpath:layout.html", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertEquals("/template/thymeleaf/expected/layout_foo_42.html", content);
+		AssertTemplate.assertSimilar("/template/thymeleaf/expected/layout_foo_42.html", content);
 	}
 	
 	@Test(expected=ParseException.class)

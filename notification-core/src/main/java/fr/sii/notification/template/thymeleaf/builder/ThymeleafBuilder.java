@@ -5,15 +5,16 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.notification.core.builder.TemplateParserBuilder;
 import fr.sii.notification.core.exception.builder.BuildException;
+import fr.sii.notification.core.resource.resolver.LookupMappingResolver;
+import fr.sii.notification.core.resource.resolver.ResourceResolver;
 import fr.sii.notification.core.template.parser.TemplateParser;
-import fr.sii.notification.core.template.resolver.LookupMappingResolver;
-import fr.sii.notification.core.template.resolver.TemplateResolver;
 import fr.sii.notification.template.exception.NoResolverAdapterException;
 import fr.sii.notification.template.thymeleaf.ThymeleafLookupMappingResolver;
 import fr.sii.notification.template.thymeleaf.ThymeleafParser;
 import fr.sii.notification.template.thymeleaf.adapter.ClassPathResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.FileResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.FirstSupportingResolverAdapter;
+import fr.sii.notification.template.thymeleaf.adapter.StringResolverAdapter;
 import fr.sii.notification.template.thymeleaf.adapter.ThymeleafResolverAdapter;
 
 /**
@@ -36,7 +37,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 
 	/**
 	 * Find the first adapter that can handle the general
-	 * {@link TemplateResolver} in order to convert it to Thymeleaf specific
+	 * {@link ResourceResolver} in order to convert it to Thymeleaf specific
 	 * resolver
 	 */
 	private FirstSupportingResolverAdapter resolverAdapter;
@@ -55,7 +56,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 		super();
 		engine = new TemplateEngine();
 		lookupResolver = new ThymeleafLookupMappingResolver();
-		resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter());
+		resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter(), new StringResolverAdapter());
 		prefix = "";
 		suffix = "";
 	}
@@ -132,7 +133,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	}
 
 	@Override
-	public TemplateParserBuilder withLookupResolver(String lookup, TemplateResolver resolver) {
+	public TemplateParserBuilder withLookupResolver(String lookup, ResourceResolver resolver) {
 		try {
 			return withLookupResolver(lookup, resolverAdapter.adapt(resolver));
 		} catch (NoResolverAdapterException e) {

@@ -27,11 +27,6 @@ public class ThymeleafParser implements TemplateParser {
 	private TemplateEngine engine;
 	
 	/**
-	 * A resolver that provides real instances according to lookup prefixes
-	 */
-	private ThymeleafLookupMappingResolver lookupResolver;
-	
-	/**
 	 * Converts general context into Thymeleaf specific context
 	 */
 	private ThymeleafContextConverter contextConverter;
@@ -39,7 +34,6 @@ public class ThymeleafParser implements TemplateParser {
 	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver lookupResolver, ThymeleafContextConverter contextConverter) {
 		super();
 		this.engine = engine;
-		this.lookupResolver = lookupResolver;
 		this.contextConverter = contextConverter;
 		engine.setTemplateResolver(lookupResolver);
 	}
@@ -52,8 +46,7 @@ public class ThymeleafParser implements TemplateParser {
 	public Content parse(String templateName, Context ctx) throws ParseException {
 		try {
 			LOG.debug("Parsing Thymeleaf template {} with context {}...", templateName, ctx);
-			String resolvedTemplateName = lookupResolver.getTemplateName(templateName);
-			String result = engine.process(resolvedTemplateName, contextConverter.convert(ctx));
+			String result = engine.process(templateName, contextConverter.convert(ctx));
 			LOG.debug("Template {} successfully parsed with context {}. Result:", templateName);
 			LOG.debug(result);
 			return new StringContent(result);

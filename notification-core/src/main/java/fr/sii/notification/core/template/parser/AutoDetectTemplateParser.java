@@ -6,15 +6,15 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.notification.core.exception.resource.ResourceResolutionException;
 import fr.sii.notification.core.exception.template.EngineDetectionException;
 import fr.sii.notification.core.exception.template.NoEngineDetectionException;
 import fr.sii.notification.core.exception.template.ParseException;
-import fr.sii.notification.core.exception.template.TemplateResolutionException;
 import fr.sii.notification.core.message.content.Content;
-import fr.sii.notification.core.template.Template;
+import fr.sii.notification.core.resource.Resource;
+import fr.sii.notification.core.resource.resolver.ResourceResolver;
 import fr.sii.notification.core.template.context.Context;
 import fr.sii.notification.core.template.detector.TemplateEngineDetector;
-import fr.sii.notification.core.template.resolver.TemplateResolver;
 
 /**
  * Decorator that automatically detects the template engine parser to use. The
@@ -33,14 +33,14 @@ public class AutoDetectTemplateParser implements TemplateParser {
 	/**
 	 * The template resolver used to find the template
 	 */
-	private TemplateResolver resolver;
+	private ResourceResolver resolver;
 
 	/**
 	 * The pairs of engine detector and template engine parser
 	 */
 	private Map<TemplateEngineDetector, TemplateParser> detectors;
 
-	public AutoDetectTemplateParser(TemplateResolver resolver, Map<TemplateEngineDetector, TemplateParser> detectors) {
+	public AutoDetectTemplateParser(ResourceResolver resolver, Map<TemplateEngineDetector, TemplateParser> detectors) {
 		super();
 		this.resolver = resolver;
 		this.detectors = detectors;
@@ -50,7 +50,7 @@ public class AutoDetectTemplateParser implements TemplateParser {
 	public Content parse(String templateName, Context ctx) throws ParseException {
 		try {
 			LOG.info("Start template engine automatic detection for {}", templateName);
-			Template template = resolver.getTemplate(templateName);
+			Resource template = resolver.getResource(templateName);
 			TemplateParser parser = null;
 			for (Entry<TemplateEngineDetector, TemplateParser> entry : detectors.entrySet()) {
 				if (entry.getKey().canParse(templateName, ctx, template)) {
@@ -66,7 +66,7 @@ public class AutoDetectTemplateParser implements TemplateParser {
 			}
 			LOG.info("Parse the template {} using template engine {}", templateName, parser);
 			return parser.parse(templateName, ctx);
-		} catch (TemplateResolutionException e) {
+		} catch (ResourceResolutionException e) {
 			throw new ParseException("Failed to automatically detect parser because the template couldn't be resolved", templateName, ctx, e);
 		} catch (EngineDetectionException e) {
 			throw new ParseException("Failed to automatically detect parser due to detection error", templateName, ctx, e);

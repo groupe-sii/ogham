@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.notification.core.exception.template.EngineDetectionException;
-import fr.sii.notification.core.template.Template;
+import fr.sii.notification.core.resource.Resource;
 import fr.sii.notification.core.template.context.Context;
 import fr.sii.notification.core.template.detector.TemplateEngineDetector;
 
@@ -30,7 +30,7 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 	private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns[^=]+=\\s*\"http://www.thymeleaf.org\"");
 
 	@Override
-	public boolean canParse(String templateName, Context ctx, Template template) throws EngineDetectionException {
+	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException {
 		LOG.debug("Checking if Thymeleaf can handle the template {}", templateName);
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(template.getInputStream()))) {
 			String line;

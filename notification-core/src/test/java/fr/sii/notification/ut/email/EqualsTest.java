@@ -9,10 +9,10 @@ import fr.sii.notification.core.message.content.MultiContent;
 import fr.sii.notification.core.message.content.MultiTemplateContent;
 import fr.sii.notification.core.message.content.StringContent;
 import fr.sii.notification.core.message.content.TemplateContent;
+import fr.sii.notification.core.resource.ByteResource;
+import fr.sii.notification.core.resource.FileResource;
+import fr.sii.notification.core.resource.LookupResource;
 import fr.sii.notification.email.attachment.Attachment;
-import fr.sii.notification.email.attachment.ByteSource;
-import fr.sii.notification.email.attachment.FileSource;
-import fr.sii.notification.email.attachment.LookupSource;
 import fr.sii.notification.email.message.Email;
 import fr.sii.notification.email.message.EmailAddress;
 import fr.sii.notification.email.message.Recipient;
@@ -60,16 +60,16 @@ public class EqualsTest {
 	
 	@Test
 	public void lookupSource() {
-		EqualsVerifier.forClass(LookupSource.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
+		EqualsVerifier.forClass(LookupResource.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
 	}
 	
 	@Test
 	public void fileSource() {
-		EqualsVerifier.forClass(FileSource.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
+		EqualsVerifier.forClass(FileResource.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
 	}
 	
 	@Test
 	public void byteSource() {
-		EqualsVerifier.forClass(ByteSource.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
+		EqualsVerifier.forClass(ByteResource.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
 	}
 }
