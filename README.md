@@ -1,5 +1,5 @@
 # notification-module
-Reusable Java library for sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can comes from any templating engine (Thymeleaf, Freemarker, Velocity, ...). It also provides bridges the inclusion into frameworks (Spring, JSF, ...). It is designed to be easily extended.
+Reusable Java library in charge of sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). Hte librairy also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
 
 # Why ?
 
