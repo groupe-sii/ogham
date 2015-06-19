@@ -1,5 +1,5 @@
 # Ogham
-Open, General and Highly adaptative Messaging library.
+Open, General and Highly Adaptative Messaging library.
 
 It is a reusable Java library in charge of sending any kind of message (email, SMS, mobile notification, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). The library also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
 
