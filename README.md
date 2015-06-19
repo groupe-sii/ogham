@@ -5,17 +5,16 @@ Reusable Java library in charge of sending any kind of message (email, SMS, noti
 
 ## Existing libraries
 
-There already exists several libraries for sending email ([Apache Commons Email](https://commons.apache.org/proper/commons-email/), [Simple Java Mail/Vesijama](https://github.com/bbottema/simple-java-mail), [Spring Email Integration](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html)...). These libraries help you to send an email but you have to manually write the content. So if you want to use a template for the email content, you have to manually integrate a template engine.
+Several libraries for sending email already exist ([Apache Commons Email](https://commons.apache.org/proper/commons-email/), [Simple Java Mail/Vesijama](https://github.com/bbottema/simple-java-mail), [Spring Email Integration](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html)...). These libraries help you with sending an email but if you want to use a templated content, you will have to manually integrate a template engine.
 
-These libraries also provide only implementations based on Java Mail API. But in some environments, it is possible that you don't want to send the email directly but use a web service for sending the email.
+These libraries also provide only implementations based on Java Mail API. But in some environments, you might NOT want to send the email directly but to use a web service to do it for you. Furthermore, those libraries are bound by design to frameworks or libraries that you might not want to use in your own context.
 
-Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
+So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service... Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
 
-These libraries are stick to frameworks or libraries so you can't use the same code if you don't use the same framework or libraries.
 
 ## The notification-module
 
-This module is designed for handling any kind of message the same way. It can provide several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can add your own implementation.
+This module is designed for handling any kind of message the same way. It also provides several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can easily add your own implementation.
 
 It also provides templating support and integrates natively several template engines. You can also add your own.
 
