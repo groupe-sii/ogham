@@ -198,7 +198,7 @@ public class HtmlTemplateSample {
 
 ```
 
-Here is the content of the template:
+Here is the templated content:
 
 ```html
 <!DOCTYPE html>
@@ -253,7 +253,7 @@ public class HtmlTemplateWithSubjectSample {
 }
 ```
 
-Here is the content of the template:
+Here is the templated content :
 
 ```html
 <!DOCTYPE html>
@@ -313,7 +313,7 @@ public class WithAttachmentSample {
 
 ## Sending an email with both HTML and text
 
-Sending an email with HTML content AND text content is really important for smartphones. When a smartphone receives an email it displays the sender, the subject and also a preview of the message. If the message is only HTML, the preview may be unreadable. That's why the smartphones are using the text alternative for the preview.
+Sending an email with HTML content **and** text content might be really important, at least for smartphones. When a smartphone receives an email, it displays the sender, the subject and also a preview of the message, using the text alternative. If the message is only HTML, the preview might be unreadable.
 
 This sample shows how to provide both HTML content and text content. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlAndTextSample.java).
 
@@ -349,7 +349,7 @@ public class HtmlAndTextSample {
 }
 ```
 
-This sample shows how to provide both HTML content and text content that comes from templates. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlAndTextTemplateSample.java).
+This sample shows how to provide both HTML content and text content following a template engine language. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlAndTextTemplateSample.java).
 
 ```java
 package fr.sii.notification.sample.standard.email;
@@ -400,11 +400,12 @@ Here is the content of the HTML template (available [here](sample-standard-usage
 </html>
 ```
 
-And the content of the text template (available [here](sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt)):
+And the templated content (available [here](sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt)):
 
 ```html
 <html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">
-[[${name}]] [[${value}]]
+[[${name}]]
+[[${value}]]
 </html>
 ```
 ## Sending SMS
