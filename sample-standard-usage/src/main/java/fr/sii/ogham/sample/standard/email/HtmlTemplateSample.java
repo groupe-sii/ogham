@@ -17,8 +17,8 @@ public class HtmlTemplateSample {
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("notification.email.from", "<email address to display for the sender user>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email

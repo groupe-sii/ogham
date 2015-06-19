@@ -15,12 +15,12 @@ public class TemplateSample {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.setProperty("notification.sms.smpp.host", "<your server host>");
-		properties.setProperty("notification.sms.smpp.port", "<your server port>");
-		properties.setProperty("notification.sms.smpp.systemId", "<your server system ID>");
-		properties.setProperty("notification.sms.smpp.password", "<your server password>");
-		properties.setProperty("notification.sms.from", "<phone number to display for the sender>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.sms.smpp.host", "<your server host>");
+		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
+		properties.setProperty("ogham.sms.smpp.systemId", "<your server system ID>");
+		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
+		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the sms

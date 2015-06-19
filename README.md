@@ -1,5 +1,7 @@
-# notification-module
-Open, General and Highly adaptative Messaging library. It is a reusable Java library in charge of sending any kind of message (email, SMS, notification mobile, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). The library also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
+# Ogham
+Open, General and Highly adaptative Messaging library.
+
+It is a reusable Java library in charge of sending any kind of message (email, SMS, mobile notification, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). The library also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
 
 # Why ?
 
@@ -12,7 +14,7 @@ These libraries also provide only implementations based on Java Mail API. But in
 So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service... Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
 
 
-## The notification-module
+## The Ogham module
 
 This module is designed for handling any kind of message the same way. It also provides several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can easily add your own implementation.
 
@@ -53,9 +55,9 @@ To include the library in your project, you just have to add the dependency to y
 	<dependencies>
 	  ...
 		<dependency>
-			<groupId>fr.sii.notification</groupId>
-			<artifactId>notification-core</artifactId>
-			<version>${notification-module.version}</version>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-core</artifactId>
+			<version>${ogham-module.version}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -71,34 +73,34 @@ The samples are available in the [sample-standard-usage sub-project](https://git
 This sample shows how to send a basic email. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/BasicSample.java).
 
 The first lines configure the properties that will be used by the sender.
-Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Then you must create the service. You can use the MessagingBuilder to help you to create the service.
 Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
 
 See other examples for advanced usages (using a templated content or adding attachments).
 
 
 ```java
-package fr.sii.notification.sample.standard.email;
+package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.email.message.Email;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
 
 public class BasicSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
 		properties.put("mail.smtp.host", "<your server host>");
 		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("notification.email.from", "<email address to display for the sender user>");
-		// Instantiate the notification service using default behavior and
+		properties.put("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", "email content", "<recipient address>"));
 	}
@@ -114,25 +116,25 @@ public class BasicSample {
 This sample shows how to send a basic email through GMail. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/gmail/BasicGmailSSLSample.java).
 
 The first lines configure the properties that will be used by the sender.
-Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Then you must create the service. You can use the MessagingBuilder to help you to create the service.
 Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
 
 See other examples for advanced usages (using a templated content or adding attachments).
 
 
 ```java
-package fr.sii.notification.sample.standard.email.gmail;
+package fr.sii.ogham.sample.standard.email.gmail;
 
 import java.util.Properties;
 
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.email.message.Email;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
 
 public class BasicGmailSSLSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
@@ -141,12 +143,12 @@ public class BasicGmailSSLSample {
 		properties.setProperty("mail.smtp.port", "465");
 		properties.setProperty("mail.smtp.socketFactory.port", "465");
 		properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		properties.setProperty("notification.email.authenticator.username", "<your gmail username>");
-		properties.setProperty("notification.email.authenticator.password", "<your gmail password>");
-		properties.setProperty("notification.email.from", "<your gmail address>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.email.authenticator.username", "<your gmail username>");
+		properties.setProperty("ogham.email.authenticator.password", "<your gmail password>");
+		properties.setProperty("ogham.email.from", "<your gmail address>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", "email content", "<recipient address>"));
 	}
@@ -160,36 +162,36 @@ public class BasicGmailSSLSample {
 This sample shows how to send an email with a content following a template engine language. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlTemplateSample.java).
 
 The first lines configure the properties that will be used by the sender.
-Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Then you must create the service. You can use the MessagingBuilder to help you to create the service.
 Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the content based on a templated content available in the classpath, a bean to use as source of variable substitutions and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
 
 See other examples for advanced usages (adding attachments).
 
 
 ```java
-package fr.sii.notification.sample.standard.email;
+package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.notification.context.SimpleBean;
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.message.content.TemplateContent;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.email.message.Email;
+import fr.sii.ogham.context.SimpleBean;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
 
 public class HtmlTemplateSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("notification.email.from", "<email address to display for the sender user>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42)), "<recipient address>"));
 	}
@@ -221,29 +223,29 @@ The template is available [here](sample-standard-usage/src/main/resources/templa
 This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to mutualize the code and to avoid to create a new file just for one line.
 
 ```java
-package fr.sii.notification.sample.standard.email;
+package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.notification.context.SimpleBean;
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.message.content.TemplateContent;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.email.message.Email;
+import fr.sii.ogham.context.SimpleBean;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
 
 public class HtmlTemplateWithSubjectSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("notification.email.from", "<email address to display for the sender user>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		// subject is set to null to let automatic mechanism to read the title
 		// of the HTML and use it as subject of your email
@@ -277,33 +279,33 @@ You can look directly at the sample codes: [Java](sample-standard-usage/src/main
 This sample shows how to send an email with attached file. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/WithAttachmentSample.java)
 
 The first lines configure the properties that will be used by the sender.
-Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Then you must create the service. You can use the MessagingBuilder to help you to create the service.
 Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the textual content, the receiver address and the attachment file that is available in the classpath. You may use several attachments too. The sender address is automatically added to the email by the service based on configuration properties.
 
 
 ```java
-package fr.sii.notification.sample.standard.email;
+package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.email.attachment.Attachment;
-import fr.sii.notification.email.message.Email;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.message.Email;
 
 public class WithAttachmentSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
 		properties.put("mail.smtp.host", "<your server host>");
 		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("notification.email.from", "<email address to display for the sender user>");
-		// Instantiate the notification service using default behavior and
+		properties.put("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", "content of the email", "<recipient address>", new Attachment("classpath:/attachment/test.pdf")));
 	}
@@ -317,29 +319,29 @@ Sending an email with HTML content **and** text content might be really importan
 
 This sample shows how to provide both HTML content and text content. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlAndTextSample.java).
 
-package fr.sii.notification.sample.standard.email;
+package fr.sii.ogham.sample.standard.email;
 
 ```java
 import java.util.Properties;
 
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.message.content.MultiContent;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.email.message.Email;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.MultiContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
 
 public class HtmlAndTextSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
 		properties.put("mail.smtp.host", "<your server host>");
 		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("notification.email.from", "<email address to display for the sender user>");
-		// Instantiate the notification service using default behavior and
+		properties.put("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		String html = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /></head><body><h1 class=\"title\">Hello World</h1><p class=\"text\">Foo bar</p></body></html>";
 		String text = "Hello World !\r\nFoo bar";
@@ -352,29 +354,29 @@ public class HtmlAndTextSample {
 This sample shows how to provide both HTML content and text content following a template engine language. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlAndTextTemplateSample.java).
 
 ```java
-package fr.sii.notification.sample.standard.email;
+package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.notification.context.SimpleBean;
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.message.content.MultiTemplateContent;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.email.message.Email;
+import fr.sii.ogham.context.SimpleBean;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
 
 public class HtmlAndTextTemplateSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("notification.email.from", "<email address to display for the sender user>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		// Note that the extension of the template is not given. This version
 		// automatically takes the provided path and adds the '.html' extension
@@ -416,29 +418,29 @@ The [SMPP](https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer) protocol is
 
 
 ```java
-package fr.sii.notification.sample.standard.sms;
+package fr.sii.ogham.sample.standard.sms;
 
 import java.util.Properties;
 
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.sms.message.Sms;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
 
 public class BasicSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.setProperty("notification.sms.smpp.host", "<your server host>");
-		properties.setProperty("notification.sms.smpp.port", "<your server port>");
-		properties.setProperty("notification.sms.smpp.systemId", "<your server system ID>");
-		properties.setProperty("notification.sms.smpp.password", "<your server password>");
-		properties.setProperty("notification.sms.from", "<phone number to display for the sender>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.sms.smpp.host", "<your server host>");
+		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
+		properties.setProperty("ogham.sms.smpp.systemId", "<your server system ID>");
+		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
+		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the sms
 		service.send(new Sms("sms content", "<recipient phone number>"));
 	}
@@ -451,35 +453,35 @@ public class BasicSample {
 Sending SMS with a templated content is exactly the same as sending email with a templated content. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/TemplateSample.java).
 
 The first lines configure the properties that will be used by the sender.
-Then you must create the service. You can use the NotificationBuilder to help you to create the service.
+Then you must create the service. You can use the MessagingBuilder to help you to create the service.
 Finally, the last line sends the SMS. The specified SMS is really basic too. It only contains the templated content available in the classpath, a bean to use as source of variable substitutions and the receiver number. The sender number is automatically added to the SMS by the service based on configuration properties.
 
 ```java
-package fr.sii.notification.sample.standard.sms;
+package fr.sii.ogham.sample.standard.sms;
 
 import java.util.Properties;
 
-import fr.sii.notification.context.SimpleBean;
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.message.content.TemplateContent;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.sms.message.Sms;
+import fr.sii.ogham.context.SimpleBean;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
 
 public class TemplateSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.setProperty("notification.sms.smpp.host", "<your server host>");
-		properties.setProperty("notification.sms.smpp.port", "<your server port>");
-		properties.setProperty("notification.sms.smpp.systemId", "<your server system ID>");
-		properties.setProperty("notification.sms.smpp.password", "<your server password>");
-		properties.setProperty("notification.sms.from", "<phone number to display for the sender>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.sms.smpp.host", "<your server host>");
+		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
+		properties.setProperty("ogham.sms.smpp.systemId", "<your server system ID>");
+		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
+		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the sms
 		service.send(new Sms(new TemplateContent("classpath:/template/thymeleaf/simple.txt", new SimpleBean("foo", 42)), "<recipient phone number>"));
 	}
@@ -492,29 +494,29 @@ public class TemplateSample {
 As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters (depends of char encoding). If needed, the library will split your messages into several parts the right way to be recomposed by clients later. So the code doesn't change at all (the sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/sms/LongMessageSample.java):
 
 ```java
-package fr.sii.notification.sample.standard.sms;
+package fr.sii.ogham.sample.standard.sms;
 
 import java.util.Properties;
 
-import fr.sii.notification.core.builder.NotificationBuilder;
-import fr.sii.notification.core.exception.NotificationException;
-import fr.sii.notification.core.service.NotificationService;
-import fr.sii.notification.sms.message.Sms;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
 
 public class LongMessageSample {
 
-	public static void main(String[] args) throws NotificationException {
+	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.setProperty("notification.sms.smpp.host", "<your server host>");
-		properties.setProperty("notification.sms.smpp.port", "<your server port>");
-		properties.setProperty("notification.sms.smpp.systemId", "<your server system ID>");
-		properties.setProperty("notification.sms.smpp.password", "<your server password>");
-		properties.setProperty("notification.sms.from", "<phone number to display for the sender>");
-		// Instantiate the notification service using default behavior and
+		properties.setProperty("ogham.sms.smpp.host", "<your server host>");
+		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
+		properties.setProperty("ogham.sms.smpp.systemId", "<your server system ID>");
+		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
+		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+		// Instantiate the messaging service using default behavior and
 		// provided properties
-		NotificationService service = new NotificationBuilder().useAllDefaults(properties).build();
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the sms
 		String longMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 		service.send(new Sms(longMessage, "<recipient phone number>"));
