@@ -429,7 +429,7 @@ public class Attachment {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(resource).append(description).append(disposition).append(contentId).hashCode();
+		return new HashCodeBuilder().append(resource, description, disposition, contentId).hashCode();
 	}
 
 	@Override

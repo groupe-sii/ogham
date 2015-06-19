@@ -79,7 +79,7 @@ public class Recipient {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(address).append(type).hashCode();
+		return new HashCodeBuilder().append(address, type).hashCode();
 	}
 
 	@Override

@@ -62,7 +62,7 @@ public class ByteResource implements NamedResource {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(name).append(bytes).hashCode();
+		return new HashCodeBuilder().append(name, bytes).hashCode();
 	}
 
 	@Override

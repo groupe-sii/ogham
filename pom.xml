@@ -43,6 +43,7 @@
 		<commons-codec.version>1.10</commons-codec.version>
 		<xmlunit.version>1.6</xmlunit.version>
 		<cloning.version>1.9.2</cloning.version>
+		<sendgrid-java.version>2.2.2</sendgrid-java.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -75,6 +76,11 @@
 				<groupId>javax.mail</groupId>
 				<artifactId>javax.mail-api</artifactId>
 				<version>${javamail.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sendgrid</groupId>
+				<artifactId>sendgrid-java</artifactId>
+				<version>${sendgrid-java.version}</version>
 			</dependency>
 
 			<!-- SMS -->
@@ -373,7 +379,7 @@
 					<goals>deploy</goals>
 				</configuration>
 			</plugin>
-			
+
 			<!-- Github site -->
 			<plugin>
 				<groupId>com.github.github</groupId>
@@ -472,7 +478,7 @@
 		<connection>scm:git:${scm.url}</connection>
 		<developerConnection>scm:git:${scm.url}</developerConnection>
 	</scm>
-	
+
 	<issueManagement>
 		<url>${github.url}/issues</url>
 		<system>GitHub Issues</system>

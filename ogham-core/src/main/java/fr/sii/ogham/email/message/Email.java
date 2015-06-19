@@ -1096,7 +1096,7 @@ public class Email implements Message, WithSubject {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(subject).append(content).append(from).append(recipients).append(attachments).hashCode();
+		return new HashCodeBuilder().append(subject, content, from, recipients, attachments).hashCode();
 	}
 
 	@Override

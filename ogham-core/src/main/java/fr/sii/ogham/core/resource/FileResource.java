@@ -78,7 +78,7 @@ public class FileResource implements NamedResource {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(name).append(file).hashCode();
+		return new HashCodeBuilder().append(name, file).hashCode();
 	}
 
 	@Override

@@ -56,12 +56,12 @@ public class AddressedPhoneNumber extends PhoneNumber {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(getNumber()).append(ton).append(npi).hashCode();
+		return new HashCodeBuilder().append(getNumber(), ton, npi).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendFields("number").appendFields("ton").appendFields("npi").isEqual();
+		return new EqualsBuilder(this, obj).appendFields("number", "ton", "npi").isEqual();
 	}
 
 }

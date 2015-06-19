@@ -67,7 +67,7 @@ public class TemplateContent implements Content {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(path).append(context).hashCode();
+		return new HashCodeBuilder().append(path, context).hashCode();
 	}
 
 	@Override

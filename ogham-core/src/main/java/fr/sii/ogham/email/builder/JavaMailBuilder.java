@@ -10,13 +10,14 @@ import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
+import fr.sii.ogham.core.mimetype.FixedMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.JMimeMagicProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.resource.NamedResource;
 import fr.sii.ogham.core.util.BuilderUtils;
-import fr.sii.ogham.email.EmailConstants;
+import fr.sii.ogham.email.EmailConstants.SmtpConstants;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
 import fr.sii.ogham.email.sender.impl.javamail.ContentWithAttachmentsHandler;
@@ -94,6 +95,7 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 * <ul>
 	 * <li>Use the system properties</li>
 	 * <li>Register Mime Type detection using MimeMagic library</li>
+	 * <li>Register default Mime Type (text/plain)</li>
 	 * <li>Handle {@link MultiContent}</li>
 	 * <li>Handle {@link StringContent}</li>
 	 * <li>Handle {@link ByteResource}</li>
@@ -112,6 +114,7 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 * <ul>
 	 * <li>Use the provided properties</li>
 	 * <li>Register Mime Type detection using MimeMagic library</li>
+	 * <li>Register default Mime Type (text/plain)</li>
 	 * <li>Handle {@link MultiContent}</li>
 	 * <li>Handle {@link StringContent}</li>
 	 * <li>Handle {@link ByteResource}</li>
@@ -124,10 +127,11 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 */
 	public JavaMailBuilder useDefaults(Properties props) {
 		withProperties(props);
-		if (props.containsKey(EmailConstants.AUTHENTICATOR_PROPERTIES_USERNAME_KEY)) {
+		if (props.containsKey(SmtpConstants.AUTHENTICATOR_USERNAME_KEY)) {
 			setAuthenticator(new PropertiesUsernamePasswordAuthenticator(props));
 		}
 		registerMimeTypeProvider(new JMimeMagicProvider());
+		registerMimeTypeProvider(new FixedMimeTypeProvider());
 		registerContentHandler(MultiContent.class, new MultiContentHandler(mapContentHandler));
 		// TODO: make charset provider configurable
 		registerContentHandler(StringContent.class, new StringContentHandler(mimetypeProvider, new FixedCharsetProvider()));

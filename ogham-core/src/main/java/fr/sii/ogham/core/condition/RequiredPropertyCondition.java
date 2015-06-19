@@ -2,6 +2,9 @@ package fr.sii.ogham.core.condition;
 
 import java.util.Properties;
 
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+
 /**
  * Condition that checks if the provided property is defined either in the
  * system property or in the provided properties.
@@ -11,6 +14,11 @@ import java.util.Properties;
  * @param <T>
  *            The type of the object to test for acceptance. Has no effect on
  *            the acceptance
+ */
+/**
+ * @author Aurélien Baudet
+ *
+ * @param <T>
  */
 public class RequiredPropertyCondition<T> implements Condition<T> {
 	/**
@@ -54,4 +62,20 @@ public class RequiredPropertyCondition<T> implements Condition<T> {
 		return properties.containsKey(key);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendFields("key", "properties").isEqual();
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(key, properties).hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RequiredPropertyCondition:").append(key).append(" in ").append(properties);
+		return builder.toString();
+	}
 }

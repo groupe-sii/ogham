@@ -95,7 +95,7 @@ public class LookupResource implements NamedResource {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(name).append(path).hashCode();
+		return new HashCodeBuilder().append(name, path).hashCode();
 	}
 
 	@Override

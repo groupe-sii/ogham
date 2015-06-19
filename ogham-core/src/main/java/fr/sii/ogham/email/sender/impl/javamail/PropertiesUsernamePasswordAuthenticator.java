@@ -2,7 +2,7 @@ package fr.sii.ogham.email.sender.impl.javamail;
 
 import java.util.Properties;
 
-import fr.sii.ogham.email.EmailConstants;
+import fr.sii.ogham.email.EmailConstants.SmtpConstants;
 
 /**
  * Shortcut to provide username and password by reading them from provided
@@ -14,7 +14,7 @@ import fr.sii.ogham.email.EmailConstants;
 public class PropertiesUsernamePasswordAuthenticator extends UsernamePasswordAuthenticator {
 
 	public PropertiesUsernamePasswordAuthenticator(Properties properties) {
-		this(properties, EmailConstants.AUTHENTICATOR_PROPERTIES_USERNAME_KEY, EmailConstants.AUTHENTICATOR_PROPERTIES_PASSWORD_KEY);
+		this(properties, SmtpConstants.AUTHENTICATOR_USERNAME_KEY, SmtpConstants.AUTHENTICATOR_PASSWORD_KEY);
 	}
 
 	public PropertiesUsernamePasswordAuthenticator(Properties properties, String usernameKey, String passwordKey) {

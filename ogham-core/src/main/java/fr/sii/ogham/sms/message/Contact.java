@@ -101,7 +101,7 @@ public class Contact {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(name).append(phoneNumber).hashCode();
+		return new HashCodeBuilder().append(name, phoneNumber).hashCode();
 	}
 
 	@Override

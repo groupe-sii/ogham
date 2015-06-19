@@ -610,7 +610,7 @@ public class Sms implements Message {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(from).append(recipients).append(content).hashCode();
+		return new HashCodeBuilder().append(from, recipients, content).hashCode();
 	}
 
 	@Override

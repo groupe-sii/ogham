@@ -120,6 +120,20 @@ public class HashCodeBuilder {
 	}
 
 	/**
+	 * Append a hashCode for an Object.
+	 * 
+	 * @param objectValue
+	 *            the Object to add to the hashCode
+	 * @return used to chain calls
+	 */
+	public HashCodeBuilder append(Object... objectValues) {
+		for(Object objectValue : objectValues) {
+			append(objectValue);
+		}
+		return this;
+	}
+
+	/**
 	 * Adds the result of super.hashCode() to this builder.
 	 * 
 	 * @param superHashCode

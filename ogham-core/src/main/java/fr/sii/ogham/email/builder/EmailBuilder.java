@@ -29,6 +29,7 @@ import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.EmailConstants;
+import fr.sii.ogham.email.EmailConstants.SendGridConstants;
 import fr.sii.ogham.email.sender.AttachmentResourceTranslatorSender;
 import fr.sii.ogham.email.sender.EmailSender;
 
@@ -42,6 +43,7 @@ import fr.sii.ogham.email.sender.EmailSender;
  * <li>Using <a href="https://commons.apache.org/proper/commons-email/">Apache
  * Commons Email</a></li>
  * <li>Using any other library</li>
+ * <li>Through <a href="https://sendgrid.com/">SendGrid</a></li>
  * <li>Through a WebService</li>
  * <li>...</li>
  * </ul>
@@ -249,6 +251,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 */
 	public EmailBuilder registerDefaultImplementations(Properties properties) {
 		withJavaMail(properties);
+		withSendGrid(properties);
 		return this;
 	}
 
@@ -280,6 +283,37 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 					new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")), new JavaMailBuilder().useDefaults(properties));
 		} catch (Throwable e) {
 			LOG.debug("Can't register Java Mail implementation", e);
+		}
+		return this;
+	}
+
+	/**
+	 * Enable SendGrid implementation. This implementation is used only if the
+	 * associated condition indicates that Java Mail API can be used. The
+	 * condition checks if:
+	 * <ul>
+	 * <li>The property <code>sendgrid.api.key</code> is set</li>
+	 * <li>The property <code>sendgrid.api.user</code> is set</li>
+	 * <li>The class <code>com.sendgrid.SendGrid</code> is available in the
+	 * classpath</li>
+	 * </ul>
+	 * The registration can silently fail if the javax.mail jar is not in the
+	 * classpath. In this case, the SendGrid is not registered at all.
+	 * 
+	 * @param properties
+	 *            the properties used to check if property exists
+	 * @return this builder instance for fluent use
+	 */
+	public EmailBuilder withSendGrid(Properties properties) {
+		// SendGrid can be used only if the property "send.api.key.smtp.host" is
+		// provided and also if the class "com.sendgrid.SendGrid" is defined in
+		// the classpath. The try/catch clause is mandatory in order to prevent
+		// failure when sendgrid jar is not in the classpath
+		try {
+			registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SendGridConstants.API_KEY, properties), new RequiredPropertyCondition<Message>(SendGridConstants.API_USER,
+					properties), new RequiredClassCondition<Message>("com.sendgrid.SendGrid")), new SendGridBuilder().useDefaults(properties));
+		} catch (Throwable e) {
+			LOG.debug("Can't register SendGrid implementation", e);
 		}
 		return this;
 	}
@@ -476,5 +510,15 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 */
 	public JavaMailBuilder getJavaMailBuilder() {
 		return getImplementationBuilder(JavaMailBuilder.class);
+	}
+
+	/**
+	 * Get the reference to the specialized builder for SendGrid. It may be
+	 * useful to fine tune SendGrid implementation.
+	 * 
+	 * @return The specialized builder for SendGrid
+	 */
+	public SendGridBuilder getSendGridBuilder() {
+		return getImplementationBuilder(SendGridBuilder.class);
 	}
 }

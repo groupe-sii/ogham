@@ -68,7 +68,7 @@ public class EmailAddress {
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(address).append(personal).hashCode();
+		return new HashCodeBuilder().append(address, personal).hashCode();
 	}
 
 	@Override

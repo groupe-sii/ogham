@@ -1,6 +1,8 @@
 package fr.sii.ogham.core.condition;
 
 import fr.sii.ogham.core.util.ClasspathHelper;
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
 
 /**
  * Condition that checks if the provided class is available in the classpath.
@@ -32,5 +34,21 @@ public class RequiredClassCondition<T> implements Condition<T> {
 	public boolean accept(T obj) {
 		return ClasspathHelper.exists(className);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendFields("className").isEqual();
+	}
 
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(className).hashCode();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RequiredClassCondition:").append(className);
+		return builder.toString();
+	}
 }
