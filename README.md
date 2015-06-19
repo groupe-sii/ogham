@@ -272,7 +272,7 @@ Here is the templated content :
 
 You can look directly at the sample codes: [Java](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/HtmlTemplateSample.java) and [HTML](sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html).
 
-## sending email with attachments
+## Sending email with attachments
 
 This sample shows how to send an email with attached file. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/notification/sample/standard/email/WithAttachmentSample.java)
 
@@ -545,15 +545,15 @@ One of the main aim of the library is to hide the implementation complexity and 
 
 ## Email
 
-### Mime Type detection
+### Mime Type detection policy
 
-When you send an email, it is really important to indicate what is the type of the message (html, text or maybe anything else). The library automatically detects for you the [Mime Type](https://en.wikipedia.org/wiki/Internet_media_type) of the email content and add this information into the real sent mail for you.
+When you send an email, it is really important to indicate what is the type of the message (html, text or maybe anything else). The library automatically detects for you the [Mime Type](https://en.wikipedia.org/wiki/Internet_media_type) of the email content and add this information into the real sent email.
 
-Moreover, every attached file must also provide the Mime Type in order to be correctly handled by the email client. Besides, some email clients can provide a preview of attached file. This can be possible only by providing the right Mime Type. The library will detect the Mime Type for every attached file for you.
+Moreover, every attached file must also provide the Mime Type in order to be correctly handled by the email client. Besides, some email clients may provide a preview of attached file. This will be possible only if the correct Mime Type is provided. The library comes with a handy Mime Type Detector policy.
 
 ### Working with HTML content
 
-Email clients have many constraints that make writing HTML email very complex and time consuming. In order to ensure that your email can be read in most of the email clients, there are several rules to follow. The library do all this headache work for you.
+To be sure that most of Email clients will handle an HTML content, there are many rules to follow when writing the content. They might be very complex and time consuming. The library do all this headache work for you.
 
 All these features can be either disabled or use another implementation instead of the default one.
 
@@ -561,9 +561,9 @@ All these features can be either disabled or use another implementation instead 
 
 For Web developers, it is important to write clean code and separate the concerns. So when writing HTML, developers want to externalize CSS files and images. This is also really important to mutualize the code of CSS files and images for reuse.
 
-However, email clients doesn't handle external CSS files. Styles can be included in a `style` tag but Gmail doesn't support it. So all rules provided in the CSS *MUST* be inlined directly in the HTML. Writing code like this is just awful and error prone. Moreover, images can be references externally but there are many constraints to use it this way. You have to know in advance what is the URL of the final image. The image can also be blocked by the email client and not loaded if offline.
+However, email clients do not handle external CSS files. Styles might be included in a `style` tag but Gmail doesn't support it. So all rules provided in the CSS *MUST* be inlined directly in the HTML. Writing code like this is just painful and error prone. Moreover, images can be referenced externally but only if you know in advance what will be the URL of the final image. And even then, the email client might block those images for safety purpose. Not mentioning offline issues.
 
-That's why the library do this job for you. It automatically inlines CSS rules directly on the HTML tags. The images are either inlined as base64 encoded in `img` `src` attribute or images are attached with the email (with inline content disposition and references in the HTML).
+The library will automatically inlines CSS rules directly on the HTML tags. The images are either inlined as base64 encoded in `img` `src` attribute or images are attached with the email (with inline content disposition and references in the HTML).
 
 #### Use expanded CSS properties
 
@@ -576,23 +576,25 @@ This is equivalent to:
 padding: 4px 2px 4px 2px;
 ```
 
-Some email clients doesn't understand shorthand properties. So all properties written in shorthand version must be expanded in order to work everywhere.
+Some email clients do not handle shorthand properties. So all properties written in shorthand version should be expanded in order to work everywhere. 
 
-The library handles this case for you and will automatically expand properties from shorthand versions.
+The library will automatically expand properties from shorthand versions.
 
 #### Add extra attributes for old email clients
 
-Several attributes must be added on some HTML tags in order to be compliant with email clients. For example, tables and images must have attribute `border="0"`in order to prevent an ugly border on some clients.
+Several attributes should be added on some HTML tags in order to be compliant with email clients. For example, tables and images must have attribute `border="0"`in order to prevent an ugly border on some clients.
 
-The library automatically adds these attributes in order to help you to have the email displaying identically in whole clients.
+The library will automatically add these attributes.
 
 #### Use XHTML
 
-It is recommended to write XHTML instead of HTML due to some mail clients. The library do it for you.
+It is recommended to write XHTML instead of HTML due to some email clients. The library do it for you.
 
 #### Background images
 
-Background images are not correctly handled by several mail clients. There are some techniques to make background images working for everyone. These techniques are handled by the library and will be applied to your HTML.
+Background images are not correctly handled by several email clients. And again, some workarounds to apply to fix this issue. 
+
+The library will apply those workarounds to your HTML.
 
 #### Use tables for layouts
 
