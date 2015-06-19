@@ -45,7 +45,6 @@
 		<github.url>https://github.com/groupe-sii/notification-module</github.url>
 		<project.url>${github.url}</project.url>
 		<scm.url>${github.url}.git</scm.url>
-		<github.global.server>github</github.global.server>
 	</properties>
 
 
@@ -373,7 +372,7 @@
 				<version>0.9</version>
 				<configuration>
 					<message>Creating site for ${project.version}</message>
-					<dryRun>true</dryRun>
+					<server>github</server>
 				</configuration>
 				<executions>
 					<execution>
@@ -453,14 +452,20 @@
 		<developer>
 			<name>Aurélien Baudet</name>
 			<email>aurelien.baudet@gmail.com</email>
+			<url>https://github.com/aurelien-baudet</url>
 			<organization>Groupe SII</organization>
 			<organizationUrl>http://www.groupe-sii.com</organizationUrl>
 		</developer>
 	</developers>
 
 	<scm>
+		<url>${github.url}</url>
 		<connection>scm:git:${scm.url}</connection>
 		<developerConnection>scm:git:${scm.url}</developerConnection>
-		<url>${github.url}</url>
 	</scm>
+	
+	<issueManagement>
+		<url>${github.url}/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 </project>
