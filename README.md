@@ -68,6 +68,8 @@ To include the library in your project, you just have to add the dependency to y
 
 The samples are available in the [sample-standard-usage sub-project](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage).
 
+All these samples show how to send email through SMTP. See [configuration](https://github.com/groupe-sii/ogham/wiki/Configure-email) to know how to send email using another implementation.
+
 ### General
 
 This sample shows how to send a basic email. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java).
