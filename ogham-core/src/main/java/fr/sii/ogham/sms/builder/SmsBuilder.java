@@ -290,8 +290,10 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			// in
 			// the classpath and the SmppConstants.SMPP_HOST_PROPERTY property
 			// is set
-			registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties), new RequiredPropertyCondition<Message>(
-					SmsConstants.SmppConstants.PORT_PROPERTY, properties), new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
+			registerImplementation(new AndCondition<>(
+									new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
+									new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
+									new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
 					new CloudhopperSMPPBuilder().useDefaults(properties));
 		} catch (Throwable e) {
 			LOG.debug("Can't register Cloudhopper implementation", e);

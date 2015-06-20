@@ -280,8 +280,11 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 		// the classpath. The try/catch clause is mandatory in order to prevent
 		// failure when javax.mail jar is not in the classpath
 		try {
-			registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>("mail.smtp.host", properties), new RequiredClassCondition<Message>("javax.mail.Transport"),
-					new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")), new JavaMailBuilder().useDefaults(properties));
+			registerImplementation(new AndCondition<>(
+										new RequiredPropertyCondition<Message>("mail.smtp.host", properties),
+										new RequiredClassCondition<Message>("javax.mail.Transport"),
+										new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")),
+					new JavaMailBuilder().useDefaults(properties));
 		} catch (Throwable e) {
 			LOG.debug("Can't register Java Mail implementation", e);
 		}
