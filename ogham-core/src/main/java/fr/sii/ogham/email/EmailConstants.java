@@ -36,9 +36,14 @@ public interface EmailConstants {
 		public static final String API_KEY = SNEDGRID_PROPERTIES_PREFIX+".api.key";
 		
 		/**
-		 * The property key for SendGrid API user
+		 * The property key for SendGrid user name
 		 */
-		public static final String API_USER = SNEDGRID_PROPERTIES_PREFIX+".api.user";
+		public static final String USERNAME = SNEDGRID_PROPERTIES_PREFIX+".username";
+		
+		/**
+		 * The property key for SendGrid user password
+		 */
+		public static final String PASSWORD = SNEDGRID_PROPERTIES_PREFIX+".password";
 		
 	}
 }

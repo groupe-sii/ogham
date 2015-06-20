@@ -49,9 +49,14 @@ public final class SendGridBuilder implements Builder<SendGridSender> {
 	private FallbackMimeTypeProvider mimetypeProvider;
 
 	/**
-	 * The API user
+	 * The account user
 	 */
-	private String apiUser;
+	private String username;
+
+	/**
+	 * The account password
+	 */
+	private String password;
 
 	/**
 	 * The API key
@@ -98,7 +103,8 @@ public final class SendGridBuilder implements Builder<SendGridSender> {
 	 * @return this instance for fluent use
 	 */
 	public SendGridBuilder useDefaults(Properties props) {
-		withCredentials(props.getProperty(SendGridConstants.API_USER), props.getProperty(SendGridConstants.API_KEY));
+		withCredentials(props.getProperty(SendGridConstants.USERNAME), props.getProperty(SendGridConstants.PASSWORD));
+		withApiKey(props.getProperty(SendGridConstants.API_KEY));
 		registerMimeTypeProvider(new JMimeMagicProvider());
 		registerMimeTypeProvider(new FixedMimeTypeProvider());
 		registerContentHandler(MultiContent.class, new MultiContentHandler(mapContentHandler));
@@ -151,8 +157,8 @@ public final class SendGridBuilder implements Builder<SendGridSender> {
 	 * @return the current instance for fluent use
 	 */
 	public SendGridBuilder withCredentials(final String username, final String password) {
-		this.apiUser = username;
-		this.apiKey = password;
+		this.username = username;
+		this.password = password;
 		return this;
 	}
 
@@ -184,7 +190,11 @@ public final class SendGridBuilder implements Builder<SendGridSender> {
 	@Override
 	public SendGridSender build() throws BuildException {
 		if (client == null) {
-			client = new DelegateSendGridClient(apiUser, apiKey);
+			if(username!=null && password!=null) {
+				client = new DelegateSendGridClient(username, password);
+			} else {
+				client = new DelegateSendGridClient(apiKey);
+			}
 		}
 
 		return new SendGridSender(client, contentHandler);

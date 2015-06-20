@@ -35,7 +35,7 @@ public final class SendGridClientTest {
 
 	@Test(expected = NullPointerException.class)
 	public void constructorDelegateParamCannotBeNull() {
-		new DelegateSendGridClient(null);
+		new DelegateSendGridClient((SendGrid) null);
 	}
 
 	@Test

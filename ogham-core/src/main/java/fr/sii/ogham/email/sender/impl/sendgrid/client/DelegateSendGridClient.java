@@ -19,9 +19,14 @@ public final class DelegateSendGridClient implements SendGridClient {
 	private SendGrid delegate;
 
 	/**
-	 * The API user
+	 * The account username
 	 */
-	private String apiUser;
+	private String username;
+
+	/**
+	 * The account password
+	 */
+	private String password;
 
 	/**
 	 * The API key
@@ -44,9 +49,14 @@ public final class DelegateSendGridClient implements SendGridClient {
 		this.delegate = delegate;
 	}
 
-	public DelegateSendGridClient(String apiUser, String apiKey) {
+	public DelegateSendGridClient(String username, String password) {
 		super();
-		this.apiUser = apiUser;
+		this.username = username;
+		this.password = password;
+	}
+
+	public DelegateSendGridClient(String apiKey) {
+		super();
 		this.apiKey = apiKey;
 	}
 
@@ -63,7 +73,11 @@ public final class DelegateSendGridClient implements SendGridClient {
 		LOG.debug("Sending to SendGrid client: HTML CONTENT {}", email.getHtml());
 
 		if (delegate == null) {
-			delegate = new SendGrid(apiUser, apiKey);
+			if(username!=null && password!=null) {
+				delegate = new SendGrid(username, password);
+			} else if(apiKey!=null) {
+				delegate = new SendGrid(apiKey);
+			}
 		}
 		final SendGrid.Response response = delegate.send(email);
 

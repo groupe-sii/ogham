@@ -14,6 +14,7 @@ import fr.sii.ogham.core.builder.MessageFillerBuilder;
 import fr.sii.ogham.core.builder.MessagingSenderBuilder;
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.OrCondition;
 import fr.sii.ogham.core.condition.RequiredClassCondition;
 import fr.sii.ogham.core.condition.RequiredPropertyCondition;
 import fr.sii.ogham.core.exception.builder.BuildException;
@@ -293,7 +294,8 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * condition checks if:
 	 * <ul>
 	 * <li>The property <code>sendgrid.api.key</code> is set</li>
-	 * <li>The property <code>sendgrid.api.user</code> is set</li>
+	 * <li>The property <code>sendgrid.username</code> and
+	 * <code>sendgrid.password</code> is set</li>
 	 * <li>The class <code>com.sendgrid.SendGrid</code> is available in the
 	 * classpath</li>
 	 * </ul>
@@ -305,13 +307,19 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this builder instance for fluent use
 	 */
 	public EmailBuilder withSendGrid(Properties properties) {
-		// SendGrid can be used only if the property "send.api.key.smtp.host" is
+		// SendGrid can be used only if the property "sendgrid.api.key" is
 		// provided and also if the class "com.sendgrid.SendGrid" is defined in
 		// the classpath. The try/catch clause is mandatory in order to prevent
 		// failure when sendgrid jar is not in the classpath
 		try {
-			registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SendGridConstants.API_KEY, properties), new RequiredPropertyCondition<Message>(SendGridConstants.API_USER,
-					properties), new RequiredClassCondition<Message>("com.sendgrid.SendGrid")), new SendGridBuilder().useDefaults(properties));
+			registerImplementation(new AndCondition<>(
+										new OrCondition<>(
+												new RequiredPropertyCondition<Message>(SendGridConstants.API_KEY, properties),
+												new AndCondition<>(
+														new RequiredPropertyCondition<Message>(SendGridConstants.USERNAME, properties),
+														new RequiredPropertyCondition<Message>(SendGridConstants.PASSWORD, properties))),
+										new RequiredClassCondition<Message>("com.sendgrid.SendGrid")),
+					new SendGridBuilder().useDefaults(properties));
 		} catch (Throwable e) {
 			LOG.debug("Can't register SendGrid implementation", e);
 		}
