@@ -68,6 +68,8 @@ To include the library in your project, you just have to add the dependency to y
 
 The samples are available in the [sample-standard-usage sub-project](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage).
 
+All these samples show how to send email through SMTP. See [configuration](https://github.com/groupe-sii/ogham/wiki/Configure-email) to know how to send email using another implementation.
+
 ### General
 
 This sample shows how to send a basic email. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java).
@@ -526,20 +528,6 @@ public class LongMessageSample {
 
 ```
 
-# With Spring
-
-## Spring 3
-
-### Integration
-
-### Configuration
-
-## Spring Boot
-
-### Integration
-
-### Configuration
-
 
 # Hidden complexity
 
@@ -618,44 +606,13 @@ Sending SMS with the wrong charset might cause your message to be unreadable. Bu
 
 # Advanced usage
 
-This section describes how to configure the library to customize its behavior.
+See wiki to [know how to configure the library to customize its behavior](https://github.com/groupe-sii/ogham/wiki/Configuration-Guide).
 
-## Configuration
-
-### Configure email
-
-#### Connecting to a server
-
-#### Sender address
-
-### Configure Thymeleaf template engine
-
-## Lookup resolvers
-
-### Available lookups
-
-## Auto detection feature
-
-## Choose email implementation
-
-## Choose SMS implementation
-
-## Choose template engine
 
 
 # Extend the library
 
-## Add new email implementation
-
-## Add new SMS implementation
-
-## Add new template engine
-
-## Add new lookup resolver
-
-## Add new Message sender
-
-## Add custom message interceptor
+See wiki to [know how to add custom implementations](https://github.com/groupe-sii/ogham/wiki/Extension-Guide)
 
 
 # Appendix
@@ -664,10 +621,4 @@ This section describes how to configure the library to customize its behavior.
 
 You must log in via your web browser. You may have received an email asking to allow or not the connection.
 See [this post on stackoverflow](http://stackoverflow.com/questions/25341198/javax-mail-authenticationfailedexception-is-thrown-while-sending-email-in-java)
-
-
-
-
-Roadmap
-=======
 
