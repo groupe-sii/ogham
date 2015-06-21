@@ -14,9 +14,7 @@
 		provides bridges for framework integration (Spring, JSF, ...). It
 		is designed to be easily extended.
 	</description>
-	<url>
-		${project.url}
-	</url>
+	<url>${project.url}</url>
 
 	<properties>
 		<!-- Java version -->
@@ -61,11 +59,11 @@
 	</properties>
 
 
-	<!-- <modules>
+	<modules>
 		<module>ogham-core</module>
 		<module>ogham-spring</module>
 		<module>ogham-test-utils</module>
-	</modules> -->
+	</modules>
 
 	<dependencyManagement>
 		<dependencies>

@@ -22,8 +22,8 @@
 			<smoothScroll>true</smoothScroll>
 			<theme>bootswatch-cerulean</theme>
 			<highlightJs>true</highlightJs>
-      <highlightJsTheme>github</highlightJsTheme>
-			<!-- <absoluteResourceURL>http://groupe-sii.github.io/ogham/</absoluteResourceURL> -->
+			<highlightJsTheme>github</highlightJsTheme>
+			<absoluteResourceURL>http://groupe-sii.github.io/ogham/</absoluteResourceURL>
 			<brand>
 				<name>Ogham</name>
 				<href>http://groupe-sii.github.io/ogham</href>
@@ -44,16 +44,21 @@
 				<column>reports</column>
 			</bottomNav>
 			<bottomDescription>
-				Open, General and Highly Adaptative Messaging library. It is
+				Open, General and Highly Adaptative Messaging
+				library. It is
 				a reusable
-				Java library for sending any kind of message (email, SMS,
+				Java library for sending any kind of message
+				(email, SMS,
 				mobile
 				notification,
-				tweet, SNMP...). The content of the message can
+				tweet, SNMP...). The content of the
+				message can
 				comes from any
-				templating engine (Thymeleaf, Freemarker, Velocity,
+				templating engine (Thymeleaf, Freemarker,
+				Velocity,
 				...). It also
-				provides bridges for framework integration (Spring,
+				provides bridges for framework integration
+				(Spring,
 				JSF, ...). It
 				is designed to be easily extended.
 			</bottomDescription>
@@ -147,8 +152,7 @@
 		</menu>
 		<menu name="Contribute" inherit="bottom">
 			<item name="Contribute" href="contribute.html" />
-			<item name="Issues"
-				href="http://github.com/groupe-sii/ogham/issues/" />
+			<item name="Issues" href="http://github.com/groupe-sii/ogham/issues/" />
 			<item name="Fork on GitHub" href="http://github.com/groupe-sii/ogham/" />
 		</menu>
 		<menu name="Maven documentation" ref="reports" inherit="bottom" />
