@@ -28,7 +28,7 @@ public interface EmailConstants {
 		/**
 		 * The prefix for SendGrid properties
 		 */
-		public static final String SNEDGRID_PROPERTIES_PREFIX = "sendgrid";
+		public static final String SNEDGRID_PROPERTIES_PREFIX = "ogham.email.sendgrid";
 		
 		/**
 		 * The property key for SendGrid API key

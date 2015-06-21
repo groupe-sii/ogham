@@ -121,11 +121,6 @@ public interface SmsConstants {
 			public static final String UNBIND_PROPERTY = SMPP_TIMEOUT_PREFIX + ".unbind";
 
 			/**
-			 * The key of property for timeout for sending one SMS
-			 */
-			public static final String SEND_PROPERTY = SMPP_TIMEOUT_PREFIX + ".send";
-
-			/**
 			 * The key of property for timeout for
 			 */
 			public static final String WINDOW_WAIT_PROPERTY = SMPP_TIMEOUT_PREFIX + ".window";

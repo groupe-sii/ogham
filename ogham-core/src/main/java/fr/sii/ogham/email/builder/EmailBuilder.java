@@ -296,9 +296,9 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * associated condition indicates that Java Mail API can be used. The
 	 * condition checks if:
 	 * <ul>
-	 * <li>The property <code>sendgrid.api.key</code> is set</li>
-	 * <li>The property <code>sendgrid.username</code> and
-	 * <code>sendgrid.password</code> is set</li>
+	 * <li>The property <code>ogham.email.sendgrid.api.key</code> is set</li>
+	 * <li>The property <code>ogham.email.sendgrid.username</code> and
+	 * <code>ogham.email.sendgrid.password</code> is set</li>
 	 * <li>The class <code>com.sendgrid.SendGrid</code> is available in the
 	 * classpath</li>
 	 * </ul>

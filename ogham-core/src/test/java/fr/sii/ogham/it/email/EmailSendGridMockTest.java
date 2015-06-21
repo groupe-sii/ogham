@@ -27,9 +27,9 @@ import fr.sii.ogham.email.sender.impl.SendGridSender;
 import fr.sii.ogham.email.sender.impl.sendgrid.client.SendGridClient;
 
 /**
- * Tests regarding the integration between {@code notification-module} and the
+ * Tests regarding the integration between {@code ogham} and the
  * {@link SendGridSender} class. The emails are captured at the boundary between
- * the {@code notification-module}-aware code and the {@code SendGrid-java}
+ * the {@code ogham}-aware code and the {@code SendGrid-java}
  * -aware code, i.e. the {@link SendGridClient} interface.
  */
 public final class EmailSendGridMockTest {

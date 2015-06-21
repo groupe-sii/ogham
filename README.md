@@ -528,6 +528,9 @@ public class LongMessageSample {
 
 ```
 
+# Implementation selection
+
+See wiki to [know how to the library selects the right implementation](https://github.com/groupe-sii/ogham/wiki/Configuration-Guide#select-implementation).
 
 # Hidden complexity
 
