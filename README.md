@@ -50,6 +50,7 @@ This section describes how to use the library with no framework and default beha
 ## Maven integration
 
 To include the library in your project, you just have to add the dependency to your pom.xml:
+
 ```xml
   ...
 	<dependencies>
