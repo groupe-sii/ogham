@@ -20,7 +20,7 @@ This module is designed for handling any kind of message the same way. It also p
 
 It also provides **templating support** and integrates natively several template engines. You can also add your own.
 
-It provides bridges for **common frameworks integration** and is **framework and library agnostic** (Spring, JSF, ...).
+It is **framework and library agnostic** but provides bridges for **common frameworks integration** (Spring, JSF, ...).
 
 When using the module to send email based on an HTML template, the templating system let you **design your HTML like a standard HTML page**. It automatically transforms the associated resources (images, css files...) to be usable in an email context (automatic inline css, embed images...). You don't need to write your HTML specifically for email.
 
@@ -50,6 +50,7 @@ This section describes how to use the library with no framework and default beha
 ## Maven integration
 
 To include the library in your project, you just have to add the dependency to your pom.xml:
+
 ```xml
   ...
 	<dependencies>

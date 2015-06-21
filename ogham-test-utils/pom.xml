@@ -7,7 +7,11 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>ogham-test-utils</artifactId>
-	
+	<name>Ogham test helpers</name>
+	<description>
+		Separate module for tests. It provides many helpers for testing email, SMS. It also provides useful tools for testing
+	</description>
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
