@@ -128,26 +128,31 @@ To use Ogham, [add it to pom.xml][ogham-integration]:
 
 Send email
 
-* basic email
-* email with templated content
-* email with attachments
-* email with HTML and text
+* Basic email
+* Email with templated content
+* Email with attachments
+* Both HTML and text content
 
 Send SMS
 
-* basic SMS
+* Basic SMS
 * SMS with templated content
 
 Managing lookup prefixes like JNDI
 
-* for templates
-* for resources
-* for attachments
+* For templates
+* For resources
+* For attachments
 
 Automatic configuration
 
-* automatically detect email implementation to use
-* automatically detect SMS implementation to use
-* automatically detect template engine to use
+* Automatically detect email implementation to use
+* Automatically detect SMS implementation to use
+* Automatically detect template engine to use
 
 
+### Hidden complexity
+
+One of the main aim of the library is to hide the implementation complexity. It provides automatic behaviors to simplify the development and focus on useful code.
+
+[Read more about helpful features &raquo;](features/hidden-complexity.html)
