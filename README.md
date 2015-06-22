@@ -1,6 +1,6 @@
 # Ogham
 
-[Open, General and Highly Adaptative Messaging library.](http://groupe-sii.github.io/ogham/0.0.1-SNAPSHOT/)
+[Open, General and Highly Adaptative Messaging library.](http://groupe-sii.github.io/ogham/)
 
 It is a reusable Java library in charge of sending any kind of message (email, SMS, mobile notification, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). The library also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
 
@@ -70,7 +70,7 @@ To include the library in your project, you just have to add the dependency to y
 
 The samples are available in the [sample-standard-usage sub-project](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage).
 
-All these samples show how to send email through SMTP. See [configuration](https://github.com/groupe-sii/ogham/wiki/Configure-email) to know how to send email using another implementation.
+All these samples show how to send email through SMTP. See [configuration](https://github.com/groupe-sii/ogham/wiki/Configuration-Guide#email-configuration) to know how to send email using another implementation.
 
 ### General
 

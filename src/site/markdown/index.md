@@ -126,25 +126,25 @@ To use Ogham, [add it to pom.xml][ogham-integration]:
 
 ### Features
 
-Send email
+**Send email**
 
 * Basic email
 * Email with templated content
 * Email with attachments
 * Both HTML and text content
 
-Send SMS
+**Send SMS**
 
 * Basic SMS
 * SMS with templated content
 
-Managing lookup prefixes like JNDI
+**Managing lookup prefixes like JNDI**
 
 * For templates
 * For resources
 * For attachments
 
-Automatic configuration
+**Automatic configuration**
 
 * Automatically detect email implementation to use
 * Automatically detect SMS implementation to use
