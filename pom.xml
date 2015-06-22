@@ -52,10 +52,10 @@
 
 		<!-- URL -->
 		<github.url>https://github.com/groupe-sii/ogham</github.url>
-		<project.url>${github.url}</project.url>
+		<project.url>https://groupe-sii.github.io/ogham</project.url>
 		<scm.url>${github.url}.git</scm.url>
 		<site.url>http://groupe-sii.github.io/ogham</site.url>
-		<site.deploy.url>${github.url}/tree/gh-pages/</site.deploy.url>
+		<site.deploy.url>${project.url}</site.deploy.url>
 	</properties>
 
 
@@ -403,16 +403,21 @@
 						<artifactId>velocity</artifactId>
 						<version>1.7</version>
 					</dependency>
+					<dependency>
+            <groupId>net.trajano.wagon</groupId>
+            <artifactId>wagon-git</artifactId>
+            <version>2.0.3</version>
+        </dependency>
 				</dependencies>
 				<configuration>
 					<generateReports>true</generateReports>
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
 					<!-- Site deployment done using GitHub site plugin -->
-					<skipDeploy>true</skipDeploy>
+					<!-- skipDeploy>true</skipDeploy-->
 				</configuration>
 			</plugin>
-			<plugin>
+			<!-- plugin>
 				<groupId>com.github.github</groupId>
 				<artifactId>site-maven-plugin</artifactId>
 				<version>0.12</version>
@@ -430,7 +435,7 @@
 						<phase>site</phase>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin-->
 		</plugins>
 	</build>
 
@@ -443,7 +448,7 @@
 				<configuration>
 				</configuration>
 			</plugin>
-	    </plugins>
+		</plugins>
 	</reporting>
 
 	<distributionManagement>
@@ -452,13 +457,44 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<site>
-			<id>github-pages-site</id>
-			<name>Deployment through GitHub's site deployment plugin</name>
-			<url>${site.deploy.url}</url>
+			<id>gh-pages</id>
+			<name>Deployment on Github</name>
+			<url>github:${site.deploy.url}</url>
 		</site>
 	</distributionManagement>
 
 	<profiles>
+		<!-- profile>
+			<id>stage</id>
+			<properties>
+				<site.deploy.url>${github.url}/tree/gh-pages/${project.version}</site.deploy.url>
+			</properties>
+			<build>
+				<plugins -->
+					<!-- Configure Maven site plugin to perform stage -->
+					<!-- plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-site-plugin</artifactId>
+						<version>3.4</version>
+						<executions>
+							<execution>
+								<id>stage</id>
+								<goals>
+									<goal>stage</goal>
+								</goals>
+								<phase>site</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>github-site</id>
+			<properties>
+				<site.deploy.url>${project.version}</site.deploy.url>
+			</properties>
+		</profile-->
 		<profile>
 			<id>release</id>
 			<build>
