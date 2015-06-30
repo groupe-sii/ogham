@@ -39,7 +39,7 @@ public class ThymeleafParser implements TemplateParser {
 	}
 
 	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver lookupResolver) {
-		this(engine, lookupResolver, new ThymeleafContextConverter());
+		this(engine, lookupResolver, new SimpleThymeleafContextConverter());
 	}
 	
 	@Override

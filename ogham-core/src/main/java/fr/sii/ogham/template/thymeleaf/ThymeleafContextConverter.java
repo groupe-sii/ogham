@@ -10,7 +10,8 @@ import fr.sii.ogham.core.template.context.Context;
  * @author Aurélien Baudet
  *
  */
-public class ThymeleafContextConverter {
+public interface ThymeleafContextConverter {
+
 	/**
 	 * Convert abstraction used for all template engines into a Thymeleaf
 	 * context.
@@ -21,9 +22,6 @@ public class ThymeleafContextConverter {
 	 * @throws ContextException
 	 *             when conversion couldn't be applied
 	 */
-	public org.thymeleaf.context.Context convert(Context context) throws ContextException {
-		org.thymeleaf.context.Context thymeleafContext = new org.thymeleaf.context.Context();
-		thymeleafContext.setVariables(context.getVariables());
-		return thymeleafContext;
-	}
+	public abstract org.thymeleaf.context.Context convert(Context context) throws ContextException;
+
 }
