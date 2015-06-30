@@ -11,33 +11,48 @@ public class LoggingTestRule implements TestRule {
 	private static final Logger LOG = LoggerFactory.getLogger(LoggingTestRule.class);
 	private static final int MAX_LENGTH = 100;
 	private static final String DASH = "─";
-	private static final String ANY = ".";
+	private static final String SEPARATOR = ".";
+	
+	private int maxLength;
+	
+	public LoggingTestRule(int maxLength) {
+		super();
+		this.maxLength = maxLength;
+	}
+
+	public LoggingTestRule() {
+		this(MAX_LENGTH);
+	}
+
 
 	@Override
 	public Statement apply(final Statement base, final Description description) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				String className = StringUtils.abbreviate(description.getClassName(), MAX_LENGTH);
-				String descriptionDashes = className.replaceAll(ANY, DASH);
-				String methodName = StringUtils.abbreviate(description.getMethodName(), MAX_LENGTH);
-				String methodNameDashes = methodName.replaceAll(ANY, DASH);
-				LOG.info("┌──────────────────────────{}─{}────────────┐", descriptionDashes, methodNameDashes);
-				LOG.info("│            Starting test {}.{}            │", className, methodName);
-				LOG.info("└──────────────────────────{}─{}────────────┘", descriptionDashes, methodNameDashes);
+				String testName = description.getTestClass().getSimpleName()+SEPARATOR+description.getMethodName();
+				String dashLine = StringUtils.repeat(DASH, maxLength-2);
+				String header = "┌"+dashLine+"┐";
+				String footer = "└"+dashLine+"┘";
+				LOG.info(header);
+				LOG.info("│{}│", format("Starting test "+testName));
+				LOG.info(footer);
 				try {
 					base.evaluate();
-					LOG.info("┌─────────────────{}─{}──────────────────────────────┐", descriptionDashes, methodNameDashes);
-					LOG.info("│            Test {}.{} successfully done            │", className, methodName);
-					LOG.info("└─────────────────{}─{}──────────────────────────────┘\r\n\r\n", descriptionDashes, methodNameDashes);
+					LOG.info(header);
+					LOG.info("│{}│", format("Test "+testName+" successfully done"));
+					LOG.info(footer+"\r\n\r\n");
 				} catch(Throwable e) {
-					String errorMessage = StringUtils.abbreviate(e.toString(), MAX_LENGTH);
-					String errorDashes = errorMessage.replaceAll(ANY, DASH);
-					LOG.info("┌─────────────────{}─{}────────────────────{}────────────┐", descriptionDashes, methodNameDashes, errorDashes);
-					LOG.info("│            Test {}.{} has failed. Cause: {}            │", className, methodName, errorMessage);
-					LOG.info("└─────────────────{}─{}────────────────────{}────────────┘\r\n\r\n", descriptionDashes, methodNameDashes, errorDashes);
+					LOG.error(header);
+					LOG.error("│{}│", format("Test "+testName+" has failed"));
+					LOG.error("│{}│", format("Cause: "+e));
+					LOG.error(footer);
 					throw e;
 				}
+			}
+			
+			private String format(String text) {
+				return StringUtils.center(StringUtils.abbreviate(text, maxLength-4), maxLength-2);
 			}
 		};
 	}
