@@ -32,7 +32,7 @@ import fr.sii.ogham.email.sender.impl.sendgrid.client.SendGridClient;
  * the {@code ogham}-aware code and the {@code SendGrid-java}
  * -aware code, i.e. the {@link SendGridClient} interface.
  */
-public final class EmailSendGridMockTest {
+public final class EmailSendGridTest {
 
 	private static final String SUBJECT = "Example email";
 	private static final String CONTENT_TEXT = "This is a default content.";

@@ -27,7 +27,7 @@ public final class MultiContentHandler implements SendGridContentHandler {
 	 */
 	public MultiContentHandler(final SendGridContentHandler delegate) {
 		if (delegate == null) {
-			throw new NullPointerException("[delegate] cannot be null");
+			throw new IllegalArgumentException("[delegate] cannot be null");
 		}
 
 		this.delegate = delegate;
@@ -53,10 +53,10 @@ public final class MultiContentHandler implements SendGridContentHandler {
 	@Override
 	public void setContent(final SendGrid.Email email, final Content content) throws ContentHandlerException {
 		if (email == null) {
-			throw new NullPointerException("[email] cannot be null");
+			throw new IllegalArgumentException("[email] cannot be null");
 		}
 		if (content == null) {
-			throw new NullPointerException("[content] cannot be null");
+			throw new IllegalArgumentException("[content] cannot be null");
 		}
 
 		if (content instanceof MultiContent) {

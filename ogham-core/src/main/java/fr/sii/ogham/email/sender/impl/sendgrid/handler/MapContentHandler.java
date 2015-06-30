@@ -42,10 +42,10 @@ public final class MapContentHandler implements SendGridContentHandler {
 	 */
 	public SendGridContentHandler register(final Class<? extends Content> clazz, final SendGridContentHandler handler) {
 		if (handler == null) {
-			throw new NullPointerException("[handler] cannot be null");
+			throw new IllegalArgumentException("[handler] cannot be null");
 		}
 		if (clazz == null) {
-			throw new NullPointerException("[clazz] cannot be null");
+			throw new IllegalArgumentException("[clazz] cannot be null");
 		}
 
 		LOG.debug("Registering content handler {} for content type {}", handler, clazz);
@@ -55,10 +55,10 @@ public final class MapContentHandler implements SendGridContentHandler {
 	@Override
 	public void setContent(final Email email, final Content content) throws ContentHandlerException {
 		if (email == null) {
-			throw new NullPointerException("[email] cannot be null");
+			throw new IllegalArgumentException("[email] cannot be null");
 		}
 		if (content == null) {
-			throw new NullPointerException("[content] cannot be null");
+			throw new IllegalArgumentException("[content] cannot be null");
 		}
 
 		final Class<?> clazz = content.getClass();

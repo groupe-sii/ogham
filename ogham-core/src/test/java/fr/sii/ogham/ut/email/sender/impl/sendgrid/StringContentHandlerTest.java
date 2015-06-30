@@ -10,6 +10,9 @@ import javax.activation.MimeTypeParseException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.sendgrid.SendGrid;
 
@@ -24,6 +27,7 @@ import fr.sii.ogham.email.sender.impl.sendgrid.handler.StringContentHandler;
 /**
  * Test campaign for the {@link StringContentHandler} class.
  */
+@RunWith(MockitoJUnitRunner.class)
 public final class StringContentHandlerTest {
 
 	private static final String CONTENT_TEXT = "This is a simple text content.";
@@ -33,8 +37,8 @@ public final class StringContentHandlerTest {
 	/**
 	 * Content type that StringContentHandler is not compatible with.
 	 */
-	private class TestContent implements Content {
-	}
+	@Mock
+	private Content testContent;
 
 	private final StringContent content = new StringContent(CONTENT_TEXT);
 	private MimeTypeProvider provider;
@@ -47,17 +51,17 @@ public final class StringContentHandlerTest {
 		instance = new StringContentHandler(provider);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void emailParamCannotBeNull() throws ContentHandlerException {
 		instance.setContent(null, content);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void contentParamCannotBeNull() throws ContentHandlerException {
 		instance.setContent(new SendGrid.Email(), null);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void providerParamCannotBeNull() {
 		new StringContentHandler(null);
 	}
@@ -101,9 +105,8 @@ public final class StringContentHandlerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void setContent_badContentType() throws ContentHandlerException {
 		final SendGrid.Email email = new SendGrid.Email();
-		final Content content = new TestContent();
 
-		instance.setContent(email, content);
+		instance.setContent(email, testContent);
 	}
 
 	@Test(expected = ContentHandlerException.class)

@@ -28,12 +28,12 @@ public final class SendGridClientTest {
 		instance = new DelegateSendGridClient(delegate);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void sendEmailParamCannotBeNull() throws SendGridException {
 		instance.send(null);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void constructorDelegateParamCannotBeNull() {
 		new DelegateSendGridClient((SendGrid) null);
 	}

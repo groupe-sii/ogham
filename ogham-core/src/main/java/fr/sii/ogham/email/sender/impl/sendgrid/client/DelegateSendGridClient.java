@@ -43,7 +43,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 	 */
 	public DelegateSendGridClient(final SendGrid delegate) {
 		if (delegate == null) {
-			throw new NullPointerException("[delegate] cannot be null");
+			throw new IllegalArgumentException("[delegate] cannot be null");
 		}
 
 		this.delegate = delegate;
@@ -63,7 +63,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 	@Override
 	public void send(final Email email) throws SendGridException {
 		if (email == null) {
-			throw new NullPointerException("[email] cannot be null");
+			throw new IllegalArgumentException("[email] cannot be null");
 		}
 
 		LOG.debug("Sending to SendGrid client: FROM {}<{}>", email.getFromName(), email.getFrom());
@@ -77,6 +77,8 @@ public final class DelegateSendGridClient implements SendGridClient {
 				delegate = new SendGrid(username, password);
 			} else if(apiKey!=null) {
 				delegate = new SendGrid(apiKey);
+			} else {
+				throw new IllegalStateException("No SendGrid instance available. Either provide an instance manually or provide username/password or provide API key");
 			}
 		}
 		final SendGrid.Response response = delegate.send(email);

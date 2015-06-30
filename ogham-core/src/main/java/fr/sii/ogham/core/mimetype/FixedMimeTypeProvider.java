@@ -24,7 +24,7 @@ public final class FixedMimeTypeProvider implements MimeTypeProvider {
 		try {
 			mimetype = new MimeType("text/plain");
 		} catch (MimeTypeParseException e) {
-			throw new AssertionError("This should never happen as 'text/plain' is a valid MIME type");
+			throw new AssertionError("This should never happen as 'text/plain' is a valid MIME type", e);
 		}
 	}
 

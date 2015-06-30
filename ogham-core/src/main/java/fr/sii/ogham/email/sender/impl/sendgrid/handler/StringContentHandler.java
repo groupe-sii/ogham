@@ -31,7 +31,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 	 */
 	public StringContentHandler(final MimeTypeProvider mimeProvider) {
 		if (mimeProvider == null) {
-			throw new NullPointerException("[mimeProvider] cannot be null");
+			throw new IllegalArgumentException("[mimeProvider] cannot be null");
 		}
 
 		this.mimeProvider = mimeProvider;
@@ -57,10 +57,10 @@ public final class StringContentHandler implements SendGridContentHandler {
 	@Override
 	public void setContent(final Email email, final Content content) throws ContentHandlerException {
 		if (email == null) {
-			throw new NullPointerException("[email] cannot be null");
+			throw new IllegalArgumentException("[email] cannot be null");
 		}
 		if (content == null) {
-			throw new NullPointerException("[content] cannot be null");
+			throw new IllegalArgumentException("[content] cannot be null");
 		}
 
 		if (content instanceof StringContent) {

@@ -39,10 +39,10 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 	 */
 	public SendGridSender(final SendGridClient service, final SendGridContentHandler handler) {
 		if (service == null) {
-			throw new NullPointerException("[service] cannot be null");
+			throw new IllegalArgumentException("[service] cannot be null");
 		}
 		if (handler == null) {
-			throw new NullPointerException("[handler] cannot be null");
+			throw new IllegalArgumentException("[handler] cannot be null");
 		}
 
 		this.service = service;
@@ -52,7 +52,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 	@Override
 	public void send(final Email message) throws MessageException {
 		if (message == null) {
-			throw new NullPointerException("[message] cannot be null");
+			throw new IllegalArgumentException("[message] cannot be null");
 		}
 		final Set<String> violations = validate(message);
 		if (!violations.isEmpty()) {

@@ -30,11 +30,6 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 	private static final String DEFAULT_CHARSET = "UTF-8";
 
 	/**
-	 * Properties that is used to initialize the session
-	 */
-	private Properties properties;
-	
-	/**
 	 * The configuration for SMPP session to use
 	 */
 	private SmppSessionConfiguration sessionConfiguration;
@@ -93,21 +88,8 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 	 * @return this instance for fluent use
 	 */
 	public CloudhopperSMPPBuilder useDefaults(Properties props) {
-		withProperties(props);
 		generateOptionsFrom(props);
 		generateSmppSessionConfigurationFrom(props);
-		return this;
-	}
-
-	/**
-	 * Set the properties to use for configuring Cloudhopper implementation.
-	 * 
-	 * @param properties
-	 *            the properties to use
-	 * @return this instance for fluent use
-	 */
-	public CloudhopperSMPPBuilder withProperties(Properties properties) {
-		this.properties = properties;
 		return this;
 	}
 	

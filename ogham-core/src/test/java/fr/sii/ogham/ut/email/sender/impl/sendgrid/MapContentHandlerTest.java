@@ -31,28 +31,28 @@ public final class MapContentHandlerTest {
 		instance = new MapContentHandler();
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void emailParamCannotBeNull() throws ContentHandlerException {
 		instance.setContent(null, new StringContent(""));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void contentParamCannotBeNull() throws ContentHandlerException {
 		instance.setContent(new SendGrid.Email(), null);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void providerParamCannotBeNull() {
 		new StringContentHandler(null);
 	}
 
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void register_handlerParamCannotBeNull() {
 		instance.register(StringContent.class, null);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void register_clazzParamCannotBeNull() {
 		instance.register(null, handler);
 	}

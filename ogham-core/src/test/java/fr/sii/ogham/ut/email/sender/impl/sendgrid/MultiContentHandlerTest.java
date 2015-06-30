@@ -35,23 +35,23 @@ public final class MultiContentHandlerTest {
 		this.instance = new MultiContentHandler(delegate);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void emailParamCannotBeNull() throws ContentHandlerException {
 		instance.setContent(null, new StringContent(""));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void contentParamCannotBeNull() throws ContentHandlerException {
 		instance.setContent(new SendGrid.Email(), null);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void providerParamCannotBeNull() {
 		new StringContentHandler(null);
 	}
 
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void constructor_delegateParamCannotBeNull() {
 		new MultiContentHandler(null);
 	}
