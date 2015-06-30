@@ -25,11 +25,41 @@ public interface SmsConstants {
 	 * @author Aurélien Baudet
 	 *
 	 */
-	public static interface Ovh {
+	public static interface OvhConstants {
 		/**
-		 * The key for OVH APP key
+		 * The key for OVH account (format sms-nic-X)
 		 */
-		public static final String OVH_APP_KEY_PROPERTY = PROPERTIES_PREFIX + ".ovh.app.key";
+		public static final String ACCOUNT_PROPERTY = PROPERTIES_PREFIX + ".ovh.account";
+		
+		/**
+		 * The key for OVH login
+		 */
+		public static final String LOGIN_PROPERTY = PROPERTIES_PREFIX + ".ovh.login";
+		
+		/**
+		 * The key for OVH password
+		 */
+		public static final String PASSWORD_PROPERTY = PROPERTIES_PREFIX + ".ovh.password";
+		
+		/**
+		 * The key for OVH option noStop
+		 */
+		public static final String NO_STOP_PROPERTY = PROPERTIES_PREFIX + ".ovh.noStop";
+		
+		/**
+		 * The key for OVH option tag
+		 */
+		public static final String TAG_PROPERTY = PROPERTIES_PREFIX + ".ovh.tag";
+		
+		/**
+		 * The key for OVH option smsConding
+		 */
+		public static final String SMS_CODING_PROPERTY = PROPERTIES_PREFIX + ".ovh.smsCoding";
+		
+		/**
+		 * The URL of the HTTP API for sending SMS through OVH
+		 */
+		public static final String HTTP_API_URL = "https://www.ovh.com/cgi-bin/sms/http2sms.cgi";
 	}
 
 	/**

@@ -252,7 +252,9 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * the associated condition indicates that OVH HTTP API can be used. The
 	 * condition checks if:
 	 * <ul>
-	 * <li>The property <code>ogham.sms.ovh.app.key</code> is set</li>
+	 * <li>The property <code>ogham.sms.ovh.account</code> is set</li>
+	 * <li>The property <code>ogham.sms.ovh.login</code> is set</li>
+	 * <li>The property <code>ogham.sms.ovh.password</code> is set</li>
 	 * </ul>
 	 * 
 	 * @param properties
@@ -260,9 +262,13 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this builder instance for fluent use
 	 */
 	public SmsBuilder withOvhHttpApi(Properties properties) {
-		// Use OVH implementation only if SmsConstants.OVH_APP_KEY_PROPERTY is
+		// Use OVH implementation only if SmsConstants.ACCOUNT_PROPERTY is
 		// set
-		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.Ovh.OVH_APP_KEY_PROPERTY, properties), new OvhSmsSender());
+		registerImplementation(new AndCondition<>(
+								new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.ACCOUNT_PROPERTY, properties),
+								new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.LOGIN_PROPERTY, properties),
+								new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, properties)),
+					new OvhSmsBuilder().useDefaults(properties));
 		return this;
 	}
 
@@ -287,9 +293,8 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	public SmsBuilder withCloudhopper(Properties properties) {
 		try {
 			// Use Cloudhopper SMPP implementation only if SmppClient class is
-			// in
-			// the classpath and the SmppConstants.SMPP_HOST_PROPERTY property
-			// is set
+			// in the classpath and the SmppConstants.SMPP_HOST_PROPERTY
+			// property is set
 			registerImplementation(new AndCondition<>(
 									new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
 									new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
