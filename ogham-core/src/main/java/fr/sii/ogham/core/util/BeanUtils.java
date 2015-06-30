@@ -74,10 +74,12 @@ public final class BeanUtils {
 			Map<String, Object> map = new HashMap<String, Object>();
 			BeanInfo info = Introspector.getBeanInfo(bean.getClass());
 			for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
-				Method reader = pd.getReadMethod();
-				// TODO: convert recursively ?
-				if (reader != null) {
-					map.put(pd.getName(), reader.invoke(bean));
+				if(!pd.getName().equals("class")) {
+					Method reader = pd.getReadMethod();
+					// TODO: convert recursively ?
+					if (reader != null) {
+						map.put(pd.getName(), reader.invoke(bean));
+					}
 				}
 			}
 			return map;

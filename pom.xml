@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.sii.ogham</groupId>
 	<artifactId>ogham-parent</artifactId>
@@ -42,6 +43,8 @@
 		<cloning.version>1.9.2</cloning.version>
 		<sendgrid-java.version>2.2.2</sendgrid-java.version>
 		<commons-logging.version>1.2</commons-logging.version>
+		<wiremock.version>1.56</wiremock.version>
+		<libphonenumber.version>7.0.6</libphonenumber.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -127,6 +130,11 @@
 				<artifactId>commons-logging</artifactId>
 				<version>${commons-logging.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.googlecode.libphonenumber</groupId>
+				<artifactId>libphonenumber</artifactId>
+				<version>${libphonenumber.version}</version>
+			</dependency>
 
 			<!-- Template parsers -->
 			<dependency>
@@ -191,6 +199,11 @@
 				<groupId>uk.com.robust-it</groupId>
 				<artifactId>cloning</artifactId>
 				<version>${cloning.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.tomakehurst</groupId>
+				<artifactId>wiremock</artifactId>
+				<version>${wiremock.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -403,38 +416,24 @@
 						<version>1.7</version>
 					</dependency>
 					<dependency>
-            <groupId>net.trajano.wagon</groupId>
-            <artifactId>wagon-git</artifactId>
-            <version>2.0.3</version>
-        </dependency>
+						<groupId>net.trajano.wagon</groupId>
+						<artifactId>wagon-git</artifactId>
+						<version>2.0.3</version>
+					</dependency>
 				</dependencies>
 				<configuration>
 					<generateReports>true</generateReports>
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
 					<!-- Site deployment done using GitHub site plugin -->
-					<!-- skipDeploy>true</skipDeploy-->
+					<!-- skipDeploy>true</skipDeploy -->
 				</configuration>
 			</plugin>
-			<!-- plugin>
-				<groupId>com.github.github</groupId>
-				<artifactId>site-maven-plugin</artifactId>
-				<version>0.12</version>
-				<configuration>
-					<message>Creating site for ${project.artifactId}-${project.version}</message>
-					<server>github</server>
-					<path>${project.distributionManagement.site.url}</path>
-					<merge>true</merge>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>site</goal>
-						</goals>
-						<phase>site</phase>
-					</execution>
-				</executions>
-			</plugin-->
+			<!-- plugin> <groupId>com.github.github</groupId> <artifactId>site-maven-plugin</artifactId> 
+				<version>0.12</version> <configuration> <message>Creating site for ${project.artifactId}-${project.version}</message> 
+				<server>github</server> <path>${project.distributionManagement.site.url}</path> 
+				<merge>true</merge> </configuration> <executions> <execution> <goals> <goal>site</goal> 
+				</goals> <phase>site</phase> </execution> </executions> </plugin -->
 		</plugins>
 	</build>
 
@@ -463,37 +462,14 @@
 	</distributionManagement>
 
 	<profiles>
-		<!-- profile>
-			<id>stage</id>
-			<properties>
-				<site.deploy.url>${github.url}/tree/gh-pages/${project.version}</site.deploy.url>
-			</properties>
-			<build>
-				<plugins -->
-					<!-- Configure Maven site plugin to perform stage -->
-					<!-- plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-site-plugin</artifactId>
-						<version>3.4</version>
-						<executions>
-							<execution>
-								<id>stage</id>
-								<goals>
-									<goal>stage</goal>
-								</goals>
-								<phase>site</phase>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>github-site</id>
-			<properties>
-				<site.deploy.url>${project.version}</site.deploy.url>
-			</properties>
-		</profile-->
+		<!-- profile> <id>stage</id> <properties> <site.deploy.url>${github.url}/tree/gh-pages/${project.version}</site.deploy.url> 
+			</properties> <build> <plugins -->
+		<!-- Configure Maven site plugin to perform stage -->
+		<!-- plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-site-plugin</artifactId> 
+			<version>3.4</version> <executions> <execution> <id>stage</id> <goals> <goal>stage</goal> 
+			</goals> <phase>site</phase> </execution> </executions> </plugin> </plugins> 
+			</build> </profile> <profile> <id>github-site</id> <properties> <site.deploy.url>${project.version}</site.deploy.url> 
+			</properties> </profile -->
 		<profile>
 			<id>release</id>
 			<build>
@@ -550,8 +526,8 @@
 		<url>${github.url}</url>
 		<connection>scm:git:${scm.url}</connection>
 		<developerConnection>scm:git:${scm.url}</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<issueManagement>
 		<url>${github.url}/issues</url>
