@@ -46,7 +46,7 @@ public class LoggingTestRule implements TestRule {
 					LOG.error(header);
 					LOG.error("│{}│", format("Test "+testName+" has failed"));
 					LOG.error("│{}│", format("Cause: "+e));
-					LOG.error(footer);
+					LOG.error(footer+"\r\n\r\n");
 					throw e;
 				}
 			}
