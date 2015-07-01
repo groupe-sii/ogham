@@ -1,38 +1,31 @@
 package fr.sii.ogham.ut.sms.sender.impl;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 
-import org.jsmpp.bean.SubmitSm;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mortbay.log.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-
-import com.cloudhopper.smpp.SmppSessionConfiguration;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
-import fr.sii.ogham.helper.sms.AssertSms;
-import fr.sii.ogham.helper.sms.ExpectedAddressedPhoneNumber;
-import fr.sii.ogham.helper.sms.ExpectedSms;
-import fr.sii.ogham.helper.sms.SplitSms;
-import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.helper.sms.rule.SmppServerRule;
-import fr.sii.ogham.sms.builder.CloudhopperSMPPBuilder;
 import fr.sii.ogham.sms.builder.OvhSmsBuilder;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
-import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhAuthParams;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
@@ -49,7 +42,7 @@ public class OvhSmsTest {
 	@Before
 	public void setUp() throws IOException {
 		sender = new OvhSmsBuilder()
-						.withOvhUrl(new URL("http://localhost:"+serverRule.port()+"/cgi-bin/sms/http2sms.cgi"))
+						.withUrl(new URL("http://localhost:"+serverRule.port()+"/cgi-bin/sms/http2sms.cgi"))
 						.withAuthParams(new OvhAuthParams("sms-nic-foobar42", "login", "password"))
 						.withOptions(new OvhOptions())
 						.build();
@@ -113,8 +106,10 @@ public class OvhSmsTest {
 	}
 
 	@Test
+	@Ignore("Not yet implemented")
 	public void longMessage() throws MessagingException, IOException {
-
+		// TODO: implement test
+		Assert.fail("Not yet implemented");
 	}
 
 	@Test
@@ -143,7 +138,7 @@ public class OvhSmsTest {
 						.withStatus(200)
 						.withHeader("Content-Type", "application/json")
 						.withBody(IOUtils.toString(getClass().getResourceAsStream("/ovh/response/ok.json")))));
-		sender.send(new Sms("sms content", new Sender("0203040506"), "0605040302", "446681800"));
+		sender.send(new Sms("sms content", new Sender("+332 03 04 05 06"), "+33 6 05 04 03 02", "+41 44 668 18 00"));
 		verify(getRequestedFor(urlPathEqualTo("/cgi-bin/sms/http2sms.cgi"))
 					.withQueryParam("account", equalTo("sms-nic-foobar42"))
 					.withQueryParam("login", equalTo("login"))
@@ -151,8 +146,13 @@ public class OvhSmsTest {
 					.withQueryParam("noStop", equalTo("1"))
 					.withQueryParam("contentType", equalTo("application/json"))
 					.withQueryParam("from", equalTo("0033203040506"))
-					.withQueryParam("to", equalTo("0033605040302,0033605040303,0041446681800"))
+					.withQueryParam("to", equalTo("0033605040302,0041446681800"))
 					.withQueryParam("message", equalTo("sms content")));
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void nationalNumber() throws MessagingException, IOException {
+		sender.send(new Sms("sms content", new Sender("02 03 04 05 06"), "06 05 04 03 02"));
 	}
 
 
