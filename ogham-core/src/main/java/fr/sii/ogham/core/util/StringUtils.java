@@ -76,6 +76,38 @@ public final class StringUtils {
 		return org.apache.commons.lang3.StringUtils.join(iterable, separator);
 	}
 
+	/**
+	 * <p>
+	 * Left pad a String with a specified character.
+	 * </p>
+	 *
+	 * <p>
+	 * Pad to a size of {@code size}.
+	 * </p>
+	 *
+	 * <pre>
+	 * StringUtils.leftPad(null, *, *)     = null
+	 * StringUtils.leftPad("", 3, 'z')     = "zzz"
+	 * StringUtils.leftPad("bat", 3, 'z')  = "bat"
+	 * StringUtils.leftPad("bat", 5, 'z')  = "zzbat"
+	 * StringUtils.leftPad("bat", 1, 'z')  = "bat"
+	 * StringUtils.leftPad("bat", -1, 'z') = "bat"
+	 * </pre>
+	 *
+	 * @param str
+	 *            the String to pad out, may be null
+	 * @param size
+	 *            the size to pad to
+	 * @param padChar
+	 *            the character to pad with
+	 * @return left padded String or original String if no padding is necessary,
+	 *         {@code null} if null String input
+	 * @since 2.0
+	 */
+	public static String leftPad(String str, int size, char padChar) {
+		return org.apache.commons.lang3.StringUtils.leftPad(str, size, padChar);
+	}
+
 	private StringUtils() {
 		super();
 	}

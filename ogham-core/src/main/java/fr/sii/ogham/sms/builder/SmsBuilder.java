@@ -262,13 +262,17 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this builder instance for fluent use
 	 */
 	public SmsBuilder withOvhHttpApi(Properties properties) {
-		// Use OVH implementation only if SmsConstants.ACCOUNT_PROPERTY is
-		// set
-		registerImplementation(new AndCondition<>(
-								new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.ACCOUNT_PROPERTY, properties),
-								new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.LOGIN_PROPERTY, properties),
-								new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, properties)),
-					new OvhSmsBuilder().useDefaults(properties));
+		try {
+			// Use OVH implementation only if SmsConstants.ACCOUNT_PROPERTY is
+			// set
+			registerImplementation(new AndCondition<>(
+									new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.ACCOUNT_PROPERTY, properties),
+									new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.LOGIN_PROPERTY, properties),
+									new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, properties)),
+						new OvhSmsBuilder().useDefaults(properties));
+		} catch (Throwable e) {
+			LOG.debug("Can't register OVH implementation", e);
+		}
 		return this;
 	}
 
