@@ -57,12 +57,29 @@ public class JsoupAttachImageInlinerTest {
 		// do the job
 		ContentWithImages inlined = inliner.inline(source, images);
 		// prepare expected result for the html
-		String expected = generateExpectedHtml("withImages.html", "fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
+		String expected = getExpectedHtml("withImagesAttach.html");
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(images);
 		// assertions
 		AssertHtml.assertSimilar(expected, inlined.getContent());
 		Assert.assertEquals("should have 5 attachments", 5, inlined.getAttachments().size());
+		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
+	}
+	
+	@Test
+	public void skipInline() throws IOException {
+		// prepare html and associated images
+		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"skipInline.html"));
+		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
+		// do the job
+		ContentWithImages inlined = inliner.inline(source, images);
+		// prepare expected result for the html
+		String expected = getExpectedHtml("skipInlineAttach.html");
+		// prepare expected attachments
+		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif"));
+		// assertions
+		AssertHtml.assertSimilar(expected, inlined.getContent());
+		Assert.assertEquals("should have 2 attachments", 2, inlined.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
 	}
 	
@@ -91,18 +108,14 @@ public class JsoupAttachImageInlinerTest {
 		return attachments;
 	}
 	
-	private static String generateExpectedHtml(String fileName, String... imageNames) throws IOException {
-		String expected = IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
-		for(String imageName : imageNames) {
-			expected = expected.replaceAll("images/"+imageName, "cid:"+imageName);
-		}
-		return expected;
+	private static String getExpectedHtml(String fileName) throws IOException {
+		return IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
 	}
 	
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
 		List<ImageResource> resources = new ArrayList<>(imageNames.length);
 		for(String imageName : imageNames) {
-			resources.add(new ImageResource(imageName, "images/"+imageName, IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER+"images/"+imageName)), "images/gif"));
+			resources.add(new ImageResource(imageName, "images/"+imageName, IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER+"images/"+imageName)), "image/gif"));
 		}
 		return resources;
 	}

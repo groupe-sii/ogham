@@ -1,7 +1,10 @@
 package fr.sii.ogham.core.subject.provider;
 
 import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.UpdatableStringContent;
 
 /**
  * Provider that analyzes the content of the message. If the first line contains
@@ -33,12 +36,19 @@ public class TextPrefixSubjectProvider implements SubjectProvider {
 
 	@Override
 	public String provide(Message message) {
-		if(message.getContent() instanceof StringContent) {
-			String content = message.getContent().toString();
+		Content msgContent = message.getContent();
+		if(msgContent instanceof MayHaveStringContent && ((MayHaveStringContent) msgContent).canProvideString()) {
+			String content = ((MayHaveStringContent) msgContent).asString();
 			int idx = content.indexOf(NEW_LINE);
 			if (idx > 0 && content.startsWith(prefix)) {
-				// remove the subject from the content
-				message.setContent(new StringContent(content.substring(idx+1)));
+				// remove the subject from the content and update the content
+				String bodyContent = content.substring(idx+1);
+				if(msgContent instanceof UpdatableStringContent) {
+					((UpdatableStringContent) msgContent).setStringContent(bodyContent);
+				} else {
+					message.setContent(new StringContent(bodyContent));
+				}
+				// returns the subject
 				return content.substring(prefix.length(), idx).trim();
 			}
 		}

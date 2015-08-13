@@ -38,37 +38,46 @@ public final class HtmlUtils {
 
 	/**
 	 * Finds all CSS file inclusions (looks for <code>link</code> tags for
-	 * stylesheet files).
+	 * stylesheet files). Returns only the path or URL to the CSS file. If the
+	 * several CSS inclusions have the same path, the path is present in the
+	 * list only one time.
 	 * 
 	 * @param htmlContent
 	 *            the html content that may contain external CSS files
-	 * @return the list of found CSS inclusions (paths only) or empty string if
-	 *         nothing found
+	 * @return the list of found CSS inclusions (paths only) or empty if nothing
+	 *         found
 	 */
-	public static List<String> getCssFiles(String htmlContent) {
+	public static List<String> getDistinctCssUrls(String htmlContent) {
 		Document doc = Jsoup.parse(htmlContent);
 		Elements els = doc.select(CSS_LINKS_SELECTOR);
 		List<String> cssFiles = new ArrayList<>(els.size());
 		for (Element e : els) {
-			cssFiles.add(e.attr(HREF_ATTR));
+			String path = e.attr(HREF_ATTR);
+			if (!cssFiles.contains(path)) {
+				cssFiles.add(path);
+			}
 		}
 		return cssFiles;
 	}
 
 	/**
-	 * Finds all image inclusions (looks for <code>img</code> tags).
+	 * Finds all image inclusions (looks for <code>img</code> tags). Returns
+	 * only the path or URL to the image. If the several images have the same
+	 * path, the path is present in the list only one time.
 	 * 
 	 * @param htmlContent
 	 *            the html content that may contain image files
-	 * @return the list of found images (paths only) or empty string if nothing
-	 *         found
+	 * @return the list of found images (paths only) or empty if nothing found
 	 */
-	public static List<String> getImages(String htmlContent) {
+	public static List<String> getDistinctImageUrls(String htmlContent) {
 		Document doc = Jsoup.parse(htmlContent);
 		Elements els = doc.select(IMG_SELECTOR);
 		List<String> images = new ArrayList<>(els.size());
 		for (Element e : els) {
-			images.add(e.attr(SRC_ATTR));
+			String path = e.attr(SRC_ATTR);
+			if (!images.contains(path)) {
+				images.add(path);
+			}
 		}
 		return images;
 	}

@@ -16,7 +16,10 @@ import fr.sii.ogham.core.translator.content.EveryContentTranslator;
 import fr.sii.ogham.core.translator.content.MultiContentTranslator;
 import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
 import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.html.inliner.EveryImageInliner;
+import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.ogham.html.translator.InlineCssTranslator;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
@@ -176,7 +179,10 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	public ContentTranslatorBuilder withInlining() {
 		LookupMappingResolver resolver = new LookupMappingResourceResolverBuilder().useDefaults().build();
 		translator.addTranslator(new InlineCssTranslator(new JsoupCssInliner(), resolver));
-		translator.addTranslator(new InlineImageTranslator(new JsoupAttachImageInliner(new SequentialIdGenerator()), resolver, new JMimeMagicProvider()));
+		JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
+		// TODO: extract image inliner init to its own builder
+		ImageInliner imageInliner = new EveryImageInliner(new JsoupAttachImageInliner(new SequentialIdGenerator()), new JsoupBase64ImageInliner());
+		translator.addTranslator(new InlineImageTranslator(imageInliner, resolver, mimetypeProvider));
 		return this;
 	}
 

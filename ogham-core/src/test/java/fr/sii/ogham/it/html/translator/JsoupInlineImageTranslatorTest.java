@@ -28,8 +28,11 @@ import fr.sii.ogham.email.attachment.ContentDisposition;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
 import fr.sii.ogham.helper.html.AssertHtml;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.html.inliner.EveryImageInliner;
+import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
 import fr.sii.ogham.ut.html.inliner.impl.JsoupAttachImageInlinerTest;
 
@@ -55,17 +58,19 @@ public class JsoupInlineImageTranslatorTest {
 		Mockito.when(generator.generate("right.gif")).thenReturn("right.gif");
 		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
 		LookupMappingResolver resourceResolver = new LookupMappingResourceResolverBuilder().useDefaults().withPrefix(SOURCE_FOLDER).build();
-		translator = new InlineImageTranslator(new JsoupAttachImageInliner(generator), resourceResolver, new JMimeMagicProvider());
+		JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
+		ImageInliner inliner = new EveryImageInliner(new JsoupAttachImageInliner(generator), new JsoupBase64ImageInliner());
+		translator = new InlineImageTranslator(inliner, resourceResolver, mimetypeProvider);
 	}
 	
 	@Test
-	public void withImages() throws IOException, ContentTranslatorException {
+	public void attachImages() throws IOException, ContentTranslatorException {
 		// prepare the html and associated images
 		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"withImages.html"));
 		// do the job
 		Content result = translator.translate(new StringContent(source));
 		// prepare expected html
-		String expected = generateExpectedHtml("withImages.html", "fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
+		String expected = getExpectedHtml("withImagesBoth.html");
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif"));
 		// assertions
@@ -76,6 +81,24 @@ public class JsoupInlineImageTranslatorTest {
 		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
 	}
 	
+	
+	@Test
+	public void skipAttach() throws IOException, ContentTranslatorException {
+		// prepare the html and associated images
+		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"skipInline.html"));
+		// do the job
+		Content result = translator.translate(new StringContent(source));
+		// prepare expected html
+		String expected = getExpectedHtml("skipInlineBoth.html");
+		// prepare expected attachments
+		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif"));
+		// assertions
+		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
+		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
+		AssertHtml.assertSimilar(expected, contentWithAttachments.getContent().toString());
+		Assert.assertEquals("should have 2 attachments", 2, contentWithAttachments.getAttachments().size());
+		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
+	}
 	
 	
 	//---------------------------------------------------------------//
@@ -94,12 +117,8 @@ public class JsoupInlineImageTranslatorTest {
 		return attachments;
 	}
 	
-	private static String generateExpectedHtml(String fileName, String... imageNames) throws IOException {
-		String expected = IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
-		for(String imageName : imageNames) {
-			expected = expected.replaceAll("images/"+imageName, "cid:"+imageName);
-		}
-		return expected;
+	private static String getExpectedHtml(String fileName) throws IOException {
+		return IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
 	}
 	
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {

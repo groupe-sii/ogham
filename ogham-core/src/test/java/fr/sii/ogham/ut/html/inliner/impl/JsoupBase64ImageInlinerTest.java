@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -39,7 +38,19 @@ public class JsoupBase64ImageInlinerTest {
 		// do the job
 		ContentWithImages inlined = inliner.inline(source, images);
 		// prepare expected result for the html
-		String expected = generateExpectedHtml("withImages.html", "fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
+		String expected = getExpectedHtml("withImagesBase64.html");
+		AssertHtml.assertSimilar(expected, inlined.getContent());
+	}
+	
+	@Test
+	public void skipInline() throws IOException {
+		// prepare html and associated images
+		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"skipInline.html"));
+		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
+		// do the job
+		ContentWithImages inlined = inliner.inline(source, images);
+		// prepare expected result for the html
+		String expected = getExpectedHtml("skipInlineBase64.html");
 		AssertHtml.assertSimilar(expected, inlined.getContent());
 	}
 	
@@ -49,18 +60,14 @@ public class JsoupBase64ImageInlinerTest {
 	//                           Utilities                           //
 	//---------------------------------------------------------------//
 	
-	private static String generateExpectedHtml(String fileName, String... imageNames) throws IOException {
-		String expected = IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
-		for(String imageName : imageNames) {
-			expected = expected.replaceAll("images/"+imageName, "data:images/gif;base64,"+new Base64().encodeToString(IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER+"images/"+imageName))));
-		}
-		return expected;
+	private static String getExpectedHtml(String fileName) throws IOException {
+		return IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
 	}
 	
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
 		List<ImageResource> resources = new ArrayList<>(imageNames.length);
 		for(String imageName : imageNames) {
-			resources.add(new ImageResource(imageName, "images/"+imageName, IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER+"images/"+imageName)), "images/gif"));
+			resources.add(new ImageResource(imageName, "images/"+imageName, IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER+"images/"+imageName)), "image/gif"));
 		}
 		return resources;
 	}

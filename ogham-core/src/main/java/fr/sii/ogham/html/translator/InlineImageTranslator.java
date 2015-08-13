@@ -6,11 +6,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.UpdatableStringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
@@ -37,6 +42,8 @@ import fr.sii.ogham.html.inliner.ImageResource;
  * 
  */
 public class InlineImageTranslator implements ContentTranslator {
+	private static final Logger LOG = LoggerFactory.getLogger(InlineImageTranslator.class);
+	
 	/**
 	 * The image inliner
 	 */
@@ -61,32 +68,60 @@ public class InlineImageTranslator implements ContentTranslator {
 
 	@Override
 	public Content translate(Content content) throws ContentTranslatorException {
-		if (content instanceof StringContent) {
-			String stringContent = content.toString();
-			if (HtmlUtils.isHtml(stringContent)) {
-				List<String> images = HtmlUtils.getImages(stringContent);
-				if (!images.isEmpty()) {
-					List<ImageResource> imageResources = new ArrayList<>(images.size());
-					for (String path : images) {
-						try {
-							byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
-							String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
-							String imgName = new File(path).getName().toString();
-							imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
-						} catch (IOException e) {
-							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
-						} catch (ResourceResolutionException e) {
-							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
-						} catch (MimeTypeDetectionException e) {
-							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because mimetype can't be detected", e);
-						}
+		if (content instanceof MayHaveStringContent && ((MayHaveStringContent) content).canProvideString()) {
+			String stringContent = ((MayHaveStringContent) content).asString();
+			List<String> images = HtmlUtils.getDistinctImageUrls(stringContent);
+			if (!images.isEmpty()) {
+				// parepare list of images paths/urls with their content
+				List<ImageResource> imageResources = new ArrayList<>(images.size());
+				for (String path : images) {
+					try {
+						byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
+						String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
+						String imgName = new File(path).getName().toString();
+						imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
+					} catch (IOException e) {
+						throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
+					} catch (ResourceResolutionException e) {
+						throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
+					} catch (MimeTypeDetectionException e) {
+						throw new ContentTranslatorException("Failed to inline CSS file " + path + " because mimetype can't be detected", e);
 					}
-					ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);
-					return new ContentWithAttachments(new StringContent(contentWithImages.getContent()), contentWithImages.getAttachments());
 				}
+				// generate new HTML with inlined images
+				ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);
+				// update the HTML content
+				Content inlinedContent = updateHtmlContent(content, contentWithImages);
+				// if it was already a content with attachments then update it otherwise create a new one
+				return generateFinalContent(content, contentWithImages, inlinedContent);
 			}
+		} else {
+			LOG.debug("Neither content usable as string nor HTML. Skip image inlining for {}", content);
 		}
 		return content;
 	}
 
+	private Content updateHtmlContent(Content content, ContentWithImages contentWithImages) {
+		Content inlinedContent = content;
+		if(inlinedContent instanceof UpdatableStringContent) {
+			LOG.debug("Content is updatable => update it with inlined images");
+			((UpdatableStringContent) inlinedContent).setStringContent(contentWithImages.getContent());
+		} else {
+			LOG.info("Content is not updatable => create a new StringContent for image inlining result");
+			inlinedContent = new StringContent(contentWithImages.getContent());
+		}
+		return inlinedContent;
+	}
+
+	private Content generateFinalContent(Content content, ContentWithImages contentWithImages, Content inlinedContent) {
+		ContentWithAttachments finalContent;
+		if(content instanceof ContentWithAttachments) {
+			finalContent = ((ContentWithAttachments) content);
+			finalContent.addAttachments(contentWithImages.getAttachments());
+			finalContent.setContent(inlinedContent);
+		} else {
+			finalContent = new ContentWithAttachments(inlinedContent, contentWithImages.getAttachments());
+		}
+		return finalContent;
+	}
 }

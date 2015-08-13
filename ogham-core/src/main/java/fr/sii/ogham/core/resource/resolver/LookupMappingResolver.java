@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.exception.resource.NoResolverException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.util.LookupUtils;
@@ -82,6 +83,9 @@ public class LookupMappingResolver implements ConditionalResolver {
 	@Override
 	public Resource getResource(String path) throws ResourceResolutionException {
 		ResourceResolver resolver = getResolver(path);
+		if(resolver==null) {
+			throw new NoResolverException("No resource resolver available for "+path, path);
+		}
 		LOG.debug("Loading resource {} using resolver {}...", path, resolver);
 		return resolver.getResource(LookupUtils.getRealPath(mapping, path));
 	}

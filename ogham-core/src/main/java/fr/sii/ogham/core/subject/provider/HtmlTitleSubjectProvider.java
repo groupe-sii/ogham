@@ -1,8 +1,8 @@
 package fr.sii.ogham.core.subject.provider;
 
 import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.Content;
-import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.util.HtmlUtils;
 
 /**
@@ -19,8 +19,8 @@ public class HtmlTitleSubjectProvider implements SubjectProvider {
 	@Override
 	public String provide(Message message) {
 		Content content = message.getContent();
-		if(content instanceof StringContent) {
-			String stringContent = content.toString();
+		if(content instanceof MayHaveStringContent && ((MayHaveStringContent) content).canProvideString()) {
+			String stringContent = ((MayHaveStringContent) content).asString();
 			if (HtmlUtils.isHtml(stringContent)) {
 				return HtmlUtils.getTitle(stringContent);
 			}

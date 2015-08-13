@@ -1,5 +1,6 @@
 package fr.sii.ogham.html.inliner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class ContentWithImages {
 	private List<Attachment> attachments;
 
 	public ContentWithImages(String content, Attachment... attachments) {
-		this(content, Arrays.asList(attachments));
+		this(content, new ArrayList<>(Arrays.asList(attachments)));
 	}
 
 	public ContentWithImages(String content, List<Attachment> attachments) {
@@ -26,5 +27,17 @@ public class ContentWithImages {
 
 	public List<Attachment> getAttachments() {
 		return attachments;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+	
+	public void addAttachments(List<Attachment> attachments) {
+		this.attachments.addAll(attachments);
 	}
 }

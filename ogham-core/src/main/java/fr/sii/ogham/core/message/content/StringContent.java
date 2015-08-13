@@ -10,7 +10,7 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  * @author Aurélien Baudet
  *
  */
-public class StringContent implements Content {
+public class StringContent implements MayHaveStringContent, UpdatableStringContent {
 	/**
 	 * The content as string
 	 */
@@ -36,15 +36,24 @@ public class StringContent implements Content {
 		return content;
 	}
 
-	/**
-	 * Redefine the toString method to follow the contract provided by
-	 * {@link Content} interface.
-	 * 
-	 * @return the content as string
-	 */
 	@Override
 	public String toString() {
 		return content;
+	}
+
+	@Override
+	public boolean canProvideString() {
+		return true;
+	}
+
+	@Override
+	public String asString() {
+		return content;
+	}
+
+	@Override
+	public void setStringContent(String content) {
+		this.content = content;
 	}
 
 	@Override
@@ -56,6 +65,4 @@ public class StringContent implements Content {
 	public boolean equals(Object obj) {
 		return new EqualsBuilder(this, obj).appendFields("content").isEqual();
 	}
-
-	
 }

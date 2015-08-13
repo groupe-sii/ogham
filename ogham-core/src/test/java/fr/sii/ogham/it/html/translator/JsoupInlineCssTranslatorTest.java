@@ -40,7 +40,8 @@ public class JsoupInlineCssTranslatorTest {
 		String expected = IOUtils.toString(getClass().getResourceAsStream(EXPECTED_FOLDER+"externalStyles.html"));
 		StringContent sourceContent = new StringContent(source);
 		Content result = translator.translate(sourceContent);
-		Assert.assertNotSame("Content should not be the same", sourceContent, result);
+		// StringContent is now updatable => now it remains the same instance
+		Assert.assertSame("Content should be the same (updated)", sourceContent, result);
 		AssertHtml.assertSimilar(expected, result.toString());
 	}
 	

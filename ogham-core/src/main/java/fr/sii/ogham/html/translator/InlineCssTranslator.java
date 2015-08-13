@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.UpdatableStringContent;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.util.HtmlUtils;
@@ -26,6 +31,8 @@ import fr.sii.ogham.html.inliner.ExternalCss;
  *
  */
 public class InlineCssTranslator implements ContentTranslator {
+	private static final Logger LOG = LoggerFactory.getLogger(InlineCssTranslator.class);
+	
 	/**
 	 * The CSS inliner
 	 */
@@ -44,11 +51,12 @@ public class InlineCssTranslator implements ContentTranslator {
 
 	@Override
 	public Content translate(Content content) throws ContentTranslatorException {
-		if (content instanceof StringContent) {
-			String stringContent = content.toString();
+		if (content instanceof MayHaveStringContent && ((MayHaveStringContent) content).canProvideString()) {
+			String stringContent = ((MayHaveStringContent) content).asString();
 			if (HtmlUtils.isHtml(stringContent)) {
-				List<String> cssFiles = HtmlUtils.getCssFiles(stringContent);
+				List<String> cssFiles = HtmlUtils.getDistinctCssUrls(stringContent);
 				if (!cssFiles.isEmpty()) {
+					// prepare list of css files/urls with their content
 					List<ExternalCss> cssResources = new ArrayList<>(cssFiles.size());
 					for (String path : cssFiles) {
 						try {
@@ -59,10 +67,27 @@ public class InlineCssTranslator implements ContentTranslator {
 							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
 						}
 					}
-					return new StringContent(cssInliner.inline(stringContent, cssResources));
+					// generate the content with inlined css
+					String inlinedContentStr = cssInliner.inline(stringContent, cssResources);
+					// update the HTML content
+					return updateHtmlContent(content, inlinedContentStr);
 				}
 			}
+		} else {
+			LOG.debug("Neither content as string nor HTML. Skip CSS inlining for {}", content);
 		}
 		return content;
+	}
+
+	private Content updateHtmlContent(Content content, String inlinedContentStr) {
+		Content inlinedContent = content;
+		if(content instanceof UpdatableStringContent) {
+			LOG.debug("Content is updatable => update it with inlined CSS");
+			((UpdatableStringContent) inlinedContent).setStringContent(inlinedContentStr);
+		} else {
+			LOG.info("Content is not updatable => create a new StringContent for CSS inlining result");
+			inlinedContent = new StringContent(inlinedContentStr);
+		}
+		return inlinedContent;
 	}
 }
