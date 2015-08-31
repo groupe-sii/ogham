@@ -31,15 +31,14 @@ public class ThymeleafParser implements TemplateParser {
 	 */
 	private ThymeleafContextConverter contextConverter;
 	
-	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver lookupResolver, ThymeleafContextConverter contextConverter) {
+	public ThymeleafParser(TemplateEngine engine, ThymeleafContextConverter contextConverter) {
 		super();
 		this.engine = engine;
 		this.contextConverter = contextConverter;
-		engine.setTemplateResolver(lookupResolver);
 	}
 
-	public ThymeleafParser(TemplateEngine engine, ThymeleafLookupMappingResolver lookupResolver) {
-		this(engine, lookupResolver, new SimpleThymeleafContextConverter());
+	public ThymeleafParser(TemplateEngine engine) {
+		this(engine, new SimpleThymeleafContextConverter());
 	}
 	
 	@Override

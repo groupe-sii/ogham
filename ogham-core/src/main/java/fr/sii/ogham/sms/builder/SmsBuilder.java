@@ -304,8 +304,10 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 		try {
 			// Use OVH implementation only if SmsConstants.ACCOUNT_PROPERTY is
 			// set
-			registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.ACCOUNT_PROPERTY, properties), new RequiredPropertyCondition<Message>(
-					SmsConstants.OvhConstants.LOGIN_PROPERTY, properties), new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, properties)),
+			registerImplementation(new AndCondition<>(
+										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.ACCOUNT_PROPERTY, properties),
+										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.LOGIN_PROPERTY, properties),
+										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, properties)),
 					new OvhSmsBuilder().useDefaults(properties));
 		} catch (Throwable e) {
 			LOG.debug("Can't register OVH implementation", e);
@@ -336,8 +338,10 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			// Use Cloudhopper SMPP implementation only if SmppClient class is
 			// in the classpath and the SmppConstants.SMPP_HOST_PROPERTY
 			// property is set
-			registerImplementation(new AndCondition<>(new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties), new RequiredPropertyCondition<Message>(
-					SmsConstants.SmppConstants.PORT_PROPERTY, properties), new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
+			registerImplementation(new AndCondition<>(
+										new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
+										new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
+										new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
 					new CloudhopperSMPPBuilder().useDefaults(properties));
 		} catch (Throwable e) {
 			LOG.debug("Can't register Cloudhopper implementation", e);

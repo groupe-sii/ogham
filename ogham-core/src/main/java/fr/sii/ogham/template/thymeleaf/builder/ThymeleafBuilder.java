@@ -70,7 +70,8 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 				templateResolver.setSuffix(suffix);
 			}
 		}
-		return new ThymeleafParser(engine, lookupResolver);
+		engine.addTemplateResolver(lookupResolver);
+		return new ThymeleafParser(engine);
 	}
 
 	/**
