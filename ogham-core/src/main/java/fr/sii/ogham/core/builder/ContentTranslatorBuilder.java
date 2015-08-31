@@ -38,15 +38,22 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	private static final Logger LOG = LoggerFactory.getLogger(ContentTranslatorBuilder.class);
 
 	/**
-	 * A simple translator that delegates the translation to all of the provided
-	 * implementations.
+	 * The builder for parsing templates. If set, then a
+	 * {@link TemplateContentTranslator} is created with this template builder.
 	 */
-	private EveryContentTranslator translator;
+	private TemplateBuilder templateBuilder;
 
-	public ContentTranslatorBuilder() {
-		super();
-		translator = new EveryContentTranslator();
-	}
+	/**
+	 * If true, a {@link MultiContentTranslator} is added to handle
+	 * {@link MultiContent}
+	 */
+	private boolean enableMultiContent;
+
+	/**
+	 * If true, a {@link InlineCssTranslator} and a
+	 * {@link InlineImageTranslator} are added
+	 */
+	private boolean enableInlining;
 
 	/**
 	 * Generate a chain translator that delegates translation of content to all
@@ -59,7 +66,26 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	@Override
 	public ContentTranslator build() throws BuildException {
 		LOG.info("Using translator that calls all registered translators");
-		LOG.debug("Registered translators: {}", translator.getTranslators());
+		EveryContentTranslator translator = new EveryContentTranslator();
+		if(templateBuilder != null) {
+			TemplateParser templateParser = templateBuilder.build();
+			LOG.debug("Registering content translator that parses templates using {}", templateParser);
+			translator.addTranslator(new TemplateContentTranslator(templateParser));
+		}
+		if(enableMultiContent) {
+			LOG.debug("Multi-content transformation is enabled");
+			translator.addTranslator(new MultiContentTranslator(translator));
+		}
+		if(enableInlining) {
+			// TODO: extract inliners init to their own builders
+			LOG.debug("CSS inlining is enabled");
+			LookupMappingResolver resolver = new LookupMappingResourceResolverBuilder().useDefaults().build();
+			translator.addTranslator(new InlineCssTranslator(new JsoupCssInliner(), resolver));
+			LOG.debug("Image inlining is enabled");
+			JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
+			ImageInliner imageInliner = new EveryImageInliner(new JsoupAttachImageInliner(new SequentialIdGenerator()), new JsoupBase64ImageInliner());
+			translator.addTranslator(new InlineImageTranslator(imageInliner, resolver, mimetypeProvider));
+		}
 		return translator;
 	}
 
@@ -102,27 +128,6 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	}
 
 	/**
-	 * Enable the management of templates using the provided template engine. It
-	 * adds a new translator for templates that will use the provided template
-	 * engine. The previous added ones are still available.
-	 * <p>
-	 * This method is automatically called when calling {@link #useDefaults()}.
-	 * </p>
-	 * 
-	 * @param parser
-	 *            the template parser to add
-	 * @return this builder instance for fluent use
-	 * @see TemplateContentTranslator More information about the translator for
-	 *      templates
-	 * @see TemplateParser More information about the parser implementation to
-	 *      use
-	 */
-	public ContentTranslatorBuilder withTemplate(TemplateParser parser) {
-		translator.addTranslator(new TemplateContentTranslator(parser));
-		return this;
-	}
-
-	/**
 	 * Enable the management of templates by delegating template engine
 	 * construction to the specialized builder. It adds a new translator for
 	 * templates that will use the provided template engine. The previous added
@@ -140,7 +145,8 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 *      helping to construct the template parser
 	 */
 	public ContentTranslatorBuilder withTemplate(TemplateBuilder builder) {
-		return withTemplate(builder.build());
+		this.templateBuilder = builder;
+		return this;
 	}
 
 	/**
@@ -158,7 +164,7 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 *      management
 	 */
 	public ContentTranslatorBuilder withMultiContentSupport() {
-		translator.addTranslator(new MultiContentTranslator(translator));
+		enableMultiContent = true;
 		return this;
 	}
 
@@ -177,12 +183,7 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 *      management
 	 */
 	public ContentTranslatorBuilder withInlining() {
-		LookupMappingResolver resolver = new LookupMappingResourceResolverBuilder().useDefaults().build();
-		translator.addTranslator(new InlineCssTranslator(new JsoupCssInliner(), resolver));
-		JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
-		// TODO: extract image inliner init to its own builder
-		ImageInliner imageInliner = new EveryImageInliner(new JsoupAttachImageInliner(new SequentialIdGenerator()), new JsoupBase64ImageInliner());
-		translator.addTranslator(new InlineImageTranslator(imageInliner, resolver, mimetypeProvider));
+		enableInlining = true;
 		return this;
 	}
 
@@ -218,5 +219,17 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 		withMultiContentSupport();
 		withInlining();
 		return this;
+	}
+
+	public TemplateBuilder getTemplateBuilder() {
+		return templateBuilder;
+	}
+
+	public boolean isEnableMultiContent() {
+		return enableMultiContent;
+	}
+
+	public boolean isEnableInlining() {
+		return enableInlining;
 	}
 }

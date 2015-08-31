@@ -50,12 +50,12 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * Configuration values come from system properties.
 	 * </p>
 	 * 
-	 * @param baseKey
-	 *            the prefix for the keys used for filling the message
+	 * @param baseKeys
+	 *            the prefix(es) for the keys used for filling the message
 	 * @return this instance for fluent use
 	 */
-	public MessageFillerBuilder useDefaults(String baseKey) {
-		return useDefaults(BuilderUtils.getDefaultProperties(), baseKey);
+	public MessageFillerBuilder useDefaults(String... baseKeys) {
+		return useDefaults(BuilderUtils.getDefaultProperties(), baseKeys);
 	}
 
 	/**
@@ -71,12 +71,12 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * 
 	 * @param properties
 	 *            the properties to use instead of default ones
-	 * @param baseKey
-	 *            the prefix for the keys used for filling the message
+	 * @param baseKeys
+	 *            the prefix(es) for the keys used for filling the message
 	 * @return this instance for fluent use
 	 */
-	public MessageFillerBuilder useDefaults(Properties properties, String baseKey) {
-		withConfigurationFiller(properties, baseKey);
+	public MessageFillerBuilder useDefaults(Properties properties, String... baseKeys) {
+		withConfigurationFiller(properties, baseKeys);
 		withSubjectFiller();
 		return this;
 	}
@@ -85,18 +85,20 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * Enables filling of messages with values that comes from provided
 	 * configuration properties.
 	 * <p>
-	 * Automatically called by {@link #useDefaults(String)} and
-	 * {@link #useDefaults(Properties, String)}
+	 * Automatically called by {@link #useDefaults(String...)} and
+	 * {@link #useDefaults(Properties, String...)}
 	 * </p>
 	 * 
 	 * @param props
 	 *            the properties that contains the values to set on the message
-	 * @param baseKey
-	 *            the prefix for the keys used for filling the message
+	 * @param baseKeys
+	 *            the prefix(es) for the keys used for filling the message
 	 * @return this instance for fluent use
 	 */
-	public MessageFillerBuilder withConfigurationFiller(Properties props, String baseKey) {
-		fillers.add(new PropertiesFiller(props, baseKey));
+	public MessageFillerBuilder withConfigurationFiller(Properties props, String... baseKeys) {
+		for(String baseKey : baseKeys) {
+			fillers.add(new PropertiesFiller(props, baseKey));
+		}
 		return this;
 	}
 
@@ -104,16 +106,16 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * Enables filling of messages with values that comes from system
 	 * configuration properties.
 	 * <p>
-	 * Automatically called by {@link #useDefaults(String)} and
-	 * {@link #useDefaults(Properties, String)}
+	 * Automatically called by {@link #useDefaults(String...)} and
+	 * {@link #useDefaults(Properties, String...)}
 	 * </p>
 	 * 
-	 * @param baseKey
-	 *            the prefix for the keys used for filling the message
+	 * @param baseKeys
+	 *            the prefix(es) for the keys used for filling the message
 	 * @return this instance for fluent use
 	 */
-	public MessageFillerBuilder withConfigurationFiller(String baseKey) {
-		return withConfigurationFiller(BuilderUtils.getDefaultProperties(), baseKey);
+	public MessageFillerBuilder withConfigurationFiller(String... baseKeys) {
+		return withConfigurationFiller(BuilderUtils.getDefaultProperties(), baseKeys);
 	}
 
 	/**
@@ -125,8 +127,8 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * <code>"Subject:"</code>, then it is used as subject</li>
 	 * </ul>
 	 * <p>
-	 * Automatically called by {@link #useDefaults(String)} and
-	 * {@link #useDefaults(Properties, String)}
+	 * Automatically called by {@link #useDefaults(String...)} and
+	 * {@link #useDefaults(Properties, String...)}
 	 * </p>
 	 * 
 	 * @return this instance for fluent use

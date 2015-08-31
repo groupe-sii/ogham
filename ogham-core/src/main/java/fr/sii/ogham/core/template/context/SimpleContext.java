@@ -51,9 +51,11 @@ public class SimpleContext implements Context {
 	 *            the name of the variable
 	 * @param value
 	 *            the value of the variable
+	 * @return the context for fluent use
 	 */
-	public final void addValue(String variable, Object value) {
+	public final SimpleContext addValue(String variable, Object value) {
 		variables.put(variable, value);
+		return this;
 	}
 
 	@Override

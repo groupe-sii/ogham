@@ -30,7 +30,7 @@ import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 public class CloudhopperSmppTest {
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
 
-	private static final String INTERNATIONAL_PHONE_NUMBER = "+330203040506";
+	private static final String INTERNATIONAL_PHONE_NUMBER = "+33203040506";
 
 	private CloudhopperSMPPSender sender;
 

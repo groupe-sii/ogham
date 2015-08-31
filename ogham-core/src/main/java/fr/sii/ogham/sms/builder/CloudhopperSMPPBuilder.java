@@ -54,8 +54,7 @@ public class CloudhopperSMPPBuilder implements Builder<CloudhopperSMPPSender> {
 			throw new BuildException("Unable to build default charset handler", e);
 		}
 		
-		// Default phone number translator
-		PhoneNumberTranslator fallbackPhoneNumberTranslator = new DefaultPhoneNumberTranslatorBuilder().useFallbackDefaults().build();
+		PhoneNumberTranslator fallbackPhoneNumberTranslator = new DefaultPhoneNumberTranslatorBuilder().useDefaults().build();
 
 		return new CloudhopperSMPPSender(sessionConfiguration, options, charsetHandler, fallbackPhoneNumberTranslator);
 	}

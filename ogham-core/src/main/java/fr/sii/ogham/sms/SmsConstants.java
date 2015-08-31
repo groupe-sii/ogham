@@ -7,6 +7,11 @@ public interface SmsConstants {
 	public static final String PROPERTIES_PREFIX = "ogham.sms";
 
 	/**
+	 * The prefix for filling SMS using properties
+	 */
+	public static final String[] FILL_PREFIXES = {"sms", "ogham.sms"};
+
+	/**
 	 * Specialized constants for smsglobal API
 	 * 
 	 * @author Aurélien Baudet

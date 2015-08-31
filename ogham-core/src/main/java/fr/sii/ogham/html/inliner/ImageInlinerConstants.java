@@ -9,10 +9,11 @@ package fr.sii.ogham.html.inliner;
  */
 public interface ImageInlinerConstants {
 	/**
+	 * <p>
 	 * The attribute name to indicate which strategy for inlining to apply if
 	 * the default one is not appropriated.
+	 * </p>
 	 * 
-	 * <p>
 	 * For example:
 	 * 
 	 * <pre>
@@ -21,19 +22,19 @@ public interface ImageInlinerConstants {
 	 * }
 	 * </pre>
 	 * 
-	 * It forces to use <ocde>base64</code> inlining for this image
-	 * </p>
+	 * It forces to use <code>base64</code> inlining for this image
 	 */
 	public static final String INLINE_MODE_ATTR = "data-inline-mode";
 
 	/**
+	 * <p>
 	 * The attribute name to indicate the modes that are not allowed for
 	 * inlining. The value can contain several modes separated by colon (,).
 	 * This attribute is complementary with the previous one: it is useful in
 	 * order to not force statically one mode directly in the template. It just
 	 * tells that one or several modes can't be applied.
+	 * </p>
 	 * 
-	 * <p>
 	 * For example :
 	 * 
 	 * <pre>
@@ -44,7 +45,6 @@ public interface ImageInlinerConstants {
 	 * 
 	 * It indicates that all modes are applicable except the mode
 	 * <code>attach</code>
-	 * </p>
 	 */
 	public static final String SKIP_INLINE_ATTR = "data-skip-inline";
 

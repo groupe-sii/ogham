@@ -13,19 +13,10 @@ import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
 public interface PhoneNumberTranslatorBuilder extends Builder<PhoneNumberTranslator> {
 
 	/**
-	 * @return default recipient phone number translator
+	 * Tells the builder to use default values and behaviors.
+	 * 
+	 * @return this instance for fluent use
 	 */
-	PhoneNumberTranslatorBuilder useRecipientDefaults();
-
-	/**
-	 * @return default sender phone number translator
-	 */
-	PhoneNumberTranslatorBuilder useSenderDefaults();
-
-	/**
-	 * @see CloudhopperSMPPBuilder
-	 * @return default fallback phone number translator
-	 */
-	PhoneNumberTranslatorBuilder useFallbackDefaults();
+	PhoneNumberTranslatorBuilder useDefaults();
 
 }

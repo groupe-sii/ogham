@@ -40,7 +40,7 @@ public class HttpUtils {
 	 * parameters (already contains a '?' character), then the parameters are
 	 * added to the existing parameters. The parameters are converted into
 	 * <code>application/x-www-form-urlencoded</code>. For example:
-	 * <code>field1=value1&field1=value2&field2=value3</code>. The special
+	 * <code>field1=value1&amp;field1=value2&amp;field2=value3</code>. The special
 	 * characters are encoded. If there is a space, it is encoded into '%20'.
 	 * 
 	 * @param url
@@ -77,7 +77,7 @@ public class HttpUtils {
 	 * parameters (already contains a '?' character), then the parameters are
 	 * added to the existing parameters. The parameters are converted into
 	 * <code>application/x-www-form-urlencoded</code>. For example:
-	 * <code>field1=value1&field1=value2&field2=value3</code>. The special
+	 * <code>field1=value1&amp;field1=value2&amp;field2=value3</code>. The special
 	 * characters are encoded. If there is a space, it is encoded into '%20'.
 	 * 
 	 * @param url
@@ -99,7 +99,7 @@ public class HttpUtils {
 	 * parameters (already contains a '?' character), then the parameters are
 	 * added to the existing parameters. The parameters are converted into
 	 * <code>application/x-www-form-urlencoded</code>. For example:
-	 * <code>field1=value1&field1=value2&field2=value3</code>. The special
+	 * <code>field1=value1&amp;field1=value2&amp;field2=value3</code>. The special
 	 * characters are encoded. If there is a space, it is encoded into '%20'.
 	 * </p>
 	 * The parameters can be anything:
@@ -147,7 +147,7 @@ public class HttpUtils {
 	 * parameters (already contains a '?' character), then the parameters are
 	 * added to the existing parameters. The parameters are converted into
 	 * <code>application/x-www-form-urlencoded</code>. For example:
-	 * <code>field1=value1&field1=value2&field2=value3</code>. The special
+	 * <code>field1=value1&amp;field1=value2&amp;field2=value3</code>. The special
 	 * characters are encoded. If there is a space, it is encoded into '%20'.
 	 * <p>
 	 * Each entry of the map is used as a parameter. The key of the entry is the

@@ -281,7 +281,9 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 		// failure when javax.mail jar is not in the classpath
 		try {
 			registerImplementation(new AndCondition<>(
-										new RequiredPropertyCondition<Message>("mail.smtp.host", properties),
+										new OrCondition<>(
+												new RequiredPropertyCondition<Message>("mail.smtp.host", properties),
+												new RequiredPropertyCondition<Message>("mail.host", properties)),
 										new RequiredClassCondition<Message>("javax.mail.Transport"),
 										new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")),
 					new JavaMailBuilder().useDefaults(properties));
@@ -351,7 +353,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * properties.</li>
 	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
 	 * </ul>
-	 * See {@link MessageFillerBuilder#useDefaults(Properties, String)} for more
+	 * See {@link MessageFillerBuilder#useDefaults(Properties, String...)} for more
 	 * information.
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
@@ -360,12 +362,12 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * 
 	 * @param props
 	 *            the properties that contains the values to set on the email
-	 * @param baseKey
-	 *            the prefix for the keys used for filling the message
+	 * @param baseKeys
+	 *            the prefix(es) for the keys used for filling the message
 	 * @return this instance for fluent use
 	 */
-	public EmailBuilder withAutoFilling(Properties props, String baseKey) {
-		withAutoFilling(new MessageFillerBuilder().useDefaults(props, baseKey));
+	public EmailBuilder withAutoFilling(Properties props, String... baseKeys) {
+		withAutoFilling(new MessageFillerBuilder().useDefaults(props, baseKeys));
 		return this;
 	}
 
@@ -374,7 +376,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * sources:
 	 * <ul>
 	 * <li>Fill email with values that come from provided configuration
-	 * properties. It uses the default prefix for the keys ("ogham.email").</li>
+	 * properties. It uses the default prefix for the keys ("mail" and "ogham.email").</li>
 	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
 	 * </ul>
 	 * <p>
@@ -387,7 +389,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withAutoFilling(Properties props) {
-		return withAutoFilling(props, EmailConstants.PROPERTIES_PREFIX);
+		return withAutoFilling(props, EmailConstants.FILL_PREFIXES);
 	}
 
 	/**
@@ -531,5 +533,34 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 */
 	public SendGridBuilder getSendGridBuilder() {
 		return getImplementationBuilder(SendGridBuilder.class);
+	}
+
+	/**
+	 * Get the builder used for filling messages.
+	 * 
+	 * @return the builder used for filling messages
+	 */
+	public MessageFillerBuilder getMessageFillerBuilder() {
+		return messageFillerBuilder;
+	}
+
+	/**
+	 * Get the builder used transform the content of the message.
+	 * 
+	 * @return the builder used to transform the content of the message
+	 */
+	public ContentTranslatorBuilder getContentTranslatorBuilder() {
+		return contentTranslatorBuilder;
+	}
+
+	/**
+	 * Get the builder used to transform the resources associated to the
+	 * message.
+	 * 
+	 * @return the builder used to transform the resources associated to the
+	 *         message
+	 */
+	public AttachmentResourceTranslatorBuilder getResourceTranslatorBuilder() {
+		return resourceTranslatorBuilder;
 	}
 }

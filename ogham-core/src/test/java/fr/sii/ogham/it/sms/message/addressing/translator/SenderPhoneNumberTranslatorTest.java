@@ -6,7 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import fr.sii.ogham.helper.rule.LoggingTestRule;
-import fr.sii.ogham.sms.builder.DefaultPhoneNumberTranslatorBuilder;
+import fr.sii.ogham.sms.builder.SenderPhoneNumberTranslatorBuilder;
 import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
@@ -23,7 +23,7 @@ public class SenderPhoneNumberTranslatorTest {
 
 	@Before
 	public void before() {
-		translator = new DefaultPhoneNumberTranslatorBuilder().useSenderDefaults().build();
+		translator = new SenderPhoneNumberTranslatorBuilder().useDefaults().build();
 	}
 
 	@Test(expected = NullPointerException.class)

@@ -28,7 +28,7 @@ import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
 public class SmsCustomImplTest {
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
 
-	private static final String INTERNATIONAL_PHONE_NUMBER = "+330203040506";
+	private static final String INTERNATIONAL_PHONE_NUMBER = "+33203040506";
 
 	private MessagingService oghamService;
 

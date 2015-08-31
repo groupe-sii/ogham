@@ -54,9 +54,9 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 
 	public ThymeleafBuilder() {
 		super();
-		engine = new TemplateEngine();
-		lookupResolver = new ThymeleafLookupMappingResolver();
-		resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter(), new StringResolverAdapter());
+		this.engine = new TemplateEngine();
+		this.lookupResolver = new ThymeleafLookupMappingResolver();
+		this.resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter(), new StringResolverAdapter());
 		prefix = "";
 		suffix = "";
 	}
