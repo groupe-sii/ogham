@@ -38,8 +38,8 @@ public class OghamAutoConfiguration {
 		// TODO: use Spring message source and resource resolver too ?
 		public MessagingService messagingService(PropertiesBridge propertiesBridge, SpringTemplateEngine engine) {
 			MessagingBuilder builder = new MessagingBuilder().useAllDefaults(propertiesBridge.convert(environment));
-			builder.getEmailBuilder().getContentTranslatorBuilder().getTemplateBuilder().getThymeleafParser().withTemplateEngine(engine);
-			builder.getSmsBuilder().getContentTranslatorBuilder().getTemplateBuilder().getThymeleafParser().withTemplateEngine(engine);
+			builder.getEmailBuilder().getTemplateBuilder().getThymeleafParser().withTemplateEngine(engine);
+			builder.getSmsBuilder().getTemplateBuilder().getThymeleafParser().withTemplateEngine(engine);
 			return builder.build();
 		}
 	}

@@ -12,6 +12,7 @@ import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.ContentTranslatorBuilder;
 import fr.sii.ogham.core.builder.MessageFillerBuilder;
 import fr.sii.ogham.core.builder.MessagingSenderBuilder;
+import fr.sii.ogham.core.builder.TemplateBuilder;
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.RequiredClassCondition;
@@ -33,6 +34,7 @@ import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
 import fr.sii.ogham.sms.sender.impl.PhoneNumberTranslatorSender;
 import fr.sii.ogham.sms.sender.impl.SmsglobalRestSender;
+import fr.sii.ogham.template.TemplateConstants;
 
 /**
  * <p>
@@ -68,6 +70,9 @@ import fr.sii.ogham.sms.sender.impl.SmsglobalRestSender;
  * @see SmsSender
  * @see OvhSmsSender
  * @see CloudhopperSMPPSender
+ * @see TemplateBuilder
+ * @see ContentTranslatorBuilder
+ * @see MessageFillerBuilder
  */
 public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);
@@ -109,6 +114,16 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 */
 	private PhoneNumberTranslatorBuilder senderNumberTranslatorBuilder;
 
+	/**
+	 * Own property key for template resolution prefix
+	 */
+	private String templatePrefixKey;
+
+	/**
+	 * Own property key for template resolution prefix
+	 */
+	private String templateSuffixKey;
+
 	public SmsBuilder() {
 		super();
 		sender = smsSender = new SmsSender();
@@ -123,13 +138,21 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			smsSender.addImplementation(impl.getKey(), s);
 		}
 		if (contentTranslatorBuilder != null) {
+			if (templatePrefixKey != null) {
+				LOG.debug("Use custom property key {} for prefix template resolution", templatePrefixKey);
+				getTemplateBuilder().setPrefixKey(templatePrefixKey);
+			}
+			if (templateSuffixKey != null) {
+				LOG.debug("Use custom property key {} for suffix template resolution", templateSuffixKey);
+				getTemplateBuilder().setSuffixKey(templateSuffixKey);
+			}
 			sender = new ContentTranslatorSender(contentTranslatorBuilder.build(), sender);
 		}
-		if(senderNumberTranslatorBuilder == null) {
+		if (senderNumberTranslatorBuilder == null) {
 			LOG.debug("Using default phone number translation for sender phone number");
 			senderNumberTranslatorBuilder = new DefaultPhoneNumberTranslatorBuilder();
 		}
-		if(recipientNumberTranslatorBuilder == null) {
+		if (recipientNumberTranslatorBuilder == null) {
 			LOG.debug("Using default phone number translation for recipient phone number");
 			recipientNumberTranslatorBuilder = new DefaultPhoneNumberTranslatorBuilder();
 		}
@@ -304,11 +327,13 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 		try {
 			// Use OVH implementation only if SmsConstants.ACCOUNT_PROPERTY is
 			// set
+			// @formatter:off
 			registerImplementation(new AndCondition<>(
 										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.ACCOUNT_PROPERTY, properties),
 										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.LOGIN_PROPERTY, properties),
 										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, properties)),
 					new OvhSmsBuilder().useDefaults(properties));
+			// @formatter:on
 		} catch (Throwable e) {
 			LOG.debug("Can't register OVH implementation", e);
 		}
@@ -338,11 +363,13 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			// Use Cloudhopper SMPP implementation only if SmppClient class is
 			// in the classpath and the SmppConstants.SMPP_HOST_PROPERTY
 			// property is set
+			// @formatter:off
 			registerImplementation(new AndCondition<>(
 										new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
 										new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
 										new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
 					new CloudhopperSMPPBuilder().useDefaults(properties));
+			// @formatter:on
 		} catch (Throwable e) {
 			LOG.debug("Can't register Cloudhopper implementation", e);
 		}
@@ -446,6 +473,86 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * <p>
+	 * Calling this method will enable different location for SMS templates from
+	 * default one. The location will be specified by different property keys
+	 * for prefix and suffix.
+	 * </p>
+	 * 
+	 * By default default properties are:
+	 * <ul>
+	 * <li>ogham.template.prefix (see {@link TemplateConstants#PREFIX_PROPERTY})
+	 * </li>
+	 * <li>ogham.template.suffix (see {@link TemplateConstants#SUFFIX_PROPERTY}</li>
+	 * </ul>
+	 * 
+	 * Calling this method will change the property keys to:
+	 * <ul>
+	 * <li>ogham.sms.template.prefix (see
+	 * {@link fr.sii.ogham.sms.SmsConstants.TemplateConstants#PREFIX_PROPERTY}</li>
+	 * <li>ogham.sms.template.suffix (see
+	 * {@link fr.sii.ogham.sms.SmsConstants.TemplateConstants#SUFFIX_PROPERTY}</li>
+	 * </ul>
+	 * 
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder enableSmsTemplateKeys() {
+		setTemplatePrefixKey(SmsConstants.TemplateConstants.PREFIX_PROPERTY);
+		setTemplateSuffixKey(SmsConstants.TemplateConstants.SUFFIX_PROPERTY);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Calling this method will enable different location for SMS templates from
+	 * default one. The location will be specified by a different property key
+	 * for prefix.
+	 * </p>
+	 * 
+	 * <p>
+	 * By default default property key is ogham.template.prefix (see
+	 * {@link TemplateConstants#PREFIX_PROPERTY})
+	 * </p>
+	 * 
+	 * <p>
+	 * Calling this method will change the property key to the provided key.
+	 * </p>
+	 * 
+	 * @param prefixKey
+	 *            the new key for the SMS template prefix
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder setTemplatePrefixKey(String prefixKey) {
+		this.templatePrefixKey = prefixKey;
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Calling this method will enable different location for SMS templates from
+	 * default one. The location will be specified by a different property key
+	 * for suffix.
+	 * </p>
+	 * 
+	 * <p>
+	 * By default default property key is ogham.template.prefix (see
+	 * {@link TemplateConstants#SUFFIX_PROPERTY})
+	 * </p>
+	 * 
+	 * <p>
+	 * Calling this method will change the property key to the provided key.
+	 * </p>
+	 * 
+	 * @param suffixKey
+	 *            the new key for the SMS template suffix
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder setTemplateSuffixKey(String suffixKey) {
+		this.templateSuffixKey = suffixKey;
+		return this;
+	}
+
+	/**
 	 * Enables Addressing strategy using all default behaviors and values. See
 	 * {@link SenderPhoneNumberTranslatorBuilder} and
 	 * {@link RecipientPhoneNumberTranslatorBuilder}.
@@ -511,18 +618,99 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * Get the builder used for filling messages.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Enable/disable automatic filling of messages with values provided in
+	 * configuration</li>
+	 * <li>Enable/disable automatic filling of subject for messages based on
+	 * templates</li>
+	 * <li>Add your own message filler</li>
+	 * </ul>
+	 * 
+	 * @return the builder used for filling messages
+	 */
 	public MessageFillerBuilder getMessageFillerBuilder() {
 		return messageFillerBuilder;
 	}
 
+	/**
+	 * <p>
+	 * Get the builder used transform the content of the message. It may be
+	 * useful to fine tune templating mechanism, resource inlining and messages
+	 * with with several contents.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize templating mechanism (see {@link #getTemplateBuilder()})</li>
+	 * <li>Enable/disable support for messages with multiple contents</li>
+	 * <li>Enable/disable support for inlining of resources</li>
+	 * <li>Add your own content translator</li>
+	 * </ul>
+	 * 
+	 * @return the builder used to transform the content of the message
+	 */
 	public ContentTranslatorBuilder getContentTranslatorBuilder() {
 		return contentTranslatorBuilder;
 	}
 
+	/**
+	 * <p>
+	 * Shortcut to directly access template builder for fine tuning templating
+	 * mechanism.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize how template resources are resolved</li>
+	 * <li>Register a custom lookup mapping resolver for template resources</li>
+	 * <li>Use your own template engine</li>
+	 * <li>Customize the template engine configuration</li>
+	 * <li>Set the prefix and suffix for template resolution</li>
+	 * <li>Set the property key for prefix and suffix resolution</li>
+	 * </ul>
+	 * 
+	 * @return the template builder
+	 */
+	public TemplateBuilder getTemplateBuilder() {
+		return contentTranslatorBuilder.getTemplateBuilder();
+	}
+
+	/**
+	 * <p>
+	 * Get the builder for transformation of recipient phone numbers.
+	 * </p>
+	 * 
+	 * Access to this builder if you want to:
+	 * <ul>
+	 * <li>Enable/disable international format transformation</li>
+	 * </ul>
+	 * 
+	 * @return the builder for transformation of recipient phone numbers
+	 */
 	public PhoneNumberTranslatorBuilder getRecipientNumberTranslatorBuilder() {
 		return recipientNumberTranslatorBuilder;
 	}
 
+	/**
+	 * <p>
+	 * Get the builder for transformation of sender phone numbers.
+	 * </p>
+	 * 
+	 * Access to this builder if you want to:
+	 * <ul>
+	 * <li>Enable/disable alpha-numeric format transformation</li>
+	 * <li>Enable/disable short code format transformation</li>
+	 * <li>Enable/disable international format transformation</li>
+	 * </ul>
+	 * 
+	 * @return the builder for transformation of sender phone numbers
+	 */
 	public PhoneNumberTranslatorBuilder getSenderNumberTranslatorBuilder() {
 		return senderNumberTranslatorBuilder;
 	}

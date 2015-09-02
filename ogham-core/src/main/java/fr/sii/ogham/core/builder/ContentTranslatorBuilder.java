@@ -221,15 +221,24 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * Get the builder used to handle template support.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize how template resources are resolved</li>
+	 * <li>Register a custom lookup mapping resolver for template resources</li>
+	 * <li>Use your own template engine</li>
+	 * <li>Customize the template engine configuration</li>
+	 * <li>Set the prefix and suffix for template resolution</li>
+	 * <li>Set the property key for prefix and suffix resolution</li>
+	 * </ul>
+	 * 
+	 * @return the template builder
+	 */
 	public TemplateBuilder getTemplateBuilder() {
 		return templateBuilder;
-	}
-
-	public boolean isEnableMultiContent() {
-		return enableMultiContent;
-	}
-
-	public boolean isEnableInlining() {
-		return enableInlining;
 	}
 }

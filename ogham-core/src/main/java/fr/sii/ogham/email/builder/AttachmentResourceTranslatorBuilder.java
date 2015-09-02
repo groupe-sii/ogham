@@ -12,11 +12,14 @@ import fr.sii.ogham.core.translator.resource.EveryResourceTranslator;
 import fr.sii.ogham.core.translator.resource.LookupResourceTranslator;
 
 /**
+ * <p>
  * Builder for constructing a chained translator. Each translator is able to
  * handle a kind of resource and to transform it into another resource.
- * 
+ * </p>
+ * <p>
  * This builder simplifies the definition of the translators to use. Each
  * defined translator will be applied on each resource.
+ * </p>
  * 
  * @author Aurélien Baudet
  *
@@ -51,7 +54,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	@Override
 	public AttachmentResourceTranslator build() throws BuildException {
 		LOG.info("Using translator that calls all registered translators");
-		if(resolverBuilder!=null) {
+		if (resolverBuilder != null) {
 			translator.addTranslator(new LookupResourceTranslator(resolverBuilder.build()));
 		}
 		LOG.debug("Registered translators: {}", translator.getTranslators());
@@ -116,10 +119,27 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	 * @return this instance for fluent use
 	 */
 	public AttachmentResourceTranslatorBuilder withLookupResolver(String lookup, ResourceResolver resource) {
-		if(resolverBuilder==null) {
+		if (resolverBuilder == null) {
 			resolverBuilder = new LookupMappingResourceResolverBuilder();
 		}
 		resolverBuilder.withLookupResolver(lookup, resource);
 		return this;
+	}
+
+	/**
+	 * <p>
+	 * Get the builder used to handle resource resolution.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize how attached resources are resolved</li>
+	 * <li>Register a custom lookup mapping resolver for attached resources</li>
+	 * </ul>
+	 * 
+	 * @return the builder used to handle resource resolution
+	 */
+	public LookupMappingResourceResolverBuilder getResolverBuilder() {
+		return resolverBuilder;
 	}
 }

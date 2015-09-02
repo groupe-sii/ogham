@@ -12,6 +12,7 @@ import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.ContentTranslatorBuilder;
 import fr.sii.ogham.core.builder.MessageFillerBuilder;
 import fr.sii.ogham.core.builder.MessagingSenderBuilder;
+import fr.sii.ogham.core.builder.TemplateBuilder;
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.OrCondition;
@@ -24,8 +25,8 @@ import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.sender.ConditionalSender;
 import fr.sii.ogham.core.sender.ContentTranslatorSender;
 import fr.sii.ogham.core.sender.FillerSender;
-import fr.sii.ogham.core.sender.MultiImplementationSender;
 import fr.sii.ogham.core.sender.MessageSender;
+import fr.sii.ogham.core.sender.MultiImplementationSender;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
 import fr.sii.ogham.core.util.BuilderUtils;
@@ -33,6 +34,7 @@ import fr.sii.ogham.email.EmailConstants;
 import fr.sii.ogham.email.EmailConstants.SendGridConstants;
 import fr.sii.ogham.email.sender.AttachmentResourceTranslatorSender;
 import fr.sii.ogham.email.sender.EmailSender;
+import fr.sii.ogham.template.TemplateConstants;
 
 /**
  * <p>
@@ -63,6 +65,11 @@ import fr.sii.ogham.email.sender.EmailSender;
  * @author Aurélien Baudet
  * @see EmailSender
  * @see JavaMailBuilder
+ * @see SendGridBuilder
+ * @see TemplateBuilder
+ * @see AttachmentResourceTranslatorBuilder
+ * @see ContentTranslatorBuilder
+ * @see MessageFillerBuilder
  */
 public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(EmailBuilder.class);
@@ -99,6 +106,16 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 */
 	private Map<Condition<Message>, Builder<? extends MessageSender>> implementations;
 
+	/**
+	 * Own property key for template resolution prefix
+	 */
+	private String templatePrefixKey;
+
+	/**
+	 * Own property key for template resolution prefix
+	 */
+	private String templateSuffixKey;
+
 	public EmailBuilder() {
 		super();
 		sender = emailSender = new EmailSender();
@@ -123,6 +140,14 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			sender = new AttachmentResourceTranslatorSender(resourceTranslator, sender);
 		}
 		if (contentTranslatorBuilder != null) {
+			if (templatePrefixKey != null) {
+				LOG.debug("Use custom property key {} for prefix template resolution", templatePrefixKey);
+				getTemplateBuilder().setPrefixKey(templatePrefixKey);
+			}
+			if (templateSuffixKey != null) {
+				LOG.debug("Use custom property key {} for suffix template resolution", templateSuffixKey);
+				getTemplateBuilder().setSuffixKey(templateSuffixKey);
+			}
 			ContentTranslator contentTranslator = contentTranslatorBuilder.build();
 			LOG.debug("Content translation enabled {}", contentTranslator);
 			sender = new ContentTranslatorSender(contentTranslator, sender);
@@ -172,6 +197,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 		registerDefaultImplementations(properties);
 		withAutoFilling(properties);
 		withTemplate(properties);
+		enableEmailTemplateKeys();
 		withAttachmentFeatures();
 		return this;
 	}
@@ -280,13 +306,15 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 		// the classpath. The try/catch clause is mandatory in order to prevent
 		// failure when javax.mail jar is not in the classpath
 		try {
+			// @formatter:off
 			registerImplementation(new AndCondition<>(
 										new OrCondition<>(
 												new RequiredPropertyCondition<Message>("mail.smtp.host", properties),
-												new RequiredPropertyCondition<Message>("mail.host", properties)),
+												new RequiredPropertyCondition<Message>("mail.host",	properties)),
 										new RequiredClassCondition<Message>("javax.mail.Transport"),
 										new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")),
 					new JavaMailBuilder().useDefaults(properties));
+			// @formatter:on
 		} catch (Throwable e) {
 			LOG.debug("Can't register Java Mail implementation", e);
 		}
@@ -317,6 +345,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 		// the classpath. The try/catch clause is mandatory in order to prevent
 		// failure when sendgrid jar is not in the classpath
 		try {
+			// @formatter:off
 			registerImplementation(new AndCondition<>(
 										new OrCondition<>(
 												new RequiredPropertyCondition<Message>(SendGridConstants.API_KEY, properties),
@@ -325,6 +354,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 														new RequiredPropertyCondition<Message>(SendGridConstants.PASSWORD, properties))),
 										new RequiredClassCondition<Message>("com.sendgrid.SendGrid")),
 					new SendGridBuilder().useDefaults(properties));
+			// @formatter:on
 		} catch (Throwable e) {
 			LOG.debug("Can't register SendGrid implementation", e);
 		}
@@ -353,8 +383,8 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * properties.</li>
 	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
 	 * </ul>
-	 * See {@link MessageFillerBuilder#useDefaults(Properties, String...)} for more
-	 * information.
+	 * See {@link MessageFillerBuilder#useDefaults(Properties, String...)} for
+	 * more information.
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
 	 * {@link #useDefaults(Properties)}
@@ -376,7 +406,8 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * sources:
 	 * <ul>
 	 * <li>Fill email with values that come from provided configuration
-	 * properties. It uses the default prefix for the keys ("mail" and "ogham.email").</li>
+	 * properties. It uses the default prefix for the keys ("mail" and
+	 * "ogham.email").</li>
 	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
 	 * </ul>
 	 * <p>
@@ -459,6 +490,88 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * <p>
+	 * Calling this method will enable different location for email templates
+	 * from default one. The location will be specified by different property
+	 * keys for prefix and suffix.
+	 * </p>
+	 * 
+	 * By default default properties are:
+	 * <ul>
+	 * <li>ogham.template.prefix (see {@link TemplateConstants#PREFIX_PROPERTY})
+	 * </li>
+	 * <li>ogham.template.suffix (see {@link TemplateConstants#SUFFIX_PROPERTY}</li>
+	 * </ul>
+	 * 
+	 * Calling this method will change the property keys to:
+	 * <ul>
+	 * <li>ogham.email.template.prefix (see
+	 * {@link fr.sii.ogham.email.EmailConstants.TemplateConstants#PREFIX_PROPERTY}
+	 * </li>
+	 * <li>ogham.email.template.suffix (see
+	 * {@link fr.sii.ogham.email.EmailConstants.TemplateConstants#SUFFIX_PROPERTY}
+	 * </li>
+	 * </ul>
+	 * 
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder enableEmailTemplateKeys() {
+		setTemplatePrefixKey(EmailConstants.TemplateConstants.PREFIX_PROPERTY);
+		setTemplateSuffixKey(EmailConstants.TemplateConstants.SUFFIX_PROPERTY);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Calling this method will enable different location for email templates
+	 * from default one. The location will be specified by a different property
+	 * key for prefix.
+	 * </p>
+	 * 
+	 * <p>
+	 * By default default property key is ogham.template.prefix (see
+	 * {@link TemplateConstants#PREFIX_PROPERTY})
+	 * </p>
+	 * 
+	 * <p>
+	 * Calling this method will change the property key to the provided key.
+	 * </p>
+	 * 
+	 * @param prefixKey
+	 *            the new key for the email template prefix
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder setTemplatePrefixKey(String prefixKey) {
+		this.templatePrefixKey = prefixKey;
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Calling this method will enable different location for email templates
+	 * from default one. The location will be specified by a different property
+	 * key for suffix.
+	 * </p>
+	 * 
+	 * <p>
+	 * By default default property key is ogham.template.prefix (see
+	 * {@link TemplateConstants#SUFFIX_PROPERTY})
+	 * </p>
+	 * 
+	 * <p>
+	 * Calling this method will change the property key to the provided key.
+	 * </p>
+	 * 
+	 * @param suffixKey
+	 *            the new key for the email template suffix
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder setTemplateSuffixKey(String suffixKey) {
+		this.templateSuffixKey = suffixKey;
+		return this;
+	}
+
+	/**
 	 * Enable attachment features like attachment resolution based on lookup
 	 * mapping. It delegates to {@link AttachmentResourceTranslatorBuilder} with
 	 * the default behavior and values (see
@@ -494,8 +607,14 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * <p>
 	 * Get reference to the specialized builder. It may be useful to fine tune a
 	 * specific implementation.
+	 * </p>
+	 * <p>
+	 * There also exists shortcuts: {@link #getJavaMailBuilder()} and
+	 * {@link #getSendGridBuilder()}.
+	 * </p>
 	 * 
 	 * @param clazz
 	 *            the class of the builder to get
@@ -516,8 +635,19 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * <p>
 	 * Get the reference to the specialized builder for Java Mail API. It may be
 	 * useful to fine tune Java Mail API implementation.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize content handler management</li>
+	 * <li>Customize resource attachment handler management</li>
+	 * <li>Customize Mimetype detection</li>
+	 * <li>Use custom Authenticator</li>
+	 * <li>Use custom interceptor</li>
+	 * </ul>
 	 * 
 	 * @return The specialized builder for Java Mail API
 	 */
@@ -526,8 +656,18 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * <p>
 	 * Get the reference to the specialized builder for SendGrid. It may be
 	 * useful to fine tune SendGrid implementation.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize content handler management</li>
+	 * <li>Customize Mimetype detection</li>
+	 * <li>Customize username/password/API key</li>
+	 * <li>Provide your own SendGrid client implementation</li>
+	 * </ul>
 	 * 
 	 * @return The specialized builder for SendGrid
 	 */
@@ -536,7 +676,18 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * <p>
 	 * Get the builder used for filling messages.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Enable/disable automatic filling of messages with values provided in
+	 * configuration</li>
+	 * <li>Enable/disable automatic filling of subject for messages based on
+	 * templates</li>
+	 * <li>Add your own message filler</li>
+	 * </ul>
 	 * 
 	 * @return the builder used for filling messages
 	 */
@@ -545,7 +696,19 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
-	 * Get the builder used transform the content of the message.
+	 * <p>
+	 * Get the builder used transform the content of the message. It may be
+	 * useful to fine tune templating mechanism, resource inlining and messages
+	 * with with several contents.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize templating mechanism (see {@link #getTemplateBuilder()})</li>
+	 * <li>Enable/disable support for messages with multiple contents</li>
+	 * <li>Enable/disable support for inlining of resources</li>
+	 * <li>Add your own content translator</li>
+	 * </ul>
 	 * 
 	 * @return the builder used to transform the content of the message
 	 */
@@ -554,8 +717,40 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * <p>
+	 * Shortcut to directly access template builder for fine tuning templating
+	 * mechanism.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize how template resources are resolved</li>
+	 * <li>Register a custom lookup mapping resolver for template resources</li>
+	 * <li>Use your own template engine</li>
+	 * <li>Customize the template engine configuration</li>
+	 * <li>Set the prefix and suffix for template resolution</li>
+	 * <li>Set the property key for prefix and suffix resolution</li>
+	 * </ul>
+	 * 
+	 * @return the template builder
+	 */
+	public TemplateBuilder getTemplateBuilder() {
+		return contentTranslatorBuilder.getTemplateBuilder();
+	}
+
+	/**
+	 * <p>
 	 * Get the builder used to transform the resources associated to the
-	 * message.
+	 * message. It may be useful to fine tune how to attach resources to
+	 * messages.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize how attached resources are transformed</li>
+	 * <li>Customize how attached resources are resolved for transformation</li>
+	 * <li>Register a custom lookup mapping resolver for attached resources</li>
+	 * </ul>
 	 * 
 	 * @return the builder used to transform the resources associated to the
 	 *         message

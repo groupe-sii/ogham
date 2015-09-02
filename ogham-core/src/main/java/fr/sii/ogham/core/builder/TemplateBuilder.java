@@ -19,6 +19,7 @@ import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.template.TemplateConstants;
 import fr.sii.ogham.template.thymeleaf.ThymeleafParser;
 import fr.sii.ogham.template.thymeleaf.ThymeleafTemplateDetector;
 import fr.sii.ogham.template.thymeleaf.builder.ThymeleafBuilder;
@@ -51,21 +52,6 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	private static final Logger LOG = LoggerFactory.getLogger(TemplateBuilder.class);
 
 	/**
-	 * The prefix for properties used by the template engines
-	 */
-	public static final String PROPERTIES_PREFIX = "ogham.template";
-
-	/**
-	 * The property key for the prefix of the template resolution
-	 */
-	public static final String PREFIX_PROPERTY = PROPERTIES_PREFIX + ".prefix";
-
-	/**
-	 * The property key for the suffix of the template resolution
-	 */
-	public static final String SUFFIX_PROPERTY = PROPERTIES_PREFIX + ".suffix";
-
-	/**
 	 * The builder used to generate template resolution
 	 */
 	private LookupMappingResourceResolverBuilder resolverBuilder;
@@ -86,11 +72,27 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	private Map<TemplateEngineDetector, TemplateParserBuilder> detectors;
 
+	/**
+	 * The property key for prefix value
+	 */
+	private String prefixPropKey;
+
+	/**
+	 * The property key for suffix value
+	 */
+	private String suffixPropKey;
+
 	public TemplateBuilder() {
+		this(TemplateConstants.PREFIX_PROPERTY, TemplateConstants.SUFFIX_PROPERTY);
+	}
+
+	public TemplateBuilder(String prefixProperty, String suffixProperty) {
 		super();
 		prefix = "";
 		suffix = "";
 		detectors = new HashMap<>();
+		this.prefixPropKey = prefixProperty;
+		this.suffixPropKey = suffixProperty;
 	}
 
 	/**
@@ -154,8 +156,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	public TemplateBuilder useDefaults(Properties properties) {
 		// TODO: order of calls must not be important !!
 		useDefaultResolvers();
-		withPrefix(properties.getProperty(PREFIX_PROPERTY, ""));
-		withSuffix(properties.getProperty(SUFFIX_PROPERTY, ""));
+		withPrefix(properties.getProperty(prefixPropKey, ""));
+		withSuffix(properties.getProperty(suffixPropKey, ""));
 		withThymeleaf();
 		return this;
 	}
@@ -263,6 +265,36 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
+	 * Change the default property key for template resolution prefix. By
+	 * default, the property key is ogham.template.prefix (see
+	 * {@link TemplateConstants#PREFIX_PROPERTY}). Use this method to change the
+	 * key.
+	 * 
+	 * @param prefixKey
+	 *            the new property key for template resolution prefix
+	 * @return this instance for fluent use
+	 */
+	public TemplateBuilder setPrefixKey(String prefixKey) {
+		this.prefixPropKey = prefixKey;
+		return this;
+	}
+
+	/**
+	 * Change the default property key for template resolution prefix. By
+	 * default, the property key is ogham.template.suffix (see
+	 * {@link TemplateConstants#SUFFIX_PROPERTY}). Use this method to change the
+	 * key.
+	 * 
+	 * @param suffixKey
+	 *            the new property key for template resolution prefix
+	 * @return this instance for fluent use
+	 */
+	public TemplateBuilder setSuffixKey(String suffixKey) {
+		this.suffixPropKey = suffixKey;
+		return this;
+	}
+
+	/**
 	 * Build the template parser according to options previously enabled. If
 	 * only one template engine has been activated then the parser will be this
 	 * template engine parser. If there are several activated engines, then the
@@ -354,5 +386,22 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	public ThymeleafBuilder getThymeleafParser() {
 		return getParserBuilder(ThymeleafBuilder.class);
+	}
+
+	/**
+	 * <p>
+	 * Get the builder used to handle resource resolution.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Customize how template resources are resolved</li>
+	 * <li>Register a custom lookup mapping resolver for template resources</li>
+	 * </ul>
+	 * 
+	 * @return the builder used to handle resource resolution
+	 */
+	public LookupMappingResourceResolverBuilder getResolverBuilder() {
+		return resolverBuilder;
 	}
 }
