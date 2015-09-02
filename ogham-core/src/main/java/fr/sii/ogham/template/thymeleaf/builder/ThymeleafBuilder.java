@@ -1,5 +1,7 @@
 package fr.sii.ogham.template.thymeleaf.builder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
@@ -24,6 +26,8 @@ import fr.sii.ogham.template.thymeleaf.adapter.ThymeleafResolverAdapter;
  *
  */
 public class ThymeleafBuilder implements TemplateParserBuilder {
+	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafBuilder.class);
+	
 	/**
 	 * The Thymeleaf template engine
 	 */
@@ -63,6 +67,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 
 	@Override
 	public TemplateParser build() throws BuildException {
+		LOG.debug("Using prefix {} and suffix {} for thymeleaf template resolvers", prefix, suffix);
 		for (ITemplateResolver resolver : lookupResolver.getResolvers()) {
 			if (resolver instanceof org.thymeleaf.templateresolver.TemplateResolver) {
 				org.thymeleaf.templateresolver.TemplateResolver templateResolver = (org.thymeleaf.templateresolver.TemplateResolver) resolver;

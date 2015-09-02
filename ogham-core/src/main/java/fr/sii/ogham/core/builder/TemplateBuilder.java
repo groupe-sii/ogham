@@ -82,17 +82,16 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	private String suffixPropKey;
 
-	public TemplateBuilder() {
-		this(TemplateConstants.PREFIX_PROPERTY, TemplateConstants.SUFFIX_PROPERTY);
-	}
+	/**
+	 * The properties used for the configuration
+	 */
+	private Properties properties;
 
-	public TemplateBuilder(String prefixProperty, String suffixProperty) {
+	public TemplateBuilder() {
 		super();
-		prefix = "";
-		suffix = "";
 		detectors = new HashMap<>();
-		this.prefixPropKey = prefixProperty;
-		this.suffixPropKey = suffixProperty;
+		this.prefixPropKey = TemplateConstants.PREFIX_PROPERTY;
+		this.suffixPropKey = TemplateConstants.SUFFIX_PROPERTY;
 	}
 
 	/**
@@ -154,10 +153,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder useDefaults(Properties properties) {
-		// TODO: order of calls must not be important !!
+		this.properties = properties;
 		useDefaultResolvers();
-		withPrefix(properties.getProperty(prefixPropKey, ""));
-		withSuffix(properties.getProperty(suffixPropKey, ""));
 		withThymeleaf();
 		return this;
 	}
@@ -230,14 +227,12 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	@Override
 	public TemplateBuilder withPrefix(String prefix) {
 		this.prefix = prefix;
-		resolverBuilder.withPrefix(prefix);
 		return this;
 	}
 
 	@Override
 	public TemplateBuilder withSuffix(String suffix) {
 		this.suffix = suffix;
-		resolverBuilder.withPrefix(prefix);
 		return this;
 	}
 
@@ -320,12 +315,19 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	@Override
 	public TemplateParser build() throws BuildException {
+		// resolve final prefix and suffix
+		String resolvedPrefix = resolve("prefix", prefix, prefixPropKey, TemplateConstants.PREFIX_PROPERTY);
+		String resolvedSuffix = resolve("suffix", suffix, suffixPropKey, TemplateConstants.SUFFIX_PROPERTY);
+		// propagate the prefix and suffix for resource resolution
+		// and also for template engines
+		resolverBuilder.withPrefix(resolvedPrefix);
+		resolverBuilder.withSuffix(resolvedSuffix);
 		LookupMappingResolver lookupResolver = resolverBuilder.build();
 		Map<String, ResourceResolver> resolvers = lookupResolver.getMapping();
 		for (TemplateParserBuilder builder : detectors.values()) {
 			// set prefix and suffix for each implementation
-			builder.withPrefix(prefix);
-			builder.withSuffix(suffix);
+			builder.withPrefix(resolvedPrefix);
+			builder.withSuffix(resolvedSuffix);
 			// set resolvers for each implementation
 			for (Entry<String, ResourceResolver> entry : resolvers.entrySet()) {
 				builder.withLookupResolver(entry.getKey(), entry.getValue());
@@ -379,8 +381,17 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
+	 * <p>
 	 * Get the reference to the specialized builder for Thymeleaf. It may be
 	 * useful to fine tune Thymeleaf engine.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Use your own Thymeleaf template engine</li>
+	 * <li>Customize the lookup resolution for Thymeleaf</li>
+	 * <li>Customize the adapters</li>
+	 * </ul>
 	 * 
 	 * @return The Thymeleaf builder
 	 */
@@ -403,5 +414,21 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	public LookupMappingResourceResolverBuilder getResolverBuilder() {
 		return resolverBuilder;
+	}
+
+	private String resolve(String which, String value, String key, String defaultKey) {
+		String resolved = value;
+		if (resolved == null) {
+			if(properties==null) {
+				LOG.debug("Property key specified ({}) but no properties provided. Empty {} is used", key, which);
+				resolved = "";
+			} else {
+				resolved = properties.getProperty(key, properties.getProperty(defaultKey, ""));
+				LOG.debug("Using {} provided by property key {}: {}", which, key, resolved);
+			}
+		} else {
+			LOG.debug("Using provided {}: {}", which, resolved);
+		}
+		return resolved;
 	}
 }

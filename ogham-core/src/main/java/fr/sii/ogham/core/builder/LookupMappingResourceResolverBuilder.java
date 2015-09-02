@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
 import fr.sii.ogham.core.resource.resolver.FileResolver;
@@ -41,6 +44,8 @@ import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
  *
  */
 public class LookupMappingResourceResolverBuilder implements Builder<LookupMappingResolver> {
+	private static final Logger LOG = LoggerFactory.getLogger(LookupMappingResourceResolverBuilder.class);
+	
 	/**
 	 * The map that temporarily stores the template resolver implementations
 	 * according to the lookup prefix
@@ -67,6 +72,7 @@ public class LookupMappingResourceResolverBuilder implements Builder<LookupMappi
 	@Override
 	public LookupMappingResolver build() throws BuildException {
 		if (!prefix.isEmpty() || !suffix.isEmpty()) {
+			LOG.debug("Using prefix {} and suffix {} for resource resolution", prefix, suffix);
 			for (Entry<String, ResourceResolver> entry : resolvers.entrySet()) {
 				resolvers.put(entry.getKey(), new RelativeResolver(entry.getValue(), prefix, suffix));
 			}

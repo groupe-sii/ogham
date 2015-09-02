@@ -36,13 +36,14 @@ public class EmailTemplatePrefixTest {
 		props.load(getClass().getResourceAsStream("/application.properties"));
 		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
 		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		props.setProperty("ogham.template.prefix", "/template/thymeleaf/source/");
+		props.setProperty("ogham.email.template.prefix", "/template/thymeleaf/source/");
+		props.setProperty("ogham.email.template.suffix", ".html");
 		oghamService = new MessagingBuilder().useAllDefaults(props).build();
 	}
 	
 	@Test
 	public void withThymeleaf() throws MessagingException, javax.mail.MessagingException, IOException {
-		oghamService.send(new Email("Template", new TemplateContent("simple.html", new SimpleBean("foo", 42)), "recipient@sii.fr"));
+		oghamService.send(new Email("Template", new TemplateContent("simple", new SimpleBean("foo", 42)), "recipient@sii.fr"));
 		AssertEmail.assertSimilar(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
 
