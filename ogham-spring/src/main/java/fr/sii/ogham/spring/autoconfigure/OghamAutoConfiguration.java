@@ -100,7 +100,7 @@ public class OghamAutoConfiguration {
 	 * @author Aurélien Baudet
 	 */
 	@Configuration
-	@ConditionalOnMissingClass(SpringTemplateEngine.class)
+	@ConditionalOnMissingClass(name="org.thymeleaf.spring4.SpringTemplateEngine")
 	public static class DefaultConfiguration {
 		@Autowired
 		Environment environment;
