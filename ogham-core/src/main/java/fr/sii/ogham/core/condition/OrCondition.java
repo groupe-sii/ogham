@@ -2,6 +2,8 @@ package fr.sii.ogham.core.condition;
 
 import java.util.List;
 
+import fr.sii.ogham.core.util.StringUtils;
+
 /**
  * Condition that provides a logical OR operation on manipulated conditions.
  * 
@@ -32,5 +34,9 @@ public class OrCondition<T> extends CompositeCondition<T> {
 		// none condition has accepted the object => it is rejected
 		return false;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "{" + StringUtils.join(conditions, " or ") + "}";
+	}
 }

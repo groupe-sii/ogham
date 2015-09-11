@@ -48,7 +48,7 @@ public class RequiredClassCondition<T> implements Condition<T> {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RequiredClassCondition:").append(className);
+		builder.append("(Is").append(className).append(" in classpath ?)");
 		return builder.toString();
 	}
 }

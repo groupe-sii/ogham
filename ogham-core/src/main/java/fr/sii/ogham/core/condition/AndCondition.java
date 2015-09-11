@@ -2,6 +2,8 @@ package fr.sii.ogham.core.condition;
 
 import java.util.List;
 
+import fr.sii.ogham.core.util.StringUtils;
+
 /**
  * Condition that provides a logical AND operation on manipulated conditions.
  * 
@@ -33,4 +35,8 @@ public class AndCondition<T> extends CompositeCondition<T> {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "{" + StringUtils.join(conditions, "} and {") + "}";
+	}
 }

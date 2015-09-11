@@ -58,7 +58,7 @@ public class RequiredPropertyCondition<T> implements Condition<T> {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RequiredPropertyCondition:").append(key).append(" in ").append(propertyResolver);
+		builder.append("(Is ").append(key).append(" in properties ?)");
 		return builder.toString();
 	}
 }

@@ -39,7 +39,7 @@ public class FixedCondition<T> implements Condition<T> {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("FixedCondition:").append(accept);
+		builder.append(accept);
 		return builder.toString();
 	}
 }
