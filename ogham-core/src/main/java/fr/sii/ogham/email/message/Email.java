@@ -55,6 +55,19 @@ public class Email implements Message, WithSubject {
 	 */
 	private List<Attachment> attachments;
 
+	
+	
+	
+	//----------------------- Constructors -----------------------//
+	
+	/**
+	 * Default constructor for using fluent API. This constructor initializes
+	 * nothing.
+	 */
+	public Email() {
+		super();
+	}
+
 	/**
 	 * Initialize the email with the following information:
 	 * <ul>
@@ -78,7 +91,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -91,7 +104,7 @@ public class Email implements Message, WithSubject {
 	public Email(String subject, String content, String... to) {
 		this(subject, new StringContent(content), toRecipient(to));
 	}
-	
+
 	/**
 	 * Initialize the email with the following information:
 	 * <ul>
@@ -112,7 +125,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -146,7 +159,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -184,7 +197,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -205,14 +218,14 @@ public class Email implements Message, WithSubject {
 	 * <li>The body of the mail (see {@link Content} and sub classes for more
 	 * information)</li>
 	 * <li>The sender address</li>
-	 * <li>None, one or several "to" recipient addresses, it will create a list of
-	 * {@link Recipient} with {@link RecipientType#TO} for you</li>
+	 * <li>None, one or several "to" recipient addresses, it will create a list
+	 * of {@link Recipient} with {@link RecipientType#TO} for you</li>
 	 * </ul>
 	 * 
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -249,7 +262,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -279,7 +292,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -308,7 +321,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -337,7 +350,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -368,7 +381,7 @@ public class Email implements Message, WithSubject {
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
 	 * calling {@link #setAttachments(List)} or
-	 * {@link #addAttachment(Attachment)}.
+	 * {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -730,6 +743,214 @@ public class Email implements Message, WithSubject {
 		this.attachments = attachments;
 	}
 
+
+	
+	
+	//----------------------- Getter/Setters -----------------------//
+	
+	@Override
+	public Content getContent() {
+		return content;
+	}
+
+	@Override
+	public void setContent(Content content) {
+		this.content = content;
+	}
+
+	/**
+	 * Get the sender address
+	 * 
+	 * @return the sender address
+	 */
+	public EmailAddress getFrom() {
+		return from;
+	}
+
+	/**
+	 * Set the sender address.
+	 * 
+	 * @param from
+	 *            the sender address
+	 */
+	public void setFrom(EmailAddress from) {
+		this.from = from;
+	}
+
+	/**
+	 * Set the sender address as string (typical address syntax is of the form
+	 * "user@host.domain" or "Personal Name &lt;user@host.domain&gt;").
+	 * 
+	 * @param from
+	 *            the sender address string (typical address syntax is of the
+	 *            form "user@host.domain" or
+	 *            "Personal Name &lt;user@host.domain&gt;").
+	 */
+	public void setFrom(String from) {
+		setFrom(new EmailAddress(from));
+	}
+
+	/**
+	 * Get the list of recipients of the mail.
+	 * 
+	 * @return the list of recipients
+	 */
+	public List<Recipient> getRecipients() {
+		return recipients;
+	}
+
+	/**
+	 * Set the whole list of recipients.
+	 * 
+	 * @param recipients
+	 *            the list of recipients
+	 */
+	public void setRecipients(List<Recipient> recipients) {
+		this.recipients = recipients;
+	}
+
+	/**
+	 * Get the subject of the mail.
+	 * 
+	 * @return the subject of the mail
+	 */
+	public String getSubject() {
+		return subject;
+	}
+
+	/**
+	 * Set the subject of the mail.
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 */
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	/**
+	 * Get the list of attachments.
+	 * 
+	 * @return the list of attachments
+	 */
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 */
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
+
+	
+	//----------------------- Fluent API -----------------------//
+	
+	/**
+	 * Set the subject of the mail.
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 * @return this instance for fluent use
+	 */
+	public Email subject(String subject) {
+		setSubject(subject);
+		return this;
+	}
+
+	/**
+	 * Set the content (body) of the message.
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent use
+	 */
+	public Email content(Content content) {
+		setContent(content);
+		return this;
+	}
+
+	/**
+	 * Set the content (body) of the message.
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent use
+	 */
+	public Email content(String content) {
+		return content(new StringContent(content));
+	}
+
+	/**
+	 * Set the sender address.
+	 * 
+	 * @param from
+	 *            the sender address
+	 * @return this instance for fluent use
+	 */
+	public Email from(EmailAddress from) {
+		setFrom(from);
+		return this;
+	}
+
+	/**
+	 * Set the sender address as string (typical address syntax is of the form
+	 * "user@host.domain" or "Personal Name &lt;user@host.domain&gt;").
+	 * 
+	 * @param from
+	 *            the sender address string (typical address syntax is of the
+	 *            form "user@host.domain" or
+	 *            "Personal Name &lt;user@host.domain&gt;").
+	 * @return this instance for fluent use
+	 */
+	public Email from(String from) {
+		setFrom(from);
+		return this;
+	}
+
+	/**
+	 * Set the whole list of recipients.
+	 * 
+	 * @param recipients
+	 *            the list of recipients
+	 * @return this instance for fluent use
+	 */
+	public Email recipients(List<Recipient> recipients) {
+		setRecipients(recipients);
+		return this;
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 * @return this instance for fluent use
+	 */
+	public Email attach(List<Attachment> attachments) {
+		setAttachments(attachments);
+		return this;
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 * @return this instance for fluent use
+	 */
+	public Email attach(Attachment... attachments) {
+		for (Attachment attachment : attachments) {
+			attach(attachment);
+		}
+		return this;
+	}
+
 	/**
 	 * Add an attachment to join to the mail.
 	 * 
@@ -737,7 +958,7 @@ public class Email implements Message, WithSubject {
 	 *            the attachment to add
 	 * @return this instance for fluent use
 	 */
-	public Email addAttachment(Attachment attachment) {
+	public Email attach(Attachment attachment) {
 		attachments.add(attachment);
 		return this;
 	}
@@ -749,7 +970,7 @@ public class Email implements Message, WithSubject {
 	 *            the recipient to add
 	 * @return this instance for fluent use
 	 */
-	public Email addRecipient(Recipient recipient) {
+	public Email recipient(Recipient recipient) {
 		recipients.add(recipient);
 		return this;
 	}
@@ -761,8 +982,8 @@ public class Email implements Message, WithSubject {
 	 *            the recipient address
 	 * @return this instance for fluent use
 	 */
-	public Email addTo(String to) {
-		addTo(new EmailAddress(to));
+	public Email to(String to) {
+		to(new EmailAddress(to));
 		return this;
 	}
 
@@ -773,8 +994,8 @@ public class Email implements Message, WithSubject {
 	 *            the recipient address
 	 * @return this instance for fluent use
 	 */
-	public Email addTo(EmailAddress to) {
-		addRecipient(to, RecipientType.TO);
+	public Email to(EmailAddress to) {
+		recipient(to, RecipientType.TO);
 		return this;
 	}
 
@@ -785,8 +1006,8 @@ public class Email implements Message, WithSubject {
 	 *            the recipient address
 	 * @return this instance for fluent use
 	 */
-	public Email addCc(String cc) {
-		addCc(new EmailAddress(cc));
+	public Email cc(String cc) {
+		cc(new EmailAddress(cc));
 		return this;
 	}
 
@@ -797,20 +1018,8 @@ public class Email implements Message, WithSubject {
 	 *            the recipient address
 	 * @return this instance for fluent use
 	 */
-	public Email addCc(EmailAddress cc) {
-		addRecipient(cc, RecipientType.CC);
-		return this;
-	}
-
-	/**
-	 * Add a "cc" recipient address.
-	 * 
-	 * @param cc
-	 *            the recipient address
-	 * @return this instance for fluent use
-	 */
-	public Email addBcc(String cc) {
-		addBcc(new EmailAddress(cc));
+	public Email cc(EmailAddress cc) {
+		recipient(cc, RecipientType.CC);
 		return this;
 	}
 
@@ -821,11 +1030,24 @@ public class Email implements Message, WithSubject {
 	 *            the recipient address
 	 * @return this instance for fluent use
 	 */
-	public Email addBcc(EmailAddress bcc) {
-		addRecipient(bcc, RecipientType.BCC);
+	public Email bcc(String bcc) {
+		bcc(new EmailAddress(bcc));
 		return this;
 	}
 
+	/**
+	 * Add a "bcc" recipient address.
+	 * 
+	 * @param bcc
+	 *            the recipient address
+	 * @return this instance for fluent use
+	 */
+	public Email bcc(EmailAddress bcc) {
+		recipient(bcc, RecipientType.BCC);
+		return this;
+	}
+
+	
 	/**
 	 * Add a recipient specifying its address and the type (to, cc, bcc).
 	 * 
@@ -835,10 +1057,14 @@ public class Email implements Message, WithSubject {
 	 *            the type (to, cc, bcc)
 	 * @return this instance for fluent use
 	 */
-	public Email addRecipient(EmailAddress recipient, RecipientType type) {
-		addRecipient(new Recipient(recipient, type));
+	public Email recipient(EmailAddress recipient, RecipientType type) {
+		recipient(new Recipient(recipient, type));
 		return this;
 	}
+
+	
+	
+	//----------------------- Utilities -----------------------//
 
 	/**
 	 * Converts a list of string to a list of recipients. Each recipient will
@@ -896,180 +1122,6 @@ public class Email implements Message, WithSubject {
 	}
 
 	@Override
-	public Content getContent() {
-		return content;
-	}
-
-	@Override
-	public void setContent(Content content) {
-		this.content = content;
-	}
-
-	/**
-	 * Set the content of the message.
-	 * 
-	 * @param content
-	 *            the content of the message
-	 * @return this instance for fluent use
-	 */
-	public Email withContent(Content content) {
-		setContent(content);
-		return this;
-	}
-
-	/**
-	 * Get the sender address
-	 * 
-	 * @return the sender address
-	 */
-	public EmailAddress getFrom() {
-		return from;
-	}
-
-	/**
-	 * Set the sender address.
-	 * 
-	 * @param from
-	 *            the sender address
-	 */
-	public void setFrom(EmailAddress from) {
-		this.from = from;
-	}
-
-	/**
-	 * Set the sender address.
-	 * 
-	 * @param from
-	 *            the sender address
-	 * @return this instance for fluent use
-	 */
-	public Email withFrom(EmailAddress from) {
-		setFrom(from);
-		return this;
-	}
-
-	/**
-	 * Set the sender address as string (typical address syntax is of the form
-	 * "user@host.domain" or "Personal Name &lt;user@host.domain&gt;").
-	 * 
-	 * @param from
-	 *            the sender address string (typical address syntax is of the
-	 *            form "user@host.domain" or
-	 *            "Personal Name &lt;user@host.domain&gt;").
-	 */
-	public void setFrom(String from) {
-		setFrom(new EmailAddress(from));
-	}
-
-	/**
-	 * Set the sender address as string (typical address syntax is of the form
-	 * "user@host.domain" or "Personal Name &lt;user@host.domain&gt;").
-	 * 
-	 * @param from
-	 *            the sender address string (typical address syntax is of the
-	 *            form "user@host.domain" or
-	 *            "Personal Name &lt;user@host.domain&gt;").
-	 * @return this instance for fluent use
-	 */
-	public Email withFrom(String from) {
-		setFrom(from);
-		return this;
-	}
-
-	/**
-	 * Get the list of recipients of the mail.
-	 * 
-	 * @return the list of recipients
-	 */
-	public List<Recipient> getRecipients() {
-		return recipients;
-	}
-
-	/**
-	 * Set the whole list of recipients.
-	 * 
-	 * @param recipients
-	 *            the list of recipients
-	 */
-	public void setRecipients(List<Recipient> recipients) {
-		this.recipients = recipients;
-	}
-
-	/**
-	 * Set the whole list of recipients.
-	 * 
-	 * @param recipients
-	 *            the list of recipients
-	 * @return this instance for fluent use
-	 */
-	public Email withRecipients(List<Recipient> recipients) {
-		setRecipients(recipients);
-		return this;
-	}
-
-	/**
-	 * Get the subject of the mail.
-	 * 
-	 * @return the subject of the mail
-	 */
-	public String getSubject() {
-		return subject;
-	}
-
-	/**
-	 * Set the subject of the mail.
-	 * 
-	 * @param subject
-	 *            the subject of the mail
-	 */
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
-	/**
-	 * Set the subject of the mail.
-	 * 
-	 * @param subject
-	 *            the subject of the mail
-	 * @return this instance for fluent use
-	 */
-	public Email withSubject(String subject) {
-		setSubject(subject);
-		return this;
-	}
-
-	/**
-	 * Get the list of attachments.
-	 * 
-	 * @return the list of attachments
-	 */
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	/**
-	 * Set the whole list of attachments.
-	 * 
-	 * @param attachments
-	 *            the list of attachments
-	 */
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
-	}
-
-	/**
-	 * Set the whole list of attachments.
-	 * 
-	 * @param attachments
-	 *            the list of attachments
-	 * @return this instance for fluent use
-	 */
-	public Email withAttachments(List<Attachment> attachments) {
-		setAttachments(attachments);
-		return this;
-	}
-
-	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Email message\r\nFrom: ").append(from);
@@ -1103,6 +1155,5 @@ public class Email implements Message, WithSubject {
 	public boolean equals(Object obj) {
 		return new EqualsBuilder(this, obj).appendFields("subject", "content", "from", "recipients", "attachments").isEqual();
 	}
-	
-	
+
 }

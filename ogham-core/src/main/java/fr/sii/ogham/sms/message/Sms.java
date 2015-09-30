@@ -41,6 +41,18 @@ public class Sms implements Message {
 	 */
 	private Content content;
 
+
+	
+	//----------------------- Constructors -----------------------//
+	
+	/**
+	 * Default constructor for using fluent API. This constructor initializes
+	 * nothing.
+	 */
+	public Sms() {
+		super();
+	}
+
 	/**
 	 * Initialize the SMS with the following information:
 	 * <ul>
@@ -398,6 +410,11 @@ public class Sms implements Message {
 		this.recipients = to;
 	}
 
+
+	
+	
+	//----------------------- Getter/Setters -----------------------//
+	
 	/**
 	 * Get the sender of the SMS
 	 * 
@@ -428,67 +445,7 @@ public class Sms implements Message {
 	}
 
 	/**
-	 * Set the sender.
-	 * 
-	 * @param from
-	 *            the sender
-	 * @return this instance for fluent use
-	 */
-	public Sms withFrom(Sender from) {
-		setFrom(from);
-		return this;
-	}
-
-	/**
-	 * Set the sender using the phone number as string.
-	 * 
-	 * @param phoneNumber
-	 *            the sender number
-	 * @return this instance for fluent use
-	 */
-	public Sms withFrom(String phoneNumber) {
-		return withFrom(null, phoneNumber);
-	}
-
-	/**
-	 * Set the sender using the phone number.
-	 * 
-	 * @param phoneNumber
-	 *            the sender number
-	 * @return this instance for fluent use
-	 */
-	public Sms withFrom(PhoneNumber phoneNumber) {
-		return withFrom(null, phoneNumber);
-	}
-
-	/**
-	 * Set the sender using the phone number as string.
-	 * 
-	 * @param name
-	 *            the name of the sender
-	 * @param phoneNumber
-	 *            the sender number
-	 * @return this instance for fluent use
-	 */
-	public Sms withFrom(String name, String phoneNumber) {
-		return withFrom(name, new PhoneNumber(phoneNumber));
-	}
-
-	/**
-	 * Set the sender using the phone number.
-	 * 
-	 * @param name
-	 *            the name of the sender
-	 * @param phoneNumber
-	 *            the sender number
-	 * @return this instance for fluent use
-	 */
-	public Sms withFrom(String name, PhoneNumber phoneNumber) {
-		return withFrom(new Sender(name, phoneNumber));
-	}
-
-	/**
-	 * Get the recipients of the SMS
+	 * Get the recipients (to) of the SMS
 	 * 
 	 * @return SMS recipients
 	 */
@@ -497,51 +454,13 @@ public class Sms implements Message {
 	}
 
 	/**
-	 * Set the recipients of the SMS
+	 * Set the recipients (to) of the SMS
 	 * 
 	 * @param to
 	 *            SMS recipients
 	 */
 	public void setRecipients(List<Recipient> to) {
 		this.recipients = to;
-	}
-
-	/**
-	 * Add a recipient specifying the phone number.
-	 * 
-	 * @param number
-	 *            the number of the recipient
-	 * @return this instance for fluent use
-	 */
-	public Sms addRecipient(PhoneNumber number) {
-		addRecipient(null, number);
-		return this;
-	}
-
-	/**
-	 * Add a recipient specifying the name and the phone number.
-	 * 
-	 * @param name
-	 *            the name of the recipient
-	 * @param number
-	 *            the number of the recipient
-	 * @return this instance for fluent use
-	 */
-	public Sms addRecipient(String name, PhoneNumber number) {
-		addRecipient(new Recipient(name, number));
-		return this;
-	}
-
-	/**
-	 * Add a recipient.
-	 * 
-	 * @param recipient
-	 *            the recipient to add
-	 * @return this instance for fluent use
-	 */
-	public Sms addRecipient(Recipient recipient) {
-		recipients.add(recipient);
-		return this;
 	}
 
 	@Override
@@ -554,6 +473,10 @@ public class Sms implements Message {
 		this.content = content;
 	}
 
+
+	
+	//----------------------- Fluent API -----------------------//
+	
 	/**
 	 * Set the content of the message.
 	 * 
@@ -561,10 +484,135 @@ public class Sms implements Message {
 	 *            the content of the message
 	 * @return this instance for fluent use
 	 */
-	public Sms withContent(Content content) {
+	public Sms content(Content content) {
 		setContent(content);
 		return this;
 	}
+
+	/**
+	 * Set the content of the message.
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent use
+	 */
+	public Sms content(String content) {
+		return content(new StringContent(content));
+	}
+
+	/**
+	 * Set the sender.
+	 * 
+	 * @param from
+	 *            the sender
+	 * @return this instance for fluent use
+	 */
+	public Sms from(Sender from) {
+		setFrom(from);
+		return this;
+	}
+
+	/**
+	 * Set the sender using the phone number as string.
+	 * 
+	 * @param phoneNumber
+	 *            the sender number
+	 * @return this instance for fluent use
+	 */
+	public Sms from(String phoneNumber) {
+		return from(null, phoneNumber);
+	}
+
+	/**
+	 * Set the sender using the phone number.
+	 * 
+	 * @param phoneNumber
+	 *            the sender number
+	 * @return this instance for fluent use
+	 */
+	public Sms from(PhoneNumber phoneNumber) {
+		return from(null, phoneNumber);
+	}
+
+	/**
+	 * Set the sender using the phone number as string.
+	 * 
+	 * @param name
+	 *            the name of the sender
+	 * @param phoneNumber
+	 *            the sender number
+	 * @return this instance for fluent use
+	 */
+	public Sms from(String name, String phoneNumber) {
+		return from(name, new PhoneNumber(phoneNumber));
+	}
+
+	/**
+	 * Set the sender using the phone number.
+	 * 
+	 * @param name
+	 *            the name of the sender
+	 * @param phoneNumber
+	 *            the sender number
+	 * @return this instance for fluent use
+	 */
+	public Sms from(String name, PhoneNumber phoneNumber) {
+		return from(new Sender(name, phoneNumber));
+	}
+
+	/**
+	 * Add a recipient specifying the phone number.
+	 * 
+	 * @param number
+	 *            the number of the recipient
+	 * @return this instance for fluent use
+	 */
+	public Sms to(PhoneNumber number) {
+		to(null, number);
+		return this;
+	}
+
+	/**
+	 * Add a recipient specifying the phone number as string.
+	 * 
+	 * @param number
+	 *            the number of the recipient
+	 * @return this instance for fluent use
+	 */
+	public Sms to(String number) {
+		to(new Recipient(number));
+		return this;
+	}
+
+	/**
+	 * Add a recipient specifying the name and the phone number.
+	 * 
+	 * @param name
+	 *            the name of the recipient
+	 * @param number
+	 *            the number of the recipient
+	 * @return this instance for fluent use
+	 */
+	public Sms to(String name, PhoneNumber number) {
+		to(new Recipient(name, number));
+		return this;
+	}
+
+	/**
+	 * Add a recipient.
+	 * 
+	 * @param recipient
+	 *            the recipient to add
+	 * @return this instance for fluent use
+	 */
+	public Sms to(Recipient recipient) {
+		recipients.add(recipient);
+		return this;
+	}
+
+
+	
+	//----------------------- Utilities -----------------------//
 
 	/**
 	 * Converts a list of phone numbers to a list of recipients.

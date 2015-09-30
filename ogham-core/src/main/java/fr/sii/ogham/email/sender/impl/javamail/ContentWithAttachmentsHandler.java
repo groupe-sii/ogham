@@ -24,7 +24,7 @@ public class ContentWithAttachmentsHandler implements JavaMailContentHandler {
 	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
 		ContentWithAttachments cwa = (ContentWithAttachments) content;
 		for(Attachment attachment : cwa.getAttachments()) {
-			email.addAttachment(attachment);
+			email.attach(attachment);
 		}
 		delegate.setContent(message, multipart, email, cwa.getContent());
 	}

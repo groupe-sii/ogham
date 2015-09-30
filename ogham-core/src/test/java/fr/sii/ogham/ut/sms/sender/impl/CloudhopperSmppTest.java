@@ -76,7 +76,7 @@ public class CloudhopperSmppTest {
 		String to2 = "0000000001";
 		String from = INTERNATIONAL_PHONE_NUMBER;
 		String content = "sms content";
-		Sms message = new Sms(content,  to1, to2).withFrom( new Sender(from));
+		Sms message = new Sms(content,  to1, to2).from( new Sender(from));
 		
 		// When
 		sender.send(message);
