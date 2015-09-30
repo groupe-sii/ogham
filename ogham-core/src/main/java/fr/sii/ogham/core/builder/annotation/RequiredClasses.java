@@ -61,6 +61,8 @@ public @interface RequiredClasses {
 	 * Means that the classes <code>javax.mail.Transport</code> and
 	 * <code>com.sun.mail.smtp.SMTPTransport</code> must be present in the
 	 * classpath for using the implementation <code>JavaMailSender</code>.
+	 * 
+	 * @return list of required classes
 	 */
 	String[] value() default {};
 
@@ -81,7 +83,7 @@ public @interface RequiredClasses {
 	 * </pre>
 	 * 
 	 * Means that <code>JavaMailSender</code> implementation can be used if
-	 * </code>javax.mail.Transport</code> class is present but can't be used if
+	 * <code>javax.mail.Transport</code> class is present but can't be used if
 	 * <code>org.apache.commons.mail.HtmlEmail</code> class is present.
 	 * 
 	 * <pre>
@@ -91,8 +93,10 @@ public @interface RequiredClasses {
 	 * </pre>
 	 * 
 	 * Means that <code>JavaMailSender</code> implementation can be used if
-	 * </code>javax.mail.Transport</code> class is present or
+	 * <code>javax.mail.Transport</code> class is present or
 	 * <code>javax.mail.Transportm</code> class is present.
+	 * 
+	 * @return list of advanced class inclusions
 	 */
 	RequiredClass[] classes() default {};
 }

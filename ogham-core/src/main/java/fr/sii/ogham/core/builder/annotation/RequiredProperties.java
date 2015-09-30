@@ -62,7 +62,7 @@ public @interface RequiredProperties {
 	 * <code>foo.baz</code> must be present in properties for using the
 	 * implementation <code>FooImplementation</code>.
 	 * 
-	 * 
+	 * @return the list of required properties
 	 */
 	String[] value() default {};
 
@@ -84,7 +84,7 @@ public @interface RequiredProperties {
 	 * </pre>
 	 * 
 	 * Means that <code>JavaMailSender</code> implementation can be used if
-	 * </code>mail.host</code> or <code>mail.smtp.host</code> property is
+	 * <code>mail.host</code> or <code>mail.smtp.host</code> property is
 	 * present.
 	 * 
 	 * <pre>
@@ -94,8 +94,10 @@ public @interface RequiredProperties {
 	 * </pre>
 	 * 
 	 * Means that <code>JavaMailSender</code> implementation can be used if
-	 * </code>mail.host</code> is present and its value is
+	 * <code>mail.host</code> is present and its value is
 	 * <code>smtp.gmail.com</code>.
+	 * 
+	 * @return the list of advanced properties inclusions
 	 */
 	RequiredProperty[] props() default {};
 }

@@ -151,6 +151,11 @@
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>${commons-collections.version}</version>
+			</dependency>
 
 			<!-- Template parsers -->
 			<dependency>

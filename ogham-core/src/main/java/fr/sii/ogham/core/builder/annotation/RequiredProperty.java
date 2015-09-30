@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 public @interface RequiredProperty {
 	/**
 	 * The property key
+	 * 
+	 * @return the required property key
 	 */
 	String value();
 
@@ -28,6 +30,8 @@ public @interface RequiredProperty {
 	 * 
 	 * <p>
 	 * If you want to use a regular expression, use {@link #pattern()} instead.
+	 * 
+	 * @return the required property value
 	 */
 	String equals() default "";
 
@@ -40,6 +44,8 @@ public @interface RequiredProperty {
 	 * 
 	 * <p>
 	 * If you want to use a strict value, use {@link #equals()} instead.
+	 * 
+	 * @return the pattern for the property value
 	 */
 	String pattern() default "";
 
@@ -64,6 +70,8 @@ public @interface RequiredProperty {
 	 * 
 	 * <p>
 	 * By default, no flag is applied.
+	 * 
+	 * @return the flag for the pattern
 	 */
 	int flags() default 0;
 
@@ -81,6 +89,8 @@ public @interface RequiredProperty {
 	 * the value of the property is <code>none</code> then it indicates that the
 	 * implementation can't be used. If the value of the property is anything
 	 * else then it indicates that the implementation can be used.
+	 * 
+	 * @return the excluded property values
 	 */
 	String[] excludes() default {};
 
@@ -102,6 +112,8 @@ public @interface RequiredProperty {
 	 * <code>foo.bar</code> is present and its value is <code>true</code> or if
 	 * the property <code>foo.baz</code> is present and its value is
 	 * <code>true</code>.
+	 * 
+	 * @return the list of alternative property keys
 	 */
 	String[] alternatives() default {};
 }

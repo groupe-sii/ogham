@@ -11,6 +11,7 @@ import mock.condition.annotation.SeveralRequiredClasses;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import fr.sii.ogham.core.condition.AndCondition;
@@ -20,9 +21,12 @@ import fr.sii.ogham.core.condition.NotCondition;
 import fr.sii.ogham.core.condition.OrCondition;
 import fr.sii.ogham.core.condition.RequiredClassCondition;
 import fr.sii.ogham.core.condition.provider.RequiredClassesAnnotationProvider;
+import fr.sii.ogham.helper.rule.LoggingTestRule;
 
 public class RequiredClassesAnnotationProviderTest {
-
+	@Rule
+	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	
 	private RequiredClassesAnnotationProvider provider;
 
 	@Before

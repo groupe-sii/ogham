@@ -17,6 +17,8 @@ package fr.sii.ogham.core.builder.annotation;
 public @interface RequiredClass {
 	/**
 	 * The required class
+	 * 
+	 * @return the require class
 	 */
 	String value();
 
@@ -43,6 +45,8 @@ public @interface RequiredClass {
 	 * implementation can be used only if all the classes provided in
 	 * {@link #value()} are available in the classpath and none of the classes
 	 * provided in {@link #excludes()} is in the classpath.
+	 * 
+	 * @return the list of excluded classes
 	 */
 	String[] excludes() default {};
 
@@ -62,6 +66,8 @@ public @interface RequiredClass {
 	 * Means that the implementation can be used either if the class
 	 * <code>com.sendgrid.SendGrid1</code> is present or if the class
 	 * <code>com.sendgrid.SendGrid2</code> is present.
+	 * 
+	 * @return the list of alternative classes
 	 */
 	String[] alternatives() default {};
 }

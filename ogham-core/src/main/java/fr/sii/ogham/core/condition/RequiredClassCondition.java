@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.condition;
 
-import fr.sii.ogham.core.util.ClasspathHelper;
+import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
@@ -32,7 +32,7 @@ public class RequiredClassCondition<T> implements Condition<T> {
 
 	@Override
 	public boolean accept(T obj) {
-		return ClasspathHelper.exists(className);
+		return ClasspathUtils.exists(className);
 	}
 	
 	@Override

@@ -46,6 +46,10 @@ public final class BeanUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(BeanUtils.class);
 
 	static {
+		registerDefaultConverters();
+	}
+
+	public static void registerDefaultConverters() {
 		// TODO: auto-detect converters in the classpath ?
 		// Add converter for being able to convert string address into
 		// EmailAddress
@@ -55,7 +59,7 @@ public final class BeanUtils {
 		ConvertUtils.register(new SmsSenderConverter(), Sender.class);
 		BeanUtilsBean.getInstance().getConvertUtils().register(true, false, 0);
 	}
-
+	
 	/**
 	 * <p>
 	 * Convert a Java object into a map. Each property of the bean is added to
