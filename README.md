@@ -112,6 +112,41 @@ public class BasicSample {
 }
 ```
 
+If you prefer, you can also use the fluent API:
+
+```java
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class BasicSample {
+
+	public static void main(String[] args) throws MessagingException {
+		// configure properties (could be stored in a properties file or defined
+		// in System properties)
+		Properties properties = new Properties();
+		properties.put("mail.smtp.host", "<your server host>");
+		properties.put("mail.smtp.port", "<your server port>");
+		properties.put("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
+		// send the email
+		service.send(new Email().
+							subject("subject").
+							content("email content").
+							to("<recipient address>"));
+	}
+
+}
+```
+
+
 
 #### Through Gmail
 
@@ -155,6 +190,11 @@ public class BasicGmailSSLSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", "email content", "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+							subject("subject").
+							content("email content").
+							to("<recipient address>"));
 	}
 
 }
@@ -198,6 +238,11 @@ public class HtmlTemplateSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42)), "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+							subject("subject").
+							content(new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42))).
+							to("<recipient address>"));
 	}
 
 }
@@ -254,6 +299,10 @@ public class HtmlTemplateWithSubjectSample {
 		// subject is set to null to let automatic mechanism to read the title
 		// of the HTML and use it as subject of your email
 		service.send(new Email(null, new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", new SimpleBean("foo", 42)), "<recipient address>"));
+		// or using fluent API (do not set subject)
+		service.send(new Email().
+							content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", new SimpleBean("foo", 42))).
+							to("<recipient address>"));
 	}
 
 }
@@ -312,6 +361,12 @@ public class WithAttachmentSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", "content of the email", "<recipient address>", new Attachment("classpath:/attachment/test.pdf")));
+		// or using fluent API
+		service.send(new Email().
+							subject("subject").
+							content("content of the email").
+							to("<recipient address>").
+							attach(new Attachment("classpath:/attachment/test.pdf")));
 	}
 
 }
@@ -350,6 +405,11 @@ public class HtmlAndTextSample {
 		String html = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /></head><body><h1 class=\"title\">Hello World</h1><p class=\"text\">Foo bar</p></body></html>";
 		String text = "Hello World !\r\nFoo bar";
 		service.send(new Email("subject", new MultiContent(html, text), "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+							subject("subject").
+							content(new MultiContent(html, text)).
+							to("<recipient address>"));
 	}
 
 }
@@ -386,6 +446,11 @@ public class HtmlAndTextTemplateSample {
 		// automatically takes the provided path and adds the '.html' extension
 		// for the HTML template and '.txt' for text template
 		service.send(new Email("subject", new MultiTemplateContent("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42)), "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+							subject("subject").
+							content(new MultiTemplateContent("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42))).
+							to("<recipient address>"));
 	}
 
 }
@@ -452,6 +517,42 @@ public class BasicSample {
 }
 ```
 
+If you prefer, you can also use the fluent API:
+
+```java
+package fr.sii.ogham.sample.standard.sms;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
+
+public class BasicSample {
+
+	public static void main(String[] args) throws MessagingException {
+		// configure properties (could be stored in a properties file or defined
+		// in System properties)
+		Properties properties = new Properties();
+		properties.setProperty("ogham.sms.smpp.host", "<your server host>");
+		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
+		properties.setProperty("ogham.sms.smpp.systemId", "<your server system ID>");
+		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
+		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
+		// send the sms
+		service.send(new Sms().
+							content("sms content").
+							to("<recipient phone number>"));
+	}
+
+}
+```
+
+
 ### Sending SMS with templated content
 
 Sending SMS with a templated content is exactly the same as sending email with a templated content. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java).
@@ -488,6 +589,10 @@ public class TemplateSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the sms
 		service.send(new Sms(new TemplateContent("classpath:/template/thymeleaf/simple.txt", new SimpleBean("foo", 42)), "<recipient phone number>"));
+		// or using fluent API
+		service.send(new Sms().
+							content(new TemplateContent("classpath:/template/thymeleaf/simple.txt", new SimpleBean("foo", 42))).
+							to("<recipient phone number>"));
 	}
 
 }
@@ -521,9 +626,13 @@ public class LongMessageSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the sms
 		String longMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+		// send the sms
 		service.send(new Sms(longMessage, "<recipient phone number>"));
+		// or using fluent API
+		service.send(new Sms().
+							content(longMessage).
+							to("<recipient phone number>"));
 	}
 
 }
