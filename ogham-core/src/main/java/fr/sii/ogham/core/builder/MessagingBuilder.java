@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.sender.ConditionalSender;
+import fr.sii.ogham.core.service.CatchAllMessagingService;
 import fr.sii.ogham.core.service.EverySupportingMessagingService;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.util.BuilderUtils;
@@ -70,7 +71,7 @@ public class MessagingBuilder implements MessagingServiceBuilder {
 		}
 		LOG.info("Using service that calls all registered senders");
 		LOG.debug("Registered senders: {}", senders);
-		return new EverySupportingMessagingService(senders);
+		return new CatchAllMessagingService(new EverySupportingMessagingService(senders));
 	}
 
 	/**
