@@ -46,8 +46,13 @@ public class BasicSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// send the email using constructor
 		service.send(new Email("subject", "email content", "<recipient address>"));
+		// or send email using the fluent API
+		service.send(new Email().
+							subject("subject").
+							content("email content").
+							to("<recipient address>"));
 	}
 
 }
@@ -86,8 +91,12 @@ public class BasicSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the sms
+		// send the sms using constructor
 		service.send(new Sms("sms content", "<recipient phone number>"));
+		// or send sms using fluent API
+		service.send(new Sms().
+							content("sms content").
+							to("<recipient phone number>"));
 	}
 
 }
