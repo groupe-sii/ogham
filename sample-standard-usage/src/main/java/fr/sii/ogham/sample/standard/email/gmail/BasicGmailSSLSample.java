@@ -26,6 +26,11 @@ public class BasicGmailSSLSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", "email content", "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+						subject("subject").
+						content("email content").
+						to("<recipient address>"));
 	}
 
 }

@@ -26,6 +26,11 @@ public class BasicGmailTLSSample {
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		service.send(new Email("subject", "email content", "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+						subject("subject").
+						content("email content").
+						to("<recipient address>"));
 	}
 
 }

@@ -23,6 +23,10 @@ public class BasicSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the sms
 		service.send(new Sms("sms content", "<recipient phone number>"));
+		// or using fluent API
+		service.send(new Sms().
+						content("sms content").
+						to("<recipient phone number>"));
 	}
 
 }

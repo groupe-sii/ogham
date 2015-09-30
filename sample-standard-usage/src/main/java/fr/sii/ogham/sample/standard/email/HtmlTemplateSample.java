@@ -23,6 +23,11 @@ public class HtmlTemplateSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42)), "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+						subject("subject").
+						content(new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42))).
+						to("<recipient address>"));
 	}
 
 }

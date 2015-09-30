@@ -26,6 +26,11 @@ public class HtmlAndTextTemplateSample {
 		// automatically takes the provided path and adds the '.html' extension
 		// for the HTML template and '.txt' for text template
 		service.send(new Email("subject", new MultiTemplateContent("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42)), "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+						subject("subject").
+						content(new MultiTemplateContent("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42))).
+						to("<recipient address>"));
 	}
 
 }

@@ -24,6 +24,11 @@ public class HtmlAndTextSample {
 		String html = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /></head><body><h1 class=\"title\">Hello World</h1><p class=\"text\">Foo bar</p></body></html>";
 		String text = "Hello World !\r\nFoo bar";
 		service.send(new Email("subject", new MultiContent(html, text), "<recipient address>"));
+		// or using the fluent API
+		service.send(new Email().
+						subject("subject").
+						content(new MultiContent(html, text)).
+						to("<recipient address>"));
 	}
 
 }

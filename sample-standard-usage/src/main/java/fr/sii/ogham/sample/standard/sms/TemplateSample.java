@@ -25,6 +25,10 @@ public class TemplateSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the sms
 		service.send(new Sms(new TemplateContent("classpath:/template/thymeleaf/simple.txt", new SimpleBean("foo", 42)), "<recipient phone number>"));
+		// or using fluent API
+		service.send(new Sms().
+						content(new TemplateContent("classpath:/template/thymeleaf/simple.txt", new SimpleBean("foo", 42))).
+						to("<recipient phone number>"));
 	}
 
 }

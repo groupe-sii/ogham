@@ -22,6 +22,12 @@ public class WithAttachmentSample {
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
 		service.send(new Email("subject", "content of the email", "<recipient address>", new Attachment("classpath:/attachment/test.pdf")));
+		// or using fluent API
+		service.send(new Email().
+						subject("subject").
+						content("content of the email").
+						to("<recipient address>").
+						attach(new Attachment("classpath:/attachment/test.pdf")));
 	}
 
 }
