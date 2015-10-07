@@ -154,6 +154,12 @@ public enum HttpStatus {
 	/** <tt>507 Insufficient Storage</tt> (WebDAV - RFC 2518) */
 	INSUFFICIENT_STORAGE(507, "Insufficient Storage");
 
+	private static final int SERVER_ERROR_STATUS_START = 500;
+	private static final int CLIENT_ERROR_STATUS_START = 400;
+	private static final int REDIRECT_STATUS_START = 300;
+	private static final int SUCCESS_STATUS_START = 200;
+	private static final int INFORMAL_STATUS_START = 100;
+
 	private int code;
 
 	private String reason;
@@ -178,17 +184,17 @@ public enum HttpStatus {
 	 * @return true if informal
 	 */
 	public boolean isInformal() {
-		return code >= 100 && code < 200;
+		return code >= INFORMAL_STATUS_START && code < SUCCESS_STATUS_START;
 	}
 
 	/**
 	 * Is the HTTP status stand for success (between 200 inclusive and 300
 	 * exclusive)
 	 * 
-	 * @return true if informal
+	 * @return true if success
 	 */
 	public boolean isSuccess() {
-		return code >= 200 && code < 300;
+		return code >= SUCCESS_STATUS_START && code < REDIRECT_STATUS_START;
 	}
 
 	/**
@@ -198,7 +204,7 @@ public enum HttpStatus {
 	 * @return true if redirect
 	 */
 	public boolean isRedirect() {
-		return code >= 300 && code < 400;
+		return code >= REDIRECT_STATUS_START && code < CLIENT_ERROR_STATUS_START;
 	}
 
 	/**
@@ -208,7 +214,7 @@ public enum HttpStatus {
 	 * @return true if client error
 	 */
 	public boolean isClientError() {
-		return code >= 400 && code < 500;
+		return code >= CLIENT_ERROR_STATUS_START && code < SERVER_ERROR_STATUS_START;
 	}
 
 	/**
@@ -218,7 +224,7 @@ public enum HttpStatus {
 	 * @return true if server error
 	 */
 	public boolean isServerError() {
-		return code >= 500;
+		return code >= SERVER_ERROR_STATUS_START;
 	}
 
 	public static HttpStatus valueOf(int code) {

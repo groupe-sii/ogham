@@ -30,7 +30,7 @@ import fr.sii.ogham.core.util.http.Response;
  * @author Aurélien Baudet
  *
  */
-public class HttpUtils {
+public final class HttpUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(HttpUtils.class);
 	private static final HttpClient CLIENT = HttpClientBuilder.create().useSystemProperties().build();
 

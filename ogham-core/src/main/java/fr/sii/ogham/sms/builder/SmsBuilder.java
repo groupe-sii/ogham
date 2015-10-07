@@ -126,7 +126,8 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 
 	public SmsBuilder() {
 		super();
-		sender = smsSender = new SmsSender();
+		smsSender = new SmsSender();
+		sender = smsSender;
 		implementations = new HashMap<>();
 	}
 
@@ -305,7 +306,7 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	public SmsBuilder withSmsglobalRestApi(Properties properties) {
 		// Use smsglobal REST API only if
 		// SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY is set
-		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY, properties), new SmsglobalRestSender());
+//		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY, properties), new SmsglobalRestSender());
 		return this;
 	}
 

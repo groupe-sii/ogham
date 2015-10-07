@@ -10,7 +10,7 @@ import fr.sii.ogham.html.inliner.ImageInlinerConstants;
  * @author Aurélien Baudet
  *
  */
-public class JsoupUtils {
+public final class JsoupUtils {
 	/**
 	 * Checks if inlining mode is allowed on the provided element.
 	 * 
@@ -22,6 +22,7 @@ public class JsoupUtils {
 	 * @return true if this mode is allowed, false otherwise
 	 */
 	public static boolean isInlineModeAllowed(Element img, String mode) {
+		// @formatter:off
 		// (1) if the img tag has data-inline-mode set to attach => allowed
 		// (2) if the img tag has data-inline-mode set to anything else => not allowed
 		// (3) if the img tag doesn't have data-inline-mode attribute
@@ -34,8 +35,9 @@ public class JsoupUtils {
 							/* (5) or (6) */ !img.attr(ImageInlinerConstants.SKIP_INLINE_ATTR).contains(mode) && 
 							/* (7) */ !img.attr(ImageInlinerConstants.SKIP_INLINE_ATTR).contains(ImageInlinerConstants.SKIP_INLINE_ALL_VALUE));
 		
+		// @formatter:on
 	}
-	
+
 	private JsoupUtils() {
 		super();
 	}

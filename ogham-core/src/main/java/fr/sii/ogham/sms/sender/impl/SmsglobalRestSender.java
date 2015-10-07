@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
-import fr.sii.ogham.sms.SmsConstants;
 import fr.sii.ogham.sms.message.Sms;
 
 /**

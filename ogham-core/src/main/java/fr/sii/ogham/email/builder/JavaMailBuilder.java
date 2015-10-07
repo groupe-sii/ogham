@@ -85,7 +85,8 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 
 	public JavaMailBuilder() {
 		super();
-		contentHandler = mapContentHandler = new MapContentHandler();
+		mapContentHandler = new MapContentHandler();
+		contentHandler = mapContentHandler;
 		attachmentResourceHandler = mapAttachmentResourceHandler = new MapAttachmentResourceHandler();
 		mimetypeProvider = new FallbackMimeTypeProvider();
 	}

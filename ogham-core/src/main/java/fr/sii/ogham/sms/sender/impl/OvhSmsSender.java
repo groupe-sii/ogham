@@ -51,6 +51,8 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	private static final String TO = "to";
 	private static final String FROM = "from";
 	private static final String RECIPIENTS_SEPARATOR = ",";
+	private static final int OK_STATUS = 200;
+	private static final int INTERNATIONAL_FORMAT_LENGTH = 13;
 
 	/**
 	 * The authentication parameters
@@ -95,7 +97,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 				int ovhStatus = json.get("status").getIntValue();
 				// 100 <= ovh status < 200     ====> OK -> just log response
 				// 200 <= ovh status           ====> KO -> throw an exception
-				if(ovhStatus>=200) {
+				if(ovhStatus>=OK_STATUS) {
 					LOG.error("SMS failed to be sent through OVH");
 					LOG.debug("Sent SMS: {}", message);
 					LOG.debug("Response status {}", response.getStatus());
@@ -163,8 +165,8 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 */
 	private static String toInternational(PhoneNumber phoneNumber) throws PhoneNumberException {
 		String number = phoneNumber.getNumber();
-		if(number.startsWith("+") || number.length()==13) {
-			return StringUtils.leftPad(number.replace("+", "").replaceAll("\\s+", ""), 13, '0');
+		if(number.startsWith("+") || number.length()==INTERNATIONAL_FORMAT_LENGTH) {
+			return StringUtils.leftPad(number.replace("+", "").replaceAll("\\s+", ""), INTERNATIONAL_FORMAT_LENGTH, '0');
 		} else {
 			throw new IllegalArgumentException("Invalid phone number. OVH only accepts international phone numbers. Please write the phone number with the country prefix. "
 					+ "For example, if the number is 0601020304 and it is a French number, then the international number is +33601020304");

@@ -67,7 +67,8 @@ public final class SendGridBuilder implements Builder<SendGridSender> {
 	 * Constructor.
 	 */
 	public SendGridBuilder() {
-		contentHandler = mapContentHandler = new MapContentHandler();
+		mapContentHandler = new MapContentHandler();
+		contentHandler = mapContentHandler;
 		mimetypeProvider = new FallbackMimeTypeProvider();
 	}
 

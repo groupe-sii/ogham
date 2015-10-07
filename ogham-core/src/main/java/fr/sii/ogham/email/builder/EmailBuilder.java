@@ -118,7 +118,8 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 
 	public EmailBuilder() {
 		super();
-		sender = emailSender = new EmailSender();
+		emailSender = new EmailSender();
+		sender = emailSender;
 		implementations = new HashMap<>();
 	}
 

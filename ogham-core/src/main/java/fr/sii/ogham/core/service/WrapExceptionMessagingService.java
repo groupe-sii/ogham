@@ -35,8 +35,6 @@ public class WrapExceptionMessagingService implements MessagingService {
 	public void send(Message message) throws MessagingException {
 		try {
 			delegate.send(message);
-		} catch(MessagingException e) {
-			throw e;
 		} catch(IllegalArgumentException e) {
 			throw new MessagingException("Message can't be sent due to precondition not met. Cause: "+e.getMessage(), e);
 		} catch(IllegalStateException e) {
