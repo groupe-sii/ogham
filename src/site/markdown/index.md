@@ -128,6 +128,8 @@ To use Ogham, [add it to pom.xml][ogham-integration]:
 	...
 ```
 
+Current version is ${project.version}.
+
 [Full usage instructions &raquo;][ogham-integration]
 
 [ogham-integration]: usage/index.html

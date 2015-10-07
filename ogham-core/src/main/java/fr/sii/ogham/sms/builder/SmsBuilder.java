@@ -33,7 +33,6 @@ import fr.sii.ogham.sms.sender.SmsSender;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
 import fr.sii.ogham.sms.sender.impl.PhoneNumberTranslatorSender;
-import fr.sii.ogham.sms.sender.impl.SmsglobalRestSender;
 import fr.sii.ogham.template.TemplateConstants;
 
 /**
