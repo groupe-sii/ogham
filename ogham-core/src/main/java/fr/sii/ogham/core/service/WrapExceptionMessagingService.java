@@ -9,13 +9,13 @@ import fr.sii.ogham.core.message.Message;
  * 
  * @author Aurélien Baudet
  */
-public class CatchAllMessagingService implements MessagingService {
+public class WrapExceptionMessagingService implements MessagingService {
 	/**
 	 * The delegate service that will really send messages
 	 */
 	private MessagingService delegate;
 	
-	public CatchAllMessagingService(MessagingService delegate) {
+	public WrapExceptionMessagingService(MessagingService delegate) {
 		super();
 		this.delegate = delegate;
 	}
