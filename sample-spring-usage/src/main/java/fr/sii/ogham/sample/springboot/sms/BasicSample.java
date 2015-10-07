@@ -1,4 +1,4 @@
-package fr.sii.ogham.context.sample.springboot.email;
+package fr.sii.ogham.sample.springboot.sms;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.sms.message.Sms;
 
 @SpringBootApplication
-@PropertySource("application-basic.properties")
+@PropertySource("application-sms-basic.properties")
 public class BasicSample {
 
 	public static void main(String[] args) throws MessagingException {
@@ -31,14 +31,13 @@ public class BasicSample {
 		@Autowired
 		MessagingService messagingService;
 		
-		@RequestMapping(value="api/email", method=RequestMethod.POST)
+		@RequestMapping(value="api/sms", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
-		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
-			// send the email
-			messagingService.send(new Email(subject, content, to));
+		public void sendMail(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
+			// send the SMS
+			messagingService.send(new Sms(content, to));
 			// or using fluent API
-			messagingService.send(new Email().
-									subject(subject).
+			messagingService.send(new Sms().
 									content(content).
 									to(to));
 		}

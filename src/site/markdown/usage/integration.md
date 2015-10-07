@@ -41,7 +41,7 @@ To use Ogham and let Spring Boot auto-configuration mechanism handle integration
 ```
 
 It will automatically create and register MessagingService bean. It will also automatically use Spring Thymeleaf integration if it is in the classpath.
-It will also automatically use the Spring environment (configuration provided by configuration files for example) and use it for configuring the module.
+The Spring environment (configuration provided by configuration files for example) will be automatically used to configure the Ogham module.
 
 Then to use it in your code, simply autowire the service:
 
@@ -58,7 +58,7 @@ Then to use it in your code, simply autowire the service:
 	}
 ```
 
-See [how to use the module with Spring](usage/index.html#).
+See [how to use the module with Spring](usage/index.html#send-email-with-spring).
 
 ### Manual integration with Spring
 
@@ -132,10 +132,10 @@ If you want to use Thymeleaf provided by Ogham (independent from Spring), you ha
 	}
 ```
 
-#### Integration including Thymeleaf in XML
-
 #### Independent integration in XML
 
 ```xml
-	<bean id="messagingService">
+	<bean id="messagingService" class="fr.sii.ogham.core.builder.SpringXMLMessagingBuilder" factory-method="build">
+		<constructor-arg ref="environment" />
+	</bean>
 ```

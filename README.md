@@ -146,11 +146,55 @@ public class BasicSample {
 }
 ```
 
+### Load properties from file
 
+This sample shows how to send a basic email. The sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSampleExternalProperties.java).
 
-#### Through Gmail
+If you want to put properties in a configuration file, you can create a properties file (email.properties for example) in src/main/resources folder with the following content:
 
-##### SSL
+```ini
+mail.smtp.host=<your server host>
+mail.smtp.port=<your server port>
+ogham.email.from=<email address to display for the sender user>
+```
+
+And then load these properties before creating messaging service:
+
+```java
+package fr.sii.ogham.sample.standard.email;
+
+import java.io.IOException;
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class BasicSampleExternalProperties {
+
+	public static void main(String[] args) throws MessagingException, IOException {
+		// load properties (available at src/main/resources)
+		Properties properties = new Properties();
+		properties.load(BasicSampleExternalProperties.class.getResourceAsStream("/email.properties"));
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
+		// send the email
+		service.send(new Email("subject", "email content", "<recipient address>"));
+		// or using fluent API
+		service.send(new Email().
+						subject("subject").
+						content("email content").
+						to("<recipient address>"));
+	}
+
+}
+```
+
+### Through Gmail
+
+#### SSL
 
 This sample shows how to send a basic email through GMail. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/gmail/BasicGmailSSLSample.java).
 
@@ -201,7 +245,7 @@ public class BasicGmailSSLSample {
 
 ```
 
-## Sending email with templated content
+### Sending email with templated content
 
 This sample shows how to send an email with a content following a template engine language. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java).
 
@@ -267,7 +311,7 @@ Here is the templated content:
 
 The template is available [here](sample-standard-usage/src/main/resources/template/thymeleaf/simple.html)
 
-## Sending email with subject from template
+### Sending email with subject from template
 
 This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to mutualize the code and to avoid to create a new file just for one line.
 
@@ -327,7 +371,7 @@ Here is the templated content :
 
 You can look directly at the sample codes: [Java](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java) and [HTML](sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html).
 
-## Sending email with attachments
+### Sending email with attachments
 
 This sample shows how to send an email with attached file. The sample is available [here](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java)
 
@@ -372,7 +416,7 @@ public class WithAttachmentSample {
 }
 ```
 
-## Sending an email with both HTML and text
+### Sending an email with both HTML and text
 
 Sending an email with HTML content **and** text content might be really important, at least for smartphones. When a smartphone receives an email, it displays the sender, the subject and also a preview of the message, using the text alternative. If the message is only HTML, the preview might be unreadable.
 
@@ -479,6 +523,70 @@ And the templated content (available [here](sample-standard-usage/src/main/resou
 [[${value}]]
 </html>
 ```
+
+### Send email with Spring
+
+Spring comes with very useful management of configuration properties (environment and profiles). Ogham module is able to use environment provided by Spring.
+
+Add the following information in the application.properties (or according to profile, into the right configuration file):
+
+```ini
+mail.smtp.host=<your server host>
+mail.smtp.port=<your server port>
+ogham.email.from=<your gmail address>
+```
+
+To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending email using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/BasicSample.java)):
+
+```java
+package fr.sii.ogham.context.sample.springboot.email;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+@SpringBootApplication
+public class BasicSample {
+
+	public static void main(String[] args) throws MessagingException {
+		SpringApplication.run(BasicSample.class, args);
+	}
+	
+	@RestController
+	public static class BasicController {
+		// Messaging service is automatically created using Spring Boot features
+		// The configuration can be set into application-basic.properties
+		// The configuration files are stored into src/main/resources
+		@Autowired
+		MessagingService messagingService;
+		
+		@RequestMapping(value="api/email", method=RequestMethod.POST)
+		@ResponseStatus(HttpStatus.CREATED)
+		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
+			// send the email
+			messagingService.send(new Email(subject, content, to));
+			// or using fluent API
+			messagingService.send(new Email().
+									subject(subject).
+									content(content).
+									to(to));
+		}
+	}
+
+}
+
+```
+
 ## Sending SMS
 
 ### General
@@ -552,6 +660,53 @@ public class BasicSample {
 }
 ```
 
+### Load properties from file
+
+This sample shows how to send a basic email. The sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java).
+
+If you want to put properties in a configuration file, you can create a properties file (sms.properties for example) in src/main/resources folder with the following content:
+
+```ini
+ogham.sms.smpp.host<your server host>
+ogham.sms.smpp.port=<your server port>
+ogham.sms.smpp.systemId=<your server system ID>
+ogham.sms.smpp.password=<your server password>
+ogham.sms.from=<phone number to display for the sender>
+```
+
+And then load these properties before creating messaging service:
+
+```java
+package fr.sii.ogham.sample.standard.sms;
+
+import java.io.IOException;
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
+
+public class BasicSampleExternalProperties {
+
+	public static void main(String[] args) throws MessagingException, IOException {
+		// load properties (available at src/main/resources)
+		Properties properties = new Properties();
+		properties.load(BasicSampleExternalProperties.class.getResourceAsStream("/sms.properties"));
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
+		// send the sms
+		service.send(new Sms("sms content", "<recipient phone number>"));
+		// or using fluent API
+		service.send(new Sms().
+						content("sms content").
+						to("<recipient phone number>"));
+	}
+
+}
+
+```
 
 ### Sending SMS with templated content
 
@@ -638,6 +793,71 @@ public class LongMessageSample {
 }
 
 ```
+
+### Send SMS with Spring
+
+Spring comes with very useful management of configuration properties (environment and profiles). Ogham module is able to use environment provided by Spring.
+
+Add the following information in the application.properties (or according to profile, into the right configuration file):
+
+```ini
+ogham.sms.smpp.host<your server host>
+ogham.sms.smpp.port=<your server port>
+ogham.sms.smpp.systemId=<your server system ID>
+ogham.sms.smpp.password=<your server password>
+ogham.sms.from=<phone number to display for the sender>
+```
+
+To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending SMS using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/BasicSample.java)):
+
+```java
+package fr.sii.ogham.context.sample.springboot.sms;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
+
+@SpringBootApplication
+public class BasicSample {
+
+	public static void main(String[] args) throws MessagingException {
+		SpringApplication.run(BasicSample.class, args);
+	}
+	
+	@RestController
+	public static class BasicController {
+		// Messaging service is automatically created using Spring Boot features
+		// The configuration can be set into application-basic.properties
+		// The configuration files are stored into src/main/resources
+		@Autowired
+		MessagingService messagingService;
+		
+		@RequestMapping(value="api/sms", method=RequestMethod.POST)
+		@ResponseStatus(HttpStatus.CREATED)
+		public void sendMail(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
+			// send the SMS
+			messagingService.send(new Sms(content, to));
+			// or using fluent API
+			messagingService.send(new Sms().
+									content(content).
+									to(to));
+		}
+	}
+
+}
+
+```
+
 
 # Implementation selection
 

@@ -2,7 +2,7 @@
 
 ### Get it now
 
-To use Ogham, [add it to pom.xml][ogham-integration]:
+To use Ogham without any framework, [add it to pom.xml][ogham-integration]:
 
 ```xml
   ...
@@ -18,10 +18,26 @@ To use Ogham, [add it to pom.xml][ogham-integration]:
 	...
 ```
 
-[Full usage instructions &raquo;][ogham-integration]
+To use Ogham with Spring Boot, just [add the following dependency][spring-integration]:
+
+```xml
+  ...
+	<dependencies>
+	  ...
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-spring</artifactId>
+			<version>${ogham-module.version}</version>
+		</dependency>
+		...
+	</dependencies>
+	...
+```
+
+[Full integration instructions &raquo;][ogham-integration]
 
 [ogham-integration]: integration.html
-
+[spring-integration]: integration.html#integrate-with-spring-boot
 
 ---
 

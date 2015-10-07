@@ -1,5 +1,6 @@
 # Release notes
 
+The history of Ogham releases is documented below. For details of changes refer to the [project's GitHub issues][issues] or the [GitHub report][github-report].
 
 [issues]: https://github.com/groupe-sii/ogham/issues?state=closed
 [github-report]: github-report.html
@@ -11,6 +12,7 @@
 ### Features
 
 - Add Spring integration with Spring Boot
+- Add Spring integration using Java config or XML config
 - Add fluent API
 - Service now wrap all exceptions (even runtime exceptions) into checked exception
 - Add OVH implementation for sending SMS

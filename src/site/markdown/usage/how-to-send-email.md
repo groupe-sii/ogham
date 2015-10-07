@@ -69,13 +69,16 @@ public class BasicSample {
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
-		service.send(new Email().subject("subject").content("email content").to("<recipient address>"));
+		service.send(new Email().
+							subject("subject").
+							content("email content").
+							to("<recipient address>"));
 	}
 
 }
 ```
 
-### Load properties from file
+#### Load properties from file
 
 This sample shows how to send a basic email. The sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSampleExternalProperties.java).
 
@@ -122,9 +125,9 @@ public class BasicSampleExternalProperties {
 ```
 
 
-### Gmail sample
+#### Gmail sample
 
-#### SSL
+##### SSL
 
 This sample shows how to send a basic email through GMail. The sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/gmail/BasicGmailSSLSample.java).
 
@@ -201,7 +204,10 @@ public class BasicGmailSSLSample {
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
 		// send the email
-		service.send(new Email().subject("subject").content("email content").to("<recipient address>"));
+		service.send(new Email().
+								subject("subject").
+								content("email content").
+								to("<recipient address>"));
 	}
 
 }
@@ -652,7 +658,9 @@ And the templated content (available [here](https://github.com/groupe-sii/ogham/
 </html>
 ```
 
-### Send email with Spring
+### Spring Boot
+
+See [Spring integration](integration.html#integrate-with-spring-boot) to know how to use Ogham with Spring Boot.
 
 Spring comes with very useful management of configuration properties (environment and profiles). Ogham module is able to use environment provided by Spring.
 
@@ -664,7 +672,7 @@ mail.smtp.port=<your server port>
 ogham.email.from=<your gmail address>
 ```
 
-To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending email using Ogham ([sample available here]()):
+To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending email using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/BasicSample.java)):
 
 ```java
 package fr.sii.ogham.context.sample.springboot.email;
@@ -672,7 +680,6 @@ package fr.sii.ogham.context.sample.springboot.email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -685,7 +692,6 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 @SpringBootApplication
-@PropertySource("application-basic.properties")
 public class BasicSample {
 
 	public static void main(String[] args) throws MessagingException {
