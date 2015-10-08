@@ -4,6 +4,9 @@
 
 Ogham lets you set the sender phone number directly into properties. This phone number is automatically used for all sent SMS: 
 
+<span class="highlight" data-lines="17,23" data-irrelevant-lines="1-9,13-16"></span>
+<span class="collapse" data-lines="1-9"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.sms;
 
@@ -35,6 +38,8 @@ public class BasicSample {
 
 If you specify the sender phone number, this value is used instead of the global one:
 
+<span class="highlight" data-lines="23-24" data-irrelevant-lines="1-9,13-16"></span>
+<span class="collapse" data-lines="1-9"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.sms;

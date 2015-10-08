@@ -6,6 +6,9 @@ In order to organize your templates and put them at one location, you can set a 
 
 Here is the sample without prefix and suffix:
 
+<span class="highlight" data-irrelevant-lines="1-11,15-20"></span>
+<span class="collapse" data-lines="1-11,15-20"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -38,6 +41,9 @@ public class HtmlTemplateSample {
 ```
 
 And now adding the properties `ogham.email.template.prefix` and `ogham.email.template.suffix`:
+
+<span class="highlight" data-lines="20-21,27" data-irrelevant-lines="1-11,15-19"></span>
+<span class="collapse" data-lines="1-11,15-19"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email;

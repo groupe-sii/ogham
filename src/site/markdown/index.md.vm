@@ -28,6 +28,8 @@ When using the module to send email based on an HTML template, the templating sy
 
 $h3 Send email
 
+<span class="highlight" data-irrelevant-lines="1-9"></span>
+<span class="collapse" data-lines="1-9"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -71,6 +73,8 @@ public class BasicSample {
 
 $h3 Send SMS
 
+<span class="highlight" data-irrelevant-lines="1-9"></span>
+<span class="collapse" data-lines="1-9"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.sms;

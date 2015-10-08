@@ -7,6 +7,9 @@ Once Ogham is [integrated with Spring](integration.html#integrate-with-spring-bo
 
 This sample shows a fully working Spring Boot application that offers a REST endpoint for sending basic email:
 
+<span class="highlight" data-lines="31-32,38-43" data-irrelevant-lines="1-17,19,21-24"></span>
+<span class="collapse" data-lines="1-17"></span>
+
 ```java
 package fr.sii.ogham.sample.springboot.email;
 
@@ -66,6 +69,9 @@ public class BasicSample {
 ### Send SMS
 
 This sample shows a fully working Spring Boot application that offers a REST endpoint for sending basic SMS:
+
+<span class="highlight" data-lines="31-32,37-42" data-irrelevant-lines="1-17,19,22-25"></span>
+<span class="collapse" data-lines="1-17"></span>
 
 ```java
 package fr.sii.ogham.sample.springboot.sms;

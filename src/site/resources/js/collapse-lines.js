@@ -31,7 +31,7 @@
 				// update previous to new line
 				previous = line;
 			}
-			decorate(sourceLines, start, previous-1);
+			decorate(sourceLines, start, lines[lines.length-1]-1);
 			lineUtils.update(sourceElement, sourceLines);
 		}
 	};
@@ -47,7 +47,7 @@
 	};
 	
 	var decorateEnd = function(/*String*/line) {
-		return '</span></span>';
+		return line+'</span></span>';
 	};
 })();
 

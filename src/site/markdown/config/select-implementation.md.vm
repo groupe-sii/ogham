@@ -33,6 +33,9 @@ There are many other properties that can be used by the Java Mail API for [confi
 
 This example shows the minimal configuration for:
 
+<span class="highlight" data-lines="16-17" data-irrelevant-lines="1-9"></span>
+<span class="collapse" data-lines="1-9"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -74,6 +77,9 @@ SendGrid also allows to use directly an API key. You can provide this API key in
  - ogham.email.sendgrid.api.key
 
 
+<span class="highlight" data-lines="16-17" data-irrelevant-lines="1-9"></span>
+<span class="collapse" data-lines="1-9"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -113,6 +119,8 @@ Currently, only Cloudhopper SMPP is implemented. Other implementations will be a
 $h3 Exclude dependency
 
 You may want to exclude some implementation libraries due to license not appropriate for example. You can do it directly from your POM by excluding the unwanted dependencies. This is an example if you don't need to send email using SMTP and you don't want to have Java Mail dependency:
+
+<span class="highlight" data-lines="8-17"></span>
 
 ```xml
   ...

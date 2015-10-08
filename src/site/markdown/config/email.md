@@ -6,6 +6,9 @@ You can configure sender address for all sent email by setting the property `ogh
 
 Example:
 
+<span class="highlight" data-lines="17,23" data-irrelevant-lines="19,13-16"></span>
+<span class="collapse" data-lines="1-9,13-16"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -36,6 +39,9 @@ public class BasicSample {
 ```
 
 This global address is used only if nothing is specified in the email. If you explicitly set the sender address in the email constructor or using the setter, this value is used instead of the global one.
+
+<span class="highlight" data-lines="23-24" data-irrelevant-lines="1-10,14-17"></span>
+<span class="collapse" data-lines="1-10,14-17"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -79,6 +85,9 @@ Ogham has a shortcut to declare default authentication mechanism using a usernam
 It will automatically create an `Authenticator` with the provided values.
 
 The Gmail sample shows how to use this feature:
+
+<span class="highlight" data-lines="16-22" data-irrelevant-lines="1-9,13-15"></span>
+<span class="collapse" data-lines="1-9"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email.gmail;
