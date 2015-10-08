@@ -2,7 +2,7 @@
 
 ### Use prefix and suffix
 
-In order to organize your templates and put them at one location, you can set a prefix for templates. This can be done using properties.
+In order to organize your templates and put them at one location, you can set a prefix for templates. This can be done using properties. Each kind of message has its own property key.
 
 Here is the sample without prefix and suffix:
 
@@ -37,7 +37,7 @@ public class HtmlTemplateSample {
 }
 ```
 
-And now adding the properties:
+And now adding the properties `ogham.email.template.prefix` and `ogham.email.template.suffix`:
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -72,4 +72,6 @@ public class HtmlTemplateSample {
 }
 ```
 
-It allows you to use a simple name for the template instead of the full path
+It allows you to use a simple name for the template instead of the full path.
+
+You can do the same for SMS by using `ogham.sms.template.prefix` and `ogham.sms.template.suffix`.
