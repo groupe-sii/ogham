@@ -76,7 +76,7 @@ public class BasicSample {
 }
 ```
 
-### <a name="load-properties-from-file"/>Load properties from file
+#### <a name="load-properties-from-file"/>Load properties from file
 
 This sample shows how to send a basic SMS. The sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java).
 

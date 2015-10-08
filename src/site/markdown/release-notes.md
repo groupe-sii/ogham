@@ -11,8 +11,8 @@ The history of Ogham releases is documented below. For details of changes refer 
 
 ### Features
 
-- [Add Spring integration with Spring Boot](integration.html#integrate-with-spring-boot)
-- [Add Spring integration using Java config or XML config](integration.html#manual-integration-with-spring)
+- [Add Spring integration with Spring Boot](usage/integration.html#integrate-with-spring-boot)
+- [Add Spring integration using Java config or XML config](usage/integration.html#manual-integration-with-spring)
 - Add fluent API
 - Service now wrap all exceptions (even runtime exceptions) into checked exception
 - Add OVH implementation for sending SMS
@@ -33,6 +33,6 @@ The history of Ogham releases is documented below. For details of changes refer 
 - [Automatically fill email/sms with information from properties](config/properties.html)
 - [Automatically fill subject for emails provided directly in template](usage/how-to-send-email.html#sending-email-with-subject-from-template)
 - [Handle email attachments](usage/how-to-send-email.html#attachments)
-- [Apply basic HTML transformations to make the email work on several email clients](hidden-complexity.html)
+- [Apply basic HTML transformations to make the email work on several email clients](features/hidden-complexity.html)
 - Detect mimetype automatically
 - Simple lookup management for finding templates and template resources

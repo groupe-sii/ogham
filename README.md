@@ -4,6 +4,8 @@
 
 It is a reusable Java library in charge of sending any kind of message (email, SMS, mobile notification, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, Freemarker, Velocity, ...). The library also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
 
+[Full documentation](http://groupe-sii.github.io/ogham/)
+
 # Why ?
 
 ## Existing libraries
@@ -28,20 +30,47 @@ When using the module to send email based on an HTML template, the templating sy
 
 # Features
 
-- send an email
-  - basic email
-  - email with templated content
-  - email with attachments
-- send a SMS
-  - basic SMS
-  - SMS with templated content
-- managing lookup prefixes like JNDI
-  - for templates
-  - for attachments
-- automatic configuration
-  - automatically detect email implementation to use
-  - automatically detect SMS implementation to use
-  - automatically detect template engine to use
+**Send email**
+
+* [Basic email](http://groupe-sii.github.io/ogham/usage/how-to-send-email.html)
+* [Email with template](http://groupe-sii.github.io/ogham/usage/how-to-send-email.html#using-a-template)
+* [Email with attachments](http://groupe-sii.github.io/ogham/usage/how-to-send-email.html#attachments)
+* [Both HTML and text content](http://groupe-sii.github.io/ogham/usage/how-to-send-email.html#both-html-and-text)
+* [Extract subject from template](http://groupe-sii.github.io/ogham/usage/how-to-send-email.html#sending-email-with-subject-from-template)
+
+**Send SMS**
+
+* [Basic SMS](http://groupe-sii.github.io/ogham/usage/how-to-send-sms.html)
+* [SMS with template](http://groupe-sii.github.io/ogham/usage/how-to-send-sms.html#using-a-template)
+* Extract subject from template
+
+**Templating**
+
+* Multi-template engine support
+* [Internalize template CSS and images for you](http://groupe-sii.github.io/ogham/features/hidden-complexity.html#inline-css-and-images)
+
+**Managing lookup prefixes like JNDI**
+
+* For templates
+* For resources
+* For attachments
+
+**Automatic configuration**
+
+* [Automatically detect email implementation to use](http://groupe-sii.github.io/ogham/config/select-implementation.html#email)
+* [Automatically detect SMS implementation to use](http://groupe-sii.github.io/ogham/config/select-implementation.html#sms)
+* Automatically detect template engine to use
+
+**Integration with Spring**
+
+* [Integration with Spring Boot](http://groupe-sii.github.io/ogham/usage/integration.html#integrate-with-spring-boot)
+* [Manual integration](http://groupe-sii.github.io/ogham/usage/integration.html#manual-integration-with-spring)
+
+**Extensible**
+
+* Add your own message sender
+* Integrate your own template engine
+* Many other possible extensions
 
 
 # Standard usage
@@ -523,6 +552,121 @@ And the templated content (available [here](sample-standard-usage/src/main/resou
 [[${value}]]
 </html>
 ```
+
+### Full sample
+
+This sample combines all features:
+
+- Uses templates (HTML and text templates)
+- HTML template includes page fragments
+- HTML template references external CSS and images
+- The subject is directly extracted from template
+- The email is sent with one attachment
+
+
+Here is the Java code ([available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/FullSample.java)):
+
+
+```java
+package fr.sii.ogham.sample.standard.email;
+
+import java.io.IOException;
+import java.util.Properties;
+
+import fr.sii.ogham.context.SimpleBean;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.message.Email;
+
+public class FullSample {
+
+	public static void main(String[] args) throws MessagingException, IOException {
+		// configure properties from file
+		Properties properties = new Properties();
+		properties.load(FullSample.class.getResourceAsStream("/email-template.properties"));
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
+		// send the email using fluent API
+		// @formatter:off
+		service.send(new Email().
+						content(new MultiTemplateContent("full", new SimpleBean("foo", 42))).
+						to("<recipient address>").
+						attach(new Attachment("/attachment/test.pdf")));
+		// @formatter:on
+	}
+
+}
+```
+
+The loaded property file content:
+
+```ini
+# general SMTP server
+mail.smtp.host=<your server host>
+mail.smtp.port=<your server port>
+# using with Gmail
+#mail.smtp.auth=true
+#mail.smtp.host=smtp.gmail.com
+#mail.smtp.port=465
+#mail.smtp.socketFactory.port=465
+#mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory
+#ogham.email.authenticator.username=<your gmail username>
+#ogham.email.authenticator.password=<your gmail password>
+
+
+# ogham additional properties
+ogham.email.from=<sender email address>
+ogham.email.template.prefix=/template/thymeleaf/email/
+```
+
+The HTML template content is [available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.html). The content of the HTML is not displayed entirely. Just useful parts are shown here:
+
+```html
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!-- Load fragment that contains external CSS -->
+<head th:replace="fragments/header.html :: header">&nbsp;</head>
+<body id="body_2a02_0">
+	...
+		<!-- Use image -->
+		<img src="classpath:/resources/images/h1.gif" alt="Creating Email Magic" width="300" height="230" />
+	...
+		<!-- Use of variables and CSS classes that will be interned -->
+		<tr>
+			<td id="td_2a02_3">
+				<span class="name" th:text="${name}">${name}</span>
+			</td>
+		</tr>
+		<tr>
+			<td id="td_2a02_4" class="value" th:text="${value}">
+			</td>
+		</tr>
+	...
+```
+
+Now the content of the header ([available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/fragments/header.html)). The header contains the subject of the email (with title tag) and references external CSS files that will be interned directly in the HTML:
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:fragment="header">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Full Sample</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<link href="classpath:/resources/css/external1.css" rel="stylesheet" />
+		<link href="classpath:/resources/css/external2.css" rel="stylesheet" />
+	</head>
+</html>
+```
+
+The content of the CSS files are not displayed here but [can be found in samples](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/resources/css/). Useful classes are `name` and `value`.
+
+The text template is [available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.txt).
+
 
 ### Send email with Spring
 

@@ -169,7 +169,7 @@ To use Ogham with Spring Boot, just [add the following dependency][spring-integr
 **Templating**
 
 * Multi-template engine support
-* [Internalize template CSS and images for you](hidden-complexity.html#inline-css-and-images)
+* [Internalize template CSS and images for you](features/hidden-complexity.html#inline-css-and-images)
 
 **Managing lookup prefixes like JNDI**
 
