@@ -1,6 +1,11 @@
-## Usage
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
 
-### Get it now
+$h2 Usage
+
+$h3 Get it now
 
 To use Ogham without any framework, [add it to pom.xml][ogham-integration]:
 
@@ -11,7 +16,7 @@ To use Ogham without any framework, [add it to pom.xml][ogham-integration]:
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${oghamVersion}</version>
+			<version>${project.version}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -27,7 +32,7 @@ To use Ogham with Spring Boot, just [add the following dependency][spring-integr
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring</artifactId>
-			<version>${oghamVersion}</version>
+			<version>${project.version}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -42,7 +47,7 @@ To use Ogham with Spring Boot, just [add the following dependency][spring-integr
 ---
 
 
-### Send email
+$h3 Send email
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -83,7 +88,7 @@ public class BasicSample {
 [email-usage]: how-to-send-email.html
 
 
-### Send SMS
+$h3 Send SMS
 
 ```java
 package fr.sii.ogham.sample.standard.sms;
@@ -125,7 +130,7 @@ public class BasicSample {
 [sms-usage]: how-to-send-sms.html
 
 
-### Use with Spring
+$h3 Use with Spring
 
 Once Ogham is [integrated with Spring](integration.html#integrate-with-spring-boot), you can simply inject `MessagingService` where you need it.
 

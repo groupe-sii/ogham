@@ -1,8 +1,13 @@
-## Integration
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
 
-### Standalone usage
+$h2 Integration
 
-#### Maven dependency
+$h3 Standalone usage
+
+$h4 Maven dependency
 
 To use Ogham, add it to your pom.xml:
 
@@ -13,7 +18,7 @@ To use Ogham, add it to your pom.xml:
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${oghamVersion}</version>
+			<version>${project.version}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -22,7 +27,7 @@ To use Ogham, add it to your pom.xml:
 
 See [how to use the module](index.html).
 
-### <a name="integrate-with-spring-boot"/>Integrate with Spring Boot
+$h3 <a name="integrate-with-spring-boot"/>Integrate with Spring Boot
 
 To use Ogham and let Spring Boot auto-configuration mechanism handle integration, just add dependency to your pom.xml:
 
@@ -33,7 +38,7 @@ To use Ogham and let Spring Boot auto-configuration mechanism handle integration
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring</artifactId>
-			<version>${oghamVersion}</version>
+			<version>${project.version}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -60,7 +65,7 @@ Then to use it in your code, simply autowire the service:
 
 See [how to use the module with Spring](spring.html).
 
-### <a name="manual-integration-with-spring"/>Manual integration with Spring
+$h3 <a name="manual-integration-with-spring"/>Manual integration with Spring
 
 To use Ogham without Spring Boot, you have to first add the dependency to your pom.xml:
 
@@ -71,7 +76,7 @@ To use Ogham without Spring Boot, you have to first add the dependency to your p
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring</artifactId>
-			<version>${oghamVersion}</version>
+			<version>${project.version}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -94,7 +99,7 @@ Then to use it in your code, simply inject the service:
 ```
 
 
-#### Integration including Thymeleaf in Java
+$h4 Integration including Thymeleaf in Java
 
 If you want to use Thymeleaf provided by Spring MVC, you have to add the following configuration:
 
@@ -115,7 +120,7 @@ If you want to use Thymeleaf provided by Spring MVC, you have to add the followi
 ```
 
 
-#### Independent integration (standalone Thymeleaf) in Java
+$h4 Independent integration (standalone Thymeleaf) in Java
 
 If you want to use Thymeleaf provided by Ogham (independent from Spring), you have to add the following configuration:
 
@@ -132,7 +137,7 @@ If you want to use Thymeleaf provided by Ogham (independent from Spring), you ha
 	}
 ```
 
-#### Independent integration in XML
+$h4 Independent integration in XML
 
 To create the service using the builder, you can use `factory-method` feature provided by Spring. The builder requires Spring environment to be able to access configuration properties.
 

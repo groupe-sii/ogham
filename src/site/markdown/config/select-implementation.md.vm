@@ -1,4 +1,9 @@
-## Select implementations
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 Select implementations
 
 The library is able to handle many ways to send the same message. For example, sending an email can be done using the following ways:
  
@@ -13,11 +18,11 @@ The library is using conditions to select the implementation to use at runtime. 
 The box colored in grey are implementations that are not available for the moment.
 
 
-### <a name="email"/>Email
+$h3 <a name="email"/>Email
 
 ![Email implementations selection](../images/email_implementations.png)
 
-#### Send email using SMTP
+$h4 Send email using SMTP
 
 To send email using SMTP, you need at least two mandatory properties:
 
@@ -57,7 +62,7 @@ public class BasicSample {
 }
 ```
 
-#### Send email through SendGrid
+$h4 Send email through SendGrid
 
 SendGrid requires some authentication information for sending email. You can provide these values directly in properties:
 
@@ -98,14 +103,14 @@ public class BasicSample {
 }
 ```
 
-### <a name="sms"/>SMS
+$h3 <a name="sms"/>SMS
 
 ![SMS implementations selection](../images/sms_implementations.png)
 
 Currently, only Cloudhopper SMPP is implemented. Other implementations will be available soon.
 
 
-### Exclude dependency
+$h3 Exclude dependency
 
 You may want to exclude some implementation libraries due to license not appropriate for example. You can do it directly from your POM by excluding the unwanted dependencies. This is an example if you don't need to send email using SMTP and you don't want to have Java Mail dependency:
 
@@ -116,7 +121,7 @@ You may want to exclude some implementation libraries due to license not appropr
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${oghamVersion}</version>
+			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.sun.mail</groupId>

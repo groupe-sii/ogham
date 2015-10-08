@@ -1,4 +1,9 @@
-### Existing libraries
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h3 Existing libraries
 
 Several libraries for sending email already exist ([Apache Commons Email](https://commons.apache.org/proper/commons-email/), [Simple Java Mail/Vesijama](https://github.com/bbottema/simple-java-mail), [Spring Email Integration](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html)...). These libraries help you send an email but if you want to use a templated content, you will have to manually integrate a template engine.
 
@@ -7,7 +12,7 @@ These libraries also provide only implementations based on Java Mail API. But in
 So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service... Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
 
 
-### The Ogham module
+$h3 The Ogham module
 
 This module is designed for handling any kind of message the same way. It also provides several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can easily add your own implementation.
 
@@ -21,7 +26,7 @@ When using the module to send email based on an HTML template, the templating sy
 ---
 
 
-### Send email
+$h3 Send email
 
 
 ```java
@@ -64,7 +69,7 @@ public class BasicSample {
 
 
 
-### Send SMS
+$h3 Send SMS
 
 
 ```java
@@ -110,7 +115,7 @@ public class BasicSample {
 ---
 
 
-### Get it now
+$h3 Get it now
 
 To use Ogham without any framework, [add it to pom.xml][ogham-integration]:
 
@@ -121,7 +126,7 @@ To use Ogham without any framework, [add it to pom.xml][ogham-integration]:
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${oghamVersion}</version>
+			<version>${project.version}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -137,7 +142,7 @@ To use Ogham with Spring Boot, just [add the following dependency][spring-integr
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring</artifactId>
-			<version>${oghamVersion}</version>
+			<version>${project.version}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -150,7 +155,7 @@ To use Ogham with Spring Boot, just [add the following dependency][spring-integr
 [spring-integration]: usage/integration.html#integrate-with-spring-boot
 
 
-### Features
+$h3 Features
 
 **Send email**
 
@@ -194,7 +199,7 @@ To use Ogham with Spring Boot, just [add the following dependency][spring-integr
 * Integrate your own template engine
 * Many other possible extensions
 
-### Hidden complexity
+$h3 Hidden complexity
 
 One of the main aim of the library is to hide the implementation complexity. It provides automatic behaviors to simplify the development and focus on useful code.
 
