@@ -16,7 +16,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 @SpringBootApplication
-@PropertySource("application-email-basic.properties")
+@PropertySource("application-email-basic.properties")	// just needed to be able to run the sample
 public class BasicSample {
 
 	public static void main(String[] args) throws MessagingException {
@@ -24,14 +24,14 @@ public class BasicSample {
 	}
 	
 	@RestController
-	public static class BasicController {
+	public static class EmailController {
 		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-basic.properties
+		// The configuration can be set into application-email-basic.properties
 		// The configuration files are stored into src/main/resources
 		@Autowired
 		MessagingService messagingService;
 		
-		@RequestMapping(value="api/email", method=RequestMethod.POST)
+		@RequestMapping(value="api/email/basic", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
 			// send the email

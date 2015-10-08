@@ -1,3 +1,5 @@
+## Configuration
+
 ### Configure using properties
 
 Configuration values can be provided by using builders. The builders can either use manually provided properties or

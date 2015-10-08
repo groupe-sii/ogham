@@ -4,7 +4,7 @@ The samples are available in the [sample-standard-usage sub-project](https://git
 
 All samples shown bellow are using SMPP for sending SMS. See [select implementation](../config/select-implementation.html) to know other ways to send SMS.
 
-### Basic
+### <a name="basic"/>Basic
 
 The [SMPP](https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer) protocol is the standard way to send SMS. This sample defines two properties mandatory (system ID and password) by this protocol in order to use it. This sample is available [here](https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java).
 
@@ -76,9 +76,9 @@ public class BasicSample {
 }
 ```
 
-### Load properties from file
+### <a name="load-properties-from-file"/>Load properties from file
 
-This sample shows how to send a basic email. The sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java).
+This sample shows how to send a basic SMS. The sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSampleExternalProperties.java).
 
 If you want to put properties in a configuration file, you can create a properties file (sms.properties for example) in src/main/resources folder with the following content:
 
@@ -124,7 +124,7 @@ public class BasicSampleExternalProperties {
 
 ```
 
-### Using a template
+### <a name="using-a-template"/>Using a template
 
 Sending SMS with a templated content is exactly the same as sending email with a templated content. The sample is available [here](https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java).
 
@@ -203,7 +203,7 @@ public class TemplateSample {
 ```
 
 
-### Sending a long SMS
+### <a name="sending-long-sms"/>Sending a long SMS
 
 As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters (depends of char encoding). If needed, the library will split your messages into several parts the right way to be recomposed by clients later. So the code doesn't change at all (the sample is available [here](https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java)):
 
@@ -241,7 +241,7 @@ public class LongMessageSample {
 ```
 
 
-### Send SMS with Spring Boot
+### <a name="spring-boot"/>Spring Boot
 
 See [Spring integration](integration.html#integrate-with-spring-boot) to know how to use Ogham with Spring Boot.
 
@@ -257,14 +257,19 @@ ogham.sms.smpp.password=<your server password>
 ogham.sms.from=<phone number to display for the sender>
 ```
 
-To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending SMS using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/BasicSample.java)):
+#### REST web service
+
+##### Basic SMS
+
+To use Ogham in Spring, you can directly inject (autowire) it. Here is a fully Spring Boot application serving one REST endpoint for sending SMS using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/BasicSample.java)):
 
 ```java
-package fr.sii.ogham.context.sample.springboot.sms;
+package fr.sii.ogham.sample.springboot.sms;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -277,6 +282,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
 @SpringBootApplication
+@PropertySource("application-sms-basic.properties")	// just needed to be able to run the sample
 public class BasicSample {
 
 	public static void main(String[] args) throws MessagingException {
@@ -284,16 +290,16 @@ public class BasicSample {
 	}
 	
 	@RestController
-	public static class BasicController {
+	public static class SmsController {
 		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-basic.properties
+		// The configuration can be set into application-sms-basic.properties
 		// The configuration files are stored into src/main/resources
 		@Autowired
 		MessagingService messagingService;
 		
-		@RequestMapping(value="api/sms", method=RequestMethod.POST)
+		@RequestMapping(value="api/sms/basic", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
-		public void sendMail(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
+		public void sendSms(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
 			// send the SMS
 			messagingService.send(new Sms(content, to));
 			// or using fluent API
@@ -304,5 +310,78 @@ public class BasicSample {
 	}
 
 }
+```
 
+##### SMS with template
+
+[This sample](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/TemplateSample.java) is a fully working Spring Boot application that exposes a simple REST endpoint for sending a SMS based on a template:
+
+```java
+package fr.sii.ogham.sample.springboot.sms;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import fr.sii.ogham.context.SimpleBean;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
+
+@SpringBootApplication
+@PropertySource("application-sms-template.properties")	// just needed to be able to run the sample
+public class TemplateSample {
+
+	public static void main(String[] args) throws MessagingException {
+		SpringApplication.run(TemplateSample.class, args);
+	}
+	
+	@RestController
+	public static class SmsController {
+		// Messaging service is automatically created using Spring Boot features
+		// The configuration can be set into application-sms-template.properties
+		// The configuration files are stored into src/main/resources
+		@Autowired
+		MessagingService messagingService;
+		
+		@RequestMapping(value="api/sms/template", method=RequestMethod.POST)
+		@ResponseStatus(HttpStatus.CREATED)
+		public void sendSms(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
+			// send the SMS
+			messagingService.send(new Sms(new TemplateContent("register.txt", new SimpleBean(name, value)), to));
+			// or using fluent API
+			messagingService.send(new Sms().
+									content(new TemplateContent("register.txt", new SimpleBean(name, value))).
+									to(to));
+		}
+	}
+
+}
+
+```
+
+That uses this [template](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/resources/sms/register.txt):
+
+```txt
+<html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">[[${name}]] [[${value}]]</html>
+```
+
+The [configuration file](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/resources/application-sms-template.properties) used for the sample:
+
+```ini
+# ogham configuration for SMS
+ogham.sms.smpp.host<your server host>
+ogham.sms.smpp.port=<your server port>
+ogham.sms.smpp.systemId=<your server system ID>
+ogham.sms.smpp.password=<your server password>
+ogham.sms.from=<phone number to display for the sender>
+ogham.sms.template.prefix=/sms/
 ```

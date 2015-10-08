@@ -50,7 +50,7 @@ public class Sms implements Message {
 	 * nothing.
 	 */
 	public Sms() {
-		super();
+		this((Content) null);
 	}
 
 	/**

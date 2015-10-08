@@ -13,7 +13,7 @@ The library is using conditions to select the implementation to use at runtime. 
 The box colored in grey are implementations that are not available for the moment.
 
 
-### Email
+### <a name="email"/>Email
 
 ![Email implementations selection](../images/email_implementations.png)
 
@@ -98,7 +98,7 @@ public class BasicSample {
 }
 ```
 
-### SMS
+### <a name="sms"/>SMS
 
 ![SMS implementations selection](../images/sms_implementations.png)
 

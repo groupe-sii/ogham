@@ -112,7 +112,7 @@ public class BasicSample {
 
 ### Get it now
 
-To use Ogham, [add it to pom.xml][ogham-integration]:
+To use Ogham without any framework, [add it to pom.xml][ogham-integration]:
 
 ```xml
   ...
@@ -128,26 +128,48 @@ To use Ogham, [add it to pom.xml][ogham-integration]:
 	...
 ```
 
-Current version is ${project.version}.
+To use Ogham with Spring Boot, just [add the following dependency][spring-integration]:
 
-[Full usage instructions &raquo;][ogham-integration]
+```xml
+  ...
+	<dependencies>
+	  ...
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-spring</artifactId>
+			<version>${ogham-module.version}</version>
+		</dependency>
+		...
+	</dependencies>
+	...
+```
 
-[ogham-integration]: usage/index.html
+[Full integration instructions &raquo;][ogham-integration]
+
+[ogham-integration]: usage/integration.html
+[spring-integration]: usage/integration.html#integrate-with-spring-boot
 
 
 ### Features
 
 **Send email**
 
-* Basic email
-* Email with templated content
-* Email with attachments
-* Both HTML and text content
+* [Basic email](usage/how-to-send-email.html)
+* [Email with template](usage/how-to-send-email.html#using-a-template)
+* [Email with attachments](usage/how-to-send-email.html#attachments)
+* [Both HTML and text content](usage/how-to-send-email.html#both-html-and-text)
+* [Extract subject from template](usage/how-to-send-email.html#sending-email-with-subject-from-template)
 
 **Send SMS**
 
-* Basic SMS
-* SMS with templated content
+* [Basic SMS](usage/how-to-send-sms.html)
+* [SMS with template](usage/how-to-send-sms.html#using-a-template)
+* Extract subject from template
+
+**Templating**
+
+* Multi-template engine support
+* [Internalize template CSS and images for you](hidden-complexity.html#inline-css-and-images)
 
 **Managing lookup prefixes like JNDI**
 
@@ -157,10 +179,20 @@ Current version is ${project.version}.
 
 **Automatic configuration**
 
-* Automatically detect email implementation to use
-* Automatically detect SMS implementation to use
+* [Automatically detect email implementation to use](config/select-implementation.html#email)
+* [Automatically detect SMS implementation to use](config/select-implementation.html#sms)
 * Automatically detect template engine to use
 
+**Integration with Spring**
+
+* [Integration with Spring Boot](usage/integration.html#integrate-with-spring-boot)
+* [Manual integration](usage/integration.html#manual-integration-with-spring)
+
+**Extensible**
+
+* Add your own message sender
+* Integrate your own template engine
+* Many other possible extensions
 
 ### Hidden complexity
 

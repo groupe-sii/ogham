@@ -16,7 +16,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
 @SpringBootApplication
-@PropertySource("application-sms-basic.properties")
+@PropertySource("application-sms-basic.properties")	// just needed to be able to run the sample
 public class BasicSample {
 
 	public static void main(String[] args) throws MessagingException {
@@ -24,16 +24,16 @@ public class BasicSample {
 	}
 	
 	@RestController
-	public static class BasicController {
+	public static class SmsController {
 		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-basic.properties
+		// The configuration can be set into application-sms-basic.properties
 		// The configuration files are stored into src/main/resources
 		@Autowired
 		MessagingService messagingService;
 		
-		@RequestMapping(value="api/sms", method=RequestMethod.POST)
+		@RequestMapping(value="api/sms/basic", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
-		public void sendMail(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
+		public void sendSms(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
 			// send the SMS
 			messagingService.send(new Sms(content, to));
 			// or using fluent API

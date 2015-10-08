@@ -65,7 +65,7 @@ public class Email implements Message, WithSubject {
 	 * nothing.
 	 */
 	public Email() {
-		super();
+		this(null, (Content) null);
 	}
 
 	/**

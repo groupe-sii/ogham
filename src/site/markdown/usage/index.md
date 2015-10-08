@@ -125,3 +125,12 @@ public class BasicSample {
 [sms-usage]: how-to-send-sms.html
 
 
+### Use with Spring
+
+Once Ogham is [integrated with Spring](integration.html#integrate-with-spring-boot), you can simply inject `MessagingService` where you need it.
+
+[Read more about usage with Spring &raquo;][spring-usage]
+
+[spring-usage]: spring.html
+
+

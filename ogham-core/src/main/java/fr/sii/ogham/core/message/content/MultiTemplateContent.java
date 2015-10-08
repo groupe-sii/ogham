@@ -50,7 +50,7 @@ public class MultiTemplateContent extends MultiContent {
 	 *            the context to share
 	 */
 	public MultiTemplateContent(String templatePath, Context context) {
-		this(templatePath, context, "html", "txt");
+		this(templatePath, context, "txt", "html");
 	}
 
 	/**
