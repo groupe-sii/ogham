@@ -117,6 +117,7 @@
 				<script src="$resourcePath/js/line-utils.js"></script>
 				<script src="$resourcePath/js/highlight-lines.js"></script>
 				<script src="$resourcePath/js/collapse-lines.js"></script>
+				<script src="$resourcePath/js/alternatives.js"></script>
 			</endContent>
 		</reflowSkin>
 	</custom>
@@ -127,6 +128,7 @@
 			<link rel="author" href="https://github.com/aurelien-baudet" />
 			<link rel="stylesheet" href="$resourcePath/css/highlight-lines.css" />
 			<link rel="stylesheet" href="$resourcePath/css/collapse-lines.css" />
+			<link rel="stylesheet" href="$resourcePath/css/alternatives.css" />
 		</head>
 
 		<links>

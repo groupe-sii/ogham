@@ -15,6 +15,9 @@ Finally, the last line sends the email. The specified email is really basic. It 
 See other examples for advanced usages (using a templated content or adding attachments).
 
 
+<span class="highlight" data-irrelevant-lines="1-9"></span>
+<span class="collapse" data-lines="1-9"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -44,7 +47,10 @@ public class BasicSample {
 }
 ```
 
-If you prefer, you can also use the fluent API:
+If you prefer, you can also use the fluent API (highlighted lines):
+
+<span class="highlight" data-lines="23-26" data-irrelevant-lines="1-9"></span>
+<span class="collapse" data-lines="1-9,13-22"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -92,6 +98,9 @@ ogham.email.from=<email address to display for the sender user>
 
 And then load these properties before creating messaging service:
 
+<span class="highlight" data-lines="14-16" data-irrelevant-lines="1-10,17-19"></span>
+<span class="collapse" data-lines="1-10"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -138,6 +147,9 @@ Finally, the last line sends the email. The specified email is really basic. It 
 See other examples for advanced usages (using a templated content or adding attachments).
 
 
+<span class="highlight" data-lines="13-23" data-irrelevant-lines="1-9"></span>
+<span class="collapse" data-lines="1-9"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email.gmail;
 
@@ -165,45 +177,9 @@ public class BasicGmailSSLSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// send the email using constructor
 		service.send(new Email("subject", "email content", "<recipient address>"));
-	}
-
-}
-
-```
-
-Or using fluent API:
-
-
-```java
-package fr.sii.ogham.sample.standard.email.gmail;
-
-import java.util.Properties;
-
-import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.message.Email;
-
-public class BasicGmailSSLSample {
-
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.auth", "true");
-		properties.setProperty("mail.smtp.host", "smtp.gmail.com");
-		properties.setProperty("mail.smtp.port", "465");
-		properties.setProperty("mail.smtp.socketFactory.port", "465");
-		properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		properties.setProperty("ogham.email.authenticator.username", "<your gmail username>");
-		properties.setProperty("ogham.email.authenticator.password", "<your gmail password>");
-		properties.setProperty("ogham.email.from", "<your gmail address>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// or send the email using fluent API
 		service.send(new Email().
 								subject("subject").
 								content("email content").
@@ -226,6 +202,8 @@ Finally, the last line sends the email. The specified email is really basic too.
 
 See other examples for advanced usages (adding attachments).
 
+<span class="highlight" data-lines="25,29" data-irrelevant-lines="1-11,15-24"></span>
+<span class="collapse" data-lines="1-11"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -251,41 +229,9 @@ public class HtmlTemplateSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// send the email using constructor
 		service.send(new Email("subject", new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42)), "<recipient address>"));
-	}
-
-}
-
-```
-
-Or using the fluent API:
-
-```java
-package fr.sii.ogham.sample.standard.email;
-
-import java.util.Properties;
-
-import fr.sii.ogham.context.SimpleBean;
-import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.message.Email;
-
-public class HtmlTemplateSample {
-
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// or send the email using fluent API
 		service.send(new Email().
 							subject("subject").
 							content(new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42))).
@@ -295,6 +241,7 @@ public class HtmlTemplateSample {
 }
 
 ```
+
 
 
 Here is the templated content:
@@ -319,6 +266,9 @@ The template is available [here](https://github.com/groupe-sii/ogham/tree/master
 
 This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to mutualize the code and to avoid to create a new file just for one line.
 
+<span class="highlight" data-lines="27,31-33" data-irrelevant-lines="1-11,15-23" data-info-lines="25-26,29-30"></span>
+<span class="collapse" data-lines="1-11"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -343,42 +293,11 @@ public class HtmlTemplateWithSubjectSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// send the email using constructor
 		// subject is set to null to let automatic mechanism to read the title
 		// of the HTML and use it as subject of your email
 		service.send(new Email(null, new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", new SimpleBean("foo", 42)), "<recipient address>"));
-	}
-
-}
-```
-
-Or using fluent API:
-
-```java
-package fr.sii.ogham.sample.standard.email;
-
-import java.util.Properties;
-
-import fr.sii.ogham.context.SimpleBean;
-import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.message.Email;
-
-public class HtmlTemplateWithSubjectSample {
-
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// or send the email using fluent API
 		// subject is not set to let automatic mechanism to read the title
 		// of the HTML and use it as subject of your email
 		service.send(new Email().
@@ -390,6 +309,8 @@ public class HtmlTemplateWithSubjectSample {
 ```
 
 Here is the templated content :
+
+<span class="highlight" data-lines="4"></span>
 
 ```html
 <!DOCTYPE html>
@@ -416,9 +337,12 @@ Sending an email with HTML content **and** text content might be really importan
 
 This sample shows how to provide both HTML content and text content. This sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java).
 
-package fr.sii.ogham.sample.standard.email;
+<span class="highlight" data-lines="24-26,30" data-irrelevant-lines="1-9,13-21"></span>
+<span class="collapse" data-lines="1-9"></span>
 
 ```java
+package fr.sii.ogham.sample.standard.email;
+
 import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
@@ -439,42 +363,11 @@ public class HtmlAndTextSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// send the email using constructor
 		String html = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /></head><body><h1 class=\"title\">Hello World</h1><p class=\"text\">Foo bar</p></body></html>";
 		String text = "Hello World !\r\nFoo bar";
 		service.send(new Email("subject", new MultiContent(html, text), "<recipient address>"));
-	}
-
-}
-```
-
-Or using fluent API:
-
-
-```java
-import java.util.Properties;
-
-import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiContent;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.message.Email;
-
-public class HtmlAndTextSample {
-
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "<your server host>");
-		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
-		String html = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /></head><body><h1 class=\"title\">Hello World</h1><p class=\"text\">Foo bar</p></body></html>";
-		String text = "Hello World !\r\nFoo bar";
+		// or send the email using fluent API
 		service.send(new Email().
 							subject("subject").
 							content(new MultiContent(html, text)).
@@ -487,6 +380,9 @@ public class HtmlAndTextSample {
 
 This sample shows how to provide both HTML content and text content following a template engine language. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java).
 
+<span class="highlight" data-lines="28,32" data-irrelevant-lines="1-10,14-23" data-info-lines="25-27"></span>
+<span class="collapse" data-lines="1-10"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -511,46 +407,12 @@ public class HtmlAndTextTemplateSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// send the email using constructor
 		// Note that the extension of the template is not given. This version
 		// automatically takes the provided path and adds the '.html' extension
 		// for the HTML template and '.txt' for text template
 		service.send(new Email("subject", new MultiTemplateContent("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42)), "<recipient address>"));
-	}
-
-}
-```
-
-Or using fluent API:
-
-```java
-package fr.sii.ogham.sample.standard.email;
-
-import java.util.Properties;
-
-import fr.sii.ogham.context.SimpleBean;
-import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.message.Email;
-
-public class HtmlAndTextTemplateSample {
-
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
-		// Note that the extension of the template is not given. This version
-		// automatically takes the provided path and adds the '.html' extension
-		// for the HTML template and '.txt' for text template
+		// or send the email using fluent API
 		service.send(new Email().
 							subject("subject").
 							content(new MultiTemplateContent("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42))).
@@ -559,6 +421,7 @@ public class HtmlAndTextTemplateSample {
 
 }
 ```
+
 
 
 Here is the content of the HTML template (available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html)):
@@ -594,6 +457,9 @@ Then you must create the service. You can use the MessagingBuilder to help you t
 Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the textual content, the receiver address and the attachment file that is available in the classpath. You may use several attachments too. The sender address is automatically added to the email by the service based on configuration properties.
 
 
+<span class="highlight" data-lines="24,30" data-irrelevant-lines="1-10,14-23"></span>
+<span class="collapse" data-lines="1-10"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.email;
 
@@ -617,39 +483,9 @@ public class WithAttachmentSample {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// send the email using constructor
 		service.send(new Email("subject", "content of the email", "<recipient address>", new Attachment("classpath:/attachment/test.pdf")));
-	}
-
-}
-```
-
-Or using fluent API:
-
-```java
-package fr.sii.ogham.sample.standard.email;
-
-import java.util.Properties;
-
-import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.message.Email;
-
-public class WithAttachmentSample {
-
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "<your server host>");
-		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		// or send the email using fluent API
 		service.send(new Email().
 							subject("subject").
 							content("content of the email").
@@ -659,7 +495,6 @@ public class WithAttachmentSample {
 
 }
 ```
-
 
 
 ### <a name="full-sample"/>Full sample
@@ -675,6 +510,8 @@ This sample combines all features:
 
 Here is the Java code ([available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/FullSample.java)):
 
+<span class="highlight" data-irrelevant-lines="1-13"></span>
+<span class="collapse" data-lines="1-13"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -713,6 +550,8 @@ public class FullSample {
 
 The loaded property file content:
 
+<span class="highlight" data-irrelevant-lines="4,-11"></span>
+
 ```ini
 # general SMTP server
 mail.smtp.host=<your server host>
@@ -726,13 +565,14 @@ mail.smtp.port=<your server port>
 #ogham.email.authenticator.username=<your gmail username>
 #ogham.email.authenticator.password=<your gmail password>
 
-
 # ogham additional properties
 ogham.email.from=<sender email address>
 ogham.email.template.prefix=/template/thymeleaf/email/
 ```
 
 The HTML template content is [available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.html). The content of the HTML is not displayed entirely. Just useful parts are shown here:
+
+<span class="highlight" data-lines="4,8,13,17"></span>
 
 ```html
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -758,6 +598,8 @@ The HTML template content is [available here](https://github.com/groupe-sii/ogha
 ```
 
 Now the content of the header ([available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/fragments/header.html)). The header contains the subject of the email (with title tag) and references external CSS files that will be interned directly in the HTML:
+
+<span class="highlight" data-lines="5,7-8"></span>
 
 ```html
 <!DOCTYPE html>
@@ -796,6 +638,9 @@ ogham.email.from=<your gmail address>
 ##### Basic email
 
 To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending email using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/BasicSample.java)):
+
+<span class="highlight" data-lines="31-32,38-43" data-irrelevant-lines="1-17,19,21-24"></span>
+<span class="collapse" data-lines="1-17"></span>
 
 ```java
 package fr.sii.ogham.sample.springboot.email;
@@ -853,6 +698,9 @@ public class BasicSample {
 
 This sample show how to use messaging service using both HTML and text templates. The templates also directly contain subject. The sample is available [here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/HtmlAndTextTemplateWithSubjectSample.java)
 
+<span class="highlight" data-lines="34-35,41,43-45" data-irrelevant-lines="1-19,21,23-26"></span>
+<span class="collapse" data-lines="1-19"></span>
+
 ```java
 package fr.sii.ogham.sample.springboot.email;
 
@@ -907,6 +755,8 @@ public class HtmlAndTextTemplateWithSubjectSample {
 
 Here is the content of the [HTML template](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/resources/email/register.html):
 
+<span class="highlight" data-lines="4"></span>
+
 ```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
@@ -923,12 +773,15 @@ Here is the content of the [HTML template](https://github.com/groupe-sii/ogham/b
 
 The content of the [text template](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/resources/email/register.txt):
 
+<span class="highlight" data-lines="1"></span>
+
 ```txt
 <html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">Subject: Subject of the email
 [[${name}]] [[${value}]]</html>
 ```
 
-Finally, he content of the [property file](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/resources/application-email-template.properties) is:
+Finally, the content of the [property file](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/resources/application-email-template.properties) is:
+
 
 ```ini
 # ogham configuration for email

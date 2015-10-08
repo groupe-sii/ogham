@@ -24,17 +24,22 @@
 					start = line-1;
 				}
 				if(previous && line!=previous+1) {
-					var end = previous-1;
 					// group is ended => wrap all lines between start and end
-					sourceLines[start] = decorateStart(sourceLines[start]);
-					sourceLines[end] = decorateEnd(sourceLines[end]);
+					decorate(sourceLines, start, previous-1);
 					start = line-1;
 				}
 				// update previous to new line
 				previous = line;
 			}
+			decorate(sourceLines, start, previous-1);
 			lineUtils.update(sourceElement, sourceLines);
 		}
+	};
+	
+	var decorate = function(/*Array*/sourceLines, /*int*/start, /*int*/end) {
+		sourceLines[start] = decorateStart(sourceLines[start]);
+		sourceLines[end] = decorateEnd(sourceLines[end]);
+		console.log(start, end, sourceLines[start], sourceLines[end]);
 	};
 	
 	var decorateStart = function(/*String*/line) {
