@@ -114,6 +114,9 @@
 			</pages>
 			<endContent>
 				<script src="$resourcePath/js/site.js"></script>
+				<script src="$resourcePath/js/line-utils.js"></script>
+				<script src="$resourcePath/js/highlight-lines.js"></script>
+				<script src="$resourcePath/js/collapse-lines.js"></script>
 			</endContent>
 		</reflowSkin>
 	</custom>
@@ -122,6 +125,8 @@
 		<!-- Add a rel to Google profile for all pages -->
 		<head>
 			<link rel="author" href="https://github.com/aurelien-baudet" />
+			<link rel="stylesheet" href="$resourcePath/css/highlight-lines.css" />
+			<link rel="stylesheet" href="$resourcePath/css/collapse-lines.css" />
 		</head>
 
 		<links>
