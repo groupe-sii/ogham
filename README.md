@@ -668,69 +668,6 @@ The content of the CSS files are not displayed here but [can be found in samples
 The text template is [available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.txt).
 
 
-### Send email with Spring
-
-Spring comes with very useful management of configuration properties (environment and profiles). Ogham module is able to use environment provided by Spring.
-
-Add the following information in the application.properties (or according to profile, into the right configuration file):
-
-```ini
-mail.smtp.host=<your server host>
-mail.smtp.port=<your server port>
-ogham.email.from=<your gmail address>
-```
-
-To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending email using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/BasicSample.java)):
-
-```java
-package fr.sii.ogham.context.sample.springboot.email;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.message.Email;
-
-@SpringBootApplication
-public class BasicSample {
-
-	public static void main(String[] args) throws MessagingException {
-		SpringApplication.run(BasicSample.class, args);
-	}
-	
-	@RestController
-	public static class BasicController {
-		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-basic.properties
-		// The configuration files are stored into src/main/resources
-		@Autowired
-		MessagingService messagingService;
-		
-		@RequestMapping(value="api/email", method=RequestMethod.POST)
-		@ResponseStatus(HttpStatus.CREATED)
-		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
-			// send the email
-			messagingService.send(new Email(subject, content, to));
-			// or using fluent API
-			messagingService.send(new Email().
-									subject(subject).
-									content(content).
-									to(to));
-		}
-	}
-
-}
-
-```
-
 ## Sending SMS
 
 ### General
@@ -936,6 +873,110 @@ public class LongMessageSample {
 
 }
 
+```
+
+
+## Usage with Spring
+
+### Integration
+
+To use Ogham and let Spring Boot auto-configuration mechanism handle integration, just add dependency to your pom.xml:
+
+```xml
+  ...
+	<dependencies>
+	  ...
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-spring</artifactId>
+			<version>${ogham-module.version}</version>
+		</dependency>
+		...
+	</dependencies>
+	...
+```
+
+It will automatically create and register MessagingService bean. It will also automatically use Spring Thymeleaf integration if it is in the classpath.
+The Spring environment (configuration provided by configuration files for example) will be automatically used to configure the Ogham module.
+
+Then to use it in your code, simply autowire the service:
+
+```java
+	public class UserService {
+		@Autowired
+		MessagingService messagingService;
+		
+		public UserDTO register(UserDTO user) {
+			...
+			messagingService.send(new Email("account registered", "email content", user.getEmailAddress()));
+			...
+		}
+	}
+```
+
+For additional usage information or manual integration see [how to use the module with Spring](http://groupe-sii.github.io/ogham/usage/spring.html).
+
+
+### Send email with Spring
+
+Spring comes with very useful management of configuration properties (environment and profiles). Ogham module is able to use environment provided by Spring.
+
+Add the following information in the application.properties (or according to profile, into the right configuration file):
+
+```ini
+mail.smtp.host=<your server host>
+mail.smtp.port=<your server port>
+ogham.email.from=<your gmail address>
+```
+
+To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending email using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/BasicSample.java)):
+
+```java
+package fr.sii.ogham.context.sample.springboot.email;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+@SpringBootApplication
+public class BasicSample {
+
+	public static void main(String[] args) throws MessagingException {
+		SpringApplication.run(BasicSample.class, args);
+	}
+	
+	@RestController
+	public static class BasicController {
+		// Messaging service is automatically created using Spring Boot features
+		// The configuration can be set into application-basic.properties
+		// The configuration files are stored into src/main/resources
+		@Autowired
+		MessagingService messagingService;
+		
+		@RequestMapping(value="api/email", method=RequestMethod.POST)
+		@ResponseStatus(HttpStatus.CREATED)
+		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
+			// send the email
+			messagingService.send(new Email(subject, content, to));
+			// or using fluent API
+			messagingService.send(new Email().
+									subject(subject).
+									content(content).
+									to(to));
+		}
+	}
+
+}
 ```
 
 ### Send SMS with Spring
