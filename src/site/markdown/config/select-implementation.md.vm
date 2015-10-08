@@ -116,7 +116,7 @@ You may want to exclude some implementation libraries due to license not appropr
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${ogham-module.version}</version>
+			<version>${oghamVersion}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.sun.mail</groupId>

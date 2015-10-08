@@ -8,6 +8,9 @@ system properties.
 [Read more about using properties &raquo;](properties.html)
 
 
+---
+
+
 ### Email configuration
 
 Some configuration is possible to customize email management.
@@ -21,6 +24,8 @@ Some configuration is possible to customize SMS management.
 
 [Read more about SMS configuration &raquo;](sms.html)
 
+
+---
 
 ### Template engines configuration
 

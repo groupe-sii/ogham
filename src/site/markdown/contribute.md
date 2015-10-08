@@ -16,7 +16,7 @@ The issue tracker is the preferred channel for [bug reports](#bug-reports),
 requests](#pull-requests), but please respect the following restrictions:
 
 * Please **do not** use the issue tracker for personal support requests (use
-  [Stack Overflow](http://stackoverflow.com) or IRC).
+  [Stack Overflow](http://stackoverflow.com) with `ogham` tag).
 
 * Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.

@@ -935,7 +935,7 @@ Finally, he content of the [property file](https://github.com/groupe-sii/ogham/b
 mail.smtp.host=<your server host>
 mail.smtp.port=<your server port>
 ogham.email.from=<your gmail address>
-ogham.template.prefix=/email/
+ogham.email.template.prefix=/email/
 ```
 
 We have just added the template prefix. It tells Ogham where to look for email templates. All template names or relative paths provided to `TemplateContent` or  `MultiTemplateContent` are relative to this prefix. By default, Ogham look for templates in the classpath. See [template section](../config/templates.html) for more information about prefix and suffix.

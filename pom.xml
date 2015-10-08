@@ -58,6 +58,9 @@
 		<scm.url>${github.url}.git</scm.url>
 		<site.url>http://groupe-sii.github.io/ogham</site.url>
 		<site.deploy.url>${project.url}</site.deploy.url>
+		
+		<!-- Properties for site generation -->
+		<oghamVersion>${project.version}</oghamVersion>
 	</properties>
 
 

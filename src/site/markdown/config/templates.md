@@ -59,8 +59,8 @@ public class HtmlTemplateSample {
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.template.prefix", "/template/thymeleaf/");
-		properties.setProperty("ogham.template.suffix", ".html");
+		properties.setProperty("ogham.email.template.prefix", "/template/thymeleaf/");
+		properties.setProperty("ogham.email.template.suffix", ".html");
 		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties

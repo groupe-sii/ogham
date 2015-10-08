@@ -88,7 +88,7 @@ To include the library in your project, you just have to add the dependency to y
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${ogham-module.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 		...
 	</dependencies>
@@ -889,7 +889,7 @@ To use Ogham and let Spring Boot auto-configuration mechanism handle integration
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring</artifactId>
-			<version>${ogham-module.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 		...
 	</dependencies>
