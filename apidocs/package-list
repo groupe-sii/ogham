@@ -26,6 +26,7 @@ fr.sii.ogham.core.translator.content
 fr.sii.ogham.core.translator.resource
 fr.sii.ogham.core.util
 fr.sii.ogham.core.util.converter
+fr.sii.ogham.core.util.http
 fr.sii.ogham.email
 fr.sii.ogham.email.attachment
 fr.sii.ogham.email.builder
@@ -61,6 +62,11 @@ fr.sii.ogham.sms.message.addressing.translator
 fr.sii.ogham.sms.sender
 fr.sii.ogham.sms.sender.impl
 fr.sii.ogham.sms.sender.impl.cloudhopper
+fr.sii.ogham.sms.sender.impl.ovh
+fr.sii.ogham.spring.autoconfigure
+fr.sii.ogham.spring.config
+fr.sii.ogham.spring.xml
+fr.sii.ogham.template
 fr.sii.ogham.template.exception
 fr.sii.ogham.template.thymeleaf
 fr.sii.ogham.template.thymeleaf.adapter
