@@ -266,7 +266,7 @@ The template is available [here](https://github.com/groupe-sii/ogham/tree/master
 
 This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to mutualize the code and to avoid to create a new file just for one line.
 
-<span class="highlight" data-lines="27,31-33" data-irrelevant-lines="1-11,15-23" data-info-lines="25-26,29-30"></span>
+<span class="highlight" data-lines="27,31-33,25-26,29-30" data-irrelevant-lines="1-11,15-23"></span>
 <span class="collapse" data-lines="1-11,15-23"></span>
 
 ```java
@@ -337,8 +337,8 @@ Sending an email with HTML content **and** text content might be really importan
 
 This sample shows how to provide both HTML content and text content. This sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java).
 
-<span class="highlight" data-lines="24-26,30" data-irrelevant-lines="1-9,13-21"></span>
-<span class="collapse" data-lines="1-9,13-21"></span>
+<span class="highlight" data-lines="24-26,30" data-irrelevant-lines="1-9,14-21"></span>
+<span class="collapse" data-lines="1-9,14-21"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email;
@@ -380,8 +380,8 @@ public class HtmlAndTextSample {
 
 This sample shows how to provide both HTML content and text content following a template engine language. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available [here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java).
 
-<span class="highlight" data-lines="28,32" data-irrelevant-lines="1-10,14-23" data-info-lines="25-27"></span>
-<span class="collapse" data-lines="1-10,14-23"></span>
+<span class="highlight" data-lines="28,32,25-27" data-irrelevant-lines="1-10,15-23"></span>
+<span class="collapse" data-lines="1-10,15-23"></span>
 
 ```java
 package fr.sii.ogham.sample.standard.email;
