@@ -248,7 +248,7 @@ ogham.sms.from=<phone number to display for the sender>
 
 To use Ogham in Spring, you can directly inject (autowire) it. Here is a fully Spring Boot application serving one REST endpoint for sending SMS using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/BasicSample.java)):
 
-<span class="highlight" data-lines="31-32,37-42" data-irrelevant-lines="1-17,19,22-25"></span>
+<span class="highlight" data-lines="31-32,37-42" data-irrelevant-lines="1-17,19"></span>
 <span class="collapse" data-lines="1-17"></span>
 
 ```java
@@ -304,7 +304,7 @@ public class BasicSample {
 
 [This sample](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/TemplateSample.java) is a fully working Spring Boot application that exposes a simple REST endpoint for sending a SMS based on a template:
 
-<span class="highlight" data-lines="33-34,39-44" data-irrelevant-lines="1-19,21,23-27"></span>
+<span class="highlight" data-lines="33-34,39-44" data-irrelevant-lines="1-19,21"></span>
 <span class="collapse" data-lines="1-19"></span>
 
 ```java

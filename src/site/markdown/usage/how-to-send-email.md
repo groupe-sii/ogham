@@ -639,7 +639,7 @@ ogham.email.from=<your gmail address>
 
 To use Ogham in Spring, you can directly inject (autowire) it. Here is a full Spring Boot application serving one REST endpoint for sending email using Ogham ([sample available here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/BasicSample.java)):
 
-<span class="highlight" data-lines="31-32,38-43" data-irrelevant-lines="1-17,19,21-24"></span>
+<span class="highlight" data-lines="31-32,38-43" data-irrelevant-lines="1-17,19"></span>
 <span class="collapse" data-lines="1-17"></span>
 
 ```java
@@ -698,7 +698,7 @@ public class BasicSample {
 
 This sample show how to use messaging service using both HTML and text templates. The templates also directly contain subject. The sample is available [here](https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/HtmlAndTextTemplateWithSubjectSample.java)
 
-<span class="highlight" data-lines="34-35,41,43-45" data-irrelevant-lines="1-19,21,23-26"></span>
+<span class="highlight" data-lines="34-35,41,43-45" data-irrelevant-lines="1-19,21"></span>
 <span class="collapse" data-lines="1-19"></span>
 
 ```java
