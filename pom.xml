@@ -53,7 +53,7 @@
 
 		<!-- URL -->
 		<github.url>https://github.com/groupe-sii/ogham</github.url>
-		<project.url>http://groupe-sii.github.io/ogham/</project.url>
+		<project.url>https://groupe-sii.github.io/ogham/</project.url>
 		<scm.url>${github.url}.git</scm.url>
 		<site.url>http://groupe-sii.github.io/ogham</site.url>
 		<site.deploy.url>${project.url}</site.deploy.url>
@@ -521,7 +521,7 @@
 		<url>${github.url}</url>
 		<connection>scm:git:${scm.url}</connection>
 		<developerConnection>scm:git:${scm.url}</developerConnection>
-		<tag>v1.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
