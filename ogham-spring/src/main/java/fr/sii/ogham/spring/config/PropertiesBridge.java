@@ -37,7 +37,12 @@ public class PropertiesBridge {
 			for (PropertySource<?> propertySource : ((ConfigurableEnvironment) env).getPropertySources()) {
 				if (propertySource instanceof EnumerablePropertySource) {
 					for (String key : ((EnumerablePropertySource<?>) propertySource).getPropertyNames()) {
-						rtn.setProperty(key, String.valueOf(propertySource.getProperty(key)));
+						// do not override if already provided
+						// Spring provides property sources in higher priority order
+						// first property source has higher priority => overrides values if not set
+						if(!rtn.containsKey(key)) {
+							rtn.setProperty(key, String.valueOf(propertySource.getProperty(key)));
+						}
 					}
 				}
 			}
