@@ -134,7 +134,7 @@ public class AssertSms {
 		return new String(shortMessage);
 	}
 
-	public AssertSms() {
+	private AssertSms() {
 		super();
 	}
 }

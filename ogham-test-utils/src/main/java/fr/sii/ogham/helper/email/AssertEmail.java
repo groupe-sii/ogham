@@ -629,7 +629,7 @@ public class AssertEmail {
 		return HTML_PATTERN.matcher(expectedBody).find();
 	}
 	
-	public AssertEmail() {
+	private AssertEmail() {
 		super();
 	}
 }

@@ -116,7 +116,7 @@ public class AssertAttachment {
 		return baos.toByteArray();
 	}
 	
-	public AssertAttachment() {
+	private AssertAttachment() {
 		super();
 	}
 }
