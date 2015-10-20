@@ -9,7 +9,7 @@ public interface EmailConstants {
 	/**
 	 * The prefix for filling email using properties
 	 */
-	public static final String[] FILL_PREFIXES = {"mail", "ogham.email"};
+	public static final String[] FILL_PREFIXES = {"mail", "mail.smtp", "ogham.email"};
 	
 	
 	public static interface SmtpConstants {

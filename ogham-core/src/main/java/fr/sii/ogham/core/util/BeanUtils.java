@@ -61,7 +61,9 @@ public final class BeanUtils {
 	 * Convert a Java object into a map. Each property of the bean is added to
 	 * the map. The key of each entry is the name of the property. The value of
 	 * each entry is the value of the property.
-	 * </p>
+	 * 
+	 * <p>
+	 * If the provided object is already a Map then it is returned as-is
 	 * 
 	 * @param bean
 	 *            the bean to convert into a map
@@ -71,14 +73,20 @@ public final class BeanUtils {
 	 */
 	public static Map<String, Object> convert(Object bean) throws BeanException {
 		try {
-			Map<String, Object> map = new HashMap<String, Object>();
-			BeanInfo info = Introspector.getBeanInfo(bean.getClass());
-			for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
-				if(!pd.getName().equals("class")) {
-					Method reader = pd.getReadMethod();
-					// TODO: convert recursively ?
-					if (reader != null) {
-						map.put(pd.getName(), reader.invoke(bean));
+			Map<String, Object> map;
+			if(bean instanceof Map) {
+				// TODO: handle Map with object keys
+				map = (Map<String, Object>) bean;
+			} else {
+				map = new HashMap<String, Object>();
+				BeanInfo info = Introspector.getBeanInfo(bean.getClass());
+				for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
+					if(!pd.getName().equals("class")) {
+						Method reader = pd.getReadMethod();
+						// TODO: convert recursively ?
+						if (reader != null) {
+							map.put(pd.getName(), reader.invoke(bean));
+						}
 					}
 				}
 			}
