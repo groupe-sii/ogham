@@ -27,6 +27,10 @@ public class EmailConstants {
 		 * The key in the properties for password to use in the authenticator
 		 */
 		public static final String AUTHENTICATOR_PASSWORD_KEY = AUTHENTICATOR_PROPERTIES_PREFIX+".password";
+		
+		private SmtpConstants() {
+			super();
+		}
 	}
 	
 	public static class SendGridConstants {
@@ -50,6 +54,9 @@ public class EmailConstants {
 		 */
 		public static final String PASSWORD = SNEDGRID_PROPERTIES_PREFIX+".password";
 		
+		private SendGridConstants() {
+			super();
+		}
 	}
 	
 	public static class TemplateConstants {
@@ -67,5 +74,15 @@ public class EmailConstants {
 		 * The property key for the suffix of the template resolution for emails only
 		 */
 		public static final String SUFFIX_PROPERTY = PROPERTIES_PREFIX + ".suffix";
+		
+		
+		private TemplateConstants() {
+			super();
+		}
+	}
+	
+	
+	private EmailConstants() {
+		super();
 	}
 }

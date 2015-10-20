@@ -41,7 +41,7 @@ public class WrapExceptionMessagingService implements MessagingService {
 			throw new MessagingException("Message can't be sent due to precondition not met. Cause: "+e.getMessage(), e);
 		} catch(IllegalStateException e) {
 			throw new MessagingException("Message can't be sent due to some illegal use. Cause: "+e.getMessage(), e);
-		} catch(Throwable e) {
+		} catch(Exception e) {
 			throw new MessagingException("Message can't be sent due to uncaught exception. Cause: "+e.getMessage(), e);
 		}
 	}

@@ -54,4 +54,8 @@ public class ImageInlinerConstants {
 	 */
 	public static final String SKIP_INLINE_ALL_VALUE = "true";
 
+	
+	private ImageInlinerConstants() {
+		super();
+	}
 }

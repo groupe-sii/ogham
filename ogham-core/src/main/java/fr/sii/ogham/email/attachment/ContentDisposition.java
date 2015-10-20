@@ -4,4 +4,8 @@ public class ContentDisposition {
 	public static final String ATTACHMENT = "attachment";
 	
 	public static final String INLINE = "inline";
+	
+	private ContentDisposition() {
+		super();
+	}
 }

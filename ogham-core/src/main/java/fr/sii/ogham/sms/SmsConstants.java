@@ -23,6 +23,10 @@ public class SmsConstants {
 		 * The key for smsglobal REST API key
 		 */
 		public static final String SMSGLOBAL_REST_API_KEY_PROPERTY = PROPERTIES_PREFIX + ".smsglobal.api.key";
+		
+		private SmsGlobal() {
+			super();
+		}
 	}
 
 	/**
@@ -66,6 +70,10 @@ public class SmsConstants {
 		 * The URL of the HTTP API for sending SMS through OVH
 		 */
 		public static final String HTTP_API_URL = "https://www.ovh.com/cgi-bin/sms/http2sms.cgi";
+		
+		private OvhConstants() {
+			super();
+		}
 	}
 
 	/**
@@ -167,6 +175,11 @@ public class SmsConstants {
 			 * disable
 			 */
 			public static final String REQUEST_EXPIRY_PROPERTY = SMPP_TIMEOUT_PREFIX + ".request";
+			
+			
+			private TimeoutConstants() {
+				super();
+			}
 		}
 
 		/**
@@ -205,6 +218,14 @@ public class SmsConstants {
 			 * The default value for unbind timeout
 			 */
 			public static final long DEFAULT_UNBIND_TIMEOUT = 5000;
+			
+			private CloudhopperConstants() {
+				super();
+			}
+		}
+		
+		private SmppConstants() {
+			super();
 		}
 	}
 	
@@ -223,5 +244,14 @@ public class SmsConstants {
 		 * The property key for the suffix of the template resolution for emails only
 		 */
 		public static final String SUFFIX_PROPERTY = PROPERTIES_PREFIX + ".suffix";
+		
+		private TemplateConstants() {
+			super();
+		}
+	}
+	
+	
+	private SmsConstants() {
+		super();
 	}
 }

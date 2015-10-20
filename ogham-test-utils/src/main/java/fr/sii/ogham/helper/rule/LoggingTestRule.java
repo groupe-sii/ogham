@@ -54,7 +54,7 @@ public class LoggingTestRule implements TestRule {
 				LOG.info(header);
 				LOG.info("│{}│", format("Test "+testName+" successfully done"));
 				LOG.info(footer+"\r\n\r\n");
-			} catch(Throwable e) {
+			} catch(Exception e) {
 				LOG.error(header);
 				LOG.error("│{}│", format("Test "+testName+" has failed"));
 				LOG.error("│{}│", format("Cause: "+e));

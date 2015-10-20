@@ -16,5 +16,9 @@ public class TemplateConstants {
 	 */
 	public static final String SUFFIX_PROPERTY = PROPERTIES_PREFIX + ".suffix";
 
+	
+	private TemplateConstants() {
+		super();
+	}
 
 }
