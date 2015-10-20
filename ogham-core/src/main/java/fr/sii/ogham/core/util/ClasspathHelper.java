@@ -1,5 +1,8 @@
 package fr.sii.ogham.core.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Helper for classpath management.
  * 
@@ -7,6 +10,8 @@ package fr.sii.ogham.core.util;
  *
  */
 public final class ClasspathHelper {
+	private static final Logger LOG = LoggerFactory.getLogger(ClasspathHelper.class);
+	
 	/**
 	 * Test if the class name is defined in the classpath.
 	 * 
@@ -19,6 +24,7 @@ public final class ClasspathHelper {
 			Class.forName(className);
 			return true;
 		} catch (ClassNotFoundException e) {
+			LOG.debug("Class "+className+" not found", e);
 			return false;
 		}
 	}

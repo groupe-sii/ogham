@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class WaitBindTask implements Runnable {
+	private static final int WAIT_DURATION = 1000;
+
 	private static final Logger LOG = LoggerFactory.getLogger(WaitBindTask.class);
 
 	private final SMPPServerSession serverSession;
@@ -22,7 +24,7 @@ class WaitBindTask implements Runnable {
 
 	public void run() {
 		try {
-			BindRequest bindRequest = serverSession.waitForBind(1000);
+			BindRequest bindRequest = serverSession.waitForBind(WAIT_DURATION);
 			LOG.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId());
 			try {
 				bindRequest.accept("sys", InterfaceVersion.IF_34);
@@ -36,7 +38,7 @@ class WaitBindTask implements Runnable {
 		} catch (TimeoutException e) {
 			LOG.warn("Wait for bind has reach timeout", e);
 		} catch (IOException e) {
-			LOG.error("Failed accepting bind request for session {}", serverSession.getSessionId());
+			LOG.error("Failed accepting bind request for session {}", serverSession.getSessionId(), e);
 		}
 	}
 }

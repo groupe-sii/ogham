@@ -21,6 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class DeliveryReceiptTask implements Runnable {
+	private static final int TWO_BYTES = 16;
+	private static final int WAIT_DURATION = 1000;
+
 	private static final Logger LOG = LoggerFactory.getLogger(DeliveryReceiptTask.class);
 
 	private final SMPPServerSession session;
@@ -80,16 +83,16 @@ class DeliveryReceiptTask implements Runnable {
 
 	public void run() {
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(WAIT_DURATION);
 		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+			LOG.error("Sleep interrupted", e1);
 		}
 		SessionState state = session.getSessionState();
 		if (!state.isReceivable()) {
 			LOG.debug("Not sending delivery receipt for message id " + messageId + " since session state is " + state);
 			return;
 		}
-		String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
+		String stringValue = Integer.valueOf(messageId.getValue(), TWO_BYTES).toString();
 		try {
 
 			DeliveryReceipt delRec = new DeliveryReceipt(stringValue, totalSubmitted, totalDelivered, new Date(), new Date(), DeliveryReceiptState.DELIVRD, null, new String(shortMessage));

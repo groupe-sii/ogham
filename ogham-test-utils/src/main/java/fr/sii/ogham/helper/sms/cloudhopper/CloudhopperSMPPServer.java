@@ -51,7 +51,7 @@ public class CloudhopperSMPPServer implements SmppServerSimulator<PduRequest> {
 
 	@Override
 	public List<PduRequest> getReceivedMessages() {
-		return new ArrayList<>(serverHandler.sessionHandler.getReceivedPduRequests());
+		return new ArrayList<>(serverHandler.getSessionHandler().getReceivedPduRequests());
 	}
 	
 	private static SmppServerConfiguration createSmppServerConfiguration(int port) {

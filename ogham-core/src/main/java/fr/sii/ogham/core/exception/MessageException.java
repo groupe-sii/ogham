@@ -8,7 +8,7 @@ public class MessageException extends MessagingException {
 	 */
 	private static final long serialVersionUID = -9205278705730818467L;
 	
-	private Message message;
+	private final Message message;
 	
 	public MessageException(String message, Message msg, Throwable cause) {
 		super(message, cause);

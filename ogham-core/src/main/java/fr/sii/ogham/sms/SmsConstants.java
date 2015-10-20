@@ -1,7 +1,7 @@
 package fr.sii.ogham.sms;
 
 
-public interface SmsConstants {
+public class SmsConstants {
 	/**
 	 * The prefix for SMS properties
 	 */
@@ -18,7 +18,7 @@ public interface SmsConstants {
 	 * @author Aurélien Baudet
 	 *
 	 */
-	public static interface SmsGlobal {
+	public static class SmsGlobal {
 		/**
 		 * The key for smsglobal REST API key
 		 */
@@ -31,7 +31,7 @@ public interface SmsConstants {
 	 * @author Aurélien Baudet
 	 *
 	 */
-	public static interface OvhConstants {
+	public static class OvhConstants {
 		/**
 		 * The key for OVH account (format sms-nic-X)
 		 */
@@ -77,7 +77,7 @@ public interface SmsConstants {
 	 *      protocol</a>
 	 *
 	 */
-	public static interface SmppConstants {
+	public static class SmppConstants {
 		/**
 		 * The prefix for SMPP properties
 		 */
@@ -134,7 +134,7 @@ public interface SmsConstants {
 		public static final String INTERFACE_VERSION_5_0 = "5.0";
 
 
-		public static interface TimeoutConstants {
+		public static class TimeoutConstants {
 			/**
 			 * The prefix for SMPP timeout properties
 			 */
@@ -175,7 +175,7 @@ public interface SmsConstants {
 		 * @author Aurélien Baudet
 		 *
 		 */
-		public static interface CloudhopperConstants {
+		public static class CloudhopperConstants {
 			/**
 			 * The prefix for Cloudhopper implementation specific properties
 			 */
@@ -208,7 +208,7 @@ public interface SmsConstants {
 		}
 	}
 	
-	public static interface TemplateConstants {
+	public static class TemplateConstants {
 		/**
 		 * The prefix for properties used by the template engines for emails only
 		 */

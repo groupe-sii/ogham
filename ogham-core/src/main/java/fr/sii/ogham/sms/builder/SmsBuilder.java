@@ -334,7 +334,7 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, properties)),
 					new OvhSmsBuilder().useDefaults(properties));
 			// @formatter:on
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			LOG.debug("Can't register OVH implementation", e);
 		}
 		return this;
@@ -370,7 +370,7 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 										new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
 					new CloudhopperSMPPBuilder().useDefaults(properties));
 			// @formatter:on
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			LOG.debug("Can't register Cloudhopper implementation", e);
 		}
 		return this;

@@ -6,7 +6,7 @@ public class BeanException extends Exception {
 	 */
 	private static final long serialVersionUID = 8915624365130173436L;
 	
-	private Object bean;
+	private final Object bean;
 
 	public BeanException(String message, Object bean, Throwable cause) {
 		super(message, cause);

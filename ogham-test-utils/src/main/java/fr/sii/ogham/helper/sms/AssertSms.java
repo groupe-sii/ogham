@@ -13,6 +13,8 @@ import org.junit.Assert;
  *
  */
 public class AssertSms {
+	private static final int UDHI_SIZE = 6;
+
 	/**
 	 * Assert that the fields of the received SMS using SMPP protocol are equal
 	 * to the expected values. It will check that:
@@ -127,9 +129,12 @@ public class AssertSms {
 	private static String getSmsContent(SubmitSm actual) {
 		byte[] shortMessage = actual.getShortMessage();
 		if(actual.isUdhi()) {
-			shortMessage = Arrays.copyOfRange(shortMessage, 6, shortMessage.length);
+			shortMessage = Arrays.copyOfRange(shortMessage, UDHI_SIZE, shortMessage.length);
 		}
 		return new String(shortMessage);
 	}
 
+	public AssertSms() {
+		super();
+	}
 }

@@ -14,6 +14,8 @@ import fr.sii.ogham.html.inliner.CssInliner;
 import fr.sii.ogham.html.inliner.ExternalCss;
 
 public class JsoupCssInliner implements CssInliner {
+	private static final String HREF_ATTR = "href";
+	private static final String TRUE_VALUE = "true";
 	private static final String SKIP_INLINE = "data-skip-inline";
 	private static final String TEMP_STYLE_ATTR = "data-cssstyle";
 	private static final String STYLE_ATTR = "style";
@@ -66,8 +68,8 @@ public class JsoupCssInliner implements CssInliner {
 	private void internStyles(Document doc, List<ExternalCss> cssContents) {
 		Elements els = doc.select(CSS_LINKS_SELECTOR);
 		for (Element e : els) {
-			if (!e.attr(SKIP_INLINE).equals("true")) {
-				String path = e.attr("href");
+			if (!TRUE_VALUE.equals(e.attr(SKIP_INLINE))) {
+				String path = e.attr(HREF_ATTR);
 				Element style = new Element(Tag.valueOf(STYLE_TAG), "");
 				style.appendChild(new DataNode(getCss(cssContents, path), ""));
 				e.replaceWith(style);
@@ -95,7 +97,7 @@ public class JsoupCssInliner implements CssInliner {
 		Elements els = doc.select(STYLE_TAG);
 		StringBuilder styles = new StringBuilder();
 		for (Element e : els) {
-			if (!e.attr(SKIP_INLINE).equals("true")) {
+			if (!TRUE_VALUE.equals(e.attr(SKIP_INLINE))) {
 				styles.append(e.data());
 				e.remove();
 			}

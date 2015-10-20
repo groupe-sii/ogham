@@ -54,21 +54,7 @@ public class SmppServerRule<M> implements TestRule {
 
 	@Override
 	public Statement apply(final Statement base, final Description description) {
-		return new Statement() {
-			@Override
-			public void evaluate() throws Throwable {
-				LOG.info("starting SMPP server on port {}...", getPort());
-				server.start();
-				LOG.info("SMPP server started on port {}", getPort());
-				try {
-					base.evaluate();
-				} finally {
-					LOG.info("stopping SMPP server...");
-					server.stop();
-					LOG.info("SMPP server stopped");
-				}
-			}
-		};
+		return new StartServerStatement(base);
 	}
 
 	/**
@@ -88,4 +74,29 @@ public class SmppServerRule<M> implements TestRule {
 	public List<M> getReceivedMessages() {
 		return server.getReceivedMessages();
 	}
+
+	
+	
+	private final class StartServerStatement extends Statement {
+		private final Statement base;
+
+		private StartServerStatement(Statement base) {
+			this.base = base;
+		}
+
+		@Override
+		public void evaluate() throws Throwable {
+			LOG.info("starting SMPP server on port {}...", getPort());
+			server.start();
+			LOG.info("SMPP server started on port {}", getPort());
+			try {
+				base.evaluate();
+			} finally {
+				LOG.info("stopping SMPP server...");
+				server.stop();
+				LOG.info("SMPP server stopped");
+			}
+		}
+	}
+
 }

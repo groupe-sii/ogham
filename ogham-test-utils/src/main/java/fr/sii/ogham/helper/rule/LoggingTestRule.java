@@ -27,34 +27,46 @@ public class LoggingTestRule implements TestRule {
 
 	@Override
 	public Statement apply(final Statement base, final Description description) {
-		return new Statement() {
-			@Override
-			public void evaluate() throws Throwable {
-				String testName = description.getTestClass().getSimpleName()+SEPARATOR+description.getMethodName();
-				String dashLine = StringUtils.repeat(DASH, maxLength-2);
-				String header = "┌"+dashLine+"┐";
-				String footer = "└"+dashLine+"┘";
-				LOG.info(header);
-				LOG.info("│{}│", format("Starting test "+testName));
-				LOG.info(footer);
-				try {
-					base.evaluate();
-					LOG.info(header);
-					LOG.info("│{}│", format("Test "+testName+" successfully done"));
-					LOG.info(footer+"\r\n\r\n");
-				} catch(Throwable e) {
-					LOG.error(header);
-					LOG.error("│{}│", format("Test "+testName+" has failed"));
-					LOG.error("│{}│", format("Cause: "+e));
-					LOG.error(footer+"\r\n\r\n");
-					throw e;
-				}
-			}
-			
-			private String format(String text) {
-				return StringUtils.center(StringUtils.abbreviate(text, maxLength-4), maxLength-2);
-			}
-		};
+		return new LoggingStatement(description, base);
 	}
+
+	
+	private final class LoggingStatement extends Statement {
+		private final Description description;
+		private final Statement base;
+
+		private LoggingStatement(Description description, Statement base) {
+			this.description = description;
+			this.base = base;
+		}
+
+		@Override
+		public void evaluate() throws Throwable {
+			String testName = description.getTestClass().getSimpleName()+SEPARATOR+description.getMethodName();
+			String dashLine = StringUtils.repeat(DASH, maxLength-2);
+			String header = "┌"+dashLine+"┐";
+			String footer = "└"+dashLine+"┘";
+			LOG.info(header);
+			LOG.info("│{}│", format("Starting test "+testName));
+			LOG.info(footer);
+			try {
+				base.evaluate();
+				LOG.info(header);
+				LOG.info("│{}│", format("Test "+testName+" successfully done"));
+				LOG.info(footer+"\r\n\r\n");
+			} catch(Throwable e) {
+				LOG.error(header);
+				LOG.error("│{}│", format("Test "+testName+" has failed"));
+				LOG.error("│{}│", format("Cause: "+e));
+				LOG.error(footer+"\r\n\r\n");
+				throw e;
+			}
+		}
+
+		private String format(String text) {
+			return StringUtils.center(StringUtils.abbreviate(text, maxLength-4), maxLength-2);
+		}
+	}
+
 
 }

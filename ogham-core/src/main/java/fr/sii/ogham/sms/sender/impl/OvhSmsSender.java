@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,22 +59,22 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 * The authentication parameters
 	 */
 	private final OvhAuthParams authParams;
-	
+
 	/**
 	 * The OVH options
 	 */
 	private final OvhOptions options;
-	
+
 	/**
 	 * This is used to parse JSON response
 	 */
 	private final ObjectMapper mapper;
-	
+
 	/**
 	 * The URL to OVH web service
 	 */
 	private final URL url;
-	
+
 	public OvhSmsSender(URL url, OvhAuthParams authParams, OvhOptions options) {
 		super();
 		this.url = url;
@@ -85,6 +86,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	@Override
 	public void send(Sms message) throws MessageException {
 		try {
+			// @formatter:off
 			Response response = HttpUtils.get(url.toString(), authParams, options,
 									new Parameter(RESPONSE_TYPE, CONTENT_TYPE),
 									// convert phone number to international format
@@ -92,33 +94,54 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 									new Parameter(TO, StringUtils.join(convert(message.getRecipients()), RECIPIENTS_SEPARATOR)),
 									// TODO: manage long messages: how to do ??
 									new Parameter(MESSAGE, getContent(message)));
-			if(response.getStatus().isSuccess()) {
-				JsonNode json = mapper.readTree(response.getBody());
-				int ovhStatus = json.get("status").getIntValue();
-				// 100 <= ovh status < 200     ====> OK -> just log response
-				// 200 <= ovh status           ====> KO -> throw an exception
-				if(ovhStatus>=OK_STATUS) {
-					LOG.error("SMS failed to be sent through OVH");
-					LOG.debug("Sent SMS: {}", message);
-					LOG.debug("Response status {}", response.getStatus());
-					LOG.debug("Response body {}", response.getBody());
-					throw new MessageNotSentException("SMS couldn't be sent through OVH: "+json.get("message").getTextValue(), message);
-				} else {
-					LOG.info("SMS successfully sent through OVH");
-					LOG.debug("Sent SMS: {}", message);
-					LOG.debug("Response: {}", response.getBody());
-				}
-			} else {
-				LOG.error("Response status {}", response.getStatus());
-				LOG.error("Response body {}", response.getBody());
-				throw new MessageNotSentException("SMS couldn't be sent. Response status is "+response.getStatus(), message);
-			}
-		} catch(IOException e) {
+			// @formatter:on
+			handleResponse(message, response);
+		} catch (IOException e) {
 			throw new MessageException("Failed to read response when sending SMS through OVH", message, e);
 		} catch (HttpException e) {
 			throw new MessageException("Failed to send SMS through OVH", message, e);
 		} catch (PhoneNumberException e) {
 			throw new MessageException("Failed to send SMS through OVH (invalid phone number)", message, e);
+		}
+	}
+
+	/**
+	 * Handle OVH response. If status provided in response is less than 200,
+	 * then the message has been sent. Otherwise, the message has not been sent.
+	 * 
+	 * @param message
+	 *            the SMS to send
+	 * @param response
+	 *            the received response from OVH API
+	 * @throws IOException
+	 *             when the response couldn't be read
+	 * @throws JsonProcessingException
+	 *             when the response format is not valid JSON
+	 * @throws MessageNotSentException
+	 *             generated exception to indicate that the message couldn't be
+	 *             sent
+	 */
+	private void handleResponse(Sms message, Response response) throws IOException, JsonProcessingException, MessageNotSentException {
+		if (response.getStatus().isSuccess()) {
+			JsonNode json = mapper.readTree(response.getBody());
+			int ovhStatus = json.get("status").getIntValue();
+			// 100 <= ovh status < 200 ====> OK -> just log response
+			// 200 <= ovh status ====> KO -> throw an exception
+			if (ovhStatus >= OK_STATUS) {
+				LOG.error("SMS failed to be sent through OVH");
+				LOG.debug("Sent SMS: {}", message);
+				LOG.debug("Response status {}", response.getStatus());
+				LOG.debug("Response body {}", response.getBody());
+				throw new MessageNotSentException("SMS couldn't be sent through OVH: " + json.get("message").getTextValue(), message);
+			} else {
+				LOG.info("SMS successfully sent through OVH");
+				LOG.debug("Sent SMS: {}", message);
+				LOG.debug("Response: {}", response.getBody());
+			}
+		} else {
+			LOG.error("Response status {}", response.getStatus());
+			LOG.error("Response body {}", response.getBody());
+			throw new MessageNotSentException("SMS couldn't be sent. Response status is " + response.getStatus(), message);
 		}
 	}
 
@@ -135,7 +158,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 		// if there are \n without \r, those \n are converted to \r
 		return message.getContent().toString().replaceAll("(\r)?\n", "\r");
 	}
-	
+
 	/**
 	 * Convert the list of SMS recipients to international phone numbers usable
 	 * by OVH.
@@ -148,12 +171,12 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	private static List<String> convert(List<Recipient> recipients) throws PhoneNumberException {
 		List<String> tos = new ArrayList<>(recipients.size());
 		// convert phone numbers to international format
-		for(Recipient recipient : recipients) {
+		for (Recipient recipient : recipients) {
 			tos.add(toInternational(recipient.getPhoneNumber()));
 		}
 		return tos;
 	}
-	
+
 	/**
 	 * Convert a raw phone number to its international form usable by OVH (13
 	 * digits with no space).
@@ -165,7 +188,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 */
 	private static String toInternational(PhoneNumber phoneNumber) throws PhoneNumberException {
 		String number = phoneNumber.getNumber();
-		if(number.startsWith("+") || number.length()==INTERNATIONAL_FORMAT_LENGTH) {
+		if (number.startsWith("+") || number.length() == INTERNATIONAL_FORMAT_LENGTH) {
 			return StringUtils.leftPad(number.replace("+", "").replaceAll("\\s+", ""), INTERNATIONAL_FORMAT_LENGTH, '0');
 		} else {
 			throw new IllegalArgumentException("Invalid phone number. OVH only accepts international phone numbers. Please write the phone number with the country prefix. "

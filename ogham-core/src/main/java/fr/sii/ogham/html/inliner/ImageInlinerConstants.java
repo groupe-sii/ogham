@@ -7,7 +7,7 @@ package fr.sii.ogham.html.inliner;
  * @author Aurélien Baudet
  *
  */
-public interface ImageInlinerConstants {
+public class ImageInlinerConstants {
 	/**
 	 * <p>
 	 * The attribute name to indicate which strategy for inlining to apply if

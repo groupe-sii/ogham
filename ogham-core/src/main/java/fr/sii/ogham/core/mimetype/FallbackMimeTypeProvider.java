@@ -77,22 +77,31 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 		try {
 			ByteArrayInputStream copy = new ByteArrayInputStream(IOUtils.toByteArray(stream));
 			copy.mark(Integer.MAX_VALUE);
-			for (MimeTypeProvider provider : providers) {
-				try {
-					LOG.debug("Trying to get mime type from stream using {}", provider);
-					MimeType mimetype = provider.detect(copy);
-					LOG.debug("{} has detected mime type {} from stream", provider, mimetype);
-					return mimetype;
-				} catch (MimeTypeDetectionException e) {
-					// try next one => move read cursor to beginning
-					copy.reset();
-					LOG.debug("{} could not detect mime type from stream. Cause: {}", provider, e);
-				}
+			MimeType mimetype = detect(copy);
+			if(mimetype==null) {
+				throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");
 			}
-			throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");
+			return mimetype;
 		} catch (IOException e1) {
 			throw new MimeTypeDetectionException("Can't read the content of the stream", e1);
 		}
+	}
+
+	private MimeType detect(ByteArrayInputStream copy) {
+		MimeType mimetype = null;
+		for (MimeTypeProvider provider : providers) {
+			try {
+				LOG.debug("Trying to get mime type from stream using {}", provider);
+				mimetype = provider.detect(copy);
+				LOG.debug("{} has detected mime type {} from stream", provider, mimetype);
+				break;
+			} catch (MimeTypeDetectionException e) {
+				// try next one => move read cursor to beginning
+				copy.reset();
+				LOG.debug("{} could not detect mime type from stream. Cause: {}", provider, e);
+			}
+		}
+		return mimetype;
 	}
 
 	@Override

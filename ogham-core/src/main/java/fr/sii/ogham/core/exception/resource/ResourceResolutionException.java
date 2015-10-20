@@ -9,7 +9,7 @@ public class ResourceResolutionException extends MessagingException {
 	 */
 	private static final long serialVersionUID = 2503512294444324909L;
 
-	private String path;
+	private final String path;
 	
 	public ResourceResolutionException(String message, String path, Throwable cause) {
 		super(message, cause);

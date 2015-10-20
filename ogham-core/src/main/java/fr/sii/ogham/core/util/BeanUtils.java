@@ -78,17 +78,7 @@ public final class BeanUtils {
 				// TODO: handle Map with object keys
 				map = (Map<String, Object>) bean;
 			} else {
-				map = new HashMap<String, Object>();
-				BeanInfo info = Introspector.getBeanInfo(bean.getClass());
-				for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
-					if(!pd.getName().equals("class")) {
-						Method reader = pd.getReadMethod();
-						// TODO: convert recursively ?
-						if (reader != null) {
-							map.put(pd.getName(), reader.invoke(bean));
-						}
-					}
-				}
+				map = convertBean(bean);
 			}
 			return map;
 		} catch (ReflectiveOperationException | IntrospectionException e) {
@@ -139,27 +129,67 @@ public final class BeanUtils {
 	public static void populate(Object bean, Map<String, Object> values, Options options) throws BeanException {
 		try {
 			for (Entry<String, Object> entry : values.entrySet()) {
-				try {
-					String property = org.apache.commons.beanutils.BeanUtils.getProperty(bean, entry.getKey());
-					if (options.isOverride() || property == null) {
-						org.apache.commons.beanutils.BeanUtils.setProperty(bean, entry.getKey(), entry.getValue());
-					}
-				} catch (NestedNullException | NoSuchMethodException e) {
-					if (options.isSkipUnknown()) {
-						LOG.debug("skipping property " + entry.getKey() + ": it doesn't exist or is not accessible", e);
-					} else {
-						throw new BeanException("Failed to populate bean due to unknown property", bean, e);
-					}
-				} catch (ConversionException e) {
-					if (options.isSkipUnknown()) {
-						LOG.debug("skipping property " + entry.getKey() + ": can't convert value", e);
-					} else {
-						throw new BeanException("Failed to populate bean due to conversion error", bean, e);
-					}
-				}
+				populate(bean, entry, options);
 			}
 		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw new BeanException("Failed to populate bean", bean, e);
+		}
+	}
+
+	/**
+	 * <p>
+	 * Fills a Java object with the provided value. The key of the entry
+	 * corresponds to the name of the property to set. The value of the entry
+	 * corresponds to the value to set on the Java object.
+	 * </p>
+	 * <p>
+	 * The keys can contain '.' to set nested values.
+	 * </p>
+	 * Override parameter allows to indicate which source has higher priority:
+	 * <ul>
+	 * <li>If true, then the value provided in the entry will be always set on
+	 * the bean</li>
+	 * <li>If false then there are two cases:
+	 * <ul>
+	 * <li>If the property value of the bean is null, then the value that comes
+	 * from the entry is used</li>
+	 * <li>If the property value of the bean is not null, then this value is
+	 * unchanged and the value in the entry is not used</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * Skip unknown parameter allows to indicate if execution should fail or
+	 * not:
+	 * <ul>
+	 * <li>If true and a property provided in the entry doesn't exist, then
+	 * there is no failure and no change is applied to the bean</li>
+	 * <li>If false and a property provided in the entry doesn't exist, then the
+	 * method fails immediately.</li>
+	 * </ul>
+	 * 
+	 * @param bean
+	 *            the bean to populate
+	 * @param entry
+	 *            the name/value pair
+	 * @param options
+	 *            options used to
+	 * @throws BeanException
+	 *             when the bean couldn't be populated
+	 * @throws InvocationTargetException
+	 *             when the setter method can't be called
+	 * @throws IllegalAccessException
+	 *             when the field can't be accessed due to security restrictions
+	 */
+	public static void populate(Object bean, Entry<String, Object> entry, Options options) throws BeanException, IllegalAccessException, InvocationTargetException {
+		try {
+			String property = org.apache.commons.beanutils.BeanUtils.getProperty(bean, entry.getKey());
+			if (options.isOverride() || property == null) {
+				org.apache.commons.beanutils.BeanUtils.setProperty(bean, entry.getKey(), entry.getValue());
+			}
+		} catch (NestedNullException | NoSuchMethodException e) {
+			handleUnknown(bean, options, entry, e);
+		} catch (ConversionException e) {
+			handleConversion(bean, options, entry, e);
 		}
 	}
 
@@ -217,6 +247,40 @@ public final class BeanUtils {
 	public static void populate(Object bean, Map<String, Object> values) throws BeanException {
 		populate(bean, values, new Options(false, true));
 	}
+
+	
+	private static Map<String, Object> convertBean(Object bean) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
+		Map<String, Object> map;
+		map = new HashMap<String, Object>();
+		BeanInfo info = Introspector.getBeanInfo(bean.getClass());
+		for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
+			if(!"class".equals(pd.getName())) {
+				Method reader = pd.getReadMethod();
+				// TODO: convert recursively ?
+				if (reader != null) {
+					map.put(pd.getName(), reader.invoke(bean));
+				}
+			}
+		}
+		return map;
+	}
+
+	private static void handleUnknown(Object bean, Options options, Entry<String, Object> entry, Exception e) throws BeanException {
+		if (options.isSkipUnknown()) {
+			LOG.debug("skipping property " + entry.getKey() + ": it doesn't exist or is not accessible", e);
+		} else {
+			throw new BeanException("Failed to populate bean due to unknown property", bean, e);
+		}
+	}
+
+	private static void handleConversion(Object bean, Options options, Entry<String, Object> entry, ConversionException e) throws BeanException {
+		if (options.isSkipUnknown()) {
+			LOG.debug("skipping property " + entry.getKey() + ": can't convert value", e);
+		} else {
+			throw new BeanException("Failed to populate bean due to conversion error", bean, e);
+		}
+	}
+
 
 	public static class Options {
 		private boolean override;

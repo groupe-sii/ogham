@@ -9,6 +9,7 @@ import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.sender.ConditionalSender;
 import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
+import fr.sii.ogham.sms.message.Contact;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.Recipient;
 import fr.sii.ogham.sms.message.Sms;
@@ -71,22 +72,11 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 
 			try {
 				// sender
-				PhoneNumber senderPhoneNumber = sms.getFrom().getPhoneNumber();
-				if (senderPhoneNumber instanceof AddressedPhoneNumber) {
-					LOG.info("No need for sender translation. Already addressed : {}", senderPhoneNumber);
-				} else {
-					LOG.debug("Translate the message FROM phone number {} using {}", senderPhoneNumber, senderTranslator);
-					sms.getFrom().setPhoneNumber(senderTranslator.translate(senderPhoneNumber));
-				}
+				translatePhoneNumber(sms.getFrom(), sms.getFrom().getPhoneNumber(), senderTranslator, "sender", "FROM");
 
 				// receivers
 				for (Recipient currentRecipient : sms.getRecipients()) {
-					if (currentRecipient.getPhoneNumber() instanceof AddressedPhoneNumber) {
-						LOG.info("No need for recipient translation. Already addressed : {}", currentRecipient.getPhoneNumber());
-					} else {
-						LOG.debug("Translate the message TO phone number {} using {}", currentRecipient, recipientTranslator);
-						currentRecipient.setPhoneNumber(recipientTranslator.translate(currentRecipient.getPhoneNumber()));
-					}
+					translatePhoneNumber(currentRecipient, currentRecipient.getPhoneNumber(), recipientTranslator, "recipient", "TO");
 				}
 
 				LOG.debug("Sending translated message {} using {}", sms, delegate);
@@ -97,6 +87,15 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 		} else {
 			LOG.debug("Sending translated message {} using {}", message, delegate);
 			delegate.send(message);
+		}
+	}
+
+	private void translatePhoneNumber(Contact contact, PhoneNumber senderPhoneNumber, PhoneNumberTranslator translator, String type, String field) throws PhoneNumberTranslatorException {
+		if (senderPhoneNumber instanceof AddressedPhoneNumber) {
+			LOG.info("No need for "+type+" translation. Already addressed : {}", senderPhoneNumber);
+		} else {
+			LOG.debug("Translate the message "+field+" phone number {} using {}", senderPhoneNumber, translator);
+			contact.setPhoneNumber(translator.translate(senderPhoneNumber));
 		}
 	}
 

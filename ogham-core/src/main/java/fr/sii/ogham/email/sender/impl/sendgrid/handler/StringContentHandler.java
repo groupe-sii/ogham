@@ -69,14 +69,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 			try {
 				final String mime = mimeProvider.detect(contentStr).toString();
 				LOG.debug("Email content {} has detected type {}", content, mime);
-
-				if ("text/plain".equals(mime)) {
-					email.setText(contentStr);
-				} else if ("text/html".equals(mime)) {
-					email.setHtml(contentStr);
-				} else {
-					throw new ContentHandlerException("MIME type " + mime + " is not supported");
-				}
+				setMimeContent(email, contentStr, mime);
 			} catch (MimeTypeDetectionException e) {
 				throw new ContentHandlerException("Unable to set the email content", e);
 			}
@@ -84,6 +77,16 @@ public final class StringContentHandler implements SendGridContentHandler {
 			throw new IllegalArgumentException("This instance can only work with StringContent instances, but was passed " + content.getClass().getSimpleName());
 		}
 
+	}
+
+	private void setMimeContent(final Email email, final String contentStr, final String mime) throws ContentHandlerException {
+		if ("text/plain".equals(mime)) {
+			email.setText(contentStr);
+		} else if ("text/html".equals(mime)) {
+			email.setHtml(contentStr);
+		} else {
+			throw new ContentHandlerException("MIME type " + mime + " is not supported");
+		}
 	}
 
 }

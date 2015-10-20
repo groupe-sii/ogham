@@ -115,4 +115,8 @@ public class AssertAttachment {
 		IOUtils.copy(stream, baos);
 		return baos.toByteArray();
 	}
+	
+	public AssertAttachment() {
+		super();
+	}
 }

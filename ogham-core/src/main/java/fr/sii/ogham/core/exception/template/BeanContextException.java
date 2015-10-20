@@ -8,7 +8,7 @@ public class BeanContextException extends ContextException {
 	 */
 	private static final long serialVersionUID = 692730330861798854L;
 
-	private Object bean;
+	private final Object bean;
 	
 	public BeanContextException(String message, Object bean, Throwable cause) {
 		super(message, cause);

@@ -70,4 +70,8 @@ public class AssertTemplate {
 	private static String sanitize(String str) {
 		return str.replaceAll("\r|\n", "");
 	}
+	
+	private AssertTemplate() {
+		super();
+	}
 }

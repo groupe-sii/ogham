@@ -10,7 +10,7 @@ public class AttachmentResourceHandlerException extends MessagingException {
 	 */
 	private static final long serialVersionUID = -3172860709067806202L;
 	
-	private Attachment attachment;
+	private final Attachment attachment;
 
 	public AttachmentResourceHandlerException(String message, Attachment attachment, Throwable cause) {
 		super(message, cause);

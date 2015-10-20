@@ -1,6 +1,6 @@
 package fr.sii.ogham.email;
 
-public interface EmailConstants {
+public class EmailConstants {
 	/**
 	 * The prefix for email properties
 	 */
@@ -12,7 +12,7 @@ public interface EmailConstants {
 	public static final String[] FILL_PREFIXES = {"mail", "mail.smtp", "ogham.email"};
 	
 	
-	public static interface SmtpConstants {
+	public static class SmtpConstants {
 		/**
 		 * The prefix for email authenticator properties
 		 */
@@ -29,7 +29,7 @@ public interface EmailConstants {
 		public static final String AUTHENTICATOR_PASSWORD_KEY = AUTHENTICATOR_PROPERTIES_PREFIX+".password";
 	}
 	
-	public static interface SendGridConstants {
+	public static class SendGridConstants {
 		/**
 		 * The prefix for SendGrid properties
 		 */
@@ -52,7 +52,7 @@ public interface EmailConstants {
 		
 	}
 	
-	public static interface TemplateConstants {
+	public static class TemplateConstants {
 		/**
 		 * The prefix for properties used by the template engines for emails only
 		 */

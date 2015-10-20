@@ -10,7 +10,7 @@ public class ContentHandlerException extends MessagingException {
 	 */
 	private static final long serialVersionUID = -3172860709067806202L;
 	
-	private Content content;
+	private final Content content;
 
 	public ContentHandlerException(String message, Content content, Throwable cause) {
 		super(message, cause);

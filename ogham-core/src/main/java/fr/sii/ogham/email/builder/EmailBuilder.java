@@ -316,7 +316,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 										new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")),
 					new JavaMailBuilder().useDefaults(properties));
 			// @formatter:on
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			LOG.debug("Can't register Java Mail implementation", e);
 		}
 		return this;
@@ -356,7 +356,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 										new RequiredClassCondition<Message>("com.sendgrid.SendGrid")),
 					new SendGridBuilder().useDefaults(properties));
 			// @formatter:on
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			LOG.debug("Can't register SendGrid implementation", e);
 		}
 		return this;

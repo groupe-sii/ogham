@@ -253,7 +253,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		// The try/catch clause
 		try {
 			registerTemplateParser(new ThymeleafBuilder(), new ThymeleafTemplateDetector());
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			LOG.debug("Can't register Thymeleaf template engine", e);
 		}
 		return this;

@@ -1,6 +1,6 @@
 package fr.sii.ogham.template;
 
-public interface TemplateConstants {
+public class TemplateConstants {
 	/**
 	 * The prefix for properties used by the template engines
 	 */

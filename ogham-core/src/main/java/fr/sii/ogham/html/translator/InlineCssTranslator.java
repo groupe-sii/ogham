@@ -57,16 +57,7 @@ public class InlineCssTranslator implements ContentTranslator {
 				List<String> cssFiles = HtmlUtils.getDistinctCssUrls(stringContent);
 				if (!cssFiles.isEmpty()) {
 					// prepare list of css files/urls with their content
-					List<ExternalCss> cssResources = new ArrayList<>(cssFiles.size());
-					for (String path : cssFiles) {
-						try {
-							cssResources.add(new ExternalCss(path, IOUtils.toString(resourceResolver.getResource(path).getInputStream())));
-						} catch (IOException e) {
-							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
-						} catch (ResourceResolutionException e) {
-							throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
-						}
-					}
+					List<ExternalCss> cssResources = load(cssFiles);
 					// generate the content with inlined css
 					String inlinedContentStr = cssInliner.inline(stringContent, cssResources);
 					// update the HTML content
@@ -77,6 +68,24 @@ public class InlineCssTranslator implements ContentTranslator {
 			LOG.debug("Neither content as string nor HTML. Skip CSS inlining for {}", content);
 		}
 		return content;
+	}
+
+	private List<ExternalCss> load(List<String> cssFiles) throws ContentTranslatorException {
+		List<ExternalCss> cssResources = new ArrayList<>(cssFiles.size());
+		for (String path : cssFiles) {
+			load(cssResources, path);
+		}
+		return cssResources;
+	}
+
+	private void load(List<ExternalCss> cssResources, String path) throws ContentTranslatorException {
+		try {
+			cssResources.add(new ExternalCss(path, IOUtils.toString(resourceResolver.getResource(path).getInputStream())));
+		} catch (IOException e) {
+			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
+		} catch (ResourceResolutionException e) {
+			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
+		}
 	}
 
 	private Content updateHtmlContent(Content content, String inlinedContentStr) {

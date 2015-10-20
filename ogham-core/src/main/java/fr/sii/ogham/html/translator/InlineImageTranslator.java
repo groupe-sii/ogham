@@ -73,21 +73,7 @@ public class InlineImageTranslator implements ContentTranslator {
 			List<String> images = HtmlUtils.getDistinctImageUrls(stringContent);
 			if (!images.isEmpty()) {
 				// parepare list of images paths/urls with their content
-				List<ImageResource> imageResources = new ArrayList<>(images.size());
-				for (String path : images) {
-					try {
-						byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
-						String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
-						String imgName = new File(path).getName().toString();
-						imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
-					} catch (IOException e) {
-						throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
-					} catch (ResourceResolutionException e) {
-						throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
-					} catch (MimeTypeDetectionException e) {
-						throw new ContentTranslatorException("Failed to inline CSS file " + path + " because mimetype can't be detected", e);
-					}
-				}
+				List<ImageResource> imageResources = load(images);
 				// generate new HTML with inlined images
 				ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);
 				// update the HTML content
@@ -99,6 +85,29 @@ public class InlineImageTranslator implements ContentTranslator {
 			LOG.debug("Neither content usable as string nor HTML. Skip image inlining for {}", content);
 		}
 		return content;
+	}
+
+	private List<ImageResource> load(List<String> images) throws ContentTranslatorException {
+		List<ImageResource> imageResources = new ArrayList<>(images.size());
+		for (String path : images) {
+			load(imageResources, path);
+		}
+		return imageResources;
+	}
+
+	private void load(List<ImageResource> imageResources, String path) throws ContentTranslatorException {
+		try {
+			byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
+			String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
+			String imgName = new File(path).getName().toString();
+			imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
+		} catch (IOException e) {
+			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
+		} catch (ResourceResolutionException e) {
+			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
+		} catch (MimeTypeDetectionException e) {
+			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because mimetype can't be detected", e);
+		}
 	}
 
 	private Content updateHtmlContent(Content content, ContentWithImages contentWithImages) {

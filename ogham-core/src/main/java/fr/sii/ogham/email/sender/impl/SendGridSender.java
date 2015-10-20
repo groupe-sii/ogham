@@ -89,7 +89,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 			violations.add("Missing sender name");
 		}
 
-		if (message.getRecipients().size() == 0) {
+		if (message.getRecipients().isEmpty()) {
 			violations.add("Missing recipients");
 		}
 

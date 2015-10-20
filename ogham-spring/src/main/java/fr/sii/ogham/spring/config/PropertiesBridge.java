@@ -32,21 +32,25 @@ public class PropertiesBridge {
 	 * @return the properties for using it in Ogham
 	 */
 	public Properties convert(Environment env) {
-		Properties rtn = new Properties();
+		Properties props = new Properties();
 		if (env instanceof ConfigurableEnvironment) {
 			for (PropertySource<?> propertySource : ((ConfigurableEnvironment) env).getPropertySources()) {
 				if (propertySource instanceof EnumerablePropertySource) {
-					for (String key : ((EnumerablePropertySource<?>) propertySource).getPropertyNames()) {
-						// do not override if already provided
-						// Spring provides property sources in higher priority order
-						// first property source has higher priority => overrides values if not set
-						if(!rtn.containsKey(key)) {
-							rtn.setProperty(key, String.valueOf(propertySource.getProperty(key)));
-						}
-					}
+					copyProperties(propertySource, props);
 				}
 			}
 		}
-		return rtn;
+		return props;
+	}
+
+	private void copyProperties(PropertySource<?> propertySource, Properties destination) {
+		for (String key : ((EnumerablePropertySource<?>) propertySource).getPropertyNames()) {
+			// do not override if already provided
+			// Spring provides property sources in higher priority order
+			// first property source has higher priority => overrides values if not set
+			if(!destination.containsKey(key)) {
+				destination.setProperty(key, String.valueOf(propertySource.getProperty(key)));
+			}
+		}
 	}
 }

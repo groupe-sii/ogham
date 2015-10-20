@@ -1,6 +1,7 @@
 package fr.sii.ogham.helper.sms.cloudhopper;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.SmppServerHandler;
@@ -12,8 +13,8 @@ import com.cloudhopper.smpp.pdu.BaseBindResp;
 import com.cloudhopper.smpp.type.SmppProcessingException;
 
 public class TestSmppServerHandler implements SmppServerHandler {
-	public HashSet<SmppServerSession> sessions = new HashSet<SmppServerSession>();
-	public PollableSmppSessionHandler sessionHandler = new PollableSmppSessionHandler();
+	private Set<SmppServerSession> sessions = new HashSet<SmppServerSession>();
+	private PollableSmppSessionHandler sessionHandler = new PollableSmppSessionHandler();
 
 	private String systemId;
 	private String password;
@@ -51,5 +52,21 @@ public class TestSmppServerHandler implements SmppServerHandler {
 	@Override
 	public void sessionDestroyed(Long sessionId, SmppServerSession session) {
 		sessions.remove(session);
+	}
+
+	public Set<SmppServerSession> getSessions() {
+		return sessions;
+	}
+
+	public PollableSmppSessionHandler getSessionHandler() {
+		return sessionHandler;
+	}
+
+	public String getSystemId() {
+		return systemId;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 }

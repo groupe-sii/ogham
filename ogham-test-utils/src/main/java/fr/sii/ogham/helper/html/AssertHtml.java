@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import fr.sii.ogham.helper.exception.ComparisonException;
+
 /**
  * Utility class for checking HTML content.
  * 
@@ -43,7 +45,6 @@ public class AssertHtml {
 	 * @param actual
 	 *            the HTML content to check
 	 */
-	@SuppressWarnings("unchecked")
 	public static void assertIdentical(String expected, String actual) {
 		try {
 			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));
@@ -51,13 +52,11 @@ public class AssertHtml {
 			Document actualDoc = builder.parse(actual);
 			DetailedDiff diff = new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));
 			if (!diff.identical()) {
-				for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
-					LOG.error(difference.toString());
-				}
+				logDifferences(diff);
 				throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
 			}
 		} catch (SAXException | IOException | ConfigurationException | ParserConfigurationException e) {
-			throw new RuntimeException("Failed to compare HTML", e);
+			throw new ComparisonException("Failed to compare HTML", e);
 		}
 	}
 
@@ -77,7 +76,6 @@ public class AssertHtml {
 	 * @param actual
 	 *            the HTML content to check
 	 */
-	@SuppressWarnings("unchecked")
 	public static void assertSimilar(String expected, String actual) {
 		try {
 			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));
@@ -85,15 +83,28 @@ public class AssertHtml {
 			Document actualDoc = builder.parse(actual);
 			DetailedDiff diff = new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));
 			if (!diff.similar()) {
-				for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
-					if (!difference.isRecoverable()) {
-						LOG.error(difference.toString());
-					}
-				}
+				logUnrecoverableDifferences(diff);
 				throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
 			}
 		} catch (SAXException | IOException | ConfigurationException | ParserConfigurationException e) {
-			throw new RuntimeException("Failed to compare HTML", e);
+			throw new ComparisonException("Failed to compare HTML", e);
+		}
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	private static void logDifferences(DetailedDiff diff) {
+		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
+			LOG.error(difference.toString());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void logUnrecoverableDifferences(DetailedDiff diff) {
+		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
+			if (!difference.isRecoverable()) {
+				LOG.error(difference.toString());
+			}
 		}
 	}
 

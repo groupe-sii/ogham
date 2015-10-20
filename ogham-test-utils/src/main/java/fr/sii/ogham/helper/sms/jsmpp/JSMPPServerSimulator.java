@@ -35,10 +35,13 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implements Runnable, ServerMessageReceiverListener {
+	private static final int BIND_THREAD_POOL_SIZE = 5;
+	private static final int RECEIPT_THREAD_POOL_SIZE = 100;
+
 	private static final Logger LOG = LoggerFactory.getLogger(JSMPPServerSimulator.class);
 	
 	private ExecutorService execService;// = Executors.newFixedThreadPool(5);
-	private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(100);
+	private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(RECEIPT_THREAD_POOL_SIZE);
 	private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
 	private int port;
 	private boolean stopped;
@@ -54,7 +57,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		try {
 			if(!stopped) {
 				sessionListener = new SMPPServerSessionListener(port);
-				execService = Executors.newFixedThreadPool(5);
+				execService = Executors.newFixedThreadPool(BIND_THREAD_POOL_SIZE);
 				LOG.info("Listening on port {}", port);
 			}
 			while (!stopped) {
@@ -93,6 +96,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 				sessionListener = null;
 			} catch (IOException e) {
 				// nothing to do
+				LOG.trace("Failed to close session listener", e);
 			}
 		}
 		LOG.info("SMPP simulator stopped");

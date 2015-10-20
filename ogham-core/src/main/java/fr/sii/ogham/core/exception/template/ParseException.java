@@ -9,9 +9,9 @@ public class ParseException extends MessagingException {
 	 */
 	private static final long serialVersionUID = -6431070357840561026L;
 
-	private String templateName;
+	private final String templateName;
 	
-	private Context context;
+	private final Context context;
 
 	public ParseException(String message, String templateName, Context context, Throwable cause) {
 		super(message, cause);

@@ -628,4 +628,8 @@ public class AssertEmail {
 	private static boolean isHtml(String expectedBody) {
 		return HTML_PATTERN.matcher(expectedBody).find();
 	}
+	
+	public AssertEmail() {
+		super();
+	}
 }

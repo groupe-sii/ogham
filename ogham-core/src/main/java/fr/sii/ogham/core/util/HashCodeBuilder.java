@@ -153,7 +153,12 @@ public class HashCodeBuilder {
 	public int hashCode() {
 		return delegate.hashCode();
 	}
-
+	
+	@Override
+	public boolean equals(Object obj) {
+		return delegate.equals(obj);
+	}
+	
 	/**
 	 * <p>
 	 * Uses reflection to build a valid hash code from the fields of object.
@@ -194,4 +199,5 @@ public class HashCodeBuilder {
 	public static int reflectionsHashCode(Object object, String... excludeFields) {
 		return org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode(object, excludeFields);
 	}
+
 }

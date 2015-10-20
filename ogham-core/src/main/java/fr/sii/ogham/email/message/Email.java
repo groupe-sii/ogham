@@ -173,7 +173,7 @@ public class Email implements Message, WithSubject {
 	 *            the list of recipients of the mail
 	 */
 	public Email(String subject, Content content, Recipient recipient, Recipient... recipients) {
-		this(subject, content, new ArrayList<>(Arrays.asList(recipients)));
+		this(subject, content, ArrayUtils.concat(recipient, recipients));
 	}
 
 	/**
