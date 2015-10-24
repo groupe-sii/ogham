@@ -57,7 +57,7 @@
 		<project.url>https://groupe-sii.github.io/ogham/</project.url>
 		<scm.url>git@github.com:groupe-sii/ogham.git</scm.url>
 		<site.url>http://groupe-sii.github.io/ogham</site.url>
-		<site.deploy.url>${project.url}</site.deploy.url>
+		<site.deploy.url>gitsite:git@github.com/groupe-sii/ogham.git</site.deploy.url>
 	</properties>
 
 
@@ -459,7 +459,7 @@
 		<site>
 			<id>gh-pages</id>
 			<name>Deployment on Github</name>
-			<url>gitsite:git@github.com/groupe-sii/ogham.git</url>
+			<url>${site.deploy.url}</url>
 		</site>
 	</distributionManagement>
 
