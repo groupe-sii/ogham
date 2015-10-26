@@ -18,7 +18,7 @@ To use Ogham, add it to your pom.xml:
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${project.version}</version>
+			<version>${docProjectVersion}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -38,7 +38,7 @@ To use Ogham and let Spring Boot auto-configuration mechanism handle integration
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring</artifactId>
-			<version>${project.version}</version>
+			<version>${docProjectVersion}</version>
 		</dependency>
 		...
 	</dependencies>
@@ -76,7 +76,7 @@ To use Ogham without Spring Boot, you have to first add the dependency to your p
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring</artifactId>
-			<version>${project.version}</version>
+			<version>${docProjectVersion}</version>
 		</dependency>
 		...
 	</dependencies>
