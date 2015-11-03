@@ -23,13 +23,4 @@ public interface HasSubject extends Message {
 	 *            the subject of the message
 	 */
 	public void setSubject(String subject);
-
-	/**
-	 * Set the subject of the message
-	 *
-	 * @param subject
-	 *            the subject of the message to set
-	 * @return this instance for fluent use
-	 */
-	public HasSubject subject(String subject);
 }

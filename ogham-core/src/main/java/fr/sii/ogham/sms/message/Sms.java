@@ -6,6 +6,7 @@ import java.util.List;
 
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.message.capability.HasRecipients;
+import fr.sii.ogham.core.message.capability.HasRecipientsFluent;
 import fr.sii.ogham.core.message.capability.HasToFluent;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -27,7 +28,7 @@ import fr.sii.ogham.sms.builder.SmsBuilder;
  * @author Aurélien Baudet
  *
  */
-public class Sms implements Message, HasRecipients<Recipient>, HasToFluent {
+public class Sms implements Message, HasRecipients<Recipient>, HasRecipientsFluent<Sms, Recipient>, HasToFluent<Sms> {
 	/**
 	 * The number of the sender
 	 */
