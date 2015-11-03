@@ -40,11 +40,15 @@ public class SmsSMPPDefaultsTest {
 
 	@Before
 	public void setUp() throws IOException {
-		Properties props = new Properties(System.getProperties());
-		props.load(getClass().getResourceAsStream("/application.properties"));
-		props.setProperty("ogham.sms.smpp.host", "127.0.0.1");
-		props.setProperty("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()));
-		oghamService = new MessagingBuilder().useAllDefaults(props).build();
+		Properties additionalProps = new Properties();
+		additionalProps.setProperty("ogham.sms.smpp.host", "127.0.0.1");
+		additionalProps.setProperty("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()));
+		oghamService = MessagingBuilder.standard()
+				.environment()
+					.properties("/application.properties")
+					.properties(additionalProps)
+					.and()
+				.build();
 	}
 
 	@Test

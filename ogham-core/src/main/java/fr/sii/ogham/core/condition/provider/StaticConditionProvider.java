@@ -2,17 +2,17 @@ package fr.sii.ogham.core.condition.provider;
 
 import fr.sii.ogham.core.condition.Condition;
 
-public class StaticConditionProvider<T> implements ConditionProvider<T> {
+public class StaticConditionProvider<T, C> implements ConditionProvider<T, C> {
 
-	private Condition<T> condition;
+	private Condition<C> condition;
 	
-	public StaticConditionProvider(Condition<T> condition) {
+	public StaticConditionProvider(Condition<C> condition) {
 		super();
 		this.condition = condition;
 	}
 
 	@Override
-	public Condition<T> provide(T source) {
+	public Condition<C> provide(T source) {
 		return condition;
 	}
 

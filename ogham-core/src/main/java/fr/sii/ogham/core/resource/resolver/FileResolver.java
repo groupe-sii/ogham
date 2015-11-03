@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.resource.resolver;
 
 import java.io.File;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,10 @@ import fr.sii.ogham.core.resource.ResourcePath;
  */
 public class FileResolver extends AbstractPrefixedLookupPathResolver implements RelativisableResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(FileResolver.class);
+
+	public FileResolver(List<String> lookups) {
+		super(lookups);
+	}
 
 	public FileResolver(String... lookups) {
 		super(lookups);

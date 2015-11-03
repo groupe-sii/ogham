@@ -77,7 +77,7 @@ public @interface RequiredClasses {
 	 * For example:
 	 * 
 	 * <pre>
-	 * &#064;RequiredClasses(classes = { &#064;RequiredClass(value = &quot;javax.mail.Transport&quot;, except = &quot;org.apache.commons.mail.HtmlEmail&quot;) })
+	 * &#064;RequiredClasses(classes = { &#064;RequiredClass(value = &quot;javax.mail.Transport&quot;, exclude = &quot;org.apache.commons.mail.HtmlEmail&quot;) })
 	 * public class JavaMailBuilder implements ImplementationBuilder&lt;JavaMailSender&gt; {
 	 * }
 	 * </pre>
@@ -87,7 +87,7 @@ public @interface RequiredClasses {
 	 * <code>org.apache.commons.mail.HtmlEmail</code> class is present.
 	 * 
 	 * <pre>
-	 * &#064;RequiredProperties(classes = &#064;RequiredProperty(value = &quot;javax.mail.Transport&quot;, equals = &quot;java.mail.Transport&quot;))
+	 * &#064;RequiredClasses(classes = &#064;RequiredClass(value = &quot;javax.mail.Transport&quot;, alternatives = &quot;java.mail.Transport&quot;))
 	 * public class JavaMailBuilder implements ImplementationBuilder&lt;JavaMailSender&gt; {
 	 * }
 	 * </pre>

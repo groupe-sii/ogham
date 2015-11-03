@@ -1,9 +1,11 @@
 package fr.sii.ogham.spring.config;
 
-import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.sms.builder.SmsBuilder;
 import freemarker.template.Configuration;
 
-public class FreeMarkerConfigurer implements MessagingBuilderConfigurer {
+public class FreeMarkerConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
 	private final Configuration emailConfiguration;
 	private final Configuration smsConfiguration;
 	
@@ -15,9 +17,18 @@ public class FreeMarkerConfigurer implements MessagingBuilderConfigurer {
 
 
 	@Override
-	public void configure(MessagingBuilder builder) {
-		builder.getEmailBuilder().getTemplateBuilder().getFreeMarkerParser().withConfiguration(emailConfiguration);
-		builder.getSmsBuilder().getTemplateBuilder().getFreeMarkerParser().withConfiguration(smsConfiguration);
+	public void configure(EmailBuilder emailBuilder) {
+		emailBuilder.template().freemarker().configuration(emailConfiguration);
+	}
+
+	@Override
+	public void configure(SmsBuilder smsBuilder) {
+		smsBuilder.template().freemarker().configuration(smsConfiguration);
+	}
+
+	@Override
+	public int getOrder() {
+		return 880;
 	}
 
 }

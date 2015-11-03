@@ -2,8 +2,8 @@ package fr.sii.ogham.spring.xml;
 
 import org.springframework.core.env.Environment;
 
+import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.MessagingServiceBuilder;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.spring.env.SpringEnvironmentPropertyResolver;
 
@@ -13,7 +13,7 @@ import fr.sii.ogham.spring.env.SpringEnvironmentPropertyResolver;
  * @author Aurélien Baudet
  *
  */
-public class SpringXMLMessagingBuilder implements MessagingServiceBuilder {
+public class SpringXMLMessagingBuilder implements Builder<MessagingService> {
 	Environment environment;
 
 	MessagingBuilder builder;
@@ -33,7 +33,7 @@ public class SpringXMLMessagingBuilder implements MessagingServiceBuilder {
 	 *            properties
 	 */
 	public SpringXMLMessagingBuilder(Environment environment) {
-		this(environment, new MessagingBuilder().useAllDefaults(new SpringEnvironmentPropertyResolver(environment)));
+		this(environment, MessagingBuilder.standard().environment().resolver(new SpringEnvironmentPropertyResolver(environment)).and());
 	}
 
 	/**

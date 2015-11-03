@@ -11,6 +11,7 @@ import fr.sii.ogham.core.message.content.TemplateVariantContent;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.common.adapter.VariantResolver;
+import fr.sii.ogham.template.exception.VariantResolutionException;
 
 /**
  * <p>
@@ -35,25 +36,30 @@ public class TemplateContentTranslator implements ContentTranslator {
 	/**
 	 * The parser to use for finding, loading and evaluating the template
 	 */
-	private TemplateParser parser;
+	private final TemplateParser parser;
 
 	/**
 	 * The resolver that converts partial path with variant into real path
 	 */
-	private VariantResolver variantResolver;
+	private final VariantResolver variantResolver;
 
+	public TemplateContentTranslator(TemplateParser parser) {
+		this(parser, null);
+	}
+	
 	public TemplateContentTranslator(TemplateParser parser, VariantResolver variantResolver) {
 		super();
 		this.parser = parser;
 		this.variantResolver = variantResolver;
 	}
+	
 
 	@Override
 	public Content translate(Content content) throws ContentTranslatorException {
 		if (content instanceof TemplateContent) {
 			try {
 				TemplateContent template = (TemplateContent) content;
-				String realPath = variantResolver.getRealPath(template);
+				String realPath = getRealPath(template);
 				if(realPath==null) {
 					LOG.debug("No template found for {}", template.getPath());
 					return null;
@@ -69,6 +75,14 @@ public class TemplateContentTranslator implements ContentTranslator {
 			LOG.trace("Not a TemplateContent => skip it");
 			return content;
 		}
+	}
+
+
+	private String getRealPath(TemplateContent template) throws VariantResolutionException {
+		if(variantResolver==null) {
+			return template.getPath();
+		}
+		return variantResolver.getRealPath(template);
 	}
 
 	@Override

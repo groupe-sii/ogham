@@ -1,7 +1,6 @@
 package fr.sii.ogham.it.email;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,9 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.condition.FixedCondition;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
@@ -33,11 +30,16 @@ public class EmailCustomImplTest {
 	
 	@Before
 	public void setUp() throws IOException {
-		Properties props = new Properties(System.getProperties());
-		props.load(getClass().getResourceAsStream("/application.properties"));
-		MessagingBuilder builder = new MessagingBuilder().useAllDefaults(props);
-		builder.getEmailBuilder().registerImplementation(new FixedCondition<Message>(true), customSender);
-		messagingService = builder.build();
+		// @formatter:off
+		messagingService = MessagingBuilder.standard()
+				.environment()
+					.properties("/application.properties")
+					.and()
+				.email()
+					.customSender(customSender)
+					.and()
+				.build();
+		// @formatter:on
 	}
 	
 	@Test

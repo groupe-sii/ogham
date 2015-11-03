@@ -38,13 +38,17 @@ public class EmailTemplatePrefixTest {
 	
 	@Before
 	public void setUp() throws IOException {
-		Properties props = new Properties(System.getProperties());
-		props.load(getClass().getResourceAsStream("/application.properties"));
-		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		props.setProperty("ogham.email.template.prefix", "/template/thymeleaf/source/");
-		props.setProperty("ogham.email.template.suffix", ".html");
-		oghamService = new MessagingBuilder().useAllDefaults(props).build();
+		Properties additionalProperties = new Properties();
+		additionalProperties.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
+		additionalProperties.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		additionalProperties.setProperty("ogham.email.template.prefix", "/template/thymeleaf/source/");
+		additionalProperties.setProperty("ogham.email.template.suffix", ".html");
+		oghamService = MessagingBuilder.standard()
+				.environment()
+					.properties("/application.properties")
+					.properties(additionalProperties)
+					.and()
+				.build();
 	}
 	
 	@Test

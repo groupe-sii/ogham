@@ -1,11 +1,11 @@
 package fr.sii.ogham.email.sender;
 
-import java.util.Map;
+import java.util.List;
 
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.message.Message;
-import fr.sii.ogham.core.sender.MultiImplementationSender;
 import fr.sii.ogham.core.sender.MessageSender;
+import fr.sii.ogham.core.sender.MultiImplementationSender;
 import fr.sii.ogham.email.message.Email;
 
 /**
@@ -25,14 +25,14 @@ public class EmailSender extends MultiImplementationSender<Email> {
 		super(condition, implementation);
 	}
 
-	public EmailSender(Map<Condition<Message>, MessageSender> implementations) {
+	public EmailSender(List<Implementation> implementations) {
 		super(implementations);
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("EmailSender ").append(getImplementations().values());
+		builder.append("EmailSender ").append(getImplementations());
 		return builder.toString();
 	}
 }

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.capability.HasVariant;
 import fr.sii.ogham.core.message.content.TemplateContent;
-import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.VariantResolutionException;
 
 /**
@@ -18,17 +16,15 @@ import fr.sii.ogham.template.exception.VariantResolutionException;
  *
  */
 public class FirstExistingResourceVariantResolver implements VariantResolver {
-	private ResourceResolver resolver;
 	private List<VariantResolver> delegates;
 	private VariantResolver defaultResolver;
 
-	public FirstExistingResourceVariantResolver(ResourceResolver resolver, VariantResolver defaultResolver, VariantResolver... delegates) {
-		this(resolver, defaultResolver, new ArrayList<>(Arrays.asList(delegates)));
+	public FirstExistingResourceVariantResolver(VariantResolver defaultResolver, VariantResolver... delegates) {
+		this(defaultResolver, new ArrayList<>(Arrays.asList(delegates)));
 	}
 
-	public FirstExistingResourceVariantResolver(ResourceResolver resolver, VariantResolver defaultResolver, List<VariantResolver> delegates) {
+	public FirstExistingResourceVariantResolver(VariantResolver defaultResolver, List<VariantResolver> delegates) {
 		super();
-		this.resolver = resolver;
 		this.defaultResolver = defaultResolver;
 		this.delegates = delegates;
 	}
@@ -37,17 +33,27 @@ public class FirstExistingResourceVariantResolver implements VariantResolver {
 	public String getRealPath(TemplateContent template) throws VariantResolutionException {
 		if (template instanceof HasVariant) {
 			for (VariantResolver delegate : delegates) {
-				try {
-					String realPath = delegate.getRealPath(template);
-					resolver.getResource(realPath);
-					return realPath;
-				} catch (ResourceResolutionException e) {
-					// just skip the exception
+				if(delegate.variantExists(template)) {
+					return delegate.getRealPath(template);
 				}
 			}
 			return defaultResolver.getRealPath(template);
 		} else {
 			return template.getPath();
+		}
+	}
+
+	@Override
+	public boolean variantExists(TemplateContent template) {
+		if (template instanceof HasVariant) {
+			for (VariantResolver delegate : delegates) {
+				if(delegate.variantExists(template)) {
+					return true;
+				}
+			}
+			return defaultResolver.variantExists(template);
+		} else {
+			return false;
 		}
 	}
 

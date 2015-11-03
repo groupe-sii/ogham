@@ -1,5 +1,10 @@
 package fr.sii.ogham.core.builder.annotation;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.regex.Pattern;
 
 /**
@@ -17,6 +22,8 @@ import java.util.regex.Pattern;
  * @author Aurélien Baudet
  *
  */
+@Target(TYPE)
+@Retention(RUNTIME)
 public @interface RequiredProperty {
 	/**
 	 * The property key
@@ -33,7 +40,7 @@ public @interface RequiredProperty {
 	 * 
 	 * @return the required property value
 	 */
-	String equals() default "";
+	String is() default "";
 
 	/**
 	 * Indicates that the property value must match the provided regular
@@ -43,7 +50,7 @@ public @interface RequiredProperty {
 	 * expressions.
 	 * 
 	 * <p>
-	 * If you want to use a strict value, use {@link #equals()} instead.
+	 * If you want to use a strict value, use {@link #is()} instead.
 	 * 
 	 * @return the pattern for the property value
 	 */
@@ -99,13 +106,13 @@ public @interface RequiredProperty {
 	 * key provided by attribute {@link #value()}.
 	 * 
 	 * <p>
-	 * Attributes {@link #equals()}, {@link #pattern()}, {@link #excludes()} are
+	 * Attributes {@link #is()}, {@link #pattern()}, {@link #excludes()} are
 	 * common for every alternative.
 	 * 
 	 * For Example:
 	 * 
 	 * <pre>
-	 * &#064;RequiredProperty(value="foo.bar", alternatives="foo.baz", equals="true")
+	 * &#064;RequiredProperty(value="foo.bar", alternatives="foo.baz", is="true")
 	 * </pre>
 	 * 
 	 * Means that the implementation can be used either if the property

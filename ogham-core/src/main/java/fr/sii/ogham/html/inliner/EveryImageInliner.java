@@ -1,5 +1,6 @@
 package fr.sii.ogham.html.inliner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class EveryImageInliner implements ImageInliner {
 	private List<ImageInliner> inliners;
 
 	public EveryImageInliner(ImageInliner... inliners) {
-		this(Arrays.asList(inliners));
+		this(new ArrayList<>(Arrays.asList(inliners)));
 	}
 
 	public EveryImageInliner(List<ImageInliner> inliners) {
@@ -37,4 +38,8 @@ public class EveryImageInliner implements ImageInliner {
 		return combined;
 	}
 
+	public EveryImageInliner addInliner(ImageInliner inliner) {
+		inliners.add(inliner);
+		return this;
+	}
 }

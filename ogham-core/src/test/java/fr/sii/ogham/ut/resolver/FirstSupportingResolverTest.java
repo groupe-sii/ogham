@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import fr.sii.ogham.core.builder.FirstSupportingResourceResolverBuilder;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
@@ -27,7 +26,10 @@ public class FirstSupportingResolverTest {
 
 	@Before
 	public void setUp() throws ResourceResolutionException {
-		firstSupportingResolver = new FirstSupportingResourceResolverBuilder().useDefaults().build();
+		firstSupportingResolver = new FirstSupportingResourceResolver(
+				new StringResourceResolver("string:", "s:"),
+				new FileResolver("file:"),
+				new ClassPathResolver("classpath:", ""));
 	}
 
 	@Test
@@ -63,11 +65,9 @@ public class FirstSupportingResolverTest {
 		Assert.assertSame("should be classpath resolver", resource.getClass(), ByteResource.class);
 	}
 
-	@Test
-	public void unknown() {
-		firstSupportingResolver = new FirstSupportingResourceResolverBuilder().withResourceResolver(new FileResolver("file:")).withResourceResolver(new StringResourceResolver("string:"))
-				.withResourceResolver(new ClassPathResolver("classpath:")).build();
+	@Test(expected=ResourceResolutionException.class)
+	public void unknown() throws ResourceResolutionException {
 		String path = "fake:/template/resolver/foo/bar.html";
-		Assert.assertFalse("should not be able to support template path", firstSupportingResolver.supports(path));
+		firstSupportingResolver.getResource(path);
 	}
 }

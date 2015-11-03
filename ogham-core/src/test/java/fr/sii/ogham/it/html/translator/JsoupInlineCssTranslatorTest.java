@@ -9,11 +9,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import fr.sii.ogham.core.builder.FirstSupportingResourceResolverBuilder;
+import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
-import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.helper.html.AssertHtml;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
@@ -31,7 +31,12 @@ public class JsoupInlineCssTranslatorTest {
 
 	@Before
 	public void setUp() {
-		FirstSupportingResourceResolver resourceResolver = new FirstSupportingResourceResolverBuilder().useDefaults().withParentPath(SOURCE_FOLDER).build();
+		ResourceResolver resourceResolver = MessagingBuilder.standard()
+				.email()
+					.template()
+						.thymeleaf()
+							.pathPrefix(SOURCE_FOLDER)
+							.buildResolver();
 		translator = new InlineCssTranslator(new JsoupCssInliner(), resourceResolver);
 	}
 

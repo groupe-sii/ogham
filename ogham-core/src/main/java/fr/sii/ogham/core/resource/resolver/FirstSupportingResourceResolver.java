@@ -1,5 +1,8 @@
 package fr.sii.ogham.core.resource.resolver;
 
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -28,6 +31,17 @@ public class FirstSupportingResourceResolver implements ResourceResolver {
 	 * lookup.
 	 */
 	private List<ResourceResolver> resolvers;
+
+	/**
+	 * Initialize the decorator with the provided resource resolver
+	 * implementations. The registration order may be important.
+	 * 
+	 * @param resolvers
+	 *            the resolvers to register
+	 */
+	public FirstSupportingResourceResolver(ResourceResolver... resolvers) {
+		this(new ArrayList<>(asList(resolvers)));
+	}
 
 	/**
 	 * Initialize the decorator with the provided resource resolver

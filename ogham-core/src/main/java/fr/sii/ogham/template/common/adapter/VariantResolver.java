@@ -20,4 +20,6 @@ public interface VariantResolver {
 	 *             when template has variant but the variant is not known
 	 */
 	String getRealPath(TemplateContent template) throws VariantResolutionException;
+	
+	boolean variantExists(TemplateContent template);
 }

@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.resource.resolver;
 
+import java.util.List;
+
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.resource.ResourcePath;
@@ -12,6 +14,10 @@ import fr.sii.ogham.core.resource.SimpleResource;
  *
  */
 public class StringResourceResolver extends AbstractPrefixedLookupPathResolver implements ResourceResolver {
+
+	public StringResourceResolver(List<String> lookups) {
+		super(lookups);
+	}
 
 	public StringResourceResolver(String... lookups) {
 		super(lookups);

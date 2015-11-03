@@ -20,10 +20,10 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.spring.config.FreeMarkerConfigurer;
-import fr.sii.ogham.spring.config.MessagingBuilderConfigurer;
 import fr.sii.ogham.spring.config.NoTemplateEngineConfigurer;
+import fr.sii.ogham.spring.config.SpringEnvironmentConfigurer;
+import fr.sii.ogham.spring.config.SpringMessagingConfigurer;
 import fr.sii.ogham.spring.config.ThymeLeafConfigurer;
-import fr.sii.ogham.spring.env.SpringEnvironmentPropertyResolver;
 import freemarker.template.TemplateExceptionHandler;
 
 /**
@@ -47,7 +47,7 @@ public class OghamAutoConfiguration {
 
 	@Autowired
 	Environment environment;
-
+	
 	/**
 	 * Configures the Messaging service and the {@link TemplateParser}. A
 	 * ThymeLeaf parser will be configured. If we find SpringTemplateEngine, we
@@ -62,24 +62,30 @@ public class OghamAutoConfiguration {
 	 */
 	@Bean
 	public MessagingService messagingService(MessagingBuilder builder) {
+		builder.configure();
 		return builder.build();
 	}
 
 	@Bean
-	public MessagingBuilder defaultMessagingBuilder(List<MessagingBuilderConfigurer> configurers) {
-		MessagingBuilder builder = new MessagingBuilder().useAllDefaults(new SpringEnvironmentPropertyResolver(environment));
-		for (MessagingBuilderConfigurer configurer : configurers) {
-			configurer.configure(builder);
+	public MessagingBuilder defaultMessagingBuilder(List<SpringMessagingConfigurer> configurers) {
+		MessagingBuilder builder = MessagingBuilder.standard(false);
+		for (SpringMessagingConfigurer configurer : configurers) {
+			builder.register(configurer, configurer.getOrder());
 		}
 		return builder;
+	}
+	
+	@Bean
+	public SpringEnvironmentConfigurer springEnvironmentConfigurer() {
+		return new SpringEnvironmentConfigurer(environment);
 	}
 	
 	@Configuration
 	@ConditionalOnMissingClass({"freemarker.template.Configuration", "org.thymeleaf.spring4.SpringTemplateEngine"})
 	public static class OghamNoTemplateEngineConfiguration {
 		@Bean
-		public List<MessagingBuilderConfigurer> defaultMessagingBuilderConfigurer() {
-			return Arrays.<MessagingBuilderConfigurer>asList(new NoTemplateEngineConfigurer());
+		public List<SpringMessagingConfigurer> defaultMessagingBuilderConfigurer() {
+			return Arrays.<SpringMessagingConfigurer>asList(new NoTemplateEngineConfigurer());
 		}
 	}
 

@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.sii.ogham.email.builder.SendGridBuilder;
+import fr.sii.ogham.email.builder.sendgrid.SendGridBuilder;
 import fr.sii.ogham.email.sender.impl.SendGridSender;
 import fr.sii.ogham.email.sender.impl.sendgrid.client.SendGridClient;
 
@@ -19,12 +19,18 @@ public final class SendGridBuilderTest {
 
 	@Before
 	public void setUp() {
-		instance = new SendGridBuilder();
+		instance = new SendGridBuilder()
+				.mimetype()
+					.tika()
+						.failIfOctetStream(false)
+						.and()
+					.and();
 	}
 
 	@Test
 	public void build_withCredentials() {
-		instance.withCredentials("username", "password");
+		instance.username("username");
+		instance.password("password");
 
 		final SendGridSender val = instance.build();
 
@@ -33,7 +39,7 @@ public final class SendGridBuilderTest {
 
 	@Test
 	public void build_withApiKey() {
-		instance.withApiKey("apiKey");
+		instance.apiKey("apiKey");
 
 		final SendGridSender val = instance.build();
 
@@ -42,7 +48,7 @@ public final class SendGridBuilderTest {
 
 	@Test
 	public void build_withClient() {
-		instance.withClient(mock(SendGridClient.class));
+		instance.client(mock(SendGridClient.class));
 
 		final SendGridSender val = instance.build();
 

@@ -24,7 +24,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.builder.JavaMailBuilder;
+import fr.sii.ogham.email.builder.javamail.JavaMailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
@@ -41,10 +41,20 @@ public class JavaMailSmtpTest {
 	
 	@Before
 	public void setUp() throws IOException {
-		Properties props = new Properties(System.getProperties());
-		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		sender = new JavaMailBuilder().useDefaults(props).build();
+		Properties additionalProps = new Properties();
+		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
+		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		sender = new JavaMailBuilder()
+				.environment()
+					.systemProperties()
+					.properties(additionalProps)
+					.and()
+				.mimetype()
+					.tika()
+						.failIfOctetStream(false)
+						.and()
+					.and()
+				.build();
 	}
 	
 	@Test

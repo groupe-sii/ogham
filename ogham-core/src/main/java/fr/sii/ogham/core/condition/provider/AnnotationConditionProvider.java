@@ -1,36 +1,36 @@
 package fr.sii.ogham.core.condition.provider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import fr.sii.ogham.core.builder.annotation.RequiredClass;
+import fr.sii.ogham.core.builder.annotation.RequiredClasses;
+import fr.sii.ogham.core.builder.annotation.RequiredProperties;
+import fr.sii.ogham.core.builder.annotation.RequiredProperty;
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.env.PropertyResolver;
 
-// TODO: provide known annotation provider implementations
-// TODO: allow to add custom annotation provider implementation
-// TODO: make a and condition between all annotation providers
-public class AnnotationConditionProvider implements ConditionProvider<Class<?>> {
-
-	private List<ConditionProvider<Class<?>>> delegates;
+public class AnnotationConditionProvider<T> implements ConditionProvider<Class<?>, T> {
+	private final RequiredPropertyAnnotationProvider<T> propertyConditionProvider;
+	private final RequiredPropertiesAnnotationProvider<T> propertiesConditionProvider;
+	private final RequiredClassAnnotationProvider<T> classConditionProvider;
+	private final RequiredClassesAnnotationProvider<T> classesConditionProvider;
 	
-	@SafeVarargs
-	public AnnotationConditionProvider(ConditionProvider<Class<?>>... delegates) {
-		this(Arrays.asList(delegates));
+	public AnnotationConditionProvider(PropertyResolver propertyResolver) {
+		super();
+		propertyConditionProvider = new RequiredPropertyAnnotationProvider<>(propertyResolver);
+		propertiesConditionProvider = new RequiredPropertiesAnnotationProvider<>(propertyResolver);
+		classConditionProvider = new RequiredClassAnnotationProvider<>();
+		classesConditionProvider = new RequiredClassesAnnotationProvider<>();
 	}
 
-	public AnnotationConditionProvider(List<ConditionProvider<Class<?>>> delegates) {
-		super();
-		this.delegates = delegates;
-	}
 
 	@Override
-	public Condition<Class<?>> provide(Class<?> source) {
-		List<Condition<Class<?>>> conditions = new ArrayList<>();
-		for(ConditionProvider<Class<?>> delegate : delegates) {
-			conditions.add(delegate.provide(source));
-		}
-		return new AndCondition<>(conditions);
+	public Condition<T> provide(Class<?> source) {
+		AndCondition<T> mainCondition = new AndCondition<>();
+		mainCondition.and(propertyConditionProvider.provide(source.getAnnotation(RequiredProperty.class)));
+		mainCondition.and(propertiesConditionProvider.provide(source.getAnnotation(RequiredProperties.class)));
+		mainCondition.and(classConditionProvider.provide(source.getAnnotation(RequiredClass.class)));
+		mainCondition.and(classesConditionProvider.provide(source.getAnnotation(RequiredClasses.class)));
+		return mainCondition;
 	}
 
 }

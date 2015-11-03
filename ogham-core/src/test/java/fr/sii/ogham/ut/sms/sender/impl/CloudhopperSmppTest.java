@@ -20,7 +20,7 @@ import fr.sii.ogham.helper.sms.ExpectedSms;
 import fr.sii.ogham.helper.sms.SplitSms;
 import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
-import fr.sii.ogham.sms.builder.CloudhopperSMPPBuilder;
+import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
@@ -45,7 +45,17 @@ public class CloudhopperSmppTest {
 		SmppSessionConfiguration configuration = new SmppSessionConfiguration();
 		configuration.setHost("127.0.0.1");
 		configuration.setPort(smppServer.getPort());
-		sender = new CloudhopperSMPPBuilder().withSmppSessionConfiguration(configuration).build();
+		// @formatter:off
+		sender = new CloudhopperBuilder()
+					.session(configuration)
+					.session()
+						.connectRetry()
+							.maxRetries(10)
+							.delay(500L)
+							.and()
+						.and()
+					.build();
+		// @formatter:on
 	}
 
 	@Test

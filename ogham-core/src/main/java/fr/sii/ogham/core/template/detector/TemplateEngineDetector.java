@@ -1,7 +1,6 @@
 package fr.sii.ogham.core.template.detector;
 
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
-import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.template.context.Context;
 
 /**
@@ -25,11 +24,9 @@ public interface TemplateEngineDetector {
 	 *            the name of the template (may be the full path)
 	 * @param ctx
 	 *            the variable substitutions
-	 * @param template
-	 *            the template that can provide the content
 	 * @return true if the engine can parse the template, false otherwise
 	 * @throws EngineDetectionException
 	 *             when something went wrong during detection
 	 */
-	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException;
+	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException;
 }

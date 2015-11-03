@@ -13,4 +13,10 @@ public class FailIfNotFoundVariantResolver implements VariantResolver {
 		throw new VariantResolutionException("Failed to resolve variant (" + variant + ")", template.getPath(), template.getContext(), variant);
 	}
 
+	@Override
+	public boolean variantExists(TemplateContent template) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

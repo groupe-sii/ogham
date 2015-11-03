@@ -48,6 +48,8 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 	private List<SubmitSm> receivedMessages = new ArrayList<>();
 	private SMPPServerSessionListener sessionListener;
 	private SMPPServerSession serverSession;
+    private final Object startupMonitor = new Object();
+    private volatile boolean running = false;
 
 	public JSMPPServerSimulator(int port) {
 		this.port = port;
@@ -58,7 +60,11 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 			if(!stopped) {
 				sessionListener = new SMPPServerSessionListener(port);
 				execService = Executors.newFixedThreadPool(BIND_THREAD_POOL_SIZE);
+				running = true;
 				LOG.info("Listening on port {}", port);
+	            synchronized (startupMonitor) {
+	                startupMonitor.notifyAll();
+	            }
 			}
 			while (!stopped) {
 				serverSession = sessionListener.accept();
@@ -69,9 +75,16 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 			}
 		} catch (IOException e) {
 			if(!stopped) {
-				LOG.error("IO error occurred", e);
+				LOG.error("Failed to initialize SMPP server simulator", e);
+				close();
 			}
-		}
+		} finally {
+            // Notify everybody that we're ready to accept connections or failed to start.
+            // Otherwise will run into startup timeout, see #waitTillRunning(long).
+            synchronized (startupMonitor) {
+                startupMonitor.notifyAll();
+            }
+        }
 	}
 	
 	public synchronized void reset() {
@@ -81,11 +94,17 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 
 	public synchronized void stop() {
 		LOG.info("Stopping SMPP simulator");
+		running = false;
 		stopped = true;
 		if (execService != null) {
 			execService.shutdownNow();
 			execService = null;
 		}
+		close();
+		LOG.info("SMPP simulator stopped");
+	}
+
+	private void close() {
 		if (serverSession != null) {
 			serverSession.close();
 			serverSession = null;
@@ -99,8 +118,20 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 				LOG.trace("Failed to close session listener", e);
 			}
 		}
-		LOG.info("SMPP simulator stopped");
 	}
+
+	public boolean waitTillRunning(long timeoutInMs) throws InterruptedException {
+        long t = System.currentTimeMillis();
+        synchronized (startupMonitor) {
+            // Loop to avoid spurious wake ups, see
+            // https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
+            while (!running && System.currentTimeMillis() - t < timeoutInMs) {
+                startupMonitor.wait(timeoutInMs);
+            }
+        }
+
+        return running;
+    }
 
 	public QuerySmResult onAcceptQuerySm(QuerySm querySm, SMPPServerSession source) throws ProcessRequestException {
 		LOG.info("Accepting query sm, but not implemented");

@@ -34,15 +34,19 @@ public class EmailPropertiesTest {
 	
 	@Before
 	public void setUp() throws IOException {
-		Properties props = new Properties(System.getProperties());
-		props.load(getClass().getResourceAsStream("/application.properties"));
-		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		props.setProperty("ogham.email.from", "test.sender@sii.fr");
-		props.setProperty("ogham.email.to", "recipient.to1@sii.fr,recipient.to2@sii.fr,recipient.to3@sii.fr");
-		props.setProperty("ogham.email.cc", "recipient.cc1@sii.fr,recipient.cc2@sii.fr");
-		props.setProperty("ogham.email.bcc", "recipient.bcc@sii.fr");
-		oghamService = new MessagingBuilder().useAllDefaults(props).build();
+		Properties additional = new Properties();
+		additional.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
+		additional.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		additional.setProperty("ogham.email.from", "test.sender@sii.fr");
+		additional.setProperty("ogham.email.to", "recipient.to1@sii.fr,recipient.to2@sii.fr,recipient.to3@sii.fr");
+		additional.setProperty("ogham.email.cc", "recipient.cc1@sii.fr,recipient.cc2@sii.fr");
+		additional.setProperty("ogham.email.bcc", "recipient.bcc@sii.fr");
+		oghamService = MessagingBuilder.standard()
+				.environment()
+					.properties("/application.properties")
+					.properties(additional)
+					.and()
+				.build();
 	}
 	
 	@Test

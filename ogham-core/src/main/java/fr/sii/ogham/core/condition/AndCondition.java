@@ -35,6 +35,16 @@ public class AndCondition<T> extends CompositeCondition<T> {
 		return true;
 	}
 
+	public AndCondition<T> and(Condition<T> condition) {
+		addCondition(condition);
+		return this;
+	}
+	
+	public AndCondition<T> and(List<Condition<T>> conditions) {
+		addConditions(conditions);
+		return this;
+	}
+	
 	@Override
 	public String toString() {
 		return "{" + StringUtils.join(conditions, "} and {") + "}";

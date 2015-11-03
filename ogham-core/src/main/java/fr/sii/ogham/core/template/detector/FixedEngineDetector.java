@@ -44,7 +44,7 @@ public class FixedEngineDetector implements TemplateEngineDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException {
+	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
 		return canParse;
 	}
 

@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import fr.sii.ogham.core.builder.TemplateBuilder;
+import fr.sii.ogham.core.builder.template.TemplateBuilder;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -21,7 +21,6 @@ import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.helper.template.AssertTemplate;
 import fr.sii.ogham.mock.context.NestedBean;
 import fr.sii.ogham.mock.context.SimpleBean;
-import fr.sii.ogham.template.thymeleaf.builder.ThymeleafTemplateParserBuilder;
 
 public class ThymeleafParserTest {
 	private TemplateParser parser;
@@ -33,11 +32,13 @@ public class ThymeleafParserTest {
 	
 	@Before
 	public void setUp() {
-		parser = new TemplateBuilder()
-					.registerTemplateParser(new ThymeleafTemplateParserBuilder())
-					.useDefaultResolvers()
-					.withParentPath("/template/thymeleaf/source/")
-					.build();
+		parser = new TemplateBuilder<>()
+				.thymeleaf()
+				.classpath("classpath:", "")
+				.file("file:")
+				.string("s:", "string:")
+				.pathPrefix("/template/thymeleaf/source/")
+				.build();
 		Calendar cal = Calendar.getInstance();
 		cal.set(2015, 6, 1, 14, 28, 42);
 		date = cal.getTime();

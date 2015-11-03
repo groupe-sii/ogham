@@ -1,5 +1,6 @@
 package fr.sii.ogham.core.filler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class EveryFillerDecorator implements MessageFiller {
 	private List<MessageFiller> fillers;
 
 	public EveryFillerDecorator(MessageFiller... fillers) {
-		this(Arrays.asList(fillers));
+		this(new ArrayList<>(Arrays.asList(fillers)));
 	}
 
 	public EveryFillerDecorator(List<MessageFiller> fillers) {
@@ -34,4 +35,8 @@ public class EveryFillerDecorator implements MessageFiller {
 		}
 	}
 
+	public EveryFillerDecorator addFiller(MessageFiller filler) {
+		fillers.add(filler);
+		return this;
+	}
 }

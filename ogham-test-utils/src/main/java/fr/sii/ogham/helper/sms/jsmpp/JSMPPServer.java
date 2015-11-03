@@ -10,8 +10,7 @@ import fr.sii.ogham.helper.sms.rule.SmppServerException;
 import fr.sii.ogham.helper.sms.rule.SmppServerSimulator;
 
 /**
- * The server simulator based on <a href="http://jsmpp.org/">jsmpp</a>
- * samples.
+ * The server simulator based on <a href="http://jsmpp.org/">jsmpp</a> samples.
  */
 public class JSMPPServer implements SmppServerSimulator<SubmitSm> {
 	private static final Logger LOG = LoggerFactory.getLogger(JSMPPServer.class);
@@ -26,14 +25,19 @@ public class JSMPPServer implements SmppServerSimulator<SubmitSm> {
 	}
 
 	@Override
-	public void start() {
-		LOG.debug("starting simulator thread...");
-		simulator.reset();
-		thread = new Thread(simulator);
-		thread.start();
-		LOG.debug("simulator thread started");
+	public synchronized void start() throws SmppServerException {
+		try {
+			LOG.debug("starting simulator thread...");
+			simulator.reset();
+			thread = new Thread(simulator);
+			thread.start();
+			simulator.waitTillRunning(5000L);
+		} catch (InterruptedException e) {
+			throw new SmppServerException("Failed to start JSMPPServer", e);
+		}
+		LOG.debug("simulator started");
 	}
-	
+
 	@Override
 	public synchronized void stop() throws SmppServerException {
 		try {
@@ -41,17 +45,17 @@ public class JSMPPServer implements SmppServerSimulator<SubmitSm> {
 			simulator.stop();
 			thread.interrupt();
 			thread.join();
-			LOG.debug("simulator thread stopped");
+			LOG.debug("simulator stopped");
 		} catch (InterruptedException e) {
 			throw new SmppServerException("Failed to stop JSMPP server", e);
 		}
 	}
-	
+
 	@Override
 	public int getPort() {
 		return simulator.getPort();
 	}
-	
+
 	@Override
 	public List<SubmitSm> getReceivedMessages() {
 		return simulator.getReceivedMessages();

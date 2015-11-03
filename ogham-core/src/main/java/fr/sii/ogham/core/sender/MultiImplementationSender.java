@@ -2,9 +2,8 @@ package fr.sii.ogham.core.sender;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +33,9 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	private static final Logger LOG = LoggerFactory.getLogger(MultiImplementationSender.class);
 
 	/**
-	 * The map of possible implementations indexed by the associated condition
+	 * The list of possible implementations indexed by the associated condition
 	 */
-	private Map<Condition<Message>, MessageSender> implementations;
+	private List<Implementation> implementations;
 
 	/**
 	 * The selected sender implementation
@@ -47,7 +46,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	 * Initialize with no registered implementation.
 	 */
 	public MultiImplementationSender() {
-		this(new HashMap<Condition<Message>, MessageSender>());
+		this(new ArrayList<Implementation>());
 	}
 
 	/**
@@ -68,10 +67,10 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	 * Initialize with several implementations.
 	 * 
 	 * @param implementations
-	 *            the map of possible implementations indexed by the condition
+	 *            the list of possible implementations indexed by the condition
 	 *            that indicates if the implementation is eligible at runtime
 	 */
-	public MultiImplementationSender(Map<Condition<Message>, MessageSender> implementations) {
+	public MultiImplementationSender(List<Implementation> implementations) {
 		super();
 		this.implementations = implementations;
 	}
@@ -89,7 +88,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	 * @return this instance for fluent use
 	 */
 	public final MultiImplementationSender<M> addImplementation(Condition<Message> condition, MessageSender implementation) {
-		implementations.put(condition, implementation);
+		implementations.add(new Implementation(condition, implementation));
 		return this;
 	}
 
@@ -99,13 +98,13 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 		boolean supports = message.getClass().isAssignableFrom(getManagedClass());
 		if (supports) {
 			LOG.debug("Can handle the message type {}. Is there any implementation available to send it ?", message.getClass());
-			for (Entry<Condition<Message>, MessageSender> entry : implementations.entrySet()) {
-				if (entry.getKey().accept(message)) {
-					sender = entry.getValue();
+			for (Implementation impl : implementations) {
+				if (impl.getCondition().accept(message)) {
+					sender = impl.getSender();
 					break;
 				}
 			}
-			if(sender!=null) {
+			if (sender != null) {
 				LOG.debug("The implementation {} can handle the message {}", sender, message);
 			}
 		} else {
@@ -129,11 +128,30 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 		sender.send(message);
 	}
 
-	public Map<Condition<Message>, MessageSender> getImplementations() {
+	public List<Implementation> getImplementations() {
 		return implementations;
 	}
 
 	public MessageSender getSender() {
 		return sender;
+	}
+
+	protected static class Implementation {
+		private final Condition<Message> condition;
+		private final MessageSender sender;
+
+		public Implementation(Condition<Message> condition, MessageSender sender) {
+			super();
+			this.condition = condition;
+			this.sender = sender;
+		}
+
+		public Condition<Message> getCondition() {
+			return condition;
+		}
+
+		public MessageSender getSender() {
+			return sender;
+		}
 	}
 }

@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.resource.resolver;
 
+import static java.util.Arrays.asList;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,9 +19,13 @@ import fr.sii.ogham.core.resource.ResourcePath;
 public abstract class AbstractPrefixedLookupPathResolver implements ResourceResolver {
 	private List<String> lookups;
 
-	protected AbstractPrefixedLookupPathResolver(String... lookups) {
+	protected AbstractPrefixedLookupPathResolver(List<String> lookups) {
 		super();
-		this.lookups = Arrays.asList(lookups);
+		this.lookups = lookups;
+	}
+
+	protected AbstractPrefixedLookupPathResolver(String... lookups) {
+		this(new ArrayList<>(asList(lookups)));
 	}
 
 	@Override
@@ -28,9 +34,9 @@ public abstract class AbstractPrefixedLookupPathResolver implements ResourceReso
 	}
 
 	public String getLookup(String path) {
-		for (String lookups : lookups) {
-			if (path.startsWith(lookups)) {
-				return lookups;
+		for (String lookup : lookups) {
+			if (path.startsWith(lookup)) {
+				return lookup;
 			}
 		}
 		return null;

@@ -47,13 +47,17 @@ public class EmailSMTPDefaultsTest {
 
 	@Before
 	public void setUp() throws IOException {
-		Properties props = new Properties(System.getProperties());
-		props.load(getClass().getResourceAsStream("/application.properties"));
-		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		oghamService = new MessagingBuilder().useAllDefaults(props).build();
+		Properties additionalProps = new Properties();
+		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
+		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		oghamService = MessagingBuilder.standard()
+				.environment()
+					.properties("/application.properties")
+					.properties(additionalProps)
+					.and()
+				.build();
 	}
-
+	
 	@Test
 	public void simple() throws MessagingException, javax.mail.MessagingException {
 		// @formatter:off

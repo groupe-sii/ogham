@@ -8,8 +8,10 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
 import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 
@@ -29,10 +31,20 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 	 */
 	private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns[^=]+=\\s*\"http://www.thymeleaf.org\"");
 
+	/**
+	 * The template resolver used to find the template
+	 */
+	private final ResourceResolver resolver;
+	
+	public ThymeleafTemplateDetector(ResourceResolver resolver) {
+		super();
+		this.resolver = resolver;
+	}
+
 	@Override
-	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException {
+	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
 		LOG.debug("Checking if Thymeleaf can handle the template {}", templateName);
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(template.getInputStream()))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(getTemplate(templateName).getInputStream()))) {
 			String line;
 			boolean containsThymeleafNamespace = false;
 			do {
@@ -49,6 +61,14 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 			return containsThymeleafNamespace;
 		} catch (IOException e) {
 			throw new EngineDetectionException("Failed to detect if template can be read by thymeleaf", e);
+		}
+	}
+	
+	private Resource getTemplate(String templateName) throws EngineDetectionException {
+		try {
+			return resolver.getResource(templateName);
+		} catch (ResourceResolutionException e) {
+			throw new EngineDetectionException("Failed to automatically detect parser because the template couldn't be resolved", e);
 		}
 	}
 

@@ -47,6 +47,8 @@
 		<tika.version>1.14</tika.version>
 		<jackson.version>2.8.7</jackson.version>
 		<hamcrest.version>1.3</hamcrest.version>
+		<reflections.version>0.9.11</reflections.version>
+		<guava.version>20.0</guava.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -152,9 +154,14 @@
 				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-collections4</artifactId>
-				<version>${commons-collections.version}</version>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections</artifactId>
+				<version>${reflections.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
 			</dependency>
 
 			<!-- Template parsers -->

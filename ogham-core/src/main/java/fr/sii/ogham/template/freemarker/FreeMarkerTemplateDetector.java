@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
-import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 
@@ -32,7 +31,7 @@ public class FreeMarkerTemplateDetector implements TemplateEngineDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException {
+	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
 		LOG.debug("Checking if FreeMarker can handle the template {}", templateName);
 
 		boolean result = false;

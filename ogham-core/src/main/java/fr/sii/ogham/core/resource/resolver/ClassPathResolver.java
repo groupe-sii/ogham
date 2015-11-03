@@ -2,6 +2,7 @@ package fr.sii.ogham.core.resource.resolver;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,10 @@ import fr.sii.ogham.core.resource.ResourcePath;
 public class ClassPathResolver extends AbstractPrefixedLookupPathResolver implements RelativisableResourceResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClassPathResolver.class);
+
+	public ClassPathResolver(List<String> lookups) {
+		super(lookups);
+	}
 
 	public ClassPathResolver(String... lookups) {
 		super(lookups);

@@ -103,4 +103,8 @@ public class PropertiesBridge extends Properties {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public synchronized String toString() {
+		return propertyResolver.toString();
+	}
 }

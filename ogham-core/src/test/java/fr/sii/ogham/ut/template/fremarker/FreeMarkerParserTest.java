@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import fr.sii.ogham.core.builder.TemplateBuilder;
+import fr.sii.ogham.core.builder.template.TemplateBuilder;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -21,7 +21,6 @@ import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.helper.template.AssertTemplate;
 import fr.sii.ogham.mock.context.NestedBean;
 import fr.sii.ogham.mock.context.SimpleBean;
-import fr.sii.ogham.template.freemarker.builder.FreeMarkerTemplateParserBuilder;
 
 public class FreeMarkerParserTest {
 	private TemplateParser parser;
@@ -32,7 +31,13 @@ public class FreeMarkerParserTest {
 
 	@Before
 	public void setUp() {
-		parser = new TemplateBuilder().registerTemplateParser(new FreeMarkerTemplateParserBuilder()).useDefaultResolvers().withParentPath("/template/freemarker/source/").build();
+		parser = new TemplateBuilder<>()
+				.freemarker()
+				.classpath("classpath:", "")
+				.file("file:")
+				.string("s:", "string:")
+				.pathPrefix("/template/freemarker/source/")
+				.build();
 		Calendar cal = Calendar.getInstance();
 		cal.set(2015, 6, 1, 14, 28, 42);
 		date = cal.getTime();

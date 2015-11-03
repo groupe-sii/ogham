@@ -67,13 +67,20 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	private Authenticator authenticator;
 
 	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentResourceHandler, Authenticator authenticator) {
-		this(propertyResolver, contentHandler, attachmentResourceHandler, authenticator, null);
+		this(new PropertiesBridge(propertyResolver), contentHandler, attachmentResourceHandler, authenticator);
 	}
 
-	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator,
-			JavaMailInterceptor interceptor) {
+	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator, JavaMailInterceptor interceptor) {
+		this(new PropertiesBridge(propertyResolver), contentHandler, attachmentHandler, authenticator, interceptor);
+	}
+
+	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentResourceHandler, Authenticator authenticator) {
+		this(properties, contentHandler, attachmentResourceHandler, authenticator, null);
+	}
+
+	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator, JavaMailInterceptor interceptor) {
 		super();
-		this.properties = new PropertiesBridge(propertyResolver);
+		this.properties = properties;
 		this.contentHandler = contentHandler;
 		this.attachmentHandler = attachmentHandler;
 		this.authenticator = authenticator;
@@ -283,14 +290,14 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 
 	private RecipientType convert(fr.sii.ogham.email.message.RecipientType type) {
 		switch (type) {
-			case BCC:
-				return RecipientType.BCC;
-			case CC:
-				return RecipientType.CC;
-			case TO:
-				return RecipientType.TO;
-			default:
-				throw new IllegalArgumentException("Invalid recipient type " + type);
+		case BCC:
+			return RecipientType.BCC;
+		case CC:
+			return RecipientType.CC;
+		case TO:
+			return RecipientType.TO;
+		default:
+			throw new IllegalArgumentException("Invalid recipient type " + type);
 		}
 	}
 

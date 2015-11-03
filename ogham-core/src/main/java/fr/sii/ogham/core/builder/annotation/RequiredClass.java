@@ -1,5 +1,11 @@
 package fr.sii.ogham.core.builder.annotation;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 /**
  * This annotation is used with {@link RequiredClasses} and its aim is to
  * provide more options on how to handle required classes.
@@ -14,6 +20,8 @@ package fr.sii.ogham.core.builder.annotation;
  * @author Aurélien Baudet
  *
  */
+@Target(TYPE)
+@Retention(RUNTIME)
 public @interface RequiredClass {
 	/**
 	 * The required class

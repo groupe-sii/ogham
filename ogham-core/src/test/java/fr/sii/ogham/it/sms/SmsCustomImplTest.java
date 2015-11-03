@@ -1,7 +1,6 @@
 package fr.sii.ogham.it.sms;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,9 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.condition.FixedCondition;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
@@ -40,11 +37,15 @@ public class SmsCustomImplTest {
 	
 	@Before
 	public void setUp() throws IOException {
-		Properties props = new Properties(System.getProperties());
-		props.load(getClass().getResourceAsStream("/application.properties"));
-		MessagingBuilder builder = new MessagingBuilder().useAllDefaults(props);
-		builder.getSmsBuilder().registerImplementation(new FixedCondition<Message>(true), customSender);
-		oghamService = builder.build();
+		oghamService = MessagingBuilder.standard()
+				.environment()
+					.systemProperties()
+					.properties("/application.properties")
+					.and()
+				.sms()
+					.customSender(customSender)
+					.and()
+				.build();
 	}
 	
 	@Test

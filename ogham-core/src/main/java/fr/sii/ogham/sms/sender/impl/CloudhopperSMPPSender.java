@@ -16,12 +16,14 @@ import com.cloudhopper.smpp.impl.DefaultSmppClient;
 import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.RecoverablePduException;
+import com.cloudhopper.smpp.type.SmppBindException;
 import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
 
 import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.retry.Retry;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
 import fr.sii.ogham.sms.exception.message.EncodingException;
 import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
@@ -110,15 +112,15 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		SmppSession session = null;
 		try {
 			LOG.debug("Creating a new SMPP session...");
-			session = client.bind(smppSessionConfiguration);
+			session = connect(client);
 			LOG.info("SMPP session bounded");
-			for (SubmitSm msg : createMessages(message)) {
-				session.submit(msg, options.getResponseTimeout());
-			}
-		} catch (SmppInvalidArgumentException | PhoneNumberTranslatorException | EncodingException e) {
+			send(message, session);
+		} catch (PhoneNumberTranslatorException | EncodingException e) {
 			throw new MessageException("Failed to create SMPP message", message, e);
 		} catch (SmppTimeoutException | SmppChannelException | UnrecoverablePduException | InterruptedException | RecoverablePduException e) {
 			throw new MessageException("Failed to initialize SMPP session", message, e);
+		} catch (Exception e) {
+			throw new MessageException("Failed to initialize SMPP session after maximum retries reached", message, e);
 		} finally {
 			if (session != null) {
 				session.unbind(options.getUnbindTimeout());
@@ -127,6 +129,35 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 			}
 			client.destroy();
 		}
+	}
+
+	private void send(Sms message, SmppSession session) throws MessageException, PhoneNumberTranslatorException, EncodingException {
+		try {
+			for (SubmitSm msg : createMessages(message)) {
+				session.submit(msg, options.getResponseTimeout());
+			}
+		} catch(RecoverablePduException | UnrecoverablePduException | SmppTimeoutException | SmppChannelException | InterruptedException e) {
+			throw new MessageException("Failed to send SMPP message", message, e);
+		}
+	}
+
+	private SmppSession connect(DefaultSmppClient client) throws Exception {
+		Retry retry = options.getConnectRetry();
+		if(retry==null) {
+			return client.bind(smppSessionConfiguration);
+		}
+		Exception last;
+		do {
+			try {
+				return client.bind(smppSessionConfiguration);
+			} catch(SmppTimeoutException | SmppChannelException | SmppBindException e) {
+				long delay = retry.nextDate() - System.currentTimeMillis();
+				LOG.debug("Connection to SMPP session failed. Retrying in {}ms...", delay);
+				last = e;
+				Thread.sleep(delay);
+			}
+		} while(!retry.terminated());
+		throw last;
 	}
 
 	private List<SubmitSm> createMessages(Sms message) throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {

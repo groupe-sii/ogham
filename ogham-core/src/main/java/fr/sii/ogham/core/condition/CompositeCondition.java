@@ -24,12 +24,12 @@ public abstract class CompositeCondition<T> implements Condition<T> {
 		return conditions;
 	}
 	
-	public CompositeCondition<T> addCondition(Condition<T> condition) {
+	protected CompositeCondition<T> addCondition(Condition<T> condition) {
 		conditions.add(condition);
 		return this;
 	}
 	
-	public CompositeCondition<T> addConditions(List<Condition<T>> conditions) {
+	protected CompositeCondition<T> addConditions(List<Condition<T>> conditions) {
 		this.conditions.addAll(conditions);
 		return this;
 	}

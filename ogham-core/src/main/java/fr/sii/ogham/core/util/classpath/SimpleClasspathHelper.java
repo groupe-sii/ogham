@@ -1,7 +1,18 @@
 package fr.sii.ogham.core.util.classpath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+
+/**
+ * Helper for classpath management.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class SimpleClasspathHelper implements ClasspathHelper {
+	private static final Logger LOG = LoggerFactory.getLogger(SimpleClasspathHelper.class);
+	
 	private ClassLoader classLoader;
 
 	/**
@@ -12,10 +23,44 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 	 * @return true if the class exists in the classpath, false otherwise
 	 */
 	public boolean exists(String className) {
+		if(this.classLoader!=null) {
+			if(exists(className, this.classLoader)) {
+				LOG.debug("class "+className+" found using class specific class loader");
+				return true;
+			}
+			return false;
+		}
+		if(existsWithDefaultClassLoader(className)) {
+			LOG.debug("class "+className+" found using default class loader");
+			return true;
+		}
+		if(exists(className, Thread.currentThread().getContextClassLoader())) {
+			LOG.debug("class "+className+" found using class loader of current thread");
+			return true;
+		}
+		if(exists(className, getClass().getClassLoader())) {
+			LOG.debug("class "+className+" found using class loader of current class");
+			return true;
+		}
+		return false;
+	}
+
+	private boolean existsWithDefaultClassLoader(String className) {
 		try {
-			Class.forName(className, false, this.classLoader == null ? Thread.currentThread().getContextClassLoader() : this.classLoader);
+			Class.forName(className);
 			return true;
 		} catch (ClassNotFoundException e) {
+			LOG.debug("Class "+className+" not found");
+			return false;
+		}
+	}
+
+	private boolean exists(String className, ClassLoader classLoader) {
+		try {
+			Class.forName(className, false, classLoader);
+			return true;
+		} catch (ClassNotFoundException e) {
+			LOG.debug("Class "+className+" not found");
 			return false;
 		}
 	}

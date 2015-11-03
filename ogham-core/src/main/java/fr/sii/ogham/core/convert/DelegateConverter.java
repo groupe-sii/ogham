@@ -6,7 +6,7 @@ import java.util.List;
 
 import fr.sii.ogham.core.exception.convert.ConversionException;
 
-public class DelegateConverter implements Converter {
+public class DelegateConverter implements Converter, ConverterRegistry {
 	private final List<SupportingConverter> delegates;
 	
 	public DelegateConverter(SupportingConverter... delegates) {
@@ -18,7 +18,7 @@ public class DelegateConverter implements Converter {
 		this.delegates = delegates;
 	}
 	
-	public DelegateConverter add(SupportingConverter converter) {
+	public ConverterRegistry register(SupportingConverter converter) {
 		delegates.add(converter);
 		return this;
 	}

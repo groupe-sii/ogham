@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import fr.sii.ogham.core.builder.FirstSupportingResourceResolverBuilder;
+import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.message.content.Content;
@@ -25,7 +25,7 @@ import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.TikaProvider;
 import fr.sii.ogham.core.resource.ByteResource;
-import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.attachment.ContentDisposition;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
@@ -60,7 +60,12 @@ public class JsoupInlineImageTranslatorTest {
 		Mockito.when(generator.generate("left.gif")).thenReturn("left.gif");
 		Mockito.when(generator.generate("right.gif")).thenReturn("right.gif");
 		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
-		FirstSupportingResourceResolver resourceResolver = new FirstSupportingResourceResolverBuilder().useDefaults().withParentPath(SOURCE_FOLDER).build();
+		ResourceResolver resourceResolver = MessagingBuilder.standard()
+				.email()
+					.template()
+						.thymeleaf()
+						.pathPrefix(SOURCE_FOLDER)
+							.buildResolver();
 		MimeTypeProvider mimetypeProvider = new TikaProvider();
 		ImageInliner inliner = new EveryImageInliner(new JsoupAttachImageInliner(generator), new JsoupBase64ImageInliner());
 		translator = new InlineImageTranslator(inliner, resourceResolver, mimetypeProvider);

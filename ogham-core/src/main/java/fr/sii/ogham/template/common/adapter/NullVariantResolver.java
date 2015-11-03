@@ -10,4 +10,9 @@ public class NullVariantResolver implements VariantResolver {
 		return null;
 	}
 
+	@Override
+	public boolean variantExists(TemplateContent template) {
+		return false;
+	}
+
 }

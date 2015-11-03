@@ -13,14 +13,12 @@ import com.sendgrid.SendGrid;
 import com.sendgrid.SendGridException;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.condition.FixedCondition;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.template.context.SimpleContext;
-import fr.sii.ogham.email.builder.SendGridBuilder;
+import fr.sii.ogham.email.builder.sendgrid.SendGridBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.sender.impl.SendGridSender;
@@ -50,15 +48,18 @@ public final class EmailSendGridTest {
 	private static final String TO_ADDRESS_2 = "to.2@example.com";
 
 	private SendGridClient sendGridClient;
-	private MessagingService notificationService;
+	private MessagingService messagingService;
 
 	@Before
 	public void setUp() {
 		sendGridClient = mock(SendGridClient.class);
-		MessagingBuilder builder = new MessagingBuilder().useAllDefaults();
-		// FixedCondition(true) => always used for Email messages
-		builder.getEmailBuilder().registerImplementation(new FixedCondition<Message>(true), new SendGridBuilder().useDefaults().withClient(sendGridClient));
-		notificationService = builder.build();
+		messagingService = MessagingBuilder.standard()
+				.email()
+					.sender(SendGridBuilder.class)
+						.client(sendGridClient)
+						.and()
+					.and()
+				.build();
 	}
 
 	@Test
@@ -71,7 +72,7 @@ public final class EmailSendGridTest {
 									.to(new EmailAddress(TO_ADDRESS_1, TO));
 		// @formatter:on
 
-		notificationService.send(email);
+		messagingService.send(email);
 
 		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
@@ -99,7 +100,7 @@ public final class EmailSendGridTest {
 									.to(new EmailAddress(TO_ADDRESS_1, TO));
 		// @formatter:on
 
-		notificationService.send(email);
+		messagingService.send(email);
 
 		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
@@ -123,7 +124,7 @@ public final class EmailSendGridTest {
 									.to(new EmailAddress(TO_ADDRESS_1, TO));
 		// @formatter:on
 
-		notificationService.send(email);
+		messagingService.send(email);
 
 		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
@@ -147,7 +148,7 @@ public final class EmailSendGridTest {
 									.to(new EmailAddress(TO_ADDRESS_1, TO), new EmailAddress(TO_ADDRESS_2, TO));
 		// @formatter:on
 
-		notificationService.send(email);
+		messagingService.send(email);
 
 		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
@@ -171,7 +172,7 @@ public final class EmailSendGridTest {
 									.to(new EmailAddress(TO_ADDRESS_1, TO), new EmailAddress(TO_ADDRESS_2, TO));
 		// @formatter:on
 
-		notificationService.send(email);
+		messagingService.send(email);
 
 		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());

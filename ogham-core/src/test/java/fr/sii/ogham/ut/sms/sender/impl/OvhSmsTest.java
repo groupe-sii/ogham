@@ -10,7 +10,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
 import java.io.IOException;
-import java.net.URL;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,12 +22,10 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
-import fr.sii.ogham.sms.builder.OvhSmsBuilder;
+import fr.sii.ogham.sms.builder.ovh.OvhSmsBuilder;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
-import fr.sii.ogham.sms.sender.impl.ovh.OvhAuthParams;
-import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
 
 public class OvhSmsTest {
 	@Rule
@@ -42,9 +39,13 @@ public class OvhSmsTest {
 	@Before
 	public void setUp() throws IOException {
 		sender = new OvhSmsBuilder()
-						.withUrl(new URL("http://localhost:"+serverRule.port()+"/cgi-bin/sms/http2sms.cgi"))
-						.withAuthParams(new OvhAuthParams("sms-nic-foobar42", "login", "password"))
-						.withOptions(new OvhOptions())
+						.url("http://localhost:"+serverRule.port()+"/cgi-bin/sms/http2sms.cgi")
+						.account("sms-nic-foobar42")
+						.login("login")
+						.password("password")
+						.options()
+							.noStop(true)
+							.and()
 						.build();
 	}
 

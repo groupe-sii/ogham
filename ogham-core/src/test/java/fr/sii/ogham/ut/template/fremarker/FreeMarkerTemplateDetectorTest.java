@@ -23,16 +23,16 @@ public class FreeMarkerTemplateDetectorTest {
 
 	@Test
 	public void text() throws EngineDetectionException {
-		Assert.assertTrue("should parse any filename ending with .ftl", detector.canParse("template.txt.ftl", null, null));
+		Assert.assertTrue("should parse any filename ending with .ftl", detector.canParse("template.txt.ftl", null));
 	}
 
 	@Test
 	public void html() throws EngineDetectionException {
-		Assert.assertTrue("should parse any filename ending with .ftl", detector.canParse("template.html.ftl", null, null));
+		Assert.assertTrue("should parse any filename ending with .ftl", detector.canParse("template.html.ftl", null));
 	}
 
 	@Test
 	public void notFTL() throws EngineDetectionException {
-		Assert.assertFalse("should not parse any filename not ending with .ftl", detector.canParse("template.txtl", null, null));
+		Assert.assertFalse("should not parse any filename not ending with .ftl", detector.canParse("template.txtl", null));
 	}
 }

@@ -9,7 +9,7 @@ import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 
 /**
  * Adapter interface to be able to handle any Mime Type detection
- * implementation. There exists to kinds of detection mechanisms:
+ * implementation. There exists two kinds of detection mechanisms:
  * <ul>
  * <li>Detection based on the file extension:
  * <ul>
@@ -32,7 +32,7 @@ import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
  * </li>
  * </ul>
  * 
- * This interface reconcile both approaches. It let the implementation choose
+ * This interface reconcile both approaches. It lets the implementation choose
  * which approach to use. Some implementations can't handle both approaches so
  * they have to delegate to another one to be able to implement both detection
  * mechanisms.

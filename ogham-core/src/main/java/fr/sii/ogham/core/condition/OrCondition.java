@@ -34,6 +34,16 @@ public class OrCondition<T> extends CompositeCondition<T> {
 		// none condition has accepted the object => it is rejected
 		return false;
 	}
+
+	public OrCondition<T> or(Condition<T> condition) {
+		addCondition(condition);
+		return this;
+	}
+	
+	public OrCondition<T> or(List<Condition<T>> conditions) {
+		addConditions(conditions);
+		return this;
+	}
 	
 	@Override
 	public String toString() {

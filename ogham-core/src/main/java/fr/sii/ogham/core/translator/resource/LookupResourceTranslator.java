@@ -7,6 +7,7 @@ import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.LookupResource;
 import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.email.exception.attachment.translator.ResourceTranslatorException;
 
 /**
@@ -28,9 +29,9 @@ public class LookupResourceTranslator implements AttachmentResourceTranslator {
 	/**
 	 * The parser to use for finding, loading and evaluating the template
 	 */
-	private FirstSupportingResourceResolver resolver;
+	private ResourceResolver resolver;
 
-	public LookupResourceTranslator(FirstSupportingResourceResolver resolver) {
+	public LookupResourceTranslator(ResourceResolver resolver) {
 		super();
 		this.resolver = resolver;
 	}

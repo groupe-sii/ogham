@@ -1,8 +1,5 @@
 package fr.sii.ogham.core.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.sii.ogham.core.util.classpath.ClasspathHelper;
 import fr.sii.ogham.core.util.classpath.SimpleClasspathHelper;
 
@@ -30,20 +27,12 @@ public final class ClasspathUtils {
 		return helper.exists(className);
 	}
 	
-	public static <T> List<Class<? extends T>> getImplementations(Class<T> type) {
-		
-	}
-	
-	public static <T, M> List<Class<? extends T>> getImplementations(Class<T> type, Class<M> messageType) {
-		List<Class<? extends T>> implementations = getImplementations(type);
-		List<Class<? extends T>> filtered = new ArrayList<>(implementations.size());
-		for(Class<? extends T> implementation : implementations) {
-		}
-		return filtered;
-	}
-	
 	public static void setHelper(ClasspathHelper helper) {
 		ClasspathUtils.helper = helper;
+	}
+	
+	public static void reset() {
+		ClasspathUtils.helper = new SimpleClasspathHelper();
 	}
 	
 	private ClasspathUtils() {

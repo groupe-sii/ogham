@@ -3,9 +3,11 @@ package fr.sii.ogham.template.common.adapter;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.capability.HasVariant;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.UnknownVariantException;
 import fr.sii.ogham.template.exception.VariantResolutionException;
 
@@ -17,14 +19,16 @@ import fr.sii.ogham.template.exception.VariantResolutionException;
  */
 public class ExtensionMappingVariantResolver implements VariantResolver {
 
+	private final ResourceResolver resourceResolver;
 	private final Map<Variant, String> mapping;
 
-	public ExtensionMappingVariantResolver() {
-		this(new HashMap<Variant, String>());
+	public ExtensionMappingVariantResolver(ResourceResolver resourceResolver) {
+		this(resourceResolver, new HashMap<Variant, String>());
 	}
 
-	public ExtensionMappingVariantResolver(Map<Variant, String> mapping) {
+	public ExtensionMappingVariantResolver(ResourceResolver resourceResolver, Map<Variant, String> mapping) {
 		super();
+		this.resourceResolver = resourceResolver;
 		this.mapping = mapping;
 	}
 
@@ -43,6 +47,23 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 	public ExtensionMappingVariantResolver register(Variant variant, String extension) {
 		mapping.put(variant, extension.startsWith(".") ? extension : ("." + extension));
 		return this;
+	}
+
+	@Override
+	public boolean variantExists(TemplateContent template) {
+		if(template instanceof HasVariant) {
+			String extension = mapping.get(((HasVariant) template).getVariant());
+			if (extension == null) {
+				return false;
+			}
+			try {
+				resourceResolver.getResource(template.getPath() + extension);
+				return true;
+			} catch(ResourceResolutionException e) {
+				return false;
+			}
+		}
+		return false;
 	}
 
 }

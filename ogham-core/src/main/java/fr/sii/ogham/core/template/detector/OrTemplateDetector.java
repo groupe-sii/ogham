@@ -3,7 +3,6 @@ package fr.sii.ogham.core.template.detector;
 import java.util.List;
 
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
-import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.template.context.Context;
 
 /**
@@ -41,9 +40,9 @@ public class OrTemplateDetector extends CompositeTemplateDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException {
+	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
 		for (TemplateEngineDetector detector : getDetectors()) {
-			if (detector.canParse(templateName, ctx, template)) {
+			if (detector.canParse(templateName, ctx)) {
 				return true;
 			}
 		}
