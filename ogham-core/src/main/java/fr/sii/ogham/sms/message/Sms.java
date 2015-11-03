@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.capability.HasRecipients;
+import fr.sii.ogham.core.message.capability.HasToFluent;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.util.ArrayUtils;
@@ -25,7 +27,7 @@ import fr.sii.ogham.sms.builder.SmsBuilder;
  * @author Aurélien Baudet
  *
  */
-public class Sms implements Message {
+public class Sms implements Message, HasRecipients<Recipient>, HasToFluent {
 	/**
 	 * The number of the sender
 	 */
@@ -510,6 +512,32 @@ public class Sms implements Message {
 	public Sms from(Sender from) {
 		setFrom(from);
 		return this;
+	}
+
+
+	/**
+	 * Set the list of recipients of the message
+	 *
+	 * @param recipients
+	 *            the list of recipients of the message to set
+	 * @return this instance for fluent use
+	 */
+	@Override
+	public Sms recipients(List<Recipient> recipients) {
+		setRecipients(recipients);
+		return this;
+	}
+
+	/**
+	 * Add a recipient for the message
+	 *
+	 * @param recipient
+	 *            the recipient to add to the message
+	 * @return this instance for fluent use
+	 */
+	@Override
+	public Sms recipient(Recipient recipient) {
+		return to(recipient);
 	}
 
 	/**

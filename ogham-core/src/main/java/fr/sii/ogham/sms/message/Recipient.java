@@ -1,7 +1,9 @@
 package fr.sii.ogham.sms.message;
 
+import fr.sii.ogham.core.message.recipient.Addressee;
 
-public class Recipient extends Contact {
+
+public class Recipient extends Contact implements Addressee {
 
 	/**
 	 * Initialize the contact with its name and its phone number.

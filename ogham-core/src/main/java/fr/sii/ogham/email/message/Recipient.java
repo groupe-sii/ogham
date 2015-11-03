@@ -1,5 +1,6 @@
 package fr.sii.ogham.email.message;
 
+import fr.sii.ogham.core.message.recipient.Addressee;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
@@ -13,7 +14,7 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  * @author Aurélien Baudet
  *
  */
-public class Recipient {
+public class Recipient implements Addressee {
 	/**
 	 * The recipient address
 	 */

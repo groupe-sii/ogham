@@ -1,4 +1,6 @@
-package fr.sii.ogham.core.message;
+package fr.sii.ogham.core.message.capability;
+
+import fr.sii.ogham.core.message.Message;
 
 /**
  * Interface to mark a message that has the subject capability.
@@ -6,7 +8,7 @@ package fr.sii.ogham.core.message;
  * @author Aurélien Baudet
  *
  */
-public interface WithSubject extends Message {
+public interface HasSubject extends Message {
 	/**
 	 * Get the subject of the message.
 	 * 
@@ -21,4 +23,13 @@ public interface WithSubject extends Message {
 	 *            the subject of the message
 	 */
 	public void setSubject(String subject);
+
+	/**
+	 * Set the subject of the message
+	 *
+	 * @param subject
+	 *            the subject of the message to set
+	 * @return this instance for fluent use
+	 */
+	public HasSubject subject(String subject);
 }

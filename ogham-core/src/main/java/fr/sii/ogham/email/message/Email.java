@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.sii.ogham.core.message.Message;
-import fr.sii.ogham.core.message.WithSubject;
+import fr.sii.ogham.core.message.capability.HasRecipients;
+import fr.sii.ogham.core.message.capability.HasSubject;
+import fr.sii.ogham.core.message.capability.HasToFluent;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.util.ArrayUtils;
@@ -29,7 +31,7 @@ import fr.sii.ogham.email.builder.EmailBuilder;
  * @author Aurélien Baudet
  *
  */
-public class Email implements Message, WithSubject {
+public class Email implements Message, HasSubject, HasRecipients<Recipient>, HasToFluent {
 	/**
 	 * The subject
 	 */
@@ -795,6 +797,7 @@ public class Email implements Message, WithSubject {
 	 * 
 	 * @return the list of recipients
 	 */
+	@Override
 	public List<Recipient> getRecipients() {
 		return recipients;
 	}
@@ -805,6 +808,7 @@ public class Email implements Message, WithSubject {
 	 * @param recipients
 	 *            the list of recipients
 	 */
+	@Override
 	public void setRecipients(List<Recipient> recipients) {
 		this.recipients = recipients;
 	}
@@ -920,6 +924,7 @@ public class Email implements Message, WithSubject {
 	 *            the list of recipients
 	 * @return this instance for fluent use
 	 */
+	@Override
 	public Email recipients(List<Recipient> recipients) {
 		setRecipients(recipients);
 		return this;
@@ -970,6 +975,7 @@ public class Email implements Message, WithSubject {
 	 *            the recipient to add
 	 * @return this instance for fluent use
 	 */
+	@Override
 	public Email recipient(Recipient recipient) {
 		recipients.add(recipient);
 		return this;
