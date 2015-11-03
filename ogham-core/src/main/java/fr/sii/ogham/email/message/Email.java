@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.capability.HasContentFluent;
 import fr.sii.ogham.core.message.capability.HasRecipients;
 import fr.sii.ogham.core.message.capability.HasRecipientsFluent;
 import fr.sii.ogham.core.message.capability.HasSubject;
@@ -33,7 +34,7 @@ import fr.sii.ogham.email.builder.EmailBuilder;
  * @author Aurélien Baudet
  *
  */
-public class Email implements Message, HasSubject, HasSubjectFluent<Email>, HasRecipients<Recipient>, HasRecipientsFluent<Email, Recipient>, HasToFluent<Email> {
+public class Email implements Message, HasContentFluent<Email>, HasSubject, HasSubjectFluent<Email>, HasRecipients<Recipient>, HasRecipientsFluent<Email, Recipient>, HasToFluent<Email> {
 	/**
 	 * The subject
 	 */
