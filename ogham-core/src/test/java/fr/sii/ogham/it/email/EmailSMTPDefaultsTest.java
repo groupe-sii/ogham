@@ -64,13 +64,13 @@ public class EmailSMTPDefaultsTest {
 	@Test
 	public void withThymeleafResources() throws MessagingException, javax.mail.MessagingException, IOException {
 		oghamService.send(new Email("Template", new TemplateContent("classpath:/template/thymeleaf/source/resources.html", new SimpleBean("foo", 42)), "recipient@sii.fr"));
-		AssertEmail.assertSimilar(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/resources_foo_42.html"), "text/html.*|application/x?html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		AssertEmail.assertSimilar(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/resources_foo_42.html"), "text/html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
 
 	@Test
 	public void withThymeleafResourcesXhtml() throws MessagingException, javax.mail.MessagingException, IOException {
 		oghamService.send(new Email("Template", new TemplateContent("classpath:/template/thymeleaf/source/resources.xhtml", new SimpleBean("foo", 42)), "recipient@sii.fr"));
-		AssertEmail.assertSimilar(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/resources_foo_42.xhtml"), "text/html.*|application/x?html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		AssertEmail.assertSimilar(new ExpectedEmail("Template", new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/resources_foo_42.xhtml"), "application/x?html.*"), "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
 
 	@Test
