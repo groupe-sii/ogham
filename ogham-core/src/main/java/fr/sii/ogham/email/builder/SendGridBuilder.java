@@ -9,8 +9,8 @@ import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.FixedMimeTypeProvider;
-import fr.sii.ogham.core.mimetype.JMimeMagicProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.mimetype.TikaProvider;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.EmailConstants.SendGridConstants;
 import fr.sii.ogham.email.sender.impl.SendGridSender;
@@ -106,7 +106,7 @@ public final class SendGridBuilder implements Builder<SendGridSender> {
 	public SendGridBuilder useDefaults(Properties props) {
 		withCredentials(props.getProperty(SendGridConstants.USERNAME), props.getProperty(SendGridConstants.PASSWORD));
 		withApiKey(props.getProperty(SendGridConstants.API_KEY));
-		registerMimeTypeProvider(new JMimeMagicProvider());
+		registerMimeTypeProvider(new TikaProvider());
 		registerMimeTypeProvider(new FixedMimeTypeProvider());
 		registerContentHandler(MultiContent.class, new MultiContentHandler(mapContentHandler));
 		registerContentHandler(StringContent.class, new StringContentHandler(mimetypeProvider));

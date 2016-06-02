@@ -45,6 +45,9 @@
 		<commons-logging.version>1.2</commons-logging.version>
 		<wiremock.version>1.56</wiremock.version>
 		<libphonenumber.version>7.0.6</libphonenumber.version>
+		<tika.version>1.13</tika.version>
+		<xerces.version>2.11.0</xerces.version>
+		<xml-apis.version>1.4.01</xml-apis.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -58,7 +61,7 @@
 		<scm.url>git@github.com:groupe-sii/ogham.git</scm.url>
 		<site.url>http://groupe-sii.github.io/ogham</site.url>
 		<site.deploy.url>gitsite:git@github.com/groupe-sii/ogham.git</site.deploy.url>
-		
+
 		<!-- Documentation -->
 		<docProjectVersion>${project.version}</docProjectVersion>
 	</properties>
@@ -146,6 +149,21 @@
 				<groupId>net.sf.jmimemagic</groupId>
 				<artifactId>jmimemagic</artifactId>
 				<version>${jmimemagic.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tika</groupId>
+				<artifactId>tika-core</artifactId>
+				<version>${tika.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xercesImpl</artifactId>
+				<version>${xerces.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>xml-apis</groupId>
+				<artifactId>xml-apis</artifactId>
+				<version>${xml-apis.version}</version>
 			</dependency>
 
 			<!-- CSS inliners -->

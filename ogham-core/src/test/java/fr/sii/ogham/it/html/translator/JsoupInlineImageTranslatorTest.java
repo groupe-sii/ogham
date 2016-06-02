@@ -20,7 +20,8 @@ import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
-import fr.sii.ogham.core.mimetype.JMimeMagicProvider;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.mimetype.TikaProvider;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.resolver.LookupMappingResolver;
 import fr.sii.ogham.email.attachment.Attachment;
@@ -58,7 +59,7 @@ public class JsoupInlineImageTranslatorTest {
 		Mockito.when(generator.generate("right.gif")).thenReturn("right.gif");
 		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
 		LookupMappingResolver resourceResolver = new LookupMappingResourceResolverBuilder().useDefaults().withPrefix(SOURCE_FOLDER).build();
-		JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
+		MimeTypeProvider mimetypeProvider = new TikaProvider();
 		ImageInliner inliner = new EveryImageInliner(new JsoupAttachImageInliner(generator), new JsoupBase64ImageInliner());
 		translator = new InlineImageTranslator(inliner, resourceResolver, mimetypeProvider);
 	}

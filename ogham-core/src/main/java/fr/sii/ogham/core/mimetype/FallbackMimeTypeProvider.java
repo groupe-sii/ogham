@@ -82,8 +82,8 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 				throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");
 			}
 			return mimetype;
-		} catch (IOException e1) {
-			throw new MimeTypeDetectionException("Can't read the content of the stream", e1);
+		} catch (IOException e) {
+			throw new MimeTypeDetectionException("Can't read the content of the stream", e);
 		}
 	}
 

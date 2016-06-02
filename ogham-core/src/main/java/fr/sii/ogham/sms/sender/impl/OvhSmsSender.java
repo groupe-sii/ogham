@@ -5,11 +5,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessageNotSentException;
@@ -124,7 +125,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	private void handleResponse(Sms message, Response response) throws IOException, JsonProcessingException, MessageNotSentException {
 		if (response.getStatus().isSuccess()) {
 			JsonNode json = mapper.readTree(response.getBody());
-			int ovhStatus = json.get("status").getIntValue();
+			int ovhStatus = json.get("status").asInt();
 			// 100 <= ovh status < 200 ====> OK -> just log response
 			// 200 <= ovh status ====> KO -> throw an exception
 			if (ovhStatus >= OK_STATUS) {
@@ -132,7 +133,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 				LOG.debug("Sent SMS: {}", message);
 				LOG.debug("Response status {}", response.getStatus());
 				LOG.debug("Response body {}", response.getBody());
-				throw new MessageNotSentException("SMS couldn't be sent through OVH: " + json.get("message").getTextValue(), message);
+				throw new MessageNotSentException("SMS couldn't be sent through OVH: " + json.get("message").asText(), message);
 			} else {
 				LOG.info("SMS successfully sent through OVH");
 				LOG.debug("Sent SMS: {}", message);

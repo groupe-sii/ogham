@@ -1,6 +1,7 @@
 package fr.sii.ogham.helper.email;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -13,6 +14,7 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 
@@ -26,6 +28,7 @@ import fr.sii.ogham.helper.html.AssertHtml;
  */
 public class AssertEmail {
 	private static final Pattern HTML_PATTERN = Pattern.compile("<html", Pattern.CASE_INSENSITIVE);
+	private static final Pattern TEXT_OR_HTML_MIMETYPES = Pattern.compile("^((text/)|(application/x?html)).*", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Assert that the fields of the received email are equal to the expected
@@ -585,7 +588,11 @@ public class AssertEmail {
 	}
 
 	private static Part getBodyPart(Part actualEmail) throws MessagingException {
-			return getBodyParts(actualEmail).get(0);
+		List<Part> bodyParts = getBodyParts(actualEmail);
+		if(bodyParts.isEmpty()) {
+			throw new IllegalStateException("Expected at least one body part but none found");
+		}
+		return bodyParts.get(0);
 	}
 
 	private static List<Part> getBodyParts(Part actualEmail) throws MessagingException {
@@ -603,7 +610,7 @@ public class AssertEmail {
 					BodyPart part = mp.getBodyPart(i);
 					if(part.getContentType().startsWith("multipart/")) {
 						getBodyParts(part, founds);
-					} else if(part.getContentType().startsWith("text/")){
+					} else if(TEXT_OR_HTML_MIMETYPES.matcher(part.getContentType()).matches()){
 						founds.add(part);
 					}
 				}
@@ -615,7 +622,14 @@ public class AssertEmail {
 
 	private static String getBody(Part actualEmail) throws MessagingException {
 		try {
-			return getBodyPart(actualEmail).getContent().toString();
+			Object content = getBodyPart(actualEmail).getContent();
+			if(content instanceof String) {
+				return (String) content;
+			} else if(content instanceof InputStream) {
+				return IOUtils.toString((InputStream) content);
+			} else {
+				return content.toString();
+			}
 		} catch (IOException e) {
 			throw new MessagingException("Failed to access content of the mail", e);
 		}

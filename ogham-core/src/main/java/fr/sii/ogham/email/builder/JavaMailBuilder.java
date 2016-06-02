@@ -11,8 +11,8 @@ import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.FixedMimeTypeProvider;
-import fr.sii.ogham.core.mimetype.JMimeMagicProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.mimetype.TikaProvider;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.resource.NamedResource;
@@ -131,7 +131,7 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 		if (props.containsKey(SmtpConstants.AUTHENTICATOR_USERNAME_KEY)) {
 			setAuthenticator(new PropertiesUsernamePasswordAuthenticator(props));
 		}
-		registerMimeTypeProvider(new JMimeMagicProvider());
+		registerMimeTypeProvider(new TikaProvider());
 		registerMimeTypeProvider(new FixedMimeTypeProvider());
 		registerContentHandler(MultiContent.class, new MultiContentHandler(mapContentHandler));
 		// TODO: make charset provider configurable

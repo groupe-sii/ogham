@@ -35,12 +35,35 @@ public class JMimeMagicProvider implements MimeTypeProvider {
 	/**
 	 * only try to get mime type, no submatches are processed when true
 	 */
-	private boolean onlyMimeMatch;
+	private final boolean onlyMimeMatch;
 
 	/**
 	 * whether or not to use extension to optimize order of content tests
 	 */
-	private boolean extensionHints;
+	private final boolean extensionHints;
+
+	/**
+	 * Initialize JMimeMagic with onlyMimeMatch and extensionHints set to false
+	 */
+	public JMimeMagicProvider() {
+		this(false, false);
+	}
+
+	/**
+	 * Initialize provider with specified options.
+	 * 
+	 * @param onlyMimeMatch
+	 *            only try to get mime type, no submatches are processed when
+	 *            true
+	 * @param extensionHints
+	 *            whether or not to use extension to optimize order of content
+	 *            tests
+	 */
+	public JMimeMagicProvider(boolean onlyMimeMatch, boolean extensionHints) {
+		super();
+		this.onlyMimeMatch = onlyMimeMatch;
+		this.extensionHints = extensionHints;
+	}
 
 	@Override
 	public MimeType getMimeType(File file) throws MimeTypeDetectionException {

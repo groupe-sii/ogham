@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.message.content.MultiContent;
-import fr.sii.ogham.core.mimetype.JMimeMagicProvider;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.mimetype.TikaProvider;
 import fr.sii.ogham.core.resource.resolver.LookupMappingResolver;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
@@ -82,7 +83,7 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 			LookupMappingResolver resolver = new LookupMappingResourceResolverBuilder().useDefaults().build();
 			translator.addTranslator(new InlineCssTranslator(new JsoupCssInliner(), resolver));
 			LOG.debug("Image inlining is enabled");
-			JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
+			MimeTypeProvider mimetypeProvider = new TikaProvider();
 			ImageInliner imageInliner = new EveryImageInliner(new JsoupAttachImageInliner(new SequentialIdGenerator()), new JsoupBase64ImageInliner());
 			translator.addTranslator(new InlineImageTranslator(imageInliner, resolver, mimetypeProvider));
 		}
