@@ -15,14 +15,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import fr.sii.ogham.core.builder.LookupMappingResourceResolverBuilder;
+import fr.sii.ogham.core.builder.FirstSupportingResolverBuilder;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.JMimeMagicProvider;
 import fr.sii.ogham.core.resource.ByteResource;
-import fr.sii.ogham.core.resource.resolver.LookupMappingResolver;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.attachment.ContentDisposition;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
@@ -39,14 +39,14 @@ import fr.sii.ogham.ut.html.inliner.impl.JsoupAttachImageInlinerTest;
 @RunWith(MockitoJUnitRunner.class)
 public class JsoupInlineImageTranslatorTest {
 	private static String FOLDER = "/inliner/images/jsoup/";
-	private static String SOURCE_FOLDER = FOLDER+"source/";
-	private static String EXPECTED_FOLDER = FOLDER+"expected/";
+	private static String SOURCE_FOLDER = FOLDER + "source/";
+	private static String EXPECTED_FOLDER = FOLDER + "expected/";
 
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
+
 	private InlineImageTranslator translator;
-	
+
 	@Mock
 	private IdGenerator generator;
 
@@ -57,16 +57,16 @@ public class JsoupInlineImageTranslatorTest {
 		Mockito.when(generator.generate("left.gif")).thenReturn("left.gif");
 		Mockito.when(generator.generate("right.gif")).thenReturn("right.gif");
 		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
-		LookupMappingResolver resourceResolver = new LookupMappingResourceResolverBuilder().useDefaults().withPrefix(SOURCE_FOLDER).build();
+		FirstSupportingResourceResolver resourceResolver = new FirstSupportingResolverBuilder().useDefaults().withParentPath(SOURCE_FOLDER).build();
 		JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
 		ImageInliner inliner = new EveryImageInliner(new JsoupAttachImageInliner(generator), new JsoupBase64ImageInliner());
 		translator = new InlineImageTranslator(inliner, resourceResolver, mimetypeProvider);
 	}
-	
+
 	@Test
 	public void attachImages() throws IOException, ContentTranslatorException {
 		// prepare the html and associated images
-		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"withImages.html"));
+		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER + "withImages.html"));
 		// do the job
 		Content result = translator.translate(new StringContent(source));
 		// prepare expected html
@@ -80,12 +80,11 @@ public class JsoupInlineImageTranslatorTest {
 		Assert.assertEquals("should have 5 attachments", 5, contentWithAttachments.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
 	}
-	
-	
+
 	@Test
 	public void skipAttach() throws IOException, ContentTranslatorException {
 		// prepare the html and associated images
-		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"skipInline.html"));
+		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER + "skipInline.html"));
 		// do the job
 		Content result = translator.translate(new StringContent(source));
 		// prepare expected html
@@ -99,32 +98,32 @@ public class JsoupInlineImageTranslatorTest {
 		Assert.assertEquals("should have 2 attachments", 2, contentWithAttachments.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
 	}
-	
-	
-	//---------------------------------------------------------------//
-	//                           Utilities                           //
-	//---------------------------------------------------------------//
-	
+
+	// ---------------------------------------------------------------//
+	// Utilities //
+	// ---------------------------------------------------------------//
+
 	private static Attachment getAttachment(ImageResource image) {
-		return new Attachment(new ByteResource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, "<"+image.getName()+">");
+		return new Attachment(new ByteResource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, "<" + image.getName() + ">");
 	}
-	
+
 	private static List<Attachment> getAttachments(List<ImageResource> images) {
 		List<Attachment> attachments = new ArrayList<>(images.size());
-		for(ImageResource image : images) {
+		for (ImageResource image : images) {
 			attachments.add(getAttachment(image));
 		}
 		return attachments;
 	}
-	
+
 	private static String getExpectedHtml(String fileName) throws IOException {
-		return IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
+		return IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER + fileName));
 	}
-	
+
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
 		List<ImageResource> resources = new ArrayList<>(imageNames.length);
-		for(String imageName : imageNames) {
-			resources.add(new ImageResource(imageName, "images/"+imageName, IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER+"images/"+imageName)), "images/gif"));
+		for (String imageName : imageNames) {
+			resources.add(new ImageResource(imageName, "images/" + imageName, IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER + "images/" + imageName)),
+					"images/gif"));
 		}
 		return resources;
 	}

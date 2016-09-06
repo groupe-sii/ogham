@@ -20,7 +20,7 @@ public interface ThymeleafResolverAdapter {
 	 *            the resolver to check if the implementation can handle it
 	 * @return true if the adapter can handle the resolver, false otherwise
 	 */
-	public boolean supports(ResourceResolver resolver);
+	boolean supports(ResourceResolver resolver);
 
 	/**
 	 * Adapt the general template resolver into the Thymeleaf specific resolver.
@@ -31,5 +31,10 @@ public interface ThymeleafResolverAdapter {
 	 * @throws NoResolverAdapterException
 	 *             when no resolver could handle the resolver
 	 */
-	public ITemplateResolver adapt(ResourceResolver resolver) throws NoResolverAdapterException;
+	ITemplateResolver adapt(ResourceResolver resolver) throws NoResolverAdapterException;
+
+	void setParentPath(String parentPath);
+
+	void setExtension(String extension);
+
 }

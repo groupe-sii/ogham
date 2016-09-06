@@ -1,6 +1,5 @@
 package fr.sii.ogham.core.builder;
 
-import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 
 /**
@@ -13,10 +12,10 @@ import fr.sii.ogham.core.template.parser.TemplateParser;
  */
 public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	/**
-	 * Set the prefix for template lookup. This prefix is used for all lookup
-	 * methods. The aim is to define only the name of the template (or a subset)
-	 * and the system will find it for you. It avoids to explicitly write the
-	 * whole path and let you change the lookup method easily.
+	 * Set the parent path for template lookup. This parent path is used for all
+	 * lookup methods. The aim is to define only the name of the template (or a
+	 * subset) and the system will find it for you. It avoids to explicitly
+	 * write the whole path and let you change the lookup method easily.
 	 * 
 	 * For example:
 	 * <ul>
@@ -26,24 +25,24 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 * <code>/foo/template/resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * So you can set the prefix to <code>/foo/template/</code> and then
+	 * So you can set the parent path to <code>/foo/template/</code> and then
 	 * reference the templates using the file name:
 	 * <ul>
 	 * <li><code>createAccount.html</code></li>
 	 * <li><code>resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * @param prefix
-	 *            the prefix for template resolution
+	 * @param parentPath
+	 *            the parent path for template resolution
 	 * @return The current builder for fluent use
 	 */
-	public TemplateParserBuilder withPrefix(String prefix);
+	public TemplateParserBuilder withParentPath(String parentPath);
 
 	/**
-	 * Set the suffix for template lookup. This suffix is used for all lookup
-	 * methods. The aim is to define only the name of the template (or a subset)
-	 * and the system will find it for you. It avoids to explicitly write the
-	 * whole path and let you change the lookup method easily.
+	 * Set the extension for template lookup. This extension is used for all
+	 * lookup methods. The aim is to define only the name of the template (or a
+	 * subset) and the system will find it for you. It avoids to explicitly
+	 * write the whole path and let you change the lookup method easily.
 	 * 
 	 * For example:
 	 * <ul>
@@ -53,36 +52,18 @@ public interface TemplateParserBuilder extends Builder<TemplateParser> {
 	 * <code>/foo/template/resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * So you can set the prefix to <code>/foo/template/</code>, the suffix to
-	 * <code>.html</code> and then reference the templates using the file name:
+	 * So you can set the parent path to <code>/foo/template/</code>, the
+	 * extension to <code>.html</code> and then reference the templates using
+	 * the file name:
 	 * <ul>
 	 * <li><code>createAccount</code></li>
 	 * <li><code>resetPassword</code></li>
 	 * </ul>
 	 * 
-	 * @param suffix
-	 *            the suffix for template resolution
+	 * @param extension
+	 *            the extension for template resolution
 	 * @return The current builder for fluent use
 	 */
-	public TemplateParserBuilder withSuffix(String suffix);
+	public TemplateParserBuilder withExtension(String extension);
 
-	/**
-	 * Register a lookup resolver. The lookup is like JNDI lookup. It indicates
-	 * using a simple string how to handle the provided path or URL.
-	 * 
-	 * For example:
-	 * <ul>
-	 * <li><code>"classpath:/foo"</code> indicates that the provided path
-	 * represents a classpath entry.</li>
-	 * <li><code>"file:/tmp"</code> indicates that the provided path represents
-	 * a file located on the system.</li>
-	 * </ul>
-	 * 
-	 * @param lookup
-	 *            the lookup name (without the : character)
-	 * @param resolver
-	 *            the resolver implementation
-	 * @return The current builder for fluent use
-	 */
-	public TemplateParserBuilder withLookupResolver(String lookup, ResourceResolver resolver);
 }

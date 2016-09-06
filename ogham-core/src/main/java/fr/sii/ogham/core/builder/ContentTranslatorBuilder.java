@@ -9,7 +9,7 @@ import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.JMimeMagicProvider;
-import fr.sii.ogham.core.resource.resolver.LookupMappingResolver;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.translator.content.EveryContentTranslator;
@@ -67,19 +67,19 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	public ContentTranslator build() throws BuildException {
 		LOG.info("Using translator that calls all registered translators");
 		EveryContentTranslator translator = new EveryContentTranslator();
-		if(templateBuilder != null) {
+		if (templateBuilder != null) {
 			TemplateParser templateParser = templateBuilder.build();
 			LOG.debug("Registering content translator that parses templates using {}", templateParser);
 			translator.addTranslator(new TemplateContentTranslator(templateParser));
 		}
-		if(enableMultiContent) {
+		if (enableMultiContent) {
 			LOG.debug("Multi-content transformation is enabled");
 			translator.addTranslator(new MultiContentTranslator(translator));
 		}
-		if(enableInlining) {
+		if (enableInlining) {
 			// TODO: extract inliners init to their own builders
 			LOG.debug("CSS inlining is enabled");
-			LookupMappingResolver resolver = new LookupMappingResourceResolverBuilder().useDefaults().build();
+			FirstSupportingResourceResolver resolver = new FirstSupportingResolverBuilder().useDefaults().build();
 			translator.addTranslator(new InlineCssTranslator(new JsoupCssInliner(), resolver));
 			LOG.debug("Image inlining is enabled");
 			JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();

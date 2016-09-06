@@ -11,8 +11,9 @@ import fr.sii.ogham.template.exception.NoResolverAdapterException;
 
 /**
  * Decorator that will ask each resolver adapter if it is able to handle the
- * template resolver. If the resolver adapter can, then this implementation asks
- * the resolver adapter to provide the Thymeleaf template resolver.
+ * template resolver. If the resolver adapter supports it, then this
+ * implementation asks the resolver adapter to provide the Thymeleaf template
+ * resolver.
  * 
  * Only the first resolver adapter that can handle the template resolver is
  * used.
@@ -50,9 +51,18 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 		this.adapters = adapters;
 	}
 
+	public FirstSupportingResolverAdapter() {
+		this(new ArrayList<ThymeleafResolverAdapter>());
+	}
+
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		return true;
+		for (ThymeleafResolverAdapter adapter : adapters) {
+			if (adapter.supports(resolver)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -66,12 +76,31 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 	}
 
 	/**
-	 * Register a new adapter. The adatper is added at the end.
+	 * Register a new adapter. The adapter is added at the end.
 	 * 
 	 * @param adapter
 	 *            the adapter to register
 	 */
 	public void addAdapter(ThymeleafResolverAdapter adapter) {
 		adapters.add(adapter);
+	}
+
+	public List<ThymeleafResolverAdapter> getAdapters() {
+		return adapters;
+	}
+
+	@Override
+	public void setParentPath(String parentPath) {
+		for (ThymeleafResolverAdapter adapter : adapters) {
+			adapter.setParentPath(parentPath);
+		}
+
+	}
+
+	@Override
+	public void setExtension(String extension) {
+		for (ThymeleafResolverAdapter adapter : adapters) {
+			adapter.setExtension(extension);
+		}
 	}
 }

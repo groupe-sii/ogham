@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.ResourcePath;
 
 /**
  * Resource resolver that searches for the resource on the file system. The
@@ -21,19 +22,24 @@ import fr.sii.ogham.core.resource.Resource;
  * @author Aurélien Baudet
  * @see FileResource
  */
-public class FileResolver implements ResourceResolver {
+public class FileResolver extends AbstractSimplePathResolver implements ResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(FileResolver.class);
+
+	public FileResolver(boolean isDefault, String... prefixes) {
+		super(isDefault, prefixes);
+	}
 
 	@Override
 	public Resource getResource(String path) throws ResourceResolutionException {
-		LOG.debug("Loading resource {} from file system", path);
-		File file = new File(path);
+		ResourcePath resourcePath = getResourcePath(path);
+		LOG.debug("Loading resource {} from file system", resourcePath);
+		String resolvedPath = resourcePath.getResolvedPath();
+		File file = new File(resolvedPath);
 		if (!file.exists()) {
-			throw new ResourceResolutionException("Resource " + path + " not found on file system", path);
+			throw new ResourceResolutionException("Resource " + resourcePath + " not found on file system", resolvedPath);
 		}
 		Resource resource = new FileResource(file);
-		LOG.debug("Resource {} found on the file system", path);
+		LOG.debug("Resource {} found on the file system", resourcePath);
 		return resource;
 	}
-
 }

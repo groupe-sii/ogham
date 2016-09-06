@@ -8,23 +8,24 @@ import fr.sii.ogham.core.resource.resolver.RelativeResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 
 /**
- * Adapter that converts general {@link ClassPathResolver} into
- * Thymeleaf specific {@link ClassLoaderTemplateResolver}.
+ * Adapter that converts general {@link ClassPathResolver} into Thymeleaf
+ * specific {@link ClassLoaderTemplateResolver}.
  * 
  * @author Aurélien Baudet
  *
  */
-public class ClassPathResolverAdapter implements ThymeleafResolverAdapter {
+public class ClassPathResolverAdapter extends AbstractSimpleThymeleafResolverAdapter implements ThymeleafResolverAdapter {
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		return resolver instanceof ClassPathResolver
-				|| (resolver instanceof RelativeResolver && ((RelativeResolver) resolver).getDelegate() instanceof ClassPathResolver);
+		return resolver instanceof ClassPathResolver || (resolver instanceof RelativeResolver && ((RelativeResolver) resolver).getDelegate() instanceof ClassPathResolver);
 	}
 
 	@Override
 	public ITemplateResolver adapt(ResourceResolver resolver) {
-		// TODO: manage all other options
-		return new FixClassLoaderTemplateResolver();
+		FixClassLoaderTemplateResolver templateResolver = new FixClassLoaderTemplateResolver();
+		templateResolver.setPrefix(getParentPath());
+		templateResolver.setSuffix(getExtension());
+		return templateResolver;
 	}
 
 }

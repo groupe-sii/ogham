@@ -3,15 +3,14 @@ package fr.sii.ogham.template.thymeleaf.builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.builder.TemplateParserBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
-import fr.sii.ogham.core.resource.resolver.LookupMappingResolver;
+import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.parser.TemplateParser;
-import fr.sii.ogham.template.exception.NoResolverAdapterException;
-import fr.sii.ogham.template.thymeleaf.ThymeleafLookupMappingResolver;
+import fr.sii.ogham.template.thymeleaf.ThymeLeafFirstSupportingTemplateResolver;
 import fr.sii.ogham.template.thymeleaf.ThymeleafParser;
 import fr.sii.ogham.template.thymeleaf.adapter.ClassPathResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.adapter.FileResolverAdapter;
@@ -27,17 +26,11 @@ import fr.sii.ogham.template.thymeleaf.adapter.ThymeleafResolverAdapter;
  */
 public class ThymeleafBuilder implements TemplateParserBuilder {
 	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafBuilder.class);
-	
+
 	/**
 	 * The Thymeleaf template engine
 	 */
 	private TemplateEngine engine;
-
-	/**
-	 * The resolver based on lookup prefix. It wraps the general
-	 * {@link LookupMappingResolver} to be usable by Thymeleaf
-	 */
-	private ThymeleafLookupMappingResolver lookupResolver;
 
 	/**
 	 * Find the first adapter that can handle the general
@@ -47,58 +40,36 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	private FirstSupportingResolverAdapter resolverAdapter;
 
 	/**
-	 * The prefix for searching template
+	 * Find the first resource resolver that can handle a given path.
 	 */
-	private String prefix;
+	private FirstSupportingResourceResolver resourceResolver;
 
 	/**
-	 * The suffix for searching template
+	 * The parent path for searching template.
 	 */
-	private String suffix;
+	private String parentPath;
+
+	/**
+	 * The extension for searching template.
+	 */
+	private String extension;
 
 	public ThymeleafBuilder() {
 		super();
 		this.engine = new TemplateEngine();
-		this.lookupResolver = new ThymeleafLookupMappingResolver();
+		this.resourceResolver = null;
 		this.resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter(), new StringResolverAdapter());
-		prefix = "";
-		suffix = "";
+		parentPath = "";
+		extension = "";
 	}
 
 	@Override
 	public TemplateParser build() throws BuildException {
-		LOG.debug("Using prefix {} and suffix {} for thymeleaf template resolvers", prefix, suffix);
-		for (ITemplateResolver resolver : lookupResolver.getResolvers()) {
-			if (resolver instanceof org.thymeleaf.templateresolver.TemplateResolver) {
-				org.thymeleaf.templateresolver.TemplateResolver templateResolver = (org.thymeleaf.templateresolver.TemplateResolver) resolver;
-				templateResolver.setPrefix(prefix);
-				templateResolver.setSuffix(suffix);
-			}
-		}
-		engine.addTemplateResolver(lookupResolver);
+		LOG.debug("Using prefix {} and suffix {} for thymeleaf template resolvers", parentPath, extension);
+		resolverAdapter.setParentPath(parentPath);
+		resolverAdapter.setExtension(extension);
+		engine.addTemplateResolver(new ThymeLeafFirstSupportingTemplateResolver(resourceResolver, resolverAdapter));
 		return new ThymeleafParser(engine);
-	}
-
-	/**
-	 * <p>
-	 * Registers a new custom Thymeleaf resolver for the lookup. If a resolver
-	 * was already registered for the same lookup, the provided resolver will
-	 * replace it.
-	 * </p>
-	 * <p>
-	 * It doesn't use the general abstraction mechanism. So be sure to use it
-	 * correctly.
-	 * </p>
-	 * 
-	 * @param lookup
-	 *            the lookup prefix (without the ':' character)
-	 * @param resolver
-	 *            the Thymealeaf specific resolver
-	 * @return this instance for fluent use
-	 */
-	public ThymeleafBuilder withLookupResolver(String lookup, ITemplateResolver resolver) {
-		lookupResolver.addMapping(lookup, resolver);
-		return this;
 	}
 
 	/**
@@ -113,15 +84,31 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 		return this;
 	}
 
-	@Override
-	public ThymeleafBuilder withPrefix(String prefix) {
-		this.prefix = prefix;
+	/**
+	 * To link our {@link ThymeleafResolverAdapter}s with our
+	 * {@link ResourceResolver}, we need a
+	 * {@link FirstSupportingResourceResolver}.
+	 * 
+	 * @param firstSupportingResourceResolver
+	 *            composite resolver to link template path with our
+	 *            {@link ResourcePath}
+	 * 
+	 * @return this instance for fluent use
+	 */
+	public ThymeleafBuilder withFirstResourceResolver(FirstSupportingResourceResolver firstSupportingResourceResolver) {
+		this.resourceResolver = firstSupportingResourceResolver;
 		return this;
 	}
 
 	@Override
-	public ThymeleafBuilder withSuffix(String suffix) {
-		this.suffix = suffix;
+	public ThymeleafBuilder withParentPath(String prefix) {
+		this.parentPath = prefix;
+		return this;
+	}
+
+	@Override
+	public ThymeleafBuilder withExtension(String suffix) {
+		this.extension = suffix;
 		return this;
 	}
 
@@ -136,15 +123,6 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	public ThymeleafBuilder registerResolverAdapter(ThymeleafResolverAdapter adapter) {
 		resolverAdapter.addAdapter(adapter);
 		return this;
-	}
-
-	@Override
-	public TemplateParserBuilder withLookupResolver(String lookup, ResourceResolver resolver) {
-		try {
-			return withLookupResolver(lookup, resolverAdapter.adapt(resolver));
-		} catch (NoResolverAdapterException e) {
-			throw new IllegalArgumentException("Can't register resolver", e);
-		}
 	}
 
 	/**

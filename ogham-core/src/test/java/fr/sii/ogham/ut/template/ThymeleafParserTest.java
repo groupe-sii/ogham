@@ -36,7 +36,7 @@ public class ThymeleafParserTest {
 		parser = new TemplateBuilder()
 					.registerTemplateParser(new ThymeleafBuilder())
 					.useDefaultResolvers()
-					.withPrefix("/template/thymeleaf/source/")
+					.withParentPath("/template/thymeleaf/source/")
 					.build();
 		Calendar cal = Calendar.getInstance();
 		cal.set(2015, 6, 1, 14, 28, 42);

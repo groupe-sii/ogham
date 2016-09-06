@@ -8,13 +8,13 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 
 /**
  * Adapter that converts general
- * {@link fr.sii.ogham.core.resource.resolver.FileResolver} into
- * Thymeleaf specific {@link FileTemplateResolver}.
+ * {@link fr.sii.ogham.core.resource.resolver.FileResolver} into Thymeleaf
+ * specific {@link FileTemplateResolver}.
  * 
  * @author Aurélien Baudet
  *
  */
-public class FileResolverAdapter implements ThymeleafResolverAdapter {
+public class FileResolverAdapter extends AbstractSimpleThymeleafResolverAdapter implements ThymeleafResolverAdapter {
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {
@@ -24,8 +24,10 @@ public class FileResolverAdapter implements ThymeleafResolverAdapter {
 
 	@Override
 	public ITemplateResolver adapt(ResourceResolver resolver) {
-		// TODO: manage all other options
-		return new FileTemplateResolver();
+		FileTemplateResolver templateResolver = new FileTemplateResolver();
+		templateResolver.setPrefix(getParentPath());
+		templateResolver.setSuffix(getExtension());
+		return templateResolver;
 	}
 
 }

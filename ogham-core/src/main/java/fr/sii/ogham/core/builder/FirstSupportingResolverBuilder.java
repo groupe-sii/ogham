@@ -1,8 +1,7 @@
 package fr.sii.ogham.core.builder;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
 import fr.sii.ogham.core.resource.resolver.FileResolver;
-import fr.sii.ogham.core.resource.resolver.LookupMappingResolver;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
@@ -34,50 +33,53 @@ import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
  * <ul>
  * <li>Resolver that is able to handle classpath resolution (
  * {@link ClassPathResolver})</li>
- * <li>Resolver that is able to handle file resolution ({@link FileResolver})</li>
+ * <li>Resolver that is able to handle file resolution
+ * ({@link FileResolver})</li>
  * </ul>
  * 
  * 
  * @author Aurélien Baudet
- * @see LookupMappingResourceResolverBuilder
- * @see LookupMappingResolver
+ * @see FirstSupportingResolverBuilder
+ * @see FirstSupportingResourceResolver
  *
  */
-public class LookupMappingResourceResolverBuilder implements Builder<LookupMappingResolver> {
-	private static final Logger LOG = LoggerFactory.getLogger(LookupMappingResourceResolverBuilder.class);
-	
-	/**
-	 * The map that temporarily stores the template resolver implementations
-	 * according to the lookup prefix
-	 */
-	private Map<String, ResourceResolver> resolvers;
+public class FirstSupportingResolverBuilder implements Builder<FirstSupportingResourceResolver> {
+	private static final Logger LOG = LoggerFactory.getLogger(FirstSupportingResolverBuilder.class);
 
 	/**
-	 * The prefix for template resolution
+	 * The list that temporarily stores the template resolver implementations
 	 */
-	private String prefix;
+	private List<ResourceResolver> resolvers;
 
 	/**
-	 * The suffix for template resolution
+	 * The parent path for template resolution.
 	 */
-	private String suffix;
+	private String parentPath;
 
-	public LookupMappingResourceResolverBuilder() {
+	/**
+	 * The extension for template resolution.
+	 */
+	private String extension;
+
+	public FirstSupportingResolverBuilder() {
 		super();
-		resolvers = new HashMap<>();
-		prefix = "";
-		suffix = "";
+		resolvers = new ArrayList<>();
+		parentPath = "";
+		extension = "";
 	}
 
 	@Override
-	public LookupMappingResolver build() throws BuildException {
-		if (!prefix.isEmpty() || !suffix.isEmpty()) {
-			LOG.debug("Using prefix {} and suffix {} for resource resolution", prefix, suffix);
-			for (Entry<String, ResourceResolver> entry : resolvers.entrySet()) {
-				resolvers.put(entry.getKey(), new RelativeResolver(entry.getValue(), prefix, suffix));
+	public FirstSupportingResourceResolver build() throws BuildException {
+		List<ResourceResolver> builtResolvers = new ArrayList<>();
+		if (parentPath.isEmpty() && extension.isEmpty()) {
+			builtResolvers.addAll(resolvers);
+		} else {
+			LOG.debug("Using prefix {} and suffix {} for resource resolution", parentPath, extension);
+			for (ResourceResolver resolver : resolvers) {
+				builtResolvers.add(new RelativeResolver(resolver, parentPath, extension));
 			}
 		}
-		return new LookupMappingResolver(resolvers);
+		return new FirstSupportingResourceResolver(builtResolvers);
 	}
 
 	/**
@@ -89,16 +91,16 @@ public class LookupMappingResourceResolverBuilder implements Builder<LookupMappi
 	 * {@link FileResolver}). The lookup is "file:"</li>
 	 * <li>Resolver that is able to handle string directly (
 	 * {@link StringResourceResolver}). The lookup is "string:"</li>
-	 * <li>Default resolver if no lookup is used ( {@link ClassPathResolver})</li>
+	 * <li>Default resolver if no lookup is used (
+	 * {@link ClassPathResolver})</li>
 	 * </ul>
 	 * 
 	 * @return this builder instance for fluent use
 	 */
-	public LookupMappingResourceResolverBuilder useDefaults() {
-		withLookupResolver("classpath", new ClassPathResolver());
-		withLookupResolver("file", new FileResolver());
-		withLookupResolver("string", new StringResourceResolver());
-		withLookupResolver("", new ClassPathResolver());
+	public FirstSupportingResolverBuilder useDefaults() {
+		withResourceResolver(new FileResolver(false, "file:"));
+		withResourceResolver(new StringResourceResolver(false, "string:"));
+		withResourceResolver(new ClassPathResolver(true, "classpath:"));
 		return this;
 	}
 
@@ -108,22 +110,18 @@ public class LookupMappingResourceResolverBuilder implements Builder<LookupMappi
 	 * 
 	 * For example:
 	 * <ul>
-	 * <li>
-	 * <code>&quot;classpath:/foo&quot;</code> indicates that the
-	 * provided path represents a classpath entry.</li>
-	 * <li>
-	 * <code>&quot;file:/tmp&quot;</code> indicates that the provided path
+	 * <li><code>&quot;classpath:/foo&quot;</code> indicates that the provided
+	 * path represents a classpath entry.</li>
+	 * <li><code>&quot;file:/tmp&quot;</code> indicates that the provided path
 	 * represents a file located on the system.</li>
 	 * </ul>
 	 * 
-	 * @param lookup
-	 *            the lookup name (without the : character)
 	 * @param resolver
 	 *            the resolver implementation
 	 * @return The current builder for fluent use
 	 */
-	public LookupMappingResourceResolverBuilder withLookupResolver(String lookup, ResourceResolver resolver) {
-		resolvers.put(lookup, resolver);
+	public FirstSupportingResolverBuilder withResourceResolver(ResourceResolver resolver) {
+		resolvers.add(resolver);
 		return this;
 	}
 
@@ -141,19 +139,19 @@ public class LookupMappingResourceResolverBuilder implements Builder<LookupMappi
 	 * <code>/foo/template/resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * So you can set the prefix to <code>/foo/template/</code> and
-	 * then reference the templates using the file name:
+	 * So you can set the prefix to <code>/foo/template/</code> and then
+	 * reference the templates using the file name:
 	 * <ul>
 	 * <li><code>createAccount.html</code></li>
 	 * <li><code>resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * @param prefix
-	 *            the prefix for template resolution
+	 * @param parentPath
+	 *            the parent path for template resolution
 	 * @return The current builder for fluent use
 	 */
-	public LookupMappingResourceResolverBuilder withPrefix(String prefix) {
-		this.prefix = prefix;
+	public FirstSupportingResolverBuilder withParentPath(String parentPath) {
+		this.parentPath = parentPath;
 		return this;
 	}
 
@@ -171,20 +169,19 @@ public class LookupMappingResourceResolverBuilder implements Builder<LookupMappi
 	 * <code>/foo/resource/resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * So you can set the prefix to <code>/foo/resource/</code>, the
-	 * suffix to <code>.html</code> and then reference the resources using the
-	 * file name:
+	 * So you can set the prefix to <code>/foo/resource/</code>, the suffix to
+	 * <code>.html</code> and then reference the resources using the file name:
 	 * <ul>
 	 * <li><code>createAccount</code></li>
 	 * <li><code>resetPassword</code></li>
 	 * </ul>
 	 * 
-	 * @param suffix
-	 *            the suffix for resource resolution
+	 * @param extension
+	 *            the extension for resource resolution
 	 * @return The current builder for fluent use
 	 */
-	public LookupMappingResourceResolverBuilder withSuffix(String suffix) {
-		this.suffix = suffix;
+	public FirstSupportingResolverBuilder withExtension(String extension) {
+		this.extension = extension;
 		return this;
 	}
 }
