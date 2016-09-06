@@ -65,7 +65,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 
 	@Override
 	public TemplateParser build() throws BuildException {
-		LOG.debug("Using prefix {} and suffix {} for thymeleaf template resolvers", parentPath, extension);
+		LOG.debug("Using parent path {} and extension {} for thymeleaf template resolvers", parentPath, extension);
 		resolverAdapter.setParentPath(parentPath);
 		resolverAdapter.setExtension(extension);
 		engine.addTemplateResolver(new ThymeLeafFirstSupportingTemplateResolver(resourceResolver, resolverAdapter));
@@ -101,14 +101,14 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	}
 
 	@Override
-	public ThymeleafBuilder withParentPath(String prefix) {
-		this.parentPath = prefix;
+	public ThymeleafBuilder withParentPath(String parentPath) {
+		this.parentPath = parentPath;
 		return this;
 	}
 
 	@Override
-	public ThymeleafBuilder withExtension(String suffix) {
-		this.extension = suffix;
+	public ThymeleafBuilder withExtension(String extension) {
+		this.extension = extension;
 		return this;
 	}
 

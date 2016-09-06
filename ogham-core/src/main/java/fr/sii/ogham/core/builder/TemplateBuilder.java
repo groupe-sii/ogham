@@ -43,9 +43,9 @@ import fr.sii.ogham.template.thymeleaf.builder.ThymeleafBuilder;
  * {@link StringResourceResolver})</li>
  * </ul>
  * 
- * This builder is also able to register a prefix and a suffix for template
- * resolution. The aim is to be able to provide only the name of the template
- * without needing to provide the full path to it.
+ * This builder is also able to register a parent path and an extension for
+ * template resolution. The aim is to be able to provide only the name of the
+ * template without needing to provide the full path to it.
  * 
  * @author Aurélien Baudet
  *
@@ -59,14 +59,14 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	private FirstSupportingResolverBuilder resolverBuilder;
 
 	/**
-	 * The prefix for template resolution
+	 * The parent path for template resolution
 	 */
-	private String prefix;
+	private String parentPath;
 
 	/**
-	 * The suffix for template resolution
+	 * The extension for template resolution
 	 */
-	private String suffix;
+	private String extension;
 
 	/**
 	 * A map that stores the engine detector and the associated engine. Each
@@ -75,14 +75,14 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	private Map<TemplateEngineDetector, TemplateParserBuilder> detectors;
 
 	/**
-	 * The property key for prefix value
+	 * The property key for parentPath value
 	 */
-	private String prefixPropKey;
+	private String parentPathPropKey;
 
 	/**
-	 * The property key for suffix value
+	 * The property key for extension value
 	 */
-	private String suffixPropKey;
+	private String extensionPropKey;
 
 	/**
 	 * The properties used for the configuration
@@ -92,8 +92,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	public TemplateBuilder() {
 		super();
 		detectors = new HashMap<>();
-		this.prefixPropKey = TemplateConstants.PREFIX_PROPERTY;
-		this.suffixPropKey = TemplateConstants.SUFFIX_PROPERTY;
+		this.parentPathPropKey = TemplateConstants.PREFIX_PROPERTY;
+		this.extensionPropKey = TemplateConstants.SUFFIX_PROPERTY;
 	}
 
 	/**
@@ -115,8 +115,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link StringResourceResolver})</li>
 	 * </ul>
 	 * 
-	 * If the system properties provide values for prefix (
-	 * ogham.template.prefix) and suffix (ogham.template.suffix), then the
+	 * If the system properties provide values for parent path (
+	 * ogham.template.prefix) and extension (ogham.template.suffix), then the
 	 * builder will use them. If no value defined for these properties, then
 	 * empty strings will be used.
 	 * 
@@ -145,8 +145,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link StringResourceResolver})</li>
 	 * </ul>
 	 * 
-	 * If the provided properties provide values for prefix (
-	 * ogham.template.prefix) and suffix (ogham.template.suffix), then the
+	 * If the provided properties provide values for parent path (
+	 * ogham.template.prefix) and extension (ogham.template.suffix), then the
 	 * builder will use them. If no value defined for these properties, then
 	 * empty strings will be used.
 	 * 
@@ -229,14 +229,14 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	@Override
-	public TemplateBuilder withParentPath(String prefix) {
-		this.prefix = prefix;
+	public TemplateBuilder withParentPath(String parentPath) {
+		this.parentPath = parentPath;
 		return this;
 	}
 
 	@Override
-	public TemplateBuilder withExtension(String suffix) {
-		this.suffix = suffix;
+	public TemplateBuilder withExtension(String extension) {
+		this.extension = extension;
 		return this;
 	}
 
@@ -258,32 +258,32 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Change the default property key for template resolution prefix. By
+	 * Change the default property key for template resolution parent path. By
 	 * default, the property key is ogham.template.prefix (see
 	 * {@link TemplateConstants#PREFIX_PROPERTY}). Use this method to change the
 	 * key.
 	 * 
-	 * @param prefixKey
-	 *            the new property key for template resolution prefix
+	 * @param parentPathKey
+	 *            the new property key for template resolution parent path
 	 * @return this instance for fluent use
 	 */
-	public TemplateBuilder setPrefixKey(String prefixKey) {
-		this.prefixPropKey = prefixKey;
+	public TemplateBuilder setParentPathKey(String parentPathKey) {
+		this.parentPathPropKey = parentPathKey;
 		return this;
 	}
 
 	/**
-	 * Change the default property key for template resolution prefix. By
+	 * Change the default property key for template resolution extension. By
 	 * default, the property key is ogham.template.suffix (see
 	 * {@link TemplateConstants#SUFFIX_PROPERTY}). Use this method to change the
 	 * key.
 	 * 
-	 * @param suffixKey
-	 *            the new property key for template resolution prefix
+	 * @param extensionKey
+	 *            the new property key for template resolution extension
 	 * @return this instance for fluent use
 	 */
-	public TemplateBuilder setSuffixKey(String suffixKey) {
-		this.suffixPropKey = suffixKey;
+	public TemplateBuilder setExtensionKey(String extensionKey) {
+		this.extensionPropKey = extensionKey;
 		return this;
 	}
 
@@ -302,8 +302,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * lookup string (classpath, file, ...) and the resolver implementation as
 	 * value.
 	 * 
-	 * The builder will also provide the previously defined prefix and suffix to
-	 * the resolvers and to the delegated builders.
+	 * The builder will also provide the previously defined parent path and
+	 * extension to the resolvers and to the delegated builders.
 	 * 
 	 * @return The parser implementation for templating system. If only one
 	 *         template engine defined, then use it directly. Otherwise use the
@@ -314,19 +314,19 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	@Override
 	public TemplateParser build() throws BuildException {
-		// resolve final prefix and suffix
-		String resolvedPrefix = resolve("prefix", prefix, prefixPropKey, TemplateConstants.PREFIX_PROPERTY);
-		String resolvedSuffix = resolve("suffix", suffix, suffixPropKey, TemplateConstants.SUFFIX_PROPERTY);
-		// propagate the prefix and suffix for resource resolution
+		// resolve final parentPath and extension
+		String resolvedParentPath = resolve("prefix", parentPath, parentPathPropKey, TemplateConstants.PREFIX_PROPERTY);
+		String resolvedExtension = resolve("suffix", extension, extensionPropKey, TemplateConstants.SUFFIX_PROPERTY);
+		// propagate the parentPath and extension for resource resolution
 		// and also for template engines
-		resolverBuilder.withParentPath(resolvedPrefix);
-		resolverBuilder.withExtension(resolvedSuffix);
+		resolverBuilder.withParentPath(resolvedParentPath);
+		resolverBuilder.withExtension(resolvedExtension);
 		FirstSupportingResourceResolver firstSupportingResolver = resolverBuilder.build();
 		List<ResourceResolver> resolvers = firstSupportingResolver.getResolvers();
 		for (TemplateParserBuilder builder : detectors.values()) {
-			// set prefix and suffix for each implementation
-			builder.withParentPath(resolvedPrefix);
-			builder.withExtension(resolvedSuffix);
+			// set parent path and extension for each implementation
+			builder.withParentPath(resolvedParentPath);
+			builder.withExtension(resolvedExtension);
 			if (builder instanceof ThymeleafBuilder) {
 				/*
 				 * link between {@link ThymeleafResolverAdapter} and {@link
@@ -343,7 +343,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 			// auto detection
 			TemplateParser parser = detectors.values().iterator().next().build();
 			LOG.info("Using single template engine: {}", parser);
-			LOG.debug("Using prefix {} and suffix {} for template resolution", prefix, suffix);
+			LOG.debug("Using parent path {} and extension {} for template resolution", parentPath, extension);
 			LOG.debug("Using lookup mapping resolver: {}", resolvers);
 			return parser;
 		} else {
@@ -354,7 +354,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 			}
 			LOG.info("Using auto detection mechanism");
 			LOG.debug("Auto detection mechanisms: {}", map);
-			LOG.debug("Using prefix {} and suffix {} for template resolution", prefix, suffix);
+			LOG.debug("Using parent path {} and extension {} for template resolution", parentPath, extension);
 			LOG.debug("Using lookup mapping resolver: {}", resolvers);
 			return new AutoDetectTemplateParser(firstSupportingResolver, map);
 		}

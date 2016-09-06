@@ -1,7 +1,7 @@
 package fr.sii.ogham.core.resource;
 
 /**
- * Provides a link between a resource path, its recognized prefix and its
+ * Provides a link between a resource path, its recognized lookup and its
  * resolved value.
  * 
  * @author Cyril Dejonghe
@@ -9,24 +9,24 @@ package fr.sii.ogham.core.resource;
  */
 public class ResourcePath {
 	/**
-	 * The entire path of the resource, OGHAM style, prefix included.
+	 * The entire path of the resource, OGHAM style, lookup included.
 	 */
 	private String path;
 
 	/**
-	 * The prefix corresponding to the resource type / protocol..
+	 * The lookup corresponding to the resource type / protocol..
 	 */
-	private String prefix;
+	private String lookup;
 
 	/**
 	 * The resolved path of the resource. Used by the resolver.
 	 */
 	private String resolvedPath;
 
-	public ResourcePath(String path, String prefix, String resolvedPath) {
+	public ResourcePath(String path, String lookup, String resolvedPath) {
 		super();
 		this.path = path;
-		this.prefix = prefix;
+		this.lookup = lookup;
 		this.resolvedPath = resolvedPath;
 	}
 
@@ -43,11 +43,11 @@ public class ResourcePath {
 	}
 
 	public String getPrefix() {
-		return prefix;
+		return lookup;
 	}
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
+	public void setLookup(String lookup) {
+		this.lookup = lookup;
 	}
 
 	public String getResolvedPath() {

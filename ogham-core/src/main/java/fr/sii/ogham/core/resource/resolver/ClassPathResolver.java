@@ -22,12 +22,12 @@ import fr.sii.ogham.core.resource.ResourcePath;
  * @author Aurélien Baudet
  * @see ByteResource
  */
-public class ClassPathResolver extends AbstractSimplePathResolver implements ResourceResolver {
+public class ClassPathResolver extends AbstractPrefixedLookupPathResolver implements ResourceResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClassPathResolver.class);
 
-	public ClassPathResolver(boolean isDefault, String... prefixes) {
-		super(isDefault, prefixes);
+	public ClassPathResolver(boolean isDefault, String... lookups) {
+		super(isDefault, lookups);
 	}
 
 	@Override

@@ -17,12 +17,12 @@ import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
 /**
  * <p>
  * Builder used to help construct the resource resolution. Resource resolution
- * is based on a lookup prefix. The lookup prefix is case sensitive and must end
- * with a ':'. It must not contain another ':' character.
+ * is based on a lookup. The lookup is case sensitive and must end with a ':'.
+ * It must not contain another ':' character.
  * </p>
  * <p>
  * For example, a resource path could be "classpath:/email/hello.html". The
- * lookup prefix is "classpath:".
+ * lookup is "classpath:".
  * </p>
  * <p>
  * The lookup can also be empty in order to define a kind of default resolver if
@@ -74,7 +74,7 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 		if (parentPath.isEmpty() && extension.isEmpty()) {
 			builtResolvers.addAll(resolvers);
 		} else {
-			LOG.debug("Using prefix {} and suffix {} for resource resolution", parentPath, extension);
+			LOG.debug("Using parentPath {} and extension {} for resource resolution", parentPath, extension);
 			for (ResourceResolver resolver : resolvers) {
 				builtResolvers.add(new RelativeResolver(resolver, parentPath, extension));
 			}
@@ -86,7 +86,7 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 * Tells the builder to use the default template resolvers:
 	 * <ul>
 	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathResolver}). The lookup prefix is "classpath:"</li>
+	 * {@link ClassPathResolver}). The lookup is "classpath:"</li>
 	 * <li>Resolver that is able to handle file resolution (
 	 * {@link FileResolver}). The lookup is "file:"</li>
 	 * <li>Resolver that is able to handle string directly (
@@ -126,10 +126,10 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	}
 
 	/**
-	 * Set the prefix for template lookup. This prefix is used for all lookup
-	 * methods. The aim is to define only the name of the template (or a subset)
-	 * and the system will find it for you. It avoids to explicitly write the
-	 * whole path and let you change the lookup method easily.
+	 * Set the parent path for template lookup. This parent path is used for all
+	 * lookup methods. The aim is to define only the name of the template (or a
+	 * subset) and the system will find it for you. It avoids to explicitly
+	 * write the whole path and let you change the lookup method easily.
 	 * 
 	 * For example:
 	 * <ul>
@@ -139,7 +139,7 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 * <code>/foo/template/resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * So you can set the prefix to <code>/foo/template/</code> and then
+	 * So you can set the parent path to <code>/foo/template/</code> and then
 	 * reference the templates using the file name:
 	 * <ul>
 	 * <li><code>createAccount.html</code></li>
@@ -156,10 +156,10 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	}
 
 	/**
-	 * Set the suffix for resolution lookup. This suffix is used for all lookup
-	 * methods. The aim is to define only the name of the resource (or a subset)
-	 * and the system will find it for you. It avoids to explicitly write the
-	 * whole path and let you change the lookup method easily.
+	 * Set the extension for resolution lookup. This extension is used for all
+	 * lookup methods. The aim is to define only the name of the resource (or a
+	 * subset) and the system will find it for you. It avoids to explicitly
+	 * write the whole path and let you change the lookup method easily.
 	 * 
 	 * For example:
 	 * <ul>
@@ -169,8 +169,9 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 * <code>/foo/resource/resetPassword.html</code></li>
 	 * </ul>
 	 * 
-	 * So you can set the prefix to <code>/foo/resource/</code>, the suffix to
-	 * <code>.html</code> and then reference the resources using the file name:
+	 * So you can set the parent path to <code>/foo/resource/</code>, the
+	 * extension to <code>.html</code> and then reference the resources using
+	 * the file name:
 	 * <ul>
 	 * <li><code>createAccount</code></li>
 	 * <li><code>resetPassword</code></li>

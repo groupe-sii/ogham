@@ -65,7 +65,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	 * Tells the builder to use all default behaviors and values.
 	 * <p>
 	 * It will register a {@link LookupResourceTranslator} for searching
-	 * attachments using a prefix lookup.
+	 * attachments using a lookup.
 	 * </p>
 	 * It will enable default lookups (see {@link #useDefaultLookups()}):
 	 * <ul>
@@ -109,7 +109,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	}
 
 	/**
-	 * Register a lookup mapping. The key is the lookup prefix. The value is the
+	 * Register a lookup mapping. The key is the lookup. The value is the
 	 * resource resolver.
 	 * 
 	 * @param resource

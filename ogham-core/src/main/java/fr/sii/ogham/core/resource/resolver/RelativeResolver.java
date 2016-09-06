@@ -9,13 +9,14 @@ import fr.sii.ogham.core.resource.ResourcePath;
 
 /**
  * <p>
- * Decorator resource resolver that use prefix and suffix for resource
+ * Decorator resource resolver that use parent path and extension for resource
  * resolution.
  * </p>
  * <p>
- * For example, the prefix values "email/user/" and the suffix is ".html". The
- * resource name is "hello". This resource resolver appends the prefix, the
- * resource name and the suffix generating the path "email/user/hello.html".
+ * For example, the parent path values "email/user/" and the extension is
+ * ".html". The resource name is "hello". This resource resolver appends the
+ * parent path, the resource name and the extension generating the path
+ * "email/user/hello.html".
  * </p>
  * <p>
  * Once the path is generated, then this implementation delegates the real
@@ -29,7 +30,7 @@ public class RelativeResolver implements ResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(RelativeResolver.class);
 
 	/**
-	 * The prefix to add to the resource name (or path)
+	 * The parent path to add to the resource name (or path)
 	 */
 	private String parentPath;
 
@@ -44,21 +45,21 @@ public class RelativeResolver implements ResourceResolver {
 	private ResourceResolver delegate;
 
 	/**
-	 * Initialize the resolver with the mandatory delegate and a prefix. No
-	 * suffix will be appended to the resource path.
+	 * Initialize the resolver with the mandatory delegate and a parent path. No
+	 * extension will be appended to the resource path.
 	 * 
 	 * @param delegate
 	 *            the resolver that will do the real resource resolution
-	 * @param prefix
+	 * @param parentPath
 	 *            a string to add before the resource path
 	 */
-	public RelativeResolver(ResourceResolver delegate, String prefix) {
-		this(delegate, prefix, "");
+	public RelativeResolver(ResourceResolver delegate, String parentPath) {
+		this(delegate, parentPath, "");
 	}
 
 	/**
-	 * Initialize the resolver with the mandatory delegate, a prefix and a
-	 * suffix.
+	 * Initialize the resolver with the mandatory delegate, a parent path and a
+	 * extension.
 	 * 
 	 * @param delegate
 	 *            the resolver that will do the real resource resolution
@@ -78,10 +79,10 @@ public class RelativeResolver implements ResourceResolver {
 	public Resource getResource(String path) throws ResourceResolutionException {
 		boolean absolute = path.startsWith("/");
 		if (absolute) {
-			LOG.trace("Absolute resource path {} => do not add prefix/suffix", path);
+			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
 			return delegate.getResource(path);
 		} else {
-			LOG.debug("Adding prefix ({}) and suffix ({}) to the resource path {}", parentPath, extension, path);
+			LOG.debug("Adding parentPath ({}) and extension ({}) to the resource path {}", parentPath, extension, path);
 			return delegate.getResource(parentPath + path + extension);
 		}
 	}

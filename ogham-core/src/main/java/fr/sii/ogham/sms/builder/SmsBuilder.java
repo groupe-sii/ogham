@@ -41,15 +41,15 @@ import fr.sii.ogham.template.TemplateConstants;
  * </p>
  * There exists several implementations to send an SMS:
  * <ul>
- * <li>Using <a
- * href="https://github.com/twitter/cloudhopper-smpp">cloudhopper</a> (SMPP
+ * <li>Using
+ * <a href="https://github.com/twitter/cloudhopper-smpp">cloudhopper</a> (SMPP
  * library)</li>
  * <li>Using <a href="http://jsmpp.org/">jsmpp</a> (SMPP library)</li>
  * <li>Using any other library</li>
  * <li>Using HTTP request to drive <a href="http://guides.ovh.com/Http2Sms">OVH
  * API</a></li>
- * <li>Using REST, HTTP or SOAP requests to drive <a
- * href="http://www.smsglobal.com/">smsglobal APIs</a></li>
+ * <li>Using REST, HTTP or SOAP requests to drive
+ * <a href="http://www.smsglobal.com/">smsglobal APIs</a></li>
  * <li>Using any other web service</li>
  * <li>...</li>
  * </ul>
@@ -114,14 +114,14 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	private PhoneNumberTranslatorBuilder senderNumberTranslatorBuilder;
 
 	/**
-	 * Own property key for template resolution prefix
+	 * Own property key for template resolution parent path
 	 */
-	private String templatePrefixKey;
+	private String templateParentPathKey;
 
 	/**
-	 * Own property key for template resolution prefix
+	 * Own property key for template resolution extension
 	 */
-	private String templateSuffixKey;
+	private String templateExtensionKey;
 
 	public SmsBuilder() {
 		super();
@@ -138,13 +138,13 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			smsSender.addImplementation(impl.getKey(), s);
 		}
 		if (contentTranslatorBuilder != null) {
-			if (templatePrefixKey != null) {
-				LOG.debug("Use custom property key {} for prefix template resolution", templatePrefixKey);
-				getTemplateBuilder().setPrefixKey(templatePrefixKey);
+			if (templateParentPathKey != null) {
+				LOG.debug("Use custom property key {} for parent path template resolution", templateParentPathKey);
+				getTemplateBuilder().setParentPathKey(templateParentPathKey);
 			}
-			if (templateSuffixKey != null) {
-				LOG.debug("Use custom property key {} for suffix template resolution", templateSuffixKey);
-				getTemplateBuilder().setSuffixKey(templateSuffixKey);
+			if (templateExtensionKey != null) {
+				LOG.debug("Use custom property key {} for extension template resolution", templateExtensionKey);
+				getTemplateBuilder().setExtensionKey(templateExtensionKey);
 			}
 			sender = new ContentTranslatorSender(contentTranslatorBuilder.build(), sender);
 		}
@@ -305,7 +305,9 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	public SmsBuilder withSmsglobalRestApi(Properties properties) {
 		// Use smsglobal REST API only if
 		// SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY is set
-//		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY, properties), new SmsglobalRestSender());
+		// registerImplementation(new
+		// RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY,
+		// properties), new SmsglobalRestSender());
 		return this;
 	}
 
@@ -476,14 +478,15 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <p>
 	 * Calling this method will enable different location for SMS templates from
 	 * default one. The location will be specified by different property keys
-	 * for prefix and suffix.
+	 * for parent path and extension.
 	 * </p>
 	 * 
 	 * By default default properties are:
 	 * <ul>
 	 * <li>ogham.template.prefix (see {@link TemplateConstants#PREFIX_PROPERTY})
 	 * </li>
-	 * <li>ogham.template.suffix (see {@link TemplateConstants#SUFFIX_PROPERTY}</li>
+	 * <li>ogham.template.suffix (see
+	 * {@link TemplateConstants#SUFFIX_PROPERTY}</li>
 	 * </ul>
 	 * 
 	 * Calling this method will change the property keys to:
@@ -497,8 +500,8 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder enableSmsTemplateKeys() {
-		setTemplatePrefixKey(SmsConstants.TemplateConstants.PREFIX_PROPERTY);
-		setTemplateSuffixKey(SmsConstants.TemplateConstants.SUFFIX_PROPERTY);
+		setTemplateParentPathKey(SmsConstants.TemplateConstants.PREFIX_PROPERTY);
+		setTemplateExtensionKey(SmsConstants.TemplateConstants.SUFFIX_PROPERTY);
 		return this;
 	}
 
@@ -506,7 +509,7 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <p>
 	 * Calling this method will enable different location for SMS templates from
 	 * default one. The location will be specified by a different property key
-	 * for prefix.
+	 * for parent path.
 	 * </p>
 	 * 
 	 * <p>
@@ -518,12 +521,12 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * Calling this method will change the property key to the provided key.
 	 * </p>
 	 * 
-	 * @param prefixKey
-	 *            the new key for the SMS template prefix
+	 * @param parentPathKey
+	 *            the new key for the SMS template parent path
 	 * @return this instance for fluent use
 	 */
-	public SmsBuilder setTemplatePrefixKey(String prefixKey) {
-		this.templatePrefixKey = prefixKey;
+	public SmsBuilder setTemplateParentPathKey(String parentPathKey) {
+		this.templateParentPathKey = parentPathKey;
 		return this;
 	}
 
@@ -531,11 +534,11 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <p>
 	 * Calling this method will enable different location for SMS templates from
 	 * default one. The location will be specified by a different property key
-	 * for suffix.
+	 * for extension.
 	 * </p>
 	 * 
 	 * <p>
-	 * By default default property key is ogham.template.prefix (see
+	 * By default default property key is ogham.template.suffix (see
 	 * {@link TemplateConstants#SUFFIX_PROPERTY})
 	 * </p>
 	 * 
@@ -543,12 +546,12 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * Calling this method will change the property key to the provided key.
 	 * </p>
 	 * 
-	 * @param suffixKey
-	 *            the new key for the SMS template suffix
+	 * @param extensionKey
+	 *            the new key for the SMS template extension
 	 * @return this instance for fluent use
 	 */
-	public SmsBuilder setTemplateSuffixKey(String suffixKey) {
-		this.templateSuffixKey = suffixKey;
+	public SmsBuilder setTemplateExtensionKey(String extensionKey) {
+		this.templateExtensionKey = extensionKey;
 		return this;
 	}
 
@@ -647,7 +650,8 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * 
 	 * Access this builder if you want to:
 	 * <ul>
-	 * <li>Customize templating mechanism (see {@link #getTemplateBuilder()})</li>
+	 * <li>Customize templating mechanism (see
+	 * {@link #getTemplateBuilder()})</li>
 	 * <li>Enable/disable support for messages with multiple contents</li>
 	 * <li>Enable/disable support for inlining of resources</li>
 	 * <li>Add your own content translator</li>
@@ -671,8 +675,8 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <li>Register a custom lookup mapping resolver for template resources</li>
 	 * <li>Use your own template engine</li>
 	 * <li>Customize the template engine configuration</li>
-	 * <li>Set the prefix and suffix for template resolution</li>
-	 * <li>Set the property key for prefix and suffix resolution</li>
+	 * <li>Set the parent path and extension for template resolution</li>
+	 * <li>Set the property key for parent path and extension resolution</li>
 	 * </ul>
 	 * 
 	 * @return the template builder

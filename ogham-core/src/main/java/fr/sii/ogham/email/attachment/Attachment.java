@@ -15,10 +15,10 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  * Represents a content to attach to the email. Typically a file to join to the
  * email. An attachment is represented with the following information:
  * <ul>
- * <li>A content (the file to join to the email). See {@link NamedResource} for more
- * information.</li>
- * <li>A name (the name to display for the file). See {@link NamedResource} for more
- * information.</li>
+ * <li>A content (the file to join to the email). See {@link NamedResource} for
+ * more information.</li>
+ * <li>A name (the name to display for the file). See {@link NamedResource} for
+ * more information.</li>
  * <li>An optional description</li>
  * <li>An optional disposition ({@link ContentDisposition#ATTACHMENT} by
  * default)</li>
@@ -128,12 +128,12 @@ public class Attachment {
 	 * attachment and disposition (how to include the attachment into the mail).
 	 * </p>
 	 * <p>
-	 * The path may contain a lookup prefix. The lookup prefix is case sensitive
-	 * and must end with a ':'. It must not contain another ':' character.
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
 	 * </p>
 	 * <p>
-	 * For example, a path could be "classpath:/email/hello.pdf". The lookup
-	 * prefix is "classpath:".
+	 * For example, a path could be "classpath:/email/hello.pdf". The lookup is
+	 * "classpath:".
 	 * </p>
 	 * 
 	 * @param path
@@ -153,12 +153,12 @@ public class Attachment {
 	 * attachment.
 	 * </p>
 	 * <p>
-	 * The path may contain a lookup prefix. The lookup prefix is case sensitive
-	 * and must end with a ':'. It must not contain another ':' character.
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
 	 * </p>
 	 * <p>
-	 * For example, a path could be "classpath:/email/hello.pdf". The lookup
-	 * prefix is "classpath:".
+	 * For example, a path could be "classpath:/email/hello.pdf". The lookup is
+	 * "classpath:".
 	 * </p>
 	 * <p>
 	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
@@ -178,12 +178,12 @@ public class Attachment {
 	 * Initialize the attachment with the provided path.
 	 * </p>
 	 * <p>
-	 * The path may contain a lookup prefix. The lookup prefix is case sensitive
-	 * and must end with a ':'. It must not contain another ':' character.
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
 	 * </p>
 	 * <p>
-	 * For example, a path could be "classpath:/email/hello.pdf". The lookup
-	 * prefix is "classpath:".
+	 * For example, a path could be "classpath:/email/hello.pdf". The lookup is
+	 * "classpath:".
 	 * </p>
 	 * <p>
 	 * The description is not used (set to null)
@@ -412,7 +412,7 @@ public class Attachment {
 	public void setContentId(String contentId) {
 		this.contentId = contentId;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -420,7 +420,7 @@ public class Attachment {
 		if (description != null) {
 			builder.append(" )").append(description).append(")");
 		}
-		if(contentId!=null) {
+		if (contentId != null) {
 			builder.append("{").append(contentId).append("}>");
 		}
 		builder.append("[").append(disposition).append("]>");

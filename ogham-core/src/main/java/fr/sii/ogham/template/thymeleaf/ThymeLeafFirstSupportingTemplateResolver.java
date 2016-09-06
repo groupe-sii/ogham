@@ -17,7 +17,7 @@ import fr.sii.ogham.template.thymeleaf.adapter.FirstSupportingResolverAdapter;
  * </p>
  * <p>
  * It delegates to a {@link FirstSupportingResourceResolver} the link between
- * path, {@link ResourcePath} and {@link ResourceResolver}. each prefix to a
+ * path, {@link ResourcePath} and {@link ResourceResolver}. each lookup to a
  * dedicated {@link ResourceResolver}.
  * </p>
  * <p>

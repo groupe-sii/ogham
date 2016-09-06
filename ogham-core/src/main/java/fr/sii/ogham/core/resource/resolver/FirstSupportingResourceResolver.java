@@ -12,10 +12,10 @@ import fr.sii.ogham.core.resource.ResourcePath;
 
 /**
  * Decorator that will ask each resource resolver if it is able to handle the
- * lookup prefix. If the resource resolver can, then this implementation asks
- * the resolver to really provide the resource.
+ * lookup. If the resource resolver can, then this implementation asks the
+ * resolver to really provide the resource.
  * 
- * Only the first resource resolver that can handle the lookup prefix is used.
+ * Only the first resource resolver that can handle the lookup is used.
  * 
  * @author Aurélien Baudet
  * @see ResourceResolver
@@ -25,7 +25,7 @@ public class FirstSupportingResourceResolver implements ResourceResolver {
 
 	/**
 	 * The list of resolvers used to resolve the resource according to the
-	 * prefix
+	 * lookup.
 	 */
 	private List<ResourceResolver> resolvers;
 

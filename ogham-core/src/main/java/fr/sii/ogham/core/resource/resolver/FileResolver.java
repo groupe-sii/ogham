@@ -22,11 +22,11 @@ import fr.sii.ogham.core.resource.ResourcePath;
  * @author Aurélien Baudet
  * @see FileResource
  */
-public class FileResolver extends AbstractSimplePathResolver implements ResourceResolver {
+public class FileResolver extends AbstractPrefixedLookupPathResolver implements ResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(FileResolver.class);
 
-	public FileResolver(boolean isDefault, String... prefixes) {
-		super(isDefault, prefixes);
+	public FileResolver(boolean isDefault, String... lookups) {
+		super(isDefault, lookups);
 	}
 
 	@Override

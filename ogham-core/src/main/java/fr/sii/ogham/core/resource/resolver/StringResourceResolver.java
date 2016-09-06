@@ -10,10 +10,10 @@ import fr.sii.ogham.core.resource.SimpleResource;
  * @author Aurélien Baudet
  *
  */
-public class StringResourceResolver extends AbstractSimplePathResolver implements ResourceResolver {
+public class StringResourceResolver extends AbstractPrefixedLookupPathResolver implements ResourceResolver {
 
-	public StringResourceResolver(boolean isDefault, String... prefixes) {
-		super(isDefault, prefixes);
+	public StringResourceResolver(boolean isDefault, String... lookups) {
+		super(isDefault, lookups);
 	}
 
 	@Override
