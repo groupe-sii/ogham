@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.resource.resolver;
 
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.resource.ResourcePath;
 
 /**
@@ -14,17 +16,14 @@ import fr.sii.ogham.core.resource.ResourcePath;
 public abstract class AbstractPrefixedLookupPathResolver implements ResourceResolver {
 	private String[] lookups;
 
-	private boolean isDefault;
-
-	public AbstractPrefixedLookupPathResolver(boolean isDefault, String... lookups) {
+	public AbstractPrefixedLookupPathResolver(String... lookups) {
 		super();
-		this.isDefault = isDefault;
 		this.lookups = lookups;
 	}
 
 	@Override
 	public boolean supports(String path) {
-		return getLookup(path) != null || isDefault;
+		return getLookup(path) != null;
 	}
 
 	public String getLookup(String path) {
@@ -36,16 +35,34 @@ public abstract class AbstractPrefixedLookupPathResolver implements ResourceReso
 		return null;
 	}
 
+	/**
+	 * Find the resource using the resource path (or its name).
+	 * 
+	 * @param path
+	 *            the path of the resource
+	 * @return the found resource
+	 * @throws ResourceResolutionException
+	 *             when the resource couldn't be found
+	 */
+	protected abstract Resource getResource(ResourcePath resourcePath) throws ResourceResolutionException;
+
+	@Override
+	public Resource getResource(String path) throws ResourceResolutionException {
+		return getResource(getResourcePath(path));
+	}
+
 	@Override
 	public ResourcePath getResourcePath(String path) {
 		ResourcePath result = null;
 		String lookup = getLookup(path);
 		if (lookup != null) {
 			result = new ResourcePath(path, lookup, path.replace(lookup, ""));
-		} else if (isDefault) {
-			result = new ResourcePath(path, lookup, path);
 		}
 		return result;
 	}
 
+	@Override
+	public ResourceResolver getActualResourceResolver() {
+		return this;
+	}
 }

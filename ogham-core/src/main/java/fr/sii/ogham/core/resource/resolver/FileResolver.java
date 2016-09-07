@@ -25,13 +25,12 @@ import fr.sii.ogham.core.resource.ResourcePath;
 public class FileResolver extends AbstractPrefixedLookupPathResolver implements ResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(FileResolver.class);
 
-	public FileResolver(boolean isDefault, String... lookups) {
-		super(isDefault, lookups);
+	public FileResolver(String... lookups) {
+		super(lookups);
 	}
 
 	@Override
-	public Resource getResource(String path) throws ResourceResolutionException {
-		ResourcePath resourcePath = getResourcePath(path);
+	protected Resource getResource(ResourcePath resourcePath) throws ResourceResolutionException {
 		LOG.debug("Loading resource {} from file system", resourcePath);
 		String resolvedPath = resourcePath.getResolvedPath();
 		File file = new File(resolvedPath);

@@ -102,4 +102,9 @@ public class FirstSupportingResourceResolver implements ResourceResolver {
 		}
 	}
 
+	@Override
+	public ResourceResolver getActualResourceResolver() {
+		return null;
+	}
+
 }

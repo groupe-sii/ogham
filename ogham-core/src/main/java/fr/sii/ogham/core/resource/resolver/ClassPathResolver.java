@@ -26,13 +26,18 @@ public class ClassPathResolver extends AbstractPrefixedLookupPathResolver implem
 
 	private static final Logger LOG = LoggerFactory.getLogger(ClassPathResolver.class);
 
-	public ClassPathResolver(boolean isDefault, String... lookups) {
-		super(isDefault, lookups);
+	public ClassPathResolver(String... lookups) {
+		super(lookups);
 	}
 
 	@Override
 	public Resource getResource(String path) throws ResourceResolutionException {
 		ResourcePath resourcePath = getResourcePath(path);
+		return getResource(resourcePath);
+	}
+
+	@Override
+	protected Resource getResource(ResourcePath resourcePath) throws ResourceResolutionException {
 		try {
 			LOG.debug("Loading resource {} from classpath...", resourcePath);
 			String resolvedPath = resourcePath.getResolvedPath();
@@ -57,5 +62,4 @@ public class ClassPathResolver extends AbstractPrefixedLookupPathResolver implem
 		}
 		return name;
 	}
-
 }

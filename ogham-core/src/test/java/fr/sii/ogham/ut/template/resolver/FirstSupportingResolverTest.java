@@ -65,8 +65,8 @@ public class FirstSupportingResolverTest {
 
 	@Test
 	public void unknown() {
-		firstSupportingResolver = new FirstSupportingResolverBuilder().withResourceResolver(new FileResolver(false, "file:")).withResourceResolver(new StringResourceResolver(false, "string:"))
-				.withResourceResolver(new ClassPathResolver(false, "classpath:")).build();
+		firstSupportingResolver = new FirstSupportingResolverBuilder().withResourceResolver(new FileResolver("file:")).withResourceResolver(new StringResourceResolver("string:"))
+				.withResourceResolver(new ClassPathResolver("classpath:")).build();
 		String path = "fake:/template/resolver/foo/bar.html";
 		Assert.assertFalse("should not be able to support template path", firstSupportingResolver.supports(path));
 	}

@@ -2,6 +2,7 @@ package fr.sii.ogham.core.resource.resolver;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.ResourcePath;
 import fr.sii.ogham.core.resource.SimpleResource;
 
 /**
@@ -12,12 +13,12 @@ import fr.sii.ogham.core.resource.SimpleResource;
  */
 public class StringResourceResolver extends AbstractPrefixedLookupPathResolver implements ResourceResolver {
 
-	public StringResourceResolver(boolean isDefault, String... lookups) {
-		super(isDefault, lookups);
+	public StringResourceResolver(String... lookups) {
+		super(lookups);
 	}
 
 	@Override
-	public Resource getResource(String path) throws ResourceResolutionException {
-		return new SimpleResource(path.getBytes());
+	protected Resource getResource(ResourcePath resourcePath) throws ResourceResolutionException {
+		return new SimpleResource(resourcePath.getResolvedPath().getBytes());
 	}
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
+import fr.sii.ogham.core.resource.resolver.DefaultResourceResolver;
 import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
@@ -98,9 +99,9 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 * @return this builder instance for fluent use
 	 */
 	public FirstSupportingResolverBuilder useDefaults() {
-		withResourceResolver(new FileResolver(false, "file:"));
-		withResourceResolver(new StringResourceResolver(false, "string:"));
-		withResourceResolver(new ClassPathResolver(true, "classpath:"));
+		withResourceResolver(new FileResolver("file:"));
+		withResourceResolver(new StringResourceResolver("string:"));
+		withResourceResolver(new DefaultResourceResolver(new ClassPathResolver("classpath:")));
 		return this;
 	}
 

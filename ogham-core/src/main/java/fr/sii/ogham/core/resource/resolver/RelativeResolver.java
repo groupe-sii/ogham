@@ -95,10 +95,6 @@ public class RelativeResolver implements ResourceResolver {
 		return extension;
 	}
 
-	public ResourceResolver getDelegate() {
-		return delegate;
-	}
-
 	@Override
 	public boolean supports(String path) {
 		return delegate.supports(path);
@@ -107,5 +103,10 @@ public class RelativeResolver implements ResourceResolver {
 	@Override
 	public ResourcePath getResourcePath(String path) {
 		return delegate.getResourcePath(path);
+	}
+
+	@Override
+	public ResourceResolver getActualResourceResolver() {
+		return delegate.getActualResourceResolver();
 	}
 }

@@ -69,7 +69,7 @@ public class ThymeLeafFirstSupportingTemplateResolver implements ITemplateResolv
 					templateProcessingParameters.getContext());
 			return templateResolver.resolveTemplate(resolvedTemplateProcessingParameters);
 		} catch (NoResolverAdapterException e) {
-			throw new ResolverAdapterNotFoundException("Unable to resolver template cause no adapter supporting " + unresolvedTemplateName + " was found. ", e);
+			throw new ResolverAdapterNotFoundException("Unable to resolver template cause no adapter supporting template name '" + unresolvedTemplateName + "' was found. ", e);
 
 		}
 
