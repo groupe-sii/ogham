@@ -17,6 +17,7 @@ import fr.sii.ogham.template.thymeleaf.adapter.FileResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.adapter.FirstSupportingResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.adapter.StringResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.adapter.ThymeleafResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.adapter.ThymeleafResolverOptions;
 
 /**
  * Specialized builder for Thymeleaf template engine.
@@ -66,8 +67,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	@Override
 	public TemplateParser build() throws BuildException {
 		LOG.debug("Using parent path {} and extension {} for thymeleaf template resolvers", parentPath, extension);
-		resolverAdapter.setParentPath(parentPath);
-		resolverAdapter.setExtension(extension);
+		resolverAdapter.setOptions(new ThymeleafResolverOptions(parentPath, extension));
 		engine.addTemplateResolver(new ThymeLeafFirstSupportingTemplateResolver(resourceResolver, resolverAdapter));
 		return new ThymeleafParser(engine);
 	}

@@ -90,17 +90,9 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 	}
 
 	@Override
-	public void setParentPath(String parentPath) {
+	public void setOptions(ThymeleafResolverOptions options) {
 		for (ThymeleafResolverAdapter adapter : adapters) {
-			adapter.setParentPath(parentPath);
-		}
-
-	}
-
-	@Override
-	public void setExtension(String extension) {
-		for (ThymeleafResolverAdapter adapter : adapters) {
-			adapter.setExtension(extension);
+			adapter.setOptions(options);
 		}
 	}
 }

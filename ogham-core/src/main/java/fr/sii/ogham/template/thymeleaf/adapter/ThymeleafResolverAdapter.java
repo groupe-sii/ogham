@@ -23,7 +23,8 @@ public interface ThymeleafResolverAdapter {
 	boolean supports(ResourceResolver resolver);
 
 	/**
-	 * Adapt the general template resolver into the Thymeleaf specific resolver.
+	 * Adapts the general template resolver into the Thymeleaf specific
+	 * resolver.
 	 * 
 	 * @param resolver
 	 *            the general resolver
@@ -33,8 +34,11 @@ public interface ThymeleafResolverAdapter {
 	 */
 	ITemplateResolver adapt(ResourceResolver resolver) throws NoResolverAdapterException;
 
-	void setParentPath(String parentPath);
-
-	void setExtension(String extension);
+	/**
+	 * Sets the otpions for the adapted {@link ITemplateResolver}
+	 * 
+	 * @param options
+	 */
+	void setOptions(ThymeleafResolverOptions options);
 
 }

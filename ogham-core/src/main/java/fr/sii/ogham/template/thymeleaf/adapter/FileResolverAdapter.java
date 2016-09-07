@@ -13,7 +13,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
  * @author Aurélien Baudet
  *
  */
-public class FileResolverAdapter extends AbstractSimpleThymeleafResolverAdapter implements ThymeleafResolverAdapter {
+public class FileResolverAdapter extends AbstractThymeleafResolverOptionsAdapter implements ThymeleafResolverAdapter {
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {
@@ -23,8 +23,7 @@ public class FileResolverAdapter extends AbstractSimpleThymeleafResolverAdapter 
 	@Override
 	public ITemplateResolver adapt(ResourceResolver resolver) {
 		FileTemplateResolver templateResolver = new FileTemplateResolver();
-		templateResolver.setPrefix(getParentPath());
-		templateResolver.setSuffix(getExtension());
+		applyOptions(templateResolver);
 		return templateResolver;
 	}
 
