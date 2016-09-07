@@ -56,7 +56,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	/**
 	 * The builder used to generate template resolution
 	 */
-	private FirstSupportingResolverBuilder resolverBuilder;
+	private FirstSupportingResourceResolverBuilder resolverBuilder;
 
 	/**
 	 * The parent path for template resolution
@@ -209,10 +209,10 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * {@link #useDefaults(Properties)}.
 	 * 
 	 * @return this builder instance for fluent use
-	 * @see FirstSupportingResolverBuilder
+	 * @see FirstSupportingResourceResolverBuilder
 	 */
 	public TemplateBuilder useDefaultResolvers() {
-		resolverBuilder = new FirstSupportingResolverBuilder().useDefaults();
+		resolverBuilder = new FirstSupportingResourceResolverBuilder().useDefaults();
 		return this;
 	}
 
@@ -223,7 +223,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 *            the builder to use instead of default one
 	 * @return this builder instance for fluent use
 	 */
-	public TemplateBuilder withResourceResolverBuilder(FirstSupportingResolverBuilder resolverBuilder) {
+	public TemplateBuilder withResourceResolverBuilder(FirstSupportingResourceResolverBuilder resolverBuilder) {
 		this.resolverBuilder = resolverBuilder;
 		return this;
 	}
@@ -414,7 +414,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * 
 	 * @return the builder used to handle resource resolution
 	 */
-	public FirstSupportingResolverBuilder getResolverBuilder() {
+	public FirstSupportingResourceResolverBuilder getResolverBuilder() {
 		return resolverBuilder;
 	}
 

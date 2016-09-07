@@ -8,7 +8,7 @@ import fr.sii.ogham.core.resource.ResourcePath;
  * Decorates an {@link AbstractPrefixedLookupPathResolver} to manage a default
  * case (no lookup found).
  * 
- * @author Aurélien Baudet
+ * @author Cyril Dejonghe
  *
  */
 public class DefaultResourceResolver implements ResourceResolver {

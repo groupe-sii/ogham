@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.FirstSupportingResolverBuilder;
+import fr.sii.ogham.core.builder.FirstSupportingResourceResolverBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
@@ -36,7 +36,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	/**
 	 * The map for managing lookup part in resource path
 	 */
-	private FirstSupportingResolverBuilder resolverBuilder;
+	private FirstSupportingResourceResolverBuilder resolverBuilder;
 
 	public AttachmentResourceTranslatorBuilder() {
 		super();
@@ -92,7 +92,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	 * @return this instance for fluent use
 	 */
 	public AttachmentResourceTranslatorBuilder useDefaultLookups() {
-		resolverBuilder = new FirstSupportingResolverBuilder().useDefaults();
+		resolverBuilder = new FirstSupportingResourceResolverBuilder().useDefaults();
 		return this;
 	}
 
@@ -118,7 +118,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	 */
 	public AttachmentResourceTranslatorBuilder withResourceResolver(ResourceResolver resource) {
 		if (resolverBuilder == null) {
-			resolverBuilder = new FirstSupportingResolverBuilder();
+			resolverBuilder = new FirstSupportingResourceResolverBuilder();
 		}
 		resolverBuilder.withResourceResolver(resource);
 		return this;
@@ -137,7 +137,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	 * 
 	 * @return the builder used to handle resource resolution
 	 */
-	public FirstSupportingResolverBuilder getResolverBuilder() {
+	public FirstSupportingResourceResolverBuilder getResolverBuilder() {
 		return resolverBuilder;
 	}
 }

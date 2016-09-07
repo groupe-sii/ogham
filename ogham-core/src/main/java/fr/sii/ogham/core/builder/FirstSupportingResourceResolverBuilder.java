@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
-import fr.sii.ogham.core.resource.resolver.DefaultResourceResolver;
 import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
@@ -40,12 +39,12 @@ import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
  * 
  * 
  * @author Aurélien Baudet
- * @see FirstSupportingResolverBuilder
+ * @see FirstSupportingResourceResolverBuilder
  * @see FirstSupportingResourceResolver
  *
  */
-public class FirstSupportingResolverBuilder implements Builder<FirstSupportingResourceResolver> {
-	private static final Logger LOG = LoggerFactory.getLogger(FirstSupportingResolverBuilder.class);
+public class FirstSupportingResourceResolverBuilder implements Builder<FirstSupportingResourceResolver> {
+	private static final Logger LOG = LoggerFactory.getLogger(FirstSupportingResourceResolverBuilder.class);
 
 	/**
 	 * The list that temporarily stores the template resolver implementations
@@ -62,7 +61,7 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 */
 	private String extension;
 
-	public FirstSupportingResolverBuilder() {
+	public FirstSupportingResourceResolverBuilder() {
 		super();
 		resolvers = new ArrayList<>();
 		parentPath = "";
@@ -98,10 +97,10 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 * 
 	 * @return this builder instance for fluent use
 	 */
-	public FirstSupportingResolverBuilder useDefaults() {
+	public FirstSupportingResourceResolverBuilder useDefaults() {
 		withResourceResolver(new FileResolver("file:"));
 		withResourceResolver(new StringResourceResolver("string:"));
-		withResourceResolver(new DefaultResourceResolver(new ClassPathResolver("classpath:")));
+		withResourceResolver(new ClassPathResolver("classpath:", ""));
 		return this;
 	}
 
@@ -121,7 +120,7 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 *            the resolver implementation
 	 * @return The current builder for fluent use
 	 */
-	public FirstSupportingResolverBuilder withResourceResolver(ResourceResolver resolver) {
+	public FirstSupportingResourceResolverBuilder withResourceResolver(ResourceResolver resolver) {
 		resolvers.add(resolver);
 		return this;
 	}
@@ -151,7 +150,7 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 *            the parent path for template resolution
 	 * @return The current builder for fluent use
 	 */
-	public FirstSupportingResolverBuilder withParentPath(String parentPath) {
+	public FirstSupportingResourceResolverBuilder withParentPath(String parentPath) {
 		this.parentPath = parentPath;
 		return this;
 	}
@@ -182,7 +181,7 @@ public class FirstSupportingResolverBuilder implements Builder<FirstSupportingRe
 	 *            the extension for resource resolution
 	 * @return The current builder for fluent use
 	 */
-	public FirstSupportingResolverBuilder withExtension(String extension) {
+	public FirstSupportingResourceResolverBuilder withExtension(String extension) {
 		this.extension = extension;
 		return this;
 	}

@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import fr.sii.ogham.core.builder.FirstSupportingResolverBuilder;
+import fr.sii.ogham.core.builder.FirstSupportingResourceResolverBuilder;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
@@ -27,7 +27,7 @@ public class FirstSupportingResolverTest {
 
 	@Before
 	public void setUp() throws ResourceResolutionException {
-		firstSupportingResolver = new FirstSupportingResolverBuilder().useDefaults().build();
+		firstSupportingResolver = new FirstSupportingResourceResolverBuilder().useDefaults().build();
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class FirstSupportingResolverTest {
 
 	@Test
 	public void unknown() {
-		firstSupportingResolver = new FirstSupportingResolverBuilder().withResourceResolver(new FileResolver("file:")).withResourceResolver(new StringResourceResolver("string:"))
+		firstSupportingResolver = new FirstSupportingResourceResolverBuilder().withResourceResolver(new FileResolver("file:")).withResourceResolver(new StringResourceResolver("string:"))
 				.withResourceResolver(new ClassPathResolver("classpath:")).build();
 		String path = "fake:/template/resolver/foo/bar.html";
 		Assert.assertFalse("should not be able to support template path", firstSupportingResolver.supports(path));

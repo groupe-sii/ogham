@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import fr.sii.ogham.core.builder.FirstSupportingResolverBuilder;
+import fr.sii.ogham.core.builder.FirstSupportingResourceResolverBuilder;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -30,7 +30,7 @@ public class JsoupInlineCssTranslatorTest {
 
 	@Before
 	public void setUp() {
-		FirstSupportingResourceResolver resourceResolver = new FirstSupportingResolverBuilder().useDefaults().withParentPath(SOURCE_FOLDER).build();
+		FirstSupportingResourceResolver resourceResolver = new FirstSupportingResourceResolverBuilder().useDefaults().withParentPath(SOURCE_FOLDER).build();
 		translator = new InlineCssTranslator(new JsoupCssInliner(), resourceResolver);
 	}
 

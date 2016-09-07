@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import fr.sii.ogham.core.builder.FirstSupportingResolverBuilder;
+import fr.sii.ogham.core.builder.FirstSupportingResourceResolverBuilder;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.message.content.Content;
@@ -57,7 +57,7 @@ public class JsoupInlineImageTranslatorTest {
 		Mockito.when(generator.generate("left.gif")).thenReturn("left.gif");
 		Mockito.when(generator.generate("right.gif")).thenReturn("right.gif");
 		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
-		FirstSupportingResourceResolver resourceResolver = new FirstSupportingResolverBuilder().useDefaults().withParentPath(SOURCE_FOLDER).build();
+		FirstSupportingResourceResolver resourceResolver = new FirstSupportingResourceResolverBuilder().useDefaults().withParentPath(SOURCE_FOLDER).build();
 		JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
 		ImageInliner inliner = new EveryImageInliner(new JsoupAttachImageInliner(generator), new JsoupBase64ImageInliner());
 		translator = new InlineImageTranslator(inliner, resourceResolver, mimetypeProvider);

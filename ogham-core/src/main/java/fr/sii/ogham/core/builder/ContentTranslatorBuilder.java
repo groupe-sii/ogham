@@ -79,7 +79,7 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 		if (enableInlining) {
 			// TODO: extract inliners init to their own builders
 			LOG.debug("CSS inlining is enabled");
-			FirstSupportingResourceResolver resolver = new FirstSupportingResolverBuilder().useDefaults().build();
+			FirstSupportingResourceResolver resolver = new FirstSupportingResourceResolverBuilder().useDefaults().build();
 			translator.addTranslator(new InlineCssTranslator(new JsoupCssInliner(), resolver));
 			LOG.debug("Image inlining is enabled");
 			JMimeMagicProvider mimetypeProvider = new JMimeMagicProvider();
