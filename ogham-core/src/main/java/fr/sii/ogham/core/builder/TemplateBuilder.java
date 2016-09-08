@@ -198,13 +198,11 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		return this;
 	}
 
-	@Override
 	public TemplateBuilder withParentPath(String parentPath) {
 		this.parentPath = parentPath;
 		return this;
 	}
 
-	@Override
 	public TemplateBuilder withExtension(String extension) {
 		this.extension = extension;
 		return this;
@@ -296,9 +294,6 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		FirstSupportingResourceResolver firstSupportingResolver = resolverBuilder.build();
 		List<ResourceResolver> resolvers = firstSupportingResolver.getResolvers();
 		for (TemplateParserBuilder templateParserBuilder : detectors.values()) {
-			// set parent path and extension for each implementation
-			templateParserBuilder.withParentPath(resolvedParentPath);
-			templateParserBuilder.withExtension(resolvedExtension);
 
 			// TODO manage extra configuration for each {@link TemplateParserBuilder}
 			if (templateParserBuilder instanceof ThymeleafTemplateParserBuilder) {

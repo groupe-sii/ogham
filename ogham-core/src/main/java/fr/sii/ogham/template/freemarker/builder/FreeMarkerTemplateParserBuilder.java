@@ -39,16 +39,6 @@ public class FreeMarkerTemplateParserBuilder implements TemplateParserBuilder {
 	 */
 	private FirstSupportingResourceResolver resourceResolver;
 
-	/**
-	 * The parent path for searching template.
-	 */
-	private String parentPath;
-
-	/**
-	 * The extension for searching template.
-	 */
-	private String extension;
-
 	public FreeMarkerTemplateParserBuilder() {
 		super();
 		this.configuration = new Configuration(Configuration.VERSION_2_3_23);
@@ -57,8 +47,6 @@ public class FreeMarkerTemplateParserBuilder implements TemplateParserBuilder {
 		configuration.setLogTemplateExceptions(false);
 
 		this.resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter(), new StringResolverAdapter());
-		parentPath = "";
-		extension = "";
 	}
 
 	@Override
@@ -89,18 +77,6 @@ public class FreeMarkerTemplateParserBuilder implements TemplateParserBuilder {
 	 */
 	public FreeMarkerTemplateParserBuilder withFirstResourceResolver(FirstSupportingResourceResolver firstSupportingResourceResolver) {
 		this.resourceResolver = firstSupportingResourceResolver;
-		return this;
-	}
-
-	@Override
-	public FreeMarkerTemplateParserBuilder withParentPath(String parentPath) {
-		this.parentPath = parentPath;
-		return this;
-	}
-
-	@Override
-	public FreeMarkerTemplateParserBuilder withExtension(String extension) {
-		this.extension = extension;
 		return this;
 	}
 

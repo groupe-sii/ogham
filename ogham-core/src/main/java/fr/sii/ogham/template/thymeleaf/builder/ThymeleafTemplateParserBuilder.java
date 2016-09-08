@@ -1,7 +1,5 @@
 package fr.sii.ogham.template.thymeleaf.builder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 
 import fr.sii.ogham.core.builder.TemplateParserBuilder;
@@ -26,7 +24,6 @@ import fr.sii.ogham.template.thymeleaf.adapter.TemplateResolverAdapter;
  *
  */
 public class ThymeleafTemplateParserBuilder implements TemplateParserBuilder {
-	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafTemplateParserBuilder.class);
 
 	/**
 	 * The Thymeleaf template engine
@@ -34,9 +31,7 @@ public class ThymeleafTemplateParserBuilder implements TemplateParserBuilder {
 	private TemplateEngine engine;
 
 	/**
-	 * Find the first adapter that can handle the general
-	 * {@link ResourceResolver} in order to convert it to Thymeleaf specific
-	 * resolver
+	 * Find the first adapter that can handle the general {@link ResourceResolver} in order to convert it to Thymeleaf specific resolver
 	 */
 	private FirstSupportingResolverAdapter resolverAdapter;
 
@@ -45,23 +40,11 @@ public class ThymeleafTemplateParserBuilder implements TemplateParserBuilder {
 	 */
 	private FirstSupportingResourceResolver resourceResolver;
 
-	/**
-	 * The parent path for searching template.
-	 */
-	private String parentPath;
-
-	/**
-	 * The extension for searching template.
-	 */
-	private String extension;
-
 	public ThymeleafTemplateParserBuilder() {
 		super();
 		this.engine = new TemplateEngine();
 		this.resourceResolver = null;
 		this.resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter(), new StringResolverAdapter());
-		parentPath = "";
-		extension = "";
 	}
 
 	@Override
@@ -84,13 +67,10 @@ public class ThymeleafTemplateParserBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * To link our {@link TemplateResolverAdapter}s with our
-	 * {@link ResourceResolver}, we need a
-	 * {@link FirstSupportingResourceResolver}.
+	 * To link our {@link TemplateResolverAdapter}s with our {@link ResourceResolver}, we need a {@link FirstSupportingResourceResolver}.
 	 * 
 	 * @param firstSupportingResourceResolver
-	 *            composite resolver to link template path with our
-	 *            {@link ResourcePath}
+	 *            composite resolver to link template path with our {@link ResourcePath}
 	 * 
 	 * @return this instance for fluent use
 	 */
@@ -99,21 +79,8 @@ public class ThymeleafTemplateParserBuilder implements TemplateParserBuilder {
 		return this;
 	}
 
-	@Override
-	public ThymeleafTemplateParserBuilder withParentPath(String parentPath) {
-		this.parentPath = parentPath;
-		return this;
-	}
-
-	@Override
-	public ThymeleafTemplateParserBuilder withExtension(String extension) {
-		this.extension = extension;
-		return this;
-	}
-
 	/**
-	 * Registers a new template resolver adapter. An adapter is used for
-	 * transforming the general resolver into a Thymeleaf specific equivalent.
+	 * Registers a new template resolver adapter. An adapter is used for transforming the general resolver into a Thymeleaf specific equivalent.
 	 * 
 	 * @param adapter
 	 *            the adapter to register
@@ -125,8 +92,7 @@ public class ThymeleafTemplateParserBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Give access to the Thymeleaf template engine in order to be able to
-	 * customize it.
+	 * Give access to the Thymeleaf template engine in order to be able to customize it.
 	 * 
 	 * @return Thymeleaf template engine
 	 */
