@@ -1,4 +1,4 @@
-package fr.sii.ogham.ut.template;
+package fr.sii.ogham.ut.template.fremarker;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -40,7 +40,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void html() throws ParseException, IOException {
-		Content content = parser.parse("classpath:simple.ftlh", new BeanContext(new SimpleBean("foo", 42)));
+		Content content = parser.parse("classpath:simple.html.ftl", new BeanContext(new SimpleBean("foo", 42)));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/simple_foo_42.html", content);
@@ -48,7 +48,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void text() throws ParseException, IOException {
-		Content content = parser.parse("classpath:simple.txt", new BeanContext(new SimpleBean("foo", 42)));
+		Content content = parser.parse("classpath:simple.txt.ftl", new BeanContext(new SimpleBean("foo", 42)));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/simple_foo_42.txt", content);
@@ -56,7 +56,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void nested() throws ParseException, IOException {
-		Content content = parser.parse("classpath:nested.ftlh", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
+		Content content = parser.parse("classpath:nested.html.ftl", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/nested_foo_42.html", content);
@@ -64,7 +64,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void layout() throws ParseException, IOException {
-		Content content = parser.parse("classpath:layout.ftlh", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
+		Content content = parser.parse("classpath:layout.html.ftl", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/layout_foo_42.html", content);
@@ -72,7 +72,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void french() throws ParseException, IOException {
-		Content content = parser.parse("classpath:locale.txt", new LocaleContext(new SimpleBean("foo", 42, date), Locale.FRENCH));
+		Content content = parser.parse("classpath:locale.txt.ftl", new LocaleContext(new SimpleBean("foo", 42, date), Locale.FRENCH));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/locale_foo_42_fr.txt", content);
@@ -80,7 +80,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void english() throws ParseException, IOException {
-		Content content = parser.parse("classpath:locale.txt", new LocaleContext(new SimpleBean("foo", 42, date), Locale.ENGLISH));
+		Content content = parser.parse("classpath:locale.txt.ftl", new LocaleContext(new SimpleBean("foo", 42, date), Locale.ENGLISH));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/locale_foo_42_en.txt", content);
@@ -88,6 +88,6 @@ public class FreeMarkerParserTest {
 
 	@Test(expected = ParseException.class)
 	public void invalid() throws ParseException, IOException {
-		parser.parse("classpath:invalid.ftlh", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
+		parser.parse("classpath:invalid.html.ftl", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 	}
 }

@@ -1,4 +1,4 @@
-package fr.sii.ogham.ut.template;
+package fr.sii.ogham.ut.template.thymeleaf;
 
 import java.io.IOException;
 import java.util.Calendar;
