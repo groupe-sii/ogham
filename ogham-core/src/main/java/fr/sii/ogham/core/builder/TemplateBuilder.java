@@ -21,8 +21,8 @@ import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.template.TemplateConstants;
-import fr.sii.ogham.template.freemarker.FreemarkerTemplateDetector;
-import fr.sii.ogham.template.freemarker.builder.FreemarkerTemplateParserBuilder;
+import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
+import fr.sii.ogham.template.freemarker.builder.FreeMarkerTemplateParserBuilder;
 import fr.sii.ogham.template.thymeleaf.ThymeleafParser;
 import fr.sii.ogham.template.thymeleaf.ThymeleafTemplateDetector;
 import fr.sii.ogham.template.thymeleaf.builder.ThymeleafTemplateParserBuilder;
@@ -227,17 +227,17 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Enable Freemarker template engine. This engine is used only if the associated detector ({@link FreemarkerTemplateDetector}) indicates that Freemarker is
+	 * Enable FreeMarker template engine. This engine is used only if the associated detector ({@link FreeMarkerTemplateDetector}) indicates that FreeMarker is
 	 * able to handle the provided template.
 	 * 
 	 * @return this builder instance for fluent use
 	 */
-	public TemplateBuilder withFreemarker() {
+	public TemplateBuilder withFreeMarker() {
 		// The try/catch clause
 		try {
-			registerTemplateParser(new FreemarkerTemplateParserBuilder(), new FreemarkerTemplateDetector());
+			registerTemplateParser(new FreeMarkerTemplateParserBuilder(), new FreeMarkerTemplateDetector());
 		} catch (Exception e) {
-			LOG.debug("Can't register Freemarker template engine", e);
+			LOG.debug("Can't register FreeMarker template engine", e);
 		}
 		return this;
 	}
@@ -303,8 +303,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 			// TODO manage extra configuration for each {@link TemplateParserBuilder}
 			if (templateParserBuilder instanceof ThymeleafTemplateParserBuilder) {
 				((ThymeleafTemplateParserBuilder) templateParserBuilder).withFirstResourceResolver(firstSupportingResolver);
-			} else if (templateParserBuilder instanceof FreemarkerTemplateParserBuilder) {
-				((FreemarkerTemplateParserBuilder) templateParserBuilder).withFirstResourceResolver(firstSupportingResolver);
+			} else if (templateParserBuilder instanceof FreeMarkerTemplateParserBuilder) {
+				((FreeMarkerTemplateParserBuilder) templateParserBuilder).withFirstResourceResolver(firstSupportingResolver);
 			}
 		}
 		if (detectors.isEmpty()) {

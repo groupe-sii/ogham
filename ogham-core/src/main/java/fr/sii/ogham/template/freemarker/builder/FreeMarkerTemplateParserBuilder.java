@@ -6,8 +6,8 @@ import fr.sii.ogham.core.resource.ResourcePath;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.parser.TemplateParser;
-import fr.sii.ogham.template.freemarker.FreemarkerFirstSupportingTemplateLoader;
-import fr.sii.ogham.template.freemarker.FreemarkerParser;
+import fr.sii.ogham.template.freemarker.FreeMarkerFirstSupportingTemplateLoader;
+import fr.sii.ogham.template.freemarker.FreeMarkerParser;
 import fr.sii.ogham.template.freemarker.adapter.ClassPathResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.FileResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.FirstSupportingResolverAdapter;
@@ -17,20 +17,20 @@ import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
 
 /**
- * Specialized builder for Freemarker template engine.
+ * Specialized builder for FreeMarker template engine.
  * 
  * @author Cyril Dejonghe
  *
  */
-public class FreemarkerTemplateParserBuilder implements TemplateParserBuilder {
+public class FreeMarkerTemplateParserBuilder implements TemplateParserBuilder {
 
 	/**
-	 * Freemarker configuration.
+	 * FreeMarker configuration.
 	 */
 	private Configuration configuration;
 
 	/**
-	 * Find the first adapter that can handle the general {@link ResourceResolver} in order to convert it to Freemarker specific resolver
+	 * Find the first adapter that can handle the general {@link ResourceResolver} in order to convert it to FreeMarker specific resolver
 	 */
 	private FirstSupportingResolverAdapter resolverAdapter;
 
@@ -49,7 +49,7 @@ public class FreemarkerTemplateParserBuilder implements TemplateParserBuilder {
 	 */
 	private String extension;
 
-	public FreemarkerTemplateParserBuilder() {
+	public FreeMarkerTemplateParserBuilder() {
 		super();
 		this.configuration = new Configuration(Configuration.VERSION_2_3_23);
 		configuration.setDefaultEncoding("UTF-8");
@@ -63,18 +63,18 @@ public class FreemarkerTemplateParserBuilder implements TemplateParserBuilder {
 
 	@Override
 	public TemplateParser build() throws BuildException {
-		configuration.setTemplateLoader(new FreemarkerFirstSupportingTemplateLoader(resourceResolver, resolverAdapter));
-		return new FreemarkerParser(configuration);
+		configuration.setTemplateLoader(new FreeMarkerFirstSupportingTemplateLoader(resourceResolver, resolverAdapter));
+		return new FreeMarkerParser(configuration);
 	}
 
 	/**
-	 * By default the builder uses the a {@link FreemarkerFirstSupportingTemplateLoader} in a default configuration.
+	 * By default the builder uses the a {@link FreeMarkerFirstSupportingTemplateLoader} in a default configuration.
 	 * 
 	 * @param configuration
-	 *            the new Freemarker configuration
+	 *            the new FreeMarker configuration
 	 * @return this instance for fluent use
 	 */
-	public FreemarkerTemplateParserBuilder withConfiguration(Configuration configuration) {
+	public FreeMarkerTemplateParserBuilder withConfiguration(Configuration configuration) {
 		this.configuration = configuration;
 		return this;
 	}
@@ -87,39 +87,39 @@ public class FreemarkerTemplateParserBuilder implements TemplateParserBuilder {
 	 * 
 	 * @return this instance for fluent use
 	 */
-	public FreemarkerTemplateParserBuilder withFirstResourceResolver(FirstSupportingResourceResolver firstSupportingResourceResolver) {
+	public FreeMarkerTemplateParserBuilder withFirstResourceResolver(FirstSupportingResourceResolver firstSupportingResourceResolver) {
 		this.resourceResolver = firstSupportingResourceResolver;
 		return this;
 	}
 
 	@Override
-	public FreemarkerTemplateParserBuilder withParentPath(String parentPath) {
+	public FreeMarkerTemplateParserBuilder withParentPath(String parentPath) {
 		this.parentPath = parentPath;
 		return this;
 	}
 
 	@Override
-	public FreemarkerTemplateParserBuilder withExtension(String extension) {
+	public FreeMarkerTemplateParserBuilder withExtension(String extension) {
 		this.extension = extension;
 		return this;
 	}
 
 	/**
-	 * Registers a new template resolver adapter. An adapter is used for transforming the general resolver into a Freemarker specific equivalent.
+	 * Registers a new template resolver adapter. An adapter is used for transforming the general resolver into a FreeMarker specific equivalent.
 	 * 
 	 * @param adapter
 	 *            the adapter to register
 	 * @return this instance for fluent use
 	 */
-	public FreemarkerTemplateParserBuilder registerResolverAdapter(TemplateLoaderAdapter adapter) {
+	public FreeMarkerTemplateParserBuilder registerResolverAdapter(TemplateLoaderAdapter adapter) {
 		resolverAdapter.addAdapter(adapter);
 		return this;
 	}
 
 	/**
-	 * Give access to the Freemarker configuration in order to be able to customize it.
+	 * Give access to the FreeMarker configuration in order to be able to customize it.
 	 * 
-	 * @return Freemarker configuration
+	 * @return FreeMarker configuration
 	 */
 	public Configuration getConfiguration() {
 		return configuration;

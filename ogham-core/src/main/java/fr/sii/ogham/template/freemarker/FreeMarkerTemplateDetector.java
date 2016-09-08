@@ -15,20 +15,20 @@ import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
  * @author Cyril Dejonghe
  *
  */
-public class FreemarkerTemplateDetector implements TemplateEngineDetector {
+public class FreeMarkerTemplateDetector implements TemplateEngineDetector {
 	private static final String FREEMARKER_TEMPLATE_EXTENSION = ".ftl";
-	private static final Logger LOG = LoggerFactory.getLogger(FreemarkerTemplateDetector.class);
+	private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerTemplateDetector.class);
 
 	@Override
 	public boolean canParse(String templateName, Context ctx, Resource template) throws EngineDetectionException {
-		LOG.debug("Checking if Freemarker can handle the template {}", templateName);
-		boolean endsWithFreemarkerExtension = templateName.endsWith(FREEMARKER_TEMPLATE_EXTENSION);
-		if (endsWithFreemarkerExtension) {
-			LOG.debug("The template {} ends with " + FREEMARKER_TEMPLATE_EXTENSION + ". Freemarker can be used", templateName);
+		LOG.debug("Checking if FreeMarker can handle the template {}", templateName);
+		boolean endsWithFreeMarkerExtension = templateName.endsWith(FREEMARKER_TEMPLATE_EXTENSION);
+		if (endsWithFreeMarkerExtension) {
+			LOG.debug("The template {} ends with " + FREEMARKER_TEMPLATE_EXTENSION + ". FreeMarker can be used", templateName);
 		} else {
-			LOG.debug("The template {} doesn't end with " + FREEMARKER_TEMPLATE_EXTENSION + ". Freemarker can't be used", templateName);
+			LOG.debug("The template {} doesn't end with " + FREEMARKER_TEMPLATE_EXTENSION + ". FreeMarker can't be used", templateName);
 		}
-		return endsWithFreemarkerExtension;
+		return endsWithFreeMarkerExtension;
 
 	}
 

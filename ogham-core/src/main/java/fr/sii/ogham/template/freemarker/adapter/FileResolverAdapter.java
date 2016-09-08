@@ -9,12 +9,12 @@ import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.TemplateLoader;
 
 /**
- * Adapter that converts general {@link FileResolver} into Freemarker specific {@link FileTemplateLoader}.
+ * Adapter that converts general {@link FileResolver} into FreeMarker specific {@link FileTemplateLoader}.
  * 
  * @author Cyril Dejonghe
  *
  */
-public class FileResolverAdapter extends AbstractFreemarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
+public class FileResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {

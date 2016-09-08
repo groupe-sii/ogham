@@ -10,7 +10,7 @@ import freemarker.cache.TemplateLoader;
  * @author Cyril Dejonghe
  *
  */
-public abstract class AbstractFreemarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
+public abstract class AbstractFreeMarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
 	private TemplateLoaderOptions options;
 
 	public TemplateLoaderOptions getOptions() {

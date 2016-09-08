@@ -9,7 +9,7 @@ import fr.sii.ogham.template.freemarker.TemplateLoaderOptions;
 import freemarker.cache.TemplateLoader;
 
 /**
- * Adapter that provides the Freemarker specific {@link TemplateLoader} from the general {@link ResourceResolver}.
+ * Adapter that provides the FreeMarker specific {@link TemplateLoader} from the general {@link ResourceResolver}.
  * 
  * @author Cyril Dejonghe
  *

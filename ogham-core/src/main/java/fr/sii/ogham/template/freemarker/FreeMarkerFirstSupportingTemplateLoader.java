@@ -32,12 +32,12 @@ import freemarker.cache.TemplateLoader;
  * @see MultiTemplateLoader
  *
  */
-public class FreemarkerFirstSupportingTemplateLoader implements TemplateLoader {
+public class FreeMarkerFirstSupportingTemplateLoader implements TemplateLoader {
 
 	private FirstSupportingResourceResolver resolver;
 	private FirstSupportingResolverAdapter resolverAdapter;
 
-	public FreemarkerFirstSupportingTemplateLoader(FirstSupportingResourceResolver resolver, FirstSupportingResolverAdapter resolverAdapter) {
+	public FreeMarkerFirstSupportingTemplateLoader(FirstSupportingResourceResolver resolver, FirstSupportingResolverAdapter resolverAdapter) {
 		super();
 		this.resolver = resolver;
 		this.resolverAdapter = resolverAdapter;

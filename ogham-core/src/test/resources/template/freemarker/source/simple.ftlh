@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Freemarker simple</title>
+        <title>FreeMarker simple</title>
         <meta charset="utf-8" />
     </head>
     <body>

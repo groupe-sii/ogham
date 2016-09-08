@@ -18,24 +18,24 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 /**
- * Implementation for Freemarker template engine.
+ * Implementation for FreeMarker template engine.
  * 
  * @author Cyril Dejonghe
  *
  */
-public class FreemarkerParser implements TemplateParser {
-	private static final Logger LOG = LoggerFactory.getLogger(FreemarkerParser.class);
+public class FreeMarkerParser implements TemplateParser {
+	private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerParser.class);
 
 	private Configuration configuration;
 
-	public FreemarkerParser(Configuration configuration) {
+	public FreeMarkerParser(Configuration configuration) {
 		super();
 		this.configuration = configuration;
 	}
 
 	@Override
 	public Content parse(String templateName, Context ctx) throws ParseException {
-		LOG.debug("Parsing Freemarker template {} with context {}...", templateName, ctx);
+		LOG.debug("Parsing FreeMarker template {} with context {}...", templateName, ctx);
 
 		try {
 			Template template = configuration.getTemplate(templateName);
@@ -50,9 +50,9 @@ public class FreemarkerParser implements TemplateParser {
 			return new StringContent(out.toString());
 
 		} catch (IOException | TemplateException e) {
-			throw new ParseException("Failed to parse template with Freemarker", templateName, ctx, e);
+			throw new ParseException("Failed to parse template with FreeMarker", templateName, ctx, e);
 		} catch (ContextException e) {
-			throw new ParseException("Failed to parse template with Freemarker due to conversion error", templateName, ctx, e);
+			throw new ParseException("Failed to parse template with FreeMarker due to conversion error", templateName, ctx, e);
 
 		}
 	}

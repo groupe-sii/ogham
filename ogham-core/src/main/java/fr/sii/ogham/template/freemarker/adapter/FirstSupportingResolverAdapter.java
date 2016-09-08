@@ -12,7 +12,7 @@ import freemarker.cache.TemplateLoader;
 
 /**
  * Decorator that will ask each resolver adapter if it is able to handle the template resolver. If the resolver adapter supports it, then this implementation
- * asks the resolver adapter to provide the Freemarker template loader.
+ * asks the resolver adapter to provide the FreeMarker template loader.
  * 
  * Only the first resolver adapter that can handle the template resolver is used.
  * 
@@ -21,7 +21,7 @@ import freemarker.cache.TemplateLoader;
 public class FirstSupportingResolverAdapter implements TemplateLoaderAdapter {
 
 	/**
-	 * The list of adapters used to convert the general resolvers into Freemarker specific resolvers
+	 * The list of adapters used to convert the general resolvers into FreeMarker specific resolvers
 	 */
 	private List<TemplateLoaderAdapter> adapters;
 

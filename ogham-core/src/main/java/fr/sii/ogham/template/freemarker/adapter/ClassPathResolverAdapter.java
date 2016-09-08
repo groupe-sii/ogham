@@ -6,12 +6,12 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
 
 /**
- * Adapter that converts general {@link ClassPathResolver} into Freemarker specific {@link ClassTemplateLoader}.
+ * Adapter that converts general {@link ClassPathResolver} into FreeMarker specific {@link ClassTemplateLoader}.
  * 
  * @author Cyril Dejonghe
  *
  */
-public class ClassPathResolverAdapter extends AbstractFreemarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
+public class ClassPathResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
 	@Override
 	public boolean supports(ResourceResolver resolver) {
 		return resolver.getActualResourceResolver() instanceof ClassPathResolver;
