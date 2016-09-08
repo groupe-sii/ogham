@@ -2,6 +2,8 @@ package fr.sii.ogham.template.thymeleaf.adapter;
 
 import org.thymeleaf.templateresolver.TemplateResolver;
 
+import fr.sii.ogham.template.thymeleaf.TemplateResolverOptions;
+
 /**
  * Abstract class to handle options configuration for the adapted
  * {@link TemplateResolver}.
@@ -9,15 +11,15 @@ import org.thymeleaf.templateresolver.TemplateResolver;
  * @author Cyril Dejonghe
  *
  */
-public abstract class AbstractThymeleafResolverOptionsAdapter implements ThymeleafResolverAdapter {
-	private ThymeleafResolverOptions options;
+public abstract class AbstractTemplateResolverOptionsAdapter implements TemplateResolverAdapter {
+	private TemplateResolverOptions options;
 
-	public ThymeleafResolverOptions getOptions() {
+	public TemplateResolverOptions getOptions() {
 		return options;
 	}
 
 	@Override
-	public void setOptions(ThymeleafResolverOptions options) {
+	public void setOptions(TemplateResolverOptions options) {
 		this.options = options;
 	}
 
@@ -28,7 +30,6 @@ public abstract class AbstractThymeleafResolverOptionsAdapter implements Thymele
 	 *            TemplateResolver to configure
 	 */
 	protected void applyOptions(TemplateResolver templateResolver) {
-		templateResolver.setPrefix(getOptions().getParentPath());
-		templateResolver.setSuffix(getOptions().getExtension());
+		// TODO managing options
 	}
 }

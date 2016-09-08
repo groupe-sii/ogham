@@ -22,7 +22,7 @@ import fr.sii.ogham.core.resource.ResourcePath;
  * @author Aurélien Baudet
  * @see FileResource
  */
-public class FileResolver extends AbstractPrefixedLookupPathResolver implements ResourceResolver {
+public class FileResolver extends AbstractPrefixedLookupPathResolver implements RelativisableResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(FileResolver.class);
 
 	public FileResolver(String... lookups) {

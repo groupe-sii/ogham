@@ -10,14 +10,14 @@ import fr.sii.ogham.core.resource.ResourcePath;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.thymeleaf.TemplateResolverOptions;
 import fr.sii.ogham.template.thymeleaf.ThymeLeafFirstSupportingTemplateResolver;
 import fr.sii.ogham.template.thymeleaf.ThymeleafParser;
 import fr.sii.ogham.template.thymeleaf.adapter.ClassPathResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.adapter.FileResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.adapter.FirstSupportingResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.adapter.StringResolverAdapter;
-import fr.sii.ogham.template.thymeleaf.adapter.ThymeleafResolverAdapter;
-import fr.sii.ogham.template.thymeleaf.adapter.ThymeleafResolverOptions;
+import fr.sii.ogham.template.thymeleaf.adapter.TemplateResolverAdapter;
 
 /**
  * Specialized builder for Thymeleaf template engine.
@@ -25,8 +25,8 @@ import fr.sii.ogham.template.thymeleaf.adapter.ThymeleafResolverOptions;
  * @author Aurélien Baudet
  *
  */
-public class ThymeleafBuilder implements TemplateParserBuilder {
-	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafBuilder.class);
+public class ThymeleafTemplateParserBuilder implements TemplateParserBuilder {
+	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafTemplateParserBuilder.class);
 
 	/**
 	 * The Thymeleaf template engine
@@ -55,7 +55,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	 */
 	private String extension;
 
-	public ThymeleafBuilder() {
+	public ThymeleafTemplateParserBuilder() {
 		super();
 		this.engine = new TemplateEngine();
 		this.resourceResolver = null;
@@ -66,8 +66,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 
 	@Override
 	public TemplateParser build() throws BuildException {
-		LOG.debug("Using parent path {} and extension {} for thymeleaf template resolvers", parentPath, extension);
-		resolverAdapter.setOptions(new ThymeleafResolverOptions(parentPath, extension));
+		resolverAdapter.setOptions(new TemplateResolverOptions());
 		engine.addTemplateResolver(new ThymeLeafFirstSupportingTemplateResolver(resourceResolver, resolverAdapter));
 		return new ThymeleafParser(engine);
 	}
@@ -79,13 +78,13 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	 *            the new Thymeleaf template engine
 	 * @return this instance for fluent use
 	 */
-	public ThymeleafBuilder withTemplateEngine(TemplateEngine engine) {
+	public ThymeleafTemplateParserBuilder withTemplateEngine(TemplateEngine engine) {
 		this.engine = engine;
 		return this;
 	}
 
 	/**
-	 * To link our {@link ThymeleafResolverAdapter}s with our
+	 * To link our {@link TemplateResolverAdapter}s with our
 	 * {@link ResourceResolver}, we need a
 	 * {@link FirstSupportingResourceResolver}.
 	 * 
@@ -95,19 +94,19 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	 * 
 	 * @return this instance for fluent use
 	 */
-	public ThymeleafBuilder withFirstResourceResolver(FirstSupportingResourceResolver firstSupportingResourceResolver) {
+	public ThymeleafTemplateParserBuilder withFirstResourceResolver(FirstSupportingResourceResolver firstSupportingResourceResolver) {
 		this.resourceResolver = firstSupportingResourceResolver;
 		return this;
 	}
 
 	@Override
-	public ThymeleafBuilder withParentPath(String parentPath) {
+	public ThymeleafTemplateParserBuilder withParentPath(String parentPath) {
 		this.parentPath = parentPath;
 		return this;
 	}
 
 	@Override
-	public ThymeleafBuilder withExtension(String extension) {
+	public ThymeleafTemplateParserBuilder withExtension(String extension) {
 		this.extension = extension;
 		return this;
 	}
@@ -120,7 +119,7 @@ public class ThymeleafBuilder implements TemplateParserBuilder {
 	 *            the adapter to register
 	 * @return this instance for fluent use
 	 */
-	public ThymeleafBuilder registerResolverAdapter(ThymeleafResolverAdapter adapter) {
+	public ThymeleafTemplateParserBuilder registerResolverAdapter(TemplateResolverAdapter adapter) {
 		resolverAdapter.addAdapter(adapter);
 		return this;
 	}

@@ -21,31 +21,27 @@ import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.template.TemplateConstants;
+import fr.sii.ogham.template.freemarker.FreemarkerTemplateDetector;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerTemplateParserBuilder;
 import fr.sii.ogham.template.thymeleaf.ThymeleafParser;
 import fr.sii.ogham.template.thymeleaf.ThymeleafTemplateDetector;
-import fr.sii.ogham.template.thymeleaf.builder.ThymeleafBuilder;
+import fr.sii.ogham.template.thymeleaf.builder.ThymeleafTemplateParserBuilder;
 
 /**
- * A specialized builder for template management. It helps construct the
- * template engines. By default, the builder construct the following engines:
+ * A specialized builder for template management. It helps construct the template engines. By default, the builder construct the following engines:
  * <ul>
- * <li>{@link ThymeleafParser} (delegate construction to
- * {@link ThymeleafBuilder})</li>
+ * <li>{@link ThymeleafParser} (delegate construction to {@link ThymeleafTemplateParserBuilder})</li>
  * </ul>
  * 
  * By default, the builder will use the following template resolvers:
  * <ul>
- * <li>Resolver that is able to handle classpath resolution (
- * {@link ClassPathResolver})</li>
- * <li>Resolver that is able to handle file resolution (
- * {@link FileResolver})</li>
- * <li>Resolver that is able to handle string directly (
- * {@link StringResourceResolver})</li>
+ * <li>Resolver that is able to handle classpath resolution ( {@link ClassPathResolver})</li>
+ * <li>Resolver that is able to handle file resolution ( {@link FileResolver})</li>
+ * <li>Resolver that is able to handle string directly ( {@link StringResourceResolver})</li>
  * </ul>
  * 
- * This builder is also able to register a parent path and an extension for
- * template resolution. The aim is to be able to provide only the name of the
- * template without needing to provide the full path to it.
+ * This builder is also able to register a parent path and an extension for template resolution. The aim is to be able to provide only the name of the template
+ * without needing to provide the full path to it.
  * 
  * @author Aurélien Baudet
  *
@@ -69,8 +65,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	private String extension;
 
 	/**
-	 * A map that stores the engine detector and the associated engine. Each
-	 * detector will indicate if the engine is able to parse the template.
+	 * A map that stores the engine detector and the associated engine. Each detector will indicate if the engine is able to parse the template.
 	 */
 	private Map<TemplateEngineDetector, TemplateParserBuilder> detectors;
 
@@ -97,28 +92,20 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Tells the builder to use all default behaviors and values. It will enable
-	 * the following template engines:
+	 * Tells the builder to use all default behaviors and values. It will enable the following template engines:
 	 * <ul>
-	 * <li>{@link ThymeleafParser} with the associated detector (
-	 * {@link ThymeleafTemplateDetector}) by calling
-	 * {@link #withThymeleaf()}</li>
+	 * <li>{@link ThymeleafParser} with the associated detector ( {@link ThymeleafTemplateDetector}) by calling {@link #withThymeleaf()}</li>
 	 * </ul>
 	 * 
 	 * It will also use the default template resolvers:
 	 * <ul>
-	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathResolver})</li>
-	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileResolver})</li>
-	 * <li>Resolver that is able to handle string directly (
-	 * {@link StringResourceResolver})</li>
+	 * <li>Resolver that is able to handle classpath resolution ( {@link ClassPathResolver})</li>
+	 * <li>Resolver that is able to handle file resolution ( {@link FileResolver})</li>
+	 * <li>Resolver that is able to handle string directly ( {@link StringResourceResolver})</li>
 	 * </ul>
 	 * 
-	 * If the system properties provide values for parent path (
-	 * ogham.template.prefix) and extension (ogham.template.suffix), then the
-	 * builder will use them. If no value defined for these properties, then
-	 * empty strings will be used.
+	 * If the system properties provide values for parent path ( ogham.template.prefix) and extension (ogham.template.suffix), then the builder will use them.
+	 * If no value defined for these properties, then empty strings will be used.
 	 * 
 	 * @return this builder instance for fluent use
 	 */
@@ -127,32 +114,23 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Tells the builder to use all default behaviors and values. It will enable
-	 * the following template engines:
+	 * Tells the builder to use all default behaviors and values. It will enable the following template engines:
 	 * <ul>
-	 * <li>{@link ThymeleafParser} with the associated detector (
-	 * {@link ThymeleafTemplateDetector})</li>
+	 * <li>{@link ThymeleafParser} with the associated detector ( {@link ThymeleafTemplateDetector})</li>
 	 * </ul>
 	 * 
-	 * It will also use the default template resolvers (by calling
-	 * {@link #useDefaultResolvers()}):
+	 * It will also use the default template resolvers (by calling {@link #useDefaultResolvers()}):
 	 * <ul>
-	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathResolver})</li>
-	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileResolver})</li>
-	 * <li>Resolver that is able to handle string directly (
-	 * {@link StringResourceResolver})</li>
+	 * <li>Resolver that is able to handle classpath resolution ( {@link ClassPathResolver})</li>
+	 * <li>Resolver that is able to handle file resolution ( {@link FileResolver})</li>
+	 * <li>Resolver that is able to handle string directly ( {@link StringResourceResolver})</li>
 	 * </ul>
 	 * 
-	 * If the provided properties provide values for parent path (
-	 * ogham.template.prefix) and extension (ogham.template.suffix), then the
-	 * builder will use them. If no value defined for these properties, then
-	 * empty strings will be used.
+	 * If the provided properties provide values for parent path ( ogham.template.prefix) and extension (ogham.template.suffix), then the builder will use them.
+	 * If no value defined for these properties, then empty strings will be used.
 	 * 
 	 * @param properties
-	 *            indicate which properties to use instead of using the system
-	 *            ones
+	 *            indicate which properties to use instead of using the system ones
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder useDefaults(Properties properties) {
@@ -163,8 +141,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Register a specialized builder for a particular template engine. Using
-	 * this method will associate a detector to this engine that will accept all
+	 * Register a specialized builder for a particular template engine. Using this method will associate a detector to this engine that will accept all
 	 * templates.
 	 * 
 	 * @param builder
@@ -176,15 +153,13 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Register a specialized builder for a particular template engine. It also
-	 * registers the associated detector to indicate if the engine can handle
-	 * the templates at runtime.
+	 * Register a specialized builder for a particular template engine. It also registers the associated detector to indicate if the engine can handle the
+	 * templates at runtime.
 	 * 
 	 * @param builder
 	 *            the builder to register
 	 * @param detector
-	 *            the detector that indicates if the engine can handle the
-	 *            provided template at runtime
+	 *            the detector that indicates if the engine can handle the provided template at runtime
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder registerTemplateParser(TemplateParserBuilder builder, TemplateEngineDetector detector) {
@@ -195,18 +170,13 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	/**
 	 * Tells the builder to use the default template resolvers:
 	 * <ul>
-	 * <li>Resolver that is able to handle classpath resolution (
-	 * {@link ClassPathResolver}). The lookup prefix is "classpath:"</li>
-	 * <li>Resolver that is able to handle file resolution (
-	 * {@link FileResolver}). The lookup is "file:"</li>
-	 * <li>Resolver that is able to handle string directly (
-	 * {@link StringResourceResolver}). The lookup is "string:"</li>
-	 * <li>Default resolver if no lookup is used (
-	 * {@link ClassPathResolver})</li>
+	 * <li>Resolver that is able to handle classpath resolution ( {@link ClassPathResolver}). The lookup prefix is "classpath:"</li>
+	 * <li>Resolver that is able to handle file resolution ( {@link FileResolver}). The lookup is "file:"</li>
+	 * <li>Resolver that is able to handle string directly ( {@link StringResourceResolver}). The lookup is "string:"</li>
+	 * <li>Default resolver if no lookup is used ( {@link ClassPathResolver})</li>
 	 * </ul>
 	 * 
-	 * This method is automatically called by {@link #useDefaults()} or
-	 * {@link #useDefaults(Properties)}.
+	 * This method is automatically called by {@link #useDefaults()} or {@link #useDefaults(Properties)}.
 	 * 
 	 * @return this builder instance for fluent use
 	 * @see FirstSupportingResourceResolverBuilder
@@ -241,16 +211,15 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Enable Thymeleaf template engine. This engine is used only if the
-	 * associated detector ({@link ThymeleafTemplateDetector}) indicates that
-	 * Thymeleaf is able to handle the provided template.
+	 * Enable Thymeleaf template engine. This engine is used only if the associated detector ({@link ThymeleafTemplateDetector}) indicates that Thymeleaf is
+	 * able to handle the provided template.
 	 * 
 	 * @return this builder instance for fluent use
 	 */
 	public TemplateBuilder withThymeleaf() {
 		// The try/catch clause
 		try {
-			registerTemplateParser(new ThymeleafBuilder(), new ThymeleafTemplateDetector());
+			registerTemplateParser(new ThymeleafTemplateParserBuilder(), new ThymeleafTemplateDetector());
 		} catch (Exception e) {
 			LOG.debug("Can't register Thymeleaf template engine", e);
 		}
@@ -258,10 +227,24 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Change the default property key for template resolution parent path. By
-	 * default, the property key is ogham.template.prefix (see
-	 * {@link TemplateConstants#PREFIX_PROPERTY}). Use this method to change the
-	 * key.
+	 * Enable Freemarker template engine. This engine is used only if the associated detector ({@link FreemarkerTemplateDetector}) indicates that Freemarker is
+	 * able to handle the provided template.
+	 * 
+	 * @return this builder instance for fluent use
+	 */
+	public TemplateBuilder withFreemarker() {
+		// The try/catch clause
+		try {
+			registerTemplateParser(new FreemarkerTemplateParserBuilder(), new FreemarkerTemplateDetector());
+		} catch (Exception e) {
+			LOG.debug("Can't register Freemarker template engine", e);
+		}
+		return this;
+	}
+
+	/**
+	 * Change the default property key for template resolution parent path. By default, the property key is ogham.template.prefix (see
+	 * {@link TemplateConstants#PREFIX_PROPERTY}). Use this method to change the key.
 	 * 
 	 * @param parentPathKey
 	 *            the new property key for template resolution parent path
@@ -273,10 +256,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Change the default property key for template resolution extension. By
-	 * default, the property key is ogham.template.suffix (see
-	 * {@link TemplateConstants#SUFFIX_PROPERTY}). Use this method to change the
-	 * key.
+	 * Change the default property key for template resolution extension. By default, the property key is ogham.template.suffix (see
+	 * {@link TemplateConstants#SUFFIX_PROPERTY}). Use this method to change the key.
 	 * 
 	 * @param extensionKey
 	 *            the new property key for template resolution extension
@@ -288,27 +269,18 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Build the template parser according to options previously enabled. If
-	 * only one template engine has been activated then the parser will be this
-	 * template engine parser. If there are several activated engines, then the
-	 * builder will generate an {@link AutoDetectTemplateParser}. This kind of
-	 * parser is able to detect which parser to use according to the provided
-	 * template at runtime. The auto-detection is delegated to each defined
-	 * {@link TemplateEngineDetector} associated with each engine.
+	 * Build the template parser according to options previously enabled. If only one template engine has been activated then the parser will be this template
+	 * engine parser. If there are several activated engines, then the builder will generate an {@link AutoDetectTemplateParser}. This kind of parser is able to
+	 * detect which parser to use according to the provided template at runtime. The auto-detection is delegated to each defined {@link TemplateEngineDetector}
+	 * associated with each engine.
 	 * 
-	 * The builder will also construct a template resolver based on the
-	 * previously defined mappings. This mapping is done using a
-	 * {@link FirstSupportingResourceResolver}. It uses a map indexed by the
-	 * lookup string (classpath, file, ...) and the resolver implementation as
-	 * value.
+	 * The builder will also construct a template resolver based on the previously defined mappings. This mapping is done using a
+	 * {@link FirstSupportingResourceResolver}. It uses a map indexed by the lookup string (classpath, file, ...) and the resolver implementation as value.
 	 * 
-	 * The builder will also provide the previously defined parent path and
-	 * extension to the resolvers and to the delegated builders.
+	 * The builder will also provide the previously defined parent path and extension to the resolvers and to the delegated builders.
 	 * 
-	 * @return The parser implementation for templating system. If only one
-	 *         template engine defined, then use it directly. Otherwise use the
-	 *         auto-detection feature to automatically detect at runtime which
-	 *         engine to use
+	 * @return The parser implementation for templating system. If only one template engine defined, then use it directly. Otherwise use the auto-detection
+	 *         feature to automatically detect at runtime which engine to use
 	 * @throws BuildException
 	 *             when the builder can't construct the parser
 	 */
@@ -323,16 +295,16 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		resolverBuilder.withExtension(resolvedExtension);
 		FirstSupportingResourceResolver firstSupportingResolver = resolverBuilder.build();
 		List<ResourceResolver> resolvers = firstSupportingResolver.getResolvers();
-		for (TemplateParserBuilder builder : detectors.values()) {
+		for (TemplateParserBuilder templateParserBuilder : detectors.values()) {
 			// set parent path and extension for each implementation
-			builder.withParentPath(resolvedParentPath);
-			builder.withExtension(resolvedExtension);
-			if (builder instanceof ThymeleafBuilder) {
-				/*
-				 * link between {@link ThymeleafResolverAdapter} and {@link
-				 * ResourceResolver}
-				 */
-				((ThymeleafBuilder) builder).withFirstResourceResolver(firstSupportingResolver);
+			templateParserBuilder.withParentPath(resolvedParentPath);
+			templateParserBuilder.withExtension(resolvedExtension);
+
+			// TODO manage extra configuration for each {@link TemplateParserBuilder}
+			if (templateParserBuilder instanceof ThymeleafTemplateParserBuilder) {
+				((ThymeleafTemplateParserBuilder) templateParserBuilder).withFirstResourceResolver(firstSupportingResolver);
+			} else if (templateParserBuilder instanceof FreemarkerTemplateParserBuilder) {
+				((FreemarkerTemplateParserBuilder) templateParserBuilder).withFirstResourceResolver(firstSupportingResolver);
 			}
 		}
 		if (detectors.isEmpty()) {
@@ -361,8 +333,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	}
 
 	/**
-	 * Get reference to the specialized builder. It may be useful to fine tune
-	 * the template engine.
+	 * Get reference to the specialized builder. It may be useful to fine tune the template engine.
 	 * 
 	 * @param clazz
 	 *            the class of the parser builder to get
@@ -384,8 +355,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 
 	/**
 	 * <p>
-	 * Get the reference to the specialized builder for Thymeleaf. It may be
-	 * useful to fine tune Thymeleaf engine.
+	 * Get the reference to the specialized builder for Thymeleaf. It may be useful to fine tune Thymeleaf engine.
 	 * </p>
 	 * 
 	 * Access this builder if you want to:
@@ -397,8 +367,8 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 * 
 	 * @return The Thymeleaf builder
 	 */
-	public ThymeleafBuilder getThymeleafParser() {
-		return getParserBuilder(ThymeleafBuilder.class);
+	public ThymeleafTemplateParserBuilder getThymeleafParser() {
+		return getParserBuilder(ThymeleafTemplateParserBuilder.class);
 	}
 
 	/**

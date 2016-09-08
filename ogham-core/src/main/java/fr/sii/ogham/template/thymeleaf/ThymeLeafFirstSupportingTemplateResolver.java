@@ -35,7 +35,7 @@ public class ThymeLeafFirstSupportingTemplateResolver implements ITemplateResolv
 
 	private FirstSupportingResourceResolver resolver;
 	private FirstSupportingResolverAdapter resolverAdapter;
-	private boolean isInitialized;
+	private boolean forceInitialize;
 
 	public ThymeLeafFirstSupportingTemplateResolver(FirstSupportingResourceResolver resolver, FirstSupportingResolverAdapter resolverAdapter) {
 		super();
@@ -60,7 +60,7 @@ public class ThymeLeafFirstSupportingTemplateResolver implements ITemplateResolv
 		ITemplateResolver templateResolver;
 		try {
 			templateResolver = resolverAdapter.adapt(supportingResolver);
-			if (isInitialized) {
+			if (forceInitialize) {
 				// we must initialize the new templateResolver
 				templateResolver.initialize();
 			}
@@ -77,7 +77,7 @@ public class ThymeLeafFirstSupportingTemplateResolver implements ITemplateResolv
 
 	@Override
 	public void initialize() {
-		isInitialized = true;
+		forceInitialize = true;
 	}
 
 }

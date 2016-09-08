@@ -21,7 +21,7 @@ import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.helper.template.AssertTemplate;
 import fr.sii.ogham.mock.context.NestedBean;
 import fr.sii.ogham.mock.context.SimpleBean;
-import fr.sii.ogham.template.thymeleaf.builder.ThymeleafBuilder;
+import fr.sii.ogham.template.thymeleaf.builder.ThymeleafTemplateParserBuilder;
 
 public class ThymeleafParserTest {
 	private TemplateParser parser;
@@ -34,7 +34,7 @@ public class ThymeleafParserTest {
 	@Before
 	public void setUp() {
 		parser = new TemplateBuilder()
-					.registerTemplateParser(new ThymeleafBuilder())
+					.registerTemplateParser(new ThymeleafTemplateParserBuilder())
 					.useDefaultResolvers()
 					.withParentPath("/template/thymeleaf/source/")
 					.build();

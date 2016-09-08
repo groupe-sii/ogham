@@ -42,7 +42,7 @@ public class RelativeResolver implements ResourceResolver {
 	/**
 	 * The delegate resolver that will do the real resource resolution
 	 */
-	private ResourceResolver delegate;
+	private RelativisableResourceResolver delegate;
 
 	/**
 	 * Initialize the resolver with the mandatory delegate and a parent path. No
@@ -53,7 +53,7 @@ public class RelativeResolver implements ResourceResolver {
 	 * @param parentPath
 	 *            a string to add before the resource path
 	 */
-	public RelativeResolver(ResourceResolver delegate, String parentPath) {
+	public RelativeResolver(RelativisableResourceResolver delegate, String parentPath) {
 		this(delegate, parentPath, "");
 	}
 
@@ -68,7 +68,7 @@ public class RelativeResolver implements ResourceResolver {
 	 * @param extension
 	 *            a string to add after the resource path
 	 */
-	public RelativeResolver(ResourceResolver delegate, String parentPath, String extension) {
+	public RelativeResolver(RelativisableResourceResolver delegate, String parentPath, String extension) {
 		super();
 		this.parentPath = parentPath == null ? "" : parentPath;
 		this.extension = extension == null ? "" : extension;
@@ -102,7 +102,15 @@ public class RelativeResolver implements ResourceResolver {
 
 	@Override
 	public ResourcePath getResourcePath(String path) {
-		return delegate.getResourcePath(path);
+		boolean absolute = path.startsWith("/");
+		ResourcePath resourcePath = delegate.getResourcePath(path);
+		if (absolute) {
+			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
+		} else {
+			LOG.debug("Adding parentPath ({}) and extension ({}) to the resource path {}", parentPath, extension, path);
+			resourcePath.setResolvedPath(parentPath + resourcePath.getResolvedPath() + extension);
+		}
+		return resourcePath;
 	}
 
 	@Override

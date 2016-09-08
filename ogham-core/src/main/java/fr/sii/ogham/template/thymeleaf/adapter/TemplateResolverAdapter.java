@@ -4,15 +4,15 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
+import fr.sii.ogham.template.thymeleaf.TemplateResolverOptions;
 
 /**
- * Adapter that provides the Thymeleaf specific resolver from the general
- * template resolver.
+ * Adapter that provides the Thymeleaf specific {@link ITemplateResolver} from the general {@link ResourceResolver}.
  * 
  * @author Aurélien Baudet
  *
  */
-public interface ThymeleafResolverAdapter {
+public interface TemplateResolverAdapter {
 	/**
 	 * Is the adapter can handle the general resolver.
 	 * 
@@ -23,8 +23,7 @@ public interface ThymeleafResolverAdapter {
 	boolean supports(ResourceResolver resolver);
 
 	/**
-	 * Adapts the general template resolver into the Thymeleaf specific
-	 * resolver.
+	 * Adapts the general template resolver into the Thymeleaf specific resolver.
 	 * 
 	 * @param resolver
 	 *            the general resolver
@@ -35,10 +34,10 @@ public interface ThymeleafResolverAdapter {
 	ITemplateResolver adapt(ResourceResolver resolver) throws NoResolverAdapterException;
 
 	/**
-	 * Sets the otpions for the adapted {@link ITemplateResolver}
+	 * Sets the options for the adapted {@link ITemplateResolver}.
 	 * 
 	 * @param options
 	 */
-	void setOptions(ThymeleafResolverOptions options);
+	void setOptions(TemplateResolverOptions options);
 
 }

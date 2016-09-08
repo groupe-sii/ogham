@@ -11,6 +11,7 @@ import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
 import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
+import fr.sii.ogham.core.resource.resolver.RelativisableResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
 
@@ -76,7 +77,11 @@ public class FirstSupportingResourceResolverBuilder implements Builder<FirstSupp
 		} else {
 			LOG.debug("Using parentPath {} and extension {} for resource resolution", parentPath, extension);
 			for (ResourceResolver resolver : resolvers) {
-				builtResolvers.add(new RelativeResolver(resolver, parentPath, extension));
+				if (resolver instanceof RelativisableResourceResolver) {
+					builtResolvers.add(new RelativeResolver((RelativisableResourceResolver) resolver, parentPath, extension));
+				} else {
+					builtResolvers.add(resolver);
+				}
 			}
 		}
 		return new FirstSupportingResourceResolver(builtResolvers);

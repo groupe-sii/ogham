@@ -1,4 +1,4 @@
-package fr.sii.ogham.ut.template.resolver;
+package fr.sii.ogham.ut.resolver;
 
 import java.io.IOException;
 

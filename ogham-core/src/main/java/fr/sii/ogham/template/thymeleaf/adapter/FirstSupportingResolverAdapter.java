@@ -8,6 +8,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
+import fr.sii.ogham.template.thymeleaf.TemplateResolverOptions;
 
 /**
  * Decorator that will ask each resolver adapter if it is able to handle the
@@ -20,13 +21,13 @@ import fr.sii.ogham.template.exception.NoResolverAdapterException;
  * 
  * @author Aurélien Baudet
  */
-public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter {
+public class FirstSupportingResolverAdapter implements TemplateResolverAdapter {
 
 	/**
 	 * The list of adapters used to convert the general resolvers into Thymeleaf
 	 * specific resolvers
 	 */
-	private List<ThymeleafResolverAdapter> adapters;
+	private List<TemplateResolverAdapter> adapters;
 
 	/**
 	 * Initialize the decorator with none, one or several resolver adapter
@@ -35,7 +36,7 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 	 * @param adapters
 	 *            the adapters to register
 	 */
-	public FirstSupportingResolverAdapter(ThymeleafResolverAdapter... adapters) {
+	public FirstSupportingResolverAdapter(TemplateResolverAdapter... adapters) {
 		this(new ArrayList<>(Arrays.asList(adapters)));
 	}
 
@@ -46,18 +47,18 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 	 * @param adapters
 	 *            the adapters to register
 	 */
-	public FirstSupportingResolverAdapter(List<ThymeleafResolverAdapter> adapters) {
+	public FirstSupportingResolverAdapter(List<TemplateResolverAdapter> adapters) {
 		super();
 		this.adapters = adapters;
 	}
 
 	public FirstSupportingResolverAdapter() {
-		this(new ArrayList<ThymeleafResolverAdapter>());
+		this(new ArrayList<TemplateResolverAdapter>());
 	}
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		for (ThymeleafResolverAdapter adapter : adapters) {
+		for (TemplateResolverAdapter adapter : adapters) {
 			if (adapter.supports(resolver)) {
 				return true;
 			}
@@ -67,7 +68,7 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 
 	@Override
 	public ITemplateResolver adapt(ResourceResolver resolver) throws NoResolverAdapterException {
-		for (ThymeleafResolverAdapter adapter : adapters) {
+		for (TemplateResolverAdapter adapter : adapters) {
 			if (adapter.supports(resolver)) {
 				return adapter.adapt(resolver);
 			}
@@ -81,17 +82,17 @@ public class FirstSupportingResolverAdapter implements ThymeleafResolverAdapter 
 	 * @param adapter
 	 *            the adapter to register
 	 */
-	public void addAdapter(ThymeleafResolverAdapter adapter) {
+	public void addAdapter(TemplateResolverAdapter adapter) {
 		adapters.add(adapter);
 	}
 
-	public List<ThymeleafResolverAdapter> getAdapters() {
+	public List<TemplateResolverAdapter> getAdapters() {
 		return adapters;
 	}
 
 	@Override
-	public void setOptions(ThymeleafResolverOptions options) {
-		for (ThymeleafResolverAdapter adapter : adapters) {
+	public void setOptions(TemplateResolverOptions options) {
+		for (TemplateResolverAdapter adapter : adapters) {
 			adapter.setOptions(options);
 		}
 	}

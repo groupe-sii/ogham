@@ -1,0 +1,1 @@
+${name} ${value} ${date?string["MMM/dd/yyyy"]}

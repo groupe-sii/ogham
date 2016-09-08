@@ -3,6 +3,7 @@ package fr.sii.ogham.template.thymeleaf.adapter;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.template.thymeleaf.templateresolver.StringTemplateResolver;
 
 /**
  * Adapter that converts general
@@ -12,7 +13,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
  * @author Aurélien Baudet
  *
  */
-public class StringResolverAdapter extends AbstractThymeleafResolverOptionsAdapter implements ThymeleafResolverAdapter {
+public class StringResolverAdapter extends AbstractTemplateResolverOptionsAdapter implements TemplateResolverAdapter {
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {

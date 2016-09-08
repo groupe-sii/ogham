@@ -57,5 +57,5 @@ public interface ResourceResolver {
 	 * @return a {@link ResourceResolver} that can be translated to an template
 	 *         engine adapter
 	 */
-	public ResourceResolver getActualResourceResolver();
+	ResourceResolver getActualResourceResolver();
 }
