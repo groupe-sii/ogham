@@ -41,6 +41,7 @@ public interface TemplateLoaderAdapter {
 	 * Sets the options for the adapted {@link ITemplateResolver}
 	 * 
 	 * @param options
+	 *            template loader options
 	 */
 	void setOptions(TemplateLoaderOptions options);
 

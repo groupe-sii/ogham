@@ -5,10 +5,8 @@ import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.resource.ResourcePath;
 
 /**
- * ResourceResolver using a list of supported lookups to compute a simple
- * {@link ResourcePath} where resolved path is simply the given path without the
- * lookup. Eg : classpath resource "classpath:/package/file" --> resolved path
- * is "package/file".
+ * ResourceResolver using a list of supported lookups to compute a simple {@link ResourcePath} where resolved path is simply the given path without the lookup.
+ * Eg : classpath resource "classpath:/package/file" to resolved path is "package/file".
  * 
  * @author Cyril Dejonghe
  *
@@ -38,7 +36,7 @@ public abstract class AbstractPrefixedLookupPathResolver implements ResourceReso
 	/**
 	 * Find the resource using the resource path (or its name).
 	 * 
-	 * @param path
+	 * @param resourcePath
 	 *            the path of the resource
 	 * @return the found resource
 	 * @throws ResourceResolutionException
