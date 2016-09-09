@@ -137,6 +137,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		this.properties = properties;
 		useDefaultResolvers();
 		withThymeleaf();
+		withFreeMarker();
 		return this;
 	}
 
@@ -364,6 +365,24 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	 */
 	public ThymeleafTemplateParserBuilder getThymeleafParser() {
 		return getParserBuilder(ThymeleafTemplateParserBuilder.class);
+	}
+
+	/**
+	 * <p>
+	 * Get the reference to the specialized builder for Thymeleaf. It may be useful to fine tune Thymeleaf engine.
+	 * </p>
+	 * 
+	 * Access this builder if you want to:
+	 * <ul>
+	 * <li>Use your own Thymeleaf template engine</li>
+	 * <li>Customize the lookup resolution for Thymeleaf</li>
+	 * <li>Customize the adapters</li>
+	 * </ul>
+	 * 
+	 * @return The Thymeleaf builder
+	 */
+	public FreeMarkerTemplateParserBuilder getFreeMarkerParser() {
+		return getParserBuilder(FreeMarkerTemplateParserBuilder.class);
 	}
 
 	/**
