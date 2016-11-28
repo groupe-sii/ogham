@@ -18,7 +18,7 @@
 		provides bridges for framework integration (Spring, JSF, ...). It
 		is designed to be easily extended.
 	</description>
-	
+
 	<dependencies>
 		<!-- Mail -->
 		<dependency>
@@ -61,6 +61,10 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
 
 		<!-- Template parsers -->
 		<dependency>
@@ -69,12 +73,6 @@
 		</dependency>
 
 		<!-- MimeType detection -->
-		<dependency>
-			<groupId>net.sf.jmimemagic</groupId>
-			<artifactId>jmimemagic</artifactId>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-core</artifactId>

@@ -12,7 +12,6 @@ import org.apache.tika.Tika;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.FixedMimeTypeProvider;
-import fr.sii.ogham.core.mimetype.JMimeMagicProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.TikaProvider;
 
@@ -46,17 +45,11 @@ public class MimetypeProviderBuilder implements Builder<MimeTypeProvider> {
 		// @formatter:off
 		tika()
 			.and()
-		.jmimemagic() // TODO: only if implementation is available in the classpath + /!\ xercesImpl version
-			.and()
 		.defaultMimetype();
 		// TODO: auto-detect
 //		autodetect();
 		// @formatter:on
 		return this;
-	}
-
-	public JMimeMagicBuilder jmimemagic() {
-		return add(new JMimeMagicBuilder(this));
 	}
 
 	public TikaBuilder tika() {
@@ -112,39 +105,6 @@ public class MimetypeProviderBuilder implements Builder<MimeTypeProvider> {
 
 		public MimetypeProviderBuilder and() {
 			return parent;
-		}
-	}
-
-	private static class JMimeMagicBuilder extends ChildBuilder {
-		/**
-		 * only try to get mime type, no submatches are processed when true
-		 */
-		private boolean onlyMimeMatch;
-
-		/**
-		 * whether or not to use extension to optimize order of content tests
-		 */
-		private boolean extensionHints;
-
-		public JMimeMagicBuilder(MimetypeProviderBuilder parent) {
-			super(parent);
-			this.onlyMimeMatch = false;
-			this.extensionHints = false;
-		}
-
-		public JMimeMagicBuilder onlyMimeMatch(boolean onlyMimeMatch) {
-			this.onlyMimeMatch = onlyMimeMatch;
-			return this;
-		}
-
-		public JMimeMagicBuilder extensionHints(boolean extensionHints) {
-			this.extensionHints = extensionHints;
-			return this;
-		}
-
-		@Override
-		public JMimeMagicProvider build() {
-			return new JMimeMagicProvider(onlyMimeMatch, extensionHints);
 		}
 	}
 
