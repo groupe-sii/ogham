@@ -49,13 +49,4 @@ public interface ResourceResolver {
 	 * @return the resolved resource path or null if it does not support it.
 	 */
 	ResourcePath getResourcePath(String path);
-
-	/**
-	 * Finds the final delegated {@link ResourceResolver} by any level of
-	 * delegation.
-	 * 
-	 * @return a {@link ResourceResolver} that can be translated to an template
-	 *         engine adapter
-	 */
-	ResourceResolver getActualResourceResolver();
 }

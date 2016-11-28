@@ -1,6 +1,7 @@
 package fr.sii.ogham.template.freemarker.adapter;
 
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
+import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -14,7 +15,8 @@ import freemarker.cache.TemplateLoader;
 public class ClassPathResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		return resolver.getActualResourceResolver() instanceof ClassPathResolver;
+		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;
+		return actualResolver instanceof ClassPathResolver;
 	}
 
 	@Override

@@ -58,9 +58,4 @@ public abstract class AbstractPrefixedLookupPathResolver implements ResourceReso
 		}
 		return result;
 	}
-
-	@Override
-	public ResourceResolver getActualResourceResolver() {
-		return this;
-	}
 }

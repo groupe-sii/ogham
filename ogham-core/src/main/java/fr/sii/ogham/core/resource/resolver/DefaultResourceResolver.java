@@ -11,7 +11,7 @@ import fr.sii.ogham.core.resource.ResourcePath;
  * @author Cyril Dejonghe
  *
  */
-public class DefaultResourceResolver implements ResourceResolver {
+public class DefaultResourceResolver implements DelegateResourceResolver {
 	/**
 	 * The delegate resolver that will do the real resource resolution
 	 */
@@ -49,6 +49,6 @@ public class DefaultResourceResolver implements ResourceResolver {
 
 	@Override
 	public ResourceResolver getActualResourceResolver() {
-		return delegate.getActualResourceResolver();
+		return delegate instanceof DelegateResourceResolver ? ((DelegateResourceResolver) delegate).getActualResourceResolver() : delegate;
 	}
 }

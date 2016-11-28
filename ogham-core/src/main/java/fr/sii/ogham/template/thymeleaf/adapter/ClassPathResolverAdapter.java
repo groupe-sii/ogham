@@ -4,6 +4,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
+import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.thymeleaf.templateresolver.FixClassLoaderTemplateResolver;
 
@@ -17,7 +18,8 @@ import fr.sii.ogham.template.thymeleaf.templateresolver.FixClassLoaderTemplateRe
 public class ClassPathResolverAdapter extends AbstractTemplateResolverOptionsAdapter implements TemplateResolverAdapter {
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		return resolver.getActualResourceResolver() instanceof ClassPathResolver;
+		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;
+		return actualResolver instanceof ClassPathResolver;
 	}
 
 	@Override

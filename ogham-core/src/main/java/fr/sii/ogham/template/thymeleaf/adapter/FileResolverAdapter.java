@@ -3,6 +3,7 @@ package fr.sii.ogham.template.thymeleaf.adapter;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 
 /**
@@ -17,7 +18,8 @@ public class FileResolverAdapter extends AbstractTemplateResolverOptionsAdapter 
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		return resolver.getActualResourceResolver() instanceof fr.sii.ogham.core.resource.resolver.FileResolver;
+		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;
+		return actualResolver instanceof fr.sii.ogham.core.resource.resolver.FileResolver;
 	}
 
 	@Override

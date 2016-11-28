@@ -136,6 +136,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 	public TemplateBuilder useDefaults(Properties properties) {
 		this.properties = properties;
 		useDefaultResolvers();
+		// TODO: we should choose only one according to classpath
 		withThymeleaf();
 		withFreeMarker();
 		return this;

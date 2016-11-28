@@ -26,7 +26,7 @@ import fr.sii.ogham.core.resource.ResourcePath;
  * @author Aurélien Baudet
  *
  */
-public class RelativeResolver implements ResourceResolver {
+public class RelativeResolver implements DelegateResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(RelativeResolver.class);
 
 	/**
@@ -115,6 +115,6 @@ public class RelativeResolver implements ResourceResolver {
 
 	@Override
 	public ResourceResolver getActualResourceResolver() {
-		return delegate.getActualResourceResolver();
+		return delegate instanceof DelegateResourceResolver ? ((RelativeResolver) delegate).getActualResourceResolver() : delegate;
 	}
 }

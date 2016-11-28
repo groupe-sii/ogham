@@ -1,5 +1,6 @@
 package fr.sii.ogham.template.freemarker.adapter;
 
+import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -14,8 +15,8 @@ public class StringResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptio
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		return resolver.getActualResourceResolver() instanceof fr.sii.ogham.core.resource.resolver.StringResourceResolver;
-
+		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;
+		return actualResolver instanceof fr.sii.ogham.core.resource.resolver.StringResourceResolver;
 	}
 
 	@Override

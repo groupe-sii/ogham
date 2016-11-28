@@ -2,6 +2,7 @@ package fr.sii.ogham.template.freemarker.adapter;
 
 import java.io.IOException;
 
+import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.ResolverAdapterConfigurationException;
@@ -18,7 +19,8 @@ public class FileResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptions
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		return resolver.getActualResourceResolver() instanceof fr.sii.ogham.core.resource.resolver.FileResolver;
+		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;
+		return actualResolver instanceof fr.sii.ogham.core.resource.resolver.FileResolver;
 	}
 
 	@Override

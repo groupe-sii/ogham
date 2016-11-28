@@ -101,10 +101,4 @@ public class FirstSupportingResourceResolver implements ResourceResolver {
 			return null;
 		}
 	}
-
-	@Override
-	public ResourceResolver getActualResourceResolver() {
-		return null;
-	}
-
 }
