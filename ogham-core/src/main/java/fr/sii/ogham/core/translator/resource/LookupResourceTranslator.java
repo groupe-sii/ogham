@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.LookupResource;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.resolver.LookupMappingResolver;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.email.exception.attachment.translator.ResourceTranslatorException;
 
 /**
@@ -15,8 +15,8 @@ import fr.sii.ogham.email.exception.attachment.translator.ResourceTranslatorExce
  * real resource implementation.
  * </p>
  * <p>
- * This translator uses a {@link LookupMappingResolver} to get the real resource
- * implementation.
+ * This translator uses a {@link FirstSupportingResourceResolver} to get the real
+ * resource implementation.
  * </p>
  * 
  * @author Aurélien Baudet
@@ -28,9 +28,9 @@ public class LookupResourceTranslator implements AttachmentResourceTranslator {
 	/**
 	 * The parser to use for finding, loading and evaluating the template
 	 */
-	private LookupMappingResolver resolver;
+	private FirstSupportingResourceResolver resolver;
 
-	public LookupResourceTranslator(LookupMappingResolver resolver) {
+	public LookupResourceTranslator(FirstSupportingResourceResolver resolver) {
 		super();
 		this.resolver = resolver;
 	}

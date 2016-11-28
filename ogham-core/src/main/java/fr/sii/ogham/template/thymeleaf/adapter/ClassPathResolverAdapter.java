@@ -4,27 +4,27 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
-import fr.sii.ogham.core.resource.resolver.RelativeResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.template.thymeleaf.templateresolver.FixClassLoaderTemplateResolver;
 
 /**
- * Adapter that converts general {@link ClassPathResolver} into
- * Thymeleaf specific {@link ClassLoaderTemplateResolver}.
+ * Adapter that converts general {@link ClassPathResolver} into Thymeleaf
+ * specific {@link ClassLoaderTemplateResolver}.
  * 
  * @author Aurélien Baudet
  *
  */
-public class ClassPathResolverAdapter implements ThymeleafResolverAdapter {
+public class ClassPathResolverAdapter extends AbstractTemplateResolverOptionsAdapter implements TemplateResolverAdapter {
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-		return resolver instanceof ClassPathResolver
-				|| (resolver instanceof RelativeResolver && ((RelativeResolver) resolver).getDelegate() instanceof ClassPathResolver);
+		return resolver.getActualResourceResolver() instanceof ClassPathResolver;
 	}
 
 	@Override
 	public ITemplateResolver adapt(ResourceResolver resolver) {
-		// TODO: manage all other options
-		return new FixClassLoaderTemplateResolver();
+		FixClassLoaderTemplateResolver templateResolver = new FixClassLoaderTemplateResolver();
+		applyOptions(templateResolver);
+		return templateResolver;
 	}
 
 }

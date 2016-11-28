@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.LookupMappingResourceResolverBuilder;
+import fr.sii.ogham.core.builder.FirstSupportingResourceResolverBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
@@ -36,7 +36,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	/**
 	 * The map for managing lookup part in resource path
 	 */
-	private LookupMappingResourceResolverBuilder resolverBuilder;
+	private FirstSupportingResourceResolverBuilder resolverBuilder;
 
 	public AttachmentResourceTranslatorBuilder() {
 		super();
@@ -65,7 +65,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	 * Tells the builder to use all default behaviors and values.
 	 * <p>
 	 * It will register a {@link LookupResourceTranslator} for searching
-	 * attachments using a prefix lookup.
+	 * attachments using a lookup.
 	 * </p>
 	 * It will enable default lookups (see {@link #useDefaultLookups()}):
 	 * <ul>
@@ -92,7 +92,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	 * @return this instance for fluent use
 	 */
 	public AttachmentResourceTranslatorBuilder useDefaultLookups() {
-		resolverBuilder = new LookupMappingResourceResolverBuilder().useDefaults();
+		resolverBuilder = new FirstSupportingResourceResolverBuilder().useDefaults();
 		return this;
 	}
 
@@ -109,20 +109,18 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	}
 
 	/**
-	 * Register a lookup mapping. The key is the lookup prefix. The value is the
+	 * Register a lookup mapping. The key is the lookup. The value is the
 	 * resource resolver.
 	 * 
-	 * @param lookup
-	 *            the lookup prefix
 	 * @param resource
 	 *            the attachment resource resolver
 	 * @return this instance for fluent use
 	 */
-	public AttachmentResourceTranslatorBuilder withLookupResolver(String lookup, ResourceResolver resource) {
+	public AttachmentResourceTranslatorBuilder withResourceResolver(ResourceResolver resource) {
 		if (resolverBuilder == null) {
-			resolverBuilder = new LookupMappingResourceResolverBuilder();
+			resolverBuilder = new FirstSupportingResourceResolverBuilder();
 		}
-		resolverBuilder.withLookupResolver(lookup, resource);
+		resolverBuilder.withResourceResolver(resource);
 		return this;
 	}
 
@@ -139,7 +137,7 @@ public class AttachmentResourceTranslatorBuilder implements Builder<AttachmentRe
 	 * 
 	 * @return the builder used to handle resource resolution
 	 */
-	public LookupMappingResourceResolverBuilder getResolverBuilder() {
+	public FirstSupportingResourceResolverBuilder getResolverBuilder() {
 		return resolverBuilder;
 	}
 }

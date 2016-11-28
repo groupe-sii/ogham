@@ -10,7 +10,7 @@
 		Open, General and Highly Adaptative Messaging library. It is a reusable
 		Java library for sending any kind of message (email, SMS, mobile notification,
 		tweet, SNMP...). The content of the message can comes from any
-		templating engine (Thymeleaf, Freemarker, Velocity, ...). It also
+		templating engine (Thymeleaf, FreeMarker, Velocity, ...). It also
 		provides bridges for framework integration (Spring, JSF, ...). It
 		is designed to be easily extended.
 	</description>
@@ -25,6 +25,7 @@
 		<commons-io.version>2.4</commons-io.version>
 		<commons-beanutils.version>1.9.2</commons-beanutils.version>
 		<thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
+		<freemarker.version>2.3.23</freemarker.version>
 		<javamail.version>1.5.2</javamail.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
@@ -147,7 +148,13 @@
 				<artifactId>thymeleaf</artifactId>
 				<version>${thymeleaf.version}</version>
 			</dependency>
-
+			
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>${freemarker.version}</version>
+			</dependency>
+			
 			<!-- MimeType detection -->
 			<dependency>
 				<groupId>org.apache.tika</groupId>

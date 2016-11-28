@@ -10,7 +10,7 @@ import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.TikaProvider;
-import fr.sii.ogham.core.resource.resolver.LookupMappingResolver;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.translator.content.EveryContentTranslator;
@@ -68,19 +68,19 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	public ContentTranslator build() throws BuildException {
 		LOG.info("Using translator that calls all registered translators");
 		EveryContentTranslator translator = new EveryContentTranslator();
-		if(templateBuilder != null) {
+		if (templateBuilder != null) {
 			TemplateParser templateParser = templateBuilder.build();
 			LOG.debug("Registering content translator that parses templates using {}", templateParser);
 			translator.addTranslator(new TemplateContentTranslator(templateParser));
 		}
-		if(enableMultiContent) {
+		if (enableMultiContent) {
 			LOG.debug("Multi-content transformation is enabled");
 			translator.addTranslator(new MultiContentTranslator(translator));
 		}
-		if(enableInlining) {
+		if (enableInlining) {
 			// TODO: extract inliners init to their own builders
 			LOG.debug("CSS inlining is enabled");
-			LookupMappingResolver resolver = new LookupMappingResourceResolverBuilder().useDefaults().build();
+			FirstSupportingResourceResolver resolver = new FirstSupportingResourceResolverBuilder().useDefaults().build();
 			translator.addTranslator(new InlineCssTranslator(new JsoupCssInliner(), resolver));
 			LOG.debug("Image inlining is enabled");
 			MimeTypeProvider mimetypeProvider = new TikaProvider();
@@ -233,8 +233,8 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * <li>Register a custom lookup mapping resolver for template resources</li>
 	 * <li>Use your own template engine</li>
 	 * <li>Customize the template engine configuration</li>
-	 * <li>Set the prefix and suffix for template resolution</li>
-	 * <li>Set the property key for prefix and suffix resolution</li>
+	 * <li>Set the parent path and extension for template resolution</li>
+	 * <li>Set the property key for parent path and extension resolution</li>
 	 * </ul>
 	 * 
 	 * @return the template builder

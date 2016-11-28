@@ -107,14 +107,14 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	private Map<Condition<Message>, Builder<? extends MessageSender>> implementations;
 
 	/**
-	 * Own property key for template resolution prefix
+	 * Own property key for template resolution parent path.
 	 */
-	private String templatePrefixKey;
+	private String templateParentPathKey;
 
 	/**
-	 * Own property key for template resolution prefix
+	 * Own property key for template resolution extension.
 	 */
-	private String templateSuffixKey;
+	private String templateExtensionKey;
 
 	public EmailBuilder() {
 		super();
@@ -141,13 +141,13 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			sender = new AttachmentResourceTranslatorSender(resourceTranslator, sender);
 		}
 		if (contentTranslatorBuilder != null) {
-			if (templatePrefixKey != null) {
-				LOG.debug("Use custom property key {} for prefix template resolution", templatePrefixKey);
-				getTemplateBuilder().setPrefixKey(templatePrefixKey);
+			if (templateParentPathKey != null) {
+				LOG.debug("Use custom property key {} for parent path template resolution", templateParentPathKey);
+				getTemplateBuilder().setParentPathKey(templateParentPathKey);
 			}
-			if (templateSuffixKey != null) {
-				LOG.debug("Use custom property key {} for suffix template resolution", templateSuffixKey);
-				getTemplateBuilder().setSuffixKey(templateSuffixKey);
+			if (templateExtensionKey != null) {
+				LOG.debug("Use custom property key {} for extension template resolution", templateExtensionKey);
+				getTemplateBuilder().setExtensionKey(templateExtensionKey);
 			}
 			ContentTranslator contentTranslator = contentTranslatorBuilder.build();
 			LOG.debug("Content translation enabled {}", contentTranslator);
@@ -164,7 +164,8 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <li>Enables automatic filling of message based on configuration
 	 * properties</li>
 	 * <li>Enables templating support</li>
-	 * <li>Enables attachment features (see {@link #withAttachmentFeatures()})</li>
+	 * <li>Enables attachment features (see
+	 * {@link #withAttachmentFeatures()})</li>
 	 * </ul>
 	 * <p>
 	 * Configuration values come from system properties.
@@ -184,7 +185,8 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <li>Enables automatic filling of message based on configuration
 	 * properties</li>
 	 * <li>Enables templating support</li>
-	 * <li>Enables attachment features (see {@link #withAttachmentFeatures()})</li>
+	 * <li>Enables attachment features (see
+	 * {@link #withAttachmentFeatures()})</li>
 	 * </ul>
 	 * <p>
 	 * Configuration values come from provided properties.
@@ -494,14 +496,15 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <p>
 	 * Calling this method will enable different location for email templates
 	 * from default one. The location will be specified by different property
-	 * keys for prefix and suffix.
+	 * keys for parent path and extension.
 	 * </p>
 	 * 
 	 * By default default properties are:
 	 * <ul>
 	 * <li>ogham.template.prefix (see {@link TemplateConstants#PREFIX_PROPERTY})
 	 * </li>
-	 * <li>ogham.template.suffix (see {@link TemplateConstants#SUFFIX_PROPERTY}</li>
+	 * <li>ogham.template.suffix (see
+	 * {@link TemplateConstants#SUFFIX_PROPERTY}</li>
 	 * </ul>
 	 * 
 	 * Calling this method will change the property keys to:
@@ -526,7 +529,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <p>
 	 * Calling this method will enable different location for email templates
 	 * from default one. The location will be specified by a different property
-	 * key for prefix.
+	 * key for parent path.
 	 * </p>
 	 * 
 	 * <p>
@@ -543,7 +546,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder setTemplatePrefixKey(String prefixKey) {
-		this.templatePrefixKey = prefixKey;
+		this.templateParentPathKey = prefixKey;
 		return this;
 	}
 
@@ -551,7 +554,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <p>
 	 * Calling this method will enable different location for email templates
 	 * from default one. The location will be specified by a different property
-	 * key for suffix.
+	 * key for extension.
 	 * </p>
 	 * 
 	 * <p>
@@ -568,7 +571,7 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder setTemplateSuffixKey(String suffixKey) {
-		this.templateSuffixKey = suffixKey;
+		this.templateExtensionKey = suffixKey;
 		return this;
 	}
 
@@ -705,7 +708,8 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * 
 	 * Access this builder if you want to:
 	 * <ul>
-	 * <li>Customize templating mechanism (see {@link #getTemplateBuilder()})</li>
+	 * <li>Customize templating mechanism (see
+	 * {@link #getTemplateBuilder()})</li>
 	 * <li>Enable/disable support for messages with multiple contents</li>
 	 * <li>Enable/disable support for inlining of resources</li>
 	 * <li>Add your own content translator</li>
@@ -729,8 +733,8 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * <li>Register a custom lookup mapping resolver for template resources</li>
 	 * <li>Use your own template engine</li>
 	 * <li>Customize the template engine configuration</li>
-	 * <li>Set the prefix and suffix for template resolution</li>
-	 * <li>Set the property key for prefix and suffix resolution</li>
+	 * <li>Set the parent path and extension for template resolution</li>
+	 * <li>Set the property key for parent path and extension resolution</li>
 	 * </ul>
 	 * 
 	 * @return the template builder

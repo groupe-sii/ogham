@@ -5,16 +5,18 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.ResourcePath;
 
 /**
  * <p>
- * Decorator resource resolver that use prefix and suffix for resource
+ * Decorator resource resolver that use parent path and extension for resource
  * resolution.
  * </p>
  * <p>
- * For example, the prefix values "email/user/" and the suffix is ".html". The
- * resource name is "hello". This resource resolver appends the prefix, the
- * resource name and the suffix generating the path "email/user/hello.html".
+ * For example, the parent path values "email/user/" and the extension is
+ * ".html". The resource name is "hello". This resource resolver appends the
+ * parent path, the resource name and the extension generating the path
+ * "email/user/hello.html".
  * </p>
  * <p>
  * Once the path is generated, then this implementation delegates the real
@@ -28,72 +30,91 @@ public class RelativeResolver implements ResourceResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(RelativeResolver.class);
 
 	/**
-	 * The prefix to add to the resource name (or path)
+	 * The parent path to add to the resource name (or path)
 	 */
-	private String prefix;
+	private String parentPath;
 
 	/**
 	 * The suffix to add to the resource name (or path)
 	 */
-	private String suffix;
+	private String extension;
 
 	/**
 	 * The delegate resolver that will do the real resource resolution
 	 */
-	private ResourceResolver delegate;
+	private RelativisableResourceResolver delegate;
 
 	/**
-	 * Initialize the resolver with the mandatory delegate and a prefix. No
-	 * suffix will be appended to the resource path.
+	 * Initialize the resolver with the mandatory delegate and a parent path. No
+	 * extension will be appended to the resource path.
 	 * 
 	 * @param delegate
 	 *            the resolver that will do the real resource resolution
-	 * @param prefix
+	 * @param parentPath
 	 *            a string to add before the resource path
 	 */
-	public RelativeResolver(ResourceResolver delegate, String prefix) {
-		this(delegate, prefix, "");
+	public RelativeResolver(RelativisableResourceResolver delegate, String parentPath) {
+		this(delegate, parentPath, "");
 	}
 
 	/**
-	 * Initialize the resolver with the mandatory delegate, a prefix and a
-	 * suffix.
+	 * Initialize the resolver with the mandatory delegate, a parent path and a
+	 * extension.
 	 * 
 	 * @param delegate
 	 *            the resolver that will do the real resource resolution
-	 * @param prefix
+	 * @param parentPath
 	 *            a string to add before the resource path
-	 * @param suffix
+	 * @param extension
 	 *            a string to add after the resource path
 	 */
-	public RelativeResolver(ResourceResolver delegate, String prefix, String suffix) {
+	public RelativeResolver(RelativisableResourceResolver delegate, String parentPath, String extension) {
 		super();
-		this.prefix = prefix == null ? "" : prefix;
-		this.suffix = suffix == null ? "" : suffix;
+		this.parentPath = parentPath == null ? "" : parentPath;
+		this.extension = extension == null ? "" : extension;
 		this.delegate = delegate;
 	}
 
 	@Override
 	public Resource getResource(String path) throws ResourceResolutionException {
 		boolean absolute = path.startsWith("/");
-		if(absolute) {
-			LOG.trace("Absolute resource path {} => do not add prefix/suffix", path);
+		if (absolute) {
+			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
 			return delegate.getResource(path);
 		} else {
-			LOG.debug("Adding prefix ({}) and suffix ({}) to the resource path {}", prefix, suffix, path);
-			return delegate.getResource(prefix + path + suffix);
+			LOG.debug("Adding parentPath ({}) and extension ({}) to the resource path {}", parentPath, extension, path);
+			return delegate.getResource(parentPath + path + extension);
 		}
 	}
 
-	public String getPrefix() {
-		return prefix;
+	public String getParentPath() {
+		return parentPath;
 	}
 
-	public String getSuffix() {
-		return suffix;
+	public String getExtension() {
+		return extension;
 	}
 
-	public ResourceResolver getDelegate() {
-		return delegate;
+	@Override
+	public boolean supports(String path) {
+		return delegate.supports(path);
+	}
+
+	@Override
+	public ResourcePath getResourcePath(String path) {
+		boolean absolute = path.startsWith("/");
+		ResourcePath resourcePath = delegate.getResourcePath(path);
+		if (absolute) {
+			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
+		} else {
+			LOG.debug("Adding parentPath ({}) and extension ({}) to the resource path {}", parentPath, extension, path);
+			resourcePath.setResolvedPath(parentPath + resourcePath.getResolvedPath() + extension);
+		}
+		return resourcePath;
+	}
+
+	@Override
+	public ResourceResolver getActualResourceResolver() {
+		return delegate.getActualResourceResolver();
 	}
 }
