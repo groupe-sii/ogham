@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
+import fr.sii.ogham.core.message.content.EmailVariant;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.TikaProvider;
@@ -24,6 +25,8 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.ogham.html.translator.InlineCssTranslator;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
+import fr.sii.ogham.template.common.adapter.ExtensionMappingVariantResolver;
+import fr.sii.ogham.template.common.adapter.FirstExistingResourceVariantResolver;
 
 /**
  * Builder for constructing a chained translator. Each translator is able to
@@ -71,7 +74,13 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 		if (templateBuilder != null) {
 			TemplateParser templateParser = templateBuilder.build();
 			LOG.debug("Registering content translator that parses templates using {}", templateParser);
-			translator.addTranslator(new TemplateContentTranslator(templateParser));
+			// TODO: provide possibility to define custom variant mapping
+			// @formatter:off
+			translator.addTranslator(new TemplateContentTranslator(templateParser, 
+					new FirstExistingResourceVariantResolver(templateBuilder.getResolverBuilder().build(), 
+							new ExtensionMappingVariantResolver().register(EmailVariant.HTML, "html").register(EmailVariant.TEXT, "txt"), 
+							new ExtensionMappingVariantResolver().register(EmailVariant.HTML, "html.ftl").register(EmailVariant.TEXT, "txt.ftl"))));
+			// @formatter:on
 		}
 		if (enableMultiContent) {
 			LOG.debug("Multi-content transformation is enabled");
@@ -79,8 +88,8 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 		}
 		if (enableInlining) {
 			// TODO: extract inliners init to their own builders
-			LOG.debug("CSS inlining is enabled");
 			FirstSupportingResourceResolver resolver = new FirstSupportingResourceResolverBuilder().useDefaults().build();
+			LOG.debug("CSS inlining is enabled");
 			translator.addTranslator(new InlineCssTranslator(new JsoupCssInliner(), resolver));
 			LOG.debug("Image inlining is enabled");
 			MimeTypeProvider mimetypeProvider = new TikaProvider();

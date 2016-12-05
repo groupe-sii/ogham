@@ -6,7 +6,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
 import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
-import fr.sii.ogham.template.thymeleaf.templateresolver.FixClassLoaderTemplateResolver;
+import fr.sii.ogham.template.thymeleaf.resolver.FixClassLoaderTemplateResolver;
 
 /**
  * Adapter that converts general {@link ClassPathResolver} into Thymeleaf

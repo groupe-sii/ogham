@@ -1,4 +1,4 @@
-package fr.sii.ogham.template.thymeleaf.templateresolver;
+package fr.sii.ogham.template.thymeleaf.resolver;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

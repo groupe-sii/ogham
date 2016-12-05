@@ -4,7 +4,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
-import fr.sii.ogham.template.thymeleaf.templateresolver.StringTemplateResolver;
+import fr.sii.ogham.template.thymeleaf.resolver.StringTemplateResolver;
 
 /**
  * Adapter that converts general

@@ -4,10 +4,12 @@ import org.thymeleaf.TemplateEngine;
 
 import fr.sii.ogham.core.builder.TemplateParserBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.message.content.EmailVariant;
 import fr.sii.ogham.core.resource.ResourcePath;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.common.adapter.ExtensionMappingVariantResolver;
 import fr.sii.ogham.template.thymeleaf.TemplateResolverOptions;
 import fr.sii.ogham.template.thymeleaf.ThymeLeafFirstSupportingTemplateResolver;
 import fr.sii.ogham.template.thymeleaf.ThymeleafParser;

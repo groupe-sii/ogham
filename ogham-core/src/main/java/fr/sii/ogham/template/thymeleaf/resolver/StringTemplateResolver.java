@@ -1,4 +1,4 @@
-package fr.sii.ogham.template.thymeleaf.templateresolver;
+package fr.sii.ogham.template.thymeleaf.resolver;
 
 import org.thymeleaf.templateresolver.TemplateResolver;
 

@@ -7,12 +7,16 @@ import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.message.content.TemplateVariantContent;
+import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.common.adapter.VariantResolver;
 
 /**
  * <p>
  * Translator that handles {@link TemplateContent}. It parses the template and
- * provide an evaluated content.
+ * provide an evaluated content. It also handles {@link TemplateVariantContent}
+ * through {@link VariantResolver}.
  * </p>
  * <p>
  * The template parsing is delegated to a {@link TemplateParser}.
@@ -33,9 +37,15 @@ public class TemplateContentTranslator implements ContentTranslator {
 	 */
 	private TemplateParser parser;
 
-	public TemplateContentTranslator(TemplateParser parser) {
+	/**
+	 * The resolver that converts partial path with variant into real path
+	 */
+	private VariantResolver variantResolver;
+
+	public TemplateContentTranslator(TemplateParser parser, VariantResolver variantResolver) {
 		super();
 		this.parser = parser;
+		this.variantResolver = variantResolver;
 	}
 
 	@Override
@@ -43,9 +53,11 @@ public class TemplateContentTranslator implements ContentTranslator {
 		if (content instanceof TemplateContent) {
 			try {
 				TemplateContent template = (TemplateContent) content;
-				LOG.info("Parse template {} using context {}", template.getPath(), template.getContext());
+				String realPath = variantResolver.getRealPath(template);
+				Context ctx = template.getContext();
+				LOG.info("Parse template {} using context {}", realPath, ctx);
 				LOG.debug("Parse template content {} using {}", template, parser);
-				return parser.parse(template.getPath(), template.getContext());
+				return parser.parse(realPath, ctx);
 			} catch (ParseException e) {
 				throw new ContentTranslatorException("failed to translate templated content", e);
 			}
@@ -59,5 +71,5 @@ public class TemplateContentTranslator implements ContentTranslator {
 	public String toString() {
 		return "TemplateContentTranslator";
 	}
-	
+
 }
