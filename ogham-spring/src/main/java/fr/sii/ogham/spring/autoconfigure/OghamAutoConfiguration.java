@@ -51,7 +51,7 @@ public class OghamAutoConfiguration implements ApplicationContextAware {
 	 * @return the bridge helper
 	 */
 	@Bean
-	@ConditionalOnMissingBean
+	@ConditionalOnMissingBean(PropertiesBridge.class)
 	public PropertiesBridge propertiesBridge() {
 		return new PropertiesBridge();
 	}
