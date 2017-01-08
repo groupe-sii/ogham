@@ -34,10 +34,12 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 		LOG.debug("Checking if Thymeleaf can handle the template {}", templateName);
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(template.getInputStream()))) {
 			String line;
-			boolean containsThymeleafNamespace;
+			boolean containsThymeleafNamespace = false;
 			do {
 				line = br.readLine();
-				containsThymeleafNamespace = NAMESPACE_PATTERN.matcher(line).find();
+				if(line != null) {
+					containsThymeleafNamespace = NAMESPACE_PATTERN.matcher(line).find();
+				}
 			} while (line != null && !containsThymeleafNamespace);
 			if(containsThymeleafNamespace) {
 				LOG.debug("The template {} contains the namespace http://www.thymeleaf.org. Thymeleaf can be used", templateName);
