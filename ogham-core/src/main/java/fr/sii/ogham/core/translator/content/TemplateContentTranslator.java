@@ -54,6 +54,10 @@ public class TemplateContentTranslator implements ContentTranslator {
 			try {
 				TemplateContent template = (TemplateContent) content;
 				String realPath = variantResolver.getRealPath(template);
+				if(realPath==null) {
+					LOG.debug("No template found for {}", template.getPath());
+					return null;
+				}
 				Context ctx = template.getContext();
 				LOG.info("Parse template {} using context {}", realPath, ctx);
 				LOG.debug("Parse template content {} using {}", template, parser);

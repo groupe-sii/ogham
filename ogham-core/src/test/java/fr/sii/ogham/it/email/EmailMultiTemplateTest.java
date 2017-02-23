@@ -50,6 +50,14 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
+	public void withThymeleafMissingVariant() throws MessagingException, javax.mail.MessagingException, IOException {
+		oghamService.send(new Email("Template", new MultiTemplateContent("thymeleaf/source/multi_missing_variant", new SimpleBean("foo", 42)), "recipient@sii.fr"));
+		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Template", new ExpectedContent[] {
+				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "text/html.*")
+		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+	}
+	
+	@Test
 	public void withFreemarkerMulti() throws MessagingException, javax.mail.MessagingException, IOException {
 		oghamService.send(new Email("Template", new MultiTemplateContent("freemarker/source/simple", new SimpleBean("foo", 42)), "recipient@sii.fr"));
 		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Template", new ExpectedContent[] {

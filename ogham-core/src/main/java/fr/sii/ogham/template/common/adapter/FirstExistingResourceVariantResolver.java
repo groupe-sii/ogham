@@ -7,7 +7,6 @@ import java.util.List;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.capability.HasVariant;
 import fr.sii.ogham.core.message.content.TemplateContent;
-import fr.sii.ogham.core.message.content.Variant;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.VariantResolutionException;
 
@@ -21,14 +20,16 @@ import fr.sii.ogham.template.exception.VariantResolutionException;
 public class FirstExistingResourceVariantResolver implements VariantResolver {
 	private ResourceResolver resolver;
 	private List<VariantResolver> delegates;
+	private VariantResolver defaultResolver;
 
-	public FirstExistingResourceVariantResolver(ResourceResolver resolver, VariantResolver... delegates) {
-		this(resolver, new ArrayList<>(Arrays.asList(delegates)));
+	public FirstExistingResourceVariantResolver(ResourceResolver resolver, VariantResolver defaultResolver, VariantResolver... delegates) {
+		this(resolver, defaultResolver, new ArrayList<>(Arrays.asList(delegates)));
 	}
 
-	public FirstExistingResourceVariantResolver(ResourceResolver resolver, List<VariantResolver> delegates) {
+	public FirstExistingResourceVariantResolver(ResourceResolver resolver, VariantResolver defaultResolver, List<VariantResolver> delegates) {
 		super();
 		this.resolver = resolver;
+		this.defaultResolver = defaultResolver;
 		this.delegates = delegates;
 	}
 
@@ -44,8 +45,7 @@ public class FirstExistingResourceVariantResolver implements VariantResolver {
 					// just skip the exception
 				}
 			}
-			Variant variant = ((HasVariant) template).getVariant();
-			throw new VariantResolutionException("Failed to resolve variant (" + variant + ")", template.getPath(), template.getContext(), variant);
+			return defaultResolver.getRealPath(template);
 		} else {
 			return template.getPath();
 		}

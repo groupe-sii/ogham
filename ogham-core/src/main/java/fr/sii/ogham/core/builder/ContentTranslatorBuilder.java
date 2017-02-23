@@ -9,6 +9,7 @@ import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.message.content.EmailVariant;
 import fr.sii.ogham.core.message.content.MultiContent;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.TikaProvider;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
@@ -26,7 +27,9 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.ogham.html.translator.InlineCssTranslator;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
 import fr.sii.ogham.template.common.adapter.ExtensionMappingVariantResolver;
+import fr.sii.ogham.template.common.adapter.FailIfNotFoundVariantResolver;
 import fr.sii.ogham.template.common.adapter.FirstExistingResourceVariantResolver;
+import fr.sii.ogham.template.common.adapter.NullVariantResolver;
 
 /**
  * Builder for constructing a chained translator. Each translator is able to
@@ -60,6 +63,14 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	private boolean enableInlining;
 
 	/**
+	 * If false, it allows to provide only one file for a
+	 * {@link MultiTemplateContent}. It means that if only the HTML template is
+	 * provided and not the text version, it doesn't fail. If true, both files
+	 * must be defined.
+	 */
+	private boolean failOnMissingVariant;
+
+	/**
 	 * Generate a chain translator that delegates translation of content to all
 	 * enabled translators.
 	 * 
@@ -78,6 +89,7 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 			// @formatter:off
 			translator.addTranslator(new TemplateContentTranslator(templateParser, 
 					new FirstExistingResourceVariantResolver(templateBuilder.getResolverBuilder().build(), 
+							failOnMissingVariant ? new FailIfNotFoundVariantResolver() : new NullVariantResolver(),
 							new ExtensionMappingVariantResolver().register(EmailVariant.HTML, "html").register(EmailVariant.TEXT, "txt"), 
 							new ExtensionMappingVariantResolver().register(EmailVariant.HTML, "html.ftl").register(EmailVariant.TEXT, "txt.ftl"))));
 			// @formatter:on
@@ -198,6 +210,30 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	}
 
 	/**
+	 * When content is a {@link MultiTemplateContent}, you can provide several
+	 * files with extension or only the file name without extension and variants
+	 * (html or text) will be automatically detected.
+	 * 
+	 * <p>
+	 * If you set to true, you must provide both files (html and text). If you
+	 * don't, it will fail.
+	 * </p>
+	 * <p>
+	 * If you set to false (default value), it will let you create only one of
+	 * the variants (html or text).
+	 * </p>
+	 * 
+	 * @param fail
+	 *            true to fail if a variant is missing, false to allow missing
+	 *            variant
+	 * @return this builder instance for fluent use
+	 */
+	public ContentTranslatorBuilder failOnMissingVariant(boolean fail) {
+		failOnMissingVariant = fail;
+		return this;
+	}
+
+	/**
 	 * Tells the builder to use all default behaviors and values. It will enable
 	 * default template management and default multi-content support management.
 	 * 
@@ -206,6 +242,8 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * @see #withMultiContentSupport() More information about default
 	 *      multi-content management
 	 * @see #withInlining() More information about default inlining management
+	 * @see #failOnMissingVariant(boolean) More information about variant
+	 *      handling
 	 */
 	public ContentTranslatorBuilder useDefaults() {
 		useDefaults(BuilderUtils.getDefaultProperties());
@@ -223,11 +261,14 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 * @see #withMultiContentSupport() More information about default
 	 *      multi-content management
 	 * @see #withInlining() More information about default inlining management
+	 * @see #failOnMissingVariant(boolean) More information about variant
+	 *      handling
 	 */
 	public ContentTranslatorBuilder useDefaults(Properties properties) {
 		withTemplate(properties);
 		withMultiContentSupport();
 		withInlining();
+		failOnMissingVariant(false);
 		return this;
 	}
 

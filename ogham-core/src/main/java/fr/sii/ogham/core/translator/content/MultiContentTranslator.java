@@ -49,7 +49,11 @@ public class MultiContentTranslator implements ContentTranslator {
 			MultiContent result = new MultiContent();
 			for (Content c : ((MultiContent) content).getContents()) {
 				LOG.debug("Translate the sub content {} using {}", c, delegate);
-				result.addContent(delegate.translate(c));
+				Content translated = delegate.translate(c);
+				if(translated!=null) {
+					LOG.debug("Sub content {} skipped", c);
+					result.addContent(translated);
+				}
 			}
 			return result;
 		} else {
