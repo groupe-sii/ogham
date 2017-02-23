@@ -4,7 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import fr.sii.ogham.html.inliner.ImageResource;
  */
 public class InlineImageTranslator implements ContentTranslator {
 	private static final Logger LOG = LoggerFactory.getLogger(InlineImageTranslator.class);
+	private static final Pattern URL_PATTERN = Pattern.compile("^https?://.+$", Pattern.CASE_INSENSITIVE);
 	
 	/**
 	 * The image inliner
@@ -70,7 +73,7 @@ public class InlineImageTranslator implements ContentTranslator {
 	public Content translate(Content content) throws ContentTranslatorException {
 		if (content instanceof MayHaveStringContent && ((MayHaveStringContent) content).canProvideString()) {
 			String stringContent = ((MayHaveStringContent) content).asString();
-			List<String> images = HtmlUtils.getDistinctImageUrls(stringContent);
+			List<String> images = filterExternalUrls(HtmlUtils.getDistinctImageUrls(stringContent));
 			if (!images.isEmpty()) {
 				// parepare list of images paths/urls with their content
 				List<ImageResource> imageResources = load(images);
@@ -87,6 +90,16 @@ public class InlineImageTranslator implements ContentTranslator {
 		return content;
 	}
 
+	private List<String> filterExternalUrls(List<String> imageUrls) {
+		for(Iterator<String> it = imageUrls.iterator() ; it.hasNext() ; ) {
+			String url = it.next();
+			if(URL_PATTERN.matcher(url).matches()) {
+				it.remove();
+			}
+		}
+		return imageUrls;
+	}
+	
 	private List<ImageResource> load(List<String> images) throws ContentTranslatorException {
 		List<ImageResource> imageResources = new ArrayList<>(images.size());
 		for (String path : images) {

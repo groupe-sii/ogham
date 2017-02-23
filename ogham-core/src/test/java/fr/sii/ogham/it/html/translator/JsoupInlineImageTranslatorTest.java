@@ -83,6 +83,24 @@ public class JsoupInlineImageTranslatorTest {
 	}
 
 	@Test
+	public void skipExternalImages() throws IOException, ContentTranslatorException {
+		// prepare the html and associated images
+		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER + "withExternalImages.html"));
+		// do the job
+		Content result = translator.translate(new StringContent(source));
+		// prepare expected html
+		String expected = getExpectedHtml("withExternalImages.html");
+		// prepare expected attachments
+		List<Attachment> expectedAttachments = getAttachments(loadImages("h1.gif", "left.gif", "right.gif", "tw.gif"));
+		// assertions
+		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
+		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
+		AssertHtml.assertSimilar(expected, contentWithAttachments.getContent().toString());
+		Assert.assertEquals("should have 4 attachments", 4, contentWithAttachments.getAttachments().size());
+		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
+	}
+
+	@Test
 	public void skipAttach() throws IOException, ContentTranslatorException {
 		// prepare the html and associated images
 		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER + "skipInline.html"));
