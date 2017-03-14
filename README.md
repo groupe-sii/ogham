@@ -2,7 +2,7 @@
 
 [Open, General and Highly Adaptative Messaging library.](http://groupe-sii.github.io/ogham/)
 
-It is a reusable Java library in charge of sending any kind of message (email, SMS, mobile notification, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, FreeMarker, Velocity, ...). The library also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
+It is a reusable Java library in charge of sending any kind of message (email, SMS, mobile notification, tweet, SNMP...). The content of the message can follow any templating engine convention (Thymeleaf, FreeMarker, ...). The library also provides bridges for framework integration (Spring, JSF, ...). It is designed to be easily extended.
 
 [Full documentation](http://groupe-sii.github.io/ogham/)
 
@@ -14,7 +14,7 @@ Several libraries for sending email already exist ([Apache Commons Email](https:
 
 These libraries also provide only implementations based on Java Mail API. But in some environments, you might NOT want to send the email directly but to use a web service to do it for you ([SendGrid](https://sendgrid.com/) for example). Furthermore, those libraries are bound by design to frameworks or libraries that you might not want to use in your own context.
 
-So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service... Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
+So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service... Is email the only possible message type ? No, so why not sending SMS, Tweet or anything the same way ?
 
 
 ## The Ogham module

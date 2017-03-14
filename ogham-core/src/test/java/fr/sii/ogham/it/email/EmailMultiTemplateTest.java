@@ -66,4 +66,14 @@ public class EmailMultiTemplateTest {
 		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
 	}
 
+	
+	@Test
+	public void thymeleafHtmlFreemarkerText() throws MessagingException, javax.mail.MessagingException, IOException {
+		oghamService.send(new Email("Template", new MultiTemplateContent("mixed/source/simple", new SimpleBean("foo", 42)), "recipient@sii.fr"));
+		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Template", new ExpectedContent[] {
+				new ExpectedContent(getClass().getResourceAsStream("/template/mixed/expected/simple_foo_42.txt"), "text/plain.*"),
+				new ExpectedContent(getClass().getResourceAsStream("/template/mixed/expected/simple_foo_42.html"), "text/html.*")
+		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+	}
+
 }
