@@ -220,7 +220,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		// The try/catch clause
 		try {
 			registerTemplateParser(new ThymeleafTemplateParserBuilder(), new ThymeleafTemplateDetector());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LOG.debug("Can't register Thymeleaf template engine", e);
 		}
 		return this;
@@ -236,7 +236,7 @@ public class TemplateBuilder implements TemplateParserBuilder {
 		// The try/catch clause
 		try {
 			registerTemplateParser(new FreeMarkerTemplateParserBuilder(), new FreeMarkerTemplateDetector());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			LOG.debug("Can't register FreeMarker template engine", e);
 		}
 		return this;

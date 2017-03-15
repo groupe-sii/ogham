@@ -475,6 +475,16 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * Disable templating support.
+	 * 
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder withoutTemplate() {
+		this.contentTranslatorBuilder = null;
+		return this;
+	}
+
+	/**
 	 * <p>
 	 * Calling this method will enable different location for SMS templates from
 	 * default one. The location will be specified by different property keys

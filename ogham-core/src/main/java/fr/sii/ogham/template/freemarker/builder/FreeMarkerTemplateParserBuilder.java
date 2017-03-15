@@ -41,10 +41,10 @@ public class FreeMarkerTemplateParserBuilder implements TemplateParserBuilder {
 
 	public FreeMarkerTemplateParserBuilder() {
 		super();
-		this.configuration = new Configuration(Configuration.VERSION_2_3_23);
+		this.configuration = new Configuration();
 		configuration.setDefaultEncoding("UTF-8");
 		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-		configuration.setLogTemplateExceptions(false);
+		//configuration.setLogTemplateExceptions(false);
 
 		this.resolverAdapter = new FirstSupportingResolverAdapter(new ClassPathResolverAdapter(), new FileResolverAdapter(), new StringResolverAdapter());
 	}

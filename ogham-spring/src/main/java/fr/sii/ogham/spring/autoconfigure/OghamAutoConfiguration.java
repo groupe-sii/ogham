@@ -1,25 +1,28 @@
 package fr.sii.ogham.spring.autoconfigure;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.spring.config.FreeMarkerConfigurer;
+import fr.sii.ogham.spring.config.MessagingBuilderConfigurer;
 import fr.sii.ogham.spring.config.PropertiesBridge;
+import fr.sii.ogham.spring.config.ThymeLeafConfigurer;
+import freemarker.template.TemplateExceptionHandler;
 
 /**
  * <p>
@@ -28,7 +31,8 @@ import fr.sii.ogham.spring.config.PropertiesBridge;
  * 
  * It links Ogham with Spring beans:
  * <ul>
- * <li>Use {@link SpringTemplateEngine} instead of default Thymeleaf {@link TemplateEngine}</li>
+ * <li>Use SpringTemplateEngine instead of default Thymeleaf
+ * TemplateEngine</li>
  * </ul>
  * 
  * 
@@ -37,10 +41,7 @@ import fr.sii.ogham.spring.config.PropertiesBridge;
 @Configuration
 @AutoConfigureAfter({ WebMvcAutoConfiguration.class, ThymeleafAutoConfiguration.class, FreeMarkerAutoConfiguration.class })
 @ConditionalOnMissingBean(MessagingService.class)
-// TODO: manage all other template engines (freemarker, velocity, ...)
-public class OghamAutoConfiguration implements ApplicationContextAware {
-
-	private ApplicationContext applicationContext;
+public class OghamAutoConfiguration {
 
 	@Autowired
 	Environment environment;
@@ -57,59 +58,67 @@ public class OghamAutoConfiguration implements ApplicationContextAware {
 	}
 
 	/**
-	 * Configures the Messaging service and the {@link TemplateParser}. A ThymeLeaf parser will be configured. If we find {@link SpringTemplateEngine}, we will
-	 * set it as its template engine implementation. If we find a FreeMarker configuration already configured by spring-boot, we will add a FreeMarker parser.
+	 * Configures the Messaging service and the {@link TemplateParser}. A
+	 * ThymeLeaf parser will be configured. If we find SpringTemplateEngine, we
+	 * will set it as its template engine implementation. If we find a
+	 * FreeMarker configuration already configured by spring-boot, we will add a
+	 * FreeMarker parser.
 	 * 
-	 * @param propertiesBridge
-	 *            Bridge between environment and properties
+	 * @param builder
+	 *            The builder used to create the messaging service
 	 * 
 	 * @return A configured messaging service
 	 */
 	@Bean
-	public MessagingService messagingService(PropertiesBridge propertiesBridge) {
-
-		MessagingBuilder builder = messagingServiceBuilder(propertiesBridge);
-
+	public MessagingService messagingService(MessagingBuilder builder) {
 		return builder.build();
 	}
 
-	public MessagingBuilder messagingServiceBuilder(PropertiesBridge propertiesBridge) {
-		// TODO: use Spring message source and resource resolver too ?
-
+	@Bean
+	public MessagingBuilder defaultMessagingBuilder(PropertiesBridge propertiesBridge, List<MessagingBuilderConfigurer> configurers) {
 		MessagingBuilder builder = new MessagingBuilder().useAllDefaults(propertiesBridge.convert(environment));
-
-		autoconfigureThymeLeaf(builder);
-		autoconfigureFreeMarker(builder);
+		for (MessagingBuilderConfigurer configurer : configurers) {
+			configurer.configure(builder);
+		}
 		return builder;
 	}
-
-	private void autoconfigureFreeMarker(MessagingBuilder builder) {
-		try {
-			freemarker.template.Configuration freemarkerCofinguration = applicationContext.getBean(freemarker.template.Configuration.class);
-			if (freemarkerCofinguration != null) {
-				builder.getEmailBuilder().getTemplateBuilder().getFreeMarkerParser().withConfiguration(freemarkerCofinguration);
-				builder.getSmsBuilder().getTemplateBuilder().getFreeMarkerParser().withConfiguration(freemarkerCofinguration);
-			}
-		} catch (NoSuchBeanDefinitionException e) {
-			// skip FreeMarker configuration
+	
+	@Configuration
+	@ConditionalOnMissingClass({"freemarker.template.Configuration", "org.thymeleaf.spring4.SpringTemplateEngine"})
+	public static class OghamNoTemplateEngineConfiguration {
+		@Bean
+		public List<MessagingBuilderConfigurer> defaultMessagingBuilderConfigurer() {
+			return Arrays.<MessagingBuilderConfigurer>asList(new NoTemplateEngineConfigurer());
 		}
 	}
 
-	private void autoconfigureThymeLeaf(MessagingBuilder builder) {
-		try {
-			SpringTemplateEngine springTemplateEngine = applicationContext.getBean(SpringTemplateEngine.class);
-			if (springTemplateEngine != null) {
-				builder.getEmailBuilder().getTemplateBuilder().getThymeleafParser().withTemplateEngine(springTemplateEngine);
-				builder.getSmsBuilder().getTemplateBuilder().getThymeleafParser().withTemplateEngine(springTemplateEngine);
-			}
-		} catch (NoSuchBeanDefinitionException e) {
-			// skipThymeLeaf configuration
+	@Configuration
+	@ConditionalOnClass(freemarker.template.Configuration.class)
+	public static class OghamFreemarkerConfiguration {
+		@Bean
+		@ConditionalOnMissingBean(freemarker.template.Configuration.class)
+		public freemarker.template.Configuration defaultFreemarkerConfiguration() {
+			freemarker.template.Configuration configuration = new freemarker.template.Configuration();
+			configuration.setDefaultEncoding("UTF-8");
+			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+//			configuration.setLogTemplateExceptions(false);
+			return configuration;
+		}
+
+		@Bean
+		@ConditionalOnMissingBean(FreeMarkerConfigurer.class)
+		public FreeMarkerConfigurer freemarkerConfigurer(freemarker.template.Configuration configuration) {
+			return new FreeMarkerConfigurer(configuration);
 		}
 	}
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-
+	@Configuration
+	@ConditionalOnClass(org.thymeleaf.spring4.SpringTemplateEngine.class)
+	public static class OghamThymeleafConfiguration {
+		@Bean
+		@ConditionalOnMissingBean(ThymeLeafConfigurer.class)
+		public ThymeLeafConfigurer thymeleafConfigurer(org.thymeleaf.spring4.SpringTemplateEngine springTemplateEngine) {
+			return new ThymeLeafConfigurer(springTemplateEngine);
+		}
 	}
 }

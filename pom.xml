@@ -22,32 +22,31 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 
 		<!-- Dependencies -->
-		<commons-io.version>2.4</commons-io.version>
-		<commons-beanutils.version>1.9.2</commons-beanutils.version>
-		<thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
-		<freemarker.version>2.3.23</freemarker.version>
-		<javamail.version>1.5.2</javamail.version>
+		<commons-io.version>2.5</commons-io.version>
+		<commons-beanutils.version>1.9.3</commons-beanutils.version>
+		<thymeleaf.version>2.1.5.RELEASE</thymeleaf.version>
+		<freemarker.version>2.3.25-incubating</freemarker.version>
+		<javamail.version>1.5.6</javamail.version>
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
-		<greenmail.version>1.4.1</greenmail.version>
-		<slf4j.version>1.7.12</slf4j.version>
-		<logback.version>1.0.13</logback.version>
-		<jmimemagic.version>0.1.4</jmimemagic.version>
-		<commons-lang.version>3.4</commons-lang.version>
-		<equalsverifier.version>1.7.2</equalsverifier.version>
-		<cloudhopper.version>5.0.8</cloudhopper.version>
+		<greenmail.version>1.5.3</greenmail.version>
+		<slf4j.version>1.7.24</slf4j.version>
+		<logback.version>1.1.11</logback.version>
+		<commons-lang.version>3.5</commons-lang.version>
+		<equalsverifier.version>2.2.1</equalsverifier.version>
+		<cloudhopper.version>5.0.9</cloudhopper.version>
 		<cloudhopper-gsm.version>3.0.0</cloudhopper-gsm.version>
-		<jsmpp.version>2.2.1</jsmpp.version>
-		<jsoup.version>1.8.2</jsoup.version>
+		<jsmpp.version>2.3.4</jsmpp.version>
+		<jsoup.version>1.10.2</jsoup.version>
 		<commons-codec.version>1.10</commons-codec.version>
 		<xmlunit.version>1.6</xmlunit.version>
-		<cloning.version>1.9.2</cloning.version>
+		<cloning.version>1.9.3</cloning.version>
 		<sendgrid-java.version>2.2.2</sendgrid-java.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<wiremock.version>1.56</wiremock.version>
-		<libphonenumber.version>7.0.6</libphonenumber.version>
-		<tika.version>1.13</tika.version>
-		<jackson.version>2.4.6</jackson.version>
+		<wiremock.version>2.5.1</wiremock.version>
+		<libphonenumber.version>8.3.2</libphonenumber.version>
+		<tika.version>1.14</tika.version>
+		<jackson.version>2.8.7</jackson.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -135,6 +134,16 @@
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>${commons-logging.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>

@@ -13,7 +13,7 @@
 	</description>
 
 	<properties>
-		<spring.boot.version>1.2.7.RELEASE</spring.boot.version>
+		<spring.boot.version>1.3.8.RELEASE</spring.boot.version>
 	</properties>
 
 	<dependencies>
@@ -45,11 +45,11 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 			<exclusions>
-        <exclusion>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>servlet-api</artifactId>
-        </exclusion>
-    </exclusions>
+				<exclusion>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

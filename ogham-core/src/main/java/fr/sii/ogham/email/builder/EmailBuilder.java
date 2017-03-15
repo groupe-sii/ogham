@@ -493,6 +493,16 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	}
 
 	/**
+	 * Disable templating support.
+	 * 
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withoutTemplate() {
+		this.contentTranslatorBuilder = null;
+		return this;
+	}
+
+	/**
 	 * <p>
 	 * Calling this method will enable different location for email templates
 	 * from default one. The location will be specified by different property

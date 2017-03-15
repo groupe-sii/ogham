@@ -116,7 +116,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		}
 		LOG.debug("Receiving submit_sm '{}', and return message id {}", new String(shortMessage), messageId);
 		receivedMessages.add(submitSm);
-		if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
+		if (SMSCDeliveryReceipt.DEFAULT.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
 		}
 		return messageId;
@@ -129,7 +129,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 	public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti, SMPPServerSession source) throws ProcessRequestException {
 		MessageId messageId = messageIDGenerator.newMessageId();
 		LOG.debug("Receiving submit_multi_sm '{}', and return message id {}", new String(submitMulti.getShortMessage()), messageId);
-		if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitMulti.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
+		if (SMSCDeliveryReceipt.DEFAULT.containedIn(submitMulti.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
 		}
 
