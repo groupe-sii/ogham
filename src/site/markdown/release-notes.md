@@ -7,6 +7,15 @@ The history of Ogham releases is documented below. For details of changes refer 
 
 
 
+## 1.1.0 / 2017-03-14
+
+### Features
+
+- Support FreeMarker templates
+- It is possible to mix Thymeleaf and FreeMarker templates
+- Tested with Spring Boot 1.3.8+ latest releases (1.3.8, 1.4.5 and 1.5.2)
+
+
 ## 1.0.0 / 2015-10-08
 
 ### Features

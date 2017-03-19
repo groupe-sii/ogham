@@ -1043,6 +1043,87 @@ public class BasicSample {
 
 ```
 
+## Using FreeMarker
+
+If you prefer FreeMarker as template engine, you just need to create your templates using FreeMarker (templates for FreeMarker are suffixed by `.ftl` extension).
+
+
+### Sending an email with both HTML and text
+
+Content of the HTML template (simple.html.ftl):
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <h1 class="title">${name}</h1>
+        <p class="text">${value}</p>
+    </body>
+</html>
+```
+
+Content of the text template (simple.txt.ftl):
+
+```
+${name} ${value}
+```
+
+The Java code is the same as before, no difference at all. Ogham automatically discover your templates and understands that you are using FreeMarker template files.
+
+```java
+package fr.sii.ogham.sample.standard.template.freemarker;
+
+import java.util.Properties;
+
+import fr.sii.ogham.context.SimpleBean;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlAndTextTemplateSample {
+
+	public static void main(String[] args) throws MessagingException {
+		// configure properties (could be stored in a properties file or defined
+		// in System properties)
+		Properties properties = new Properties();
+		properties.setProperty("mail.smtp.host", "<your server host>");
+		properties.setProperty("mail.smtp.port", "<your server port>");
+		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
+		// send the email
+		// Note that the extension of the template is not given. This version
+		// automatically takes the provided path and adds the '.html' extension
+		// for the HTML template and '.txt' for text template
+		service.send(new Email("subject", new MultiTemplateContent("classpath:/template/freemarker/simple", new SimpleBean("foo", 42)), "<recipient address>"));
+		// or using fluent API
+		service.send(new Email()
+						.subject("subject")
+						.content(new MultiTemplateContent("classpath:/template/freemarker/simple", new SimpleBean("foo", 42)))
+						.to("<recipient address>"));
+	}
+
+}
+```
+
+## Mixing Thymeleaf and FreeMarker
+
+It is possible to mix templates in the same application. Even better, you can use a template engine that is better suited for HTML like Thymeleaf and
+FreeMarker that is better for textual version for the same email. Just write your templates with the engine you want.
+
+See samples to [ensure that Java code is still the same](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java).
+
+Only the templates are different:
+
+- [HTML template using Thymeleaf](sample-standard-usage/src/main/resources/template/mixed/simple.html)
+- [Text template using FreeMarker](sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl)
+
 
 # Implementation selection
 

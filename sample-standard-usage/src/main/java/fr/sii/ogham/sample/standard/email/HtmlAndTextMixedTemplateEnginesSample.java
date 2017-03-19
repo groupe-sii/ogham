@@ -1,4 +1,4 @@
-package fr.sii.ogham.sample.standard.template.freemarker;
+package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
@@ -9,7 +9,7 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlAndTextTemplateSample {
+public class HtmlAndTextMixedTemplateEnginesSample {
 
 	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
@@ -24,13 +24,13 @@ public class HtmlAndTextTemplateSample {
 		// send the email
 		// Note that the extension of the template is not given. This version
 		// automatically takes the provided path and adds the '.html' extension
-		// for the HTML template and '.txt' for text template
-		service.send(new Email("subject", new MultiTemplateContent("classpath:/template/freemarker/simple", new SimpleBean("foo", 42)), "<recipient address>"));
+		// for the HTML template and '.txt.ftl' for text template
+		service.send(new Email("subject", new MultiTemplateContent("classpath:/template/mixed/simple", new SimpleBean("foo", 42)), "<recipient address>"));
 		// or using fluent API
-		service.send(new Email()
-						.subject("subject")
-						.content(new MultiTemplateContent("classpath:/template/freemarker/simple", new SimpleBean("foo", 42)))
-						.to("<recipient address>"));
+		service.send(new Email().
+						subject("subject").
+						content(new MultiTemplateContent("classpath:/template/mixed/simple", new SimpleBean("foo", 42))).
+						to("<recipient address>"));
 	}
 
 }
