@@ -479,6 +479,9 @@ ${name} ${value}
 
 The Java code is the same as before, no difference at all. Ogham automatically discover your templates and understands that you are using FreeMarker template files.
 
+<span class="highlight" data-irrelevant-lines="1-11,14-27,29,34"></span>
+<span class="collapse" data-lines="1-11"></span>
+
 ```java
 package fr.sii.ogham.sample.standard.template.freemarker;
 
@@ -523,12 +526,12 @@ public class HtmlAndTextTemplateSample {
 It is possible to mix templates in the same application. Even better, you can use a template engine that is better suited for HTML like Thymeleaf and
 FreeMarker that is better for textual version for the same email. Just write your templates with the engine you want.
 
-See samples to [ensure that Java code is still the same](sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java).
+See samples to [ensure that Java code is still the same](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java).
 
 Only the templates are different:
 
-- [HTML template using Thymeleaf](sample-standard-usage/src/main/resources/template/mixed/simple.html)
-- [Text template using FreeMarker](sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl)
+- [HTML template using Thymeleaf](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/mixed/simple.html)
+- [Text template using FreeMarker](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl)
 
 
 
