@@ -1,7 +1,6 @@
-package fr.sii.ogham.spring.autoconfigure;
+package fr.sii.ogham.spring.config;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.spring.config.MessagingBuilderConfigurer;
 
 public class NoTemplateEngineConfigurer implements MessagingBuilderConfigurer {
 

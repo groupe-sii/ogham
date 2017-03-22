@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,6 +21,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.spring.config.FreeMarkerConfigurer;
 import fr.sii.ogham.spring.config.MessagingBuilderConfigurer;
+import fr.sii.ogham.spring.config.NoTemplateEngineConfigurer;
 import fr.sii.ogham.spring.config.PropertiesBridge;
 import fr.sii.ogham.spring.config.ThymeLeafConfigurer;
 import freemarker.template.TemplateExceptionHandler;
@@ -96,8 +98,20 @@ public class OghamAutoConfiguration {
 	@ConditionalOnClass(freemarker.template.Configuration.class)
 	public static class OghamFreemarkerConfiguration {
 		@Bean
-		@ConditionalOnMissingBean(freemarker.template.Configuration.class)
-		public freemarker.template.Configuration defaultFreemarkerConfiguration() {
+		@Qualifier("email")
+		@ConditionalOnMissingBean(name="emailFreemarkerConfiguration")
+		public freemarker.template.Configuration emailFreemarkerConfiguration() {
+			freemarker.template.Configuration configuration = new freemarker.template.Configuration();
+			configuration.setDefaultEncoding("UTF-8");
+			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+//			configuration.setLogTemplateExceptions(false);
+			return configuration;
+		}
+
+		@Bean
+		@Qualifier("sms")
+		@ConditionalOnMissingBean(name="smsFreemarkerConfiguration")
+		public freemarker.template.Configuration smsFreemarkerConfiguration() {
 			freemarker.template.Configuration configuration = new freemarker.template.Configuration();
 			configuration.setDefaultEncoding("UTF-8");
 			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
@@ -107,8 +121,8 @@ public class OghamAutoConfiguration {
 
 		@Bean
 		@ConditionalOnMissingBean(FreeMarkerConfigurer.class)
-		public FreeMarkerConfigurer freemarkerConfigurer(freemarker.template.Configuration configuration) {
-			return new FreeMarkerConfigurer(configuration);
+		public FreeMarkerConfigurer freemarkerConfigurer(@Qualifier("email") freemarker.template.Configuration emailFreemarkerConfiguration, @Qualifier("sms") freemarker.template.Configuration smsFreemarkerConfiguration) {
+			return new FreeMarkerConfigurer(emailFreemarkerConfiguration, smsFreemarkerConfiguration);
 		}
 	}
 

@@ -4,17 +4,20 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import freemarker.template.Configuration;
 
 public class FreeMarkerConfigurer implements MessagingBuilderConfigurer {
-	private final Configuration freemarkerConfiguration;
+	private final Configuration emailConfiguration;
+	private final Configuration smsConfiguration;
 	
-	public FreeMarkerConfigurer(Configuration freemarkerConfiguration) {
+	public FreeMarkerConfigurer(Configuration emailConfiguration, Configuration smsConfiguration) {
 		super();
-		this.freemarkerConfiguration = freemarkerConfiguration;
+		this.emailConfiguration = emailConfiguration;
+		this.smsConfiguration = smsConfiguration;
 	}
+
 
 	@Override
 	public void configure(MessagingBuilder builder) {
-		builder.getEmailBuilder().getTemplateBuilder().getFreeMarkerParser().withConfiguration(freemarkerConfiguration);
-		builder.getSmsBuilder().getTemplateBuilder().getFreeMarkerParser().withConfiguration(freemarkerConfiguration);
+		builder.getEmailBuilder().getTemplateBuilder().getFreeMarkerParser().withConfiguration(emailConfiguration);
+		builder.getSmsBuilder().getTemplateBuilder().getFreeMarkerParser().withConfiguration(smsConfiguration);
 	}
 
 }
