@@ -1,16 +1,15 @@
 package fr.sii.ogham.helper.email;
 
-import java.io.ByteArrayOutputStream;
+import static fr.sii.ogham.helper.email.EmailUtils.getAttachment;
+import static fr.sii.ogham.helper.email.EmailUtils.getContent;
+
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.Part;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.internal.ArrayComparisonFailure;
 
@@ -98,23 +97,6 @@ public class AssertAttachment {
 		Assert.assertArrayEquals("attachment " + expected.getName() + " has invalid content", expected.getContent(), getContent(attachment));
 	}
 
-	private static BodyPart getAttachment(Multipart multipart, String name) throws MessagingException {
-		for (int i = 0; i < multipart.getCount(); i++) {
-			BodyPart bodyPart = multipart.getBodyPart(i);
-			if (name.equals(bodyPart.getFileName())) {
-				return bodyPart;
-			}
-		}
-		Assert.fail("No attachment with the name " + name);
-		return null;
-	}
-
-	private static byte[] getContent(Part part) throws IOException, MessagingException {
-		InputStream stream = part.getInputStream();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		IOUtils.copy(stream, baos);
-		return baos.toByteArray();
-	}
 	
 	private AssertAttachment() {
 		super();

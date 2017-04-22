@@ -1,12 +1,9 @@
 package fr.sii.ogham.it.email;
 
 import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
 import java.io.IOException;
@@ -21,13 +18,12 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
-import fr.sii.ogham.mock.context.SimpleBean;
 
-public class EmailTemplatePrefixTest {
+public class EmailPropertiesTest {
+
 	private MessagingService oghamService;
 	
 	@Rule
@@ -42,30 +38,28 @@ public class EmailTemplatePrefixTest {
 		props.load(getClass().getResourceAsStream("/application.properties"));
 		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
 		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		props.setProperty("ogham.email.template.prefix", "/template/thymeleaf/source/");
-		props.setProperty("ogham.email.template.suffix", ".html");
+		props.setProperty("ogham.email.from", "test.sender@sii.fr");
+		props.setProperty("ogham.email.to", "recipient.to1@sii.fr,recipient.to2@sii.fr,recipient.to3@sii.fr");
+		props.setProperty("ogham.email.cc", "recipient.cc1@sii.fr,recipient.cc2@sii.fr");
+		props.setProperty("ogham.email.bcc", "recipient.bcc@sii.fr");
 		oghamService = new MessagingBuilder().useAllDefaults(props).build();
 	}
 	
 	@Test
-	public void withThymeleaf() throws MessagingException, javax.mail.MessagingException, IOException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.subject("Template")
-								.content(new TemplateContent("simple", new SimpleBean("foo", 42)))
-								.to("recipient@sii.fr"));
+	public void simple() throws MessagingException, javax.mail.MessagingException {
+		oghamService.send(new Email("Simple", "string body"));
 		assertThat(greenMail).receivedMessages()
-			.count(is(1))
-			.message(0)
-				.subject(is("Template"))
-				.from().address(hasItems("test.sender@sii.fr")).and()
-				.to().address(hasItems("recipient@sii.fr")).and()
-				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.html")))
-					.contentType(startsWith("text/html")).and()
-				.alternative(nullValue())
-				.attachments(emptyIterable());
-		// @formatter:on
+				.count(is(6))
+				.forEach()
+					.subject(is("Simple"))
+					.body()
+						.contentAsString(is("string body"))
+						.contentType(startsWith("text/plain")).and()
+					.from()
+						.address(contains("test.sender@sii.fr")).and()
+					.to()
+						.address(containsInAnyOrder("recipient.to1@sii.fr", "recipient.to2@sii.fr", "recipient.to3@sii.fr")).and()
+					.cc()
+						.address(containsInAnyOrder("recipient.cc1@sii.fr", "recipient.cc2@sii.fr"));
 	}
-
 }

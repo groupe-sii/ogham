@@ -1,5 +1,14 @@
 package fr.sii.ogham.ut.email.sender.impl;
 
+import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.assertion.OghamAssertions.resource;
+import static fr.sii.ogham.helper.email.EmailUtils.ATTACHMENT_DISPOSITION;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -19,10 +28,6 @@ import fr.sii.ogham.email.builder.JavaMailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
-import fr.sii.ogham.helper.email.AssertAttachment;
-import fr.sii.ogham.helper.email.AssertEmail;
-import fr.sii.ogham.helper.email.ExpectedAttachment;
-import fr.sii.ogham.helper.email.ExpectedEmail;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 
 public class JavaMailSmtpTest {
@@ -44,19 +49,59 @@ public class JavaMailSmtpTest {
 	
 	@Test
 	public void simple() throws MessageException, MessagingException {
-		sender.send(new Email("Subject", "Body", new EmailAddress("custom.sender@sii.fr"), "recipient@sii.fr"));
-		AssertEmail.assertEquals(new ExpectedEmail("Subject", "Body", "custom.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		// @formatter:off
+		sender.send(new Email()
+							.subject("Subject")
+							.content("Body")
+							.from(new EmailAddress("custom.sender@sii.fr"))
+							.to("recipient@sii.fr"));
+		assertThat(greenMail).receivedMessages()
+			.count(is(1))
+			.message(0)
+				.subject(is("Subject"))
+				.from().address(hasItems("custom.sender@sii.fr")).and()
+				.to().address(hasItems("recipient@sii.fr")).and()
+				.body()
+					.contentAsString(is("Body"))
+					.contentType(startsWith("text/plain")).and()
+				.alternative(nullValue())
+				.attachments(emptyIterable());
+		// @formatter:on
 	}
 	
 	@Test
 	public void attachment() throws MessageException, MessagingException, IOException {
-		sender.send(new Email("Subject", "Body", new EmailAddress("custom.sender@sii.fr"), "recipient@sii.fr", new Attachment(new File(getClass().getResource("/attachment/04-Java-OOP-Basics.pdf").getFile()))));
-		AssertEmail.assertEquals(new ExpectedEmail("Subject", "Body", "custom.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
-		AssertAttachment.assertEquals(new ExpectedAttachment("/attachment/04-Java-OOP-Basics.pdf", "application/pdf.*"), greenMail.getReceivedMessages());
+		// @formatter:off
+		sender.send(new Email()
+							.subject("Subject")
+							.content("Body")
+							.from(new EmailAddress("custom.sender@sii.fr"))
+							.to("recipient@sii.fr")
+							.attach(new Attachment(new File(getClass().getResource("/attachment/04-Java-OOP-Basics.pdf").getFile()))));
+		assertThat(greenMail).receivedMessages()
+			.count(is(1))
+			.message(0)
+				.subject(is("Subject"))
+				.from().address(hasItems("custom.sender@sii.fr")).and()
+				.to().address(hasItems("recipient@sii.fr")).and()
+				.body()
+					.contentAsString(is("Body"))
+					.contentType(startsWith("text/plain")).and()
+				.alternative(nullValue())
+				.attachment("04-Java-OOP-Basics.pdf")
+					.content(is(resource("/attachment/04-Java-OOP-Basics.pdf")))
+					.contentType(startsWith("application/pdf"))
+					.filename(is("04-Java-OOP-Basics.pdf"))
+					.disposition(is(ATTACHMENT_DISPOSITION));
+		// @formatter:on
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void invalid() throws MessageException {
-		sender.send(new Email("subject", "content"));
+	public void missingRecipientIsInvalid() throws MessageException {
+		// @formatter:off
+		sender.send(new Email()
+							.subject("subject")
+							.content("content"));
+		// @formatter:on
 	}
 }

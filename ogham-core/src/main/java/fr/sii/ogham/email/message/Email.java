@@ -60,11 +60,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 */
 	private List<Attachment> attachments;
 
-	
-	
-	
-	//----------------------- Constructors -----------------------//
-	
+	// ----------------------- Constructors -----------------------//
+
 	/**
 	 * Default constructor for using fluent API. This constructor initializes
 	 * nothing.
@@ -95,8 +92,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * </p>
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -129,8 +125,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * </p>
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -163,8 +158,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * </p>
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -201,8 +195,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * </p>
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -229,8 +222,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -266,8 +258,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * </p>
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -296,8 +287,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -325,8 +315,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -354,8 +343,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -385,8 +373,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * <p>
 	 * No attachment is added to the email. You can add attachments later by
-	 * calling {@link #setAttachments(List)} or
-	 * {@link #attach(Attachment)}.
+	 * calling {@link #setAttachments(List)} or {@link #attach(Attachment)}.
 	 * </p>
 	 * 
 	 * @param subject
@@ -410,7 +397,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * {@link StringContent} for you</li>
 	 * <li>The single address used in to field (typical address syntax is of the
 	 * form "user@host.domain" or "Personal Name &lt;user@host.domain&gt;"), it
-	 * will create a {@link Recipient} with {@link RecipientType#TO} for you</li>
+	 * will create a {@link Recipient} with {@link RecipientType#TO} for you
+	 * </li>
 	 * <li>One or several attachments to join to the mail</li>
 	 * </ul>
 	 * 
@@ -481,7 +469,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * <li>The sender address</li>
 	 * <li>The single address used in to field (typical address syntax is of the
 	 * form "user@host.domain" or "Personal Name &lt;user@host.domain&gt;"), it
-	 * will create a {@link Recipient} with {@link RecipientType#TO} for you</li>
+	 * will create a {@link Recipient} with {@link RecipientType#TO} for you
+	 * </li>
 	 * <li>One or several attachments to join to the mail</li>
 	 * </ul>
 	 * 
@@ -669,7 +658,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * <li>The sender address</li>
 	 * <li>The single address used in to field (typical address syntax is of the
 	 * form "user@host.domain" or "Personal Name &lt;user@host.domain&gt;"), it
-	 * will create a {@link Recipient} with {@link RecipientType#TO} for you</li>
+	 * will create a {@link Recipient} with {@link RecipientType#TO} for you
+	 * </li>
 	 * <li>One or several attachments to join to the mail</li>
 	 * </ul>
 	 * 
@@ -748,11 +738,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		this.attachments = attachments;
 	}
 
+	// ----------------------- Getter/Setters -----------------------//
 
-	
-	
-	//----------------------- Getter/Setters -----------------------//
-	
 	@Override
 	public Content getContent() {
 		return content;
@@ -854,10 +841,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		this.attachments = attachments;
 	}
 
+	// ----------------------- Fluent API -----------------------//
 
-	
-	//----------------------- Fluent API -----------------------//
-	
 	/**
 	 * Set the subject of the mail.
 	 * 
@@ -974,13 +959,13 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	/**
 	 * Add a recipient of the mail.
 	 * 
-	 * @param recipient
-	 *            the recipient to add
+	 * @param recipients
+	 *            one or several recipient to add
 	 * @return this instance for fluent use
 	 */
 	@Override
-	public Email recipient(Recipient recipient) {
-		recipients.add(recipient);
+	public Email recipient(Recipient... recipients) {
+		this.recipients.addAll(Arrays.asList(recipients));
 		return this;
 	}
 
@@ -988,11 +973,13 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * Add a "to" recipient address.
 	 * 
 	 * @param to
-	 *            the recipient address
+	 *            one or several recipient addresses
 	 * @return this instance for fluent use
 	 */
-	public Email to(String to) {
-		to(new EmailAddress(to));
+	public Email to(String... to) {
+		for (String t : to) {
+			to(new EmailAddress(t));
+		}
 		return this;
 	}
 
@@ -1000,11 +987,13 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * Add a "to" recipient address.
 	 * 
 	 * @param to
-	 *            the recipient address
+	 *            one or several recipient addresses
 	 * @return this instance for fluent use
 	 */
-	public Email to(EmailAddress to) {
-		recipient(to, RecipientType.TO);
+	public Email to(EmailAddress... to) {
+		for (EmailAddress t : to) {
+			recipient(t, RecipientType.TO);
+		}
 		return this;
 	}
 
@@ -1012,11 +1001,13 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * Add a "cc" recipient address.
 	 * 
 	 * @param cc
-	 *            the recipient address
+	 *            one or several recipient addresses
 	 * @return this instance for fluent use
 	 */
-	public Email cc(String cc) {
-		cc(new EmailAddress(cc));
+	public Email cc(String... cc) {
+		for (String c : cc) {
+			cc(new EmailAddress(c));
+		}
 		return this;
 	}
 
@@ -1024,11 +1015,13 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * Add a "cc" recipient address.
 	 * 
 	 * @param cc
-	 *            the recipient address
+	 *            one or several recipient addresses
 	 * @return this instance for fluent use
 	 */
-	public Email cc(EmailAddress cc) {
-		recipient(cc, RecipientType.CC);
+	public Email cc(EmailAddress... cc) {
+		for (EmailAddress c : cc) {
+			recipient(c, RecipientType.CC);
+		}
 		return this;
 	}
 
@@ -1036,11 +1029,13 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * Add a "bcc" recipient address.
 	 * 
 	 * @param bcc
-	 *            the recipient address
+	 *            one or several recipient addresses
 	 * @return this instance for fluent use
 	 */
-	public Email bcc(String bcc) {
-		bcc(new EmailAddress(bcc));
+	public Email bcc(String... bcc) {
+		for (String b : bcc) {
+			bcc(new EmailAddress(b));
+		}
 		return this;
 	}
 
@@ -1048,15 +1043,16 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * Add a "bcc" recipient address.
 	 * 
 	 * @param bcc
-	 *            the recipient address
+	 *            one or several recipient addresses
 	 * @return this instance for fluent use
 	 */
-	public Email bcc(EmailAddress bcc) {
-		recipient(bcc, RecipientType.BCC);
+	public Email bcc(EmailAddress... bcc) {
+		for (EmailAddress b : bcc) {
+			recipient(b, RecipientType.BCC);
+		}
 		return this;
 	}
 
-	
 	/**
 	 * Add a recipient specifying its address and the type (to, cc, bcc).
 	 * 
@@ -1071,9 +1067,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		return this;
 	}
 
-	
-	
-	//----------------------- Utilities -----------------------//
+	// ----------------------- Utilities -----------------------//
 
 	/**
 	 * Converts a list of string to a list of recipients. Each recipient will

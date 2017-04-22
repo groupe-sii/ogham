@@ -1,9 +1,14 @@
 package fr.sii.ogham.it.sms;
 
+import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.bean.TypeOfNumber;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -15,16 +20,10 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
-import fr.sii.ogham.helper.sms.AssertSms;
-import fr.sii.ogham.helper.sms.ExpectedAddressedPhoneNumber;
-import fr.sii.ogham.helper.sms.ExpectedSms;
-import fr.sii.ogham.helper.sms.SplitSms;
 import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
 import fr.sii.ogham.mock.context.SimpleBean;
 import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
-import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
 
 public class SmsSMPPDefaultsTest {
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
@@ -50,41 +49,97 @@ public class SmsSMPPDefaultsTest {
 
 	@Test
 	public void simple() throws MessagingException, IOException {
-		oghamService.send(new Sms("sms content", NATIONAL_PHONE_NUMBER));
-		AssertSms.assertEquals(new ExpectedSms("sms content",
-				new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.INTERNATIONAL.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
-				new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value())),
-				smppServer.getReceivedMessages());
+		// @formatter:off
+		oghamService.send(new Sms()
+							.content("sms content")
+							.to(NATIONAL_PHONE_NUMBER));
+		assertThat(smppServer).receivedMessages()
+			.count(is(1))
+			.message(0)
+				.content(is("sms content"))
+				.from()
+					.number(is(INTERNATIONAL_PHONE_NUMBER))
+					.typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+					.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()
+				.to()
+					.number(is(NATIONAL_PHONE_NUMBER))
+					.typeOfNumber(is(TypeOfNumber.UNKNOWN))
+					.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN));
+		// @formatter:on
 	}
 
 	@Test
 	public void longMessage() throws MessagingException, IOException {
-		oghamService
-				.send(new Sms(
-						"sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split",
-						NATIONAL_PHONE_NUMBER));
-		AssertSms.assertEquals(new SplitSms(
-				new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.INTERNATIONAL.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
-				new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
-				"sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the beh",
-				"avior of the sender when message has to be split"),
-				smppServer.getReceivedMessages());
+		// @formatter:off
+		oghamService.send(new Sms()
+							.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split")
+							.to(NATIONAL_PHONE_NUMBER));
+		assertThat(smppServer).receivedMessages()
+			.count(is(2))
+			.message(0)
+				.content(is("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the beh")).and()
+			.message(1)
+				.content(is("avior of the sender when message has to be split")).and()
+			.forEach()
+				.from()
+					.number(is(INTERNATIONAL_PHONE_NUMBER))
+					.typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+					.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()
+				.to()
+					.number(is(NATIONAL_PHONE_NUMBER))
+					.typeOfNumber(is(TypeOfNumber.UNKNOWN))
+					.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN));
+		// @formatter:on
 	}
 
 	@Test
 	public void withThymeleaf() throws MessagingException, IOException {
-		oghamService.send(new Sms(new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("foo", 42)), NATIONAL_PHONE_NUMBER));
-		AssertSms.assertEquals(new ExpectedSms("foo 42",
-				new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.INTERNATIONAL.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
-				new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value())),
-				smppServer.getReceivedMessages());
+		// @formatter:off
+		oghamService.send(new Sms()
+								.content(new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("foo", 42)))
+								.to(NATIONAL_PHONE_NUMBER));
+		assertThat(smppServer).receivedMessages()
+			.count(is(1))
+			.message(0)
+				.content(is("foo 42"))
+				.from()
+					.number(is(INTERNATIONAL_PHONE_NUMBER))
+					.typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+					.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()
+				.to()
+					.number(is(NATIONAL_PHONE_NUMBER))
+					.typeOfNumber(is(TypeOfNumber.UNKNOWN))
+					.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN));
+		// @formatter:on
 	}
 
 	@Test
-	@Ignore("Not yet implemented")
 	public void severalRecipients() throws MessagingException, IOException {
-		// TODO: test several recipients
-		Assert.fail("not implemented");
+		// @formatter:off
+		oghamService.send(new Sms()
+							.content("sms content")
+							.to(NATIONAL_PHONE_NUMBER, "0102030405", "0605040302"));
+		assertThat(smppServer).receivedMessages()
+			.count(is(3))
+			.forEach()
+				.content(is("sms content"))
+				.from()
+					.number(is(INTERNATIONAL_PHONE_NUMBER))
+					.typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+					.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()
+				.to()
+					.typeOfNumber(is(TypeOfNumber.UNKNOWN))
+					.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN)).and().and()
+			.message(0)
+				.to()
+					.number(is(NATIONAL_PHONE_NUMBER)).and().and()
+			.message(1)
+				.to()
+					.number(is("0102030405")).and().and()
+			.message(2)
+				.to()
+					.number(is("0605040302"));
+		// @formatter:on
 	}
 
 	@Test

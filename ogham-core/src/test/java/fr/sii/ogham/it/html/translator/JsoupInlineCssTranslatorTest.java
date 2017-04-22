@@ -1,8 +1,9 @@
 package fr.sii.ogham.it.html.translator;
 
+import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
+
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,8 +37,8 @@ public class JsoupInlineCssTranslatorTest {
 
 	@Test
 	public void externalStyles() throws IOException, ContentTranslatorException {
-		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER + "externalStyles.html"));
-		String expected = IOUtils.toString(getClass().getResourceAsStream(EXPECTED_FOLDER + "externalStyles.html"));
+		String source = resourceAsString(SOURCE_FOLDER + "externalStyles.html");
+		String expected = resourceAsString(EXPECTED_FOLDER + "externalStyles.html");
 		StringContent sourceContent = new StringContent(source);
 		Content result = translator.translate(sourceContent);
 		// StringContent is now updatable => now it remains the same instance

@@ -1,6 +1,7 @@
 package fr.sii.ogham.helper.sms;
 
-import java.util.Arrays;
+import static fr.sii.ogham.helper.sms.SmsUtils.getSmsContent;
+
 import java.util.List;
 
 import org.jsmpp.bean.SubmitSm;
@@ -13,7 +14,6 @@ import org.junit.Assert;
  *
  */
 public class AssertSms {
-	private static final int UDHI_SIZE = 6;
 
 	/**
 	 * Assert that the fields of the received SMS using SMPP protocol are equal
@@ -124,14 +124,6 @@ public class AssertSms {
 	 */
 	public static void assertEquals(SplitSms expected, List<SubmitSm> receivedMessages) {
 		assertEquals(expected.getParts(), receivedMessages);
-	}
-
-	private static String getSmsContent(SubmitSm actual) {
-		byte[] shortMessage = actual.getShortMessage();
-		if(actual.isUdhi()) {
-			shortMessage = Arrays.copyOfRange(shortMessage, UDHI_SIZE, shortMessage.length);
-		}
-		return new String(shortMessage);
 	}
 
 	private AssertSms() {

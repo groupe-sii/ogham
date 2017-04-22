@@ -62,7 +62,7 @@ public class AssertHtml {
 
 	/**
 	 * Check if the HTML is similar to the expected. The HTML strings are parsed
-	 * into {@link Document}s. Two documents are considered to be "identical" if
+	 * into {@link Document}s. Two documents are considered to be "similar" if
 	 * they contain the same elements and attributes regardless of order.
 	 * <p>
 	 * For each difference, the difference will be logged with error level. It

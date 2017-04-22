@@ -42,7 +42,12 @@ public class EmailCustomImplTest {
 	
 	@Test
 	public void simple() throws MessagingException {
-		messagingService.send(new Email("subject", "content", "recipient@sii.fr"));
-		Mockito.verify(customSender).send(new Email("subject", "content", new EmailAddress("test.sender@sii.fr"), "recipient@sii.fr"));
+		// @formatter:off
+		messagingService.send(new Email()
+									.subject("subject")
+									.content("content")
+									.to("recipient@sii.fr"));
+		Mockito.verify(customSender).send(new Email("subject", "content", new EmailAddress("Sender Name <test.sender@sii.fr>"), "recipient@sii.fr"));
+		// @formatter:on
 	}
 }

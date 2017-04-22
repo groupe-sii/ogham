@@ -80,5 +80,4 @@ public class ExpectedEmailHeader {
 	public void setBcc(String... bcc) {
 		this.bcc = new ArrayList<>(Arrays.asList(bcc));
 	}
-
 }

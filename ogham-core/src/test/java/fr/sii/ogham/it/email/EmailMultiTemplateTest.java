@@ -1,5 +1,14 @@
 package fr.sii.ogham.it.email;
 
+import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.assertion.OghamAssertions.isSimilarHtml;
+import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -15,9 +24,6 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.helper.email.AssertEmail;
-import fr.sii.ogham.helper.email.ExpectedContent;
-import fr.sii.ogham.helper.email.ExpectedMultiPartEmail;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.mock.context.SimpleBean;
 
@@ -42,38 +48,93 @@ public class EmailMultiTemplateTest {
 	
 	@Test
 	public void withThymeleafMulti() throws MessagingException, javax.mail.MessagingException, IOException {
-		oghamService.send(new Email("Template", new MultiTemplateContent("thymeleaf/source/simple", new SimpleBean("foo", 42)), "recipient@sii.fr"));
-		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Template", new ExpectedContent[] {
-				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.txt"), "text/plain.*"),
-				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "text/html.*")
-		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		// @formatter:off
+		oghamService.send(new Email()
+							.subject("Template")
+							.content(new MultiTemplateContent("thymeleaf/source/simple", new SimpleBean("foo", 42)))
+							.to("recipient@sii.fr"));
+		assertThat(greenMail).receivedMessages()
+			.count(is(1))
+			.message(0)
+				.subject(is("Template"))
+				.from().address(hasItems("test.sender@sii.fr")).and()
+				.to().address(hasItems("recipient@sii.fr")).and()
+				.body()
+					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.html")))
+					.contentType(startsWith("text/html")).and()
+				.alternative()
+					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.txt")))
+					.contentType(startsWith("text/plain")).and()
+				.attachments(emptyIterable());
+		// @formatter:on					
 	}
 	
 	@Test
 	public void withThymeleafMissingVariant() throws MessagingException, javax.mail.MessagingException, IOException {
-		oghamService.send(new Email("Template", new MultiTemplateContent("thymeleaf/source/multi_missing_variant", new SimpleBean("foo", 42)), "recipient@sii.fr"));
-		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Template", new ExpectedContent[] {
-				new ExpectedContent(getClass().getResourceAsStream("/template/thymeleaf/expected/simple_foo_42.html"), "text/html.*")
-		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		// @formatter:off
+		oghamService.send(new Email()
+							.subject("Template")
+							.content(new MultiTemplateContent("thymeleaf/source/multi_missing_variant", new SimpleBean("foo", 42)))
+							.to("recipient@sii.fr"));
+		assertThat(greenMail).receivedMessages()
+			.count(is(1))
+			.message(0)
+				.subject(is("Template"))
+				.from().address(hasItems("test.sender@sii.fr")).and()
+				.to().address(hasItems("recipient@sii.fr")).and()
+				.body()
+					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.html")))
+					.contentType(startsWith("text/html")).and()
+				.alternative(nullValue())
+				.attachments(emptyIterable());
+		// @formatter:on					
 	}
 	
 	@Test
 	public void withFreemarkerMulti() throws MessagingException, javax.mail.MessagingException, IOException {
-		oghamService.send(new Email("Template", new MultiTemplateContent("freemarker/source/simple", new SimpleBean("foo", 42)), "recipient@sii.fr"));
-		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Template", new ExpectedContent[] {
-				new ExpectedContent(getClass().getResourceAsStream("/template/freemarker/expected/simple_foo_42.txt"), "text/plain.*"),
-				new ExpectedContent(getClass().getResourceAsStream("/template/freemarker/expected/simple_foo_42.html"), "text/html.*")
-		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		// @formatter:off
+		oghamService.send(new Email()
+							.subject("Template")
+							.content(new MultiTemplateContent("freemarker/source/simple", new SimpleBean("foo", 42)))
+							.to("recipient@sii.fr"));
+		assertThat(greenMail).receivedMessages()
+			.count(is(1))
+			.message(0)
+				.subject(is("Template"))
+				.from().address(hasItems("test.sender@sii.fr")).and()
+				.to().address(hasItems("recipient@sii.fr")).and()
+				.body()
+					.contentAsString(isSimilarHtml(resourceAsString("/template/freemarker/expected/simple_foo_42.html")))
+					.contentType(startsWith("text/html")).and()
+				.alternative()
+					.contentAsString(isSimilarHtml(resourceAsString("/template/freemarker/expected/simple_foo_42.txt")))
+					.contentType(startsWith("text/plain")).and()
+				.attachments(emptyIterable());
+		// @formatter:on					
 	}
 
 	
 	@Test
 	public void thymeleafHtmlFreemarkerText() throws MessagingException, javax.mail.MessagingException, IOException {
-		oghamService.send(new Email("Template", new MultiTemplateContent("mixed/source/simple", new SimpleBean("foo", 42)), "recipient@sii.fr"));
-		AssertEmail.assertSimilar(new ExpectedMultiPartEmail("Template", new ExpectedContent[] {
-				new ExpectedContent(getClass().getResourceAsStream("/template/mixed/expected/simple_foo_42.txt"), "text/plain.*"),
-				new ExpectedContent(getClass().getResourceAsStream("/template/mixed/expected/simple_foo_42.html"), "text/html.*")
-		}, "test.sender@sii.fr", "recipient@sii.fr"), greenMail.getReceivedMessages());
+		// @formatter:off
+		oghamService.send(new Email()
+							.subject("Template")
+							.content(new MultiTemplateContent("mixed/source/simple", new SimpleBean("foo", 42)))
+							.to("recipient@sii.fr"));
+		assertThat(greenMail).receivedMessages()
+			.count(is(1))
+			.message(0)
+				.subject(is("Template"))
+				.from().address(hasItems("test.sender@sii.fr")).and()
+				.to().address(hasItems("recipient@sii.fr")).and()
+				.body()
+					.contentAsString(isSimilarHtml(resourceAsString("/template/mixed/expected/simple_foo_42.html")))
+					.contentType(startsWith("text/html")).and()
+				.alternative()
+					.contentAsString(isSimilarHtml(resourceAsString("/template/mixed/expected/simple_foo_42.txt")))
+					.contentType(startsWith("text/plain")).and()
+				.attachments(emptyIterable());
+		// @formatter:on					
 	}
 
 }

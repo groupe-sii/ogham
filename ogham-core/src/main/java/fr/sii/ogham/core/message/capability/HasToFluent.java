@@ -13,8 +13,8 @@ public interface HasToFluent<F> {
 	 * Add a recipient for the message
 	 *
 	 * @param to
-	 *            the recipient to add to the message
+	 *            one or several recipients to add to the message
 	 * @return this instance for fluent use
 	 */
-	public F to(String to);
+	public F to(String... to);
 }

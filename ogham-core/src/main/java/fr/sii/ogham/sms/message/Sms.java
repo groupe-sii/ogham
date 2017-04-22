@@ -45,10 +45,8 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 */
 	private Content content;
 
+	// ----------------------- Constructors -----------------------//
 
-	
-	//----------------------- Constructors -----------------------//
-	
 	/**
 	 * Default constructor for using fluent API. This constructor initializes
 	 * nothing.
@@ -414,11 +412,8 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 		this.recipients = to;
 	}
 
+	// ----------------------- Getter/Setters -----------------------//
 
-	
-	
-	//----------------------- Getter/Setters -----------------------//
-	
 	/**
 	 * Get the sender of the SMS
 	 * 
@@ -477,10 +472,8 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 		this.content = content;
 	}
 
+	// ----------------------- Fluent API -----------------------//
 
-	
-	//----------------------- Fluent API -----------------------//
-	
 	/**
 	 * Set the content of the message.
 	 * 
@@ -516,7 +509,6 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 		return this;
 	}
 
-
 	/**
 	 * Set the list of recipients of the message
 	 *
@@ -533,13 +525,14 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	/**
 	 * Add a recipient for the message
 	 *
-	 * @param recipient
-	 *            the recipient to add to the message
+	 * @param recipients
+	 *            one or several recipient to add
 	 * @return this instance for fluent use
 	 */
 	@Override
-	public Sms recipient(Recipient recipient) {
-		return to(recipient);
+	public Sms recipient(Recipient... recipients) {
+		this.recipients.addAll(Arrays.asList(recipients));
+		return this;
 	}
 
 	/**
@@ -593,24 +586,28 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	/**
 	 * Add a recipient specifying the phone number.
 	 * 
-	 * @param number
-	 *            the number of the recipient
+	 * @param numbers
+	 *            one or several recipient numbers
 	 * @return this instance for fluent use
 	 */
-	public Sms to(PhoneNumber number) {
-		to(null, number);
+	public Sms to(PhoneNumber... numbers) {
+		for (PhoneNumber number : numbers) {
+			to((String) null, number);
+		}
 		return this;
 	}
 
 	/**
 	 * Add a recipient specifying the phone number as string.
 	 * 
-	 * @param number
-	 *            the number of the recipient
+	 * @param numbers
+	 *            one or several recipient numbers
 	 * @return this instance for fluent use
 	 */
-	public Sms to(String number) {
-		to(new Recipient(number));
+	public Sms to(String... numbers) {
+		for (String num : numbers) {
+			to(new Recipient(num));
+		}
 		return this;
 	}
 
@@ -631,18 +628,16 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	/**
 	 * Add a recipient.
 	 * 
-	 * @param recipient
-	 *            the recipient to add
+	 * @param recipients
+	 *            one or several recipients to add
 	 * @return this instance for fluent use
 	 */
-	public Sms to(Recipient recipient) {
-		recipients.add(recipient);
+	public Sms to(Recipient... recipients) {
+		this.recipients.addAll(Arrays.asList(recipients));
 		return this;
 	}
 
-
-	
-	//----------------------- Utilities -----------------------//
+	// ----------------------- Utilities -----------------------//
 
 	/**
 	 * Converts a list of phone numbers to a list of recipients.

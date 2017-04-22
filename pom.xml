@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.sii.ogham</groupId>
 	<artifactId>ogham-parent</artifactId>
@@ -46,6 +47,7 @@
 		<libphonenumber.version>8.3.2</libphonenumber.version>
 		<tika.version>1.14</tika.version>
 		<jackson.version>2.8.7</jackson.version>
+		<hamcrest.version>1.3</hamcrest.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -157,13 +159,13 @@
 				<artifactId>thymeleaf</artifactId>
 				<version>${thymeleaf.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>${freemarker.version}</version>
 			</dependency>
-			
+
 			<!-- MimeType detection -->
 			<dependency>
 				<groupId>org.apache.tika</groupId>
@@ -200,6 +202,11 @@
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
 				<version>${mockito.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-all</artifactId>
+				<version>${hamcrest.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.icegreen</groupId>

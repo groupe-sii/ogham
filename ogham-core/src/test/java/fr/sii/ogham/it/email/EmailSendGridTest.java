@@ -63,7 +63,13 @@ public final class EmailSendGridTest {
 
 	@Test
 	public void forBasicTextEmail() throws MessagingException, SendGridException {
-		final Email email = new Email(SUBJECT, new StringContent(CONTENT_TEXT), new EmailAddress(FROM_ADDRESS, FROM), new EmailAddress(TO_ADDRESS_1, TO));
+		// @formatter:off
+		final Email email = new Email()
+									.subject(SUBJECT)
+									.content(CONTENT_TEXT)
+									.from(new EmailAddress(FROM_ADDRESS, FROM))
+									.to(new EmailAddress(TO_ADDRESS_1, TO));
+		// @formatter:on
 
 		notificationService.send(email);
 
@@ -85,7 +91,13 @@ public final class EmailSendGridTest {
 	// works.
 	@Test
 	public void forAccentedTextEmail() throws MessagingException, SendGridException {
-		final Email email = new Email(SUBJECT, new StringContent(CONTENT_TEXT_ACCENTED), new EmailAddress(FROM_ADDRESS, FROM), new EmailAddress(TO_ADDRESS_1, TO));
+		// @formatter:off
+		final Email email = new Email()
+									.subject(SUBJECT)
+									.content(new StringContent(CONTENT_TEXT_ACCENTED))
+									.from(new EmailAddress(FROM_ADDRESS, FROM))
+									.to(new EmailAddress(TO_ADDRESS_1, TO));
+		// @formatter:on
 
 		notificationService.send(email);
 
@@ -103,7 +115,13 @@ public final class EmailSendGridTest {
 
 	@Test
 	public void forBasicHtmlEmail() throws MessagingException, SendGridException {
-		final Email email = new Email(SUBJECT, new StringContent(CONTENT_HTML), new EmailAddress(FROM_ADDRESS, FROM), new EmailAddress(TO_ADDRESS_1, TO));
+		// @formatter:off
+		final Email email = new Email()
+									.subject(SUBJECT)
+									.content(new StringContent(CONTENT_HTML))
+									.from(new EmailAddress(FROM_ADDRESS, FROM))
+									.to(new EmailAddress(TO_ADDRESS_1, TO));
+		// @formatter:on
 
 		notificationService.send(email);
 
@@ -121,9 +139,13 @@ public final class EmailSendGridTest {
 
 	@Test
 	public void forTemplatedTextEmail() throws MessagingException, SendGridException {
-		final SimpleContext context = new SimpleContext("name", NAME);
-		final TemplateContent content = new TemplateContent("string:" + CONTENT_TEXT_TEMPLATE, context);
-		final Email email = new Email(SUBJECT, content, new EmailAddress(FROM_ADDRESS, FROM), new EmailAddress(TO_ADDRESS_1, TO), new EmailAddress(TO_ADDRESS_2, TO));
+		// @formatter:off
+		final Email email = new Email()
+									.subject(SUBJECT)
+									.content(new TemplateContent("string:" + CONTENT_TEXT_TEMPLATE, new SimpleContext("name", NAME)))
+									.from(new EmailAddress(FROM_ADDRESS, FROM))
+									.to(new EmailAddress(TO_ADDRESS_1, TO), new EmailAddress(TO_ADDRESS_2, TO));
+		// @formatter:on
 
 		notificationService.send(email);
 
@@ -141,9 +163,13 @@ public final class EmailSendGridTest {
 
 	@Test
 	public void forTemplatedHtmlEmail() throws MessagingException, SendGridException {
-		final SimpleContext context = new SimpleContext("name", NAME);
-		final TemplateContent content = new TemplateContent("string:" + CONTENT_HTML_TEMPLATE, context);
-		final Email email = new Email(SUBJECT, content, new EmailAddress(FROM_ADDRESS, FROM), new EmailAddress(TO_ADDRESS_1, TO), new EmailAddress(TO_ADDRESS_2, TO));
+		// @formatter:off
+		final Email email = new Email()
+									.subject(SUBJECT)
+									.content(new TemplateContent("string:" + CONTENT_HTML_TEMPLATE, new SimpleContext("name", NAME)))
+									.from(new EmailAddress(FROM_ADDRESS, FROM))
+									.to(new EmailAddress(TO_ADDRESS_1, TO), new EmailAddress(TO_ADDRESS_2, TO));
+		// @formatter:on
 
 		notificationService.send(email);
 

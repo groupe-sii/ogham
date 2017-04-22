@@ -1,5 +1,7 @@
 package fr.sii.ogham.it.html.translator;
 
+import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -67,7 +69,7 @@ public class JsoupInlineImageTranslatorTest {
 	@Test
 	public void attachImages() throws IOException, ContentTranslatorException {
 		// prepare the html and associated images
-		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER + "withImages.html"));
+		String source = resourceAsString(SOURCE_FOLDER + "withImages.html");
 		// do the job
 		Content result = translator.translate(new StringContent(source));
 		// prepare expected html
@@ -85,7 +87,7 @@ public class JsoupInlineImageTranslatorTest {
 	@Test
 	public void skipExternalImages() throws IOException, ContentTranslatorException {
 		// prepare the html and associated images
-		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER + "withExternalImages.html"));
+		String source = resourceAsString(SOURCE_FOLDER + "withExternalImages.html");
 		// do the job
 		Content result = translator.translate(new StringContent(source));
 		// prepare expected html
@@ -103,7 +105,7 @@ public class JsoupInlineImageTranslatorTest {
 	@Test
 	public void skipAttach() throws IOException, ContentTranslatorException {
 		// prepare the html and associated images
-		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER + "skipInline.html"));
+		String source = resourceAsString(SOURCE_FOLDER + "skipInline.html");
 		// do the job
 		Content result = translator.translate(new StringContent(source));
 		// prepare expected html
@@ -135,7 +137,7 @@ public class JsoupInlineImageTranslatorTest {
 	}
 
 	private static String getExpectedHtml(String fileName) throws IOException {
-		return IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER + fileName));
+		return resourceAsString(EXPECTED_FOLDER + fileName);
 	}
 
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {

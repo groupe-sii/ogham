@@ -587,7 +587,7 @@ public class AssertEmail {
 		return str.replaceAll("\r|\n", "");
 	}
 
-	private static Part getBodyPart(Part actualEmail) throws MessagingException {
+	public static Part getBodyPart(Part actualEmail) throws MessagingException {
 		List<Part> bodyParts = getBodyParts(actualEmail);
 		if(bodyParts.isEmpty()) {
 			throw new IllegalStateException("Expected at least one body part but none found");
@@ -595,13 +595,13 @@ public class AssertEmail {
 		return bodyParts.get(0);
 	}
 
-	private static List<Part> getBodyParts(Part actualEmail) throws MessagingException {
+	public static List<Part> getBodyParts(Part actualEmail) throws MessagingException {
 		List<Part> founds = new ArrayList<>();
 		getBodyParts(actualEmail, founds);
 		return founds;
 	}
 	
-	private static void getBodyParts(Part actualEmail, List<Part> founds) throws MessagingException {
+	public static void getBodyParts(Part actualEmail, List<Part> founds) throws MessagingException {
 		try {
 			Object content = actualEmail.getContent();
 			if (content instanceof Multipart) {
@@ -620,7 +620,7 @@ public class AssertEmail {
 		}
 	}
 
-	private static String getBody(Part actualEmail) throws MessagingException {
+	public static String getBody(Part actualEmail) throws MessagingException {
 		try {
 			Object content = getBodyPart(actualEmail).getContent();
 			if(content instanceof String) {
@@ -635,7 +635,7 @@ public class AssertEmail {
 		}
 	}
 
-	private static String getBodyMimetype(Part actualEmail) throws MessagingException {
+	public static String getBodyMimetype(Part actualEmail) throws MessagingException {
 		return getBodyPart(actualEmail).getContentType();
 	}
 	

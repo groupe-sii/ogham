@@ -28,10 +28,11 @@ public interface HasRecipientsFluent<F, R extends Addressee> {
 	/**
 	 * Add a recipient for the message
 	 *
-	 * @param recipient
-	 *            the recipient to add to the message
+	 * @param recipients
+	 *            one or several recipients to add to the message
 	 * @return this instance for fluent use
 	 */
-	public F recipient(R recipient);
+	@SuppressWarnings("unchecked")
+	public F recipient(R... recipients);
 
 }

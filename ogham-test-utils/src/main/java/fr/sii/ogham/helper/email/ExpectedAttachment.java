@@ -1,5 +1,7 @@
 package fr.sii.ogham.helper.email;
 
+import static fr.sii.ogham.helper.email.EmailUtils.ATTACHMENT_DISPOSITION;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +23,6 @@ import org.apache.commons.io.IOUtils;
  * @author Aurélien Baudet
  */
 public class ExpectedAttachment {
-	private static final String ATTACHMENT_DISPOSITION = "attachment";
 
 	/**
 	 * The name of the attachment

@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.EveryFillerDecorator;
+import fr.sii.ogham.core.filler.MessageAwareFiller;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.filler.PropertiesFiller;
 import fr.sii.ogham.core.filler.SubjectFiller;
@@ -33,7 +34,7 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 		super();
 		fillers = new ArrayList<>();
 	}
-	
+
 	@Override
 	public MessageFiller build() throws BuildException {
 		return new EveryFillerDecorator(fillers);
@@ -78,6 +79,7 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	public MessageFillerBuilder useDefaults(Properties properties, String... baseKeys) {
 		withConfigurationFiller(properties, baseKeys);
 		withSubjectFiller();
+		withMessageAwareFiller(properties, baseKeys);
 		return this;
 	}
 
@@ -96,7 +98,7 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * @return this instance for fluent use
 	 */
 	public MessageFillerBuilder withConfigurationFiller(Properties props, String... baseKeys) {
-		for(String baseKey : baseKeys) {
+		for (String baseKey : baseKeys) {
 			fillers.add(new PropertiesFiller(props, baseKey));
 		}
 		return this;
@@ -122,7 +124,8 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 	 * Enable the generation of subject of the message. The subject can
 	 * automatically be extracted from the content:
 	 * <ul>
-	 * <li>If content of the message is HTML, then the title is used as subject</li>
+	 * <li>If content of the message is HTML, then the title is used as subject
+	 * </li>
 	 * <li>If content of the message is text and the first line starts with
 	 * <code>"Subject:"</code>, then it is used as subject</li>
 	 * </ul>
@@ -139,6 +142,41 @@ public class MessageFillerBuilder implements Builder<MessageFiller> {
 		SubjectProvider multiContentProvider = new MultiContentSubjectProvider(provider);
 		provider.addProvider(multiContentProvider);
 		fillers.add(new SubjectFiller(provider));
+		return this;
+	}
+
+	/**
+	 * A filler that is able to add well known properties according to the
+	 * message.
+	 * 
+	 * For email:
+	 * <ul>
+	 * <li>If properties contains <code>ogham.email.to</code>, it adds the "TO"
+	 * recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.cc</code>, it adds the "CC"
+	 * recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.bcc</code>, it adds the
+	 * "BCC" recipients to the message</li>
+	 * </ul>
+	 * 
+	 * For sms:
+	 * <ul>
+	 * <li>If properties contains <code>ogham.sms.to</code>, it adds the
+	 * recipient to the message</li>
+	 * </ul>
+	 * 
+	 * The provided property values may be a comma separated list of recipients.
+	 * 
+	 * @param properties
+	 *            the properties that contains the values to set on the message
+	 * @param baseKeys
+	 *            the prefix(es) for the keys used for filling the message
+	 * @return this instance for fluent use
+	 */
+	public MessageFillerBuilder withMessageAwareFiller(Properties properties, String... baseKeys) {
+		for (String baseKey : baseKeys) {
+			fillers.add(new MessageAwareFiller(properties, baseKey));
+		}
 		return this;
 	}
 

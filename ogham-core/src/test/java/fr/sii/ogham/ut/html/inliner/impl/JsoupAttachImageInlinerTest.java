@@ -1,10 +1,12 @@
 package fr.sii.ogham.ut.html.inliner.impl;
 
+import static fr.sii.ogham.assertion.OghamAssertions.resource;
+import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -52,7 +54,7 @@ public class JsoupAttachImageInlinerTest {
 	@Test
 	public void withImages() throws IOException {
 		// prepare html and associated images
-		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"withImages.html"));
+		String source = resourceAsString(SOURCE_FOLDER+"withImages.html");
 		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
 		// do the job
 		ContentWithImages inlined = inliner.inline(source, images);
@@ -69,7 +71,7 @@ public class JsoupAttachImageInlinerTest {
 	@Test
 	public void skipInline() throws IOException {
 		// prepare html and associated images
-		String source = IOUtils.toString(getClass().getResourceAsStream(SOURCE_FOLDER+"skipInline.html"));
+		String source = resourceAsString(SOURCE_FOLDER+"skipInline.html");
 		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
 		// do the job
 		ContentWithImages inlined = inliner.inline(source, images);
@@ -109,13 +111,13 @@ public class JsoupAttachImageInlinerTest {
 	}
 	
 	private static String getExpectedHtml(String fileName) throws IOException {
-		return IOUtils.toString(JsoupAttachImageInlinerTest.class.getResourceAsStream(EXPECTED_FOLDER+fileName));
+		return resourceAsString(EXPECTED_FOLDER+fileName);
 	}
 	
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
 		List<ImageResource> resources = new ArrayList<>(imageNames.length);
 		for(String imageName : imageNames) {
-			resources.add(new ImageResource(imageName, "images/"+imageName, IOUtils.toByteArray(JsoupAttachImageInlinerTest.class.getResourceAsStream(SOURCE_FOLDER+"images/"+imageName)), "image/gif"));
+			resources.add(new ImageResource(imageName, "images/"+imageName, resource(SOURCE_FOLDER+"images/"+imageName), "image/gif"));
 		}
 		return resources;
 	}
