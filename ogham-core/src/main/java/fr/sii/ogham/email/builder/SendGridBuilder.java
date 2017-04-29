@@ -3,6 +3,7 @@ package fr.sii.ogham.email.builder;
 import java.util.Properties;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
@@ -104,8 +105,26 @@ public final class SendGridBuilder implements Builder<SendGridSender> {
 	 * @return this instance for fluent use
 	 */
 	public SendGridBuilder useDefaults(Properties props) {
-		withCredentials(props.getProperty(SendGridConstants.USERNAME), props.getProperty(SendGridConstants.PASSWORD));
-		withApiKey(props.getProperty(SendGridConstants.API_KEY));
+		return useDefaults(BuilderUtils.getDefaultPropertyResolver(props));
+	}
+	
+	/**
+	 * Tells the builder to use all default behaviors and values:
+	 * <ul>
+	 * <li>Use the provided properties for credentials</li>
+	 * <li>Register Mime Type detection using MimeMagic library</li>
+	 * <li>Register default Mime Type (text/plain)</li>
+	 * <li>Handle {@link MultiContent}</li>
+	 * <li>Handle {@link StringContent}</li>
+	 * </ul>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public SendGridBuilder useDefaults(PropertyResolver propertyResolver) {
+		withCredentials(propertyResolver.getProperty(SendGridConstants.USERNAME), propertyResolver.getProperty(SendGridConstants.PASSWORD));
+		withApiKey(propertyResolver.getProperty(SendGridConstants.API_KEY));
 		registerMimeTypeProvider(new TikaProvider());
 		registerMimeTypeProvider(new FixedMimeTypeProvider());
 		registerContentHandler(MultiContent.class, new MultiContentHandler(mapContentHandler));

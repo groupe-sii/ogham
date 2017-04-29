@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.builder;
 
+import static fr.sii.ogham.core.util.BuilderUtils.getDefaultPropertyResolver;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -7,11 +9,12 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.sender.ConditionalSender;
-import fr.sii.ogham.core.service.WrapExceptionMessagingService;
 import fr.sii.ogham.core.service.EverySupportingMessagingService;
 import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.core.service.WrapExceptionMessagingService;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
@@ -114,8 +117,31 @@ public class MessagingBuilder implements MessagingServiceBuilder {
 	 * @see SmsBuilder#useDefaults() More information about created SMS sender
 	 */
 	public MessagingBuilder useAllDefaults(Properties properties) {
-		useEmailDefaults(properties);
-		useSmsDefaults(properties);
+		useAllDefaults(getDefaultPropertyResolver(properties));
+		return this;
+	}
+
+	/**
+	 * Tells the builder to use all default behavior and values. The
+	 * configuration values will be read from the provided properties. The
+	 * builder will construct the messaging service with the following senders:
+	 * <ul>
+	 * <li>An email sender that is able to construct email content with or
+	 * without template</li>
+	 * <li>A SMS sender that is able to construct email content with or without
+	 * template</li>
+	 * </ul>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to access property values
+	 * @return this builder instance for fluent use
+	 * @see EmailBuilder#useDefaults() More information about created email
+	 *      sender
+	 * @see SmsBuilder#useDefaults() More information about created SMS sender
+	 */
+	public MessagingBuilder useAllDefaults(PropertyResolver propertyResolver) {
+		useEmailDefaults(propertyResolver);
+		useSmsDefaults(propertyResolver);
 		return this;
 	}
 
@@ -157,6 +183,26 @@ public class MessagingBuilder implements MessagingServiceBuilder {
 	}
 
 	/**
+	 * Tells the builder to use the default behaviors and values for email
+	 * sender. The configuration values will be read from the provided
+	 * properties.
+	 * 
+	 * This method is automatically called when using
+	 * {@link #useAllDefaults(Properties)}.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 * @see EmailBuilder#useDefaults() More information about created email
+	 *      sender
+	 */
+	public MessagingBuilder useEmailDefaults(PropertyResolver propertyResolver) {
+		withEmail();
+		emailBuilder.useDefaults(propertyResolver);
+		return this;
+	}
+
+	/**
 	 * Tells the builder to use default behaviors and values for SMS sender. The
 	 * configuration values will be read from the provided properties.
 	 * 
@@ -186,6 +232,24 @@ public class MessagingBuilder implements MessagingServiceBuilder {
 	public MessagingBuilder useSmsDefaults(Properties properties) {
 		withSms();
 		smsBuilder.useDefaults(properties);
+		return this;
+	}
+
+	/**
+	 * Tells the builder to use the default behaviors and values for SMS sender.
+	 * The configuration values will be read from the provided properties.
+	 * 
+	 * This method is automatically called when using
+	 * {@link #useAllDefaults(Properties)}.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 * @see SmsBuilder#useDefaults() More information about created SMS sender
+	 */
+	public MessagingBuilder useSmsDefaults(PropertyResolver propertyResolver) {
+		withSms();
+		smsBuilder.useDefaults(propertyResolver);
 		return this;
 	}
 
@@ -239,4 +303,6 @@ public class MessagingBuilder implements MessagingServiceBuilder {
 	public EmailBuilder getEmailBuilder() {
 		return emailBuilder;
 	}
+
+
 }

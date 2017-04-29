@@ -3,11 +3,11 @@ package fr.sii.ogham.assertion.email;
 import static fr.sii.ogham.assertion.AssertionHelper.assertThat;
 import static fr.sii.ogham.assertion.OghamAssertions.usingContext;
 import static fr.sii.ogham.helper.email.EmailUtils.getContent;
+import static java.util.Collections.list;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.mail.Header;
@@ -295,7 +295,7 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = "headers of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : Collections.<Header> list(part.getAllHeaders()), usingContext(message, partWithContext, matcher));
+				assertThat(part == null ? null : (Iterable<? extends Header>) list(part.getAllHeaders()), usingContext(message, partWithContext, matcher));
 			}
 			return this;
 		} catch (MessagingException e) {

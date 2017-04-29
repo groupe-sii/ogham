@@ -2,6 +2,7 @@ package fr.sii.ogham.core.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * Helper class for I/O management:
@@ -62,7 +63,31 @@ public final class IOUtils {
 	 *             when the stream can't be read
 	 */
 	public static String toString(InputStream stream) throws IOException {
-		return org.apache.commons.io.IOUtils.toString(stream);
+		return toString(stream, Charset.defaultCharset());
+	}
+
+	/**
+	 * <p>
+	 * Get the contents of an InputStream as a String using the default
+	 * character encoding of the platform.
+	 * </p>
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * BufferedInputStream.
+	 * </p>
+	 * 
+	 * @param stream
+	 *            the InputStream to read from
+	 * @param charset
+	 *            the charset to use
+	 * @return the content of the stream as string
+	 * @throws NullPointerException
+	 *             if the input is null
+	 * @throws IOException
+	 *             when the stream can't be read
+	 */
+	public static String toString(InputStream stream, Charset charset) throws IOException {
+		return org.apache.commons.io.IOUtils.toString(stream, charset);
 	}
 
 	private IOUtils() {

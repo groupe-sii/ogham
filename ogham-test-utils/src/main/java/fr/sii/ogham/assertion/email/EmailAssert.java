@@ -147,9 +147,8 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *    .contentType(is("text/plain"))
 	 * </pre>
 	 * 
-	 * Will check if the body content of the first message is
-	 * "email alternative" and content-type of the first message is
-	 * "text/plain".
+	 * Will check if the body content of the first message is "email
+	 * alternative" and content-type of the first message is "text/plain".
 	 * 
 	 * <pre>
 	 * .receivedMessages().forEach().alternative()
@@ -207,6 +206,8 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 
 	 * @param matcher
 	 *            the assertion to apply on body
+	 * @param <T>
+	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public <T extends Part> EmailAssert<P> body(Matcher<? super Part> matcher) {
@@ -261,6 +262,8 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 
 	 * @param matcher
 	 *            the assertion to apply on alternative
+	 * @param <T>
+	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public <T extends Part> EmailAssert<P> alternative(Matcher<? super Part> matcher) {
@@ -419,6 +422,8 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 
 	 * @param matcher
 	 *            the assertion to apply on list of attachments
+	 * @param <T>
+	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public <T extends Collection<? extends BodyPart>> EmailAssert<P> attachments(Matcher<? super Collection<? extends BodyPart>> matcher) {

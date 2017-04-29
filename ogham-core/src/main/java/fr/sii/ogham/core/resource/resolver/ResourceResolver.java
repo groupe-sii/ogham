@@ -46,6 +46,7 @@ public interface ResourceResolver {
 	 * Transforms a string path in a {@link ResourcePath}.
 	 * 
 	 * @param path
+	 *            the path to the resource
 	 * @return the resolved resource path or null if it does not support it.
 	 */
 	ResourcePath getResourcePath(String path);

@@ -22,8 +22,8 @@ import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.spring.config.FreeMarkerConfigurer;
 import fr.sii.ogham.spring.config.MessagingBuilderConfigurer;
 import fr.sii.ogham.spring.config.NoTemplateEngineConfigurer;
-import fr.sii.ogham.spring.config.PropertiesBridge;
 import fr.sii.ogham.spring.config.ThymeLeafConfigurer;
+import fr.sii.ogham.spring.env.SpringEnvironmentPropertyResolver;
 import freemarker.template.TemplateExceptionHandler;
 
 /**
@@ -49,17 +49,6 @@ public class OghamAutoConfiguration {
 	Environment environment;
 
 	/**
-	 * Converter that read environment values to be usable by Ogham
-	 * 
-	 * @return the bridge helper
-	 */
-	@Bean
-	@ConditionalOnMissingBean(PropertiesBridge.class)
-	public PropertiesBridge propertiesBridge() {
-		return new PropertiesBridge();
-	}
-
-	/**
 	 * Configures the Messaging service and the {@link TemplateParser}. A
 	 * ThymeLeaf parser will be configured. If we find SpringTemplateEngine, we
 	 * will set it as its template engine implementation. If we find a
@@ -77,8 +66,8 @@ public class OghamAutoConfiguration {
 	}
 
 	@Bean
-	public MessagingBuilder defaultMessagingBuilder(PropertiesBridge propertiesBridge, List<MessagingBuilderConfigurer> configurers) {
-		MessagingBuilder builder = new MessagingBuilder().useAllDefaults(propertiesBridge.convert(environment));
+	public MessagingBuilder defaultMessagingBuilder(List<MessagingBuilderConfigurer> configurers) {
+		MessagingBuilder builder = new MessagingBuilder().useAllDefaults(new SpringEnvironmentPropertyResolver(environment));
 		for (MessagingBuilderConfigurer configurer : configurers) {
 			configurer.configure(builder);
 		}

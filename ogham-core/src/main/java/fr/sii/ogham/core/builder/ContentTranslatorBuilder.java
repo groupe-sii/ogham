@@ -1,10 +1,13 @@
 package fr.sii.ogham.core.builder;
 
+import static fr.sii.ogham.core.util.BuilderUtils.getDefaultPropertyResolver;
+
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.message.content.EmailVariant;
@@ -146,7 +149,27 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 *      templates
 	 */
 	public ContentTranslatorBuilder withTemplate(Properties properties) {
-		return withTemplate(new TemplateBuilder().useDefaults(properties));
+		return withTemplate(getDefaultPropertyResolver(properties));
+	}
+	
+	/**
+	 * Enable the management of templates using all default behaviors and
+	 * values. It will use the default template engines. This method registers
+	 * the translator that is able to convert a template into a String content.
+	 * <p>
+	 * This method is automatically called when calling {@link #useDefaults()}.
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 * @see TemplateBuilder#useDefaults() More information about the default
+	 *      behaviors.
+	 * @see TemplateContentTranslator More information about the translator for
+	 *      templates
+	 */
+	public ContentTranslatorBuilder withTemplate(PropertyResolver propertyResolver) {
+		return withTemplate(new TemplateBuilder().useDefaults(propertyResolver));
 	}
 
 	/**
@@ -265,7 +288,25 @@ public class ContentTranslatorBuilder implements Builder<ContentTranslator> {
 	 *      handling
 	 */
 	public ContentTranslatorBuilder useDefaults(Properties properties) {
-		withTemplate(properties);
+		return useDefaults(getDefaultPropertyResolver(properties));
+	}
+	
+	/**
+	 * Tells the builder to use all default behaviors and values. It will enable
+	 * default template management and default multi-content support management.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 * @see #withTemplate() More information about default template management
+	 * @see #withMultiContentSupport() More information about default
+	 *      multi-content management
+	 * @see #withInlining() More information about default inlining management
+	 * @see #failOnMissingVariant(boolean) More information about variant
+	 *      handling
+	 */
+	public ContentTranslatorBuilder useDefaults(PropertyResolver propertyResolver) {
+		withTemplate(propertyResolver);
 		withMultiContentSupport();
 		withInlining();
 		failOnMissingVariant(false);

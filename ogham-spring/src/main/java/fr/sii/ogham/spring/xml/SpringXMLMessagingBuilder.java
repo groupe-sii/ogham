@@ -5,7 +5,7 @@ import org.springframework.core.env.Environment;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.MessagingServiceBuilder;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.spring.config.PropertiesBridge;
+import fr.sii.ogham.spring.env.SpringEnvironmentPropertyResolver;
 
 /**
  * Decorator builder used for helping integration with Spring.
@@ -15,8 +15,6 @@ import fr.sii.ogham.spring.config.PropertiesBridge;
  */
 public class SpringXMLMessagingBuilder implements MessagingServiceBuilder {
 	Environment environment;
-
-	PropertiesBridge propertiesBridge;
 
 	MessagingBuilder builder;
 
@@ -35,21 +33,7 @@ public class SpringXMLMessagingBuilder implements MessagingServiceBuilder {
 	 *            properties
 	 */
 	public SpringXMLMessagingBuilder(Environment environment) {
-		this(environment, new PropertiesBridge());
-	}
-
-	/**
-	 * Constructor with the required environment dependency
-	 * 
-	 * @param environment
-	 *            the Spring environment required to read configuration
-	 *            properties
-	 * @param propertiesBridge
-	 *            the converter to use for getting configuration properties
-	 *            values
-	 */
-	public SpringXMLMessagingBuilder(Environment environment, PropertiesBridge propertiesBridge) {
-		this(environment, propertiesBridge, new MessagingBuilder().useAllDefaults(propertiesBridge.convert(environment)));
+		this(environment, new MessagingBuilder().useAllDefaults(new SpringEnvironmentPropertyResolver(environment)));
 	}
 
 	/**
@@ -59,16 +43,12 @@ public class SpringXMLMessagingBuilder implements MessagingServiceBuilder {
 	 * @param environment
 	 *            the Spring environment required to read configuration
 	 *            properties
-	 * @param propertiesBridge
-	 *            the converter to use for getting configuration properties
-	 *            values
 	 * @param builder
 	 *            the specific builder to use
 	 */
-	public SpringXMLMessagingBuilder(Environment environment, PropertiesBridge propertiesBridge, MessagingBuilder builder) {
+	public SpringXMLMessagingBuilder(Environment environment, MessagingBuilder builder) {
 		super();
 		this.environment = environment;
-		this.propertiesBridge = propertiesBridge;
 		this.builder = builder;
 	}
 
@@ -79,10 +59,6 @@ public class SpringXMLMessagingBuilder implements MessagingServiceBuilder {
 
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
-	}
-
-	public void setPropertiesBridge(PropertiesBridge propertiesBridge) {
-		this.propertiesBridge = propertiesBridge;
 	}
 
 	public void setBuilder(MessagingBuilder builder) {

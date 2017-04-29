@@ -35,6 +35,8 @@ public class AssertionHelper {
 	 *            the actual value
 	 * @param matcher
 	 *            the matcher to apply
+	 * @param <T>
+	 *            the type used for the matcher
 	 */
 	public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
 		assertThat("", actual, matcher);
@@ -59,6 +61,8 @@ public class AssertionHelper {
 	 *            the actual value
 	 * @param matcher
 	 *            the matcher to apply
+	 * @param <T>
+	 *            the type used for the matcher
 	 */
 	public static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
 		if (!matcher.matches(actual)) {

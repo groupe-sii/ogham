@@ -1,5 +1,7 @@
 package fr.sii.ogham.sms.builder;
 
+import static fr.sii.ogham.core.util.BuilderUtils.getDefaultPropertyResolver;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +19,7 @@ import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.RequiredClassCondition;
 import fr.sii.ogham.core.condition.RequiredPropertyCondition;
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.message.Message;
@@ -28,6 +31,7 @@ import fr.sii.ogham.core.sender.MultiImplementationSender;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.SmsConstants;
+import fr.sii.ogham.sms.filler.SmsFiller;
 import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.ogham.sms.sender.SmsSender;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
@@ -200,9 +204,29 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder useDefaults(Properties properties) {
-		registerDefaultImplementations(properties);
+		return useDefaults(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Tells the builder to use all default behaviors and values:
+	 * <ul>
+	 * <li>Registers OVH HTTP API implementation</li>
+	 * <li>Enables automatic filling of message based on configuration
+	 * properties</li>
+	 * <li>Enables templating support</li>
+	 * </ul>
+	 * <p>
+	 * Configuration values come from provided properties.
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder useDefaults(PropertyResolver propertyResolver) {
+		registerDefaultImplementations(propertyResolver);
 		withPhoneNumberTranslation();
-		withAutoFilling(properties);
+		withAutoFilling(propertyResolver);
 		withTemplate();
 		return this;
 	}
@@ -284,9 +308,32 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder registerDefaultImplementations(Properties properties) {
-		withOvhHttpApi(properties);
-		withSmsglobalRestApi(properties);
-		withCloudhopper(properties);
+		return registerDefaultImplementations(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Register all default implementations:
+	 * <ul>
+	 * <li>OVH HTTP API implementation</li>
+	 * <li>smsgloabl REST API implementation</li>
+	 * <li>Cloudhopper SMPP implementation</li>
+	 * </ul>
+	 * <p>
+	 * Configuration values come from provided properties.
+	 * </p>
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder registerDefaultImplementations(PropertyResolver propertyResolver) {
+		withOvhHttpApi(propertyResolver);
+		withSmsglobalRestApi(propertyResolver);
+		withCloudhopper(propertyResolver);
 		return this;
 	}
 
@@ -303,11 +350,25 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this builder instance for fluent use
 	 */
 	public SmsBuilder withSmsglobalRestApi(Properties properties) {
+		return withSmsglobalRestApi(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Enable smsglobal REST API implementation. This implementation is used
+	 * only if the associated condition indicates that smsglobal REST API can be
+	 * used. The condition checks if:
+	 * <ul>
+	 * <li>The property <code>ogham.sms.smsglobal.api.key</code> is set</li>
+	 * </ul>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 */
+	public SmsBuilder withSmsglobalRestApi(PropertyResolver propertyResolver) {
 		// Use smsglobal REST API only if
-		// SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY is set
-		// registerImplementation(new
-		// RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY,
-		// properties), new SmsglobalRestSender());
+		// TODO: SmsConstants.SMSGLOBAL_REST_API_KEY_PROPERTY is set
+//		registerImplementation(new RequiredPropertyCondition<Message>(SmsConstants.SmsGlobal.SMSGLOBAL_REST_API_KEY_PROPERTY, propertyResolver), new SmsglobalRestSender());
 		return this;
 	}
 
@@ -326,15 +387,33 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this builder instance for fluent use
 	 */
 	public SmsBuilder withOvhHttpApi(Properties properties) {
+		return withOvhHttpApi(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Enable OVH HTTP API implementation. This implementation is used only if
+	 * the associated condition indicates that OVH HTTP API can be used. The
+	 * condition checks if:
+	 * <ul>
+	 * <li>The property <code>ogham.sms.ovh.account</code> is set</li>
+	 * <li>The property <code>ogham.sms.ovh.login</code> is set</li>
+	 * <li>The property <code>ogham.sms.ovh.password</code> is set</li>
+	 * </ul>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 */
+	public SmsBuilder withOvhHttpApi(PropertyResolver propertyResolver) {
 		try {
 			// Use OVH implementation only if SmsConstants.ACCOUNT_PROPERTY is
 			// set
 			// @formatter:off
 			registerImplementation(new AndCondition<>(
-										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.ACCOUNT_PROPERTY, properties),
-										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.LOGIN_PROPERTY, properties),
-										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, properties)),
-					new OvhSmsBuilder().useDefaults(properties));
+										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.ACCOUNT_PROPERTY, propertyResolver),
+										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.LOGIN_PROPERTY, propertyResolver),
+										new RequiredPropertyCondition<Message>(SmsConstants.OvhConstants.PASSWORD_PROPERTY, propertyResolver)),
+					new OvhSmsBuilder().useDefaults(propertyResolver));
 			// @formatter:on
 		} catch (Exception e) {
 			LOG.debug("Can't register OVH implementation", e);
@@ -361,16 +440,38 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this builder instance for fluent use
 	 */
 	public SmsBuilder withCloudhopper(Properties properties) {
+		return withCloudhopper(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Enable Cloudhoppder SMPP implementation. This implementation is used only
+	 * if the associated condition indicates that Cloudhopper SMPP can be used.
+	 * The condition checks if:
+	 * <ul>
+	 * <li>The property <code>ogham.sms.smpp.host</code> is set</li>
+	 * <li>The property <code>ogham.sms.smpp.port</code> is set</li>
+	 * <li>The class <code>com.cloudhopper.smpp.SmppClient</code> is available
+	 * in the classpath</li>
+	 * </ul>
+	 * The registration can silently fail if the ch-smpp jar is not in the
+	 * classpath. In this case, the Cloudhopper implementation is not registered
+	 * at all.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 */
+	public SmsBuilder withCloudhopper(PropertyResolver propertyResolver) {
 		try {
 			// Use Cloudhopper SMPP implementation only if SmppClient class is
 			// in the classpath and the SmppConstants.SMPP_HOST_PROPERTY
 			// property is set
 			// @formatter:off
 			registerImplementation(new AndCondition<>(
-										new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, properties),
-										new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, properties),
+										new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.HOST_PROPERTY, propertyResolver),
+										new RequiredPropertyCondition<Message>(SmsConstants.SmppConstants.PORT_PROPERTY, propertyResolver),
 										new RequiredClassCondition<Message>("com.cloudhopper.smpp.SmppClient")),
-					new CloudhopperSMPPBuilder().useDefaults(properties));
+					new CloudhopperSMPPBuilder().useDefaults(propertyResolver));
 			// @formatter:on
 		} catch (Exception e) {
 			LOG.debug("Can't register Cloudhopper implementation", e);
@@ -407,14 +508,43 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder withAutoFilling(Properties props, String... baseKeys) {
-		withAutoFilling(new MessageFillerBuilder().useDefaults(props, baseKeys));
+		return withAutoFilling(getDefaultPropertyResolver(props), baseKeys);
+	}
+
+	/**
+	 * Enables filling of SMS with values that comes from provided configuration
+	 * properties.
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @param baseKeys
+	 *            the prefix(es) for the keys used for filling the message
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder withAutoFilling(PropertyResolver propertyResolver, String... baseKeys) {
+		MessageFillerBuilder builder = new MessageFillerBuilder().useDefaults();
+		for (String baseKey : baseKeys) {
+			builder.addFiller(new SmsFiller(propertyResolver, baseKey));
+		}
+		withAutoFilling(builder);
 		return this;
 	}
 
 	/**
 	 * Enables filling of SMS with values that comes from provided configuration
 	 * properties. It uses the default prefix for the keys ("sms" and
-	 * "ogham.sms").
+	 * "ogham.sms"):
+	 * <ul>
+	 * <li>If properties contains <code>ogham.sms.from</code> or
+	 * <code>sms.from</code>, it adds sender phone number to the message</li>
+	 * <li>If properties contains <code>ogham.sms.to</code> or
+	 * <code>sms.to</code>, it adds recipient phone number to the message</li>
+	 * </ul>
+	 * 
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
 	 * {@link #useDefaults(Properties)}
@@ -425,13 +555,44 @@ public class SmsBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public SmsBuilder withAutoFilling(Properties props) {
-		return withAutoFilling(props, SmsConstants.FILL_PREFIXES);
+		return withAutoFilling(getDefaultPropertyResolver(props));
+	}
+	
+	/**
+	 * Enables filling of SMS with values that comes from provided configuration
+	 * properties. It uses the default prefix for the keys ("sms" and
+	 * "ogham.sms"):
+	 * <ul>
+	 * <li>If properties contains <code>ogham.sms.from</code> or
+	 * <code>sms.from</code>, it adds sender phone number to the message</li>
+	 * <li>If properties contains <code>ogham.sms.to</code> or
+	 * <code>sms.to</code>, it adds recipient phone number to the message</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public SmsBuilder withAutoFilling(PropertyResolver propertyResolver) {
+		return withAutoFilling(propertyResolver, SmsConstants.FILL_PREFIXES);
 	}
 
 	/**
 	 * Enables filling of SMS with values that comes from system configuration
 	 * properties. It uses the default prefixes for the keys ("sms" and
-	 * "ogham.sms").
+	 * "ogham.sms"):
+	 * <ul>
+	 * <li>If properties contains <code>ogham.sms.from</code> or
+	 * <code>sms.from</code>, it adds sender phone number to the message</li>
+	 * <li>If properties contains <code>ogham.sms.to</code> or
+	 * <code>sms.to</code>, it adds recipient phone number to the message</li>
+	 * </ul>
+	 * 
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
 	 * {@link #useDefaults(Properties)}

@@ -5,7 +5,9 @@ import java.net.URL;
 import java.util.Properties;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.SmsConstants.OvhConstants;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhAuthParams;
@@ -22,7 +24,7 @@ public class OvhSmsBuilder implements Builder<OvhSmsSender> {
 	/**
 	 * The properties to use
 	 */
-	private Properties properties;
+	private PropertyResolver propertyResolver;
 	
 	/**
 	 * The required OVH authentication parameters
@@ -48,16 +50,16 @@ public class OvhSmsBuilder implements Builder<OvhSmsSender> {
 			}
 			// initialize default authentication parameters by reading values from properties 
 			if(authParams==null) {
-				authParams = new OvhAuthParams(properties.getProperty(OvhConstants.ACCOUNT_PROPERTY), 
-												properties.getProperty(OvhConstants.LOGIN_PROPERTY), 
-												properties.getProperty(OvhConstants.PASSWORD_PROPERTY));
+				authParams = new OvhAuthParams(propertyResolver.getProperty(OvhConstants.ACCOUNT_PROPERTY), 
+												propertyResolver.getProperty(OvhConstants.LOGIN_PROPERTY), 
+												propertyResolver.getProperty(OvhConstants.PASSWORD_PROPERTY));
 			}
 			// initialize default options using values from properties
 			if(options==null) {
-				String noStop = properties.getProperty(OvhConstants.NO_STOP_PROPERTY);
-				String smsCoding = properties.getProperty(OvhConstants.SMS_CODING_PROPERTY);
+				String noStop = propertyResolver.getProperty(OvhConstants.NO_STOP_PROPERTY);
+				String smsCoding = propertyResolver.getProperty(OvhConstants.SMS_CODING_PROPERTY);
 				options = new OvhOptions(noStop==null ? true : Boolean.valueOf(noStop), 
-											properties.getProperty(OvhConstants.TAG_PROPERTY), 
+											propertyResolver.getProperty(OvhConstants.TAG_PROPERTY), 
 											smsCoding==null ? null : SmsCoding.valueOf(smsCoding));
 			}
 			// create sender implementation
@@ -80,7 +82,23 @@ public class OvhSmsBuilder implements Builder<OvhSmsSender> {
 	 * @return this instance for fluent use
 	 */
 	public OvhSmsBuilder useDefaults(Properties properties) {
-		withProperties(properties);
+		return useDefaults(BuilderUtils.getDefaultPropertyResolver(properties));
+	}
+	
+	/**
+	 * Tells the builder to use all default behaviors and values:
+	 * <ul>
+	 * <li>Use the provided properties</li>
+	 * <li>Initialize OVH authentication using provided properties</li>
+	 * <li>Initialize OVH options using provided properties</li>
+	 * </ul>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public OvhSmsBuilder useDefaults(PropertyResolver propertyResolver) {
+		withProperties(propertyResolver);
 		return this;
 	}
 
@@ -95,7 +113,21 @@ public class OvhSmsBuilder implements Builder<OvhSmsSender> {
 	 * @return this instance for fluent use
 	 */
 	public OvhSmsBuilder withProperties(Properties properties) {
-		this.properties = properties;
+		return withProperties(BuilderUtils.getDefaultPropertyResolver(properties));
+	}
+	
+	/**
+	 * Set the properties to use for configuring OVH implementation.
+	 * <p>
+	 * Automatically called by {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public OvhSmsBuilder withProperties(PropertyResolver propertyResolver) {
+		this.propertyResolver = propertyResolver;
 		return this;
 	}
 

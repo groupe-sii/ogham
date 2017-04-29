@@ -31,7 +31,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 * <ul>
 	 * <li>address: "recipient@sii.fr"</li>
 	 * <li>personal: "Recipient Name"</li>
-	 * <li>textual: "Recipient Name <recipient@sii.fr>"</li>
+	 * <li>textual: {@code "Recipient Name <recipient@sii.fr>"}</li>
 	 * </ul>
 	 * 
 	 * <pre>
@@ -74,26 +74,26 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 * <ul>
 	 * <li>address: "recipient@sii.fr"</li>
 	 * <li>personal: "Recipient Name"</li>
-	 * <li>textual: "Recipient Name <recipient@sii.fr>"</li>
+	 * <li>textual: {@code "Recipient Name <recipient@sii.fr>"}</li>
 	 * </ul>
 	 * 
 	 * <pre>
 	 * .receivedMessages().message(0).to()
-	 *    .textual(hasItems("Recipient Name <recipient@sii.fr>"))
+	 *    .textual(hasItems("Recipient Name &lt;recipient@sii.fr&gt;"))
 	 * </pre>
 	 * 
 	 * Will check if the list of recipient email addresses (personal with
-	 * address) of the first message contains exactly
-	 * "Recipient Name <recipient@sii.fr>".
+	 * address) of the first message contains exactly {@code "Recipient Name
+	 * <recipient@sii.fr>"}.
 	 * 
 	 * <pre>
 	 * .receivedMessages().forEach().to()
-	 *    .textual(hasItems("Recipient Name <recipient@sii.fr>"))
+	 *    .textual(hasItems("Recipient Name &lt;recipient@sii.fr&gt;"))
 	 * </pre>
 	 * 
 	 * Will check if the list of recipient email addresses (personal with
-	 * address) of every message contains exactly
-	 * "Recipient Name <recipient@sii.fr>".
+	 * address) of every message contains exactly {@code "Recipient Name
+	 * <recipient@sii.fr>"}.
 	 * 
 	 * @param matcher
 	 *            the assertion to apply on the email addresses
@@ -154,7 +154,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 * <ul>
 	 * <li>address: "recipient@sii.fr"</li>
 	 * <li>personal: "Recipient Name"</li>
-	 * <li>textual: "Recipient Name <recipient@sii.fr>"</li>
+	 * <li>textual: {@code "Recipient Name <recipient@sii.fr>"}</li>
 	 * </ul>
 	 * 
 	 * <pre>

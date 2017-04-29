@@ -1,5 +1,7 @@
 package fr.sii.ogham.email.builder;
 
+import static fr.sii.ogham.core.util.BuilderUtils.getDefaultPropertyResolver;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,6 +20,7 @@ import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.OrCondition;
 import fr.sii.ogham.core.condition.RequiredClassCondition;
 import fr.sii.ogham.core.condition.RequiredPropertyCondition;
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.filler.SubjectFiller;
@@ -32,6 +35,7 @@ import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.EmailConstants;
 import fr.sii.ogham.email.EmailConstants.SendGridConstants;
+import fr.sii.ogham.email.filler.EmailFiller;
 import fr.sii.ogham.email.sender.AttachmentResourceTranslatorSender;
 import fr.sii.ogham.email.sender.EmailSender;
 import fr.sii.ogham.template.TemplateConstants;
@@ -197,9 +201,32 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder useDefaults(Properties properties) {
-		registerDefaultImplementations(properties);
-		withAutoFilling(properties);
-		withTemplate(properties);
+		return useDefaults(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Tells the builder to use all default behaviors and values:
+	 * <ul>
+	 * <li>Uses Java mail default behaviors and values</li>
+	 * <li>Registers Java mail API implementation</li>
+	 * <li>Enables automatic filling of message based on configuration
+	 * properties</li>
+	 * <li>Enables templating support</li>
+	 * <li>Enables attachment features (see
+	 * {@link #withAttachmentFeatures()})</li>
+	 * </ul>
+	 * <p>
+	 * Configuration values come from provided properties.
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder useDefaults(PropertyResolver propertyResolver) {
+		registerDefaultImplementations(propertyResolver);
+		withAutoFilling(propertyResolver);
+		withTemplate(propertyResolver);
 		enableEmailTemplateKeys();
 		withAttachmentFeatures();
 		return this;
@@ -280,8 +307,29 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder registerDefaultImplementations(Properties properties) {
-		withJavaMail(properties);
-		withSendGrid(properties);
+		return registerDefaultImplementations(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Register all default implementations:
+	 * <ul>
+	 * <li>Java mail API implementation</li>
+	 * </ul>
+	 * <p>
+	 * Configuration values come from provided properties.
+	 * </p>
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder registerDefaultImplementations(PropertyResolver propertyResolver) {
+		withJavaMail(propertyResolver);
+		withSendGrid(propertyResolver);
 		return this;
 	}
 
@@ -304,6 +352,28 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this builder instance for fluent use
 	 */
 	public EmailBuilder withJavaMail(Properties properties) {
+		return withJavaMail(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Enable Java Mail API implementation. This implementation is used only if
+	 * the associated condition indicates that Java Mail API can be used. The
+	 * condition checks if:
+	 * <ul>
+	 * <li>The property <code>mail.smtp.host</code> is set</li>
+	 * <li>The class <code>javax.mail.Transport</code> (Java Mail API) is
+	 * available in the classpath</li>
+	 * <li>The class <code>com.sun.mail.smtp.SMTPTransport</code> (Java Mail
+	 * implementation) is available in the classpath</li>
+	 * </ul>
+	 * The registration can silently fail if the javax.mail jar is not in the
+	 * classpath. In this case, the Java Mail API is not registered at all.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 */
+	public EmailBuilder withJavaMail(PropertyResolver propertyResolver) {
 		// Java Mail API can be used only if the property "mail.smtp.host" is
 		// provided and also if the class "javax.mail.Transport" is defined in
 		// the classpath. The try/catch clause is mandatory in order to prevent
@@ -312,11 +382,11 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			// @formatter:off
 			registerImplementation(new AndCondition<>(
 										new OrCondition<>(
-												new RequiredPropertyCondition<Message>("mail.smtp.host", properties),
-												new RequiredPropertyCondition<Message>("mail.host",	properties)),
+												new RequiredPropertyCondition<Message>("mail.smtp.host", propertyResolver),
+												new RequiredPropertyCondition<Message>("mail.host",	propertyResolver)),
 										new RequiredClassCondition<Message>("javax.mail.Transport"),
 										new RequiredClassCondition<Message>("com.sun.mail.smtp.SMTPTransport")),
-					new JavaMailBuilder().useDefaults(properties));
+					new JavaMailBuilder().useDefaults(propertyResolver));
 			// @formatter:on
 		} catch (Exception e) {
 			LOG.debug("Can't register Java Mail implementation", e);
@@ -343,6 +413,28 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this builder instance for fluent use
 	 */
 	public EmailBuilder withSendGrid(Properties properties) {
+		return withSendGrid(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Enable SendGrid implementation. This implementation is used only if the
+	 * associated condition indicates that Java Mail API can be used. The
+	 * condition checks if:
+	 * <ul>
+	 * <li>The property <code>ogham.email.sendgrid.api.key</code> is set</li>
+	 * <li>The property <code>ogham.email.sendgrid.username</code> and
+	 * <code>ogham.email.sendgrid.password</code> is set</li>
+	 * <li>The class <code>com.sendgrid.SendGrid</code> is available in the
+	 * classpath</li>
+	 * </ul>
+	 * The registration can silently fail if the javax.mail jar is not in the
+	 * classpath. In this case, the SendGrid is not registered at all.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this builder instance for fluent use
+	 */
+	public EmailBuilder withSendGrid(PropertyResolver propertyResolver) {
 		// SendGrid can be used only if the property "sendgrid.api.key" is
 		// provided and also if the class "com.sendgrid.SendGrid" is defined in
 		// the classpath. The try/catch clause is mandatory in order to prevent
@@ -351,12 +443,12 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 			// @formatter:off
 			registerImplementation(new AndCondition<>(
 										new OrCondition<>(
-												new RequiredPropertyCondition<Message>(SendGridConstants.API_KEY, properties),
+												new RequiredPropertyCondition<Message>(SendGridConstants.API_KEY, propertyResolver),
 												new AndCondition<>(
-														new RequiredPropertyCondition<Message>(SendGridConstants.USERNAME, properties),
-														new RequiredPropertyCondition<Message>(SendGridConstants.PASSWORD, properties))),
+														new RequiredPropertyCondition<Message>(SendGridConstants.USERNAME, propertyResolver),
+														new RequiredPropertyCondition<Message>(SendGridConstants.PASSWORD, propertyResolver))),
 										new RequiredClassCondition<Message>("com.sendgrid.SendGrid")),
-					new SendGridBuilder().useDefaults(properties));
+					new SendGridBuilder().useDefaults(propertyResolver));
 			// @formatter:on
 		} catch (Exception e) {
 			LOG.debug("Can't register SendGrid implementation", e);
@@ -382,11 +474,23 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * Enables automatic filling of emails with values that come from multiple
 	 * sources:
 	 * <ul>
-	 * <li>Fill email with values that come from provided configuration
-	 * properties.</li>
 	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
+	 * <li>Fill email with values that come from provided configuration
+	 * properties. It uses the default prefix for the keys ("mail" and
+	 * "ogham.email"):
+	 * <ul>
+	 * <li>If properties contains <code>ogham.email.from</code> or
+	 * <code>mail.from</code>, it adds sender address to the message</li>
+	 * <li>If properties contains <code>ogham.email.to</code> or
+	 * <code>mail.to</code>, it adds the "TO" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.cc</code> or
+	 * <code>mail.cc</code>, it adds the "CC" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.bcc</code> or
+	 * <code>mail.bcc</code>, it adds the "BCC" recipients to the message</li>
 	 * </ul>
-	 * See {@link MessageFillerBuilder#useDefaults(Properties, String...)} for
+	 * </li>
+	 * </ul>
+	 * See {@link MessageFillerBuilder#useDefaults()} for
 	 * more information.
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
@@ -400,7 +504,48 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withAutoFilling(Properties props, String... baseKeys) {
-		withAutoFilling(new MessageFillerBuilder().useDefaults(props, baseKeys));
+		return withAutoFilling(getDefaultPropertyResolver(props), baseKeys);
+	}
+
+	/**
+	 * Enables automatic filling of emails with values that come from multiple
+	 * sources:
+	 * <ul>
+	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
+	 * <li>Fill email with values that come from provided configuration
+	 * properties. It uses the default prefix for the keys ("mail" and
+	 * "ogham.email"):
+	 * <ul>
+	 * <li>If properties contains <code>ogham.email.from</code> or
+	 * <code>mail.from</code>, it adds sender address to the message</li>
+	 * <li>If properties contains <code>ogham.email.to</code> or
+	 * <code>mail.to</code>, it adds the "TO" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.cc</code> or
+	 * <code>mail.cc</code>, it adds the "CC" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.bcc</code> or
+	 * <code>mail.bcc</code>, it adds the "BCC" recipients to the message</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * See {@link MessageFillerBuilder#useDefaults()} for
+	 * more information.
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @param baseKeys
+	 *            the prefix(es) for the keys used for filling the message
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withAutoFilling(PropertyResolver propertyResolver, String... baseKeys) {
+		MessageFillerBuilder builder = new MessageFillerBuilder().useDefaults();
+		for (String baseKey : baseKeys) {
+			builder.addFiller(new EmailFiller(propertyResolver, baseKey));
+		}
+		withAutoFilling(builder);
 		return this;
 	}
 
@@ -408,10 +553,21 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * Enables automatic filling of emails with values that come from multiple
 	 * sources:
 	 * <ul>
+	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
 	 * <li>Fill email with values that come from provided configuration
 	 * properties. It uses the default prefix for the keys ("mail" and
-	 * "ogham.email").</li>
-	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
+	 * "ogham.email"):
+	 * <ul>
+	 * <li>If properties contains <code>ogham.email.from</code> or
+	 * <code>mail.from</code>, it adds sender address to the message</li>
+	 * <li>If properties contains <code>ogham.email.to</code> or
+	 * <code>mail.to</code>, it adds the "TO" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.cc</code> or
+	 * <code>mail.cc</code>, it adds the "CC" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.bcc</code> or
+	 * <code>mail.bcc</code>, it adds the "BCC" recipients to the message</li>
+	 * </ul>
+	 * </li>
 	 * </ul>
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
@@ -430,9 +586,54 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * Enables automatic filling of emails with values that come from multiple
 	 * sources:
 	 * <ul>
-	 * <li>Fill email with values that come from system configuration
-	 * properties. It uses the default prefix for the keys ("ogham.email").</li>
 	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
+	 * <li>Fill email with values that come from provided configuration
+	 * properties. It uses the default prefix for the keys ("mail" and
+	 * "ogham.email"):
+	 * <ul>
+	 * <li>If properties contains <code>ogham.email.from</code> or
+	 * <code>mail.from</code>, it adds sender address to the message</li>
+	 * <li>If properties contains <code>ogham.email.to</code> or
+	 * <code>mail.to</code>, it adds the "TO" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.cc</code> or
+	 * <code>mail.cc</code>, it adds the "CC" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.bcc</code> or
+	 * <code>mail.bcc</code>, it adds the "BCC" recipients to the message</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withAutoFilling(PropertyResolver propertyResolver) {
+		return withAutoFilling(propertyResolver, EmailConstants.FILL_PREFIXES);
+	}
+
+	/**
+	 * Enables automatic filling of emails with values that come from multiple
+	 * sources:
+	 * <ul>
+	 * <li>Generate subject for the email (see {@link SubjectFiller})</li>
+	 * <li>Fill email with values that come from provided configuration
+	 * properties. It uses the default prefix for the keys ("mail" and
+	 * "ogham.email"):
+	 * <ul>
+	 * <li>If properties contains <code>ogham.email.from</code> or
+	 * <code>mail.from</code>, it adds sender address to the message</li>
+	 * <li>If properties contains <code>ogham.email.to</code> or
+	 * <code>mail.to</code>, it adds the "TO" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.cc</code> or
+	 * <code>mail.cc</code>, it adds the "CC" recipients to the message</li>
+	 * <li>If properties contains <code>ogham.email.bcc</code> or
+	 * <code>mail.bcc</code>, it adds the "BCC" recipients to the message</li>
+	 * </ul>
+	 * </li>
 	 * </ul>
 	 * <p>
 	 * Automatically called by {@link #useDefaults()} and
@@ -474,7 +675,24 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	 * @return this instance for fluent use
 	 */
 	public EmailBuilder withTemplate(Properties properties) {
-		return withTemplate(new ContentTranslatorBuilder().useDefaults(properties));
+		return withTemplate(getDefaultPropertyResolver(properties));
+	}
+
+	/**
+	 * Enables templating support using all default behaviors and values. See
+	 * {@link ContentTranslatorBuilder#useDefaults()} for more information.
+	 * 
+	 * <p>
+	 * Automatically called by {@link #useDefaults()} and
+	 * {@link #useDefaults(Properties)}
+	 * </p>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public EmailBuilder withTemplate(PropertyResolver propertyResolver) {
+		return withTemplate(new ContentTranslatorBuilder().useDefaults(propertyResolver));
 	}
 
 	/**
@@ -773,4 +991,5 @@ public class EmailBuilder implements MessagingSenderBuilder<ConditionalSender> {
 	public AttachmentResourceTranslatorBuilder getResourceTranslatorBuilder() {
 		return resourceTranslatorBuilder;
 	}
+
 }

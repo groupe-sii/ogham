@@ -1,7 +1,6 @@
 package fr.sii.ogham.core.condition;
 
-import java.util.Properties;
-
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
@@ -19,7 +18,7 @@ public class RequiredPropertyCondition<T> implements Condition<T> {
 	/**
 	 * The properties to use for checking if property is defined or not
 	 */
-	private Properties properties;
+	private PropertyResolver propertyResolver;
 
 	/**
 	 * The key to check if defined in the properties
@@ -28,49 +27,38 @@ public class RequiredPropertyCondition<T> implements Condition<T> {
 
 	/**
 	 * Initialize the condition with the provided key. It will check the
-	 * existence of this key into the system properties.
-	 * 
-	 * @param key
-	 *            The key to check for existence
-	 */
-	public RequiredPropertyCondition(String key) {
-		this(key, System.getProperties());
-	}
-
-	/**
-	 * Initialize the condition with the provided key. It will check the
 	 * existence of this key into the provided properties.
 	 * 
 	 * @param key
 	 *            The key to check for existence
-	 * @param properties
-	 *            the properties to inspect
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
 	 */
-	public RequiredPropertyCondition(String key, Properties properties) {
+	public RequiredPropertyCondition(String key, PropertyResolver propertyResolver) {
 		super();
 		this.key = key;
-		this.properties = properties;
+		this.propertyResolver = propertyResolver;
 	}
 
 	@Override
 	public boolean accept(T obj) {
-		return properties.containsKey(key);
+		return propertyResolver.containsProperty(key);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendFields("key", "properties").isEqual();
+		return new EqualsBuilder(this, obj).appendFields("key", "propertyResolver").isEqual();
 	}
 	
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(key, properties).hashCode();
+		return new HashCodeBuilder().append(key, propertyResolver).hashCode();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RequiredPropertyCondition:").append(key).append(" in ").append(properties);
+		builder.append("RequiredPropertyCondition:").append(key).append(" in ").append(propertyResolver);
 		return builder.toString();
 	}
 }

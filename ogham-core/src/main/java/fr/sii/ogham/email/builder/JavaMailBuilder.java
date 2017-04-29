@@ -1,11 +1,14 @@
 package fr.sii.ogham.email.builder;
 
+import static fr.sii.ogham.core.util.BuilderUtils.getDefaultPropertyResolver;
+
 import java.util.Properties;
 
 import javax.mail.Authenticator;
 
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.charset.FixedCharsetProvider;
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -40,9 +43,9 @@ import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
  */
 public class JavaMailBuilder implements Builder<JavaMailSender> {
 	/**
-	 * The properties to use
+	 * The property resolver to use
 	 */
-	private Properties properties;
+	private PropertyResolver propertyResolver;
 
 	/**
 	 * The content handler to use. By default, it uses a
@@ -127,9 +130,29 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 * @return this instance for fluent use
 	 */
 	public JavaMailBuilder useDefaults(Properties props) {
-		withProperties(props);
-		if (props.containsKey(SmtpConstants.AUTHENTICATOR_USERNAME_KEY)) {
-			setAuthenticator(new PropertiesUsernamePasswordAuthenticator(props));
+		return useDefaults(getDefaultPropertyResolver(props));
+	}
+	
+	/**
+	 * Tells the builder to use all default behaviors and values:
+	 * <ul>
+	 * <li>Use the provided properties</li>
+	 * <li>Register Mime Type detection using MimeMagic library</li>
+	 * <li>Register default Mime Type (text/plain)</li>
+	 * <li>Handle {@link MultiContent}</li>
+	 * <li>Handle {@link StringContent}</li>
+	 * <li>Handle {@link ByteResource}</li>
+	 * <li>Handle {@link FileResource}</li>
+	 * </ul>
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public JavaMailBuilder useDefaults(PropertyResolver propertyResolver) {
+		withProperties(propertyResolver);
+		if (propertyResolver.containsProperty(SmtpConstants.AUTHENTICATOR_USERNAME_KEY)) {
+			setAuthenticator(new PropertiesUsernamePasswordAuthenticator(propertyResolver));
 		}
 		registerMimeTypeProvider(new TikaProvider());
 		registerMimeTypeProvider(new FixedMimeTypeProvider());
@@ -150,7 +173,18 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 	 * @return this instance for fluent use
 	 */
 	public JavaMailBuilder withProperties(Properties props) {
-		properties = props;
+		return withProperties(getDefaultPropertyResolver(props));
+	}
+	
+	/**
+	 * Set the properties to use for Java mail API implementation.
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver used to get properties values
+	 * @return this instance for fluent use
+	 */
+	public JavaMailBuilder withProperties(PropertyResolver propertyResolver) {
+		this.propertyResolver = propertyResolver;
 		return this;
 	}
 
@@ -229,6 +263,6 @@ public class JavaMailBuilder implements Builder<JavaMailSender> {
 
 	@Override
 	public JavaMailSender build() {
-		return new JavaMailSender(properties, contentHandler, attachmentResourceHandler, authenticator, interceptor);
+		return new JavaMailSender(propertyResolver, contentHandler, attachmentResourceHandler, authenticator, interceptor);
 	}
 }

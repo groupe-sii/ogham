@@ -29,41 +29,21 @@ import fr.sii.ogham.assertion.sms.SmsListAssert;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
 
 /**
- * Utility class that helps writing message assertions.
- * For emails, you can write something like this:
+ * Utility class that helps writing message assertions. For emails, you can
+ * write something like this:
+ * 
  * <pre>
- * assertThat(greenMail).receivedMessages()
- *   .count(is(1))
- *   .message(0)
- *     .subject(is("Test"))
- *     .from().address(hasItems("test.sender@sii.fr")).and()
- *     .to().address(hasItems("recipient@sii.fr")).and()
- *   .body()
- *      .contentAsString(is("body"))
- *      .contentType(startsWith("text/plain")).and()
- *   .alternative(nullValue())
- *   .attachments(hasSize(1))
- *   .attachment("04-Java-OOP-Basics.pdf")
- *      .content(is(resource("/attachment/04-Java-OOP-Basics.pdf")))
- *      .contentType(startsWith("application/pdf"))
- *      .filename(is("04-Java-OOP-Basics.pdf"))
- *      .disposition(is(ATTACHMENT_DISPOSITION));
+ * assertThat(greenMail).receivedMessages().count(is(1)).message(0).subject(is("Test")).from().address(hasItems("test.sender@sii.fr")).and().to().address(hasItems("recipient@sii.fr")).and().body()
+ * 		.contentAsString(is("body")).contentType(startsWith("text/plain")).and().alternative(nullValue()).attachments(hasSize(1)).attachment("04-Java-OOP-Basics.pdf")
+ * 		.content(is(resource("/attachment/04-Java-OOP-Basics.pdf"))).contentType(startsWith("application/pdf")).filename(is("04-Java-OOP-Basics.pdf")).disposition(is(ATTACHMENT_DISPOSITION));
  * </pre>
  * 
  * For sms, you can write something like this:
+ * 
  * <pre>
- * assertThat(smppServer).receivedMessages()
- *   .count(is(1))
- *   .message(0)
- *     .content(is("sms content"))
- *     .from()
- *       .number(is(INTERNATIONAL_PHONE_NUMBER))
- *       .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
- *       .numberPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()
- *     .to()
- *       .number(is(NATIONAL_PHONE_NUMBER))
- *       .typeOfNumber(is(TypeOfNumber.UNKNOWN))
- *       .numberPlanIndicator(is(NumberingPlanIndicator.ISDN));
+ * assertThat(smppServer).receivedMessages().count(is(1)).message(0).content(is("sms content")).from().number(is(INTERNATIONAL_PHONE_NUMBER)).typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+ * 		.numberPlanIndicator(is(NumberingPlanIndicator.ISDN)).and().to().number(is(NATIONAL_PHONE_NUMBER)).typeOfNumber(is(TypeOfNumber.UNKNOWN))
+ * 		.numberPlanIndicator(is(NumberingPlanIndicator.ISDN));
  * </pre>
  * 
  * 
@@ -203,6 +183,8 @@ public class OghamAssertions {
 	 *            the evaluation context
 	 * @param delegate
 	 *            the matcher to decorate
+	 * @param <T>
+	 *            the type used for the matcher
 	 * @return the matcher
 	 */
 	public static <T> Matcher<T> usingContext(String reasonTemplate, Context context, Matcher<T> delegate) {

@@ -18,6 +18,7 @@ import javax.mail.internet.MimeMultipart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
 import fr.sii.ogham.email.attachment.Attachment;
@@ -65,14 +66,14 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	 */
 	private Authenticator authenticator;
 
-	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentResourceHandler, Authenticator authenticator) {
-		this(properties, contentHandler, attachmentResourceHandler, authenticator, null);
+	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentResourceHandler, Authenticator authenticator) {
+		this(propertyResolver, contentHandler, attachmentResourceHandler, authenticator, null);
 	}
 
-	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator,
+	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator,
 			JavaMailInterceptor interceptor) {
 		super();
-		this.properties = properties;
+		this.properties = new PropertiesBridge(propertyResolver);
 		this.contentHandler = contentHandler;
 		this.attachmentHandler = attachmentHandler;
 		this.authenticator = authenticator;
