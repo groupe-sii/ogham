@@ -1,11 +1,15 @@
 package fr.sii.ogham.ut.resolver;
 
+import static fr.sii.ogham.assertion.OghamAssertions.resource;
+
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.ByteResource;
@@ -16,6 +20,7 @@ import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
 import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
+import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 
 public class FirstSupportingResolverTest {
@@ -23,6 +28,9 @@ public class FirstSupportingResolverTest {
 
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	
+	@Rule
+	public final TemporaryFolder folder = new TemporaryFolder();
 
 	@Before
 	public void setUp() throws ResourceResolutionException {
@@ -41,12 +49,14 @@ public class FirstSupportingResolverTest {
 		Assert.assertSame("should be classpath resolver", resource.getClass(), ByteResource.class);
 	}
 
-	@Test(expected = ResourceResolutionException.class)
+	@Test
 	public void file() throws ResourceResolutionException, IOException {
-		String path = "file:/template/resolver/foo/bar.html";
+		File tempFile = folder.newFile("bar.html");
+		IOUtils.copy(resource("/template/resolver/foo/bar.html"), tempFile);
+		String path = "file:"+tempFile.getAbsolutePath();
 		Assert.assertTrue("should be able to support file path", firstSupportingResolver.supports(path));
 		Resource resource = firstSupportingResolver.getResource(path);
-		Assert.assertSame("should be classpath resolver", resource.getClass(), FileResource.class);
+		Assert.assertSame("should be file resolver", resource.getClass(), FileResource.class);
 	}
 
 	@Test

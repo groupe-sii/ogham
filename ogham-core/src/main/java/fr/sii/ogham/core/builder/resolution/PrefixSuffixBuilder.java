@@ -1,4 +1,4 @@
-package fr.sii.ogham.core.builder.template;
+package fr.sii.ogham.core.builder.resolution;
 
 public interface PrefixSuffixBuilder<MYSELF> {
 	MYSELF pathPrefix(String... prefixes);

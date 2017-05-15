@@ -7,8 +7,12 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
+import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -21,24 +25,24 @@ public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> impl
 	
 	private ResourceResolutionBuilderHelper<AttachmentHandlingBuilder> resourceResolutionBuilderHelper;
 
-	public AttachmentHandlingBuilder(EmailBuilder parent) {
+	public AttachmentHandlingBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuider) {
 		super(parent);
-		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this);
+		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuider);
 	}
 
 	@Override
-	public AttachmentHandlingBuilder classpath(String... prefixes) {
-		return resourceResolutionBuilderHelper.classpath(prefixes);
+	public ClassPathResolutionBuilder<AttachmentHandlingBuilder> classpath() {
+		return resourceResolutionBuilderHelper.classpath();
 	}
 
 	@Override
-	public AttachmentHandlingBuilder file(String... prefixes) {
-		return resourceResolutionBuilderHelper.file(prefixes);
+	public FileResolutionBuilder<AttachmentHandlingBuilder> file() {
+		return resourceResolutionBuilderHelper.file();
 	}
 
 	@Override
-	public AttachmentHandlingBuilder string(String... prefixes) {
-		return resourceResolutionBuilderHelper.string(prefixes);
+	public StringResolutionBuilder<AttachmentHandlingBuilder> string() {
+		return resourceResolutionBuilderHelper.string();
 	}
 
 	@Override

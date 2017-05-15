@@ -1,5 +1,8 @@
 package fr.sii.ogham.core.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -90,6 +93,12 @@ public final class IOUtils {
 		return org.apache.commons.io.IOUtils.toString(stream, charset);
 	}
 
+	public static void copy(byte[] buf, File file) throws IOException {
+		try(ByteArrayInputStream input = new ByteArrayInputStream(buf); FileOutputStream output = new FileOutputStream(file)) {
+			org.apache.commons.io.IOUtils.copy(input, output);
+		}
+	}
+	
 	private IOUtils() {
 		super();
 	}

@@ -1,33 +1,34 @@
 package fr.sii.ogham.core.builder.resolution;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 
 public class StandaloneResourceResolutionBuilder<P> extends AbstractParent<P> implements ResourceResolutionBuilder<StandaloneResourceResolutionBuilder<P>> {
 	private ResourceResolutionBuilderHelper<StandaloneResourceResolutionBuilder<P>> helper;
 	
-	public StandaloneResourceResolutionBuilder() {
-		this(null);
+	public StandaloneResourceResolutionBuilder(EnvironmentBuilder<?> environmentBuilder) {
+		this(null, environmentBuilder);
 	}
 
-	public StandaloneResourceResolutionBuilder(P parent) {
+	public StandaloneResourceResolutionBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
-		helper = new ResourceResolutionBuilderHelper<>(this);
+		helper = new ResourceResolutionBuilderHelper<>(this, environmentBuilder);
 	}
 
 	@Override
-	public StandaloneResourceResolutionBuilder<P> classpath(String... prefixes) {
-		return helper.classpath(prefixes);
+	public ClassPathResolutionBuilder<StandaloneResourceResolutionBuilder<P>> classpath() {
+		return helper.classpath();
 	}
 
 	@Override
-	public StandaloneResourceResolutionBuilder<P> file(String... prefixes) {
-		return helper.file(prefixes);
+	public FileResolutionBuilder<StandaloneResourceResolutionBuilder<P>> file() {
+		return helper.file();
 	}
 
 	@Override
-	public StandaloneResourceResolutionBuilder<P> string(String... prefixes) {
-		return helper.string(prefixes);
+	public StringResolutionBuilder<StandaloneResourceResolutionBuilder<P>> string() {
+		return helper.string();
 	}
 
 	@Override

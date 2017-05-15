@@ -1,46 +1,48 @@
 package fr.sii.ogham.core.builder.resolution;
 
-import static java.util.Arrays.asList;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
-import fr.sii.ogham.core.resource.resolver.FileResolver;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
-import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
 
 public class ResourceResolutionBuilderHelper<FLUENT> {
-	private List<String> classpathPrefixes;
-	private List<String> filePrefixes;
-	private List<String> stringPrefixes;
+	private ClassPathResolutionBuilder<FLUENT> classPath;
+	private FileResolutionBuilder<FLUENT> file;
+	private StringResolutionBuilder<FLUENT> string;
 	private List<ResourceResolver> customResolvers;
 	private FLUENT fluent;
+	private EnvironmentBuilder<?> environmentBuilder;
 
-	public ResourceResolutionBuilderHelper(FLUENT fluent) {
+	public ResourceResolutionBuilderHelper(FLUENT fluent, EnvironmentBuilder<?> environmentBuilder) {
 		super();
 		this.fluent = fluent;
-		classpathPrefixes = new ArrayList<>();
-		filePrefixes = new ArrayList<>();
-		stringPrefixes = new ArrayList<>();
+		this.environmentBuilder = environmentBuilder;
 		customResolvers = new ArrayList<>();
 	}
 
-	public FLUENT classpath(String... prefixes) {
-		this.classpathPrefixes.addAll(new ArrayList<>(asList(prefixes)));
-		return fluent;
+	public ClassPathResolutionBuilder<FLUENT> classpath() {
+		if(classPath==null) {
+			classPath = new ClassPathResolutionBuilder<>(fluent, environmentBuilder);
+		}
+		return classPath;
 	}
 
-	public FLUENT file(String... prefixes) {
-		this.filePrefixes.addAll(new ArrayList<>(asList(prefixes)));
-		return fluent;
+	public FileResolutionBuilder<FLUENT> file() {
+		if(file==null) {
+			file = new FileResolutionBuilder<>(fluent, environmentBuilder);
+		}
+		return file;
 	}
 
-	public FLUENT string(String... prefixes) {
-		this.stringPrefixes.addAll(new ArrayList<>(asList(prefixes)));
-		return fluent;
+	public StringResolutionBuilder<FLUENT> string() {
+		if(string==null) {
+			string = new StringResolutionBuilder<>(fluent, environmentBuilder);
+		}
+		return string;
 	}
 
 	public FLUENT resolver(ResourceResolver resolver) {
@@ -53,14 +55,14 @@ public class ResourceResolutionBuilderHelper<FLUENT> {
 		resolvers.addAll(customResolvers);
 		// ensure that default lookup is always the last registered
 		List<ResolverHelper> helpers = new ArrayList<>();
-		if(!classpathPrefixes.isEmpty()) {
-			helpers.add(new Classpath(classpathPrefixes));
+		if(classPath!=null) {
+			helpers.add(new ResolverHelper(classPath.getLookups(), classPath));
 		}
-		if(!filePrefixes.isEmpty()) {
-			helpers.add(new File(filePrefixes));
+		if(file!=null) {
+			helpers.add(new ResolverHelper(file.getLookups(), file));
 		}
-		if(!stringPrefixes.isEmpty()) {
-			helpers.add(new StringHelper(stringPrefixes));
+		if(string!=null) {
+			helpers.add(new ResolverHelper(string.getLookups(), string));
 		}
 		Collections.sort(helpers, new PrefixComparator());
 		for(ResolverHelper helper : helpers) {
@@ -91,57 +93,22 @@ public class ResourceResolutionBuilderHelper<FLUENT> {
 		
 	}
 	
-	private static abstract class ResolverHelper {
-		protected final List<String> prefixes;
-		
-		public ResolverHelper(List<String> prefixes) {
+	private static class ResolverHelper {
+		private final List<String> prefixes;
+		private final Builder<ResourceResolver> builder;
+
+		public ResolverHelper(List<String> prefixes, Builder<ResourceResolver> builder) {
 			super();
 			this.prefixes = prefixes;
+			this.builder = builder;
 		}
 
-		public abstract void register(List<ResourceResolver> resolvers);
+		public void register(List<ResourceResolver> resolvers) {
+			resolvers.add(builder.build());
+		}
 		
 		public List<String> getPrefixes() {
 			return prefixes;
-		}
-	}
-	
-	private static class Classpath extends ResolverHelper {
-		public Classpath(List<String> prefixes) {
-			super(prefixes);
-		}
-
-		@Override
-		public void register(List<ResourceResolver> resolvers) {
-			if(!prefixes.isEmpty()) {
-				resolvers.add(new ClassPathResolver(prefixes));
-			}
-		}
-	}
-	
-	private static class File extends ResolverHelper {
-		public File(List<String> prefixes) {
-			super(prefixes);
-		}
-
-		@Override
-		public void register(List<ResourceResolver> resolvers) {
-			if(!prefixes.isEmpty()) {
-				resolvers.add(new FileResolver(prefixes));
-			}
-		}
-	}
-	
-	private static class StringHelper extends ResolverHelper {
-		public StringHelper(List<String> prefixes) {
-			super(prefixes);
-		}
-
-		@Override
-		public void register(List<ResourceResolver> resolvers) {
-			if(!prefixes.isEmpty()) {
-				resolvers.add(new StringResourceResolver(prefixes));
-			}
 		}
 	}
 }

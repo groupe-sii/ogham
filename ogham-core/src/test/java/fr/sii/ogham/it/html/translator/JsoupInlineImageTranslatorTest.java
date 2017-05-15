@@ -64,7 +64,9 @@ public class JsoupInlineImageTranslatorTest {
 				.email()
 					.template()
 						.thymeleaf()
-						.pathPrefix(SOURCE_FOLDER)
+							.classpath()
+								.pathPrefix(SOURCE_FOLDER)
+								.and()
 							.buildResolver();
 		MimeTypeProvider mimetypeProvider = new TikaProvider();
 		ImageInliner inliner = new EveryImageInliner(new JsoupAttachImageInliner(generator), new JsoupBase64ImageInliner());

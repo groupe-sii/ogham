@@ -34,10 +34,17 @@ public class ThymeleafParserTest {
 	public void setUp() {
 		parser = new TemplateBuilder<>()
 				.thymeleaf()
-				.classpath("classpath:", "")
-				.file("file:")
-				.string("s:", "string:")
-				.pathPrefix("/template/thymeleaf/source/")
+					.classpath()
+						.lookup("classpath:", "")
+						.pathPrefix("/template/thymeleaf/source/")
+						.and()
+					.file()
+						.lookup("file:")
+						.pathPrefix("/template/thymeleaf/source/")
+						.and()
+					.string()
+						.lookup("s:", "string:")
+						.and()
 				.build();
 		Calendar cal = Calendar.getInstance();
 		cal.set(2015, 6, 1, 14, 28, 42);

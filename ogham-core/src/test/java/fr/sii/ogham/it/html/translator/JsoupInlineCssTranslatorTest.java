@@ -35,7 +35,9 @@ public class JsoupInlineCssTranslatorTest {
 				.email()
 					.template()
 						.thymeleaf()
-							.pathPrefix(SOURCE_FOLDER)
+							.classpath()
+								.pathPrefix(SOURCE_FOLDER)
+								.and()
 							.buildResolver();
 		translator = new InlineCssTranslator(new JsoupCssInliner(), resourceResolver);
 	}

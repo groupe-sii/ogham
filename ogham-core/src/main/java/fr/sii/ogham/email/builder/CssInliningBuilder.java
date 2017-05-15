@@ -7,8 +7,12 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
+import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -23,9 +27,9 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 	private ResourceResolutionBuilderHelper<CssInliningBuilder> resourceResolutionBuilderHelper;
 	private boolean useJsoup;
 
-	public CssInliningBuilder(CssHandlingBuilder parent) {
+	public CssInliningBuilder(CssHandlingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
-		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this);
+		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuilder);
 	}
 
 	public CssInliningBuilder jsoup() {
@@ -34,18 +38,18 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 	}
 
 	@Override
-	public CssInliningBuilder classpath(String... prefixes) {
-		return resourceResolutionBuilderHelper.classpath(prefixes);
+	public ClassPathResolutionBuilder<CssInliningBuilder> classpath() {
+		return resourceResolutionBuilderHelper.classpath();
 	}
 
 	@Override
-	public CssInliningBuilder file(String... prefixes) {
-		return resourceResolutionBuilderHelper.file(prefixes);
+	public FileResolutionBuilder<CssInliningBuilder> file() {
+		return resourceResolutionBuilderHelper.file();
 	}
 
 	@Override
-	public CssInliningBuilder string(String... prefixes) {
-		return resourceResolutionBuilderHelper.string(prefixes);
+	public StringResolutionBuilder<CssInliningBuilder> string() {
+		return resourceResolutionBuilderHelper.string();
 	}
 
 	@Override

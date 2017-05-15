@@ -45,7 +45,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		configurers = new ArrayList<>();
 		environmentBuilder = new SimpleEnvironmentBuilder<>(this);
 		mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, environmentBuilder);
-		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this);
+		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this, environmentBuilder);
 	}
 
 	public MessagingBuilder register(MessagingConfigurer configurer, int priority) {

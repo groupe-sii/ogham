@@ -52,7 +52,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 
 	public AttachmentHandlingBuilder attachments() {
 		if(attachmentBuilder==null) {
-			attachmentBuilder = new AttachmentHandlingBuilder(this);
+			attachmentBuilder = new AttachmentHandlingBuilder(this, environmentBuilder);
 		}
 		return attachmentBuilder;
 	}
@@ -66,7 +66,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	
 	public CssHandlingBuilder css() {
 		if(cssBuilder==null) {
-			cssBuilder = new CssHandlingBuilder(this);
+			cssBuilder = new CssHandlingBuilder(this, environmentBuilder);
 		}
 		return cssBuilder;
 	}

@@ -8,8 +8,11 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
+import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
@@ -29,7 +32,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	public ImageInliningBuilder(ImageHandlingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
-		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this);
+		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuilder);
 	}
 
 	public AttachImageBuilder attach() {
@@ -59,18 +62,18 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	}
 
 	@Override
-	public ImageInliningBuilder classpath(String... prefixes) {
-		return resourceResolutionBuilderHelper.classpath(prefixes);
+	public ClassPathResolutionBuilder<ImageInliningBuilder> classpath() {
+		return resourceResolutionBuilderHelper.classpath();
 	}
 
 	@Override
-	public ImageInliningBuilder file(String... prefixes) {
-		return resourceResolutionBuilderHelper.file(prefixes);
+	public FileResolutionBuilder<ImageInliningBuilder> file() {
+		return resourceResolutionBuilderHelper.file();
 	}
 
 	@Override
-	public ImageInliningBuilder string(String... prefixes) {
-		return resourceResolutionBuilderHelper.string(prefixes);
+	public StringResolutionBuilder<ImageInliningBuilder> string() {
+		return resourceResolutionBuilderHelper.string();
 	}
 
 	@Override

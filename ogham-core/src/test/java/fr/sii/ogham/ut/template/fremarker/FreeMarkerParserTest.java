@@ -33,10 +33,17 @@ public class FreeMarkerParserTest {
 	public void setUp() {
 		parser = new TemplateBuilder<>()
 				.freemarker()
-				.classpath("classpath:", "")
-				.file("file:")
-				.string("s:", "string:")
-				.pathPrefix("/template/freemarker/source/")
+					.classpath()
+						.lookup("classpath:", "")
+						.pathPrefix("/template/freemarker/source/")
+						.and()
+					.file()
+						.lookup("file:")
+						.pathPrefix("/template/freemarker/source/")
+						.and()
+					.string()
+						.lookup("s:", "string:")
+						.and()
 				.build();
 		Calendar cal = Calendar.getInstance();
 		cal.set(2015, 6, 1, 14, 28, 42);
