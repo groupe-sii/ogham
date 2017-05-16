@@ -27,8 +27,8 @@ import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.translator.content.EveryContentTranslator;
 import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
 import fr.sii.ogham.sms.builder.PhoneNumbersBuilder.PhoneNumberTranslatorPair;
+import fr.sii.ogham.sms.sender.PhoneNumberTranslatorSender;
 import fr.sii.ogham.sms.sender.SmsSender;
-import fr.sii.ogham.sms.sender.impl.PhoneNumberTranslatorSender;
 
 public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Builder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);

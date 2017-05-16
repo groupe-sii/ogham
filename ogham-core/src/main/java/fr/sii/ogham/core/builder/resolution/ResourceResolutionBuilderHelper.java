@@ -74,21 +74,21 @@ public class ResourceResolutionBuilderHelper<FLUENT> {
 	private static class PrefixComparator implements Comparator<ResolverHelper> {
 		@Override
 		public int compare(ResolverHelper o1, ResolverHelper o2) {
-			String concat1 = "";
+			StringBuilder concat1 = new StringBuilder();
 			for(String prefix : o1.getPrefixes()) {
 				if(prefix.isEmpty()) {
 					return 1;
 				}
-				concat1 += prefix;
+				concat1.append(prefix);
 			}
-			String concat2 = "";
+			StringBuilder concat2 = new StringBuilder();
 			for(String prefix : o2.getPrefixes()) {
 				if(prefix.isEmpty()) {
 					return -1;
 				}
-				concat2 += prefix;
+				concat2.append(prefix);
 			}
-			return concat1.compareTo(concat2);
+			return concat1.toString().compareTo(concat2.toString());
 		}
 		
 	}

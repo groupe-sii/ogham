@@ -1,12 +1,10 @@
 package fr.sii.ogham.email.message;
 
-import javax.mail.internet.InternetAddress;
-
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
 /**
- * Represents an email address. {@link InternetAddress} also provides the same
+ * Represents an email address. javax.mail.internet.InternetAddress also provides the same
  * feature but we don't want to be sticked to a particular implementation.
  * 
  * @author Aurélien Baudet

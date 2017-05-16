@@ -69,7 +69,8 @@ public class AssertionHelper {
 			Description description = getDescription(reason, actual, matcher);
 
 			if (hasExpectedValue(matcher)) {
-				throw new ComparisonFailure(description.toString(), String.valueOf(getComparable(matcher).getExpectedValue()), String.valueOf(actual));
+				ExpectedValueProvider<T> comparable = getComparable(matcher);
+				throw new ComparisonFailure(description.toString(), String.valueOf(comparable==null ? null : comparable.getExpectedValue()), String.valueOf(actual));
 			} else {
 				throw new AssertionError(description.toString());
 			}

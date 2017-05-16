@@ -153,6 +153,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		return messageId;
 	}
 
+	@Override
 	public void onSubmitSmRespSent(MessageId messageId, SMPPServerSession source) {
 		LOG.debug("submit_sm_resp with message_id {} has been sent", messageId);
 	}
@@ -172,10 +173,14 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		return null;
 	}
 
+	@Override
 	public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source) throws ProcessRequestException {
+		// nothing to do
 	}
 
+	@Override
 	public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source) throws ProcessRequestException {
+		// nothing to do
 	}
 
 	public List<SubmitSm> getReceivedMessages() {

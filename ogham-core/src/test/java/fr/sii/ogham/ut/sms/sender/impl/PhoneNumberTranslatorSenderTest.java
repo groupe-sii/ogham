@@ -26,7 +26,7 @@ import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
 import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
 import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
 import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
-import fr.sii.ogham.sms.sender.impl.PhoneNumberTranslatorSender;
+import fr.sii.ogham.sms.sender.PhoneNumberTranslatorSender;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PhoneNumberTranslatorSenderTest {

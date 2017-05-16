@@ -62,7 +62,7 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 	public ContentTranslator build() throws BuildException {
 		ResourceResolver resourceResolver = buildResolver();
 		CssInliner cssInliner = buildInliner();
-		if(cssInliner==null || resourceResolver==null) {
+		if(cssInliner==null) {
 			// TODO: log to indicate why no translator
 			return null;
 		}

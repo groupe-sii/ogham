@@ -67,14 +67,28 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 		if(subjectBuilder!=null) {
 			filler.addFiller(subjectBuilder.build());
 		}
-		Map<String, List<String>> props = new HashMap<>();
-		props.put("subject", subjectBuilder.getDefaultValueProperties());
-		props.put("from", fromBuilder.getDefaultValueProperties());
-		props.put("to", toBuilder.getDefaultValueProperties());
-		props.put("cc", ccBuilder.getDefaultValueProperties());
-		props.put("bcc", bccBuilder.getDefaultValueProperties());
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		filler.addFiller(new EmailFiller(propertyResolver, props));
+		filler.addFiller(new EmailFiller(propertyResolver, buildDefaultValueProps()));
 		return filler;
+	}
+
+	private Map<String, List<String>> buildDefaultValueProps() {
+		Map<String, List<String>> props = new HashMap<>();
+		if(subjectBuilder!=null) {
+			props.put("subject", subjectBuilder.getDefaultValueProperties());
+		}
+		if(fromBuilder!=null) {
+			props.put("from", fromBuilder.getDefaultValueProperties());
+		}
+		if(toBuilder!=null) {
+			props.put("to", toBuilder.getDefaultValueProperties());
+		}
+		if(ccBuilder!=null) {
+			props.put("cc", ccBuilder.getDefaultValueProperties());
+		}
+		if(bccBuilder!=null) {
+			props.put("bcc", bccBuilder.getDefaultValueProperties());
+		}
+		return props;
 	}
 }

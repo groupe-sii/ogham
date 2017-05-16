@@ -10,7 +10,7 @@ public class ResolverAdapterException extends MessagingException {
 	 */
 	private static final long serialVersionUID = 1737698194969085783L;
 
-	private final ResourceResolver resolver;
+	private final transient ResourceResolver resolver;
 	
 	public ResolverAdapterException(String message, ResourceResolver resolver, Throwable cause) {
 		super(message, cause);

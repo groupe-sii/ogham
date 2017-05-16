@@ -10,6 +10,6 @@ public class SingleMessageContext implements Context {
 	}
 	@Override
 	public String evaluate(String template) {
-		return template.replaceAll(Pattern.quote("${messageIndex}"), ""+index);
+		return template.replaceAll(Pattern.quote("${messageIndex}"), Integer.toString(index));
 	}
 }

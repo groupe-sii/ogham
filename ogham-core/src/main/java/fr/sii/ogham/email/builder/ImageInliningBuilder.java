@@ -86,7 +86,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 		ResourceResolver resourceResolver = buildResolver();
 		ImageInliner imageInliner = buildInliner();
 		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();
-		if(imageInliner==null || resourceResolver==null || mimetypeProvider==null) {
+		if(mimetypeProvider==null) {
 			// TODO: log to indicate why no translator
 			return null;
 		}

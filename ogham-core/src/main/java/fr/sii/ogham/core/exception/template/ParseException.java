@@ -11,7 +11,7 @@ public class ParseException extends MessagingException {
 
 	private final String templateName;
 	
-	private final Context context;
+	private final transient Context context;
 
 	public ParseException(String message, String templateName, Context context, Throwable cause) {
 		super(message, cause);

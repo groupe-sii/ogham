@@ -27,7 +27,7 @@ public class FilterableClassLoader extends ClassLoader {
 		if(predicate.evaluate(name)) {
 			return delegate.loadClass(name);
 		} else {
-			LOG.info("Class "+name+" not accepted");
+			LOG.info("Class {} not accepted", name);
 			throw new ClassNotFoundException("Class "+name+" not accepted");
 		}
 	}
@@ -37,7 +37,7 @@ public class FilterableClassLoader extends ClassLoader {
 		if(predicate.evaluate(name)) {
 			return delegate.getResource(name);
 		} else {
-			LOG.info("Resource "+name+" not accepted");
+			LOG.info("Resource {} not accepted", name);
 			return null;
 		}
 	}
@@ -47,7 +47,7 @@ public class FilterableClassLoader extends ClassLoader {
 		if(predicate.evaluate(name)) {
 			return delegate.getResources(name);
 		} else {
-			LOG.info("Resource "+name+" not accepted");
+			LOG.info("Resource {} not accepted", name);
 			return Collections.emptyEnumeration();
 		}
 	}
@@ -57,7 +57,7 @@ public class FilterableClassLoader extends ClassLoader {
 		if(predicate.evaluate(name)) {
 			return delegate.getResourceAsStream(name);
 		} else {
-			LOG.info("Resource "+name+" not accepted");
+			LOG.info("Resource {} not accepted", name);
 			return null;
 		}
 	}

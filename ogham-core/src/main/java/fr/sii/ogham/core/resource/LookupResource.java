@@ -85,7 +85,7 @@ public class LookupResource implements NamedResource {
 		if (lastSeparatorIdx >= 0) {
 			name = path.substring(lastSeparatorIdx + 1);
 		} else {
-			int colonIdx = path.indexOf(":");
+			int colonIdx = path.indexOf(':');
 			name = colonIdx > 0 ? path.substring(colonIdx + 1) : path;
 		}
 		return name;

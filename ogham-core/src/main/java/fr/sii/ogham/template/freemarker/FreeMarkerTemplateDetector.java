@@ -39,12 +39,12 @@ public class FreeMarkerTemplateDetector implements TemplateEngineDetector {
 		for (String extension : extensions) {
 			result = templateName.endsWith(extension);
 			if (result) {
-				LOG.debug("The template {} ends with " + extension + ". FreeMarker can be used", templateName);
+				LOG.debug("The template {} ends with {}. FreeMarker can be used", templateName, extension);
 			}
 		}
 
 		if (!result) {
-			LOG.debug("The template {} doesn't end with any of" + extensions + ". FreeMarker can't be used", templateName);
+			LOG.debug("The template {} doesn't end with any of {}. FreeMarker can't be used", templateName, extensions);
 		}
 		return result;
 

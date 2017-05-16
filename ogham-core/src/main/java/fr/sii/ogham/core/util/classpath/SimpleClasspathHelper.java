@@ -25,21 +25,21 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 	public boolean exists(String className) {
 		if(this.classLoader!=null) {
 			if(exists(className, this.classLoader)) {
-				LOG.debug("class "+className+" found using class specific class loader");
+				LOG.debug("class {} found using class specific class loader", className);
 				return true;
 			}
 			return false;
 		}
 		if(existsWithDefaultClassLoader(className)) {
-			LOG.debug("class "+className+" found using default class loader");
+			LOG.debug("class {} found using default class loader", className);
 			return true;
 		}
 		if(exists(className, Thread.currentThread().getContextClassLoader())) {
-			LOG.debug("class "+className+" found using class loader of current thread");
+			LOG.debug("class {} found using class loader of current thread", className);
 			return true;
 		}
 		if(exists(className, getClass().getClassLoader())) {
-			LOG.debug("class "+className+" found using class loader of current class");
+			LOG.debug("class {} found using class loader of current class", className);
 			return true;
 		}
 		return false;
@@ -50,7 +50,8 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 			Class.forName(className);
 			return true;
 		} catch (ClassNotFoundException e) {
-			LOG.debug("Class "+className+" not found");
+			LOG.debug("Class {} not found", className);
+			LOG.trace("Cause:", e);
 			return false;
 		}
 	}
@@ -60,7 +61,8 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 			Class.forName(className, false, classLoader);
 			return true;
 		} catch (ClassNotFoundException e) {
-			LOG.debug("Class "+className+" not found");
+			LOG.debug("Class {} not found", className);
+			LOG.trace("Cause:", e);
 			return false;
 		}
 	}

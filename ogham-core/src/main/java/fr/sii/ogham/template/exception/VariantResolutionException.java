@@ -10,7 +10,7 @@ public class VariantResolutionException extends ParseException {
 	 */
 	private static final long serialVersionUID = 6337902498224234453L;
 	
-	private final Variant variant;
+	private final transient Variant variant;
 
 	public VariantResolutionException(String message, String templateName, Context context, Variant variant) {
 		super(message, templateName, context);

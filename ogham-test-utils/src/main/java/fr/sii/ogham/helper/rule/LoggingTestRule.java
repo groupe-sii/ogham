@@ -53,12 +53,12 @@ public class LoggingTestRule implements TestRule {
 				base.evaluate();
 				LOG.info(header);
 				LOG.info("│{}│", format("Test "+testName+" successfully done"));
-				LOG.info(footer+"\r\n\r\n");
+				LOG.info("{}\r\n\r\n", footer);
 			} catch(Exception e) {
 				LOG.error(header);
 				LOG.error("│{}│", format("Test "+testName+" has failed"));
 				LOG.error("│{}│", format("Cause: "+e));
-				LOG.error(footer+"\r\n\r\n");
+				LOG.info("{}\r\n\r\n", footer);
 				throw e;
 			}
 		}

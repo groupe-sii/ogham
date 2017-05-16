@@ -3,6 +3,9 @@ package fr.sii.ogham.template.common.adapter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.capability.HasVariant;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -18,6 +21,7 @@ import fr.sii.ogham.template.exception.VariantResolutionException;
  *
  */
 public class ExtensionMappingVariantResolver implements VariantResolver {
+	private static final Logger LOG = LoggerFactory.getLogger(ExtensionMappingVariantResolver.class);
 
 	private final ResourceResolver resourceResolver;
 	private final Map<Variant, String> mapping;
@@ -51,19 +55,23 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 
 	@Override
 	public boolean variantExists(TemplateContent template) {
-		if(template instanceof HasVariant) {
-			String extension = mapping.get(((HasVariant) template).getVariant());
-			if (extension == null) {
-				return false;
-			}
-			try {
-				resourceResolver.getResource(template.getPath() + extension);
-				return true;
-			} catch(ResourceResolutionException e) {
-				return false;
-			}
+		if(!(template instanceof HasVariant)) {
+			return false;
 		}
-		return false;
+		
+		String extension = mapping.get(((HasVariant) template).getVariant());
+		if (extension == null) {
+			return false;
+		}
+		
+		String templatePath = template.getPath();
+		try {
+			resourceResolver.getResource(templatePath + extension);
+			return true;
+		} catch(ResourceResolutionException e) {
+			LOG.trace("template {}.{} not found", templatePath, extension, e);
+			return false;
+		}
 	}
 
 }

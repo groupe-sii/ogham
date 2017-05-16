@@ -85,11 +85,12 @@ class DeliveryReceiptTask implements Runnable {
 		try {
 			Thread.sleep(WAIT_DURATION);
 		} catch (InterruptedException e1) {
+			Thread.currentThread().interrupt();
 			LOG.error("Sleep interrupted", e1);
 		}
 		SessionState state = session.getSessionState();
 		if (!state.isReceivable()) {
-			LOG.debug("Not sending delivery receipt for message id " + messageId + " since session state is " + state);
+			LOG.debug("Not sending delivery receipt for message id {} since session state is {}", messageId, state);
 			return;
 		}
 		String stringValue = Integer.valueOf(messageId.getValue(), TWO_BYTES).toString();
@@ -98,9 +99,9 @@ class DeliveryReceiptTask implements Runnable {
 			DeliveryReceipt delRec = new DeliveryReceipt(stringValue, totalSubmitted, totalDelivered, new Date(), new Date(), DeliveryReceiptState.DELIVRD, null, new String(shortMessage));
 			session.deliverShortMessage("mc", sourceAddrTon, sourceAddrNpi, sourceAddress, destAddrTon, destAddrNpi, destAddress, new ESMClass(MessageMode.DEFAULT,
 					MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT), (byte) 0, (byte) 0, new RegisteredDelivery(0), DataCodings.ZERO, delRec.toString().getBytes());
-			LOG.debug("Sending delivery receipt for message id " + messageId + ":" + stringValue);
+			LOG.debug("Sending delivery receipt for message id {}: {}", messageId, stringValue);
 		} catch (Exception e) {
-			LOG.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
+			LOG.error("Failed sending delivery_receipt for message id {}: {}", messageId, stringValue, e);
 		}
 	}
 }

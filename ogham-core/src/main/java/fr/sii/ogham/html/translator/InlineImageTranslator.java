@@ -112,7 +112,7 @@ public class InlineImageTranslator implements ContentTranslator {
 		try {
 			byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
 			String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
-			String imgName = new File(path).getName().toString();
+			String imgName = new File(path).getName();
 			imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
 		} catch (IOException e) {
 			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
@@ -124,26 +124,22 @@ public class InlineImageTranslator implements ContentTranslator {
 	}
 
 	private Content updateHtmlContent(Content content, ContentWithImages contentWithImages) {
-		Content inlinedContent = content;
-		if(inlinedContent instanceof UpdatableStringContent) {
+		if(content instanceof UpdatableStringContent) {
 			LOG.debug("Content is updatable => update it with inlined images");
-			((UpdatableStringContent) inlinedContent).setStringContent(contentWithImages.getContent());
-		} else {
-			LOG.info("Content is not updatable => create a new StringContent for image inlining result");
-			inlinedContent = new StringContent(contentWithImages.getContent());
+			((UpdatableStringContent) content).setStringContent(contentWithImages.getContent());
+			return content;
 		}
-		return inlinedContent;
+		LOG.info("Content is not updatable => create a new StringContent for image inlining result");
+		return new StringContent(contentWithImages.getContent());
 	}
 
 	private Content generateFinalContent(Content content, ContentWithImages contentWithImages, Content inlinedContent) {
-		ContentWithAttachments finalContent;
 		if(content instanceof ContentWithAttachments) {
-			finalContent = ((ContentWithAttachments) content);
+			ContentWithAttachments finalContent = (ContentWithAttachments) content;
 			finalContent.addAttachments(contentWithImages.getAttachments());
 			finalContent.setContent(inlinedContent);
-		} else {
-			finalContent = new ContentWithAttachments(inlinedContent, contentWithImages.getAttachments());
+			return finalContent;
 		}
-		return finalContent;
+		return new ContentWithAttachments(inlinedContent, contentWithImages.getAttachments());
 	}
 }
