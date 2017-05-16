@@ -2,7 +2,7 @@ package fr.sii.ogham.core.resource.resolver;
 
 import static java.util.Arrays.asList;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
