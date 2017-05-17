@@ -12,4 +12,4 @@ branches:
   except:
     - test/.*
     - gh-.*
-script: mvn clean install verify -B
+script: mvn clean install verify -B -q

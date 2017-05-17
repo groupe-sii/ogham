@@ -18,6 +18,8 @@
 		<appender-ref ref="TEST" />
 	</logger>
 
+	<logger name="org.thymeleaf.TemplateEngine.CONFIG" level="INFO" />
+
 	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 	</root>
