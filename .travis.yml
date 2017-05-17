@@ -12,4 +12,4 @@ branches:
   except:
     - test/.*
     - gh-.*
-script: mvn clean install verify -B -Dorg.slf4j.simpleLogger.defaultLogLevel=info
+script: mvn clean install verify -B
