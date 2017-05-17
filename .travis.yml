@@ -12,6 +12,10 @@ addons:
     - oracle-java8-installer
   sonarqube:
     organization: aurelien-baudet-github
+  branches:
+    - master
+    - refactoring/.*
+    - features/.*
 branches:
   except:
   - test/.*
