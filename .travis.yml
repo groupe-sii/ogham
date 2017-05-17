@@ -10,11 +10,11 @@ addons:
   apt:
     packages:
       - oracle-java8-installer
+  sonarqube:
+    organization: "aurelien-baudet-github"
 branches:
   except:
     - test/.*
     - gh-.*
-  sonarqube:
-    organization: "aurelien-baudet-github"
 install: mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dskip.integration.tests=true -Dskip.unit.tests=true -B -q
 script: mvn test verify sonar:sonar javadoc:javadoc -Dmaven.test.redirectTestOutputToFile=true -B -q
