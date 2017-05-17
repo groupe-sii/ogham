@@ -16,4 +16,4 @@ branches:
     - gh-.*
   sonarqube:
     organization: "aurelien-baudet-github"
-script: mvn clean install verify sonar:sonar -B -q
+script: mvn clean install verify sonar:sonar -B -q -Dmaven.test.redirectTestOutputToFile=true
