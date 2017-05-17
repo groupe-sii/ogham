@@ -1,5 +1,8 @@
 package fr.sii.ogham.core.resource.resolver;
 
+import java.util.Arrays;
+import java.util.List;
+
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.resource.ResourcePath;
@@ -12,11 +15,11 @@ import fr.sii.ogham.core.resource.ResourcePath;
  *
  */
 public abstract class AbstractPrefixedLookupPathResolver implements ResourceResolver {
-	private String[] lookups;
+	private List<String> lookups;
 
-	public AbstractPrefixedLookupPathResolver(String... lookups) {
+	protected AbstractPrefixedLookupPathResolver(String... lookups) {
 		super();
-		this.lookups = lookups;
+		this.lookups = Arrays.asList(lookups);
 	}
 
 	@Override
