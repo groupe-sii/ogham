@@ -12,12 +12,12 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser.TemplateImplementation;
+import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.freemarker.builder.AbstractFreemarkerBuilder;
 import fr.sii.ogham.template.thymeleaf.buider.AbstractThymeleafBuilder;
-import fr.sii.ogham.core.template.parser.TemplateParser;
 
 public abstract class AbstractTemplateBuilder<MYSELF extends AbstractTemplateBuilder<MYSELF, T, F, P>, T extends AbstractThymeleafBuilder<T, MYSELF>, F extends AbstractFreemarkerBuilder<F, MYSELF>, P> extends AbstractParent<P> implements Builder<TemplateParser> {
-	private static final Logger LOG = LoggerFactory.getLogger(TemplateBuilder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractTemplateBuilder.class);
 	
 	protected MYSELF myself;
 	protected final EnvironmentBuilder<?> environmentBuilder;
