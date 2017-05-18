@@ -21,7 +21,7 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 	@Override
 	public void configure(MessagingBuilder builder) {
 		super.configure(builder);
-		builder.catchAll(true);
+		builder.wrapUncaught(true);
 	}
 	
 	@Override

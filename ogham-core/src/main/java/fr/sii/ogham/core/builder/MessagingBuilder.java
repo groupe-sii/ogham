@@ -22,9 +22,9 @@ import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.resolution.StandaloneResourceResolutionBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.sender.ConditionalSender;
-import fr.sii.ogham.core.service.CatchAllMessagingService;
 import fr.sii.ogham.core.service.EverySupportingMessagingService;
 import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.core.service.WrapExceptionMessagingService;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 
@@ -38,7 +38,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	private StandaloneResourceResolutionBuilder<MessagingBuilder> resourceBuilder;
 	private EmailBuilder emailBuilder;
 	private SmsBuilder smsBuilder;
-	private boolean catchAll;
+	private boolean wrapUncaught;
 
 	public MessagingBuilder() {
 		super();
@@ -65,8 +65,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		return mimetypeBuilder;
 	}
 
-	public MessagingBuilder catchAll(boolean enable) {
-		catchAll = enable;
+	public MessagingBuilder wrapUncaught(boolean enable) {
+		wrapUncaught = enable;
 		return this;
 	}
 	
@@ -97,8 +97,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		List<ConditionalSender> senders = buildSenders();
 		LOG.debug("Registered senders: {}", senders);
 		MessagingService service = new EverySupportingMessagingService(senders);
-		if(catchAll) {
-			service = new CatchAllMessagingService(service);
+		if(wrapUncaught) {
+			service = new WrapExceptionMessagingService(service);
 		}
 		return service;
 	}
@@ -201,22 +201,6 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		}
 		public MessagingConfigurer getConfigurer() {
 			return configurer;
-		}
-	}
-	
-	private static class AnnotatedConfigurer {
-		private final ConfigurerFor annotation;
-		private final Class<? extends MessagingConfigurer> configurerClass;
-		public AnnotatedConfigurer(ConfigurerFor annotation, Class<? extends MessagingConfigurer> configurerClass) {
-			super();
-			this.annotation = annotation;
-			this.configurerClass = configurerClass;
-		}
-		public ConfigurerFor getAnnotation() {
-			return annotation;
-		}
-		public Class<? extends MessagingConfigurer> getConfigurerClass() {
-			return configurerClass;
 		}
 	}
 

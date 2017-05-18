@@ -31,6 +31,4 @@ notifications:
   slack:
     secure: NdaSwFJ16HC93H1iimYB07/0rGwQfVCto2/XLrVJNeMcvdRsHbuhBnKwwUkNCTLeLLtB1DVmoNeCBdo2pmtAvoyTnl9OXhG3GWjoB++Al+/66x/TzC1g891y59JI/F7btVqZRKMi5URdcXt7VqSTUyu3Qjf6rxxeRMfiCgg4eLP2ABWQTvNpi7AgV9ArkVqat5Fo1p98iuxpUL0kByXmyuoN15f0azVm0Mhwv2LtMyHAf5Lq1gKOt7TfKccMEJaZXPZMfFWkXblZUWggx6EYXB2ylXJ7e45UeunsroqPYuXJtepwOjcT00NSm7tR+wDaVZl3hXDfexwb35wP+g/tcIiQYTWgQQvr5b6Z0tUX3WgZt7aBMH9gaJPRolC7FXwukXkdBwjvyDLsra147M2pm7fc5zj73TV0gaEdqDewd+UgFA12Vm1gwC0eWH/HVhOZ0HGOQdYmtYkZJ67KTwes9B+SKDkrSF4Nq7T3svOWvGxzDCaw4CCOBY5U1xRc3VVOo/xtFa8dAKfxpo0IFy/qaHS4vIb2BDHJ0LU7+WarcjcmADxJXvhvOvvByS5k0sqkUXF4uB+QpxQqQEGNMzLC2iMog0UnBIIEZEe6pvrzchoQIpKyom4GvnAi+Xco8aJaMgrLZY9JwmlLP8r1YFyMawH4kmJ8XpPZ5+fIN2HSkD4=
     template:
-      - "%{result} for branch %{branch}: %{commit_subject}"
-      - "Build: <%{build_url}|#%{build_number}> in %{duration}"
-      - "Commit: <%{compare_url}|%{commit}> by %{author}"
+      - "%{result} for branch %{branch}: %{commit_subject}\n\nBuild %{build_number} (%{duration}): %{build_url}\nCommit: <%{compare_url}|%{commit}> by %{author}\n%{commit_subject}"
