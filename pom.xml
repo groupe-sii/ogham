@@ -72,6 +72,21 @@
 		<!-- Documentation -->
 		<docProjectVersion>${project.version}</docProjectVersion>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
+		
+		<!-- Plugins -->
+		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
+		<maven-resources-plugin.version>2.7</maven-resources-plugin.version>
+		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
+		<maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
+		<maven-release-plugin.version>2.5.2</maven-release-plugin.version>
+		<maven-site-plugin.version>3.4</maven-site-plugin.version>
+		<sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
+		<nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
+		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 	</properties>
 
 
@@ -270,7 +285,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.10</version>
+				<version>${maven-eclipse-plugin.version}</version>
 				<configuration>
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
@@ -279,14 +294,14 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
+				<version>${maven-resources-plugin.version}</version>
 			</plugin>
 
 			<!-- Compiler -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.source}</target>
@@ -298,7 +313,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.4</version>
+				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -311,7 +326,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
+				<version>${maven-javadoc-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -326,7 +341,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.9</version>
+				<version>${jacoco-maven-plugin.version}</version>
 				<executions>
 					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
 						is passed as VM argument when Maven the Surefire plugin is executed. -->
@@ -395,7 +410,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.18.1</version>
+				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<!-- Sets the VM argument line used when unit tests are run. -->
 					<argLine>${surefireArgLine}</argLine>
@@ -414,7 +429,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.18.1</version>
+				<version>${maven-failsafe-plugin.version}</version>
 				<executions>
 					<!-- Ensures that both integration-test and verify goals of the Failsafe 
 						Maven plugin are executed. -->
@@ -445,7 +460,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.2</version>
+				<version>${maven-release-plugin.version}</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<useReleaseProfile>false</useReleaseProfile>
@@ -459,7 +474,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.4</version>
+				<version>${maven-site-plugin.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>lt.velykis.maven.skins</groupId>
@@ -502,7 +517,7 @@
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.2</version>
+					<version>${sonar-maven-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -514,7 +529,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
+				<version>${maven-javadoc-plugin.version}</version>
 				<configuration>
 				</configuration>
 			</plugin>
@@ -542,7 +557,7 @@
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.3</version>
+						<version>${nexus-staging-maven-plugin.version}</version>
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
@@ -553,7 +568,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>${maven-gpg-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
