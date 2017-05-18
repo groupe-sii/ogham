@@ -14,8 +14,7 @@ addons:
     organization: aurelien-baudet-github
   branches:
     - master
-    - refactoring/.*
-    - features/.*
+    - refactoring/builders
 branches:
   except:
   - test/.*
