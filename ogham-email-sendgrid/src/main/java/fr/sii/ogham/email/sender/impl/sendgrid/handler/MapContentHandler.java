@@ -26,7 +26,7 @@ public final class MapContentHandler implements SendGridContentHandler {
 	 * Constructor.
 	 */
 	public MapContentHandler() {
-		this.handlers = new HashMap<Class<? extends Content>, SendGridContentHandler>();
+		this.handlers = new HashMap<>();
 	}
 
 	/**
