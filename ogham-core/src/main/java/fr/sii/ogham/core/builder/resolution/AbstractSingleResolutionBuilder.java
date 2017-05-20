@@ -45,7 +45,7 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 	@Override
 	public ResourceResolver build() throws BuildException {
 		ResourceResolver resolver = createResolver();	
-		if(!(resolver instanceof RelativisableResourceResolver)) {
+		if(!(resolver instanceof RelativisableResourceResolver) || environmentBuilder==null) {
 			return resolver;
 		}
 		PropertyResolver propertyResolver = environmentBuilder.build();

@@ -3,6 +3,8 @@ package fr.sii.ogham.spring.config;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
 import freemarker.template.Configuration;
 
 public class FreeMarkerConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
@@ -18,12 +20,12 @@ public class FreeMarkerConfigurer extends MessagingConfigurerAdapter implements 
 
 	@Override
 	public void configure(EmailBuilder emailBuilder) {
-		emailBuilder.template().freemarker().configuration(emailConfiguration);
+		emailBuilder.template(FreemarkerEmailBuilder.class).configuration(emailConfiguration);
 	}
 
 	@Override
 	public void configure(SmsBuilder smsBuilder) {
-		smsBuilder.template().freemarker().configuration(smsConfiguration);
+		smsBuilder.template(FreemarkerSmsBuilder.class).configuration(smsConfiguration);
 	}
 
 	@Override

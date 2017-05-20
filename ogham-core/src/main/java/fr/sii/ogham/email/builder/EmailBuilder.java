@@ -1,12 +1,5 @@
 package fr.sii.ogham.email.builder;
 
-import static fr.sii.ogham.core.builder.condition.MessageConditions.alwaysTrue;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +7,8 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.template.TemplateMultiContentBuilder;
-import fr.sii.ogham.core.condition.provider.ImplementationConditionProvider;
+import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
+import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.sender.ConditionalSender;
@@ -34,20 +27,19 @@ import fr.sii.ogham.email.sender.EmailSender;
 public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Builder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(EmailBuilder.class);
 	
-	private TemplateMultiContentBuilder<EmailBuilder> templateBuilder;
-	private EnvironmentBuilder<?> environmentBuilder;
+	private final EnvironmentBuilder<?> environmentBuilder;
+	private final TemplateBuilderHelper<EmailBuilder> templateBuilderHelper;
+	private final SenderImplementationBuilderHelper<EmailBuilder> senderBuilderHelper;
 	private AttachmentHandlingBuilder attachmentBuilder;
 	private AutofillEmailBuilder autofillBuilder;
 	private CssHandlingBuilder cssBuilder;
 	private ImageHandlingBuilder imageBuilder;
-	private List<Builder<? extends MessageSender>> senderBuilders;
-	private List<MessageSender> customSenders;
 
 	public EmailBuilder(MessagingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
-		senderBuilders = new ArrayList<>();
-		customSenders = new ArrayList<>();
+		templateBuilderHelper = new TemplateBuilderHelper<>(this, environmentBuilder);
+		senderBuilderHelper = new SenderImplementationBuilderHelper<>(this, environmentBuilder);
 	}
 
 	public AttachmentHandlingBuilder attachments() {
@@ -78,54 +70,24 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 		return imageBuilder;
 	}
 	
-	public TemplateMultiContentBuilder<EmailBuilder> template() {
-		if(templateBuilder==null) {
-			templateBuilder = new TemplateMultiContentBuilder<>(this, environmentBuilder);
-		}
-		return templateBuilder;
+	public <T extends Builder<? extends TemplateParser>> T template(Class<T> builderClass) {
+		return templateBuilderHelper.register(builderClass);
 	}
-	
+
 	public EmailBuilder customSender(MessageSender sender) {
-		customSenders.add(sender);
+		senderBuilderHelper.customSender(sender);
 		return this;
 	}
 	
 	public <T extends Builder<? extends MessageSender>> T sender(Class<T> builderClass) {
-		for(Builder<? extends MessageSender> builder : senderBuilders) {
-			if(builderClass.isAssignableFrom(builder.getClass())) {
-				return (T) builder;
-			}
-		}
-		try {
-			T builder;
-			Constructor<T> constructor = builderClass.getConstructor(EmailBuilder.class);
-			if(constructor!=null) {
-				builder = constructor.newInstance(this);
-			} else {
-				builder = builderClass.newInstance();
-			}
-			senderBuilders.add(builder);
-			return builder;
-		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
-			throw new BuildException("Can't instantiate builder from class "+builderClass.getSimpleName(), e);
-		}
+		return senderBuilderHelper.register(builderClass);
 	}
 
 	@Override
 	public ConditionalSender build() throws BuildException {
 		EmailSender emailSender = new EmailSender();
 		ConditionalSender sender = emailSender;
-		for(MessageSender s : customSenders) {
-			emailSender.addImplementation(alwaysTrue(), s);
-		}
-		ImplementationConditionProvider implementationSelection = new ImplementationConditionProvider(environmentBuilder.build());
-		for(Builder<? extends MessageSender> builder : senderBuilders) {
-			MessageSender s = builder.build();
-			if(s!=null) {
-				LOG.debug("Implementation {} registered", s);
-				emailSender.addImplementation(implementationSelection.provide(builder), s);
-			}
-		}
+		senderBuilderHelper.addSenders(emailSender);
 		if(autofillBuilder!=null) {
 			MessageFiller messageFiller = autofillBuilder.build();
 			LOG.debug("Automatic filling of message enabled {}", messageFiller);
@@ -136,7 +98,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 			LOG.debug("Resource translation enabled {}", resourceTranslator);
 			sender = new AttachmentResourceTranslatorSender(resourceTranslator, sender);
 		}
-		if(templateBuilder!=null || cssBuilder!=null || imageBuilder!=null) {
+		if(templateBuilderHelper.hasRegisteredTemplates() || cssBuilder!=null || imageBuilder!=null) {
 			ContentTranslator translator = buildContentTranslator();
 			LOG.debug("Content translation enabled {}", translator);
 			sender = new ContentTranslatorSender(translator, sender);
@@ -155,12 +117,12 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	}
 
 	private void addTemplateTranslator(EveryContentTranslator translator) {
-		if (templateBuilder == null) {
+		if (!templateBuilderHelper.hasRegisteredTemplates()) {
 			return;
 		}
-		TemplateParser templateParser = templateBuilder.build();
+		TemplateParser templateParser = templateBuilderHelper.buildTemplateParser();
 		LOG.debug("Registering content translator that parses templates using {}", templateParser);
-		translator.addTranslator(new TemplateContentTranslator(templateParser, templateBuilder.buildVariant()));
+		translator.addTranslator(new TemplateContentTranslator(templateParser, templateBuilderHelper.buildVariant()));
 	}
 
 	private void addMultiContent(EveryContentTranslator translator) {
@@ -188,4 +150,5 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 			translator.addTranslator(cssInliner);
 		}
 	}
+
 }

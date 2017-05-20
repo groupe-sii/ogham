@@ -18,6 +18,7 @@ import fr.sii.ogham.helper.html.AssertHtml;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.ogham.html.translator.InlineCssTranslator;
+import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
 
 public class JsoupInlineCssTranslatorTest {
 	private static String FOLDER = "/inliner/css/jsoup/";
@@ -33,12 +34,11 @@ public class JsoupInlineCssTranslatorTest {
 	public void setUp() {
 		ResourceResolver resourceResolver = MessagingBuilder.standard()
 				.email()
-					.template()
-						.thymeleaf()
-							.classpath()
-								.pathPrefix(SOURCE_FOLDER)
-								.and()
-							.buildResolver();
+					.template(ThymeleafEmailBuilder.class)
+						.classpath()
+							.pathPrefix(SOURCE_FOLDER)
+							.and()
+						.buildResolver();
 		translator = new InlineCssTranslator(new JsoupCssInliner(), resourceResolver);
 	}
 

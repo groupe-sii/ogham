@@ -12,6 +12,19 @@
 	<name>Ogham with all implementations</name>
 
 	<dependencies>
+		<!-- Template implementations -->
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-template-freemarker</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-template-thymeleaf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<!-- Email implementations -->
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-email-javamail</artifactId>
@@ -22,6 +35,8 @@
 			<artifactId>ogham-email-sendgrid</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<!-- SMS implementations -->
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-sms-cloudhopper</artifactId>

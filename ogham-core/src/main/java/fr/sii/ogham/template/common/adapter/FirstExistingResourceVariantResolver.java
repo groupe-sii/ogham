@@ -57,4 +57,8 @@ public class FirstExistingResourceVariantResolver implements VariantResolver {
 		}
 	}
 
+	public FirstExistingResourceVariantResolver addVariantResolver(VariantResolver variantResolver) {
+		delegates.add(variantResolver);
+		return this;
+	}
 }

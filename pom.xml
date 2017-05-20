@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.sii.ogham</groupId>
 	<artifactId>ogham-parent</artifactId>
@@ -72,7 +73,7 @@
 		<!-- Documentation -->
 		<docProjectVersion>${project.version}</docProjectVersion>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
-		
+
 		<!-- Plugins -->
 		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
 		<maven-resources-plugin.version>2.7</maven-resources-plugin.version>
@@ -92,6 +93,8 @@
 
 	<modules>
 		<module>ogham-core</module>
+		<module>ogham-template-thymeleaf</module>
+		<module>ogham-template-freemarker</module>
 		<module>ogham-email-javamail</module>
 		<module>ogham-email-sendgrid</module>
 		<module>ogham-sms-cloudhopper</module>

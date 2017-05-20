@@ -9,12 +9,12 @@ public class NoTemplateEngineConfigurer extends MessagingConfigurerAdapter imple
 
 	@Override
 	public void configure(EmailBuilder emailBuilder) {
-		emailBuilder.template().enable(false);
+//		emailBuilder.template().enable(false);
 	}
 
 	@Override
 	public void configure(SmsBuilder smsBuilder) {
-		smsBuilder.template().enable(false);
+//		smsBuilder.template().enable(false);
 	}
 
 	@Override

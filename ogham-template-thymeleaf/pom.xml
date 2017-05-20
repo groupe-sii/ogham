@@ -8,10 +8,10 @@
 		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>ogham-email-sendgrid</artifactId>
-	<name>Ogham SendGrid implementation</name>
+	<artifactId>ogham-template-thymeleaf</artifactId>
+	<name>Ogham ThymeLeaf integration</name>
 	<description>
-		SendGrid implementation for Ogham
+		Use ThymeLeaf as template engine in Ogham
 	</description>
 
 	<dependencies>
@@ -21,28 +21,16 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- Mail -->
+		<!-- Template parser -->
 		<dependency>
-			<groupId>com.sendgrid</groupId>
-			<artifactId>sendgrid-java</artifactId>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf</artifactId>
 		</dependency>
 
 		<!-- Tests -->
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-template-freemarker</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-template-thymeleaf</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

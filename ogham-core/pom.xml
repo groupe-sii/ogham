@@ -38,16 +38,6 @@
 			<artifactId>reflections</artifactId>
 		</dependency>
 
-		<!-- Template parsers -->
-		<dependency>
-			<groupId>org.thymeleaf</groupId>
-			<artifactId>thymeleaf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-		</dependency>
-
 		<!-- MimeType detection -->
 		<dependency>
 			<groupId>org.apache.tika</groupId>

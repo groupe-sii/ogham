@@ -37,6 +37,7 @@ import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
+import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JsoupInlineImageTranslatorTest {
@@ -61,12 +62,11 @@ public class JsoupInlineImageTranslatorTest {
 		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
 		ResourceResolver resourceResolver = MessagingBuilder.standard()
 				.email()
-					.template()
-						.thymeleaf()
-							.classpath()
-								.pathPrefix(SOURCE_FOLDER)
-								.and()
-							.buildResolver();
+					.template(ThymeleafEmailBuilder.class)
+						.classpath()
+							.pathPrefix(SOURCE_FOLDER)
+							.and()
+						.buildResolver();
 		MimeTypeProvider mimetypeProvider = new TikaProvider();
 		ImageInliner inliner = new EveryImageInliner(new JsoupAttachImageInliner(generator), new JsoupBase64ImageInliner());
 		translator = new InlineImageTranslator(inliner, resourceResolver, mimetypeProvider);
