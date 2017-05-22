@@ -1,6 +1,7 @@
 package fr.sii.ogham.test.classpath.springboot;
 
 import static fr.sii.ogham.test.classpath.matrix.MatrixUtils.expand;
+import static fr.sii.ogham.test.classpath.springboot.IdentifierGenerator.generateIdentifier;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.CONFIGURATION_PROCESSOR;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.DEVTOOLS;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.LOMBOK;
@@ -15,12 +16,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -47,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class SpringBootProjectRunner implements ApplicationRunner {
-	private static final List<SpringBootDependency> STANDARD_BOOT_DEPS = asList(CONFIGURATION_PROCESSOR, DEVTOOLS, LOMBOK, WEB);
+	public static final List<SpringBootDependency> STANDARD_BOOT_DEPS = asList(CONFIGURATION_PROCESSOR, DEVTOOLS, LOMBOK, WEB);
 
 	@Autowired
 	ProjectInitializer projectInitializer;
@@ -83,12 +84,17 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		write(rootPom, pom);
 	}
 
-	private List<String> createProjects(Path parentFolder) throws InterruptedException, ExecutionException {
+	private List<String> createProjects(final Path parentFolder) throws InterruptedException, ExecutionException {
 		List<Future<String>> futures = new ArrayList<>();
 		CompletionService<String> service = new ExecutorCompletionService<>(Executors.newFixedThreadPool(8));
 		List<SpringBootProjectParams> expandedMatrix = generateSringBootMatrix();
-		for (SpringBootProjectParams params : expandedMatrix) {
-			service.submit(() -> createProject(parentFolder, params));
+		for (final SpringBootProjectParams params : expandedMatrix) {
+			service.submit(new Callable<String>() {
+				@Override
+				public String call() throws Exception {
+					return createProject(parentFolder, params);
+				}
+			});
 		}
 		for(int i=0 ; i<expandedMatrix.size() ; i++) {
 			futures.add(service.take());
@@ -101,7 +107,7 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 	}
 
 	private String createProject(Path parentFolder, SpringBootProjectParams params) throws ProjectInitializationException, AddDependencyException, IOException {
-		String identifier = generateIdentifier(params);
+		String identifier = generateIdentifier(params, STANDARD_BOOT_DEPS);
 		log.info("Creating project {}", identifier);
 		Project project = projectInitializer.initialize(parentFolder, identifier, params);
 		Path testResourcesFolder = project.getPath().resolve("src/test/resources");
@@ -158,16 +164,6 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 			}
 		}
 		return deps;
-	}
-
-	private String generateIdentifier(SpringBootProjectParams params) {
-		// @formatter;off
-		return params.getJavaVersion().name().toLowerCase().replace("_", "") + "." 
-				+ params.getBuildTool().name().toLowerCase() + "." 
-				+ "boot-" + params.getSpringBootVersion()+"."
-				+ params.getSpringBootDependencies().stream().filter(d -> !STANDARD_BOOT_DEPS.contains(d)).map(SpringBootDependency::getModule).collect(Collectors.joining("_")) + "."
-				+ params.getOghamDependencies().stream().map(Dependency::getArtifactId).map(a -> a.replace("ogham-spring-boot-", "")).collect(Collectors.joining("_"));
-		// @formatter:on
 	}
 
 }

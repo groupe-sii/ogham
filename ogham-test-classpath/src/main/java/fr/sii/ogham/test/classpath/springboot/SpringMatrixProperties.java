@@ -1,7 +1,6 @@
 package fr.sii.ogham.test.classpath.springboot;
 
-import static java.util.stream.Collectors.toList;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,9 +22,10 @@ public class SpringMatrixProperties {
 	private List<OghamDependency> oghamDependencies;
 	
 	public List<JavaVersion> getJavaVersions() {
-		return java.stream()
-				.map(v -> "JAVA"+v.replace("1.", "_"))
-				.map(JavaVersion::valueOf)
-				.collect(toList());
+		List<JavaVersion> javaVersions = new ArrayList<>();
+		for(String version : java) {
+			javaVersions.add(JavaVersion.valueOf("JAVA"+version.replace("1.", "_")));
+		}
+		return javaVersions;
 	}
 }
