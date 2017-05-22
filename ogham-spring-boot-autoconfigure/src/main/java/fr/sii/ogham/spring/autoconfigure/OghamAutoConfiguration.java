@@ -24,6 +24,8 @@ import fr.sii.ogham.spring.config.NoTemplateEngineConfigurer;
 import fr.sii.ogham.spring.config.SpringEnvironmentConfigurer;
 import fr.sii.ogham.spring.config.SpringMessagingConfigurer;
 import fr.sii.ogham.spring.config.ThymeLeafConfigurer;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
+import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
 import freemarker.template.TemplateExceptionHandler;
 
 /**
@@ -42,6 +44,7 @@ import freemarker.template.TemplateExceptionHandler;
  */
 @Configuration
 @AutoConfigureAfter({ WebMvcAutoConfiguration.class, ThymeleafAutoConfiguration.class, FreeMarkerAutoConfiguration.class })
+@ConditionalOnClass({MessagingService.class, MessagingBuilder.class})
 @ConditionalOnMissingBean(MessagingService.class)
 public class OghamAutoConfiguration {
 
@@ -90,7 +93,7 @@ public class OghamAutoConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnClass(freemarker.template.Configuration.class)
+	@ConditionalOnClass({freemarker.template.Configuration.class, FreemarkerEmailBuilder.class})
 	public static class OghamFreemarkerConfiguration {
 		@Bean
 		@Qualifier("email")
@@ -122,7 +125,7 @@ public class OghamAutoConfiguration {
 	}
 
 	@Configuration
-	@ConditionalOnClass(org.thymeleaf.spring4.SpringTemplateEngine.class)
+	@ConditionalOnClass({org.thymeleaf.spring4.SpringTemplateEngine.class, ThymeleafEmailBuilder.class})
 	public static class OghamThymeleafConfiguration {
 		@Bean
 		@ConditionalOnMissingBean(ThymeLeafConfigurer.class)

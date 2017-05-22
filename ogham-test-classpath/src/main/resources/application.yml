@@ -1,0 +1,36 @@
+spring-matrix:
+  java:
+    - 1.8
+    - 1.7
+  build:
+    - maven
+  spring-boot-version:
+    - 1.3.8.RELEASE
+    - 1.4.6.RELEASE
+    - 1.5.3.RELEASE
+  spring-boot-dependencies:
+    - thymeleaf
+    - freemarker
+    - mail
+  ogham-dependencies:
+    - spring-boot-autoconfigure
+    - spring-boot-starter-email
+    - spring-boot-starter-sms
+    - spring-boot-starter-all
+        
+standalone-matrix:
+  java:
+    - 1.8
+    - 1.7
+  build:
+    - maven
+  ogham-dependencies:
+    - core
+    - email-javamail
+    - email-sendgrid
+    - sms-ovh
+    - sms-cloudhopper
+    - all
+    - spring-boot-autoconfigure
+    - spring-boot-starter
+  

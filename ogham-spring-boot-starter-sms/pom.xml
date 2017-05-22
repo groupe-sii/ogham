@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>fr.sii.ogham</groupId>
+		<artifactId>ogham-parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>ogham-spring-boot-starter-sms</artifactId>
+	<name>Ogham Spring Boot Starter for SMS</name>
+	<description>
+		Starter for Spring Boot that provides dependencies for sending SMS and autoconfiguration
+	</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-spring-boot-autoconfigure</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-sms-cloudhopper</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-sms-ovh</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

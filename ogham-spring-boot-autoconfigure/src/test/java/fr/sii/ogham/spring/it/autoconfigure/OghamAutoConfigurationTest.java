@@ -1,6 +1,7 @@
 package fr.sii.ogham.spring.it.autoconfigure;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.io.IOException;
 
@@ -10,8 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,8 +33,7 @@ import fr.sii.ogham.mock.context.SimpleBean;
 import fr.sii.ogham.spring.mock.MockApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = MockApplication.class)
-@WebIntegrationTest("server.port=0")
+@SpringBootTest(classes = MockApplication.class, webEnvironment=RANDOM_PORT)
 public class OghamAutoConfigurationTest {
 	private static final String BASE_URL = "/api/email";
 
