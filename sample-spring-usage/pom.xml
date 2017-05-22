@@ -15,6 +15,9 @@
 
 		<!-- Spring version -->
 		<spring.boot.version>1.5.2.RELEASE</spring.boot.version>
+		
+		<!-- Skip Sonar analysis -->
+		<sonar.skip>true</sonar.skip>
 	</properties>
 
 	<dependencies>
