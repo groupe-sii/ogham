@@ -31,7 +31,7 @@ script:
   - mvn test verify javadoc:javadoc -Dmaven.test.redirectTestOutputToFile=true -fae -B
   # execute generated classpath tests
   - set -o pipefail
-  - mvn test -f target/classpath-tests/pom.xml -Dmaven.test.redirectTestOutputToFile=false -fae -q | grep -Ei '(error|exception)'
+  - mvn test -T 2.5C -f target/classpath-tests/pom.xml -Dmaven.test.redirectTestOutputToFile=false -fae -q | grep -Ei '(error|exception)'
 # TODO: after error -> grab logs and send it
 after_success:
   -  mvn sonar:sonar -B
