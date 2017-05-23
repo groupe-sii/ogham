@@ -1,11 +1,9 @@
 package fr.sii.ogham.test.classpath.springboot;
 
-import static fr.sii.ogham.test.classpath.matrix.MatrixUtils.expand;
 import static fr.sii.ogham.test.classpath.springboot.IdentifierGenerator.generateIdentifier;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.CONFIGURATION_PROCESSOR;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.DEVTOOLS;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.LOMBOK;
-import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.WEB;
 import static java.util.Arrays.asList;
 
 import java.io.FileReader;
@@ -48,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class SpringBootProjectRunner implements ApplicationRunner {
-	public static final List<SpringBootDependency> STANDARD_BOOT_DEPS = asList(CONFIGURATION_PROCESSOR, DEVTOOLS, LOMBOK, WEB);
+	public static final List<SpringBootDependency> STANDARD_BOOT_DEPS = asList(CONFIGURATION_PROCESSOR, DEVTOOLS, LOMBOK);
 
 	@Autowired
 	ProjectInitializer projectInitializer;
@@ -70,7 +68,7 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		List<String> modules = createProjects(parentFolder);
 		log.info("Creating root project");
 		createRootPom(parentFolder, modules);
-		log.info("Projects created");
+		log.info("{} projects created", modules.size());
 		System.exit(0);
 	}
 
@@ -135,9 +133,9 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		for (JavaVersion javaVersion : springMatrixProperties.getJavaVersions()) {
 			for (BuildTool buildTool : springMatrixProperties.getBuild()) {
 				for (String bootVersion : springMatrixProperties.getSpringBootVersion()) {
-					for (List<SpringBootDependency> springDeps : expand(springMatrixProperties.getSpringBootDependencies())) {
-						for (List<Dependency> oghamDeps : expandOghamDependencies(springMatrixProperties.getOghamDependencies())) {
-							expanded.add(new SpringBootProjectParams(javaVersion, buildTool, bootVersion, getDependencies(springDeps), oghamDeps));
+					for (List<SpringBootDependency> springDeps : springMatrixProperties.getExpandedSpringBootDependencies()) {
+						for (Dependency oghamDeps : getOghamDependencies(springMatrixProperties.getOghamDependencies())) {
+							expanded.add(new SpringBootProjectParams(javaVersion, buildTool, bootVersion, getDependencies(springDeps), asList(oghamDeps)));
 						}
 					}
 				}
@@ -153,15 +151,10 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		return dependencies;
 	}
 
-	private List<List<Dependency>> expandOghamDependencies(List<OghamDependency> oghamDependencies) {
-		List<List<OghamDependency>> expanded = expand(oghamDependencies);
-		List<List<Dependency>> deps = new ArrayList<>();
-		for(List<OghamDependency> ods : expanded) {
-			ArrayList<Dependency> d = new ArrayList<>();
-			deps.add(d);
-			for(OghamDependency od : ods) {
-				d.add(od.toDependency(oghamProperties.getOghamVersion()));
-			}
+	private List<Dependency> getOghamDependencies(List<OghamDependency> oghamDependencies) {
+		List<Dependency> deps = new ArrayList<>();
+		for(OghamDependency od : oghamDependencies) {
+			deps.add(od.toDependency(oghamProperties.getOghamVersion()));
 		}
 		return deps;
 	}

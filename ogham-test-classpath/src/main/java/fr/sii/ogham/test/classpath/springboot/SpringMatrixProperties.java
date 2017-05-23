@@ -18,8 +18,22 @@ public class SpringMatrixProperties {
 	private List<String> java;
 	private List<BuildTool> build;
 	private List<String> springBootVersion;
-	private List<SpringBootDependency> springBootDependencies;
+	private List<String> springBootDependencies;
 	private List<OghamDependency> oghamDependencies;
+	
+	public List<List<SpringBootDependency>> getExpandedSpringBootDependencies() {
+		List<List<SpringBootDependency>> deps = new ArrayList<>();
+		for(String dep : springBootDependencies) {
+			List<SpringBootDependency> bootDeps = new ArrayList<>();
+			deps.add(bootDeps);
+			if(!dep.isEmpty()) {
+				for(String d : dep.split("\\+")) {
+					bootDeps.add(SpringBootDependency.valueOf(d.toUpperCase()));
+				}
+			}
+		}
+		return deps;
+	}
 	
 	public List<JavaVersion> getJavaVersions() {
 		List<JavaVersion> javaVersions = new ArrayList<>();

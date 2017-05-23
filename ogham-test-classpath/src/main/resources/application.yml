@@ -9,9 +9,13 @@ spring-matrix:
     - 1.4.6.RELEASE
     - 1.5.3.RELEASE
   spring-boot-dependencies:
+    -
+    - web
     - thymeleaf
     - freemarker
     - mail
+    - web+thymeleaf
+    - web+freemarker
   ogham-dependencies:
     - spring-boot-autoconfigure
     - spring-boot-starter-email
