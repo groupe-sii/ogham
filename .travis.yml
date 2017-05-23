@@ -29,9 +29,11 @@ install:
   - mvn spring-boot:run -pl :ogham-test-classpath -Drun.arguments="target/classpath-tests" -Drun.jvmArguments="-Dogham-version=$MVN_VERSION"
 script:
   - mvn test verify javadoc:javadoc -Dmaven.test.redirectTestOutputToFile=true -fae -B
-  # execute generated classpath tests
+  # execute generated classpath tests for the right java version
   - set -o pipefail
-  - mvn test -T 2.5C -f target/classpath-tests/pom.xml -Dmaven.test.redirectTestOutputToFile=false -fae -q | grep -Ei '(error|exception)'
+  - TEST_FOLDER=$(java -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\..*"/JAVA_\2/p;')
+  - echo $TEST_FOLDER
+  - mvn test -T 2.5C -f target/classpath-tests/$TEST_FOLDER/pom.xml -Dmaven.test.redirectTestOutputToFile=false -fae -q | grep -Ei '(error|exception)'
 # TODO: after error -> grab logs and send it
 after_success:
   -  mvn sonar:sonar -B

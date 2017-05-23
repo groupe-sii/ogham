@@ -1,6 +1,7 @@
 package fr.sii.ogham.test.classpath.springboot;
 
 import static fr.sii.ogham.test.classpath.springboot.IdentifierGenerator.generateIdentifier;
+import static fr.sii.ogham.test.classpath.springboot.IdentifierGenerator.isIdentifierForJavaVersion;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.CONFIGURATION_PROCESSOR;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.DEVTOOLS;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.LOMBOK;
@@ -66,10 +67,22 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		Files.createDirectories(parentFolder);
 		FileUtils.cleanDirectory(parentFolder.toFile());
 		List<String> modules = createProjects(parentFolder);
-		log.info("Creating root project");
-		createRootPom(parentFolder, modules);
+		for(JavaVersion javaVersion : springMatrixProperties.getJavaVersions()) {
+			log.info("Creating root project for {}", javaVersion);
+			createRootPom(parentFolder.resolve(javaVersion.name()), filter(modules, javaVersion));
+		}
 		log.info("{} projects created", modules.size());
 		System.exit(0);
+	}
+
+	private List<String> filter(List<String> modules, JavaVersion javaVersion) {
+		List<String> filteredModules = new ArrayList<>();
+		for(String module : modules) {
+			if(isIdentifierForJavaVersion(module, javaVersion)) {
+				filteredModules.add(module);
+			}
+		}
+		return filteredModules;
 	}
 
 	private void createRootPom(Path parentFolder, List<String> modules) throws IOException, XmlPullParserException {
@@ -107,7 +120,7 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 	private String createProject(Path parentFolder, SpringBootProjectParams params) throws ProjectInitializationException, AddDependencyException, IOException {
 		String identifier = generateIdentifier(params, STANDARD_BOOT_DEPS);
 		log.info("Creating project {}", identifier);
-		Project project = projectInitializer.initialize(parentFolder, identifier, params);
+		Project project = projectInitializer.initialize(parentFolder.resolve(params.getJavaVersion().name()), identifier, params);
 		Path testResourcesFolder = project.getPath().resolve("src/test/resources");
 		Files.createDirectories(testResourcesFolder);
 		Files.copy(getClass().getResourceAsStream("/application-for-projects.properties"), testResourcesFolder.resolve("application.properties"));

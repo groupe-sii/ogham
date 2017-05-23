@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.sii.ogham.test.classpath.core.JavaVersion;
 import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 
 public class IdentifierGenerator {
@@ -16,6 +17,10 @@ public class IdentifierGenerator {
 				+ toBootDepsString(params.getSpringBootDependencies(), exclude) + "."
 				+ toOghamDepsString(params.getOghamDependencies());
 		// @formatter:on
+	}
+	
+	public static boolean isIdentifierForJavaVersion(String identifier, JavaVersion javaVersion) {
+		return identifier.startsWith(javaVersion.name().toLowerCase().replace("_", ""));
 	}
 
 	private static String toOghamDepsString(List<Dependency> deps) {
