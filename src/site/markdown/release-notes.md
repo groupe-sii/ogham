@@ -7,6 +7,21 @@ The history of Ogham releases is documented below. For details of changes refer 
 
 
 
+## 2.0.0 
+
+### Features
+
+- New builder API (TODO: lien)
+- Only fluent API (remove all Email/SMS constructors)
+- Follow Spring Boot starter conventions
+
+### Internal
+
+- Split projects to separate core from implementations
+- Creating a new implementation is easier
+- Add annotations to indicate that an implementation needs some preconditions in order to work
+
+
 ## 1.1.0 / 2017-03-14
 
 ### Features

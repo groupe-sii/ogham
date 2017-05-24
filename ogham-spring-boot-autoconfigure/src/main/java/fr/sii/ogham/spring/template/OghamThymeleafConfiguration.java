@@ -1,11 +1,10 @@
-package fr.sii.ogham.spring.autoconfigure;
+package fr.sii.ogham.spring.template;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import fr.sii.ogham.spring.config.ThymeLeafConfigurer;
 import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
 
 @Configuration

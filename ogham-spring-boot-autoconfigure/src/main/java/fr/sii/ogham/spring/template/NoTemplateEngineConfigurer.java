@@ -1,8 +1,9 @@
-package fr.sii.ogham.spring.config;
+package fr.sii.ogham.spring.template;
 
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 public class NoTemplateEngineConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
 

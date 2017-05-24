@@ -15,13 +15,13 @@ public class DefaultJavaMailConfigurer implements MessagingConfigurer {
 			builder.environment(msgBuilder.environment());
 			// @formatter:off
 			builder
-				.host("${ogham.email.host}", "${mail.smtp.host}", "${mail.host}")
-				.port("${ogham.email.port}", "${mail.smtp.port}", "${mail.port}")
+				.host("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}")
+				.port("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}")
 				.authenticator()
-					.username("${ogham.email.authenticator.username}")
-					.password("${ogham.email.authenticator.password}")
+					.username("${ogham.email.javamail.authenticator.username}")
+					.password("${ogham.email.javamail.authenticator.password}")
 					.and()
-				.charset("${ogham.email.body.charset}", "UTF-8")
+				.charset("${ogham.email.javamail.body.charset}", "UTF-8")
 				.mimetype()
 					.tika()
 						.failIfOctetStream(false);

@@ -23,8 +23,8 @@ public class OverridePropertiesTest {
 		defaultProps.setProperty("mail.smtp.port", "smtp-default");
 		defaultProps.setProperty("mail.host", "default");
 		defaultProps.setProperty("mail.port", "default");
-		defaultProps.setProperty("ogham.email.host", "override");
-		defaultProps.setProperty("ogham.email.port", "override");
+		defaultProps.setProperty("ogham.email.javamail.host", "override");
+		defaultProps.setProperty("ogham.email.javamail.port", "override");
 	}
 	
 	@Test
@@ -55,7 +55,7 @@ public class OverridePropertiesTest {
 	
 	@Test
 	public void overrideProperties() {
-		OverrideJavaMailProperties props = new OverrideJavaMailProperties(defaultProps, asList("${ogham.email.host}", "${mail.smtp.host}", "${mail.host}"), asList("${ogham.email.port}", "${mail.smtp.port}", "${mail.port}"), null);
+		OverrideJavaMailProperties props = new OverrideJavaMailProperties(defaultProps, asList("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}"), asList("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}"), null);
 		assertThat(props.containsKey("mail.smtp.host"), is(true));
 		assertThat(props.getProperty("mail.smtp.host"), is("override"));
 		assertThat(props.containsKey("mail.smtp.port"), is(true));
@@ -68,7 +68,7 @@ public class OverridePropertiesTest {
 	
 	@Test
 	public void overridePropertiesWithEmptyProps() {
-		OverrideJavaMailProperties props = new OverrideJavaMailProperties(new Properties(), asList("${ogham.email.host}", "${mail.smtp.host}", "${mail.host}"), asList("${ogham.email.port}", "${mail.smtp.port}", "${mail.port}"), null);
+		OverrideJavaMailProperties props = new OverrideJavaMailProperties(new Properties(), asList("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}"), asList("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}"), null);
 		assertThat(props.containsKey("mail.smtp.host"), is(false));
 		assertThat(props.getProperty("mail.smtp.host"), nullValue());
 		assertThat(props.containsKey("mail.smtp.port"), is(false));

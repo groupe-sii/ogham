@@ -1,8 +1,9 @@
-package fr.sii.ogham.spring.config;
+package fr.sii.ogham.spring.template;
 
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
 import freemarker.template.Configuration;

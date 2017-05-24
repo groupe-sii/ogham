@@ -1,4 +1,4 @@
-package fr.sii.ogham.spring.autoconfigure;
+package fr.sii.ogham.spring.template;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,8 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClas
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import fr.sii.ogham.spring.config.NoTemplateEngineConfigurer;
-import fr.sii.ogham.spring.config.SpringMessagingConfigurer;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 @Configuration
 @ConditionalOnMissingClass({"freemarker.template.Configuration", "org.thymeleaf.spring4.SpringTemplateEngine"})

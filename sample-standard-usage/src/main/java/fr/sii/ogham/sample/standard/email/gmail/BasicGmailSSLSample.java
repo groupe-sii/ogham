@@ -18,8 +18,8 @@ public class BasicGmailSSLSample {
 		properties.setProperty("mail.smtp.port", "465");
 		properties.setProperty("mail.smtp.socketFactory.port", "465");
 		properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		properties.setProperty("ogham.email.authenticator.username", "<your gmail username>");
-		properties.setProperty("ogham.email.authenticator.password", "<your gmail password>");
+		properties.setProperty("ogham.email.javamail.authenticator.username", "<your gmail username>");
+		properties.setProperty("ogham.email.javamail.authenticator.password", "<your gmail password>");
 		properties.setProperty("ogham.email.from", "<your gmail address>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties

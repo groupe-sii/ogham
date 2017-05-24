@@ -79,8 +79,8 @@ Some SMTP servers need credentials. When using Java Mail API, you need to provid
 
 Ogham has a shortcut to declare default authentication mechanism using a username and a password. Just set the two following properties:
 
- - ogham.email.authenticator.username
- - ogham.email.authenticator.password
+ - ogham.email.javamail.authenticator.username
+ - ogham.email.javamail.authenticator.password
  
 It will automatically create an `Authenticator` with the provided values.
 
@@ -110,8 +110,8 @@ public class BasicGmailSSLSample {
 		properties.setProperty("mail.smtp.port", "465");
 		properties.setProperty("mail.smtp.socketFactory.port", "465");
 		properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		properties.setProperty("ogham.email.authenticator.username", "<your gmail username>");
-		properties.setProperty("ogham.email.authenticator.password", "<your gmail password>");
+		properties.setProperty("ogham.email.javamail.authenticator.username", "<your gmail username>");
+		properties.setProperty("ogham.email.javamail.authenticator.password", "<your gmail password>");
 		properties.setProperty("ogham.email.from", "<your gmail address>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties

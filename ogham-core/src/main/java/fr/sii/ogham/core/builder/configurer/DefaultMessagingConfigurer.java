@@ -106,14 +106,14 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 			.numbers()
 				.from()
 					.format()
-						.alphanumericCode("${ogham.sms.from.format-enable-alphanumeric}", "true")
-						.shortCode("${ogham.sms.from.format-enable-shortcode}", "true")
-						.internationalNumber("${ogham.sms.from.format-enable-international}", "true")
+						.alphanumericCode("${ogham.sms.from-format-enable-alphanumeric}", "true")
+						.shortCode("${ogham.sms.from-format-enable-shortcode}", "true")
+						.internationalNumber("${ogham.sms.from-format-enable-international}", "true")
 						.and()
 					.and()
 				.to()
 					.format()
-						.internationalNumber("${ogham.sms.to.format-enable-international}", "true");
+						.internationalNumber("${ogham.sms.to-format-enable-international}", "true");
 		// @formatter:on
 	}
 
@@ -125,7 +125,7 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 				.instance(new Tika())
 				.failIfOctetStream(true)
 				.and()
-			.defaultMimetype("${ogham.mimetype.default}", "application/octet-stream");
+			.defaultMimetype("${ogham.mimetype.default-mimetype}", "application/octet-stream");
 		// @formatter:on
 	}
 

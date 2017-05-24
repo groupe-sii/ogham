@@ -1,10 +1,11 @@
-package fr.sii.ogham.spring.config;
+package fr.sii.ogham.spring.template;
 
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
 import fr.sii.ogham.template.thymeleaf.buider.ThymeleafSmsBuilder;
 

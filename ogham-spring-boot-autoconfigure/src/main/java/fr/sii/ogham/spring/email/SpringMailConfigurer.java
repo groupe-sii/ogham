@@ -1,4 +1,4 @@
-package fr.sii.ogham.spring.config;
+package fr.sii.ogham.spring.email;
 
 import java.util.Map;
 import java.util.Properties;
@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.mail.MailProperties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.email.builder.javamail.JavaMailBuilder;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 public class SpringMailConfigurer implements SpringMessagingConfigurer {
 	private final MailProperties springMailProperties;

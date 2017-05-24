@@ -19,8 +19,8 @@ public class BasicGmailTLSSample {
 		properties.setProperty("mail.smtp.port", "587");
 		properties.setProperty("mail.smtp.user", "<your gmail username>");
 		properties.setProperty("mail.smtp.password", "<your gmail password>");
-		properties.setProperty("ogham.email.authenticator.username", "<your gmail username>");
-		properties.setProperty("ogham.email.authenticator.password", "<your gmail password>");
+		properties.setProperty("ogham.email.javamail.authenticator.username", "<your gmail username>");
+		properties.setProperty("ogham.email.javamail.authenticator.password", "<your gmail password>");
 		properties.setProperty("ogham.email.from", "<your gmail address>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties

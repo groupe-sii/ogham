@@ -1,17 +1,18 @@
-package fr.sii.ogham.spring.autoconfigure;
+package fr.sii.ogham.spring.template;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import fr.sii.ogham.spring.config.FreeMarkerConfigurer;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import freemarker.template.TemplateExceptionHandler;
 
 @Configuration
 @ConditionalOnClass({ freemarker.template.Configuration.class, FreemarkerEmailBuilder.class })
+@EnableConfigurationProperties(OghamFreemarkerConfiguration.class)
 public class OghamFreemarkerConfiguration {
 	@Bean
 	@Qualifier("email")

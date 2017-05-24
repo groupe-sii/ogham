@@ -1,4 +1,4 @@
-package fr.sii.ogham.spring.config;
+package fr.sii.ogham.spring.common;
 
 import org.springframework.core.Ordered;
 

@@ -1,11 +1,11 @@
-package fr.sii.ogham.spring.properties;
+package fr.sii.ogham.spring.email;
 
 import java.nio.charset.Charset;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-@ConfigurationProperties("ogham.email")
+@ConfigurationProperties("ogham.email.javamail")
 public class OghamJavaMailProperties {
 	private String host;
 	private Integer port;
