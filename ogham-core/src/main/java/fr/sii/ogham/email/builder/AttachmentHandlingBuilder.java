@@ -61,18 +61,6 @@ public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> impl
 
 	private ResourceResolver buildResolver() {
 		List<ResourceResolver> resolvers = resourceResolutionBuilderHelper.buildResolvers();
-		// TODO: allow to use prefixes too
-//		List<ResourceResolver> builtResolvers = new ArrayList<>();
-//		if (!getValue(prefixes).isEmpty() || !getValue(suffixes).isEmpty()) {
-//			LOG.debug("Using parentPath {} and extension {} for resource resolution", getValue(prefixes), getValue(suffixes));
-//			for (ResourceResolver resolver : resolvers) {
-//				if (resolver instanceof RelativisableResourceResolver) {
-//					builtResolvers.add(new RelativeResolver((RelativisableResourceResolver) resolver, getValue(prefixes), getValue(suffixes)));
-//				} else {
-//					builtResolvers.add(resolver);
-//				}
-//			}
-//		}
 		return new FirstSupportingResourceResolver(resolvers);
 	}
 }

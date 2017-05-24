@@ -1,5 +1,19 @@
 package fr.sii.ogham.core.env;
 
+import java.util.Properties;
+
+/**
+ * Access to configuration/environment variables. This is an abstraction over
+ * {@link Properties} in order to also handle value conversions. Using interface
+ * instead of class allows to provide several implementations, handle
+ * composition of several resolvers and also wrap basic java objects like
+ * {@link Properties} (instead of copying values).
+ * 
+ * This is totally inspired from Spring.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public interface PropertyResolver {
 	/**
 	 * Return whether the given property key is available for resolution, i.e.,

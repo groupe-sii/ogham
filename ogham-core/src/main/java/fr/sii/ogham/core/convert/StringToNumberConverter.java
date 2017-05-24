@@ -5,12 +5,20 @@ import java.math.BigInteger;
 
 import fr.sii.ogham.core.exception.convert.ConversionException;
 
+/**
+ * Converts a string to a number. It also handles {@link Byte}s. This class is
+ * copied from Spring.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class StringToNumberConverter implements SupportingConverter {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {
+	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {	// NOSONAR: code from Spring
 		String text = (String) source;
-		if(text.length()==0) {
+		if (text.length() == 0) {
 			return null;
 		}
 		String trimmed = trimAllWhitespace(text);

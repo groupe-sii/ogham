@@ -1,5 +1,7 @@
 package fr.sii.ogham.email.exception.sendgrid;
 
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
 import fr.sii.ogham.core.exception.MessagingException;
 
 /**
@@ -8,8 +10,7 @@ import fr.sii.ogham.core.exception.MessagingException;
  * @see ContentHandlerException
  */
 public final class ContentHandlerException extends MessagingException {
-
-	private static final long serialVersionUID = -557251869013180354L;
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
 	/**
 	 * Builds a content handler-related exception due to an underlying

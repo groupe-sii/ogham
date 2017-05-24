@@ -38,7 +38,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 	 * 
 	 * @param delegate
 	 *            the entry point to the SendGrid library
-	 * @throws NullPointerException
+	 * @throws IllegalArgumentException
 	 *             if provided delegate is null
 	 */
 	public DelegateSendGridClient(final SendGrid delegate) {
@@ -72,6 +72,17 @@ public final class DelegateSendGridClient implements SendGridClient {
 		LOG.debug("Sending to SendGrid client: TEXT CONTENT {}", email.getText());
 		LOG.debug("Sending to SendGrid client: HTML CONTENT {}", email.getHtml());
 
+		initSendGridClient();
+		final SendGrid.Response response = delegate.send(email);
+
+		if (response.getStatus()) {
+			LOG.debug("Response from SendGrid client: ({}) {}", response.getCode(), response.getMessage());
+		} else {
+			throw new SendGridException(new IOException("Sending to SendGrid failed: (" + response.getCode() + ") " + response.getMessage()));
+		}
+	}
+
+	private void initSendGridClient() {
 		if (delegate == null) {
 			if(username!=null && password!=null) {
 				delegate = new SendGrid(username, password);
@@ -80,13 +91,6 @@ public final class DelegateSendGridClient implements SendGridClient {
 			} else {
 				throw new IllegalStateException("No SendGrid instance available. Either provide an instance manually or provide username/password or provide API key");
 			}
-		}
-		final SendGrid.Response response = delegate.send(email);
-
-		if (response.getStatus()) {
-			LOG.debug("Response from SendGrid client: ({}) {}", response.getCode(), response.getMessage());
-		} else {
-			throw new SendGridException(new IOException("Sending to SendGrid failed: (" + response.getCode() + ") " + response.getMessage()));
 		}
 	}
 

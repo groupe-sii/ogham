@@ -1,12 +1,15 @@
 package fr.sii.ogham.core.condition.fluent;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.FixedCondition;
 import fr.sii.ogham.core.condition.NotCondition;
 import fr.sii.ogham.core.condition.OrCondition;
+import fr.sii.ogham.core.condition.PropertyPatternCondition;
+import fr.sii.ogham.core.condition.PropertyValueCondition;
 import fr.sii.ogham.core.condition.RequiredClassCondition;
 import fr.sii.ogham.core.condition.RequiredPropertyCondition;
 import fr.sii.ogham.core.env.PropertyResolver;
@@ -26,7 +29,7 @@ import fr.sii.ogham.core.env.PropertyResolver;
  * 
  * <p>
  * If you are using Java 7, you may need to use {@link MessageConditions}
- * instead because Java 7 doesn't resolve correctly generics.
+ * instead because Java 7 doesn't resolve correctly generics chaining.
  * 
  * @author Aurélien Baudet
  *
@@ -58,6 +61,8 @@ public class Conditions {
 	 * 
 	 * @param condition
 	 *            the condition to surround
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> $(Condition<T> condition) {
@@ -82,6 +87,8 @@ public class Conditions {
 	 * 
 	 * @param conditions
 	 *            one or several conditions
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	@SafeVarargs
@@ -112,6 +119,8 @@ public class Conditions {
 	 * 
 	 * @param conditions
 	 *            one or several conditions
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> and(List<Condition<T>> conditions) {
@@ -136,6 +145,8 @@ public class Conditions {
 	 * 
 	 * @param conditions
 	 *            one or several conditions
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	@SafeVarargs
@@ -166,6 +177,8 @@ public class Conditions {
 	 * 
 	 * @param conditions
 	 *            one or several conditions
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> or(List<Condition<T>> conditions) {
@@ -184,6 +197,8 @@ public class Conditions {
 	 * 
 	 * @param condition
 	 *            the condition to reverse
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> not(Condition<T> condition) {
@@ -205,10 +220,66 @@ public class Conditions {
 	 *            the resolver that is used to access property values
 	 * @param property
 	 *            the property name
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> requiredProperty(PropertyResolver propertyResolver, String property) {
 		return new FluentCondition<>(new RequiredPropertyCondition<T>(property, propertyResolver));
+	}
+
+	/**
+	 * Check if a property has a particular value in the configuration
+	 * properties. The configuration properties are available through the
+	 * property resolver.
+	 * 
+	 * <pre>
+	 * requiredPropertyValue(propertyResolver, "mail.host", "localhost");
+	 * </pre>
+	 * 
+	 * Means that the result will be true only if the property
+	 * <code>mail.host</code> is present in the property resolver and its value
+	 * is exactly <code>localhost</code>.
+	 * 
+	 * @param propertyResolver
+	 *            the resolver that is used to access property values
+	 * @param property
+	 *            the property name
+	 * @param value
+	 *            the exact value to match
+	 * @param <T>
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static <T> FluentCondition<T> requiredPropertyValue(PropertyResolver propertyResolver, String property, String value) {
+		return new FluentCondition<>(new PropertyValueCondition<T>(property, value, propertyResolver));
+	}
+
+	/**
+	 * Check if a property value matches the pattern in the configuration
+	 * properties. The configuration properties are available through the
+	 * property resolver.
+	 * 
+	 * <pre>
+	 * requiredPropertyValue(propertyResolver, "mail.host", Pattern.compile("local.*"));
+	 * </pre>
+	 * 
+	 * Means that the result will be true only if the property
+	 * <code>mail.host</code> is present in the property resolver and its value
+	 * matches the pattern <code>local.*</code>.
+	 * 
+	 * @param propertyResolver
+	 *            the resolver that is used to access property values
+	 * @param property
+	 *            the property name
+	 * @param pattern
+	 *            the pattern used to check if the value matches
+	 * @param <T>
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static <T> FluentCondition<T> requiredPropertyValue(PropertyResolver propertyResolver, String property, Pattern pattern) {
+		return new FluentCondition<>(new PropertyPatternCondition<T>(property, pattern, propertyResolver));
 	}
 
 	/**
@@ -223,6 +294,8 @@ public class Conditions {
 	 * 
 	 * @param className
 	 *            the class to check
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> requiredClass(String className) {
@@ -232,6 +305,8 @@ public class Conditions {
 	/**
 	 * A condition that always returns true.
 	 * 
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> alwaysTrue() {
@@ -241,6 +316,8 @@ public class Conditions {
 	/**
 	 * A condition that always returns false.
 	 * 
+	 * @param <T>
+	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> alwaysFalse() {

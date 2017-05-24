@@ -1,11 +1,9 @@
 package fr.sii.ogham.core.exception.template;
 
-public class NoEngineDetectionException extends EngineDetectionException {
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8274951414310312339L;
+public class NoEngineDetectionException extends EngineDetectionException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
 	public NoEngineDetectionException(String message) {
 		super(message);

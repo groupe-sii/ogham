@@ -85,7 +85,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	 *            at runtime
 	 * @param implementation
 	 *            the implementation to register
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public final MultiImplementationSender<M> addImplementation(Condition<Message> condition, MessageSender implementation) {
 		implementations.add(new Implementation(condition, implementation));

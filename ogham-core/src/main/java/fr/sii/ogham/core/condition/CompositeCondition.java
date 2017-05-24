@@ -7,38 +7,47 @@ import java.util.List;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
+/**
+ * Base class for operators that handle several sub-conditions like AND operator
+ * and OR operator.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param <T>
+ *            the type of the object to test
+ */
 public abstract class CompositeCondition<T> implements Condition<T> {
-	protected List<Condition<T>> conditions;
+	protected final List<Condition<T>> conditions;
 
-	public CompositeCondition(List<Condition<T>> conditions) {
+	protected CompositeCondition(List<Condition<T>> conditions) {
 		super();
 		this.conditions = conditions;
 	}
 
 	@SafeVarargs
-	public CompositeCondition(Condition<T>... conditions) {
+	protected CompositeCondition(Condition<T>... conditions) {
 		this(new ArrayList<>(Arrays.asList(conditions)));
 	}
 
-	public List<Condition<T>> getConditions() {
+	protected List<Condition<T>> getConditions() {
 		return conditions;
 	}
-	
+
 	protected CompositeCondition<T> addCondition(Condition<T> condition) {
 		conditions.add(condition);
 		return this;
 	}
-	
+
 	protected CompositeCondition<T> addConditions(List<Condition<T>> conditions) {
 		this.conditions.addAll(conditions);
 		return this;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		return new EqualsBuilder(this, obj).appendFields("conditions").isEqual();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(conditions).hashCode();
@@ -48,5 +57,5 @@ public abstract class CompositeCondition<T> implements Condition<T> {
 	public String toString() {
 		return conditions.toString();
 	}
-	
+
 }

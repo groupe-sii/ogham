@@ -1,9 +1,11 @@
 package fr.sii.ogham.core.exception.convert;
 
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
 import fr.sii.ogham.core.exception.MessagingRuntimeException;
 
 public class ConversionException extends MessagingRuntimeException {
-	private static final long serialVersionUID = 4793045577381729380L;
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
 	public ConversionException(String message, Throwable cause) {
 		super(message, cause);

@@ -8,15 +8,15 @@ import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.thymeleaf.buider.ThymeleafSmsBuilder;
 
-@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=920)
-public class ThymeleafSmsConfigurer implements MessagingConfigurer {
+@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=70000)
+public class DefaultThymeleafSmsConfigurer implements MessagingConfigurer {
 	private final MessagingConfigurerAdapter delegate;
 
-	public ThymeleafSmsConfigurer() {
+	public DefaultThymeleafSmsConfigurer() {
 		this(new DefaultMessagingConfigurer());
 	}
 
-	public ThymeleafSmsConfigurer(MessagingConfigurerAdapter delegate) {
+	public DefaultThymeleafSmsConfigurer(MessagingConfigurerAdapter delegate) {
 		super();
 		this.delegate = delegate;
 	}

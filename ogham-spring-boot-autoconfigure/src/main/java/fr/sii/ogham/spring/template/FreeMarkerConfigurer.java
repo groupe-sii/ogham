@@ -8,16 +8,22 @@ import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
 import freemarker.template.Configuration;
 
+/**
+ * Integrates with Spring templating system by using Freemarker
+ * {@link Configuration} object provided by Spring.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class FreeMarkerConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
 	private final Configuration emailConfiguration;
 	private final Configuration smsConfiguration;
-	
+
 	public FreeMarkerConfigurer(Configuration emailConfiguration, Configuration smsConfiguration) {
 		super();
 		this.emailConfiguration = emailConfiguration;
 		this.smsConfiguration = smsConfiguration;
 	}
-
 
 	@Override
 	public void configure(EmailBuilder emailBuilder) {
@@ -31,7 +37,7 @@ public class FreeMarkerConfigurer extends MessagingConfigurerAdapter implements 
 
 	@Override
 	public int getOrder() {
-		return 880;
+		return 79000;
 	}
 
 }

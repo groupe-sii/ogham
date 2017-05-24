@@ -10,15 +10,15 @@ import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
 import freemarker.template.TemplateExceptionHandler;
 
-@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=910)
-public class FreemarkerSmsConfigurer implements MessagingConfigurer {
+@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=60000)
+public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
 	private final MessagingConfigurerAdapter delegate;
 
-	public FreemarkerSmsConfigurer() {
+	public DefaultFreemarkerSmsConfigurer() {
 		this(new DefaultMessagingConfigurer());
 	}
 
-	public FreemarkerSmsConfigurer(MessagingConfigurerAdapter delegate) {
+	public DefaultFreemarkerSmsConfigurer(MessagingConfigurerAdapter delegate) {
 		super();
 		this.delegate = delegate;
 	}

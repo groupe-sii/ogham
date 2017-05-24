@@ -34,6 +34,13 @@ public class FluentCondition<T> implements Condition<T> {
 	 */
 	private final Condition<T> delegate;
 
+	/**
+	 * Wraps the real condition in order to provide a fluent API. Calling
+	 * {@link #accept(Object)} will be delegated to the underlying condition.
+	 * 
+	 * @param delegate
+	 *            the wrapped condition
+	 */
 	public FluentCondition(Condition<T> delegate) {
 		super();
 		this.delegate = delegate;
@@ -111,4 +118,10 @@ public class FluentCondition<T> implements Condition<T> {
 	public boolean accept(T obj) {
 		return delegate.accept(obj);
 	}
+
+	@Override
+	public String toString() {
+		return delegate.toString();
+	}
+	
 }

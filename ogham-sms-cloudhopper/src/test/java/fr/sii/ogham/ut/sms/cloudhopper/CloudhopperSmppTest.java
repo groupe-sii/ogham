@@ -50,8 +50,10 @@ public class CloudhopperSmppTest {
 					.session(configuration)
 					.session()
 						.connectRetry()
-							.maxRetries(10)
-							.delay(500L)
+							.fixedDelay()
+								.maxRetries(10)
+								.delay(500L)
+								.and()
 							.and()
 						.and()
 					.build();

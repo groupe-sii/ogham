@@ -116,7 +116,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * 
 	 * @param content
 	 *            the content of the message
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms content(Content content) {
 		setContent(content);
@@ -128,7 +128,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * 
 	 * @param content
 	 *            the content of the message
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms content(String content) {
 		return content(new StringContent(content));
@@ -139,7 +139,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * 
 	 * @param from
 	 *            the sender
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms from(Sender from) {
 		setFrom(from);
@@ -151,7 +151,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 *
 	 * @param recipients
 	 *            the list of recipients of the message to set
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	@Override
 	public Sms recipients(List<Recipient> recipients) {
@@ -164,7 +164,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 *
 	 * @param recipients
 	 *            one or several recipient to add
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	@Override
 	public Sms recipient(Recipient... recipients) {
@@ -177,7 +177,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * 
 	 * @param phoneNumber
 	 *            the sender number
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms from(String phoneNumber) {
 		return from(null, phoneNumber);
@@ -188,7 +188,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * 
 	 * @param phoneNumber
 	 *            the sender number
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms from(PhoneNumber phoneNumber) {
 		return from(null, phoneNumber);
@@ -201,7 +201,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 *            the name of the sender
 	 * @param phoneNumber
 	 *            the sender number
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms from(String name, String phoneNumber) {
 		return from(name, new PhoneNumber(phoneNumber));
@@ -214,7 +214,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 *            the name of the sender
 	 * @param phoneNumber
 	 *            the sender number
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms from(String name, PhoneNumber phoneNumber) {
 		return from(new Sender(name, phoneNumber));
@@ -225,7 +225,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * 
 	 * @param numbers
 	 *            one or several recipient numbers
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms to(PhoneNumber... numbers) {
 		for (PhoneNumber number : numbers) {
@@ -239,7 +239,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * 
 	 * @param numbers
 	 *            one or several recipient numbers
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms to(String... numbers) {
 		for (String num : numbers) {
@@ -255,7 +255,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 *            the name of the recipient
 	 * @param number
 	 *            the number of the recipient
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms to(String name, PhoneNumber number) {
 		to(new Recipient(name, number));
@@ -267,7 +267,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * 
 	 * @param recipients
 	 *            one or several recipients to add
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Sms to(Recipient... recipients) {
 		this.recipients.addAll(Arrays.asList(recipients));

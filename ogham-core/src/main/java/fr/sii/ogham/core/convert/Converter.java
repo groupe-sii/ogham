@@ -2,6 +2,12 @@ package fr.sii.ogham.core.convert;
 
 import fr.sii.ogham.core.exception.convert.ConversionException;
 
+/**
+ * Converts a source object into another type.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public interface Converter {
 	/**
 	 * Convert the given {@code source} to the specified {@code targetType}.

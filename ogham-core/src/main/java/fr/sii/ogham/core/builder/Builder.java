@@ -15,9 +15,9 @@ import fr.sii.ogham.core.exception.builder.BuildException;
 public interface Builder<T> {
 
 	/**
-	 * Build the object
+	 * Instantiate and configures the instance.
 	 * 
-	 * @return The built object
+	 * @return The built instance
 	 * @throws BuildException
 	 *             when the object couldn't be constructed
 	 */

@@ -176,7 +176,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param subject
 	 *            the subject of the mail
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email subject(String subject) {
 		setSubject(subject);
@@ -188,7 +188,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param content
 	 *            the content of the message
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email content(Content content) {
 		setContent(content);
@@ -200,7 +200,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param content
 	 *            the content of the message
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email content(String content) {
 		return content(new StringContent(content));
@@ -211,7 +211,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param from
 	 *            the sender address
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email from(EmailAddress from) {
 		setFrom(from);
@@ -226,7 +226,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 *            the sender address string (typical address syntax is of the
 	 *            form "user@host.domain" or
 	 *            "Personal Name &lt;user@host.domain&gt;").
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email from(String from) {
 		setFrom(from);
@@ -238,7 +238,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param recipients
 	 *            the list of recipients
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	@Override
 	public Email recipients(List<Recipient> recipients) {
@@ -251,7 +251,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param attachments
 	 *            the list of attachments
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email attach(List<Attachment> attachments) {
 		setAttachments(attachments);
@@ -263,7 +263,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param attachments
 	 *            the list of attachments
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email attach(Attachment... attachments) {
 		for (Attachment attachment : attachments) {
@@ -277,7 +277,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param attachment
 	 *            the attachment to add
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email attach(Attachment attachment) {
 		attachments.add(attachment);
@@ -289,7 +289,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param recipients
 	 *            one or several recipient to add
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	@Override
 	public Email recipient(Recipient... recipients) {
@@ -302,7 +302,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param to
 	 *            one or several recipient addresses
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email to(String... to) {
 		for (String t : to) {
@@ -316,7 +316,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param to
 	 *            one or several recipient addresses
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email to(EmailAddress... to) {
 		for (EmailAddress t : to) {
@@ -330,7 +330,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param cc
 	 *            one or several recipient addresses
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email cc(String... cc) {
 		for (String c : cc) {
@@ -344,7 +344,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param cc
 	 *            one or several recipient addresses
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email cc(EmailAddress... cc) {
 		for (EmailAddress c : cc) {
@@ -358,7 +358,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param bcc
 	 *            one or several recipient addresses
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email bcc(String... bcc) {
 		for (String b : bcc) {
@@ -372,7 +372,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param bcc
 	 *            one or several recipient addresses
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email bcc(EmailAddress... bcc) {
 		for (EmailAddress b : bcc) {
@@ -388,7 +388,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 *            the recipient address
 	 * @param type
 	 *            the type (to, cc, bcc)
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public Email recipient(EmailAddress recipient, RecipientType type) {
 		recipient(new Recipient(recipient, type));

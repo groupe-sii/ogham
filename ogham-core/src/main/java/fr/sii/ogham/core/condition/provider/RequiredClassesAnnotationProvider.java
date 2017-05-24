@@ -5,8 +5,20 @@ import fr.sii.ogham.core.builder.annotation.RequiredClasses;
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.FixedCondition;
-import fr.sii.ogham.core.condition.RequiredClassCondition;
+import fr.sii.ogham.core.condition.fluent.Conditions;
 
+/**
+ * Provider that handle {@link RequiredClasses} annotation to provide a
+ * condition.
+ * 
+ * It delegates handling of {@link RequiredClass} to
+ * {@link RequiredClassAnnotationProvider}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param <T>
+ *            the kind of the object under conditions
+ */
 public class RequiredClassesAnnotationProvider<T> implements ConditionProvider<RequiredClasses, T> {
 	private final RequiredClassAnnotationProvider<T> delegate;
 
@@ -17,15 +29,15 @@ public class RequiredClassesAnnotationProvider<T> implements ConditionProvider<R
 
 	@Override
 	public Condition<T> provide(RequiredClasses annotation) {
-		if(annotation==null) {
+		if (annotation == null) {
 			return new FixedCondition<>(true);
 		} else {
 			AndCondition<T> mainCondition = new AndCondition<>();
-			for(String requiredClassName : annotation.value()) {
-				mainCondition.and(new RequiredClassCondition<T>(requiredClassName));
+			for (String requiredClassName : annotation.value()) {
+				mainCondition = mainCondition.and(Conditions.<T> requiredClass(requiredClassName));
 			}
-			for(RequiredClass subAnnotation : annotation.classes()) {
-				mainCondition.and(delegate.provide(subAnnotation));
+			for (RequiredClass subAnnotation : annotation.classes()) {
+				mainCondition = mainCondition.and(delegate.provide(subAnnotation));
 			}
 			return mainCondition;
 		}

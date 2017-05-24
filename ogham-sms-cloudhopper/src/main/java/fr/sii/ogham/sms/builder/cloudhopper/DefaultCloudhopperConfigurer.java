@@ -7,7 +7,7 @@ import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.util.ClasspathUtils;
 
-@ConfigurerFor(targetedBuilder="standard", priority=800)
+@ConfigurerFor(targetedBuilder="standard", priority=40000)
 public class DefaultCloudhopperConfigurer implements MessagingConfigurer {
 
 	@Override
@@ -40,8 +40,9 @@ public class DefaultCloudhopperConfigurer implements MessagingConfigurer {
 					.responseTimeout("${ogham.sms.cloudhopper.response-timeout}", "5000")
 					.unbindTimeout("${ogham.sms.cloudhopper.unbind-timeout}", "5000")
 					.connectRetry()
-						.maxRetries("${ogham.sms.cloudhopper.connect-max-retry}", "10")
-						.delay("${ogham.sms.cloudhopper.connect-retry-delay}", "500");
+						.fixedDelay()
+							.maxRetries("${ogham.sms.cloudhopper.connect-max-retry}", "10")
+							.delay("${ogham.sms.cloudhopper.connect-retry-delay}", "500");
 			// @formatter:on
 		}
 	}

@@ -1,12 +1,13 @@
 package fr.sii.ogham.core.id.generator;
 
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SequentialIdGenerator implements IdGenerator {
-	private int idx;
+	private AtomicInteger idx;
 	
 	public SequentialIdGenerator(int initial) {
 		super();
-		this.idx = initial;
+		this.idx = new AtomicInteger(initial);
 	}
 
 	public SequentialIdGenerator() {
@@ -16,7 +17,7 @@ public class SequentialIdGenerator implements IdGenerator {
 
 	@Override
 	public String generate(String name) {
-		return name+(idx++);
+		return name+idx.getAndIncrement();
 	}
 
 }

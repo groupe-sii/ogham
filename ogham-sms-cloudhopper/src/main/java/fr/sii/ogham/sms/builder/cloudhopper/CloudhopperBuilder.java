@@ -20,7 +20,7 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
-import fr.sii.ogham.core.retry.Retry;
+import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
@@ -241,7 +241,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	private CloudhopperOptions buildOptions(CloudhopperSessionOptions sessionOpts) {
 		Long responseTimeout = sessionOpts.getResponseTimeout()==null ? 5000L : sessionOpts.getResponseTimeout();
 		Long unbindTimeout = sessionOpts.getUnbindTimeout()==null ? 5000L : sessionOpts.getUnbindTimeout();
-		Retry connectRetry = sessionOpts.getConnectRetry();
+		RetryExecutor connectRetry = sessionOpts.getConnectRetry();
 		return new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry);
 	}
 }

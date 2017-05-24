@@ -6,9 +6,9 @@ import fr.sii.ogham.core.subject.provider.SubjectProvider;
 
 /**
  * Message filler that provides a subject to the message. If the message has
- * subject capability (implements {@link HasSubject}) and if the current
- * subject is null, then this filler asks to a {@link SubjectProvider} to
- * generate a subject.
+ * subject capability (implements {@link HasSubject}) and if the current subject
+ * is null, then this filler asks to a {@link SubjectProvider} to generate a
+ * subject.
  * 
  * @author Aurélien Baudet
  *
@@ -19,6 +19,13 @@ public class SubjectFiller implements MessageFiller {
 	 */
 	private SubjectProvider subjectProvider;
 
+	/**
+	 * Initializes the filler with the provider that will generate the subject
+	 * value
+	 * 
+	 * @param subjectProvider
+	 *            used to generate the subject value
+	 */
 	public SubjectFiller(SubjectProvider subjectProvider) {
 		super();
 		this.subjectProvider = subjectProvider;

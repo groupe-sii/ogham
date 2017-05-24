@@ -97,7 +97,7 @@ public class EverySupportingMessagingService implements MessagingService {
 	 * 
 	 * @param sender
 	 *            the sender to register
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public EverySupportingMessagingService addSender(ConditionalSender sender) {
 		senders.add(sender);

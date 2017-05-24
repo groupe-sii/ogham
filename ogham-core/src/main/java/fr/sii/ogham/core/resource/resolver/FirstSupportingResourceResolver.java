@@ -70,7 +70,7 @@ public class FirstSupportingResourceResolver implements ResourceResolver {
 	 * 
 	 * @param resolver
 	 *            the resolver to register
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public FirstSupportingResourceResolver addResolver(ResourceResolver resolver) {
 		resolvers.add(resolver);

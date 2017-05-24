@@ -11,15 +11,15 @@ import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import freemarker.template.TemplateExceptionHandler;
 
-@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=930)
-public class FreemarkerEmailConfigurer implements MessagingConfigurer {
+@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=80000)
+public class DefaultFreemarkerEmailConfigurer implements MessagingConfigurer {
 	private final MessagingConfigurerAdapter delegate;
 
-	public FreemarkerEmailConfigurer() {
+	public DefaultFreemarkerEmailConfigurer() {
 		this(new DefaultMessagingConfigurer());
 	}
 
-	public FreemarkerEmailConfigurer(MessagingConfigurerAdapter delegate) {
+	public DefaultFreemarkerEmailConfigurer(MessagingConfigurerAdapter delegate) {
 		super();
 		this.delegate = delegate;
 	}

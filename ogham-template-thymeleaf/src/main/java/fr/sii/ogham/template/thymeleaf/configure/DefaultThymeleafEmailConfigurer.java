@@ -9,15 +9,15 @@ import fr.sii.ogham.core.message.content.EmailVariant;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
 
-@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=940)
-public class ThymeleafEmailConfigurer implements MessagingConfigurer {
+@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=90000)
+public class DefaultThymeleafEmailConfigurer implements MessagingConfigurer {
 	private final MessagingConfigurerAdapter delegate;
 
-	public ThymeleafEmailConfigurer() {
+	public DefaultThymeleafEmailConfigurer() {
 		this(new DefaultMessagingConfigurer());
 	}
 
-	public ThymeleafEmailConfigurer(MessagingConfigurerAdapter delegate) {
+	public DefaultThymeleafEmailConfigurer(MessagingConfigurerAdapter delegate) {
 		super();
 		this.delegate = delegate;
 	}

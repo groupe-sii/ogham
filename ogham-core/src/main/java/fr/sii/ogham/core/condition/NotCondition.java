@@ -16,7 +16,7 @@ public class NotCondition<T> implements Condition<T> {
 	/**
 	 * The condition to negate
 	 */
-	private Condition<T> condition;
+	private final Condition<T> condition;
 
 	/**
 	 * Initialize the condition with the condition to negate.
@@ -32,10 +32,6 @@ public class NotCondition<T> implements Condition<T> {
 	@Override
 	public boolean accept(T obj) {
 		return !condition.accept(obj);
-	}
-
-	public Condition<T> getCondition() {
-		return condition;
 	}
 
 	@Override

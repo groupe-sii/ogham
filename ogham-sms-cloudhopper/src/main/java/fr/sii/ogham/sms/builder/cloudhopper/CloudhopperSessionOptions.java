@@ -1,6 +1,6 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import fr.sii.ogham.core.retry.Retry;
+import fr.sii.ogham.core.retry.RetryExecutor;
 
 public class CloudhopperSessionOptions {
 	private Long bindTimeout;
@@ -12,7 +12,7 @@ public class CloudhopperSessionOptions {
 	private Long writeTimeout;
 	private Long responseTimeout;
 	private Long unbindTimeout;
-	private Retry connectRetry;
+	private RetryExecutor connectRetry;
 	public Long getBindTimeout() {
 		return bindTimeout;
 	}
@@ -67,10 +67,10 @@ public class CloudhopperSessionOptions {
 	public void setUnbindTimeout(Long unbind) {
 		this.unbindTimeout = unbind;
 	}
-	public Retry getConnectRetry() {
+	public RetryExecutor getConnectRetry() {
 		return connectRetry;
 	}
-	public void setConnectRetry(Retry connectRetry) {
+	public void setConnectRetry(RetryExecutor connectRetry) {
 		this.connectRetry = connectRetry;
 	}
 }

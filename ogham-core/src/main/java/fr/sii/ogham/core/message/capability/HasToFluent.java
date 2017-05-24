@@ -14,7 +14,7 @@ public interface HasToFluent<F> {
 	 *
 	 * @param to
 	 *            one or several recipients to add to the message
-	 * @return this instance for fluent use
+	 * @return this instance for fluent chaining
 	 */
 	public F to(String... to);
 }

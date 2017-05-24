@@ -1,11 +1,9 @@
 package fr.sii.ogham.core.exception.util;
 
-public class FieldAccessException extends RuntimeException {
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 899483050199539070L;
+public class FieldAccessException extends RuntimeException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
 	public FieldAccessException(String message, Throwable cause) {
 		super(message, cause);

@@ -15,7 +15,7 @@ public class FixedCharsetProvider implements CharsetProvider {
 	/**
 	 * The charset to use
 	 */
-	private Charset charset;
+	private final Charset charset;
 
 	/**
 	 * Initialize the provider with the default charset (UTF-8)
@@ -38,13 +38,5 @@ public class FixedCharsetProvider implements CharsetProvider {
 	@Override
 	public Charset getCharset(String str) {
 		return charset;
-	}
-
-	public Charset getCharset() {
-		return charset;
-	}
-
-	public void setCharset(Charset charset) {
-		this.charset = charset;
 	}
 }

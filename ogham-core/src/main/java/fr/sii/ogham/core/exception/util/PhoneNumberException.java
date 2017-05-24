@@ -1,11 +1,9 @@
 package fr.sii.ogham.core.exception.util;
 
-public class PhoneNumberException extends Exception {
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3468181638209870723L;
+public class PhoneNumberException extends Exception {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
 	public PhoneNumberException(String message, Throwable cause) {
 		super(message, cause);

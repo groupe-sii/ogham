@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +17,13 @@ import com.cloudhopper.smpp.impl.DefaultSmppClient;
 import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.RecoverablePduException;
-import com.cloudhopper.smpp.type.SmppBindException;
 import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
 
 import fr.sii.ogham.core.exception.MessageException;
-import fr.sii.ogham.core.retry.Retry;
+import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
 import fr.sii.ogham.sms.exception.message.EncodingException;
 import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
@@ -141,23 +141,14 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		}
 	}
 
-	private SmppSession connect(DefaultSmppClient client) throws Exception {
-		Retry retry = options.getConnectRetry();
-		if(retry==null) {
-			return client.bind(smppSessionConfiguration);
-		}
-		Exception last;
-		do {
-			try {
+	private SmppSession connect(final DefaultSmppClient client) throws Exception {
+		RetryExecutor retry = options.getConnectRetry();
+		return retry.execute(new Callable<SmppSession>() {
+			@Override
+			public SmppSession call() throws Exception {
 				return client.bind(smppSessionConfiguration);
-			} catch(SmppTimeoutException | SmppChannelException | SmppBindException e) {
-				long delay = retry.nextDate() - System.currentTimeMillis();
-				LOG.debug("Connection to SMPP session failed. Retrying in {}ms...", delay);
-				last = e;
-				Thread.sleep(delay);
 			}
-		} while(!retry.terminated());
-		throw last;
+		});
 	}
 
 	private List<SubmitSm> createMessages(Sms message) throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {

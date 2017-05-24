@@ -21,5 +21,5 @@ public interface JavaMailInterceptor {
 	 *            the source message abstraction
 	 * @return the updated message that will be finally sent
 	 */
-	public MimeMessage intercept(MimeMessage message, Email source);
+	MimeMessage intercept(MimeMessage message, Email source);
 }

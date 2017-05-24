@@ -22,7 +22,7 @@ public class MultiContent implements Content {
 	/**
 	 * The list of sub contents
 	 */
-	private List<Content> contents;
+	private final List<Content> contents;
 
 	/**
 	 * Initialize the content with one or several sub contents directly as strings.

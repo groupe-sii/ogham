@@ -13,9 +13,15 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  *            the type of the object to test
  */
 public class FixedCondition<T> implements Condition<T> {
+	private final boolean accept;
 
-	private boolean accept;
-
+	/**
+	 * Initializes with the value that will always be returned when calling
+	 * {@link #accept(Object)}.
+	 * 
+	 * @param accept
+	 *            true to always accept, false to always reject
+	 */
 	public FixedCondition(boolean accept) {
 		super();
 		this.accept = accept;
@@ -30,7 +36,7 @@ public class FixedCondition<T> implements Condition<T> {
 	public boolean equals(Object obj) {
 		return new EqualsBuilder(this, obj).appendFields("accept").isEqual();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(accept).hashCode();

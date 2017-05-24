@@ -16,6 +16,7 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.message.Recipient;
 import fr.sii.ogham.email.sender.impl.sendgrid.client.SendGridClient;
+import fr.sii.ogham.email.sender.impl.sendgrid.client.SendGridInterceptor;
 import fr.sii.ogham.email.sender.impl.sendgrid.handler.SendGridContentHandler;
 
 /**
@@ -27,6 +28,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 
 	private final SendGridClient service;
 	private final SendGridContentHandler handler;
+	private final SendGridInterceptor interceptor;
 
 	/**
 	 * Constructor.
@@ -38,6 +40,21 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 	 *            into something the {@link SendGridClient} can work with
 	 */
 	public SendGridSender(final SendGridClient service, final SendGridContentHandler handler) {
+		this(service, handler, null);
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param service
+	 *            the underlying SendGrid service
+	 * @param handler
+	 *            the content handler, in change of converting the email content
+	 *            into something the {@link SendGridClient} can work with
+	 * @param interceptor
+	 *            an extension point for customizing the email to send
+	 */
+	public SendGridSender(final SendGridClient service, final SendGridContentHandler handler, SendGridInterceptor interceptor) {
 		if (service == null) {
 			throw new IllegalArgumentException("[service] cannot be null");
 		}
@@ -47,6 +64,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 
 		this.service = service;
 		this.handler = handler;
+		this.interceptor = interceptor;
 	}
 
 	@Override
@@ -61,7 +79,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 
 		try {
 			LOG.debug("Preparing to send email using SendGrid: {}", message);
-			final SendGrid.Email sgEmail = toSendGridEmail(message);
+			final SendGrid.Email sgEmail = intercept(toSendGridEmail(message), message);
 
 			LOG.debug("Sending email {}", sgEmail);
 			service.send(sgEmail);
@@ -71,6 +89,13 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 		} catch (SendGridException e) {
 			throw new MessageException("A SendGrid-related error occurred when trying to send an email", message, e);
 		}
+	}
+
+	private SendGrid.Email intercept(SendGrid.Email sendGridEmail, Email source) {
+		if(interceptor==null) {
+			return sendGridEmail;
+		}
+		return interceptor.intercept(sendGridEmail, source);
 	}
 
 	private Set<String> validate(final Email message) {

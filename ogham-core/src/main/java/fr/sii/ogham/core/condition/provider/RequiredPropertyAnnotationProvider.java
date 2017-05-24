@@ -1,21 +1,29 @@
 package fr.sii.ogham.core.condition.provider;
 
+import static fr.sii.ogham.core.condition.fluent.Conditions.not;
+import static fr.sii.ogham.core.condition.fluent.Conditions.requiredProperty;
+
 import java.util.regex.Pattern;
 
 import fr.sii.ogham.core.builder.annotation.RequiredProperty;
-import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.FixedCondition;
-import fr.sii.ogham.core.condition.NotCondition;
-import fr.sii.ogham.core.condition.OrCondition;
-import fr.sii.ogham.core.condition.PropertyPatternCondition;
-import fr.sii.ogham.core.condition.PropertyValueCondition;
-import fr.sii.ogham.core.condition.RequiredPropertyCondition;
+import fr.sii.ogham.core.condition.fluent.Conditions;
+import fr.sii.ogham.core.condition.fluent.FluentCondition;
 import fr.sii.ogham.core.env.PropertyResolver;
 
+/**
+ * Provider that handle {@link RequiredProperty} annotation to provide a
+ * condition.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param <T>
+ *            the kind of the object under conditions
+ */
 public class RequiredPropertyAnnotationProvider<T> implements ConditionProvider<RequiredProperty, T> {
 	private final PropertyResolver propertyResolver;
-	
+
 	public RequiredPropertyAnnotationProvider(PropertyResolver propertyResolver) {
 		super();
 		this.propertyResolver = propertyResolver;
@@ -23,31 +31,29 @@ public class RequiredPropertyAnnotationProvider<T> implements ConditionProvider<
 
 	@Override
 	public Condition<T> provide(RequiredProperty annotation) {
-		if(annotation==null) {
+		if (annotation == null) {
 			return new FixedCondition<>(true);
 		} else {
-			AndCondition<T> mainCondition = new AndCondition<>();
-			mainCondition.and(propertyOrAlternatives(annotation));
-			if(!annotation.is().isEmpty()) {
-				mainCondition.and(new PropertyValueCondition<T>(annotation.value(), annotation.is(), propertyResolver));
+			FluentCondition<T> mainCondition = propertyOrAlternatives(annotation);
+			if (!annotation.is().isEmpty()) {
+				mainCondition = mainCondition.and(Conditions.<T> requiredPropertyValue(propertyResolver, annotation.value(), annotation.is()));
 			}
-			if(!annotation.pattern().isEmpty()) {
-				mainCondition.and(new PropertyPatternCondition<T>(annotation.value(), Pattern.compile(annotation.pattern(), annotation.flags()), propertyResolver));
+			if (!annotation.pattern().isEmpty()) {
+				mainCondition = mainCondition.and(Conditions.<T> requiredPropertyValue(propertyResolver, annotation.value(), Pattern.compile(annotation.pattern(), annotation.flags())));
 			}
-			for(String excludeValue : annotation.excludes()) {
-				mainCondition.and(new NotCondition<>(new PropertyValueCondition<T>(annotation.value(), excludeValue, propertyResolver)));
+			for (String excludeValue : annotation.excludes()) {
+				mainCondition = mainCondition.and(not(Conditions.<T> requiredPropertyValue(propertyResolver, annotation.value(), excludeValue)));
 			}
 			return mainCondition;
 		}
 	}
 
-	private Condition<T> propertyOrAlternatives(RequiredProperty annotation) {
-		OrCondition<T> orCondition = new OrCondition<>(new RequiredPropertyCondition<T>(annotation.value(), propertyResolver));
-		for(String alternative : annotation.alternatives()) {
-			orCondition.or(new RequiredPropertyCondition<T>(alternative, propertyResolver));
+	private FluentCondition<T> propertyOrAlternatives(RequiredProperty annotation) {
+		FluentCondition<T> condition = requiredProperty(propertyResolver, annotation.value());
+		for (String alternative : annotation.alternatives()) {
+			condition = condition.or(Conditions.<T> requiredProperty(propertyResolver, alternative));
 		}
-		return orCondition;
+		return condition;
 	}
-
 
 }

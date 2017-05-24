@@ -15,8 +15,7 @@ public class FailIfNotFoundVariantResolver implements VariantResolver {
 
 	@Override
 	public boolean variantExists(TemplateContent template) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }
