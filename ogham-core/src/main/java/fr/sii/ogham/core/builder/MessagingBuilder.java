@@ -31,7 +31,7 @@ import fr.sii.ogham.sms.builder.SmsBuilder;
 public class MessagingBuilder implements Builder<MessagingService> {
 	private static final Logger LOG = LoggerFactory.getLogger(MessagingBuilder.class);
 	private static final String BASE_PACKAGE = "fr.sii.ogham";
-	
+
 	private List<PrioritizedConfigurer> configurers;
 	private EnvironmentBuilder<MessagingBuilder> environmentBuilder;
 	private MimetypeDetectionBuilder<MessagingBuilder> mimetypeBuilder;
@@ -69,7 +69,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		wrapUncaught = enable;
 		return this;
 	}
-	
+
 	public EmailBuilder email() {
 		if (emailBuilder == null) {
 			emailBuilder = new EmailBuilder(this, environmentBuilder);
@@ -86,18 +86,18 @@ public class MessagingBuilder implements Builder<MessagingService> {
 
 	public void configure() {
 		Collections.sort(configurers, new PriorityComparator());
-		for(PrioritizedConfigurer configurer : configurers) {
+		for (PrioritizedConfigurer configurer : configurers) {
 			configurer.getConfigurer().configure(this);
 		}
 	}
-	
+
 	@Override
 	public MessagingService build() throws BuildException {
 		LOG.info("Using service that calls all registered senders");
 		List<ConditionalSender> senders = buildSenders();
 		LOG.debug("Registered senders: {}", senders);
 		MessagingService service = new EverySupportingMessagingService(senders);
-		if(wrapUncaught) {
+		if (wrapUncaught) {
 			service = new WrapExceptionMessagingService(service);
 		}
 		return service;
@@ -105,10 +105,10 @@ public class MessagingBuilder implements Builder<MessagingService> {
 
 	private List<ConditionalSender> buildSenders() {
 		List<ConditionalSender> senders = new ArrayList<>();
-		if(emailBuilder!=null) {
+		if (emailBuilder != null) {
 			senders.add(emailBuilder.build());
 		}
-		if(smsBuilder!=null) {
+		if (smsBuilder != null) {
 			senders.add(smsBuilder.build());
 		}
 		return senders;
@@ -133,7 +133,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	public static MessagingBuilder standard(boolean autoconfigure, String... basePackages) {
 		MessagingBuilder builder = new MessagingBuilder();
 		findAndRegister(builder, "standard", basePackages);
-		if(autoconfigure) {
+		if (autoconfigure) {
 			builder.configure();
 		}
 		return builder;
@@ -142,11 +142,11 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	public static MessagingBuilder minimal() {
 		return minimal(BASE_PACKAGE);
 	}
-	
+
 	/**
 	 * Common but no implementation
 	 * 
-	 * @return
+	 * @return the minimal builder
 	 */
 	public static MessagingBuilder minimal(String... basePackages) {
 		return minimal(true, basePackages);
@@ -159,28 +159,28 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	public static MessagingBuilder minimal(boolean autoconfigure, String... basePackages) {
 		MessagingBuilder builder = new MessagingBuilder();
 		findAndRegister(builder, "minimal", basePackages);
-		if(autoconfigure) {
+		if (autoconfigure) {
 			builder.configure();
 		}
 		return builder;
 	}
-	
+
 	private static void findAndRegister(MessagingBuilder builder, String builderName, String... basePackages) {
 		Reflections reflections = new Reflections(basePackages, new SubTypesScanner());
 		Set<Class<? extends MessagingConfigurer>> configurerClasses = reflections.getSubTypesOf(MessagingConfigurer.class);
-		for(Class<? extends MessagingConfigurer> configurerClass : configurerClasses) {
+		for (Class<? extends MessagingConfigurer> configurerClass : configurerClasses) {
 			ConfigurerFor annotation = configurerClass.getAnnotation(ConfigurerFor.class);
-			if(annotation!=null && asList(annotation.targetedBuilder()).contains(builderName)) {
+			if (annotation != null && asList(annotation.targetedBuilder()).contains(builderName)) {
 				try {
 					builder.register(configurerClass.newInstance(), annotation.priority());
 				} catch (InstantiationException | IllegalAccessException e) {
-					LOG.error("Failed to register custom auto-discovered configurer ("+configurerClass.getSimpleName()+") for standard messaging builder", e);
-					throw new BuildException("Failed to register custom auto-discovered configurer ("+configurerClass.getSimpleName()+") for standard messaging builder", e);
+					LOG.error("Failed to register custom auto-discovered configurer (" + configurerClass.getSimpleName() + ") for standard messaging builder", e);
+					throw new BuildException("Failed to register custom auto-discovered configurer (" + configurerClass.getSimpleName() + ") for standard messaging builder", e);
 				}
 			}
 		}
 	}
-	
+
 	private static class PriorityComparator implements Comparator<PrioritizedConfigurer> {
 		@Override
 		public int compare(PrioritizedConfigurer o1, PrioritizedConfigurer o2) {
@@ -191,14 +191,17 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	private static class PrioritizedConfigurer {
 		private final int priority;
 		private final MessagingConfigurer configurer;
+
 		public PrioritizedConfigurer(int priority, MessagingConfigurer configurer) {
 			super();
 			this.priority = priority;
 			this.configurer = configurer;
 		}
+
 		public int getPriority() {
 			return priority;
 		}
+
 		public MessagingConfigurer getConfigurer() {
 			return configurer;
 		}

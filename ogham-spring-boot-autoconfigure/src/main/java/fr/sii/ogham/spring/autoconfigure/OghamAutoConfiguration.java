@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
@@ -14,15 +13,20 @@ import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.spring.common.OghamMimetypeProperties;
 import fr.sii.ogham.spring.common.SpringEnvironmentConfigurer;
 import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 import fr.sii.ogham.spring.email.OghamEmailProperties;
 import fr.sii.ogham.spring.email.OghamJavaMailConfiguration;
+import fr.sii.ogham.spring.email.OghamSendGridConfiguration;
+import fr.sii.ogham.spring.sms.OghamCloudhopperConfiguration;
+import fr.sii.ogham.spring.sms.OghamOvhSmsConfiguration;
 import fr.sii.ogham.spring.sms.OghamSmsProperties;
 import fr.sii.ogham.spring.template.OghamFreemarkerConfiguration;
 import fr.sii.ogham.spring.template.OghamNoTemplateEngineConfiguration;
@@ -41,12 +45,25 @@ import fr.sii.ogham.spring.template.OghamThymeleafConfiguration;
  * 
  * @author Aurélien Baudet
  */
+// @formatter:off
 @Configuration
-@AutoConfigureAfter({ WebMvcAutoConfiguration.class, ThymeleafAutoConfiguration.class, FreeMarkerAutoConfiguration.class, MailSenderAutoConfiguration.class })
+@AutoConfigureAfter({ WebMvcAutoConfiguration.class, 
+						ThymeleafAutoConfiguration.class, 
+						FreeMarkerAutoConfiguration.class, 
+						MailSenderAutoConfiguration.class })
 @ConditionalOnClass({ MessagingService.class, MessagingBuilder.class })
 @ConditionalOnMissingBean(MessagingService.class)
-@EnableConfigurationProperties({ OghamEmailProperties.class, OghamSmsProperties.class })
-@ImportAutoConfiguration({ OghamNoTemplateEngineConfiguration.class, OghamFreemarkerConfiguration.class, OghamThymeleafConfiguration.class, OghamJavaMailConfiguration.class })
+@EnableConfigurationProperties({ OghamEmailProperties.class, 
+								 OghamSmsProperties.class, 
+								 OghamMimetypeProperties.class })
+@Import({ OghamNoTemplateEngineConfiguration.class, 
+							OghamFreemarkerConfiguration.class, 
+							OghamThymeleafConfiguration.class, 
+							OghamJavaMailConfiguration.class,
+							OghamSendGridConfiguration.class,
+							OghamCloudhopperConfiguration.class,
+							OghamOvhSmsConfiguration.class })
+//@formatter:on
 public class OghamAutoConfiguration {
 
 	@Autowired

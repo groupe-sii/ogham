@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.builder.sender;
 
-import static fr.sii.ogham.core.builder.condition.MessageConditions.alwaysTrue;
+import static fr.sii.ogham.core.condition.fluent.MessageConditions.alwaysTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

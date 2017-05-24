@@ -1,7 +1,7 @@
 package fr.sii.ogham.ut.core.condition.provider;
 
-import static fr.sii.ogham.core.builder.condition.MessageConditions.$;
-import static fr.sii.ogham.core.builder.condition.MessageConditions.requiredProperty;
+import static fr.sii.ogham.core.condition.fluent.MessageConditions.$;
+import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredProperty;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
