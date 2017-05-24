@@ -4,6 +4,8 @@ import org.thymeleaf.dialect.IDialect;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
+import fr.sii.ogham.template.thymeleaf.buider.ThymeleafSmsBuilder;
 
 public class AddDialect {
 	public static void main(String[] args) {
@@ -13,10 +15,16 @@ public class AddDialect {
 
 	private static MessagingService createService(IDialect dialect) {
 		// init the builder with default values
-		MessagingBuilder builder = new MessagingBuilder().useAllDefaults();
-		// register the dialect
-		builder.getEmailBuilder().getTemplateBuilder().getThymeleafParser().getEngine().addDialect(dialect);
-		builder.getSmsBuilder().getTemplateBuilder().getThymeleafParser().getEngine().addDialect(dialect);
+		MessagingBuilder builder = MessagingBuilder.standard();
+		// register the dialect for both email and sms
+		builder.email()
+				.template(ThymeleafEmailBuilder.class)
+					.engine()
+						.addDialect(dialect);
+		builder.sms()
+				.template(ThymeleafSmsBuilder.class)
+					.engine()
+						.addDialect(dialect);
 		// instantiate the service
 		return builder.build();
 	}

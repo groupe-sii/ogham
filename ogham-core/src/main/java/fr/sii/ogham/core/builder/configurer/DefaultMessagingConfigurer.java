@@ -117,6 +117,7 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		// @formatter:on
 	}
 
+	@Override
 	public void configure(MimetypeDetectionBuilder<?> builder) {
 		// @formatter:off
 		builder

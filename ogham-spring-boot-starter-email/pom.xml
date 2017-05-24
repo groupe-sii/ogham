@@ -33,5 +33,15 @@
 			<artifactId>ogham-email-sendgrid</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-template-freemarker</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-template-thymeleaf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

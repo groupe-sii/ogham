@@ -9,7 +9,6 @@ import fr.sii.ogham.core.util.ClasspathUtils;
 public class DefaultJavaMailConfigurer implements MessagingConfigurer {
 
 	public void configure(MessagingBuilder msgBuilder) {
-		// TODO: check JavaMail available at startup or after (depends on properties) ?
 		if(canUseJavaMail()) {
 			JavaMailBuilder builder = msgBuilder.email().sender(JavaMailBuilder.class);
 			// use same environment as parent builder
@@ -31,6 +30,6 @@ public class DefaultJavaMailConfigurer implements MessagingConfigurer {
 	}
 
 	private boolean canUseJavaMail() {
-		return ClasspathUtils.exists("javax.mail.Transport") && ClasspathUtils.exists("com.sun.mail.smtp.SMTPTransport");
+		return ClasspathUtils.exists("javax.mail.Transport") && ClasspathUtils.exists("javax.mail.internet.MimeMessage");
 	}
 }

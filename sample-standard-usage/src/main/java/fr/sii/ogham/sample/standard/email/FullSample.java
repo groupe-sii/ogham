@@ -50,7 +50,11 @@ public class FullSample {
 		properties.load(FullSample.class.getResourceAsStream("/email-template.properties"));
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.and()
+				.build();
 		// send the email using fluent API
 		// @formatter:off
 		service.send(new Email().

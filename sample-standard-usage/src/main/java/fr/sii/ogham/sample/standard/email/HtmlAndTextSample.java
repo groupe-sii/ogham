@@ -19,12 +19,14 @@ public class HtmlAndTextSample {
 		properties.put("ogham.email.from", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.and()
+				.build();
 		String html = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /></head><body><h1 class=\"title\">Hello World</h1><p class=\"text\">Foo bar</p></body></html>";
 		String text = "Hello World !\r\nFoo bar";
-		service.send(new Email("subject", new MultiContent(html, text), "<recipient address>"));
-		// or using the fluent API
+		// send the email using the fluent API
 		service.send(new Email().
 						subject("subject").
 						content(new MultiContent(html, text)).

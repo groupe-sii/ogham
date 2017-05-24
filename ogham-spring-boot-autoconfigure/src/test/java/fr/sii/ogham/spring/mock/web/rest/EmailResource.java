@@ -23,12 +23,18 @@ public class EmailResource {
 	@RequestMapping(value="email/simple", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public void simple(@RequestParam("subject") String subject, @RequestBody String content, @RequestParam("to") String to) throws MessagingException {
-		messagingService.send(new Email(subject, content, to));
+		messagingService.send(new Email()
+								.subject(subject)
+								.content(content)
+								.to(to));
 	}
 	
 	@RequestMapping(value="email/thymeleaf", method=RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public void thymeleaf(@RequestParam("subject") String subject, @RequestParam("template") String template, @RequestBody Object context, @RequestParam("to") String to) throws MessagingException {
-		messagingService.send(new Email(subject, new TemplateContent(template, context), to));
+		messagingService.send(new Email()
+								.subject(subject)
+								.content(new TemplateContent(template, context))
+								.to(to));
 	}
 }

@@ -60,7 +60,10 @@ public class CloudhopperSmppTest {
 
 	@Test
 	public void simple() throws MessagingException, IOException {
-		sender.send(new Sms("sms content", new Sender(INTERNATIONAL_PHONE_NUMBER), NATIONAL_PHONE_NUMBER));
+		sender.send(new Sms()
+						.content("sms content")
+						.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
+						.to(NATIONAL_PHONE_NUMBER));
 		AssertSms.assertEquals(new ExpectedSms("sms content", 
 				new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
 				new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value())),
@@ -69,9 +72,10 @@ public class CloudhopperSmppTest {
 
 	@Test
 	public void longMessage() throws MessagingException, IOException {
-		sender.send(new Sms("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split",
-				new Sender(INTERNATIONAL_PHONE_NUMBER),
-				NATIONAL_PHONE_NUMBER));
+		sender.send(new Sms()
+						.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split")
+						.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
+						.to(NATIONAL_PHONE_NUMBER));
 		AssertSms.assertEquals(new SplitSms(
 				new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
 				new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
@@ -86,7 +90,7 @@ public class CloudhopperSmppTest {
 		String to2 = "0000000001";
 		String from = INTERNATIONAL_PHONE_NUMBER;
 		String content = "sms content";
-		Sms message = new Sms(content,  to1, to2).from( new Sender(from));
+		Sms message = new Sms().content(content).to(to1).to(to2).from( new Sender(from));
 		
 		// When
 		sender.send(message);

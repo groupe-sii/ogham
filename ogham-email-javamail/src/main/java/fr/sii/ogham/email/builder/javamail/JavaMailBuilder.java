@@ -149,15 +149,6 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	@Override
 	public JavaMailSender build() throws BuildException {
 		Properties props = buildProperties();
-		// TODO: check custom properties too
-//		if(!props.containsKey("mail.smtp.host") && !props.containsKey("mail.host")) {
-//			LOG.debug("No host property => can't use JavaMail implementation");
-//			return null;
-//		}
-//		if(!props.containsKey("mail.smtp.port") && !props.containsKey("mail.port")) {
-//			LOG.debug("No port property => can't use JavaMail implementation");
-//			return null;
-//		}
 		MimeTypeProvider mimetypeProvider = mimetypeBuilder.build();
 		return new JavaMailSender(props, 
 								buildContentHandler(mimetypeProvider), 

@@ -51,7 +51,9 @@ public class EmailPropertiesTest {
 	
 	@Test
 	public void simple() throws MessagingException, javax.mail.MessagingException {
-		oghamService.send(new Email("Simple", "string body"));
+		oghamService.send(new Email()
+							.subject("Simple")
+							.content("string body"));
 		assertThat(greenMail).receivedMessages()
 				.count(is(6))
 				.forEach()

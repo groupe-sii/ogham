@@ -50,9 +50,12 @@ public class SmsCustomImplTest {
 	
 	@Test
 	public void simple() throws MessagingException {
-		oghamService.send(new Sms("sms content", NATIONAL_PHONE_NUMBER));
-		Mockito.verify(customSender).send(new Sms("sms content",
-				new Sender(new AddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE)),
-				new AddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.ISDN_TELEPHONE)));
+		oghamService.send(new Sms()
+							.content("sms content")
+							.to(NATIONAL_PHONE_NUMBER));
+		Mockito.verify(customSender).send(new Sms()
+							.content("sms content")
+							.from(new Sender(new AddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE)))
+							.to(new AddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.ISDN_TELEPHONE)));
 	}
 }

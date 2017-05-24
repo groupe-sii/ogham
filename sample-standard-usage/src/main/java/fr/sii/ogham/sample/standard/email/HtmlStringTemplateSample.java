@@ -20,11 +20,13 @@ public class HtmlStringTemplateSample {
 		properties.put("ogham.email.from", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.and()
+				.build();
 		String template = "<!DOCTYPE html><html xmlns:th=\"http://www.thymeleaf.org\"><head><title>Thymeleaf simple</title><meta charset=\"utf-8\" /></head><body><h1 class=\"title\" th:text=\"${name}\"></h1><p class=\"text\" th:text=\"${value}\"></p></body></html>";
-		service.send(new Email("subject", new StringTemplateContent(template, new SimpleBean("foo", 42)), "<recipient address>"));
-		// or using fluent API
+		// send the email using fluent API
 		service.send(new Email().
 						subject("subject").
 						content(new StringTemplateContent(template, new SimpleBean("foo", 42))).

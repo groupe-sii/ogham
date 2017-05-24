@@ -34,9 +34,7 @@ public class BasicSample {
 		@RequestMapping(value="api/email/basic", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
-			// send the email
-			messagingService.send(new Email(subject, content, to));
-			// or using fluent API
+			// send the email using fluent API
 			messagingService.send(new Email().
 									subject(subject).
 									content(content).

@@ -1,5 +1,8 @@
 package fr.sii.ogham.email.builder.javamail;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.mail.Authenticator;
 
 import fr.sii.ogham.core.builder.AbstractParent;
@@ -11,21 +14,31 @@ import fr.sii.ogham.email.sender.impl.javamail.UpdatableUsernamePasswordAuthenti
 import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
 
 public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMailBuilder> implements Builder<Authenticator> {
-	private String username;
-	private String password;
+	private List<String> usernames;
+	private List<String> passwords;
 	private boolean updatable;
 	
 	public UsernamePasswordAuthenticatorBuilder(JavaMailBuilder parent) {
 		super(parent);
+		usernames = new ArrayList<>();
+		passwords = new ArrayList<>();
 	}
 
-	public UsernamePasswordAuthenticatorBuilder username(String username) {
-		this.username = username;
+	public UsernamePasswordAuthenticatorBuilder username(String... username) {
+		for(String u : username) {
+			if(u!=null && !u.isEmpty()) {
+				usernames.add(u);
+			}
+		}
 		return this;
 	}
 	
-	public UsernamePasswordAuthenticatorBuilder password(String password) {
-		this.password = password;
+	public UsernamePasswordAuthenticatorBuilder password(String... password) {
+		for(String p : password) {
+			if(p!=null && !p.isEmpty()) {
+				passwords.add(p);
+			}
+		}
 		return this;
 	}
 
@@ -38,13 +51,13 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	public Authenticator build() throws BuildException {
 		PropertyResolver propertyResolver = parent.environment().build();
 		if(updatable) {
-			if(username!=null && password!=null) {
-				return new UpdatableUsernamePasswordAuthenticator(propertyResolver, username, password);
+			if(!usernames.isEmpty() && !passwords.isEmpty()) {
+				return new UpdatableUsernamePasswordAuthenticator(propertyResolver, usernames, passwords);
 			}
 			return null;
 		}
-		String username = BuilderUtils.evaluate(this.username, propertyResolver, String.class);
-		String password = BuilderUtils.evaluate(this.password, propertyResolver, String.class);
+		String username = BuilderUtils.evaluate(this.usernames, propertyResolver, String.class);
+		String password = BuilderUtils.evaluate(this.passwords, propertyResolver, String.class);
 		if(username!=null && password!=null) {
 			return new UsernamePasswordAuthenticator(username, password);
 		}

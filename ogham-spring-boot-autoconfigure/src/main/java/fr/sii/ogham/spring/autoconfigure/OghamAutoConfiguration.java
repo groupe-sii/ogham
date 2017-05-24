@@ -1,17 +1,16 @@
 package fr.sii.ogham.spring.autoconfigure;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -19,14 +18,9 @@ import org.springframework.core.env.Environment;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.template.parser.TemplateParser;
-import fr.sii.ogham.spring.config.FreeMarkerConfigurer;
-import fr.sii.ogham.spring.config.NoTemplateEngineConfigurer;
 import fr.sii.ogham.spring.config.SpringEnvironmentConfigurer;
 import fr.sii.ogham.spring.config.SpringMessagingConfigurer;
-import fr.sii.ogham.spring.config.ThymeLeafConfigurer;
-import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
-import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
-import freemarker.template.TemplateExceptionHandler;
+import fr.sii.ogham.spring.properties.OghamMailProperties;
 
 /**
  * <p>
@@ -43,9 +37,10 @@ import freemarker.template.TemplateExceptionHandler;
  * @author Aurélien Baudet
  */
 @Configuration
-@AutoConfigureAfter({ WebMvcAutoConfiguration.class, ThymeleafAutoConfiguration.class, FreeMarkerAutoConfiguration.class })
+@AutoConfigureAfter({ WebMvcAutoConfiguration.class, ThymeleafAutoConfiguration.class, FreeMarkerAutoConfiguration.class, MailSenderAutoConfiguration.class })
 @ConditionalOnClass({MessagingService.class, MessagingBuilder.class})
 @ConditionalOnMissingBean(MessagingService.class)
+@EnableConfigurationProperties({OghamMailProperties.class})
 public class OghamAutoConfiguration {
 
 	@Autowired
@@ -81,56 +76,5 @@ public class OghamAutoConfiguration {
 	@Bean
 	public SpringEnvironmentConfigurer springEnvironmentConfigurer() {
 		return new SpringEnvironmentConfigurer(environment);
-	}
-	
-	@Configuration
-	@ConditionalOnMissingClass({"freemarker.template.Configuration", "org.thymeleaf.spring4.SpringTemplateEngine"})
-	public static class OghamNoTemplateEngineConfiguration {
-		@Bean
-		public List<SpringMessagingConfigurer> defaultMessagingBuilderConfigurer() {
-			return Arrays.<SpringMessagingConfigurer>asList(new NoTemplateEngineConfigurer());
-		}
-	}
-
-	@Configuration
-	@ConditionalOnClass({freemarker.template.Configuration.class, FreemarkerEmailBuilder.class})
-	public static class OghamFreemarkerConfiguration {
-		@Bean
-		@Qualifier("email")
-		@ConditionalOnMissingBean(name="emailFreemarkerConfiguration")
-		public freemarker.template.Configuration emailFreemarkerConfiguration() {
-			freemarker.template.Configuration configuration = new freemarker.template.Configuration();
-			configuration.setDefaultEncoding("UTF-8");
-			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-//			configuration.setLogTemplateExceptions(false);
-			return configuration;
-		}
-
-		@Bean
-		@Qualifier("sms")
-		@ConditionalOnMissingBean(name="smsFreemarkerConfiguration")
-		public freemarker.template.Configuration smsFreemarkerConfiguration() {
-			freemarker.template.Configuration configuration = new freemarker.template.Configuration();
-			configuration.setDefaultEncoding("UTF-8");
-			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-//			configuration.setLogTemplateExceptions(false);
-			return configuration;
-		}
-
-		@Bean
-		@ConditionalOnMissingBean(FreeMarkerConfigurer.class)
-		public FreeMarkerConfigurer freemarkerConfigurer(@Qualifier("email") freemarker.template.Configuration emailFreemarkerConfiguration, @Qualifier("sms") freemarker.template.Configuration smsFreemarkerConfiguration) {
-			return new FreeMarkerConfigurer(emailFreemarkerConfiguration, smsFreemarkerConfiguration);
-		}
-	}
-
-	@Configuration
-	@ConditionalOnClass({org.thymeleaf.spring4.SpringTemplateEngine.class, ThymeleafEmailBuilder.class})
-	public static class OghamThymeleafConfiguration {
-		@Bean
-		@ConditionalOnMissingBean(ThymeLeafConfigurer.class)
-		public ThymeLeafConfigurer thymeleafConfigurer(org.thymeleaf.spring4.SpringTemplateEngine springTemplateEngine) {
-			return new ThymeLeafConfigurer(springTemplateEngine);
-		}
 	}
 }

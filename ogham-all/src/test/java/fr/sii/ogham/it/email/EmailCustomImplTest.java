@@ -49,7 +49,11 @@ public class EmailCustomImplTest {
 									.subject("subject")
 									.content("content")
 									.to("recipient@sii.fr"));
-		Mockito.verify(customSender).send(new Email("subject", "content", new EmailAddress("Sender Name <test.sender@sii.fr>"), "recipient@sii.fr"));
+		Mockito.verify(customSender).send(new Email()
+									.subject("subject")
+									.content("content")
+									.from(new EmailAddress("Sender Name <test.sender@sii.fr>"))
+									.to("recipient@sii.fr"));
 		// @formatter:on
 	}
 }

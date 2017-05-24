@@ -56,7 +56,10 @@ public class OvhSmsTest {
 						.withStatus(200)
 						.withHeader("Content-Type", "application/json")
 						.withBody(IOUtils.toString(getClass().getResourceAsStream("/ovh/response/ok.json")))));
-		sender.send(new Sms("sms content", new Sender("0033203040506"), "0033605040302"));
+		sender.send(new Sms()
+						.content("sms content")
+						.from(new Sender("0033203040506"))
+						.to("0033605040302"));
 		verify(getRequestedFor(urlPathEqualTo("/cgi-bin/sms/http2sms.cgi"))
 					.withQueryParam("account", equalTo("sms-nic-foobar42"))
 					.withQueryParam("login", equalTo("login"))
@@ -75,7 +78,10 @@ public class OvhSmsTest {
 						.withStatus(200)
 						.withHeader("Content-Type", "application/json")
 						.withBody(IOUtils.toString(getClass().getResourceAsStream("/ovh/response/ok.json")))));
-		sender.send(new Sms("sms content\nwith new lines\r\nof all\rtypes", new Sender("0033203040506"), "0033605040302"));
+		sender.send(new Sms()
+						.content("sms content\nwith new lines\r\nof all\rtypes")
+						.from(new Sender("0033203040506"))
+						.to("0033605040302"));
 		verify(getRequestedFor(urlPathEqualTo("/cgi-bin/sms/http2sms.cgi"))
 					.withQueryParam("account", equalTo("sms-nic-foobar42"))
 					.withQueryParam("login", equalTo("login"))
@@ -93,7 +99,10 @@ public class OvhSmsTest {
 				.willReturn(aResponse()
 						.withStatus(400)
 						.withHeader("Content-Type", "application/json")));
-		sender.send(new Sms("sms content", new Sender("0033203040506"), "0033605040302"));
+		sender.send(new Sms()
+						.content("sms content")
+						.from(new Sender("0033203040506"))
+						.to("0033605040302"));
 	}
 
 	@Test(expected=MessagingException.class)
@@ -103,7 +112,10 @@ public class OvhSmsTest {
 						.withStatus(200)
 						.withHeader("Content-Type", "application/json")
 						.withBody(IOUtils.toString(getClass().getResourceAsStream("/ovh/response/ko.json")))));
-		sender.send(new Sms("sms content", new Sender("0033203040506"), "0033605040302"));
+		sender.send(new Sms()
+						.content("sms content")
+						.from(new Sender("0033203040506"))
+						.to("0033605040302"));
 	}
 
 	@Test
@@ -120,7 +132,12 @@ public class OvhSmsTest {
 						.withStatus(200)
 						.withHeader("Content-Type", "application/json")
 						.withBody(IOUtils.toString(getClass().getResourceAsStream("/ovh/response/ok.json")))));
-		sender.send(new Sms("sms content", new Sender("0033203040506"), "0033605040302", "0033605040303", "0033605040304"));
+		sender.send(new Sms()
+						.content("sms content")
+						.from(new Sender("0033203040506"))
+						.to("0033605040302")
+						.to("0033605040303")
+						.to("0033605040304"));
 		verify(getRequestedFor(urlPathEqualTo("/cgi-bin/sms/http2sms.cgi"))
 					.withQueryParam("account", equalTo("sms-nic-foobar42"))
 					.withQueryParam("login", equalTo("login"))
@@ -139,7 +156,11 @@ public class OvhSmsTest {
 						.withStatus(200)
 						.withHeader("Content-Type", "application/json")
 						.withBody(IOUtils.toString(getClass().getResourceAsStream("/ovh/response/ok.json")))));
-		sender.send(new Sms("sms content", new Sender("+332 03 04 05 06"), "+33 6 05 04 03 02", "+41 44 668 18 00"));
+		sender.send(new Sms()
+						.content("sms content")
+						.from(new Sender("+332 03 04 05 06"))
+						.to("+33 6 05 04 03 02")
+						.to("+41 44 668 18 00"));
 		verify(getRequestedFor(urlPathEqualTo("/cgi-bin/sms/http2sms.cgi"))
 					.withQueryParam("account", equalTo("sms-nic-foobar42"))
 					.withQueryParam("login", equalTo("login"))
@@ -153,7 +174,10 @@ public class OvhSmsTest {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void nationalNumber() throws MessagingException, IOException {
-		sender.send(new Sms("sms content", new Sender("02 03 04 05 06"), "06 05 04 03 02"));
+		sender.send(new Sms()
+						.content("sms content")
+						.from(new Sender("02 03 04 05 06"))
+						.to("06 05 04 03 02"));
 	}
 
 

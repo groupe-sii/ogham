@@ -19,10 +19,12 @@ public class WithAttachmentSample {
 		properties.put("ogham.email.from", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
-		service.send(new Email("subject", "content of the email", "<recipient address>", new Attachment("classpath:/attachment/test.pdf")));
-		// or using fluent API
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.and()
+				.build();
+		// send the email using fluent API
 		service.send(new Email().
 						subject("subject").
 						content("content of the email").

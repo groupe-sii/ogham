@@ -26,28 +26,28 @@ public class HtmlTitleSubjectProviderTest {
 	@Test
 	public void withTitle() throws IOException {
 		String html = IOUtils.toString(getClass().getResourceAsStream("/subject/withTitle.html"));
-		String subject = subjectProvider.provide(new Email(null, html));
+		String subject = subjectProvider.provide(new Email().content(html));
 		Assert.assertEquals("subject should be 'this is the subject'", "this is the subject", subject);
 	}
 	
 	@Test
 	public void trim() throws IOException {
 		String html = IOUtils.toString(getClass().getResourceAsStream("/subject/trim.html"));
-		String subject = subjectProvider.provide(new Email(null, html));
+		String subject = subjectProvider.provide(new Email().content(html));
 		Assert.assertEquals("subject should be 'this is the subject'", "this is the subject", subject);
 	}
 	
 	@Test
 	public void emptyTitle() throws IOException {
 		String html = IOUtils.toString(getClass().getResourceAsStream("/subject/emptyTitle.html"));
-		String subject = subjectProvider.provide(new Email(null, html));
+		String subject = subjectProvider.provide(new Email().content(html));
 		Assert.assertTrue("subject should be empty", subject.isEmpty());
 	}
 	
 	@Test
 	public void noTitle() throws IOException {
 		String html = IOUtils.toString(getClass().getResourceAsStream("/subject/noTitle.html"));
-		String subject = subjectProvider.provide(new Email(null, html));
+		String subject = subjectProvider.provide(new Email().content(html));
 		Assert.assertNull("subject should be null", subject);
 	}
 }

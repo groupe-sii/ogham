@@ -23,10 +23,12 @@ public class BasicGmailSSLSample {
 		properties.setProperty("ogham.email.from", "<your gmail address>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
-		service.send(new Email("subject", "email content", "<recipient address>"));
-		// or using fluent API
+		MessagingService service = MessagingBuilder.standard()
+										.environment()
+											.properties(properties)
+											.and()
+										.build();
+		// send the mail using fluent API
 		service.send(new Email().
 						subject("subject").
 						content("email content").

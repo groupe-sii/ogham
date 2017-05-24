@@ -62,7 +62,10 @@ public class PhoneNumberTranslatorSenderTest {
 		PhoneNumber givenRecipientNumber = new PhoneNumber("0000000000");
 		Sender givenSender = new Sender(givenSenderNumber);
 		Recipient givenRecipient = new Recipient(givenRecipientNumber);
-		Sms givenMessage = new Sms(givenContent, givenSender, givenRecipient);
+		Sms givenMessage = new Sms()
+								.content(givenContent)
+								.from(givenSender)
+								.to(givenRecipient);
 
 		AddressedPhoneNumber mockSenderNumber = new AddressedPhoneNumber(null, null, null);
 		AddressedPhoneNumber mockRecipientNumber = new AddressedPhoneNumber(null, null, null);
@@ -74,7 +77,10 @@ public class PhoneNumberTranslatorSenderTest {
 		sender.send(givenMessage);
 
 		// then
-		Sms expexctedSms = new Sms(givenContent, new Sender(mockSenderNumber), new Recipient(mockRecipientNumber));
+		Sms expexctedSms = new Sms()
+								.content(givenContent)
+								.from(new Sender(mockSenderNumber))
+								.to(new Recipient(mockRecipientNumber));
 
 		Mockito.verify(delegateMock).send(expexctedSms);
 	}
@@ -88,13 +94,19 @@ public class PhoneNumberTranslatorSenderTest {
 
 		Sender givenSender = new Sender(givenSenderNumber);
 		Recipient givenRecipient = new Recipient(givenRecipientNumber);
-		Sms givenMessage = new Sms(givenContent, givenSender, givenRecipient);
+		Sms givenMessage = new Sms()
+								.content(givenContent)
+								.from(givenSender)
+								.to(givenRecipient);
 
 		// when
 		sender.send(givenMessage);
 
 		// then
-		Sms expectedSms = new Sms(givenContent, new Sender(givenSenderNumber), new Recipient(givenRecipientNumber));
+		Sms expectedSms = new Sms()
+								.content(givenContent)
+								.from(new Sender(givenSenderNumber))
+								.to(new Recipient(givenRecipientNumber));
 
 
 		Mockito.verify(delegateMock).send(expectedSms);

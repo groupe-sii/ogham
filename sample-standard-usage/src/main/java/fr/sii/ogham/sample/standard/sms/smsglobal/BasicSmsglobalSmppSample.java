@@ -20,10 +20,12 @@ public class BasicSmsglobalSmppSample {
 		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the sms
-		service.send(new Sms("sms content", "<recipient phone number>"));
-		// or using fluent API
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.and()
+				.build();
+		// send the sms using fluent API
 		service.send(new Sms().
 						content("sms content").
 						to("<recipient phone number>"));

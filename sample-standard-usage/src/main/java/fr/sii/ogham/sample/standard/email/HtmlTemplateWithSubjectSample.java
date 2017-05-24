@@ -20,12 +20,14 @@ public class HtmlTemplateWithSubjectSample {
 		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = new MessagingBuilder().useAllDefaults(properties).build();
-		// send the email
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.and()
+				.build();
+		// send the email using fluent API (do not specify subject)
 		// subject is set to null to let automatic mechanism to read the title
 		// of the HTML and use it as subject of your email
-		service.send(new Email(null, new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", new SimpleBean("foo", 42)), "<recipient address>"));
-		// or using fluent API (do not specify subject)
 		service.send(new Email().
 						content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", new SimpleBean("foo", 42))).
 						to("<recipient address>"));

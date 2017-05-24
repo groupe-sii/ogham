@@ -143,10 +143,13 @@ public class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafBuilder<MY
 	protected TemplateEngine buildEngine() {
 		TemplateEngine engine;
 		if(this.engine!=null) {
+			LOG.debug("Using custom Thymeleaf engine");
 			engine = this.engine;
 		} else if(engineBuilder!=null) {
+			LOG.debug("Using custom Thymeleaf engine built using engine()");
 			engine = engineBuilder.build();
 		} else {
+			LOG.debug("Using default Thymeleaf engine");
 			engine = new TemplateEngine();
 		}
 		engine.addTemplateResolver(new ThymeLeafFirstSupportingTemplateResolver(buildResolver(), buildAdapters()));

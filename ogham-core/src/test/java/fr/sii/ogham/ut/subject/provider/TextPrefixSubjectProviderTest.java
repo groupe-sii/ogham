@@ -22,7 +22,7 @@ public class TextPrefixSubjectProviderTest {
 	
 	@Test
 	public void withPrefix() {
-		Email message = new Email(null, "Subject: this is the subject\nContent of the email");
+		Email message = new Email().content("Subject: this is the subject\nContent of the email");
 		String subject = subjectProvider.provide(message);
 		Assert.assertEquals("subject should be 'this is the subject'", "this is the subject", subject);
 		Assert.assertEquals("Content should be updated", "Content of the email", message.getContent().toString());
@@ -30,7 +30,7 @@ public class TextPrefixSubjectProviderTest {
 	
 	@Test
 	public void trim() {
-		Email message = new Email(null, "Subject:    this is the subject    \nContent of the email");
+		Email message = new Email().content("Subject:    this is the subject    \nContent of the email");
 		String subject = subjectProvider.provide(message);
 		Assert.assertEquals("subject should be 'this is the subject'", "this is the subject", subject);
 		Assert.assertEquals("Content should be updated", "Content of the email", message.getContent().toString());
@@ -38,7 +38,7 @@ public class TextPrefixSubjectProviderTest {
 	
 	@Test
 	public void emptySubject() {
-		Email message = new Email(null, "Subject:\nContent of the email");
+		Email message = new Email().content("Subject:\nContent of the email");
 		String subject = subjectProvider.provide(message);
 		Assert.assertTrue("subject should be empty", subject.isEmpty());
 		Assert.assertEquals("Content should be updated", "Content of the email", message.getContent().toString());
@@ -46,7 +46,7 @@ public class TextPrefixSubjectProviderTest {
 	
 	@Test
 	public void malformedPrefix() {
-		Email message = new Email(null, "subject: this is the subject\nContent of the email");
+		Email message = new Email().content("subject: this is the subject\nContent of the email");
 		String subject = subjectProvider.provide(message);
 		Assert.assertNull("subject should be null", subject);
 		Assert.assertEquals("Content should not be updated", "subject: this is the subject\nContent of the email", message.getContent().toString());
@@ -54,7 +54,7 @@ public class TextPrefixSubjectProviderTest {
 	
 	@Test
 	public void noPrefix() {
-		Email message = new Email(null, "this is the subject\nContent of the email");
+		Email message = new Email().content("this is the subject\nContent of the email");
 		String subject = subjectProvider.provide(message);
 		Assert.assertNull("subject should be null", subject);
 		Assert.assertEquals("Content should not be updated", "this is the subject\nContent of the email", message.getContent().toString());

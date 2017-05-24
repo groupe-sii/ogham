@@ -37,9 +37,7 @@ public class HtmlAndTextTemplateWithSubjectSample {
 		@RequestMapping(value="api/email/template", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
-			// send the email
-			messagingService.send(new Email(null, new MultiTemplateContent("register", new SimpleBean(name, value)), to));
-			// or using fluent API
+			// send the email using fluent API
 			messagingService.send(new Email().
 									content(new MultiTemplateContent("register", new SimpleBean(name, value))).
 									to(to));
