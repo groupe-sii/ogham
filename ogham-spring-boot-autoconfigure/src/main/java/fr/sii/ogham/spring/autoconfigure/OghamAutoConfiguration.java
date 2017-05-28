@@ -30,6 +30,7 @@ import fr.sii.ogham.spring.sms.OghamOvhSmsConfiguration;
 import fr.sii.ogham.spring.sms.OghamSmsProperties;
 import fr.sii.ogham.spring.template.OghamFreemarkerConfiguration;
 import fr.sii.ogham.spring.template.OghamNoTemplateEngineConfiguration;
+import fr.sii.ogham.spring.template.OghamCommonTemplateProperties;
 import fr.sii.ogham.spring.template.OghamThymeleafConfiguration;
 
 /**
@@ -55,7 +56,8 @@ import fr.sii.ogham.spring.template.OghamThymeleafConfiguration;
 @ConditionalOnMissingBean(MessagingService.class)
 @EnableConfigurationProperties({ OghamEmailProperties.class, 
 								 OghamSmsProperties.class, 
-								 OghamMimetypeProperties.class })
+								 OghamMimetypeProperties.class,
+								 OghamCommonTemplateProperties.class })
 @Import({ OghamNoTemplateEngineConfiguration.class, 
 							OghamFreemarkerConfiguration.class, 
 							OghamThymeleafConfiguration.class, 

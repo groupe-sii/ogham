@@ -34,12 +34,12 @@ public class DefaultThymeleafSmsConfigurer implements MessagingConfigurer {
 			// @formatter:off
 			builder
 				.classpath()
-					.pathPrefix("${ogham.sms.thymeleaf.classpath.prefix}", "${ogham.sms.template.classpath.prefix}", "${ogham.sms.thymeleaf.prefix}", "${ogham.sms.template.prefix}")
-					.pathSuffix("${ogham.sms.thymeleaf.classpath.suffix}", "${ogham.sms.template.classpath.suffix}", "${ogham.sms.thymeleaf.suffix}", "${ogham.sms.template.suffix}")
+					.pathPrefix("${ogham.sms.thymeleaf.classpath.path-prefix}", "${ogham.sms.template.classpath.path-prefix}", "${ogham.sms.thymeleaf.path-prefix}", "${ogham.sms.template.path-prefix}", "${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.sms.thymeleaf.classpath.path-suffix}", "${ogham.sms.template.classpath.path-suffix}", "${ogham.sms.thymeleaf.path-suffix}", "${ogham.sms.template.path-suffix}", "${ogham.template.path-suffix}")
 					.and()
 				.file()
-					.pathPrefix("${ogham.sms.thymeleaf.file.prefix}", "${ogham.sms.template.file.prefix}", "${ogham.sms.thymeleaf.prefix}", "${ogham.sms.template.prefix}")
-					.pathSuffix("${ogham.sms.thymeleaf.file.suffix}", "${ogham.sms.template.file.suffix}", "${ogham.sms.thymeleaf.suffix}", "${ogham.sms.template.suffix}");
+					.pathPrefix("${ogham.sms.thymeleaf.file.path-prefix}", "${ogham.sms.template.file.path-prefix}", "${ogham.sms.thymeleaf.path-prefix}", "${ogham.sms.template.path-prefix}", "${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.sms.thymeleaf.file.path-suffix}", "${ogham.sms.template.file.path-suffix}", "${ogham.sms.thymeleaf.path-suffix}", "${ogham.sms.template.path-suffix}", "${ogham.template.path-suffix}");
 			// @formatter:on
 		}
 	}

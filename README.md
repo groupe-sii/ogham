@@ -620,7 +620,7 @@ mail.smtp.port=<your server port>
 
 # ogham additional properties
 ogham.email.from=<sender email address>
-ogham.email.template.prefix=/template/thymeleaf/email/
+ogham.email.template.path-prefix=/template/thymeleaf/email/
 ```
 
 The HTML template content is [available here](https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.html). The content of the HTML is not displayed entirely. Just useful parts are shown here:

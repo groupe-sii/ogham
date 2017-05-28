@@ -36,12 +36,12 @@ public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
 			// @formatter:off
 			builder
 				.classpath()
-					.pathPrefix("${ogham.sms.freemarker.classpath.prefix}", "${ogham.sms.template.classpath.prefix}", "${ogham.sms.freemarker.prefix}", "${ogham.sms.template.prefix}")
-					.pathSuffix("${ogham.sms.freemarker.classpath.suffix}", "${ogham.sms.template.classpath.suffix}", "${ogham.sms.freemarker.suffix}", "${ogham.sms.template.suffix}")
+					.pathPrefix("${ogham.sms.freemarker.classpath.path-prefix}", "${ogham.sms.template.classpath.path-prefix}", "${ogham.sms.freemarker.prefix}", "${ogham.sms.template.path-prefix}", "${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.sms.freemarker.classpath.path-suffix}", "${ogham.sms.template.classpath.path-suffix}", "${ogham.sms.freemarker.suffix}", "${ogham.sms.template.path-suffix}", "${ogham.template.path-suffix}")
 					.and()
 				.file()
-					.pathPrefix("${ogham.sms.freemarker.file.prefix}", "${ogham.sms.template.file.prefix}", "${ogham.sms.freemarker.prefix}", "${ogham.sms.template.prefix}")
-					.pathSuffix("${ogham.sms.freemarker.file.suffix}", "${ogham.sms.template.file.suffix}", "${ogham.sms.freemarker.suffix}", "${ogham.sms.template.suffix}")
+					.pathPrefix("${ogham.sms.freemarker.file.path-prefix}", "${ogham.sms.template.file.path-prefix}", "${ogham.sms.freemarker.prefix}", "${ogham.sms.template.path-prefix}", "${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.sms.freemarker.file.path-suffix}", "${ogham.sms.template.file.path-suffix}", "${ogham.sms.freemarker.suffix}", "${ogham.sms.template.path-suffix}", "${ogham.template.path-suffix}")
 					.and()
 				.configuration()
 					.defaultEncoding("${ogham.freemarker.default-encoding}", "UTF-8")

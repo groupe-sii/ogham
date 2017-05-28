@@ -41,7 +41,7 @@ public class EmailMultiTemplateTest {
 		Properties additionalProps = new Properties();
 		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
 		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		additionalProps.setProperty("ogham.email.template.prefix", "/template/");
+		additionalProps.setProperty("ogham.email.template.path-prefix", "/template/");
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties("/application.properties")

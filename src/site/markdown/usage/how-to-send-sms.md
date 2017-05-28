@@ -374,5 +374,5 @@ ogham.sms.smpp.port=<your server port>
 ogham.sms.smpp.systemId=<your server system ID>
 ogham.sms.smpp.password=<your server password>
 ogham.sms.from=<phone number to display for the sender>
-ogham.sms.template.prefix=/sms/
+ogham.sms.template.path-prefix=/sms/
 ```

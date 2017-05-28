@@ -40,7 +40,7 @@ public class HtmlTemplateSample {
 }
 ```
 
-And now adding the properties `ogham.email.template.prefix` and `ogham.email.template.suffix`:
+And now adding the properties `ogham.email.template.path-prefix` and `ogham.email.template.path-suffix`:
 
 <span class="highlight" data-lines="20-21,27" data-irrelevant-lines="1-11,15-19"></span>
 <span class="collapse" data-lines="1-11,15-19"></span>
@@ -65,8 +65,8 @@ public class HtmlTemplateSample {
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.template.prefix", "/template/thymeleaf/");
-		properties.setProperty("ogham.email.template.suffix", ".html");
+		properties.setProperty("ogham.email.template.path-prefix", "/template/thymeleaf/");
+		properties.setProperty("ogham.email.template.path-suffix", ".html");
 		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
@@ -80,4 +80,4 @@ public class HtmlTemplateSample {
 
 It allows you to use a simple name for the template instead of the full path.
 
-You can do the same for SMS by using `ogham.sms.template.prefix` and `ogham.sms.template.suffix`.
+You can do the same for SMS by using `ogham.sms.template.path-prefix` and `ogham.sms.template.path-suffix`.

@@ -41,8 +41,8 @@ public class EmailTemplatePrefixTest {
 		Properties additionalProperties = new Properties();
 		additionalProperties.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
 		additionalProperties.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		additionalProperties.setProperty("ogham.email.template.prefix", "/template/thymeleaf/source/");
-		additionalProperties.setProperty("ogham.email.template.suffix", ".html");
+		additionalProperties.setProperty("ogham.email.template.path-prefix", "/template/thymeleaf/source/");
+		additionalProperties.setProperty("ogham.email.template.path-suffix", ".html");
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties("/application.properties")
