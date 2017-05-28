@@ -7,7 +7,15 @@ import fr.sii.ogham.spring.common.OghamResolutionProperties;
 
 @ConfigurationProperties("ogham.sms")
 public class OghamSmsProperties {
+	/**
+	 * If no sender phone number is explicitly defined on the message, Ogham
+	 * will use this phone number as default sender number.
+	 */
 	private String from;
+	/**
+	 * If no recipient phone number is explicitly defined on the message, Ogham
+	 * will use this phone number as default recipient number.
+	 */
 	private String to;
 	private boolean fromFormatEnableAlphanumeric = true;
 	private boolean fromFormatEnableShortcode = true;

@@ -50,7 +50,7 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  * <li>Configures encoding:
  * <ul>
  * <li>It uses "ogham.email.javamail.body.charset" property value as charset for
- * email body is defined. Default charset is UTF-8</li>
+ * email body if defined. Default charset is UTF-8</li>
  * </ul>
  * </li>
  * <li>Configures mimetype detection:

@@ -1,7 +1,5 @@
 package fr.sii.ogham.spring.common;
 
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-
 public class PrefixSuffixProperties {
 	/**
 	 * You can set the path prefix for resource resolution. The aim is to define
@@ -9,38 +7,44 @@ public class PrefixSuffixProperties {
 	 * for you. It avoids to explicitly write the whole path and let you change
 	 * the resource resolution easily.
 	 * 
-	 * For example:
-	 * <ul>
-	 * <li>You have one template located into
-	 * <code>/foo/template/createAccount.html</code></li>
-	 * <li>You have one template located into
-	 * <code>/foo/template/resetPassword.html</code></li>
-	 * </ul>
+	 * For example, you have one template located into
+	 * "/foo/template/createAccount.html" and you have one template located into
+	 * "/foo/template/resetPassword.html".
 	 * 
-	 * So you can set the prefix path to <code>/foo/template/</code>. You can
-	 * now reference the templates using the file name:
-	 * <ul>
-	 * <li><code>createAccount.html</code></li>
-	 * <li><code>resetPassword.html</code></li>
-	 * </ul>
+	 * So you can set the prefix path to "/foo/template/". You can now reference
+	 * the templates using only the file name: "createAccount.html" and
+	 * "resetPassword.html".
 	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
-	 * 
-	 * <pre>
-	 * .pathPrefix("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the build() method of the specialized resource resolution builder is
-	 * called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * Path prefix can be set globally, by template engine, by sending system
+	 * and by resolver. For example, the priority order for classpath is (from
+	 * highest priority to lowest): (1)
+	 * ogham.email.freemarker.classpath.path-prefix, (2)
+	 * ogham.email.template.classpath.path-prefix, (3)
+	 * ogham.email.freemarker.path-prefix, (4) ogham.email.template.path-prefix,
+	 * (5) ogham.template.path-prefix
 	 */
 	private String pathPrefix;
+
+	/**
+	 * You can set the path suffix for resource resolution. The aim is to define
+	 * only the name of the resource (or a subset) and the system will find it
+	 * for you. It avoids to explicitly write the whole path and let you change
+	 * the resource resolution easily.
+	 * 
+	 * For example, you have one template located into "createAccount.html" and
+	 * you have one template located into "resetPassword.html".
+	 * 
+	 * So you can set the suffix path to ".html". You can now reference the
+	 * templates using the file name: "createAccount" and "resetPassword".
+	 * 
+	 * Path suffix can be set globally, by template engine, by sending system
+	 * and by resolver. For example, the priority order for classpath is (from
+	 * highest priority to lowest): (1)
+	 * ogham.email.freemarker.classpath.path-suffix, (2)
+	 * ogham.email.template.classpath.path-suffix, (3)
+	 * ogham.email.freemarker.path-suffix, (4) ogham.email.template.path-suffix,
+	 * (5) ogham.template.path-suffix
+	 */
 	private String pathSuffix;
 
 	public String getPathPrefix() {

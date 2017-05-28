@@ -12,10 +12,25 @@ public class RecipientNumberBuilder extends AbstractParent<PhoneNumbersBuilder> 
 	private RecipientNumberFormatBuilder formatBuilder;
 	private PhoneNumberTranslator customTranslator;
 	
+	/**
+	 * Default constructor used without all Ogham work.
+	 * 
+	 * <strong>WARNING: use is only if you know what you are doing !</strong>
+	 */
 	public RecipientNumberBuilder() {
 		this(null, new SimpleEnvironmentBuilder<>(null));
 	}
 
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
 	public RecipientNumberBuilder(PhoneNumbersBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;

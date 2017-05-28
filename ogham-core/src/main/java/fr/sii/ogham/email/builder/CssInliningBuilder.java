@@ -21,17 +21,45 @@ import fr.sii.ogham.html.inliner.CssInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.ogham.html.translator.InlineCssTranslator;
 
+/**
+ * Configures how CSS are applied on HTML emails.
+ * 
+ * Inlining CSS means that CSS styles are loaded and applied on the matching
+ * HTML nodes using the {@code style} HTML attribute.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> implements ResourceResolutionBuilder<CssInliningBuilder>, Builder<ContentTranslator> {
 	private static final Logger LOG = LoggerFactory.getLogger(CssInliningBuilder.class);
-	
+
 	private ResourceResolutionBuilderHelper<CssInliningBuilder> resourceResolutionBuilderHelper;
 	private boolean useJsoup;
 
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
 	public CssInliningBuilder(CssHandlingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuilder);
 	}
 
+	/**
+	 * Enable CSS inlining: CSS styles are loaded and applied on the matching
+	 * HTML nodes using the {@code style} HTML attribute.
+	 * 
+	 * The implementation uses <a href="https://jsoup.org/">jsoup</a> to parse
+	 * HTML content.
+	 * 
+	 * @return this instance for fluent chaining
+	 */
 	public CssInliningBuilder jsoup() {
 		useJsoup = true;
 		return this;
@@ -57,23 +85,21 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 		return resourceResolutionBuilderHelper.resolver(resolver);
 	}
 
-
 	@Override
 	public ContentTranslator build() throws BuildException {
 		ResourceResolver resourceResolver = buildResolver();
 		CssInliner cssInliner = buildInliner();
-		if(cssInliner==null) {
-			// TODO: log to indicate why no translator
+		if (cssInliner == null) {
+			LOG.info("CSS won't be applied on HTML content of your emails because no inliner is configured");
 			return null;
 		}
 		return new InlineCssTranslator(cssInliner, resourceResolver);
 	}
 
 	private CssInliner buildInliner() {
-		if(useJsoup) {
+		if (useJsoup) {
 			return new JsoupCssInliner();
 		}
-		LOG.debug("No CSS inliner implementation configured");
 		return null;
 	}
 

@@ -12,6 +12,16 @@ public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements B
 	private SenderNumberBuilder senderNumberBuilder;
 	private RecipientNumberBuilder recipientNumberBuilder;
 
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
 	public PhoneNumbersBuilder(SmsBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;

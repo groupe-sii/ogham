@@ -11,23 +11,38 @@ public class SenderNumberBuilder extends AbstractParent<PhoneNumbersBuilder> imp
 	private EnvironmentBuilder<?> environmentBuilder;
 	private SenderNumberFormatBuilder formatBuilder;
 	private PhoneNumberTranslator customTranslator;
-	
+
+	/**
+	 * Default constructor when using without all Ogham work.
+	 * 
+	 * <strong>WARNING: use is only if you know what you are doing !</strong>
+	 */
 	public SenderNumberBuilder() {
 		this(null, new SimpleEnvironmentBuilder<>(null));
 	}
 
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
 	public SenderNumberBuilder(PhoneNumbersBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
 	}
 
 	public SenderNumberFormatBuilder format() {
-		if(formatBuilder==null) {
+		if (formatBuilder == null) {
 			formatBuilder = new SenderNumberFormatBuilder(this, environmentBuilder);
 		}
 		return formatBuilder;
 	}
-	
+
 	public SenderNumberBuilder convert(PhoneNumberTranslator handler) {
 		this.customTranslator = handler;
 		return this;
@@ -35,7 +50,7 @@ public class SenderNumberBuilder extends AbstractParent<PhoneNumbersBuilder> imp
 
 	@Override
 	public PhoneNumberTranslator build() throws BuildException {
-		if(customTranslator!=null) {
+		if (customTranslator != null) {
 			return customTranslator;
 		}
 		return formatBuilder.build();

@@ -5,13 +5,92 @@ import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.message.content.EmailVariant;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
 import freemarker.template.TemplateExceptionHandler;
 
-@ConfigurerFor(targetedBuilder={"minimal", "standard"}, priority=80000)
+/**
+ * Default configurer for Freemarker template engine that is automatically
+ * applied every time a {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()} or {@link MessagingBuilder#minimal()}.
+ * 
+ * <p>
+ * The configurer has a priority of 80000 in order to be applied after global
+ * configurer but before any sender implementation.
+ * </p>
+ * 
+ * This configurer is applied only if {@code freemarker.template.Configuration}
+ * and {@code freemarker.template.Template} are present in the classpath. If not
+ * present, template engine is not registered at all.
+ * 
+ * <p>
+ * This configurer inherits environment configuration (see
+ * {@link EnvironmentBuilder},
+ * {@link FreemarkerEmailBuilder#environment(EnvironmentBuilder)} and
+ * {@link FreemarkerSmsBuilder#environment(EnvironmentBuilder)}).
+ * </p>
+ * <p>
+ * It also copies resource resolution configuration of
+ * {@link DefaultMessagingConfigurer} to inherit resource resolution lookups
+ * (see {@link ResourceResolutionBuilder}).
+ * </p>
+ * 
+ * <p>
+ * This configurer applies the following configuration:
+ * <ul>
+ * <li>Configures template prefix/suffix paths:
+ * <ul>
+ * <li>Uses the first property that has a value for classpath resolution prefix:
+ * "ogham.email.freemarker.classpath.path-prefix",
+ * "ogham.email.template.classpath.path-prefix",
+ * "ogham.email.freemarker.path-prefix", "ogham.email.template.path-prefix",
+ * "ogham.template.path-prefix"</li>
+ * <li>Uses the first property that has a value for classpath resolution suffix:
+ * "ogham.email.freemarker.classpath.path-suffix",
+ * "ogham.email.template.classpath.path-suffix",
+ * "ogham.email.freemarker.path-suffix", "ogham.email.template.path-suffix",
+ * "ogham.template.path-suffix"</li>
+ * <li>Uses the first property that has a value for file resolution prefix:
+ * "ogham.email.freemarker.file.path-prefix",
+ * "ogham.email.template.file.path-prefix",
+ * "ogham.email.freemarker.path-prefix", "ogham.email.template.path-prefix",
+ * "ogham.template.path-prefix"</li>
+ * <li>Uses the first property that has a value for file resolution suffix:
+ * "ogham.email.freemarker.file.path-suffix",
+ * "ogham.email.template.file.path-suffix",
+ * "ogham.email.freemarker.path-suffix", "ogham.email.template.path-suffix",
+ * "ogham.template.path-suffix"</li>
+ * </ul>
+ * </li>
+ * <li>Configures email alternative content:
+ * <ul>
+ * <li>Automatically loads HTML template if extension is .html.ftl</li>
+ * <li>Automatically loads text template if extension is .txt.ftl</li>
+ * </ul>
+ * </li>
+ * <li>Configures encoding:
+ * <ul>
+ * <li>It uses "ogham.freemarker.default-encoding" property value as charset for
+ * template parsing if defined. Default charset is UTF-8</li>
+ * </ul>
+ * </li>
+ * <li>Configures template detection:
+ * <ul>
+ * <li>Uses {@link FreeMarkerTemplateDetector} to detect if templates are
+ * parseable by Freemarker</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = 80000)
 public class DefaultFreemarkerEmailConfigurer implements MessagingConfigurer {
 	private final MessagingConfigurerAdapter delegate;
 
@@ -26,12 +105,12 @@ public class DefaultFreemarkerEmailConfigurer implements MessagingConfigurer {
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
-		if(canUseFreemaker()) {
+		if (canUseFreemaker()) {
 			FreemarkerEmailBuilder builder = msgBuilder.email().template(FreemarkerEmailBuilder.class);
 			// use same environment as parent builder
 			builder.environment(msgBuilder.environment());
 			// apply default resource resolution configuration
-			if(delegate!=null) {
+			if (delegate != null) {
 				delegate.configure(builder);
 			}
 			// @formatter:off

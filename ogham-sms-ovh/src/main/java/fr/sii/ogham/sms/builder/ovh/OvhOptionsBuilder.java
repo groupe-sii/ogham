@@ -133,7 +133,7 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * <li>1 for 7bit encoding</li>
 	 * <li>2 for 8bit encoding (UTF-8)</li>
 	 * </ul>
-	 * If you use UTF-8, your SMS will have a maximum size of 70 charatacters
+	 * If you use UTF-8, your SMS will have a maximum size of 70 characters
 	 * instead of 160
 	 * 
 	 * You can specify one or several property keys. For example:

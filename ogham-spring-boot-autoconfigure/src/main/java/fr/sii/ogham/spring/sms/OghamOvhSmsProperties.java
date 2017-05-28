@@ -7,9 +7,21 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
 
 @ConfigurationProperties("ogham.sms.ovh")
 public class OghamOvhSmsProperties {
+	/**
+	 * URL of the OVH SMS HTTP API
+	 */
 	private String url = "https://www.ovh.com/cgi-bin/sms/http2sms.cgi";
+	/**
+	 * The OVH account identifier
+	 */
 	private String account;
+	/**
+	 * THe OVH username
+	 */
 	private String login;
+	/**
+	 * The OVH password
+	 */
 	private String password;
 	@NestedConfigurationProperty
 	private Options options;
@@ -55,8 +67,22 @@ public class OghamOvhSmsProperties {
 	}
 
 	public static class Options {
+		/**
+		 * Enable/disable "STOP" indication at the end of the message (useful to
+		 * disable for non-commercial SMS).
+		 */
 		private boolean noStop = true;
+		/**
+		 * Set the message encoding: NORMAL for 7bit encoding and UTF_8 for 8bit
+		 * encoding.
+		 * 
+		 * If you use UTF-8, your SMS will have a maximum size of 70
+		 * characters instead of 160
+		 */
 		private SmsCoding smsCoding;
+		/**
+		 * Set a tag to mark sent messages (20 maximum character string)
+		 */
 		private String tag;
 
 		public boolean isNoStop() {

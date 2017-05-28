@@ -19,15 +19,40 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
 import fr.sii.ogham.core.translator.resource.EveryResourceTranslator;
 import fr.sii.ogham.core.translator.resource.LookupResourceTranslator;
+import fr.sii.ogham.email.attachment.Attachment;
 
+/**
+ * Configures how {@link Attachment}s are handled.
+ * 
+ * Attachment resolution consists of finding a file:
+ * <ul>
+ * <li>either on filesystem</li>
+ * <li>or in the classpath</li>
+ * <li>or anywhere else</li>
+ * </ul>
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> implements ResourceResolutionBuilder<AttachmentHandlingBuilder>, Builder<AttachmentResourceTranslator> {
 	private static final Logger LOG = LoggerFactory.getLogger(AttachmentHandlingBuilder.class);
-	
+
 	private ResourceResolutionBuilderHelper<AttachmentHandlingBuilder> resourceResolutionBuilderHelper;
 
-	public AttachmentHandlingBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuider) {
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
+	public AttachmentHandlingBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
-		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuider);
+		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuilder);
 	}
 
 	@Override

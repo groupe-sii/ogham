@@ -24,6 +24,16 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	private ValueOrProperties<Long> unbind;
 	private RetryBuilder<SessionBuilder> connectRetryBuilder;
 	
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
 	public SessionBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;

@@ -26,6 +26,16 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 	private List<String> enableShortCodeProps;
 	private List<String> enableInternationalProps;
 	
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
 	public SenderNumberFormatBuilder(SenderNumberBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;

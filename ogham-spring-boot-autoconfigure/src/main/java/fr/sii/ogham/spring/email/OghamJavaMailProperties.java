@@ -7,13 +7,19 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 @ConfigurationProperties("ogham.email.javamail")
 public class OghamJavaMailProperties {
+	/**
+	 * The mail server address host (IP or hostname)
+	 */
 	private String host;
+	/**
+	 * The mail server port
+	 */
 	private Integer port;
 	@NestedConfigurationProperty
 	private AuthenticationProperties authenticator;
 	@NestedConfigurationProperty
 	private BodyProperties body;
-	
+
 	public String getHost() {
 		return host;
 	}
@@ -47,27 +53,36 @@ public class OghamJavaMailProperties {
 	}
 
 	public static class AuthenticationProperties {
+		/**
+		 * SMTP server username
+		 */
 		private String username;
+		/**
+		 * SMTP server password
+		 */
 		private String password;
 
 		public String getUsername() {
 			return username;
 		}
-		
+
 		public void setUsername(String username) {
 			this.username = username;
 		}
-		
+
 		public String getPassword() {
 			return password;
 		}
-		
+
 		public void setPassword(String password) {
 			this.password = password;
 		}
 	}
-	
+
 	public static class BodyProperties {
+		/**
+		 * Encoding for body. Default to UTF-8
+		 */
 		private Charset charset;
 
 		public Charset getCharset() {

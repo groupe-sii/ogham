@@ -20,6 +20,16 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 	private Boolean enableInternational;
 	private List<String> enableInternationalProps;
 
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
 	public RecipientNumberFormatBuilder(RecipientNumberBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
