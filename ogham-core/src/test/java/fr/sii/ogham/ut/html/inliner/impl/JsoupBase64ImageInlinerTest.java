@@ -2,6 +2,7 @@ package fr.sii.ogham.ut.html.inliner.impl;
 
 import static fr.sii.ogham.assertion.OghamAssertions.resource;
 import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,9 +40,11 @@ public class JsoupBase64ImageInlinerTest {
 		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
 		// do the job
 		ContentWithImages inlined = inliner.inline(source, images);
+		// remove ogham attributes (internal use only)
+		String inlinedHtml = removeOghamAttributes(inlined.getContent());
 		// prepare expected result for the html
 		String expected = getExpectedHtml("withImagesBase64.html");
-		AssertHtml.assertSimilar(expected, inlined.getContent());
+		AssertHtml.assertSimilar(expected, inlinedHtml);
 	}
 	
 	@Test
@@ -51,9 +54,11 @@ public class JsoupBase64ImageInlinerTest {
 		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
 		// do the job
 		ContentWithImages inlined = inliner.inline(source, images);
+		// remove ogham attributes (internal use only)
+		String inlinedHtml = removeOghamAttributes(inlined.getContent());
 		// prepare expected result for the html
 		String expected = getExpectedHtml("skipInlineBase64.html");
-		AssertHtml.assertSimilar(expected, inlined.getContent());
+		AssertHtml.assertSimilar(expected, inlinedHtml);
 	}
 	
 	

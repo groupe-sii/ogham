@@ -2,6 +2,7 @@ package fr.sii.ogham.ut.html.inliner.impl;
 
 import static fr.sii.ogham.assertion.OghamAssertions.resource;
 import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,12 +59,14 @@ public class JsoupAttachImageInlinerTest {
 		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
 		// do the job
 		ContentWithImages inlined = inliner.inline(source, images);
+		// remove ogham attributes (internal use only)
+		String inlinedHtml = removeOghamAttributes(inlined.getContent());
 		// prepare expected result for the html
 		String expected = getExpectedHtml("withImagesAttach.html");
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(images);
 		// assertions
-		AssertHtml.assertSimilar(expected, inlined.getContent());
+		AssertHtml.assertSimilar(expected, inlinedHtml);
 		Assert.assertEquals("should have 5 attachments", 5, inlined.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
 	}
@@ -75,12 +78,14 @@ public class JsoupAttachImageInlinerTest {
 		List<ImageResource> images = loadImages("fb.gif", "h1.gif", "left.gif", "right.gif", "tw.gif");
 		// do the job
 		ContentWithImages inlined = inliner.inline(source, images);
+		// remove ogham attributes (internal use only)
+		String inlinedHtml = removeOghamAttributes(inlined.getContent());
 		// prepare expected result for the html
 		String expected = getExpectedHtml("skipInlineAttach.html");
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif"));
 		// assertions
-		AssertHtml.assertSimilar(expected, inlined.getContent());
+		AssertHtml.assertSimilar(expected, inlinedHtml);
 		Assert.assertEquals("should have 2 attachments", 2, inlined.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
 	}

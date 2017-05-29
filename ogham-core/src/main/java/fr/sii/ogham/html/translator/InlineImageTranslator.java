@@ -1,5 +1,7 @@
 package fr.sii.ogham.html.translator;
 
+import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -79,15 +81,23 @@ public class InlineImageTranslator implements ContentTranslator {
 				List<ImageResource> imageResources = load(images);
 				// generate new HTML with inlined images
 				ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);
+				// remove ogham attributes
+				ContentWithImages cleaned = clean(contentWithImages);
 				// update the HTML content
-				Content inlinedContent = updateHtmlContent(content, contentWithImages);
+				Content inlinedContent = updateHtmlContent(content, cleaned);
 				// if it was already a content with attachments then update it otherwise create a new one
-				return generateFinalContent(content, contentWithImages, inlinedContent);
+				return generateFinalContent(content, cleaned, inlinedContent);
 			}
 		} else {
 			LOG.debug("Neither content usable as string nor HTML. Skip image inlining for {}", content);
 		}
 		return content;
+	}
+
+	private ContentWithImages clean(ContentWithImages contentWithImages) {
+		String html = removeOghamAttributes(contentWithImages.getContent());
+		contentWithImages.setContent(html);
+		return contentWithImages;
 	}
 
 	private List<String> filterExternalUrls(List<String> imageUrls) {

@@ -10,7 +10,18 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
  * Configures how images defined in the HTML template are inlined (converted to
  * base64).
  * 
- * This builder only provides an implementation that uses
+ * For example, if your template contains the following HTML code:
+ * 
+ * <pre>
+ * {@code
+ *    <img src="classpath:/foo.png" ogham-inline-mode="base64" />
+ * }
+ * </pre>
+ * 
+ * Then the image will be loaded from the classpath and encoded into a base64
+ * string. This base64 string is used in the src attribute of the {@code <img>}.
+ * 
+ * This builder only provides one implementation that uses
  * <a href="https://jsoup.org/">jsoup</a> to parse HTML content and then
  * converts image content to base64.
  * 

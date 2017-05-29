@@ -7,7 +7,7 @@ package fr.sii.ogham.html.inliner;
  * @author Aurélien Baudet
  *
  */
-public class ImageInlinerConstants {
+public final class ImageInlinerConstants {
 	/**
 	 * <p>
 	 * The attribute name to indicate which strategy for inlining to apply if
@@ -18,43 +18,82 @@ public class ImageInlinerConstants {
 	 * 
 	 * <pre>
 	 * {@code
-	 * 		<img src="..." data-inline-mode="base64" />
+	 * 		<img src="..." ogham-inline-mode="base64" />
 	 * }
 	 * </pre>
 	 * 
-	 * It forces to use <code>base64</code> inlining for this image
-	 */
-	public static final String INLINE_MODE_ATTR = "data-inline-mode";
-
-	/**
-	 * <p>
-	 * The attribute name to indicate the modes that are not allowed for
-	 * inlining. The value can contain several modes separated by colon (,).
-	 * This attribute is complementary with the previous one: it is useful in
-	 * order to not force statically one mode directly in the template. It just
-	 * tells that one or several modes can't be applied.
-	 * </p>
+	 * It forces to use <code>base64</code> inlining for this image.
 	 * 
-	 * For example :
+	 * 
+	 * <p>
+	 * You can also skip inlining by using "skip" value:
 	 * 
 	 * <pre>
 	 * {@code
-	 * 		<img src="..." data-skip-inline="attach" />
+	 * 		<img src="..." ogham-inline-mode="skip" />
 	 * }
 	 * </pre>
 	 * 
-	 * It indicates that all modes are applicable except the mode
-	 * <code>attach</code>
+	 * @see InlineModes
 	 */
-	public static final String SKIP_INLINE_ATTR = "data-skip-inline";
+	public static final String INLINE_MODE_ATTR = "ogham-inline-mode";
 
 	/**
-	 * Value for skipping all inlining modes. The image will not be inlined at
-	 * all.
+	 * Attribute to mark an image as already inlined in order to not process it
+	 * again
 	 */
-	public static final String SKIP_INLINE_ALL_VALUE = "true";
+	public static final String INLINED_ATTR = "data-ogham-inlined";
 
-	
+	/**
+	 * Interface for defining an inline mode
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
+	public interface InlineMode {
+		/**
+		 * The inline mode value
+		 * 
+		 * @return inline mode value
+		 */
+		String mode();
+	}
+
+	/**
+	 * Provide predefined inline modes
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
+	public enum InlineModes implements InlineMode {
+		/**
+		 * Attach the image to the email and references it in the HTML using a
+		 * Content-ID (CID).
+		 */
+		ATTACH("attach"),
+		/**
+		 * Encode the image content to a base64 string that is directly used by
+		 * image {@code src} attribute
+		 */
+		BASE64("base64"),
+		/**
+		 * Do not inline the image
+		 */
+		SKIP("skip");
+
+		private final String mode;
+
+		private InlineModes(String mode) {
+			this.mode = mode;
+		}
+
+		@Override
+		public String mode() {
+			return mode;
+		}
+
+	}
+
 	private ImageInlinerConstants() {
 		super();
 	}

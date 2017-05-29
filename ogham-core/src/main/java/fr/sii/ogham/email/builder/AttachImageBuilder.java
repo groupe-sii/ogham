@@ -15,6 +15,19 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
  * <a href="https://tools.ietf.org/html/rfc4021#section-2.2.2">Content-ID (or
  * CID)</a> if the image is attached to the email.
  * 
+ * For example, if your template contains the following HTML code:
+ * 
+ * <pre>
+ * {@code
+ *    <img src="classpath:/foo.png" ogham-inline-mode="attach" />
+ * }
+ * </pre>
+ * 
+ * Then the image will be loaded from the classpath and attached to the email.
+ * The src attribute will be replaced by the Content-ID.
+ * 
+ * The Content-ID is generated using a {@link IdGenerator} that is configured
+ * through the {@link #cid()} method.
  * 
  * @author Aurélien Baudet
  *
