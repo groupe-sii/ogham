@@ -12,7 +12,7 @@ package fr.sii.ogham.core.retry;
  * @author Aurélien Baudet
  *
  */
-public interface Retry {
+public interface RetryStrategy {
 	/**
 	 * Indicate that retries should stop now.
 	 * 

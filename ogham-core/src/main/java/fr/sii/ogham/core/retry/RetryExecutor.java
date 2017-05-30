@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 /**
  * Execute an action until it succeeds or the maximum retries are reached.
  * 
- * The retry management is handled by a {@link Retry} strategy. This strategy
+ * The retry management is handled by a {@link RetryStrategy} strategy. This strategy
  * indicates when the next try (next call of the action) should operate and when
  * the retries must stop.
  * 
@@ -39,8 +39,8 @@ public interface RetryExecutor {
 	/**
 	 * Execute the action. If the action succeeds then return the result
 	 * immediately. If the action fails (any exception) then retry it according
-	 * to {@link Retry} strategy. The action will be executed until it succeeds
-	 * or the {@link Retry} strategy is terminated. In this case, an exception
+	 * to {@link RetryStrategy} strategy. The action will be executed until it succeeds
+	 * or the {@link RetryStrategy} strategy is terminated. In this case, an exception
 	 * is thrown (often the last one).
 	 * 
 	 * @param actionToRetry

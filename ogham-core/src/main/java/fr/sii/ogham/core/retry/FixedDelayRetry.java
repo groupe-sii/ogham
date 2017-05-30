@@ -30,7 +30,7 @@ package fr.sii.ogham.core.retry;
  * @author Aurélien Baudet
  *
  */
-public class FixedDelayRetry implements Retry {
+public class FixedDelayRetry implements RetryStrategy {
 	private final int maxRetries;
 	private final long delay;
 	private int retries;

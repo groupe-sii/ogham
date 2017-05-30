@@ -93,6 +93,6 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 		if (fixedDelay == null) {
 			return null;
 		}
-		return new SimpleRetryExecutor(fixedDelay);
+		return new SimpleRetryExecutor(new BuilderToRetryStrategyProviderBridge(fixedDelay));
 	}
 }
