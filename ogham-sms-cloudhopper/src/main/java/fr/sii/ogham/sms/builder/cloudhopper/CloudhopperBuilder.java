@@ -1,7 +1,5 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredProperty;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,16 +19,13 @@ import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.LoggingOptions;
 
 import fr.sii.ogham.core.builder.AbstractParent;
-import fr.sii.ogham.core.builder.ActivableAtRuntime;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
-import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
-import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.builder.SmsBuilder;
@@ -112,7 +107,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperOptions;
  * @author Aurélien Baudet
  */
 // TODO: be able to configure PhoneNumberTranslator
-public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Builder<CloudhopperSMPPSender>, ActivableAtRuntime {
+public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Builder<CloudhopperSMPPSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperBuilder.class);
 
 	private EnvironmentBuilder<CloudhopperBuilder> environmentBuilder;
@@ -660,12 +655,6 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		CloudhopperCharsetHandler charsetHandler = buildCharsetHandler();
 		PhoneNumberTranslator phoneNumberTranslator = buildPhoneNumberTranslator();
 		return new CloudhopperSMPPSender(session, options, charsetHandler, phoneNumberTranslator);
-	}
-
-	@Override
-	public Condition<Message> getCondition() {
-		PropertyResolver propertyResolver = buildPropertyResolver();
-		return requiredProperty(propertyResolver, "ogham.sms.cloudhopper.host").or(requiredProperty(propertyResolver, "ogham.sms.smpp.host"));
 	}
 
 	private PropertyResolver buildPropertyResolver() {
