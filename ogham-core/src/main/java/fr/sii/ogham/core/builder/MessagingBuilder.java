@@ -18,13 +18,13 @@ import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.StandaloneResourceResolutionBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.builder.BuildException;
@@ -33,16 +33,132 @@ import fr.sii.ogham.core.service.EverySupportingMessagingService;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.service.WrapExceptionMessagingService;
 import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.sms.message.Sms;
 
 /**
- * TODO: indiquer ce qu'on peut faire avec plein d'exemples de code: - comment
- * configurer l'envoi d'email - comment configurer l'envoi de SMS
+ * Ogham provides many useful behaviors to focus on the message content and not
+ * the need of understanding and implementing complex protocols. Sending emails
+ * seems to be easy but the RFCs
+ * (<a href="https://tools.ietf.org/html/rfc5321">RFC5321</a>,
+ * <a href="https://tools.ietf.org/html/rfc821">RFC821</a>, ...) are long and
+ * complex. If you don't know those RFCs, some email clients won't be able to
+ * read your emails. This is the same with the
+ * <a href="http://opensmpp.org/specs/smppv50.pdf">SMPP protocol</a> used for
+ * sending SMS.
  * 
- * TODO: expliquer les standard, minimal, empty et le lien avec les configurers
+ * The builder is a helper to instantiate and configure a
+ * {@link MessagingService}. The {@link MessagingService} is used to send:
+ * <ul>
+ * <li>{@link Email} messages</li>
+ * <li>{@link Sms} messages</li>
+ * </ul>
  * 
- * TODO: expliquer que les comportements par défaut sont amenés par les
- * configurers
+ * Content of the messages can be provided by templates. Templates are parsed by
+ * template engines. Several template engines are supported:
+ * <ul>
+ * <li>Thymeleaf</li>
+ * <li>Freemaker</li>
+ * </ul>
+ * 
+ * Ogham allows to send {@link Email} and {@link Sms} using several
+ * implementations:
+ * <ul>
+ * <li>JavaMail (STMP) or SendGrid (HTTP) for sending {@link Email}</li>
+ * <li>Cloudhopper (SMPP) or OVH (HTTP) for sending {@link Sms}</li>
+ * </ul>
+ * The aim is to provide an abstraction to construct a portable message (
+ * {@link Email} or {@link Sms}) and to be able to change infrastructure (SMTP
+ * server to online HTTP service for example) without changing your code.
+ * 
+ * <p>
+ * Here is an example of standard configuration that provides a default behavior
+ * that fits 95% of usages:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .content(new MultiTemplateContent("email/sample", new SampleBean("foo", 42)))
+ *   .to("Foo Bar &lt;foo.bar@sii.fr&gt;"))
+ *   .attach(new Attachment("file:/data/reports/report1.pdf"));
+ * </code>
+ * </pre>
+ * 
+ * This sample shows that:
+ * <ul>
+ * <li>System properties are used to configure "mail.host" and "mail.port"</li>
+ * <li>An email is sent to "foo.bar@sii.fr"</li>
+ * <li>The email provides a main content (HTML) and a fallback content (text)
+ * <ul>
+ * <li>The HTML content comes from a template located in the classpath
+ * (email/sample.html) and variables that are present in the template are
+ * replaced by values provided by a simple bean object (no conversion is
+ * needed)</li>
+ * <li>The text content comes from a template located in the classpath
+ * (email/sample.txt.ftl) and variables that are present in the template are
+ * replaced by values provided by a simple bean object (no conversion is
+ * needed)</li>
+ * </ul>
+ * </li>
+ * <li>The HTML template has CSS styles that are inlined (CSS are forbidden by
+ * many email clients but inlined styles attributes are allowed)</li>
+ * <li>The HTML template references images (using &lt;img&gt;) that are
+ * automatically attached to the sent email (mimetype of each image has been
+ * detected and indicated to the sent message)</li>
+ * <li>A file located on the filesystem is attached to the email, its mimetype
+ * has been automatically detected and indicated to the sent message</li>
+ * <li>The subject is provided by the &lt;title&gt; tag of the HTML</li>
+ * <li>The sender email address is provided by the system property
+ * "ogham.email.from"</li>
+ * </ul>
+ * 
+ * 
+ * <p>
+ * The default behavior is brought by static factory methods {@link #standard()}
+ * and {@link #minimal()}. If you don't want to use predefined behaviors, you
+ * can use directly {@code new MessagingBuilder()} or {@link #empty()} static
+ * factory.
+ * 
+ * Those factory methods rely on {@link MessagingConfigurer}s to provide
+ * predefined behaviors.
+ * 
+ * <p>
+ * The default behaviors can be used and customized:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties()
+ *       .set("mail.host", "localhost")
+ *       .set("mail.port", "25")
+ *       .and()
+ *     .and()
+ *   .mimetype()
+ *     .defaultMimetype("application/octet-stream")
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .content(new MultiTemplateContent("email/sample", new SampleBean("foo", 42)))
+ *   .to("Foo Bar &lt;foo.bar@sii.fr&gt;"))
+ *   .attach(new Attachment("file:/data/reports/report1.pdf"));
+ * </code>
+ * </pre>
+ * 
+ * The previous sample shows how to change default behaviors to fit your needs:
+ * <ul>
+ * <li>It set the SMTP host and port in the code not by using system
+ * properties</li>
+ * <li>It overrides default mimetype to provide a mimetype that fit your needs
+ * when mimetype detection is not enough accurate</li>
+ * </ul>
  * 
  * @author Aurélien Baudet
  *
@@ -59,6 +175,15 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	private SmsBuilder smsBuilder;
 	private boolean wrapUncaught;
 
+	/**
+	 * Initializes the builder with minimal requirements:
+	 * <ul>
+	 * <li>an empty {@link EnvironmentBuilder}</li>
+	 * <li>an empty {@link MimetypeDetectionBuilder}</li>
+	 * <li>an empty {@link ResourceResolutionBuilder}</li>
+	 * </ul>
+	 * 
+	 */
 	public MessagingBuilder() {
 		super();
 		configurers = new ArrayList<>();
@@ -67,9 +192,44 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this, environmentBuilder);
 	}
 
+	/**
+	 * Registers a configurer with a priority. Configuration order may be
+	 * important. The priority is used to apply configurers in order. The
+	 * configurer with highest priority (applied first) has the greatest value.
+	 * 
+	 * The configurer is applied on a this builder instance to configure it
+	 * (when {@link #configure()} is called).
+	 * 
+	 * <p>
+	 * When using {@link #standard()} and {@link #minimal()} factory methods,
+	 * the list of configurers are automatically loaded from the classpath and
+	 * registered. The priority is indicated through the {@link ConfigurerFor}
+	 * annotation.
+	 * 
+	 * 
+	 * @param configurer
+	 *            the configurer to register
+	 * @param priority
+	 *            the configurer priority
+	 * @return this instance for fluent chaining
+	 */
 	public MessagingBuilder register(MessagingConfigurer configurer, int priority) {
 		configurers.add(new PrioritizedConfigurer(priority, configurer));
 		return this;
+	}
+
+	/**
+	 * Apply all registered configurers on this builder instance.
+	 * 
+	 * <p>
+	 * When using {@link #standard()} and {@link #minimal()} factory methods,
+	 * this method is automatically called.
+	 */
+	public void configure() {
+		Collections.sort(configurers, new PriorityComparator());
+		for (PrioritizedConfigurer configurer : configurers) {
+			configurer.getConfigurer().configure(this);
+		}
 	}
 
 	/**
@@ -121,6 +281,70 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		return environmentBuilder;
 	}
 
+	/**
+	 * Cconfigures resource resolution.
+	 * 
+	 * <p>
+	 * Resource resolution consists of finding a file:
+	 * <ul>
+	 * <li>either on filesystem</li>
+	 * <li>or in the classpath</li>
+	 * <li>or anywhere else</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * To identify which resolution to use, each resolution is configured to
+	 * handle one or several lookups prefixes. For example, if resolution is
+	 * configured like this:
+	 * 
+	 * <pre>
+	 * <code>
+	 * .string()
+	 *   .lookup("string:", "s:")
+	 *   .and()
+	 * .file()
+	 *   .lookup("file:")
+	 *   .and()
+	 * .classpath()
+	 *   .lookup("classpath:", "");
+	 * </code>
+	 * </pre>
+	 * 
+	 * Then you can reference a file that is in the classpath like this:
+	 * 
+	 * <pre>
+	 * "classpath:foo/bar.html"
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Resource resolution is also able to handle path prefix and suffix. The
+	 * aim is for example to have a folder that contains all templates. The
+	 * developer then configures a path prefix for the folder. He can also
+	 * configure a suffix to fix extension for templates. Thanks to those
+	 * prefix/suffix, templates can now be referenced by the name of the file
+	 * (without extension). It is useful to reference a template independently
+	 * from where it is in reality (classpath, file or anywhere else) .
+	 * Switching from classpath to file and conversely can be done easily (by
+	 * updating the lookup).
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * .classpath().lookup("classpath:").pathPrefix("foo/").pathSuffix(".html");
+	 * 
+	 * resourceResolver.getResource("classpath:bar");
+	 * </pre>
+	 * 
+	 * The real path is then {@code foo/bar.html}.
+	 * 
+	 * <p>
+	 * This implementation is used by {@link MessagingBuilder} for general
+	 * configuration. That configuration may be inherited (applied to other
+	 * resource resolution builders).
+	 * 
+	 * @return the builder to configure resource resolution
+	 */
 	public StandaloneResourceResolutionBuilder<MessagingBuilder> resource() {
 		return resourceBuilder;
 	}
@@ -177,11 +401,334 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		return mimetypeBuilder;
 	}
 
+	/**
+	 * There are technical exceptions that are thrown by libraries used by
+	 * Ogham. Those exceptions are often {@link RuntimeException}s. It can be
+	 * difficult for developers of a big application to quickly identify what
+	 * caused this {@link RuntimeException}. The stack trace doesn't always help
+	 * to find the real source of the error. If enables, this option ensures
+	 * that work done by Ogham will always throw a {@link MessagingException}
+	 * even if it was a {@link RuntimeException} thrown by any component. It
+	 * then helps the developer to know that the error comes from Ogham or a any
+	 * used library and not something else in its application. The other benefit
+	 * is that in your code you only catch a {@link MessagingException} and you
+	 * are sure that it will handle all cases, no surprise with an unchecked
+	 * exception that could make a big failure in your system because you didn't
+	 * know this could happen. Sending a message is often not critical (if
+	 * message can't be sent now, it can be sent later or manually). It it fails
+	 * the whole system must keep on working. With this option enabled, your
+	 * system will never fail due to an unchecked exception and you can handle
+	 * the failure the same way as with checked exceptions.
+	 * 
+	 * Concretely, call of
+	 * {@link MessagingService#send(fr.sii.ogham.core.message.Message)} catches
+	 * all exceptions including {@link RuntimeException}. It wraps any
+	 * exceptions into a {@link MessagingException}.
+	 * 
+	 * @param enable
+	 *            enable or disable wrapping of exceptions
+	 * @return this instance for fluent chaining
+	 */
 	public MessagingBuilder wrapUncaught(boolean enable) {
 		wrapUncaught = enable;
 		return this;
 	}
 
+	/**
+	 * Configures how to send {@link Email} messages. It allows to:
+	 * <ul>
+	 * <li>register and configure several sender implementations</li>
+	 * <li>register and configure several template engines for parsing templates
+	 * as message content</li>
+	 * <li>configure handling of missing {@link Email} information</li>
+	 * <li>configure handling of file attachments</li>
+	 * <li>configure CSS and image handling for {@link Email}s with an HTML
+	 * body</li>
+	 * </ul>
+	 * 
+	 * You can send an {@link Email} using the minimal behavior and using
+	 * JavaMail implementation:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .email()
+	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+	 *       .host("your SMTP server host")
+	 *       .port("your SMTP server port")
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the email
+	 * service.send(new Email()
+	 *   .from("sender email address")
+	 *   .subject("email subject")
+	 *   .content("email body")
+	 *   .to("recipient email address"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * You can also send an {@link Email} using a template (using Freemarker for
+	 * example):
+	 * 
+	 * The Freemarker template ("email/sample.html.ftl"):
+	 * 
+	 * <pre>
+	 * &lt;html&gt;
+	 * &lt;head&gt;
+	 * &lt;/head&gt;
+	 * &lt;body&gt;
+	 * Email content with variables: ${name} ${value}
+	 * &lt;/body&gt;
+	 * &lt;/html&gt;
+	 * </pre>
+	 * 
+	 * Then you can send the {@link Email} like this:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .email()
+	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+	 *       .host("your SMTP server host")
+	 *       .port("your SMTP server port")
+	 *       .and()
+	 *     .and()
+	 *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+	 *     .classpath()
+	 *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the email
+	 * service.send(new Email()
+	 *   .from("sender email address")
+	 *   .subject("email subject")
+	 *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient email address"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Instead of explicitly configures SMTP host and port in your code, it
+	 * could be better to externalize the configuration in a properties file for
+	 * example (for example a file named "email.properties" in the classpath).
+	 * The previous example becomes:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .environment()
+	 *     .properties("email.properties")
+	 *     .and()
+	 *   .email()
+	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+	 *       .host("${mail.host}")
+	 *       .port("${mail.port}")
+	 *       .and()
+	 *     .and()
+	 *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+	 *     .classpath()
+	 *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the email
+	 * service.send(new Email()
+	 *   .from("sender email address")
+	 *   .subject("email subject")
+	 *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient email address"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * The content of the file "email.properties":
+	 * 
+	 * <pre>
+	 * mail.host=your STMP server host
+	 * mail.port=your STMP server port
+	 * </pre>
+	 * 
+	 * 
+	 * Some fields of the Email may be automatically filled by a default value
+	 * if they are not defined. For example, the sender address could be
+	 * configured only once for your application:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .environment()
+	 *     .properties("email.properties")
+	 *     .and()
+	 *   .email()
+	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+	 *       .host("${mail.host}")
+	 *       .port("${mail.port}")
+	 *       .and()
+	 *     .autofill()    // enables and configures autofilling
+	 *       .from()
+	 *         .defaultValueProperty("${email.sender.address}")
+	 *         .and()
+	 *     .and()
+	 *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+	 *     .classpath()
+	 *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the email (now the sender address can be omitted)
+	 * service.send(new Email()
+	 *   .subject("email subject")
+	 *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient email address"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * The content of the file "email.properties":
+	 * 
+	 * <pre>
+	 * mail.host=your STMP server host
+	 * mail.port=your STMP server port
+	 * email.sender.address=sender email address
+	 * </pre>
+	 * 
+	 * 
+	 * 
+	 * Another very useful automatic filling is for providing the email subject:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .environment()
+	 *     .properties("email.properties")
+	 *     .and()
+	 *   .email()
+	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+	 *       .host("${mail.host}")
+	 *       .port("${mail.port}")
+	 *       .and()
+	 *     .autofill()    // enables and configures autofilling
+	 *       .from()
+	 *         .defaultValueProperty("${email.sender.address}")
+	 *         .and()
+	 *       .subject()
+	 *         .htmlTitle(true)    // enables use of html title tag as subject
+	 *     .and()
+	 *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+	 *     .classpath()
+	 *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the email (now the subject can be omitted)
+	 * service.send(new Email()
+	 *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient email address"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * Change your template:
+	 * 
+	 * <pre>
+	 * &lt;html&gt;
+	 * &lt;head&gt;
+	 *   &lt;title&gt;email subject - ${name}&lt;/title&gt;
+	 * &lt;/head&gt;
+	 * &lt;body&gt;
+	 * Email content with variables: ${name} ${value}
+	 * &lt;/body&gt;
+	 * &lt;/html&gt;
+	 * </pre>
+	 * 
+	 * The obvious advantage is that you have a single place to handle email
+	 * content (body + subject). There is another benefit: you can also use
+	 * variables in the subject.
+	 * 
+	 * 
+	 * There many other configuration possibilities:
+	 * <ul>
+	 * <li>for configuring {@link Email}s with HTML content with a text fallback
+	 * (useful for smartphones preview of your email for example)</li>
+	 * <li>for configuring attachments handling</li>
+	 * <li>for configuring image and css handling</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * All the previous examples are provided to understand what can be
+	 * configured. Hopefully, Ogham provides auto-configuration with a default
+	 * behavior that fits 95% of usages. This auto-configuration is provided by
+	 * {@link MessagingConfigurer}s. Those configurers are automatically applied
+	 * when using predefined {@link MessagingBuilder}s like
+	 * {@link MessagingBuilder#minimal()} and
+	 * {@link MessagingBuilder#standard()}.
+	 * 
+	 * The previous sample using standard configuration becomes:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .environment()
+	 *     .properties("email.properties")
+	 *     .and()
+	 *   .build();
+	 * // send the email
+	 * service.send(new Email()
+	 *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient email address"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * The new content of the file "email.properties":
+	 * 
+	 * <pre>
+	 * mail.host=your STMP server host
+	 * mail.port=your STMP server port
+	 * ogham.email.from=sender email address
+	 * </pre>
+	 * 
+	 * <p>
+	 * You can also use the auto-configuration for benefit from default
+	 * behaviors and override some behaviors for your needs:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .environment()
+	 *     .properties("email.properties")
+	 *     .and()
+	 *   .email()
+	 *     .autofill()
+	 *       .from()
+	 *         .defaultValueProperty("${email.sender.address}")   // overrides default sender email address property
+	 *         .and()
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the email
+	 * service.send(new Email()
+	 *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient email address"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * The new content of the file "email.properties":
+	 * 
+	 * <pre>
+	 * mail.host=your STMP server host
+	 * mail.port=your STMP server port
+	 * email.sender.address=sender email address
+	 * </pre>
+	 * 
+	 * 
+	 * @return the builder to configure how Email are handled
+	 */
 	public EmailBuilder email() {
 		if (emailBuilder == null) {
 			emailBuilder = new EmailBuilder(this, environmentBuilder);
@@ -189,18 +736,248 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		return emailBuilder;
 	}
 
+	/**
+	 * Configures how to send {@link Sms} messages. It allows to:
+	 * <ul>
+	 * <li>register and configure several sender implementations</li>
+	 * <li>register and configure several template engines for parsing templates
+	 * as message content</li>
+	 * <li>configure handling of missing {@link Sms} information</li>
+	 * <li>configure number format handling</li>
+	 * </ul>
+	 * 
+	 * You can send a {@link Sms} using the minimal behavior and using
+	 * Cloudhopper implementation:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .sms()
+	 *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+	 *       .host("your SMPP server host")
+	 *       .port("your SMPP server port")
+	 *       .systemId("your SMPP system_id")
+	 *       .password("an optional password")
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the sms
+	 * service.send(new Sms()
+	 *   .from("sender phone number")
+	 *   .content("sms content")
+	 *   .to("recipient phone number"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * You can also send a {@link Sms} using a template (using Freemarker for
+	 * example):
+	 * 
+	 * The Freemarker template ("sms/sample.txt.ftl"):
+	 * 
+	 * <pre>
+	 * Sms content with variables: ${name} ${value}
+	 * </pre>
+	 * 
+	 * Then you can send the {@link Sms} like this:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .sms()
+	 *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+	 *       .host("your SMPP server host")
+	 *       .port("your SMPP server port")
+	 *       .systemId("your SMPP system_id")
+	 *       .password("an optional password")
+	 *       .and()
+	 *     .and()
+	 *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+	 *     .classpath()
+	 *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the sms
+	 * service.send(new Sms()
+	 *   .from("sender phone number")
+	 *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient phone number"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Instead of explicitly configures SMPP host/port/system_id/password in
+	 * your code, it could be better to externalize the configuration in a
+	 * properties file for example (for example a file named "sms.properties" in
+	 * the classpath). The previous example becomes:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .environment()
+	 *     .properties("sms.properties")
+	 *     .and()
+	 *   .sms()
+	 *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+	 *       .host("${smpp.host}")
+	 *       .port("${smpp.port}")
+	 *       .systemId("${smpp.system-id}")
+	 *       .password("${smpp.password}")
+	 *       .and()
+	 *     .and()
+	 *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+	 *     .classpath()
+	 *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the sms
+	 * service.send(new Sms()
+	 *   .from("sender phone number")
+	 *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient phone number"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * The content of the file "sms.properties":
+	 * 
+	 * <pre>
+	 * smpp.host=your SMPP server host
+	 * smpp.port=your SMPP server port
+	 * smpp.system-id=your SMPP system_id
+	 * smpp.password=an optional password
+	 * </pre>
+	 * 
+	 * 
+	 * Some fields of the SMS may be automatically filled by a default value if
+	 * they are not defined. For example, the sender phone number could be
+	 * configured only once for your application:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = new MessagingBuilder()
+	 *   .environment()
+	 *     .properties("sms.properties")
+	 *     .and()
+	 *   .sms()
+	 *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+	 *       .host("${smpp.host}")
+	 *       .port("${smpp.port}")
+	 *       .systemId("${smpp.system-id}")
+	 *       .password("${smpp.password}")
+	 *       .and()
+	 *     .autofill()    // enables and configures autofilling
+	 *       .from()
+	 *         .defaultValueProperty("${sms.sender.number}")
+	 *         .and()
+	 *       .and()
+	 *     .and()
+	 *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+	 *     .classpath()
+	 *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the sms (now the sender phone number can be omitted)
+	 * service.send(new Sms()
+	 *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient phone number"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * The new content of the file "sms.properties":
+	 * 
+	 * <pre>
+	 * smpp.host=your SMPP server host
+	 * smpp.port=your SMPP server port
+	 * smpp.system-id=your SMPP system_id
+	 * smpp.password=an optional password
+	 * sms.sender.number=the sender phone number
+	 * </pre>
+	 * 
+	 * <p>
+	 * All the previous examples are provided to understand what can be
+	 * configured. Hopefully, Ogham provides auto-configuration with a default
+	 * behavior that fits 95% of usages. This auto-configuration is provided by
+	 * {@link MessagingConfigurer}s. Those configurers are automatically applied
+	 * when using predefined {@link MessagingBuilder}s like
+	 * {@link MessagingBuilder#minimal()} and
+	 * {@link MessagingBuilder#standard()}.
+	 * 
+	 * The previous sample using standard configuration becomes:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("sms.properties")
+	 *     .and()
+	 *   .build();
+	 * // send the sms
+	 * service.send(new Sms()
+	 *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient phone number"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * The new content of the file "sms.properties":
+	 * 
+	 * <pre>
+	 * ogham.sms.smpp.host=your SMPP server host
+	 * ogham.sms.smpp.port=your SMPP server port
+	 * ogham.sms.smpp.system-id=your SMPP system_id
+	 * ogham.sms.smpp.password=an optional password
+	 * ogham.sms.from=the sender phone number
+	 * </pre>
+	 * 
+	 * <p>
+	 * You can also use the auto-configuration for benefit from default
+	 * behaviors and override some behaviors for your needs:
+	 * 
+	 * <pre>
+	 * <code>
+	 * // Instantiate the messaging service
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("sms.properties")
+	 *     .and()
+	 *   .sms()
+	 *     .autofill()
+	 *       .from()
+	 *         .defaultValueProperty("${sms.sender.number}")   // overrides default sender phone number property
+	 *         .and()
+	 *       .and()
+	 *     .and()
+	 *   .build();
+	 * // send the sms
+	 * service.send(new Sms()
+	 *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+	 *   .to("recipient phone number"));
+	 * </code>
+	 * </pre>
+	 * 
+	 * The new content of the file "sms.properties":
+	 * 
+	 * <pre>
+	 * ogham.sms.smpp.host=your SMPP server host
+	 * ogham.sms.smpp.port=your SMPP server port
+	 * ogham.sms.smpp.system-id=your SMPP system_id
+	 * ogham.sms.smpp.password=an optional password
+	 * sms.sender.number=the sender phone number
+	 * </pre>
+	 * 
+	 * @return the builder to configure how SMS are handled
+	 */
 	public SmsBuilder sms() {
 		if (smsBuilder == null) {
 			smsBuilder = new SmsBuilder(this, environmentBuilder);
 		}
 		return smsBuilder;
-	}
-
-	public void configure() {
-		Collections.sort(configurers, new PriorityComparator());
-		for (PrioritizedConfigurer configurer : configurers) {
-			configurer.getConfigurer().configure(this);
-		}
 	}
 
 	/**
@@ -235,33 +1012,393 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		return service;
 	}
 
-	private List<ConditionalSender> buildSenders() {
-		List<ConditionalSender> senders = new ArrayList<>();
-		if (emailBuilder != null) {
-			senders.add(emailBuilder.build());
-		}
-		if (smsBuilder != null) {
-			senders.add(smsBuilder.build());
-		}
-		return senders;
-	}
-
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance with no auto-configuration at all.
+	 * 
+	 * @return the empty builder that provides no behavior at all that needs to
+	 *         be configured
+	 */
 	public static MessagingBuilder empty() {
 		return new MessagingBuilder();
 	}
 
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and auto-configures it with a predefined behavior named
+	 * "standard".
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the standard behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Enables all {@link Email} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Enables all {@link Sms} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in "fr.sii.ogham"
+	 * package and sub-packages are loaded. If you want to load from other
+	 * packages, use {@link #standard(String...)}. Some Ogham modules are
+	 * optional meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "standard" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "standard").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * <li><code>DefaultJavaMailConfigurer</code>: 50000</li>
+	 * <li><code>DefaultCloudhopperConfigurer</code>: 40000</li>
+	 * <li><code>DefaultSendGridConfigurer</code>: 30000</li>
+	 * <li><code>DefaultOvhSmsConfigurer</code>: 20000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by standard
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior that fits 95% of usages. You can still override some behaviors
+	 * for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * @return the messaging builder that can be customized
+	 */
 	public static MessagingBuilder standard() {
 		return standard(BASE_PACKAGE);
 	}
 
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and auto-configures it with a predefined behavior named
+	 * "standard".
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the standard behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Enables all {@link Email} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Enables all {@link Sms} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in the provided
+	 * packages and sub-packages are loaded. Some Ogham modules are optional
+	 * meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "standard" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "standard").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * <li><code>DefaultJavaMailConfigurer</code>: 50000</li>
+	 * <li><code>DefaultCloudhopperConfigurer</code>: 40000</li>
+	 * <li><code>DefaultSendGridConfigurer</code>: 30000</li>
+	 * <li><code>DefaultOvhSmsConfigurer</code>: 20000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by standard
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior that fits 95% of usages. You can still override some behaviors
+	 * for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param basePackages
+	 *            the base packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 * @return the messaging builder that can be customized
+	 */
 	public static MessagingBuilder standard(String... basePackages) {
 		return standard(true, basePackages);
 	}
 
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and registers auto-configures but doesn't apply them if
+	 * autoconfigure parameter is false. The {@link #configure()} method must be
+	 * called manually.
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the standard behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Enables all {@link Email} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Enables all {@link Sms} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in "fr.sii.ogham"
+	 * package and sub-packages are loaded. If you want to load from other
+	 * packages, use {@link #standard(String...)}. Some Ogham modules are
+	 * optional meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "standard" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "standard").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * <li><code>DefaultJavaMailConfigurer</code>: 50000</li>
+	 * <li><code>DefaultCloudhopperConfigurer</code>: 40000</li>
+	 * <li><code>DefaultSendGridConfigurer</code>: 30000</li>
+	 * <li><code>DefaultOvhSmsConfigurer</code>: 20000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by standard
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior that fits 95% of usages. You can still override some behaviors
+	 * for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param autoconfigure
+	 *            true to automatically apply found configurers, false to
+	 *            configure manually later by calling {@link #configure()}
+	 * @return the messaging builder that can be customized
+	 */
 	public static MessagingBuilder standard(boolean autoconfigure) {
 		return standard(autoconfigure, BASE_PACKAGE);
 	}
 
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and registers auto-configures but doesn't apply them if
+	 * autoconfigure parameter is false. The {@link #configure()} method must be
+	 * called manually.
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the standard behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Enables all {@link Email} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Enables all {@link Sms} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in the provided
+	 * packages and sub-packages are loaded. Some Ogham modules are optional
+	 * meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "standard" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "standard").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * <li><code>DefaultJavaMailConfigurer</code>: 50000</li>
+	 * <li><code>DefaultCloudhopperConfigurer</code>: 40000</li>
+	 * <li><code>DefaultSendGridConfigurer</code>: 30000</li>
+	 * <li><code>DefaultOvhSmsConfigurer</code>: 20000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by standard
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior that fits 95% of usages. You can still override some behaviors
+	 * for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param autoconfigure
+	 *            true to automatically apply found configurers, false to
+	 *            configure manually later by calling {@link #configure()}
+	 * @param basePackages
+	 *            the base packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 * @return the messaging builder that can be customized
+	 */
 	public static MessagingBuilder standard(boolean autoconfigure, String... basePackages) {
 		MessagingBuilder builder = new MessagingBuilder();
 		findAndRegister(builder, "standard", basePackages);
@@ -271,26 +1408,367 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		return builder;
 	}
 
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and auto-configures it with a predefined behavior named
+	 * "minimal".
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the minimal behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * The minimal behavior doesn't automatically auto-configure sender
+	 * implementations.
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in "fr.sii.ogham"
+	 * package and sub-packages are loaded. If you want to load from other
+	 * packages, use {@link #minimal(String...)}. Some Ogham modules are
+	 * optional meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "minimal" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "minimal").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by minimal
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior with no sender implementation. This is useful if you only want
+	 * to use a particular implementation or your custom sender implementation.
+	 * You can still override some behaviors for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * @return the messaging builder that can be customized
+	 */
 	public static MessagingBuilder minimal() {
 		return minimal(BASE_PACKAGE);
 	}
 
 	/**
-	 * Common but no implementation
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and auto-configures it with a predefined behavior named
+	 * "minimal".
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the minimal behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * The minimal behavior doesn't automatically auto-configure sender
+	 * implementations.
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in the provided
+	 * packages and sub-packages are loaded. Some Ogham modules are optional
+	 * meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "minimal" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "minimal").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by minimal
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior with no sender implementation. This is useful if you only want
+	 * to use a particular implementation or your custom sender implementation.
+	 * You can still override some behaviors for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
 	 * 
 	 * @param basePackages
-	 *            the base packages where to find {@link Configurer}
-	 *            implementations
-	 * @return the minimal builder
+	 *            the base packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder minimal(String... basePackages) {
 		return minimal(true, basePackages);
 	}
 
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and registers auto-configures but doesn't apply them if
+	 * autoconfigure parameter is false. The {@link #configure()} method must be
+	 * called manually.
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the minimal behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * The minimal behavior doesn't automatically auto-configure sender
+	 * implementations.
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in "fr.sii.ogham"
+	 * package and sub-packages are loaded. If you want to load from other
+	 * packages, use {@link #minimal(String...)}. Some Ogham modules are
+	 * optional meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "minimal" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "minimal").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by minimal
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior with no sender implementation. This is useful if you only want
+	 * to use a particular implementation or your custom sender implementation.
+	 * You can still override some behaviors for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param autoconfigure
+	 *            true to automatically apply found configurers, false to
+	 *            configure manually later by calling {@link #configure()}
+	 * @return the messaging builder that can be customized
+	 */
 	public static MessagingBuilder minimal(boolean autoconfigure) {
 		return minimal(autoconfigure, BASE_PACKAGE);
 	}
 
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and registers auto-configures but doesn't apply them if
+	 * autoconfigure parameter is false. The {@link #configure()} method must be
+	 * called manually.
+	 * 
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the minimal behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * The minimal behavior doesn't automatically auto-configure sender
+	 * implementations.
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in the provided
+	 * packages and sub-packages are loaded. Some Ogham modules are optional
+	 * meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "minimal" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "minimal").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by minimal
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior with no sender implementation. This is useful if you only want
+	 * to use a particular implementation or your custom sender implementation.
+	 * You can still override some behaviors for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param autoconfigure
+	 *            true to automatically apply found configurers, false to
+	 *            configure manually later by calling {@link #configure()}
+	 * @param basePackages
+	 *            the base packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 * @return the messaging builder that can be customized
+	 */
 	public static MessagingBuilder minimal(boolean autoconfigure, String... basePackages) {
 		MessagingBuilder builder = new MessagingBuilder();
 		findAndRegister(builder, "minimal", basePackages);
@@ -300,6 +1778,32 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		return builder;
 	}
 
+	/**
+	 * You can use this method if {@link #standard()} and {@link #minimal()}
+	 * factory methods doesn't fit your needs. The aim is to auto-configure a
+	 * builder with matching configurers.
+	 * 
+	 * Utility method that searches all {@link MessagingConfigurer}s that are in
+	 * the classpath. Only configurers that are in the provided packages (and
+	 * sub-packages) are loaded.
+	 * 
+	 * Once configurers are found, they are filtered thanks to information
+	 * provided by {@link ConfigurerFor} annotation. Only configurers with
+	 * {@link ConfigurerFor#targetedBuilder()} value that matches the
+	 * builderName parameter are kept.
+	 * 
+	 * The found and filtered configurers are registered into the provided
+	 * builder instance.
+	 * 
+	 * @param builder
+	 *            the builder to configure with matching configurers
+	 * @param builderName
+	 *            the name that is referenced by
+	 *            {@link ConfigurerFor#targetedBuilder()}
+	 * @param basePackages
+	 *            the packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 */
 	public static void findAndRegister(MessagingBuilder builder, String builderName, String... basePackages) {
 		Reflections reflections = new Reflections(basePackages, new SubTypesScanner());
 		Set<Class<? extends MessagingConfigurer>> configurerClasses = reflections.getSubTypesOf(MessagingConfigurer.class);
@@ -314,6 +1818,17 @@ public class MessagingBuilder implements Builder<MessagingService> {
 				}
 			}
 		}
+	}
+
+	private List<ConditionalSender> buildSenders() {
+		List<ConditionalSender> senders = new ArrayList<>();
+		if (emailBuilder != null) {
+			senders.add(emailBuilder.build());
+		}
+		if (smsBuilder != null) {
+			senders.add(smsBuilder.build());
+		}
+		return senders;
 	}
 
 	private static class PriorityComparator implements Comparator<PrioritizedConfigurer> {

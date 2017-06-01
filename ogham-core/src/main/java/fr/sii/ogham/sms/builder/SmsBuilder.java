@@ -11,12 +11,17 @@ import fr.sii.ogham.core.builder.annotation.RequiredClass;
 import fr.sii.ogham.core.builder.annotation.RequiredClasses;
 import fr.sii.ogham.core.builder.annotation.RequiredProperties;
 import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
+import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
+import fr.sii.ogham.core.builder.template.VariantBuilder;
 import fr.sii.ogham.core.condition.fluent.MessageConditions;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.message.content.Variant;
 import fr.sii.ogham.core.sender.ConditionalSender;
 import fr.sii.ogham.core.sender.ContentTranslatorSender;
 import fr.sii.ogham.core.sender.FillerSender;
@@ -25,10 +30,249 @@ import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.translator.content.EveryContentTranslator;
 import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
-import fr.sii.ogham.sms.builder.PhoneNumbersBuilder.PhoneNumberTranslatorPair;
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
 import fr.sii.ogham.sms.sender.PhoneNumberTranslatorSender;
 import fr.sii.ogham.sms.sender.SmsSender;
 
+/**
+ * Configures how to send {@link Sms} messages. It allows to:
+ * <ul>
+ * <li>register and configure several sender implementations</li>
+ * <li>register and configure several template engines for parsing templates as
+ * message content</li>
+ * <li>configure handling of missing {@link Sms} information</li>
+ * <li>configure number format handling</li>
+ * </ul>
+ * 
+ * You can send a {@link Sms} using the minimal behavior and using Cloudhopper
+ * implementation:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .sms()
+ *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+ *       .host("your SMPP server host")
+ *       .port("your SMPP server port")
+ *       .systemId("your SMPP system_id")
+ *       .password("an optional password")
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .from("sender phone number")
+ *   .content("sms content")
+ *   .to("recipient phone number"));
+ * </code>
+ * </pre>
+ * 
+ * You can also send a {@link Sms} using a template (using Freemarker for
+ * example):
+ * 
+ * The Freemarker template ("sms/sample.txt.ftl"):
+ * 
+ * <pre>
+ * Sms content with variables: ${name} ${value}
+ * </pre>
+ * 
+ * Then you can send the {@link Sms} like this:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .sms()
+ *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+ *       .host("your SMPP server host")
+ *       .port("your SMPP server port")
+ *       .systemId("your SMPP system_id")
+ *       .password("an optional password")
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .from("sender phone number")
+ *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient phone number"));
+ * </code>
+ * </pre>
+ * 
+ * <p>
+ * Instead of explicitly configures SMPP host/port/system_id/password in your
+ * code, it could be better to externalize the configuration in a properties
+ * file for example (for example a file named "sms.properties" in the
+ * classpath). The previous example becomes:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties("sms.properties")
+ *     .and()
+ *   .sms()
+ *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+ *       .host("${smpp.host}")
+ *       .port("${smpp.port}")
+ *       .systemId("${smpp.system-id}")
+ *       .password("${smpp.password}")
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .from("sender phone number")
+ *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient phone number"));
+ * </code>
+ * </pre>
+ * 
+ * The content of the file "sms.properties":
+ * 
+ * <pre>
+ * smpp.host=your SMPP server host
+ * smpp.port=your SMPP server port
+ * smpp.system-id=your SMPP system_id
+ * smpp.password=an optional password
+ * </pre>
+ * 
+ * 
+ * Some fields of the SMS may be automatically filled by a default value if they
+ * are not defined. For example, the sender phone number could be configured
+ * only once for your application:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties("sms.properties")
+ *     .and()
+ *   .sms()
+ *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+ *       .host("${smpp.host}")
+ *       .port("${smpp.port}")
+ *       .systemId("${smpp.system-id}")
+ *       .password("${smpp.password}")
+ *       .and()
+ *     .autofill()    // enables and configures autofilling
+ *       .from()
+ *         .defaultValueProperty("${sms.sender.number}")
+ *         .and()
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms (now the sender phone number can be omitted)
+ * service.send(new Sms()
+ *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient phone number"));
+ * </code>
+ * </pre>
+ * 
+ * The new content of the file "sms.properties":
+ * 
+ * <pre>
+ * smpp.host=your SMPP server host
+ * smpp.port=your SMPP server port
+ * smpp.system-id=your SMPP system_id
+ * smpp.password=an optional password
+ * sms.sender.number=the sender phone number
+ * </pre>
+ * 
+ * <p>
+ * All the previous examples are provided to understand what can be configured.
+ * Hopefully, Ogham provides auto-configuration with a default behavior that
+ * fits 95% of usages. This auto-configuration is provided by
+ * {@link MessagingConfigurer}s. Those configurers are automatically applied
+ * when using predefined {@link MessagingBuilder}s like
+ * {@link MessagingBuilder#minimal()} and {@link MessagingBuilder#standard()}.
+ * 
+ * The previous sample using standard configuration becomes:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.standard()
+ *   .environment()
+ *     .properties("sms.properties")
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient phone number"));
+ * </code>
+ * </pre>
+ * 
+ * The new content of the file "sms.properties":
+ * 
+ * <pre>
+ * ogham.sms.smpp.host=your SMPP server host
+ * ogham.sms.smpp.port=your SMPP server port
+ * ogham.sms.smpp.system-id=your SMPP system_id
+ * ogham.sms.smpp.password=an optional password
+ * ogham.sms.from=the sender phone number
+ * </pre>
+ * 
+ * <p>
+ * You can also use the auto-configuration for benefit from default behaviors
+ * and override some behaviors for your needs:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.standard()
+ *   .environment()
+ *     .properties("sms.properties")
+ *     .and()
+ *   .sms()
+ *     .autofill()
+ *       .from()
+ *         .defaultValueProperty("${sms.sender.number}")   // overrides default sender phone number property
+ *         .and()
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .content(new TemplateContent("classpath:sms/sample.txt.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient phone number"));
+ * </code>
+ * </pre>
+ * 
+ * The new content of the file "sms.properties":
+ * 
+ * <pre>
+ * ogham.sms.smpp.host=your SMPP server host
+ * ogham.sms.smpp.port=your SMPP server port
+ * ogham.sms.smpp.system-id=your SMPP system_id
+ * ogham.sms.smpp.password=an optional password
+ * sms.sender.number=the sender phone number
+ * </pre>
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Builder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);
 
@@ -55,6 +299,32 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 		senderBuilderHelper = new SenderImplementationBuilderHelper<>(this, environmentBuilder);
 	}
 
+	/**
+	 * Configures how Ogham will add default values to the {@link Sms} if some
+	 * information is missing.
+	 * 
+	 * If sender phone number is missing, a default one can be defined in
+	 * configuration properties.
+	 * 
+	 * If recipient phone number is missing, a default one can be defined in
+	 * configuration properties.
+	 * 
+	 * <pre>
+	 * <code>
+	 *	builder
+	 *	  .autofill()
+	 *	    .from()
+	 *	      .defaultValueProperty("${ogham.sms.from}")
+	 *	        .and()
+	 *	    .to()
+	 *	      .defaultValueProperty("${ogham.sms.to}")
+	 *	        .and()
+	 *	    .and()
+	 * </code>
+	 * </pre>
+	 * 
+	 * @return the builder to configure autofilling of SMS
+	 */
 	public AutofillSmsBuilder autofill() {
 		if (autofillBuilder == null) {
 			autofillBuilder = new AutofillSmsBuilder(this, environmentBuilder);
@@ -62,6 +332,37 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 		return autofillBuilder;
 	}
 
+	/**
+	 * Configures the phone number conversions (from a {@link PhoneNumber} to an
+	 * {@link AddressedPhoneNumber}).
+	 * 
+	 * The {@link PhoneNumber} is used by the developer to provide a simple
+	 * phone number without knowing how phone number works (no need to handle
+	 * formats, addressing, countries...). The {@link AddressedPhoneNumber} is
+	 * used by Ogham implementations to have a phone number that is usable by a
+	 * technical system.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 *	builder
+	 *	  .numbers()
+	 *	    .from()
+	 *	      .format()
+	 *	        .alphanumericCode("${ogham.sms.from-format-enable-alphanumeric}", "true")
+	 *	        .shortCode("${ogham.sms.from-format-enable-shortcode}", "true")
+	 *	        .internationalNumber("${ogham.sms.from-format-enable-international}", "true")
+	 *	        .and()
+	 *	      .and()
+	 *	    .to()
+	 *	      .format()
+	 *	        .internationalNumber("${ogham.sms.to-format-enable-international}", "true");
+	 * </code>
+	 * </pre>
+	 * 
+	 * @return the builder to configure phone number formats
+	 */
 	public PhoneNumbersBuilder numbers() {
 		if (phoneNumbersBuilder == null) {
 			phoneNumbersBuilder = new PhoneNumbersBuilder(this, environmentBuilder);
@@ -69,6 +370,46 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 		return phoneNumbersBuilder;
 	}
 
+	/**
+	 * Registers and configures a {@link TemplateParser} through a dedicated
+	 * builder.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * .register(ThymeleafSmsBuilder.class)
+	 *     .detector(new ThymeleafEngineDetector());
+	 * </pre>
+	 * 
+	 * <p>
+	 * Your {@link Builder} may implement {@link VariantBuilder} to handle
+	 * template {@link Variant}s (used for {@link MultiTemplateContent} that
+	 * provide a single path to templates with different extensions for
+	 * example).
+	 * </p>
+	 * 
+	 * <p>
+	 * Your {@link Builder} may also implement {@link DetectorBuilder} in order
+	 * to indicate which kind of templates your {@link TemplateParser} is able
+	 * to parse. If your template parse is able to parse any template file you
+	 * are using, you may not need to implement {@link DetectorBuilder}.
+	 * </p>
+	 * 
+	 * <p>
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with two arguments:
+	 * <ul>
+	 * <li>The type of the parent builder ({@code &lt;P&gt;})</li>
+	 * <li>The {@link EnvironmentBuilder} instance</li>
+	 * </ul>
+	 * If you don't care about chaining, just provide a default constructor.
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param <T>
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 */
 	public <T extends Builder<? extends TemplateParser>> T template(Class<T> builderClass) {
 		return templateBuilderHelper.register(builderClass);
 	}

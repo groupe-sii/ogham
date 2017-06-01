@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.commons.charset.CharsetUtil;
 
-import fr.sii.ogham.core.charset.CharsetProvider;
+import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.sms.exception.message.EncodingException;
 
 /**
@@ -29,9 +29,9 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 	private final Map<String, Charset> mapCloudhopperCharsetByNioCharsetName = new HashMap<>();
 
 	/** The charset provider. */
-	private final CharsetProvider charsetProvider;
+	private final CharsetDetector charsetProvider;
 
-	public MapCloudhopperCharsetHandler(CharsetProvider charsetProvider) {
+	public MapCloudhopperCharsetHandler(CharsetDetector charsetProvider) {
 		super();
 		this.charsetProvider = charsetProvider;
 	}
@@ -48,7 +48,7 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 	 *             If the map contains any invalid cloudhopper charset name
 	 * 
 	 */
-	public MapCloudhopperCharsetHandler(CharsetProvider charsetProvider, Map<String, String> mapCloudhopperNameByNioName) throws EncodingException {
+	public MapCloudhopperCharsetHandler(CharsetDetector charsetProvider, Map<String, String> mapCloudhopperNameByNioName) throws EncodingException {
 		this(charsetProvider);
 
 		for (Entry<String, String> nioCharset : mapCloudhopperNameByNioName.entrySet()) {
@@ -100,7 +100,7 @@ public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 
 	@Override
 	public byte[] encode(String messageStringContent) throws EncodingException {
-		java.nio.charset.Charset nioCharset = charsetProvider.getCharset(messageStringContent);
+		java.nio.charset.Charset nioCharset = charsetProvider.detect(messageStringContent);
 		if (nioCharset == null) {
 			throw new EncodingException("No charset provided for message : \n" + messageStringContent);
 		}

@@ -4,8 +4,9 @@ import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
 /**
- * Represents an email address. javax.mail.internet.InternetAddress also provides the same
- * feature but we don't want to be sticked to a particular implementation.
+ * Represents an email address. javax.mail.internet.InternetAddress also
+ * provides the same feature but we don't want to be sticked to a particular
+ * implementation.
  * 
  * @author Aurélien Baudet
  *
@@ -23,7 +24,8 @@ public class EmailAddress {
 
 	/**
 	 * Initialize the address with only the email address part (no personal). It
-	 * is of the form "user@domain.host".
+	 * is of the form "user@domain.host" or and "Personal Name
+	 * &lt;user@host.domain&gt;" formats.
 	 * 
 	 * @param address
 	 *            the email address part
@@ -63,7 +65,7 @@ public class EmailAddress {
 		builder.append("<").append(address).append(">");
 		return builder.toString();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(address, personal).hashCode();

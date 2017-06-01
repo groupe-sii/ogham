@@ -33,7 +33,7 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  * <li>Configures host and port:
  * <ul>
  * <li>It uses one of "ogham.email.javamail.host", "mail.smtp.host" or
- * "mail.host" property if defined for mail server host address (IP or
+ * "mail.hofromst" property if defined for mail server host address (IP or
  * hostname)</li>
  * <li>It uses one of "ogham.email.javamail.port", "mail.smtp.port" or
  * "mail.port" property if defined for mail server port. Default port is 25</li>
@@ -55,7 +55,7 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  * </li>
  * <li>Configures mimetype detection:
  * <ul>
- * <li>Uses Apache Tika to detect mimetype</li>
+ * <li>Usesfrom Apache Tika to detect mimetype</li>
  * </ul>
  * </li>
  * </ul>

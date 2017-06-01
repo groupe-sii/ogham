@@ -4,9 +4,21 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
-import fr.sii.ogham.sms.builder.PhoneNumbersBuilder.PhoneNumberTranslatorPair;
-import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
 
+/**
+ * Configures the phone number conversions (from a {@link PhoneNumber} to an
+ * {@link AddressedPhoneNumber}).
+ * 
+ * The {@link PhoneNumber} is used by the developer to provide a simple phone
+ * number without knowing how phone number works (no need to handle formats,
+ * addressing, countries...). The {@link AddressedPhoneNumber} is used by Ogham
+ * implementations to have a phone number that is usable by a technical system.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements Builder<PhoneNumberTranslatorPair> {
 	private EnvironmentBuilder<?> environmentBuilder;
 	private SenderNumberBuilder senderNumberBuilder;
@@ -27,15 +39,39 @@ public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements B
 		this.environmentBuilder = environmentBuilder;
 	}
 
+	/**
+	 * Configures the sender phone number conversion (from a {@link PhoneNumber}
+	 * to an {@link AddressedPhoneNumber}).
+	 * 
+	 * The {@link PhoneNumber} is used by the developer to provide a simple
+	 * phone number without knowing how phone number works (no need to handle
+	 * formats, addressing, countries...). The {@link AddressedPhoneNumber} is
+	 * used by Ogham implementations to have a phone number that is usable by a
+	 * technical system.
+	 * 
+	 * @return the builder to configure the sender phone number
+	 */
 	public SenderNumberBuilder from() {
-		if(senderNumberBuilder==null) {
+		if (senderNumberBuilder == null) {
 			senderNumberBuilder = new SenderNumberBuilder(this, environmentBuilder);
 		}
 		return senderNumberBuilder;
 	}
 
+	/**
+	 * Configures the recipient phone number conversion (from a
+	 * {@link PhoneNumber} to an {@link AddressedPhoneNumber}).
+	 * 
+	 * The {@link PhoneNumber} is used by the developer to provide a simple
+	 * phone number without knowing how phone number works (no need to handle
+	 * formats, addressing, countries...). The {@link AddressedPhoneNumber} is
+	 * used by Ogham implementations to have a phone number that is usable by a
+	 * technical system.
+	 * 
+	 * @return the builder to configure the recipient phone number
+	 */
 	public RecipientNumberBuilder to() {
-		if(recipientNumberBuilder==null) {
+		if (recipientNumberBuilder == null) {
 			recipientNumberBuilder = new RecipientNumberBuilder(this, environmentBuilder);
 		}
 		return recipientNumberBuilder;
@@ -44,21 +80,5 @@ public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements B
 	@Override
 	public PhoneNumberTranslatorPair build() throws BuildException {
 		return new PhoneNumberTranslatorPair(senderNumberBuilder.build(), recipientNumberBuilder.build());
-	}
-	
-	public static class PhoneNumberTranslatorPair {
-		private final PhoneNumberTranslator sender;
-		private final PhoneNumberTranslator recipient;
-		public PhoneNumberTranslatorPair(PhoneNumberTranslator sender, PhoneNumberTranslator recipient) {
-			super();
-			this.sender = sender;
-			this.recipient = recipient;
-		}
-		public PhoneNumberTranslator getSender() {
-			return sender;
-		}
-		public PhoneNumberTranslator getRecipient() {
-			return recipient;
-		}
 	}
 }

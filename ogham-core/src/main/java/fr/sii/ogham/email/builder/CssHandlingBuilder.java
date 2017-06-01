@@ -7,9 +7,9 @@ import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 
 /**
- * CSS handling consists of defining how images are inlined in the email.
- * Inlining CSS means that CSS styles are loaded and applied on the matching
- * HTML nodes using the {@code style} HTML attribute.
+ * CSS handling consists of defining how CSS are inlined in the email. Inlining
+ * CSS means that CSS styles are loaded and applied on the matching HTML nodes
+ * using the {@code style} HTML attribute.
  * 
  * @author Aurélien Baudet
  *

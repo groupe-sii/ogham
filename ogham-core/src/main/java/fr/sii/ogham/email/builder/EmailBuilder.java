@@ -11,12 +11,17 @@ import fr.sii.ogham.core.builder.annotation.RequiredClass;
 import fr.sii.ogham.core.builder.annotation.RequiredClasses;
 import fr.sii.ogham.core.builder.annotation.RequiredProperties;
 import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
+import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
+import fr.sii.ogham.core.builder.template.VariantBuilder;
 import fr.sii.ogham.core.condition.fluent.MessageConditions;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.message.content.Variant;
 import fr.sii.ogham.core.sender.ConditionalSender;
 import fr.sii.ogham.core.sender.ContentTranslatorSender;
 import fr.sii.ogham.core.sender.FillerSender;
@@ -27,9 +32,305 @@ import fr.sii.ogham.core.translator.content.EveryContentTranslator;
 import fr.sii.ogham.core.translator.content.MultiContentTranslator;
 import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
 import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.sender.AttachmentResourceTranslatorSender;
 import fr.sii.ogham.email.sender.EmailSender;
 
+/**
+ * Configures how to send {@link Email} messages. It allows to:
+ * <ul>
+ * <li>register and configure several sender implementations</li>
+ * <li>register and configure several template engines for parsing templates as
+ * message content</li>
+ * <li>configure handling of missing {@link Email} information</li>
+ * <li>configure handling of file attachments</li>
+ * <li>configure CSS and image handling for {@link Email}s with an HTML
+ * body</li>
+ * </ul>
+ * 
+ * You can send an {@link Email} using the minimal behavior and using JavaMail
+ * implementation:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host("your SMTP server host")
+ *       .port("your SMTP server port")
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .from("sender email address")
+ *   .subject("email subject")
+ *   .content("email body")
+ *   .to("recipient email address"));
+ * </code>
+ * </pre>
+ * 
+ * You can also send an {@link Email} using a template (using Freemarker for
+ * example):
+ * 
+ * The Freemarker template ("email/sample.html.ftl"):
+ * 
+ * <pre>
+ * &lt;html&gt;
+ * &lt;head&gt;
+ * &lt;/head&gt;
+ * &lt;body&gt;
+ * Email content with variables: ${name} ${value}
+ * &lt;/body&gt;
+ * &lt;/html&gt;
+ * </pre>
+ * 
+ * Then you can send the {@link Email} like this:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host("your SMTP server host")
+ *       .port("your SMTP server port")
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .from("sender email address")
+ *   .subject("email subject")
+ *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient email address"));
+ * </code>
+ * </pre>
+ * 
+ * <p>
+ * Instead of explicitly configures SMTP host and port in your code, it could be
+ * better to externalize the configuration in a properties file for example (for
+ * example a file named "email.properties" in the classpath). The previous
+ * example becomes:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties("email.properties")
+ *     .and()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host("${mail.host}")
+ *       .port("${mail.port}")
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .from("sender email address")
+ *   .subject("email subject")
+ *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient email address"));
+ * </code>
+ * </pre>
+ * 
+ * The content of the file "email.properties":
+ * 
+ * <pre>
+ * mail.host=your STMP server host
+ * mail.port=your STMP server port
+ * </pre>
+ * 
+ * 
+ * Some fields of the Email may be automatically filled by a default value if
+ * they are not defined. For example, the sender address could be configured
+ * only once for your application:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties("email.properties")
+ *     .and()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host("${mail.host}")
+ *       .port("${mail.port}")
+ *       .and()
+ *     .autofill()    // enables and configures autofilling
+ *       .from()
+ *         .defaultValueProperty("${email.sender.address}")
+ *         .and()
+ *     .and()
+ *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email (now the sender address can be omitted)
+ * service.send(new Email()
+ *   .subject("email subject")
+ *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient email address"));
+ * </code>
+ * </pre>
+ * 
+ * The content of the file "email.properties":
+ * 
+ * <pre>
+ * mail.host=your STMP server host
+ * mail.port=your STMP server port
+ * email.sender.address=sender email address
+ * </pre>
+ * 
+ * 
+ * 
+ * Another very useful automatic filling is for providing the email subject:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties("email.properties")
+ *     .and()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host("${mail.host}")
+ *       .port("${mail.port}")
+ *       .and()
+ *     .autofill()    // enables and configures autofilling
+ *       .from()
+ *         .defaultValueProperty("${email.sender.address}")
+ *         .and()
+ *       .subject()
+ *         .htmlTitle(true)    // enables use of html title tag as subject
+ *     .and()
+ *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup("classpath:")   // search resources/templates in the classpath if a path is prefixed by "classpath:"
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email (now the subject can be omitted)
+ * service.send(new Email()
+ *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient email address"));
+ * </code>
+ * </pre>
+ * 
+ * Change your template:
+ * 
+ * <pre>
+ * &lt;html&gt;
+ * &lt;head&gt;
+ *   &lt;title&gt;email subject - ${name}&lt;/title&gt;
+ * &lt;/head&gt;
+ * &lt;body&gt;
+ * Email content with variables: ${name} ${value}
+ * &lt;/body&gt;
+ * &lt;/html&gt;
+ * </pre>
+ * 
+ * The obvious advantage is that you have a single place to handle email content
+ * (body + subject). There is another benefit: you can also use variables in the
+ * subject.
+ * 
+ * 
+ * There many other configuration possibilities:
+ * <ul>
+ * <li>for configuring {@link Email}s with HTML content with a text fallback
+ * (useful for smartphones preview of your email for example)</li>
+ * <li>for configuring attachments handling</li>
+ * <li>for configuring image and css handling</li>
+ * </ul>
+ * 
+ * <p>
+ * All the previous examples are provided to understand what can be configured.
+ * Hopefully, Ogham provides auto-configuration with a default behavior that
+ * fits 95% of usages. This auto-configuration is provided by
+ * {@link MessagingConfigurer}s. Those configurers are automatically applied
+ * when using predefined {@link MessagingBuilder}s like
+ * {@link MessagingBuilder#minimal()} and {@link MessagingBuilder#standard()}.
+ * 
+ * The previous sample using standard configuration becomes:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.standad()
+ *   .environment()
+ *     .properties("email.properties")
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient email address"));
+ * </code>
+ * </pre>
+ * 
+ * The new content of the file "email.properties":
+ * 
+ * <pre>
+ * mail.host=your STMP server host
+ * mail.port=your STMP server port
+ * ogham.email.from=sender email address
+ * </pre>
+ * 
+ * <p>
+ * You can also use the auto-configuration for benefit from default behaviors
+ * and override some behaviors for your needs:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.standard()
+ *   .environment()
+ *     .properties("email.properties")
+ *     .and()
+ *   .email()
+ *     .autofill()
+ *       .from()
+ *         .defaultValueProperty("${email.sender.address}")   // overrides default sender email address property
+ *         .and()
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .content(new TemplateContent("classpath:email/sample.html.ftl", new SampleBean("foo", 42)))
+ *   .to("recipient email address"));
+ * </code>
+ * </pre>
+ * 
+ * The new content of the file "email.properties":
+ * 
+ * <pre>
+ * mail.host=your STMP server host
+ * mail.port=your STMP server port
+ * email.sender.address=sender email address
+ * </pre>
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Builder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(EmailBuilder.class);
 
@@ -41,6 +342,16 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	private CssHandlingBuilder cssBuilder;
 	private ImageHandlingBuilder imageBuilder;
 
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
 	public EmailBuilder(MessagingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
@@ -48,6 +359,77 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 		senderBuilderHelper = new SenderImplementationBuilderHelper<>(this, environmentBuilder);
 	}
 
+	/**
+	 * Configures how {@link Attachment}s are handled.
+	 * 
+	 * Attachment resolution consists of finding a file:
+	 * <ul>
+	 * <li>either on filesystem</li>
+	 * <li>or in the classpath</li>
+	 * <li>or anywhere else</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * To identify which resolution to use, each resolution is configured to
+	 * handle one or several lookups prefixes. For example, if resolution is
+	 * configured like this:
+	 * 
+	 * <pre>
+	 * <code>
+	 * .string()
+	 *   .lookup("string:", "s:")
+	 *   .and()
+	 * .file()
+	 *   .lookup("file:")
+	 *   .and()
+	 * .classpath()
+	 *   .lookup("classpath:", "");
+	 * </code>
+	 * </pre>
+	 * 
+	 * Then you can reference a file that is in the classpath like this:
+	 * 
+	 * <pre>
+	 * "classpath:foo/bar.pdf"
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Resource resolution is also able to handle path prefix and suffix. The
+	 * aim is for example to have a folder that contains all templates. The
+	 * developer then configures a path prefix for the folder. He can also
+	 * configure a suffix to fix extension for templates. Thanks to those
+	 * prefix/suffix, templates can now be referenced by the name of the file
+	 * (without extension). It is useful to reference a template independently
+	 * from where it is in reality (classpath, file or anywhere else) .
+	 * Switching from classpath to file and conversely can be done easily (by
+	 * updating the lookup).
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * .classpath().lookup("classpath:").pathPrefix("foo/").pathSuffix(".html");
+	 * 
+	 * resourceResolver.getResource("classpath:bar");
+	 * </pre>
+	 * 
+	 * The real path is then {@code foo/bar.pdf}.
+	 * 
+	 * <p>
+	 * This implementation is used by {@link MessagingBuilder} for general
+	 * configuration. That configuration may be inherited (applied to other
+	 * resource resolution builders).
+	 * 
+	 * 
+	 * <p>
+	 * Detection of the mimetype of each attachment is not directly configured
+	 * here. Attachment handling depends totally on the sender implementation.
+	 * Some implementations will require that a mimetype is provided (JavaMail
+	 * for example) while other implementations doesn't need it (SendGrid for
+	 * example).
+	 * 
+	 * @return the builder to configure attachment handling
+	 */
 	public AttachmentHandlingBuilder attachments() {
 		if (attachmentBuilder == null) {
 			attachmentBuilder = new AttachmentHandlingBuilder(this, environmentBuilder);
@@ -55,6 +437,50 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 		return attachmentBuilder;
 	}
 
+	/**
+	 * Configures how Ogham will add default values to the {@link Email} if some
+	 * information is missing.
+	 * 
+	 * If sender address is missing, a default one can be defined in
+	 * configuration properties.
+	 * 
+	 * If recipient address is missing, a default one can be defined in
+	 * configuration properties.
+	 * 
+	 * If subject is missing, a default one can be defined either:
+	 * <ul>
+	 * <li>In HTML title</li>
+	 * <li>In first line of text template</li>
+	 * <li>Using a default value defined in configuration properties</li>
+	 * </ul>
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * builder
+	 *  .autofill()
+	 *    .subject()
+	 *      .defaultValueProperty("${ogham.email.subject}")
+	 *      .htmlTitle(true)
+	 *      .text("${ogham.email.subject-first-line-prefix}", "Subject:")
+	 *	    .and()
+	 *    .from()
+	 *	    .defaultValueProperty("${ogham.email.from}", "${mail.smtp.from}")
+	 *	    .and()
+	 *    .to()
+	 *	    .defaultValueProperty("${ogham.email.to}")
+	 *	    .and()
+	 *    .cc()
+	 *	    .defaultValueProperty("${ogham.email.cc}")
+	 *	    .and()
+	 *    .bcc()
+	 *	    .defaultValueProperty("${ogham.email.bcc}")
+	 * </code>
+	 * </pre>
+	 * 
+	 * @return the builder to configure autofilling of Email
+	 */
 	public AutofillEmailBuilder autofill() {
 		if (autofillBuilder == null) {
 			autofillBuilder = new AutofillEmailBuilder(this, environmentBuilder);
@@ -62,6 +488,23 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 		return autofillBuilder;
 	}
 
+	/**
+	 * CSS handling consists of defining how CSS are inlined in the email.
+	 * Inlining CSS means that CSS styles are loaded and applied on the matching
+	 * HTML nodes using the {@code style} HTML attribute.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * .css()
+	 *   .inline()
+	 *     .jsoup()
+	 * </pre>
+	 * 
+	 * Enables inlining of CSS styles using Jsoup utility.
+	 * 
+	 * @return the builder to configure css handling
+	 */
 	public CssHandlingBuilder css() {
 		if (cssBuilder == null) {
 			cssBuilder = new CssHandlingBuilder(this, environmentBuilder);
@@ -69,6 +512,39 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 		return cssBuilder;
 	}
 
+	/**
+	 * Image handling consists of defining how images are inlined in the email:
+	 * <ul>
+	 * <li>Either inlining directly in the HTML content by enconding image into
+	 * base64 string</li>
+	 * <li>Or attaching the image to the email and referencing it using a
+	 * <a href="https://tools.ietf.org/html/rfc4021#section-2.2.2">Content-ID
+	 * (CID)</a></li>
+	 * <li>Or no inlining</li>
+	 * </ul>
+	 * 
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * .images()
+	 *   .inline()
+	 *     .attach()
+	 *       .cid()
+	 *         .generator(new SequentialIdGenerator())
+	 *         .and()
+	 *       .and()
+	 *     .base64();
+	 * </pre>
+	 * 
+	 * Enables both inlining modes (attaching images and encoding in base64). By
+	 * default, attaching is used if nothing is specified in the HTML. You can
+	 * also explicitly specify which mode to using the {@code ogham-inline-mode}
+	 * attribute (see {@link ImageHandlingBuilder#inline()} for more
+	 * information).
+	 * 
+	 * @return the builder to configure images handling
+	 */
 	public ImageHandlingBuilder images() {
 		if (imageBuilder == null) {
 			imageBuilder = new ImageHandlingBuilder(this, environmentBuilder);
@@ -76,6 +552,46 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 		return imageBuilder;
 	}
 
+	/**
+	 * Registers and configures a {@link TemplateParser} through a dedicated
+	 * builder.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * .register(ThymeleafEmailBuilder.class)
+	 *     .detector(new ThymeleafEngineDetector());
+	 * </pre>
+	 * 
+	 * <p>
+	 * Your {@link Builder} may implement {@link VariantBuilder} to handle
+	 * template {@link Variant}s (used for {@link MultiTemplateContent} that
+	 * provide a single path to templates with different extensions for
+	 * example).
+	 * </p>
+	 * 
+	 * <p>
+	 * Your {@link Builder} may also implement {@link DetectorBuilder} in order
+	 * to indicate which kind of templates your {@link TemplateParser} is able
+	 * to parse. If your template parse is able to parse any template file you
+	 * are using, you may not need to implement {@link DetectorBuilder}.
+	 * </p>
+	 * 
+	 * <p>
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with two arguments:
+	 * <ul>
+	 * <li>The type of the parent builder ({@code &lt;P&gt;})</li>
+	 * <li>The {@link EnvironmentBuilder} instance</li>
+	 * </ul>
+	 * If you don't care about chaining, just provide a default constructor.
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param <T>
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 */
 	public <T extends Builder<? extends TemplateParser>> T template(Class<T> builderClass) {
 		return templateBuilderHelper.register(builderClass);
 	}

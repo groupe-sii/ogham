@@ -46,7 +46,7 @@ public interface ResourceResolutionBuilder<MYSELF extends ResourceResolutionBuil
 	 * <pre>
 	 * .classpath().lookup("classpath:").pathPrefix("foo/").pathSuffix(".html");
 	 * 
-	 * resourceResolver.getResource("bar");
+	 * resourceResolver.getResource("classpath:bar");
 	 * </pre>
 	 * 
 	 * This will use the classpath resolver and the real path is
@@ -80,7 +80,7 @@ public interface ResourceResolutionBuilder<MYSELF extends ResourceResolutionBuil
 	 * <pre>
 	 * .file().lookup("file:").pathPrefix("foo/").pathSuffix(".html");
 	 * 
-	 * resourceResolver.getResource("bar");
+	 * resourceResolver.getResource("file:bar");
 	 * </pre>
 	 * 
 	 * This will use the file resolver and the real path is

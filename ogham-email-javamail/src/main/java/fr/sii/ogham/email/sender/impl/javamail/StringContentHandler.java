@@ -7,7 +7,7 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimePart;
 
-import fr.sii.ogham.core.charset.CharsetProvider;
+import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -31,9 +31,9 @@ public class StringContentHandler implements JavaMailContentHandler {
 	/**
 	 * The charset provider
 	 */
-	private CharsetProvider charsetProvider;
+	private CharsetDetector charsetProvider;
 
-	public StringContentHandler(MimeTypeProvider mimetypeProvider, CharsetProvider charsetProvider) {
+	public StringContentHandler(MimeTypeProvider mimetypeProvider, CharsetDetector charsetProvider) {
 		super();
 		this.mimetypeProvider = mimetypeProvider;
 		this.charsetProvider = charsetProvider;
@@ -44,7 +44,7 @@ public class StringContentHandler implements JavaMailContentHandler {
 		try {
 			MimeBodyPart part = new MimeBodyPart();
 			String strContent = ((StringContent) content).getContent();
-			Charset charset = charsetProvider.getCharset(strContent);
+			Charset charset = charsetProvider.detect(strContent);
 			String charsetParam = charset == null ? "" : (";charset=" + charset.name());
 			part.setContent(strContent, mimetypeProvider.detect(strContent).toString() + charsetParam);
 			multipart.addBodyPart(part);

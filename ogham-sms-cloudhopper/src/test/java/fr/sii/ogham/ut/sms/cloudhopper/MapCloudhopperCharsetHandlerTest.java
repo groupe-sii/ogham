@@ -20,7 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
 
-import fr.sii.ogham.core.charset.CharsetProvider;
+import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.sms.exception.message.EncodingException;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.MapCloudhopperCharsetHandler;
@@ -28,7 +28,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.MapCloudhopperCharsetHandler;
 @RunWith(MockitoJUnitRunner.class)
 public class MapCloudhopperCharsetHandlerTest {
 	@Mock(answer = Answers.RETURNS_SMART_NULLS)
-	private CharsetProvider charsetProviderMock;
+	private CharsetDetector charsetProviderMock;
 
 	private MapCloudhopperCharsetHandler charsetHandler;
 	
@@ -86,7 +86,7 @@ public class MapCloudhopperCharsetHandlerTest {
 			}
 		};
 
-		BDDMockito.given(charsetProviderMock.getCharset(givenContent)).willReturn(nioCharsetMock);
+		BDDMockito.given(charsetProviderMock.detect(givenContent)).willReturn(nioCharsetMock);
 
 		String expectedEncodedStr = "ok";
 		BDDMockito.given(cloudhopperCharsetMock.encode(givenContent)).willReturn(expectedEncodedStr.getBytes());
@@ -107,7 +107,7 @@ public class MapCloudhopperCharsetHandlerTest {
 		com.cloudhopper.commons.charset.Charset cloudhopperCharsetMock = Mockito.mock(com.cloudhopper.commons.charset.Charset.class, new ReturnsSmartNulls());
 		charsetHandler.addCharset(givenNioCharsetName, cloudhopperCharsetMock);
 
-		BDDMockito.given(charsetProviderMock.getCharset(givenContent)).willReturn(null);
+		BDDMockito.given(charsetProviderMock.detect(givenContent)).willReturn(null);
 
 		// when
 		charsetHandler.encode(givenContent);
@@ -136,7 +136,7 @@ public class MapCloudhopperCharsetHandlerTest {
 			}
 		};
 
-		BDDMockito.given(charsetProviderMock.getCharset(givenContent)).willReturn(nioCharsetMock);
+		BDDMockito.given(charsetProviderMock.detect(givenContent)).willReturn(nioCharsetMock);
 
 		// when
 		charsetHandler.encode(givenContent);

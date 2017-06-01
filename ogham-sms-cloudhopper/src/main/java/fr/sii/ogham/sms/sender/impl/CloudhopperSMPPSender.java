@@ -148,6 +148,10 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 			public SmppSession call() throws Exception {
 				return client.bind(smppSessionConfiguration);
 			}
+			@Override
+			public String toString() {
+				return "Connection to SMPP server";
+			}
 		});
 	}
 

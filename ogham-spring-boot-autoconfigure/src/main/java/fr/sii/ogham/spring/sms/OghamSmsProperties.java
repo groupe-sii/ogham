@@ -17,25 +17,39 @@ public class OghamSmsProperties {
 	 * will use this phone number as default recipient number.
 	 */
 	private String to;
+	/**
+	 * Enable/disable alphanumeric code format conversion for sender phone
+	 * number: if the sender address is alphanumeric (contains both letters and
+	 * numbers) or non-numeric, TON is set to 5 and NPI to 0.
+	 */
 	private boolean fromFormatEnableAlphanumeric = true;
+	/**
+	 * Enable/disable short code format conversion for sender phone number: if
+	 * the sender address is a short code, TON is set to 3, and NPI is set to 0.
+	 * A number is considered to be a short code if the length of the number is
+	 * 5 digits or less.
+	 */
 	private boolean fromFormatEnableShortcode = true;
+	/**
+	 * Enable/disable international number format conversion for sender phone
+	 * number: if the sender starts with a "+", TON is set to 1, and NPI is set
+	 * to 1.
+	 * 
+	 */
 	private boolean fromFormatEnableInternational = true;
+	/**
+	 * Enable/disable international number format conversion for recipient phone
+	 * number: if the sender starts with a "+", TON is set to 1, and NPI is set
+	 * to 1.
+	 * 
+	 */
 	private boolean toFormatEnableInternational = true;
-	private String defaultEncoding = "UTF-8";
 	@NestedConfigurationProperty
 	private OghamResolutionProperties freemarker;
 	@NestedConfigurationProperty
 	private OghamResolutionProperties thymeleaf;
 	@NestedConfigurationProperty
 	private OghamResolutionProperties template;
-
-	public String getDefaultEncoding() {
-		return defaultEncoding;
-	}
-
-	public void setDefaultEncoding(String defaultEncoding) {
-		this.defaultEncoding = defaultEncoding;
-	}
 
 	public String getFrom() {
 		return from;

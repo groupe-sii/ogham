@@ -29,8 +29,8 @@ import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
-import fr.sii.ogham.core.charset.CharsetProvider;
-import fr.sii.ogham.core.charset.FixedCharsetProvider;
+import fr.sii.ogham.core.charset.CharsetDetector;
+import fr.sii.ogham.core.charset.FixedCharsetDetector;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
@@ -43,6 +43,7 @@ import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
@@ -144,7 +145,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	private MimetypeDetectionBuilder<JavaMailBuilder> mimetypeBuilder;
 	private List<String> charsets;
 	private Charset charset;
-	private CharsetProvider charsetProvider;
+	private CharsetDetector charsetDetector;
 
 	/**
 	 * Default constructor when using JavaMail sender without all Ogham work.
@@ -229,7 +230,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	/**
-	 * Set the mail server address host (IP or hostname).
+	 * Set the mail server port.
 	 * 
 	 * You can specify a direct value. For example:
 	 * 
@@ -314,7 +315,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	/**
-	 * Define a custom provider that will indicate which charset must be used
+	 * Defines a custom detector that will indicate which charset corresponds
 	 * for a particular string.
 	 * 
 	 * This value preempts any other value defined by calling
@@ -322,12 +323,12 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * 
 	 * If this method is called several times, only the last provider is used.
 	 * 
-	 * @param charsetProvider
-	 *            the provider used to determine charset to use
+	 * @param charsetDetector
+	 *            the provider used to detect charset of a string
 	 * @return this instance for fluent chaining
 	 */
-	public JavaMailBuilder charset(CharsetProvider charsetProvider) {
-		this.charsetProvider = charsetProvider;
+	public JavaMailBuilder charset(CharsetDetector charsetDetector) {
+		this.charsetDetector = charsetDetector;
 		return this;
 	}
 
@@ -472,7 +473,8 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	/**
-	 * Builder that configures mimetype detection.
+	 * Builder that configures mimetype detection. Detection is used here to
+	 * detect mimetype of {@link Attachment}s.
 	 * 
 	 * There exists several implementations to provide the mimetype:
 	 * <ul>
@@ -596,18 +598,18 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		return contentHandler;
 	}
 
-	private CharsetProvider buildCharset() {
-		if (this.charsetProvider != null) {
-			return this.charsetProvider;
+	private CharsetDetector buildCharset() {
+		if (this.charsetDetector != null) {
+			return this.charsetDetector;
 		}
 		if (charset != null) {
-			return new FixedCharsetProvider(charset);
+			return new FixedCharsetDetector(charset);
 		}
 		if (charsets != null) {
 			String charsetValue = BuilderUtils.evaluate(charsets, getPropertyResolver(), String.class);
-			return new FixedCharsetProvider(Charset.forName(charsetValue));
+			return new FixedCharsetDetector(Charset.forName(charsetValue));
 		}
-		return new FixedCharsetProvider();
+		return new FixedCharsetDetector();
 	}
 
 	private PropertyResolver getPropertyResolver() {

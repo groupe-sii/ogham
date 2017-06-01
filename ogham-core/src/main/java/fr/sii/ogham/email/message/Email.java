@@ -58,13 +58,14 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 */
 	private List<Attachment> attachments;
 
-	
+	/**
+	 * Instantiates an empty email
+	 */
 	public Email() {
 		super();
 		recipients = new ArrayList<>();
 		attachments = new ArrayList<>();
 	}
-
 
 	// ----------------------- Getter/Setters -----------------------//
 
@@ -103,8 +104,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param from
 	 *            the sender address string (typical address syntax is of the
-	 *            form "user@host.domain" or
-	 *            "Personal Name &lt;user@host.domain&gt;").
+	 *            form "user@host.domain" or "Personal Name
+	 *            &lt;user@host.domain&gt;").
 	 */
 	public void setFrom(String from) {
 		setFrom(new EmailAddress(from));
@@ -207,7 +208,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	}
 
 	/**
-	 * Set the sender address.
+	 * Set the sender address. It supports both "user@domain.host" and "Personal
+	 * Name &lt;user@host.domain&gt;" formats.
 	 * 
 	 * @param from
 	 *            the sender address
@@ -224,8 +226,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param from
 	 *            the sender address string (typical address syntax is of the
-	 *            form "user@host.domain" or
-	 *            "Personal Name &lt;user@host.domain&gt;").
+	 *            form "user@host.domain" or "Personal Name
+	 *            &lt;user@host.domain&gt;").
 	 * @return this instance for fluent chaining
 	 */
 	public Email from(String from) {
@@ -298,7 +300,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	}
 
 	/**
-	 * Add a "to" recipient address.
+	 * Add a "to" recipient address. It supports both "user@domain.host" and
+	 * "Personal Name &lt;user@host.domain&gt;" formats.
 	 * 
 	 * @param to
 	 *            one or several recipient addresses
@@ -326,7 +329,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	}
 
 	/**
-	 * Add a "cc" recipient address.
+	 * Add a "cc" recipient address. It supports both "user@domain.host" and
+	 * "Personal Name &lt;user@host.domain&gt;" formats.
 	 * 
 	 * @param cc
 	 *            one or several recipient addresses
@@ -354,7 +358,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	}
 
 	/**
-	 * Add a "bcc" recipient address.
+	 * Add a "bcc" recipient address. It supports both "user@domain.host" and
+	 * "Personal Name &lt;user@host.domain&gt;" formats.
 	 * 
 	 * @param bcc
 	 *            one or several recipient addresses
@@ -403,8 +408,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param to
 	 *            the list of addresses to convert (typical address syntax is of
-	 *            the form "user@host.domain" or
-	 *            "Personal Name &lt;user@host.domain&gt;")
+	 *            the form "user@host.domain" or "Personal Name
+	 *            &lt;user@host.domain&gt;")
 	 * @return the list of recipients
 	 */
 	public static Recipient[] toRecipient(List<String> to) {
@@ -439,8 +444,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * 
 	 * @param to
 	 *            the list of addresses to convert (typical address syntax is of
-	 *            the form "user@host.domain" or
-	 *            "Personal Name &lt;user@host.domain&gt;")
+	 *            the form "user@host.domain" or "Personal Name
+	 *            &lt;user@host.domain&gt;")
 	 * @return the list of recipients
 	 */
 	public static Recipient[] toRecipient(String[] to) {

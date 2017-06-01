@@ -5,7 +5,7 @@ import fr.sii.ogham.core.message.Message;
 
 /**
  * Decorator that catch all exceptions including {@link RuntimeException}. It
- * translates other exceptions into {@link MessagingException}.
+ * translates any exceptions into {@link MessagingException}.
  * 
  * @author Aurélien Baudet
  */
@@ -14,7 +14,7 @@ public class WrapExceptionMessagingService implements MessagingService {
 	 * The delegate service that will really send messages
 	 */
 	private MessagingService delegate;
-	
+
 	public WrapExceptionMessagingService(MessagingService delegate) {
 		super();
 		this.delegate = delegate;
@@ -24,7 +24,8 @@ public class WrapExceptionMessagingService implements MessagingService {
 	 * Sends the message. The message can be anything with any content and that
 	 * must be delivered to something or someone.
 	 * 
-	 * If there is any exception, it caught and translated in {@link MessagingException}.
+	 * If there is any exception, it caught and translated in
+	 * {@link MessagingException}.
 	 * 
 	 * @param message
 	 *            the message to send
@@ -35,14 +36,15 @@ public class WrapExceptionMessagingService implements MessagingService {
 	public void send(Message message) throws MessagingException {
 		try {
 			delegate.send(message);
-		} catch(MessagingException e) {
-			throw e;	// this is wanted to avoid wrapping MessagingException with MessagingException
-		} catch(IllegalArgumentException e) {
-			throw new MessagingException("Message can't be sent due to precondition not met. Cause: "+e.getMessage(), e);
-		} catch(IllegalStateException e) {
-			throw new MessagingException("Message can't be sent due to some illegal use. Cause: "+e.getMessage(), e);
-		} catch(Exception e) {
-			throw new MessagingException("Message can't be sent due to uncaught exception. Cause: "+e.getMessage(), e);
+		} catch (MessagingException e) {
+			throw e; // this is wanted to avoid wrapping MessagingException with
+						// MessagingException
+		} catch (IllegalArgumentException e) {
+			throw new MessagingException("Message can't be sent due to precondition not met. Cause: " + e.getMessage(), e);
+		} catch (IllegalStateException e) {
+			throw new MessagingException("Message can't be sent due to some illegal use. Cause: " + e.getMessage(), e);
+		} catch (Exception e) {
+			throw new MessagingException("Message can't be sent due to uncaught exception. Cause: " + e.getMessage(), e);
 		}
 	}
 }
