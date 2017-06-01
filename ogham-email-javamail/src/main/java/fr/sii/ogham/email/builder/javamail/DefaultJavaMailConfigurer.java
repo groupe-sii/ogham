@@ -1,5 +1,7 @@
 package fr.sii.ogham.email.builder.javamail;
 
+import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
@@ -63,7 +65,7 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = "standard", priority = 50000)
+@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY)
 public class DefaultJavaMailConfigurer implements MessagingConfigurer {
 
 	@Override

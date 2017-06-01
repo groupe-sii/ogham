@@ -1,6 +1,7 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
@@ -72,7 +73,7 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = "standard", priority = 40000)
+@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY)
 public class DefaultCloudhopperConfigurer implements MessagingConfigurer {
 
 	@Override

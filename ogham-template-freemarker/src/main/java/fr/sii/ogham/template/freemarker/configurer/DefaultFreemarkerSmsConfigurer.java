@@ -1,5 +1,7 @@
 package fr.sii.ogham.template.freemarker.configurer;
 
+import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
@@ -81,7 +83,7 @@ import freemarker.template.TemplateExceptionHandler;
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = 60000)
+@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
 public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
 	private final MessagingConfigurerAdapter delegate;
 

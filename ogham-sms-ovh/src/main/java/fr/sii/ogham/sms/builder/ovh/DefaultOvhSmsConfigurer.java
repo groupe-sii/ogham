@@ -1,5 +1,7 @@
 package fr.sii.ogham.sms.builder.ovh;
 
+import static fr.sii.ogham.sms.OvhSmsConstants.DEFAULT_OVHSMS_CONFIGURER_PRIORITY;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
@@ -59,7 +61,7 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = "standard", priority = 20000)
+@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_OVHSMS_CONFIGURER_PRIORITY)
 public class DefaultOvhSmsConfigurer implements MessagingConfigurer {
 
 	@Override

@@ -1,5 +1,7 @@
 package fr.sii.ogham.template.thymeleaf.configure;
 
+import static fr.sii.ogham.template.thymeleaf.ThymeleafConstants.DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
@@ -81,7 +83,7 @@ import fr.sii.ogham.template.thymeleaf.buider.ThymeleafSmsBuilder;
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = 90000)
+@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY)
 public class DefaultThymeleafEmailConfigurer implements MessagingConfigurer {
 	private final MessagingConfigurerAdapter delegate;
 
