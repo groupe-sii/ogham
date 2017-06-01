@@ -58,29 +58,36 @@ import fr.sii.ogham.email.sender.impl.javamail.MultiContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StreamResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
 
-// @formatter:off
 /**
  * Configures how Java Mail implementation will send {@link Email}s.
  * 
  * <p>
  * To send {@link Email} using Java Mail, you need to register this builder into
  * a {@link MessagingBuilder} like this:
+ * 
  * <pre>
+ * <code>
  * MessagingBuilder msgBuilder = ...
  * msgBuilder.email()
  *    .sender(JavaMailBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ * </code>
  * </pre>
  * 
  * Once the builder is registered, sending email through Java Mail requires at
  * least host of the SMTP server. You can define it using:
+ * 
  * <pre>
+ * <code>
  * msgBuilder.email()
  *    .sender(JavaMailBuilder.class)    // registers the builder and accesses to that builder for configuring it
  *       .host("localhost")
+ * </code>
  * </pre>
  * 
  * Or you can also use property keys (using interpolation):
+ * 
  * <pre>
+ * <code>
  * msgBuilder
  * .environment()
  *    .properties()
@@ -90,39 +97,50 @@ import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
  * .email()
  *    .sender(JavaMailBuilder.class)    // registers the builder and accesses to that builder for configuring it
  *       .host("${custom.property.for.host}")
+ * </code>
  * </pre>
  * 
  * You can do the same with port of the SMTP server.
  * 
  * 
  * <p>
- * SMTP server may require authentication. In most cases, authentication is done 
- * using username/password. You can use this builder to quickly provide your username
- * and password:
+ * SMTP server may require authentication. In most cases, authentication is done
+ * using username/password. You can use this builder to quickly provide your
+ * username and password:
+ * 
  * <pre>
+ * <code>
  * .sender(JavaMailBuilder.class)
  *    .authenticator()
  *        .username("foo")
  *        .password("bar")
+ * </code>
  * </pre>
  * 
- * If you need another authentication mechanism, you can directly provide your own
- * {@link Authenticator} implementation:
+ * If you need another authentication mechanism, you can directly provide your
+ * own {@link Authenticator} implementation:
+ * 
  * <pre>
+ * <code>
  * .sender(JavaMailBuilder.class)
  *    .authenticator(new MyCustomAuthenticator())
+ * </code>
  * </pre>
  * 
  * 
  * <p>
- * Finally, Ogham will transform general {@link Email} object into {@link MimeMessage},
- * {@link MimeMultipart}, {@link MimeBodyPart} objects. This transformation will fit
- * almost all use cases but you may need to customize a part of the javax.mail message.
- * Instead of doing again the same work Ogham does, this builder allows you to 
- * intercept the message to modify it just before sending it:
+ * Finally, Ogham will transform general {@link Email} object into
+ * {@link MimeMessage}, {@link MimeMultipart}, {@link MimeBodyPart} objects.
+ * This transformation will fit almost all use cases but you may need to
+ * customize a part of the javax.mail message. Instead of doing again the same
+ * work Ogham does, this builder allows you to intercept the message to modify
+ * it just before sending it:
+ * 
  * <pre>
+ * <code>
  * .sender(JavaMailBuilder.class)
  *    .intercept(new MyCustomInterceptor())
+ * </code>
  * </pre>
  * 
  * See {@link JavaMailInterceptor} for more information.
@@ -131,7 +149,6 @@ import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
  * @author Aurélien Baudet
  *
  */
-//@formatter:on
 public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Builder<JavaMailSender>, ActivableAtRuntime {
 	private static final Logger LOG = LoggerFactory.getLogger(JavaMailBuilder.class);
 

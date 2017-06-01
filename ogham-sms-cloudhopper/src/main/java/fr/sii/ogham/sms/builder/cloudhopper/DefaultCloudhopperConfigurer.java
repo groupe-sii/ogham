@@ -94,7 +94,7 @@ public class DefaultCloudhopperConfigurer implements MessagingConfigurer {
 				.systemId("${ogham.sms.cloudhopper.system-id}", "${ogham.sms.smpp.system-id}")
 				.password("${ogham.sms.cloudhopper.password}", "${ogham.sms.smpp.password}")
 				.host("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}")
-				.port("${ogham.sms.cloudhopper.port}", "${ogham.sms.smpp.port}")
+				.port("${ogham.sms.cloudhopper.port}", "${ogham.sms.smpp.port}", "2775")
 				.interfaceVersion("${ogham.sms.cloudhopper.interface-version}", "3.4")
 				.session()
 					.sessionName("${ogham.sms.cloudhopper.session-name}")

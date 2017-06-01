@@ -1,5 +1,7 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
+import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredProperty;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,15 +21,20 @@ import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.LoggingOptions;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.ActivableAtRuntime;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
+import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
 import fr.sii.ogham.sms.message.addressing.translator.DefaultHandler;
 import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
@@ -46,10 +53,66 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperOptions;
  * <li>Logging options</li>
  * </ul>
  * 
+ * <p>
+ * To send {@link Sms} using Cloudhopper, you need to register this builder into
+ * a {@link MessagingBuilder} like this:
+ * 
+ * <pre>
+ * <code>
+ * MessagingBuilder msgBuilder = ...
+ * msgBuilder.sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ * </code>
+ * </pre>
+ * 
+ * Once the builder is registered, sending sms through Cloudhopper requires at
+ * least host of the SMPP server. You can define it using:
+ * 
+ * <pre>
+ * <code>
+ * msgBuilder.sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .host("localhost")
+ * </code>
+ * </pre>
+ * 
+ * Or you can also use property keys (using interpolation):
+ * 
+ * <pre>
+ * <code>
+ * msgBuilder
+ * .environment()
+ *    .properties()
+ *       .set("custom.property.for.host", "localhost")
+ *       .and()
+ *    .and()
+ * .sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .host("${custom.property.for.host}")
+ * </code>
+ * </pre>
+ * 
+ * You can do the same with port of the SMPP server.
+ * 
+ * 
+ * <p>
+ * SMPP server may require authentication. In most cases, authentication is done
+ * using system_id/password. You can use this builder to quickly provide your
+ * system_id and password:
+ * 
+ * <pre>
+ * <code>
+ * .sender(CloudhopperBuilder.class)
+ *        .systemId("foo")
+ *        .password("bar")
+ * </code>
+ * </pre>
+ * 
+ * 
  * @author Aurélien Baudet
  */
 // TODO: be able to configure PhoneNumberTranslator
-public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Builder<CloudhopperSMPPSender> {
+public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Builder<CloudhopperSMPPSender>, ActivableAtRuntime {
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperBuilder.class);
 
 	private EnvironmentBuilder<CloudhopperBuilder> environmentBuilder;
@@ -587,7 +650,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	}
 
 	public CloudhopperSMPPSender build() throws BuildException {
-		PropertyResolver propertyResolver = environmentBuilder.build();
+		PropertyResolver propertyResolver = buildPropertyResolver();
 		CloudhopperSessionOptions sessionOpts = sessionBuilder.build();
 		SmppSessionConfiguration session = buildSession(sessionOpts, propertyResolver);
 		if (session.getHost() == null || session.getPort() == 0) {
@@ -597,6 +660,16 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		CloudhopperCharsetHandler charsetHandler = buildCharsetHandler();
 		PhoneNumberTranslator phoneNumberTranslator = buildPhoneNumberTranslator();
 		return new CloudhopperSMPPSender(session, options, charsetHandler, phoneNumberTranslator);
+	}
+
+	@Override
+	public Condition<Message> getCondition() {
+		PropertyResolver propertyResolver = buildPropertyResolver();
+		return requiredProperty(propertyResolver, "ogham.sms.cloudhopper.host").or(requiredProperty(propertyResolver, "ogham.sms.smpp.host"));
+	}
+
+	private PropertyResolver buildPropertyResolver() {
+		return environmentBuilder.build();
 	}
 
 	private PhoneNumberTranslator buildPhoneNumberTranslator() {
