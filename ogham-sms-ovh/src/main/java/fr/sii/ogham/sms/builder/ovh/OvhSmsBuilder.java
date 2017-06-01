@@ -23,29 +23,36 @@ import fr.sii.ogham.sms.sender.impl.ovh.OvhAuthParams;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
 import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
 
-//@formatter:off
 /**
  * Configures how to send {@link Sms} using OVH HTTP API.
  * 
  * <p>
- * To send {@link Sms} using OVH, you need to register this builder into
- * a {@link MessagingBuilder} like this:
+ * To send {@link Sms} using OVH, you need to register this builder into a
+ * {@link MessagingBuilder} like this:
+ * 
  * <pre>
+ * <code>
  * MessagingBuilder msgBuilder = ...
  * msgBuilder.sms()
  *    .sender(OvhSmsBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ * </code>
  * </pre>
  * 
- * Once the builder is registered, sending sms through OVH requires
- * URL, account, login and password values. You can define it using:
+ * Once the builder is registered, sending sms through OVH requires URL,
+ * account, login and password values. You can define it using:
+ * 
  * <pre>
+ * <code>
  * msgBuilder.email()
  *    .sender(OvhSmsBuilder.class)    // registers the builder and accesses to that builder for configuring it
  *       .url("https://www.ovh.com/cgi-bin/sms/http2sms.cgi")
+ * </code>
  * </pre>
  * 
  * Or you can also use property keys (using interpolation):
+ * 
  * <pre>
+ * <code>
  * msgBuilder
  * .environment()
  *    .properties()
@@ -55,13 +62,13 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  * .email()
  *    .sender(OvhSmsBuilder.class)    // registers the builder and accesses to that builder for configuring it
  *       .host("${custom.property.for.url}")
+ * </code>
  * </pre>
  * 
  * 
  * @author Aurélien Baudet
  *
  */
-//@formatter:on
 public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder<OvhSmsSender> {
 	private EnvironmentBuilder<OvhSmsBuilder> environmentBuilder;
 	private List<String> urls;

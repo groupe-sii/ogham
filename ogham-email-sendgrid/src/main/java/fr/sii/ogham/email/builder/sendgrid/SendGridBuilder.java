@@ -35,7 +35,6 @@ import fr.sii.ogham.email.sender.impl.sendgrid.handler.MapContentHandler;
 import fr.sii.ogham.email.sender.impl.sendgrid.handler.MultiContentHandler;
 import fr.sii.ogham.email.sender.impl.sendgrid.handler.StringContentHandler;
 
-// @formatter:off
 /**
  * Configures how SendGrid implementation will send {@link Email}s.
  * 
@@ -44,22 +43,30 @@ import fr.sii.ogham.email.sender.impl.sendgrid.handler.StringContentHandler;
  * <p>
  * To send {@link Email} using SendGrid, you need to register this builder into
  * a {@link MessagingBuilder} like this:
+ * 
  * <pre>
+ * <code>
  * MessagingBuilder msgBuilder = ...
  * msgBuilder.email()
  *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ * </code>
  * </pre>
  * 
- * Once the builder is registered, sending email through SendGrid requires 
+ * Once the builder is registered, sending email through SendGrid requires
  * either an API key or a username/password pair. You can define it using:
+ * 
  * <pre>
+ * <code>
  * msgBuilder.email()
  *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
  *       .apiKey("foo")
+ * </code>
  * </pre>
  * 
  * Or you can also use property keys (using interpolation):
+ * 
  * <pre>
+ * <code>
  * msgBuilder
  * .environment()
  *    .properties()
@@ -69,17 +76,21 @@ import fr.sii.ogham.email.sender.impl.sendgrid.handler.StringContentHandler;
  * .email()
  *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
  *       .host("${custom.property.for.api-key}")
+ * </code>
  * </pre>
  * 
  * <p>
- * Finally, Ogham will transform general {@link Email} object into 
- * {@link SendGrid}.Email object. This transformation will fit
- * almost all use cases but you may need to customize a part of the SendGrid message.
- * Instead of doing again the same work Ogham does, this builder allows you to 
- * intercept the message to modify it just before sending it:
+ * Finally, Ogham will transform general {@link Email} object into
+ * {@link SendGrid}.Email object. This transformation will fit almost all use
+ * cases but you may need to customize a part of the SendGrid message. Instead
+ * of doing again the same work Ogham does, this builder allows you to intercept
+ * the message to modify it just before sending it:
+ * 
  * <pre>
+ * <code>
  * .sender(SendGridBuilder.class)
  *    .intercept(new MyCustomInterceptor())
+ * </code>
  * </pre>
  * 
  * See {@link SendGridInterceptor} for more information.
@@ -87,7 +98,6 @@ import fr.sii.ogham.email.sender.impl.sendgrid.handler.StringContentHandler;
  * @author Aurélien Baudet
  *
  */
-//@formatter:on
 public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Builder<SendGridSender> {
 	private EnvironmentBuilder<SendGridBuilder> environmentBuilder;
 	private MimetypeDetectionBuilder<SendGridBuilder> mimetypeBuilder;
