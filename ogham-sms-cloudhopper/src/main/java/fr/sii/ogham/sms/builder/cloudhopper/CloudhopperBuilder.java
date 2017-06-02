@@ -654,6 +654,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		CloudhopperOptions options = buildOptions(sessionOpts);
 		CloudhopperCharsetHandler charsetHandler = buildCharsetHandler();
 		PhoneNumberTranslator phoneNumberTranslator = buildPhoneNumberTranslator();
+		LOG.info("Sending SMS using Cloudhopper is registered");
+		LOG.debug("SMPP server address: {}:{}", session.getHost(), session.getPort());
 		return new CloudhopperSMPPSender(session, options, charsetHandler, phoneNumberTranslator);
 	}
 

@@ -573,6 +573,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		Properties props = buildProperties();
 		MimeTypeProvider mimetypeProvider = mimetype().build();
 		LOG.info("Sending email using JavaMail API is registered");
+		LOG.debug("SMTP server address: {}:{}", props.getProperty("mail.host"), props.getProperty("mail.port"));
 		return new JavaMailSender(props, buildContentHandler(mimetypeProvider), buildAttachmentHandler(mimetypeProvider), buildAuthenticator(), interceptor);
 	}
 

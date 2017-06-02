@@ -1,5 +1,7 @@
 package fr.sii.ogham.spring.template;
 
+import static freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,7 +20,7 @@ public class OghamFreemarkerConfiguration {
 	@Qualifier("email")
 	@ConditionalOnMissingBean(name = "emailFreemarkerConfiguration")
 	public freemarker.template.Configuration emailFreemarkerConfiguration() {
-		freemarker.template.Configuration configuration = new freemarker.template.Configuration();
+		freemarker.template.Configuration configuration = new freemarker.template.Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		configuration.setDefaultEncoding("UTF-8");
 		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 		// configuration.setLogTemplateExceptions(false);
@@ -29,7 +31,7 @@ public class OghamFreemarkerConfiguration {
 	@Qualifier("sms")
 	@ConditionalOnMissingBean(name = "smsFreemarkerConfiguration")
 	public freemarker.template.Configuration smsFreemarkerConfiguration() {
-		freemarker.template.Configuration configuration = new freemarker.template.Configuration();
+		freemarker.template.Configuration configuration = new freemarker.template.Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		configuration.setDefaultEncoding("UTF-8");
 		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 		// configuration.setLogTemplateExceptions(false);

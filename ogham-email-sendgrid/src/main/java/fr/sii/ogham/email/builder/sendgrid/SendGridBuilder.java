@@ -8,6 +8,9 @@ import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.builder.AbstractParent;
@@ -99,6 +102,8 @@ import fr.sii.ogham.email.sender.impl.sendgrid.handler.StringContentHandler;
  *
  */
 public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Builder<SendGridSender> {
+	private static final Logger LOG = LoggerFactory.getLogger(SendGridBuilder.class);
+	
 	private EnvironmentBuilder<SendGridBuilder> environmentBuilder;
 	private MimetypeDetectionBuilder<SendGridBuilder> mimetypeBuilder;
 	private List<String> apiKeys;
@@ -455,6 +460,8 @@ public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Bui
 			return null;
 		}
 		SendGridClient client = buildClient(apiKey, username, password);
+		LOG.info("Sending email using SendGrid API is registered");
+		LOG.debug("SendGrid account: apiKey={}, username={}", apiKey, username);
 		return new SendGridSender(client, buildContentHandler(), interceptor);
 	}
 

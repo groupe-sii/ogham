@@ -17,6 +17,15 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 
+/**
+ * Fluent builder to configure Thymeleaf engine.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param <P>
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
 public class ThymeleafEngineConfigBuilder<P> extends AbstractParent<P> implements Builder<TemplateEngine> {
 	private Set<IDialect> dialects;
 	private Map<String, IDialect> dialectsByPrefix;
@@ -27,6 +36,13 @@ public class ThymeleafEngineConfigBuilder<P> extends AbstractParent<P> implement
 	private Set<ITemplateModeHandler> templateModeHandlers;
 	private Set<ITemplateModeHandler> defaultTemplateModeHandlers;
 
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 */
 	public ThymeleafEngineConfigBuilder(P parent) {
 		super(parent);
 	}

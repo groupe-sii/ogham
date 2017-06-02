@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
@@ -70,6 +73,8 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  *
  */
 public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder<OvhSmsSender> {
+	private static final Logger LOG = LoggerFactory.getLogger(OvhSmsBuilder.class);
+	
 	private EnvironmentBuilder<OvhSmsBuilder> environmentBuilder;
 	private List<String> urls;
 	private List<String> accounts;
@@ -345,6 +350,8 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 		if (url == null || authParams.getAccount() == null || authParams.getLogin() == null || authParams.getPassword() == null) {
 			return null;
 		}
+		LOG.info("Sending SMS using OVH API is registered");
+		LOG.debug("OVH account: account={}, login={}", authParams.getAccount(), authParams.getLogin());
 		return new OvhSmsSender(url, authParams, options);
 	}
 

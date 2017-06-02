@@ -79,7 +79,7 @@ import fr.sii.ogham.sms.message.Sms;
  * <pre>
  * <code>
  * // Instantiate the messaging service
- * MessagingService service = new MessagingBuilder()
+ * MessagingService service = MessagingBuilder.standard()
  *   .build();
  * // send the email
  * service.send(new Email()
@@ -92,17 +92,24 @@ import fr.sii.ogham.sms.message.Sms;
  * This sample shows that:
  * <ul>
  * <li>System properties are used to configure "mail.host" and "mail.port"</li>
+ * <li>As properties "mail.host" and "mail.port" are defined and
+ * "ogham-email-javamail" is used, the email is sent using JavaMail
+ * implementation</li>
  * <li>An email is sent to "foo.bar@sii.fr"</li>
  * <li>The email provides a main content (HTML) and a fallback content (text)
  * <ul>
  * <li>The HTML content comes from a template located in the classpath
  * (email/sample.html) and variables that are present in the template are
  * replaced by values provided by a simple bean object (no conversion is
- * needed)</li>
+ * needed). As "ogham-template-thymeleaf" is used and the template is a
+ * Thymeleaf template (Thymeleaf directive on &lt;html&gt; tag), this template
+ * is parse by Thymeleaf</li>
  * <li>The text content comes from a template located in the classpath
  * (email/sample.txt.ftl) and variables that are present in the template are
  * replaced by values provided by a simple bean object (no conversion is
- * needed)</li>
+ * needed). As "ogham-template-freemarker" is used and the template is a
+ * Freemarker template (".ftl" extension), this template is parse by
+ * Thymeleaf</li>
  * </ul>
  * </li>
  * <li>The HTML template has CSS styles that are inlined (CSS are forbidden by
@@ -117,12 +124,71 @@ import fr.sii.ogham.sms.message.Sms;
  * "ogham.email.from"</li>
  * </ul>
  * 
+ * <p>
+ * Here is an example of minimal configuration that provides same default
+ * behavior as previous exemple but no sender implementation is registered. You
+ * then have to enable implementation(s) and configure them:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.minimal()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)
+ *       .host("${mail.host}")
+ *       .port("${mail.port}")
+ *       .charset("${ogham.email.javamail.body.charset}", "UTF-8")
+ *       .mimetype()
+ *         .tika()
+ *           .failIfOctetStream(false)
+ *           .and()
+ *         .and()
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .content(new MultiTemplateContent("email/sample", new SampleBean("foo", 42)))
+ *   .to("Foo Bar &lt;foo.bar@sii.fr&gt;"))
+ *   .attach(new Attachment("file:/data/reports/report1.pdf"));
+ * </code>
+ * </pre>
+ * 
+ * This sample has the same effect as the previous one (for this case, some
+ * options of JavaMail implementation are not enabled). Moreover, if you want to
+ * send a {@link Sms}, you will also need to register and configure at least one
+ * SMS sender implementation.
+ * 
+ * To benefit of all advantages but keeping control on which implementations are
+ * use, you can register implementation configurers:
+ * 
+ * <pre>
+ * <code>
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.minimal()
+ *   .register(new DefaultJavaMailConfigurer(), 50000)     // enable sending Email through SMTP
+ *   .register(new DefaultSendGridConfigurer(), 30000)     // enable sending Email through HTTP (using an online service)
+ *   .register(new DefaultCloudHopperConfigurer(), 40000)  // enable sending SMS through SMPP
+ *   .register(new DefaultOvhSmsConfigurer(), 20000)     // enable sending SMS through HTTP (using an online service)
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .content(new MultiTemplateContent("email/sample", new SampleBean("foo", 42)))
+ *   .to("Foo Bar &lt;foo.bar@sii.fr&gt;"))
+ *   .attach(new Attachment("file:/data/reports/report1.pdf"));
+ * </code>
+ * </pre>
+ * 
+ * This sample has the same effect as using {@link #standard()}.
+ * 
+ * You can create your own configurer for any sender implementation and register
+ * it too. You can then mutualize and externalize reusable configuration.
  * 
  * <p>
- * The default behavior is brought by static factory methods {@link #standard()}
- * and {@link #minimal()}. If you don't want to use predefined behaviors, you
- * can use directly {@code new MessagingBuilder()} or {@link #empty()} static
- * factory.
+ * The predefined behaviors are brought by static factory methods
+ * {@link #standard()} and {@link #minimal()}. If you don't want to use
+ * predefined behaviors, you can use directly {@code new MessagingBuilder()} or
+ * {@link #empty()} static factory.
  * 
  * Those factory methods rely on {@link MessagingConfigurer}s to provide
  * predefined behaviors.
@@ -133,7 +199,7 @@ import fr.sii.ogham.sms.message.Sms;
  * <pre>
  * <code>
  * // Instantiate the messaging service
- * MessagingService service = new MessagingBuilder()
+ * MessagingService service = MessagingBuilder.standard()
  *   .environment()
  *     .properties()
  *       .set("mail.host", "localhost")
