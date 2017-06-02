@@ -9,8 +9,6 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jknack.handlebars.io.TemplateLoader;
-
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -36,6 +34,7 @@ import fr.sii.ogham.template.freemarker.adapter.FirstSupportingResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.StringResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.TemplateLoaderAdapter;
 import fr.sii.ogham.template.freemarker.configurer.DefaultFreemarkerEmailConfigurer;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
 
@@ -231,6 +230,15 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 		return detector;
 	}
 
+	/**
+	 * Builds the resolver used by Freemarker to resolve resources
+	 * 
+	 * @return the resource resolver
+	 */
+	public FirstSupportingResourceResolver buildResolver() {
+		return new FirstSupportingResourceResolver(buildResolvers());
+	}
+
 	private Configuration buildConfiguration() {
 		Configuration configuration;
 		if (this.configuration != null) {
@@ -244,10 +252,6 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 		}
 		configuration.setTemplateLoader(new FreeMarkerFirstSupportingTemplateLoader(buildResolver(), buildAdapters()));
 		return configuration;
-	}
-
-	protected FirstSupportingResourceResolver buildResolver() {
-		return new FirstSupportingResourceResolver(buildResolvers());
 	}
 
 	protected List<ResourceResolver> buildResolvers() {

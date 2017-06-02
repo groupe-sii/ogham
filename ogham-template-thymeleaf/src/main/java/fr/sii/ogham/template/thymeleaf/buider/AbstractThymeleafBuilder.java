@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import com.github.jknack.handlebars.io.TemplateLoader;
-
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -231,7 +229,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	 * ({@link ResourceResolver}). Thymeleaf uses its own template resolution
 	 * mechanism ({@link ITemplateResolver}). A resolver adapter
 	 * ({@link TemplateResolverAdapter}) is the way to transform a
-	 * {@link ResourceResolver} into a {@link TemplateLoader}.
+	 * {@link ResourceResolver} into a {@link ITemplateResolver}.
 	 * 
 	 * <p>
 	 * Ogham provides and registers default resolver adapters but you may need
@@ -258,6 +256,15 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 		return detector == null ? new ThymeleafTemplateDetector(buildResolver()) : detector;
 	}
 
+	/**
+	 * Builds the resolver used by Thymeleaf to resolve resources
+	 * 
+	 * @return the resource resolver
+	 */
+	public FirstSupportingResourceResolver buildResolver() {
+		return new FirstSupportingResourceResolver(buildResolvers());
+	}
+
 	protected TemplateEngine buildEngine() {
 		TemplateEngine engine;
 		if (this.engine != null) {
@@ -276,10 +283,6 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 
 	protected ThymeleafContextConverter buildContext() {
 		return contextConverter == null ? new SimpleThymeleafContextConverter() : contextConverter;
-	}
-
-	protected FirstSupportingResourceResolver buildResolver() {
-		return new FirstSupportingResourceResolver(buildResolvers());
 	}
 
 	private List<ResourceResolver> buildResolvers() {
