@@ -37,9 +37,32 @@ import fr.sii.ogham.core.env.PropertyResolver;
  *            method)
  */
 public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolver> {
+	/**
+	 * Overrides any previously defined properties.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * .properties("foo.properties")
+	 * .properties(myProperties)
+	 * .systemProperties()
+	 * .override()
+	 * .properties()
+	 *   .set("foo", "bar")
+	 * </code>
+	 * </pre>
+	 * 
+	 * The three first lines won't be taken into account. Only the properties
+	 * defined after are used.
+	 * 
+	 * @return this instance for fluent chaining
+	 */
+	EnvironmentBuilder<P> override();
 
 	/**
-	 * Load a property file using its path.
+	 * Load a property file using its path. The properties are mixed with other
+	 * registered properties taking into account the priority.
 	 * 
 	 * The path may contain a lookup prefix:
 	 * <ul>
@@ -52,9 +75,15 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * </ul>
 	 * 
 	 * <p>
-	 * <strong>The loaded properties are mixed with any previously defined
-	 * properties.</strong>
-	 * </p>
+	 * The priority of the registered properties is 80000. The priority is used
+	 * to order all registered properties. Registered properties with higher
+	 * priorities are used first. It means that when requesting for a property
+	 * value the highest priority is requested first to get the value if it
+	 * exists. If it doesn't exist, the second is requested and so on.
+	 * 
+	 * If several properties are registered with the same priority, then the
+	 * registration order is used.
+	 * 
 	 * 
 	 * @param path
 	 *            the path to the property file
@@ -63,7 +92,8 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	EnvironmentBuilder<P> properties(String path);
 
 	/**
-	 * Load a property file using its path.
+	 * Load a property file using its path. The properties are mixed with other
+	 * registered properties taking into account the priority.
 	 * 
 	 * The path may contain a lookup prefix:
 	 * <ul>
@@ -76,25 +106,36 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * </ul>
 	 * 
 	 * <p>
-	 * <strong>If override parameter is true, the loaded properties override any
-	 * previously defined properties.</strong>
-	 * </p>
+	 * Indicates the priority of the registered properties. The priority is used
+	 * to order all registered properties. Registered properties with higher
+	 * priorities are used first. It means that when requesting for a property
+	 * value the highest priority is requested first to get the value if it
+	 * exists. If it doesn't exist, the second is requested and so on.
+	 * 
+	 * If several properties are registered with the same priority, then the
+	 * registration order is used.
+	 * 
 	 * 
 	 * @param path
 	 *            the path to the property file
-	 * @param override
-	 *            override previously defined properties
+	 * @param priority
+	 *            the priority of the properties
 	 * @return this instance for fluent chaining
 	 */
-	EnvironmentBuilder<P> properties(String path, boolean override);
+	EnvironmentBuilder<P> properties(String path, int priority);
 
 	/**
 	 * Provide custom properties.
 	 * 
 	 * <p>
-	 * <strong>The custom properties are mixed with any previously defined
-	 * properties.</strong>
-	 * </p>
+	 * The priority of the registered properties is 90000. The priority is used
+	 * to order all registered properties. Registered properties with higher
+	 * priorities are used first. It means that when requesting for a property
+	 * value the highest priority is requested first to get the value if it
+	 * exists. If it doesn't exist, the second is requested and so on.
+	 * 
+	 * If several properties are registered with the same priority, then the
+	 * registration order is used.
 	 * 
 	 * @param properties
 	 *            the custom properties
@@ -103,72 +144,107 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	EnvironmentBuilder<P> properties(Properties properties);
 
 	/**
-	 * Provide custom properties using fluent API.
+	 * Provide custom properties. The properties are mixed with other registered
+	 * properties taking into account the priority.
 	 * 
 	 * <p>
-	 * <strong>The custom properties are mixed with any previously defined
-	 * properties.</strong>
-	 * </p>
+	 * Indicates the priority of the registered properties. The priority is used
+	 * to order all registered properties. Registered properties with higher
+	 * priorities are used first. It means that when requesting for a property
+	 * value the highest priority is requested first to get the value if it
+	 * exists. If it doesn't exist, the second is requested and so on.
+	 * 
+	 * If several properties are registered with the same priority, then the
+	 * registration order is used.
+	 * 
+	 * 
+	 * @param properties
+	 *            the custom properties
+	 * @param priority
+	 *            the priority of the properties
+	 * @return this instance for fluent chaining
+	 */
+	EnvironmentBuilder<P> properties(Properties properties, int priority);
+
+	/**
+	 * Provide custom properties using fluent API. The properties are mixed with
+	 * other registered properties taking into account the priority.
+	 * 
+	 * <p>
+	 * The priority of the registered properties is 90000. The priority is used
+	 * to order all registered properties. Registered properties with higher
+	 * priorities are used first. It means that when requesting for a property
+	 * value the highest priority is requested first to get the value if it
+	 * exists. If it doesn't exist, the second is requested and so on.
+	 * 
+	 * If several properties are registered with the same priority, then the
+	 * registration order is used.
+	 * 
 	 * 
 	 * @return the builder to configure properties
 	 */
 	PropertiesBuilder<EnvironmentBuilder<P>> properties();
 
 	/**
-	 * Provide custom properties using fluent API.
+	 * Provide custom properties using fluent API. The properties are mixed with
+	 * other registered properties taking into account the priority.
 	 * 
 	 * <p>
-	 * <strong>If override parameter is true, the custom properties override any
-	 * previously defined properties.</strong>
-	 * </p>
+	 * Indicates the priority of the registered properties. The priority is used
+	 * to order all registered properties. Registered properties with higher
+	 * priorities are used first. It means that when requesting for a property
+	 * value the highest priority is requested first to get the value if it
+	 * exists. If it doesn't exist, the second is requested and so on.
 	 * 
-	 * @param override
-	 *            override previously defined properties
+	 * If several properties are registered with the same priority, then the
+	 * registration order is used.
+	 * 
+	 * 
+	 * @param priority
+	 *            the priority of the properties
 	 * @return the builder to configure properties
 	 */
-	PropertiesBuilder<EnvironmentBuilder<P>> properties(boolean override);
+	PropertiesBuilder<EnvironmentBuilder<P>> properties(int priority);
 
 	/**
-	 * Provide custom properties.
+	 * Use system properties. The properties are mixed with other registered
+	 * properties taking into account the priority.
 	 * 
 	 * <p>
-	 * <strong>If override parameter is true, the custom properties override any
-	 * previously defined properties.</strong>
-	 * </p>
+	 * The priority of the registered properties is 100000. The priority is used
+	 * to order all registered properties. Registered properties with higher
+	 * priorities are used first. It means that when requesting for a property
+	 * value the highest priority is requested first to get the value if it
+	 * exists. If it doesn't exist, the second is requested and so on.
 	 * 
-	 * @param properties
-	 *            the custom properties
-	 * @param override
-	 *            override previously defined properties
-	 * @return this instance for fluent chaining
-	 */
-	EnvironmentBuilder<P> properties(Properties properties, boolean override);
-
-	/**
-	 * Use system properties.
+	 * If several properties are registered with the same priority, then the
+	 * registration order is used.
 	 * 
-	 * <p>
-	 * <strong>The system properties are mixed with any previously defined
-	 * properties.</strong>
-	 * </p>
 	 * 
 	 * @return this instance for fluent chaining
 	 */
 	EnvironmentBuilder<P> systemProperties();
 
 	/**
-	 * Use system properties.
+	 * Use system properties. The properties are mixed with other registered
+	 * properties taking into account the priority.
 	 * 
 	 * <p>
-	 * <strong>If override parameter is true, the system properties override any
-	 * previously defined properties.</strong>
-	 * </p>
+	 * Indicates the priority of the registered properties. The priority is used
+	 * to order all registered properties. Registered properties with higher
+	 * priorities are used first. It means that when requesting for a property
+	 * value the highest priority is requested first to get the value if it
+	 * exists. If it doesn't exist, the second is requested and so on.
 	 * 
-	 * @param override
-	 *            override previously defined properties
+	 * If several properties are registered with the same priority, then the
+	 * registration order is used.
+	 * 
+	 * 
+	 * @param priority
+	 *            the priority of the properties
 	 * @return this instance for fluent chaining
 	 */
-	EnvironmentBuilder<P> systemProperties(boolean override);
+	EnvironmentBuilder<P> systemProperties(int priority);
 
 	/**
 	 * Configure how conversions are applied on properties.

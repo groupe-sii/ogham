@@ -15,8 +15,8 @@ public class BasicSmsglobalSmppSample {
 		Properties properties = new Properties();
 		properties.setProperty("ogham.sms.smpp.host", "smsglobal.com");
 		properties.setProperty("ogham.sms.smpp.port", "1775");
-		properties.setProperty("ogham.sms.smpp.systemId", "<your smsglobal username available in API keys>");
-		properties.setProperty("ogham.sms.smpp.port", "<your smsglobal password available in API keys>");
+		properties.setProperty("ogham.sms.smpp.system-id", "<your smsglobal username available in API keys>");
+		properties.setProperty("ogham.sms.smpp.password", "<your smsglobal password available in API keys>");
 		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
@@ -26,9 +26,9 @@ public class BasicSmsglobalSmppSample {
 					.and()
 				.build();
 		// send the sms using fluent API
-		service.send(new Sms().
-						content("sms content").
-						to("<recipient phone number>"));
+		service.send(new Sms()
+						.content("sms content")
+						.to("+33752962193"));
 	}
 
 }

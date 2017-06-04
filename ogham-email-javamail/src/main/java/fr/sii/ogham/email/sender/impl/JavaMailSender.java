@@ -107,7 +107,8 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 				interceptor.intercept(mimeMsg, email);
 			}
 			// message is ready => send it
-			LOG.info("Sending email using Java Mail API through server {}:{}...", properties.getProperty("mail.smtp.host", properties.getProperty("mail.host")),
+			LOG.info("Sending email using Java Mail API through server {}:{}...", 
+					properties.getProperty("mail.smtp.host", properties.getProperty("mail.host")),
 					properties.getProperty("mail.smtp.port", properties.getProperty("mail.port")));
 			Transport.send(mimeMsg);
 		} catch (UnsupportedEncodingException | MessagingException | ContentHandlerException | AttachmentResourceHandlerException e) {

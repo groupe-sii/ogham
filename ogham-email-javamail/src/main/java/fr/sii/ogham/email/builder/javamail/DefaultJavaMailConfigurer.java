@@ -57,7 +57,9 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  * </li>
  * <li>Configures mimetype detection:
  * <ul>
- * <li>Usesfrom Apache Tika to detect mimetype</li>
+ * <li>Uses Apache Tika to detect mimetype</li>
+ * <li>Explicitly use "text/html" mimetype instead of more specific ones like
+ * "application/xhtml" (XHTML)</li>
  * </ul>
  * </li>
  * </ul>
@@ -85,7 +87,13 @@ public class DefaultJavaMailConfigurer implements MessagingConfigurer {
 				.charset("${ogham.email.javamail.body.charset}", "UTF-8")
 				.mimetype()
 					.tika()
-						.failIfOctetStream(false);
+						.failIfOctetStream(false)
+						.and()
+					.replace()
+						// the distinction between xhtml and html can be useful in some cases
+						// most email clients don't understand xhtml mimetype
+						// for emails, this distinction must not be done
+						.pattern("application/xhtml[^;]*(;.*)?", "text/html$1");
 			// @formatter:on
 		}
 	}

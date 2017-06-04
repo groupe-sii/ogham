@@ -26,10 +26,10 @@ public class HtmlTemplateSample {
 					.and()
 				.build();
 		// send the email using fluent API
-		service.send(new Email().
-						subject("subject").
-						content(new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42))).
-						to("<recipient address>"));
+		service.send(new Email()
+						.subject("subject")
+						.content(new TemplateContent("classpath:/template/thymeleaf/simple.html", new SimpleBean("foo", 42)))
+						.to("ogham-test@yopmail.com"));
 	}
 
 }

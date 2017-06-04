@@ -47,8 +47,8 @@ public class EnvironmentBuilderDelegate<P> extends AbstractParent<P> implements 
 	}
 
 	@Override
-	public EnvironmentBuilder<P> properties(String path, boolean merge) {
-		delegate.properties(path, merge);
+	public EnvironmentBuilder<P> properties(String path, int priority) {
+		delegate.properties(path, priority);
 		return this;
 	}
 
@@ -59,8 +59,8 @@ public class EnvironmentBuilderDelegate<P> extends AbstractParent<P> implements 
 	}
 
 	@Override
-	public EnvironmentBuilder<P> properties(Properties properties, boolean merge) {
-		delegate.properties(properties, merge);
+	public EnvironmentBuilder<P> properties(Properties properties, int priority) {
+		delegate.properties(properties, priority);
 		return this;
 	}
 
@@ -71,8 +71,8 @@ public class EnvironmentBuilderDelegate<P> extends AbstractParent<P> implements 
 	}
 
 	@Override
-	public EnvironmentBuilder<P> systemProperties(boolean override) {
-		delegate.systemProperties(override);
+	public EnvironmentBuilder<P> systemProperties(int priority) {
+		delegate.systemProperties(priority);
 		return this;
 	}
 
@@ -93,9 +93,16 @@ public class EnvironmentBuilderDelegate<P> extends AbstractParent<P> implements 
 	}
 
 	@Override
-	public PropertiesBuilder<EnvironmentBuilder<P>> properties(boolean override) {
-		return new PropertiesBuilderDelegate<EnvironmentBuilder<P>>(this, delegate.properties(override));
+	public PropertiesBuilder<EnvironmentBuilder<P>> properties(int priority) {
+		return new PropertiesBuilderDelegate<EnvironmentBuilder<P>>(this, delegate.properties(priority));
 	}
+	
+	@Override
+	public EnvironmentBuilder<P> override() {
+		delegate.override();
+		return this;
+	}
+
 
 	@Override
 	public PropertyResolver build() throws BuildException {

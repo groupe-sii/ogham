@@ -27,10 +27,10 @@ public class HtmlStringTemplateSample {
 				.build();
 		String template = "<!DOCTYPE html><html xmlns:th=\"http://www.thymeleaf.org\"><head><title>Thymeleaf simple</title><meta charset=\"utf-8\" /></head><body><h1 class=\"title\" th:text=\"${name}\"></h1><p class=\"text\" th:text=\"${value}\"></p></body></html>";
 		// send the email using fluent API
-		service.send(new Email().
-						subject("subject").
-						content(new StringTemplateContent(template, new SimpleBean("foo", 42))).
-						to("<recipient address>"));
+		service.send(new Email()
+						.subject("subject")
+						.content(new StringTemplateContent(template, new SimpleBean("foo", 42)))
+						.to("ogham-test@yopmail.com"));
 	}
 
 }

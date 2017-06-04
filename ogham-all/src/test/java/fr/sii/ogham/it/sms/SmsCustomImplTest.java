@@ -1,5 +1,9 @@
 package fr.sii.ogham.it.sms;
 
+import static fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator.ISDN_TELEPHONE;
+import static fr.sii.ogham.sms.message.addressing.TypeOfNumber.INTERNATIONAL;
+import static fr.sii.ogham.sms.message.addressing.TypeOfNumber.UNKNOWN;
+
 import java.io.IOException;
 
 import org.junit.Before;
@@ -18,8 +22,6 @@ import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
-import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
-import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SmsCustomImplTest {
@@ -55,7 +57,7 @@ public class SmsCustomImplTest {
 							.to(NATIONAL_PHONE_NUMBER));
 		Mockito.verify(customSender).send(new Sms()
 							.content("sms content")
-							.from(new Sender(new AddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN_TELEPHONE)))
-							.to(new AddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.ISDN_TELEPHONE)));
+							.from(new Sender(new AddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, INTERNATIONAL, ISDN_TELEPHONE)))
+							.to(new AddressedPhoneNumber(NATIONAL_PHONE_NUMBER, UNKNOWN, ISDN_TELEPHONE)));
 	}
 }

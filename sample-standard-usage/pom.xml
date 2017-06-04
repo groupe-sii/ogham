@@ -14,29 +14,16 @@
 		
 		<!-- Skip Sonar analysis -->
 		<sonar.skip>true</sonar.skip>
+		
+		<ogham.version>2.0.0-SNAPSHOT</ogham.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-all</artifactId>
-			<version>${project.version}</version>
+			<version>${ogham.version}</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.source}</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

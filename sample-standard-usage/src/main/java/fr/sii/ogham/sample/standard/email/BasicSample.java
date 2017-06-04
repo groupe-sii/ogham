@@ -24,10 +24,10 @@ public class BasicSample {
 					.and()
 				.build();
 		// send the email using fluent API
-		service.send(new Email().
-						subject("subject").
-						content("email content").
-						to("<recipient address>"));
+		service.send(new Email()
+						.subject("subject")
+						.content("email content")
+						.to("ogham-test@yopmail.com"));
 	}
 
 }

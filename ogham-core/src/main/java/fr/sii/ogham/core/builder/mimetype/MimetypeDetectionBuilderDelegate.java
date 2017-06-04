@@ -50,6 +50,11 @@ public class MimetypeDetectionBuilderDelegate<P> extends AbstractParent<P> imple
 	}
 
 	@Override
+	public ReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replace() {
+		return new ReplaceMimetypeBuilderDelegate<MimetypeDetectionBuilder<P>>(this, delegate.replace());
+	}
+
+	@Override
 	public MimeTypeProvider build() throws BuildException {
 		return delegate.build();
 	}

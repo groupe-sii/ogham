@@ -15,6 +15,8 @@ import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.FixedMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.mimetype.OverrideMimetypeProvider;
+import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
 import fr.sii.ogham.core.util.BuilderUtils;
 
 /**
@@ -41,6 +43,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	private TikaBuilder<MimetypeDetectionBuilder<P>> tikaBuilder;
 	private List<String> defaultMimetypes;
 	private final EnvironmentBuilder<?> environmentBuilder;
+	private SimpleReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replaceMimetypeBuilder;
 
 	/**
 	 * Initializes the builder with the parent instance (used by the
@@ -74,21 +77,46 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	}
 
 	@Override
+	public ReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replace() {
+		if(replaceMimetypeBuilder == null) {
+			replaceMimetypeBuilder = new SimpleReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>>(this);
+		}
+		return replaceMimetypeBuilder;
+	}
+
+	@Override
 	public MimeTypeProvider build() throws BuildException {
 		try {
 			List<MimeTypeProvider> providers = new ArrayList<>();
 			buildTika(providers);
 			buildDefault(providers);
-			if (providers.isEmpty()) {
-				throw new BuildException("No mimetype detector configured");
-			}
-			if (providers.size() == 1) {
-				return providers.get(0);
-			}
-			return new FallbackMimeTypeProvider(providers);
+			assertNotEmpty(providers);
+			MimeTypeProvider provider = buildProvider(providers);
+			return ovverideProvider(provider);
 		} catch (MimeTypeParseException e) {
 			throw new BuildException("Failed to build mimetype provider", e);
 		}
+	}
+
+	private void assertNotEmpty(List<MimeTypeProvider> providers) {
+		if (providers.isEmpty()) {
+			throw new BuildException("No mimetype detector configured");
+		}
+	}
+	
+	private MimeTypeProvider buildProvider(List<MimeTypeProvider> providers) {
+		if (providers.size() == 1) {
+			return providers.get(0);
+		}
+		return new FallbackMimeTypeProvider(providers);
+	}
+
+	private MimeTypeProvider ovverideProvider(MimeTypeProvider provider) {
+		if(replaceMimetypeBuilder==null) {
+			return provider;
+		}
+		MimetypeReplacer replacer = replaceMimetypeBuilder.build();
+		return new OverrideMimetypeProvider(provider, replacer);
 	}
 
 	private void buildTika(List<MimeTypeProvider> providers) {

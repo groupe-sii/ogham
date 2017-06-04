@@ -51,6 +51,7 @@
 		<reflections.version>0.9.11</reflections.version>
 		<guava.version>20.0</guava.version>
 		<httpclient.version>4.5.3</httpclient.version>
+		<spock.version>1.1-groovy-2.4</spock.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -88,6 +89,7 @@
 		<sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
 		<nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+		<gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
 	</properties>
 
 
@@ -283,6 +285,12 @@
 				<artifactId>wiremock</artifactId>
 				<version>${wiremock.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.spockframework</groupId>
+				<artifactId>spock-core</artifactId>
+				<version>${spock.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -302,6 +310,22 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>${maven-resources-plugin.version}</version>
+			</plugin>
+
+			<!-- The gmavenplus plugin is used to compile Groovy code used by Spock 
+				framework -->
+			<plugin>
+				<groupId>org.codehaus.gmavenplus</groupId>
+				<artifactId>gmavenplus-plugin</artifactId>
+				<version>${gmavenplus-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- Compiler -->
@@ -430,6 +454,9 @@
 						<exclude>**/mock/**/*.java</exclude>
 						<exclude>**/helper/**/*.java</exclude>
 					</excludes>
+					<includes>
+						<include>**/*Spec.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 			<!-- Used for integration tests -->

@@ -76,6 +76,26 @@ public interface MimetypeDetectionBuilder<P> extends Parent<P>, Builder<MimeType
 	TikaBuilder<MimetypeDetectionBuilder<P>> tika();
 
 	/**
+	 * Configures mimetype replacement.
+	 * 
+	 * This may be needed in some situations where the detected mimetype is
+	 * accurate and valid but it may be understood by external systems that are
+	 * less accurate.
+	 * 
+	 * A concrete example is detection of XHTML mimetype. Standard detection
+	 * will detect that mimetype is "application/xhtml" or even
+	 * "application/xhtml+xml". This is the expected result from the point of
+	 * view of mimetype detection. However, in the context of an email client,
+	 * "application/xhtml+xml" may be unknown. The resulting email will then be
+	 * unreadable. This is where replacement is useful. You can then degrade the
+	 * standard behavior and replace "application/xhtml" and
+	 * "application/xhtml+xml" by "text/html".
+	 * 
+	 * @return the builder to configure replacements of auto-detected mimetypes
+	 */
+	ReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replace();
+
+	/**
 	 * If no previously registered mimetype detector could determine mimetype,
 	 * use a default value.
 	 * 

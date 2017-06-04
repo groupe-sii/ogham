@@ -37,9 +37,9 @@ public class TemplateSample {
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendSms(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
 			// send the SMS using fluent API
-			messagingService.send(new Sms().
-									content(new TemplateContent("register.txt", new SimpleBean(name, value))).
-									to(to));
+			messagingService.send(new Sms()
+									.content(new TemplateContent("register.txt", new SimpleBean(name, value)))
+									.to(to));
 		}
 	}
 

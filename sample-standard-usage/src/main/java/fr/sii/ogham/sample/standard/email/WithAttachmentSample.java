@@ -25,11 +25,11 @@ public class WithAttachmentSample {
 					.and()
 				.build();
 		// send the email using fluent API
-		service.send(new Email().
-						subject("subject").
-						content("content of the email").
-						to("<recipient address>").
-						attach(new Attachment("classpath:/attachment/test.pdf")));
+		service.send(new Email()
+						.subject("subject")
+						.content("content of the email")
+						.to("ogham-test@yopmail.com")
+						.attach(new Attachment("classpath:/attachment/test.pdf")));
 	}
 
 }

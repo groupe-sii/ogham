@@ -35,9 +35,9 @@ public class BasicSample {
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendSms(@RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
 			// send the SMS using fluent API
-			messagingService.send(new Sms().
-									content(content).
-									to(to));
+			messagingService.send(new Sms()
+									.content(content)
+									.to(to));
 		}
 	}
 

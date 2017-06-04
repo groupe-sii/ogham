@@ -22,9 +22,9 @@ public class BasicSampleExternalProperties {
 					.and()
 				.build();
 		// send the sms using fluent API
-		service.send(new Sms().
-						content("sms content").
-						to("<recipient phone number>"));
+		service.send(new Sms()
+						.content("sms content")
+						.to("+33752962193"));
 	}
 
 }

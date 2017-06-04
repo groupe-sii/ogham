@@ -140,7 +140,7 @@ public class EmailSMTPDefaultsTest {
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
 					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.xhtml")))
-					.contentType(startsWith("application/xhtml")).and()
+					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(emptyIterable());
 		// @formatter:on

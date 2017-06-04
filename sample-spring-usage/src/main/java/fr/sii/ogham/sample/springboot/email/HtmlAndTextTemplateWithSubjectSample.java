@@ -34,7 +34,7 @@ public class HtmlAndTextTemplateWithSubjectSample {
 		@Autowired
 		MessagingService messagingService;
 		
-		@RequestMapping(value="api/email/template", method=RequestMethod.POST)
+		@RequestMapping(value="api/email/multitemplate", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
 			// send the email using fluent API

@@ -119,7 +119,7 @@ public class DefaultThymeleafEmailConfigurer implements MessagingConfigurer {
 				.string()
 					.and()
 				.variant(EmailVariant.HTML, "html")
-				.variant(EmailVariant.TEXT, "txt");			
+				.variant(EmailVariant.TEXT, "txt");
 			// @formatter:on
 		}
 	}

@@ -29,10 +29,10 @@ public class HtmlAndTextMixedTemplateEnginesSample {
 		// Note that the extension of the template is not given. This version
 		// automatically takes the provided path and adds the '.html' extension
 		// for the HTML template and '.txt.ftl' for text template
-		service.send(new Email().
-						subject("subject").
-						content(new MultiTemplateContent("classpath:/template/mixed/simple", new SimpleBean("foo", 42))).
-						to("<recipient address>"));
+		service.send(new Email()
+						.subject("subject")
+						.content(new MultiTemplateContent("classpath:/template/mixed/simple", new SimpleBean("foo", 42)))
+						.to("ogham-test@yopmail.com"));
 	}
 
 }

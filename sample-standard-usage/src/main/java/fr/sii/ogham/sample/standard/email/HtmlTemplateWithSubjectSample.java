@@ -28,9 +28,9 @@ public class HtmlTemplateWithSubjectSample {
 		// send the email using fluent API (do not specify subject)
 		// subject is set to null to let automatic mechanism to read the title
 		// of the HTML and use it as subject of your email
-		service.send(new Email().
-						content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", new SimpleBean("foo", 42))).
-						to("<recipient address>"));
+		service.send(new Email()
+						.content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", new SimpleBean("foo", 42)))
+						.to("ogham-test@yopmail.com"));
 	}
 
 }

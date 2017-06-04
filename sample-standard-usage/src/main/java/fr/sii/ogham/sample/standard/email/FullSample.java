@@ -57,10 +57,10 @@ public class FullSample {
 				.build();
 		// send the email using fluent API
 		// @formatter:off
-		service.send(new Email().
-						content(new MultiTemplateContent("full", new SimpleBean("foo", 42))).
-						to("<recipient address>").
-						attach(new Attachment("/attachment/test.pdf")));
+		service.send(new Email()
+						.content(new MultiTemplateContent("full", new SimpleBean("foo", 42)))
+						.to("ogham-test@yopmail.com")
+						.attach(new Attachment("/attachment/test.pdf")));
 		// @formatter:on
 	}
 
