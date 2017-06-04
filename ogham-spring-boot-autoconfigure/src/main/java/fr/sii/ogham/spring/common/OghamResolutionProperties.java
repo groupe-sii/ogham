@@ -4,9 +4,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 public class OghamResolutionProperties extends PrefixSuffixProperties {
 	@NestedConfigurationProperty
-	private PrefixSuffixProperties classpath;
+	private PrefixSuffixProperties classpath = new PrefixSuffixProperties();
 	@NestedConfigurationProperty
-	private PrefixSuffixProperties file;
+	private PrefixSuffixProperties file = new PrefixSuffixProperties();
 
 	public PrefixSuffixProperties getClasspath() {
 		return classpath;

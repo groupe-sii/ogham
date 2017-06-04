@@ -4,9 +4,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import fr.sii.ogham.spring.common.OghamResolutionProperties;
+import fr.sii.ogham.spring.common.OghamTemplateProperties;
 
 @ConfigurationProperties("ogham.email")
-public class OghamEmailProperties {
+public class OghamEmailProperties implements OghamTemplateProperties {
 	/**
 	 * Configures how to handle missing email sender address: if no sender
 	 * address is explicitly defined on the email, Ogham will use this value.
@@ -38,11 +39,11 @@ public class OghamEmailProperties {
 	 */
 	private String bcc;
 	@NestedConfigurationProperty
-	private OghamResolutionProperties freemarker;
+	private OghamResolutionProperties freemarker = new OghamResolutionProperties();
 	@NestedConfigurationProperty
-	private OghamResolutionProperties thymeleaf;
+	private OghamResolutionProperties thymeleaf = new OghamResolutionProperties();
 	@NestedConfigurationProperty
-	private OghamResolutionProperties template;
+	private OghamResolutionProperties template = new OghamResolutionProperties();
 
 	public String getFrom() {
 		return from;

@@ -48,25 +48,41 @@ import freemarker.template.TemplateExceptionHandler;
  * <li>Configures template prefix/suffix paths:
  * <ul>
  * <li>Uses the first property that has a value for classpath resolution prefix:
- * "ogham.email.freemarker.classpath.path-prefix",
- * "ogham.email.template.classpath.path-prefix",
- * "ogham.email.freemarker.path-prefix", "ogham.email.template.path-prefix",
- * "ogham.template.path-prefix"</li>
+ * <ol>
+ * <li>"ogham.email.freemarker.classpath.path-prefix"</li>
+ * <li>"ogham.email.template.classpath.path-prefix"</li>
+ * <li>"ogham.email.freemarker.path-prefix"</li>
+ * <li>"ogham.email.template.path-prefix"</li>
+ * <li>"ogham.template.path-prefix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for classpath resolution suffix:
- * "ogham.email.freemarker.classpath.path-suffix",
- * "ogham.email.template.classpath.path-suffix",
- * "ogham.email.freemarker.path-suffix", "ogham.email.template.path-suffix",
- * "ogham.template.path-suffix"</li>
+ * <ol>
+ * <li>"ogham.email.freemarker.classpath.path-suffix"</li>
+ * <li>"ogham.email.template.classpath.path-suffix"</li>
+ * <li>"ogham.email.freemarker.path-suffix"</li>
+ * <li>"ogham.email.template.path-suffix"</li>
+ * <li>"ogham.template.path-suffix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for file resolution prefix:
- * "ogham.email.freemarker.file.path-prefix",
- * "ogham.email.template.file.path-prefix",
- * "ogham.email.freemarker.path-prefix", "ogham.email.template.path-prefix",
- * "ogham.template.path-prefix"</li>
+ * <ol>
+ * <li>"ogham.email.freemarker.file.path-prefix"</li>
+ * <li>"ogham.email.template.file.path-prefix"</li>
+ * <li>"ogham.email.freemarker.path-prefix"</li>
+ * <li>"ogham.email.template.path-prefix"</li>
+ * <li>"ogham.template.path-prefix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for file resolution suffix:
- * "ogham.email.freemarker.file.path-suffix",
- * "ogham.email.template.file.path-suffix",
- * "ogham.email.freemarker.path-suffix", "ogham.email.template.path-suffix",
- * "ogham.template.path-suffix"</li>
+ * <ol>
+ * <li>"ogham.email.freemarker.file.path-suffix"</li>
+ * <li>"ogham.email.template.file.path-suffix"</li>
+ * <li>"ogham.email.freemarker.path-suffix"</li>
+ * <li>"ogham.email.template.path-suffix"</li>
+ * <li>"ogham.template.path-suffix"</li>
+ * </ol>
+ * </li>
  * </ul>
  * </li>
  * <li>Configures email alternative content:
@@ -118,12 +134,28 @@ public class DefaultFreemarkerEmailConfigurer implements MessagingConfigurer {
 			// @formatter:off
 			builder
 				.classpath()
-					.pathPrefix("${ogham.email.freemarker.classpath.path-prefix}", "${ogham.email.template.classpath.path-prefix}", "${ogham.email.freemarker.path-prefix}", "${ogham.email.template.path-prefix}", "${ogham.template.path-prefix}")
-					.pathSuffix("${ogham.email.freemarker.classpath.path-suffix}", "${ogham.email.template.classpath.path-suffix}", "${ogham.email.freemarker.path-suffix}", "${ogham.email.template.path-suffix}", "${ogham.template.path-suffix}")
+					.pathPrefix("${ogham.email.freemarker.classpath.path-prefix}", 
+								"${ogham.email.template.classpath.path-prefix}", 
+								"${ogham.email.freemarker.path-prefix}", 
+								"${ogham.email.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.email.freemarker.classpath.path-suffix}", 
+								"${ogham.email.template.classpath.path-suffix}", 
+								"${ogham.email.freemarker.path-suffix}", 
+								"${ogham.email.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
 					.and()
 				.file()
-					.pathPrefix("${ogham.email.freemarker.file.path-prefix}", "${ogham.email.template.file.path-prefix}", "${ogham.email.freemarker.path-prefix}", "${ogham.email.template.path-prefix}", "${ogham.template.path-prefix}")
-					.pathSuffix("${ogham.email.freemarker.file.path-suffix}", "${ogham.email.template.file.path-suffix}", "${ogham.email.freemarker.path-suffix}", "${ogham.email.template.path-suffix}", "${ogham.template.path-suffix}")
+					.pathPrefix("${ogham.email.freemarker.file.path-prefix}", 
+								"${ogham.email.template.file.path-prefix}", 
+								"${ogham.email.freemarker.path-prefix}", 
+								"${ogham.email.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.email.freemarker.file.path-suffix}", 
+								"${ogham.email.template.file.path-suffix}", 
+								"${ogham.email.freemarker.path-suffix}", 
+								"${ogham.email.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
 					.and()
 				.string()
 					.and()
@@ -131,9 +163,7 @@ public class DefaultFreemarkerEmailConfigurer implements MessagingConfigurer {
 				.variant(EmailVariant.TEXT, "txt.ftl")
 				.configuration()
 					.defaultEncoding("${ogham.freemarker.default-encoding}", "UTF-8")
-					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)
-					.and()
-				.detector(new FreeMarkerTemplateDetector(".ftl"));
+					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 			// @formatter:on
 		}
 	}

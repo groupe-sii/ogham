@@ -1,7 +1,5 @@
 package fr.sii.ogham.core.builder.resolution;
 
-import static java.util.Arrays.asList;
-
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -68,13 +66,21 @@ public class ClassPathResolutionBuilder<P> extends AbstractSingleResolutionBuild
 
 	@Override
 	public ClassPathResolutionBuilder<P> pathPrefix(String... pathPrefix) {
-		this.pathPrefixes.addAll(asList(pathPrefix));
+		for (String p : pathPrefix) {
+			if (p != null) {
+				pathPrefixes.add(p);
+			}
+		}
 		return myself;
 	}
 
 	@Override
 	public ClassPathResolutionBuilder<P> pathSuffix(String... pathSuffix) {
-		this.pathSuffixes.addAll(asList(pathSuffix));
+		for (String p : pathSuffix) {
+			if (p != null) {
+				pathSuffixes.add(p);
+			}
+		}
 		return myself;
 	}
 }

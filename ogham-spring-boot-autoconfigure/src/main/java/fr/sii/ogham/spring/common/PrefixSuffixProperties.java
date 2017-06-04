@@ -46,7 +46,7 @@ public class PrefixSuffixProperties {
 	 * (5) ogham.template.path-suffix
 	 */
 	private String pathSuffix;
-
+	
 	public String getPathPrefix() {
 		return pathPrefix;
 	}

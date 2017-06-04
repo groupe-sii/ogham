@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import org.springframework.core.env.Environment;
 
+import fr.sii.ogham.core.CoreConstants;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.spring.env.SpringEnvironmentPropertyResolver;
@@ -30,7 +31,7 @@ public class SpringEnvironmentConfigurer extends MessagingConfigurerAdapter impl
 
 	@Override
 	public int getOrder() {
-		return 99000;
+		return CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIORITY - 1000;
 	}
 
 }

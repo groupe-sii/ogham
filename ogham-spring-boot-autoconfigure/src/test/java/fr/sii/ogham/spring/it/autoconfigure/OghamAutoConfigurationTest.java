@@ -41,6 +41,8 @@ public class OghamAutoConfigurationTest {
 
 	private static final String THYMELEAF_URL = BASE_URL + "/thymeleaf";
 
+	private static final String FREEMARKER_URL = BASE_URL + "/freemarker";
+
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
@@ -75,7 +77,7 @@ public class OghamAutoConfigurationTest {
 				.host("localhost")
 				.port(port)
 				.queryParam("subject", "test")
-				.queryParam("template", "register.html")
+				.queryParam("template", "register-thymeleaf")
 				.queryParam("to", "recipient@foo.bar");
 		RequestEntity<NestedBean> request = RequestEntity.
 				post(builder.build().toUri()).
@@ -93,12 +95,12 @@ public class OghamAutoConfigurationTest {
 	public void freemarker() throws MessagingException, IOException {
 		RestTemplate rt = new RestTemplate();
 		// @formatter:off
-		UriComponentsBuilder builder = UriComponentsBuilder.fromPath(THYMELEAF_URL)
+		UriComponentsBuilder builder = UriComponentsBuilder.fromPath(FREEMARKER_URL)
 				.scheme("http")
 				.host("localhost")
 				.port(port)
 				.queryParam("subject", "test")
-				.queryParam("template", "register.html")
+				.queryParam("template", "register-freemarker.html")
 				.queryParam("to", "recipient@foo.bar");
 		RequestEntity<NestedBean> request = RequestEntity.
 						post(builder.build().toUri()).

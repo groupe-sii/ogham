@@ -44,15 +44,12 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 	@Override
 	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
 		LOG.debug("Checking if Thymeleaf can handle the template {}", templateName);
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(getTemplate(templateName).getInputStream()))) {
-			String line;
-			boolean containsThymeleafNamespace = false;
-			do {
-				line = br.readLine();
-				if(line != null) {
-					containsThymeleafNamespace = NAMESPACE_PATTERN.matcher(line).find();
-				}
-			} while (line != null && !containsThymeleafNamespace);
+		Resource resolvedTemplate = getTemplate(templateName);
+		if(resolvedTemplate==null) {
+			return false;
+		}
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(resolvedTemplate.getInputStream()))) {
+			boolean containsThymeleafNamespace = containsThymeleafNamespace(br);
 			if(containsThymeleafNamespace) {
 				LOG.debug("The template {} contains the namespace http://www.thymeleaf.org. Thymeleaf can be used", templateName);
 			} else {
@@ -62,6 +59,18 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 		} catch (IOException e) {
 			throw new EngineDetectionException("Failed to detect if template can be read by thymeleaf", e);
 		}
+	}
+
+	private boolean containsThymeleafNamespace(BufferedReader br) throws IOException {
+		String line;
+		boolean containsThymeleafNamespace = false;
+		do {
+			line = br.readLine();
+			if(line != null) {
+				containsThymeleafNamespace = NAMESPACE_PATTERN.matcher(line).find();
+			}
+		} while (line != null && !containsThymeleafNamespace);
+		return containsThymeleafNamespace;
 	}
 	
 	private Resource getTemplate(String templateName) throws EngineDetectionException {

@@ -103,7 +103,7 @@ import fr.sii.ogham.email.sender.impl.sendgrid.handler.StringContentHandler;
  */
 public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Builder<SendGridSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(SendGridBuilder.class);
-	
+
 	private EnvironmentBuilder<SendGridBuilder> environmentBuilder;
 	private MimetypeDetectionBuilder<SendGridBuilder> mimetypeBuilder;
 	private List<String> apiKeys;
@@ -175,7 +175,9 @@ public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public SendGridBuilder apiKey(String... key) {
 		for (String k : key) {
-			apiKeys.add(k);
+			if (k != null) {
+				apiKeys.add(k);
+			}
 		}
 		return this;
 	}
@@ -210,7 +212,9 @@ public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public SendGridBuilder username(String... username) {
 		for (String u : username) {
-			usernames.add(u);
+			if (u != null) {
+				usernames.add(u);
+			}
 		}
 		return this;
 	}
@@ -245,7 +249,9 @@ public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public SendGridBuilder password(String... password) {
 		for (String p : password) {
-			passwords.add(p);
+			if (p != null) {
+				passwords.add(p);
+			}
 		}
 		return this;
 	}
@@ -456,24 +462,26 @@ public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Bui
 		String apiKey = BuilderUtils.evaluate(this.apiKeys, propertyResolver, String.class);
 		String username = BuilderUtils.evaluate(this.usernames, propertyResolver, String.class);
 		String password = BuilderUtils.evaluate(this.passwords, propertyResolver, String.class);
-		if (apiKey == null && (username == null || password == null) && client == null) {
+		SendGridClient client = buildClient(apiKey, username, password);
+		if (client == null) {
 			return null;
 		}
-		SendGridClient client = buildClient(apiKey, username, password);
 		LOG.info("Sending email using SendGrid API is registered");
 		LOG.debug("SendGrid account: apiKey={}, username={}", apiKey, username);
 		return new SendGridSender(client, buildContentHandler(), interceptor);
 	}
 
 	private SendGridClient buildClient(String apiKey, String username, String password) {
-		if (client == null) {
-			if (username != null && password != null) {
-				return new DelegateSendGridClient(username, password);
-			} else {
-				return new DelegateSendGridClient(apiKey);
-			}
+		if (client != null) {
+			return client;
 		}
-		return client;
+		if (apiKey != null) {
+			return new DelegateSendGridClient(apiKey);
+		}
+		if (username != null && password != null) {
+			return new DelegateSendGridClient(username, password);
+		}
+		return null;
 	}
 
 	private MapContentHandler buildContentHandler() {

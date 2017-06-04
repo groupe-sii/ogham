@@ -61,7 +61,7 @@ public class ResourcePath {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ResourcePath [path=").append(path);
+		builder.append("ResourcePath [original path=").append(path).append(", resolved path=").append(resolvedPath).append("]");
 		return builder.toString();
 	}
 }

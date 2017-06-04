@@ -196,4 +196,16 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 					+ "For example, if the number is 0601020304 and it is a French number, then the international number is +33601020304");
 		}
 	}
+
+	public OvhAuthParams getAuthParams() {
+		return authParams;
+	}
+
+	public OvhOptions getOptions() {
+		return options;
+	}
+
+	public URL getUrl() {
+		return url;
+	}
 }

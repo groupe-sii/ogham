@@ -47,23 +47,41 @@ import fr.sii.ogham.template.thymeleaf.buider.ThymeleafSmsBuilder;
  * <li>Configures template prefix/suffix paths:
  * <ul>
  * <li>Uses the first property that has a value for classpath resolution prefix:
- * "ogham.email.thymeleaf.classpath.path-prefix",
- * "ogham.email.template.classpath.path-prefix",
- * "ogham.email.thymeleaf.path-prefix", "ogham.email.template.path-prefix",
- * "ogham.template.path-prefix"</li>
+ * <ol>
+ * <li>"ogham.email.thymeleaf.classpath.path-prefix"</li>
+ * <li>"ogham.email.template.classpath.path-prefix"</li>
+ * <li>"ogham.email.thymeleaf.path-prefix"</li>
+ * <li>"ogham.email.template.path-prefix"</li>
+ * <li>"ogham.template.path-prefix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for classpath resolution suffix:
- * "ogham.email.thymeleaf.classpath.path-suffix",
- * "ogham.email.template.classpath.path-suffix",
- * "ogham.email.thymeleaf.path-suffix", "ogham.email.template.path-suffix",
- * "ogham.template.path-suffix"</li>
+ * <ol>
+ * <li>"ogham.email.thymeleaf.classpath.path-suffix"</li>
+ * <li>"ogham.email.template.classpath.path-suffix"</li>
+ * <li>"ogham.email.thymeleaf.path-suffix"</li>
+ * <li>"ogham.email.template.path-suffix"</li>
+ * <li>"ogham.template.path-suffix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for file resolution prefix:
- * "ogham.email.thymeleaf.file.path-prefix",
- * "ogham.email.template.file.path-prefix", "ogham.email.thymeleaf.path-prefix",
- * "ogham.email.template.path-prefix", "ogham.template.path-prefix"</li>
+ * <ol>
+ * <li>"ogham.email.thymeleaf.file.path-prefix"</li>
+ * <li>"ogham.email.template.file.path-prefix"</li>
+ * <li>"ogham.email.thymeleaf.path-prefix"</li>
+ * <li>"ogham.email.template.path-prefix"</li>
+ * <li>"ogham.template.path-prefix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for file resolution suffix:
- * "ogham.email.thymeleaf.file.path-suffix",
- * "ogham.email.template.file.path-suffix", "ogham.email.thymeleaf.path-suffix",
- * "ogham.email.template.path-suffix", "ogham.template.path-suffix"</li>
+ * <ol>
+ * <li>"ogham.email.thymeleaf.file.path-suffix"</li>
+ * <li>"ogham.email.template.file.path-suffix"</li>
+ * <li>"ogham.email.thymeleaf.path-suffix"</li>
+ * <li>"ogham.email.template.path-suffix"</li>
+ * <li>"ogham.template.path-suffix"</li>
+ * </ol>
+ * </li>
  * </ul>
  * </li>
  * <li>Configures email alternative content:
@@ -109,12 +127,28 @@ public class DefaultThymeleafEmailConfigurer implements MessagingConfigurer {
 			// @formatter:off
 			builder
 				.classpath()
-					.pathPrefix("${ogham.email.thymeleaf.classpath.path-prefix}", "${ogham.email.template.classpath.path-prefix}", "${ogham.email.thymeleaf.path-prefix}", "${ogham.email.template.path-prefix}", "${ogham.template.path-prefix}")
-					.pathSuffix("${ogham.email.thymeleaf.classpath.path-suffix}", "${ogham.email.template.classpath.path-suffix}", "${ogham.email.thymeleaf.path-suffix}", "${ogham.email.template.path-suffix}", "${ogham.template.path-suffix}")
+					.pathPrefix("${ogham.email.thymeleaf.classpath.path-prefix}", 
+								"${ogham.email.template.classpath.path-prefix}", 
+								"${ogham.email.thymeleaf.path-prefix}", 
+								"${ogham.email.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.email.thymeleaf.classpath.path-suffix}", 
+								"${ogham.email.template.classpath.path-suffix}", 
+								"${ogham.email.thymeleaf.path-suffix}", 
+								"${ogham.email.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
 					.and()
 				.file()
-					.pathPrefix("${ogham.email.thymeleaf.file.path-prefix}", "${ogham.email.template.file.path-prefix}", "${ogham.email.thymeleaf.path-prefix}", "${ogham.email.template.path-prefix}", "${ogham.template.path-prefix}")
-					.pathSuffix("${ogham.email.thymeleaf.file.path-suffix}", "${ogham.email.template.file.path-suffix}", "${ogham.email.thymeleaf.path-suffix}", "${ogham.email.template.path-suffix}", "${ogham.template.path-suffix}")
+					.pathPrefix("${ogham.email.thymeleaf.file.path-prefix}", 
+								"${ogham.email.template.file.path-prefix}", 
+								"${ogham.email.thymeleaf.path-prefix}", 
+								"${ogham.email.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.email.thymeleaf.file.path-suffix}", 
+								"${ogham.email.template.file.path-suffix}", 
+								"${ogham.email.thymeleaf.path-suffix}", 
+								"${ogham.email.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
 					.and()
 				.string()
 					.and()

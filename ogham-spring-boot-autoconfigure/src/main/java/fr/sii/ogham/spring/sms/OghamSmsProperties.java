@@ -4,9 +4,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import fr.sii.ogham.spring.common.OghamResolutionProperties;
+import fr.sii.ogham.spring.common.OghamTemplateProperties;
 
 @ConfigurationProperties("ogham.sms")
-public class OghamSmsProperties {
+public class OghamSmsProperties implements OghamTemplateProperties {
 	/**
 	 * If no sender phone number is explicitly defined on the message, Ogham
 	 * will use this phone number as default sender number.
@@ -45,11 +46,11 @@ public class OghamSmsProperties {
 	 */
 	private boolean toFormatEnableInternational = true;
 	@NestedConfigurationProperty
-	private OghamResolutionProperties freemarker;
+	private OghamResolutionProperties freemarker = new OghamResolutionProperties();
 	@NestedConfigurationProperty
-	private OghamResolutionProperties thymeleaf;
+	private OghamResolutionProperties thymeleaf = new OghamResolutionProperties();
 	@NestedConfigurationProperty
-	private OghamResolutionProperties template;
+	private OghamResolutionProperties template = new OghamResolutionProperties();
 
 	public String getFrom() {
 		return from;

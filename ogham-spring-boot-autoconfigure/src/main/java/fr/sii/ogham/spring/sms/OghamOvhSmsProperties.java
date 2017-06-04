@@ -24,7 +24,7 @@ public class OghamOvhSmsProperties {
 	 */
 	private String password;
 	@NestedConfigurationProperty
-	private Options options;
+	private Options options = new Options();
 
 	public String getUrl() {
 		return url;

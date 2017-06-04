@@ -1,7 +1,6 @@
 package fr.sii.ogham.sms.builder.ovh;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import fr.sii.ogham.core.builder.AbstractParent;
@@ -77,7 +76,11 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * @return this instance for fluent chaining
 	 */
 	public OvhOptionsBuilder noStop(String... noStop) {
-		noStops.addAll(Arrays.asList(noStop));
+		for (String n : noStop) {
+			if (n != null) {
+				noStops.add(n);
+			}
+		}
 		return this;
 	}
 
@@ -86,11 +89,13 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * disable for non-commercial SMS).
 	 * 
 	 * @param noStop
-	 *            enable or disable
+	 *            enable or disable (no effect if {@code null})
 	 * @return this instance for fluent chaining
 	 */
-	public OvhOptionsBuilder noStop(boolean noStop) {
-		this.noStop = noStop;
+	public OvhOptionsBuilder noStop(Boolean noStop) {
+		if (noStop != null) {
+			this.noStop = noStop;
+		}
 		return this;
 	}
 
@@ -123,7 +128,11 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * @return this instance for fluent chaining
 	 */
 	public OvhOptionsBuilder tag(String... tag) {
-		tags.addAll(Arrays.asList(tag));
+		for (String t : tag) {
+			if (t != null) {
+				tags.add(t);
+			}
+		}
 		return this;
 	}
 
@@ -155,7 +164,11 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * @return this instance for fluent chaining
 	 */
 	public OvhOptionsBuilder smsCoding(String... smsCoding) {
-		smsCodings.addAll(Arrays.asList(smsCoding));
+		for (String s : smsCoding) {
+			if (s != null) {
+				smsCodings.add(s);
+			}
+		}
 		return this;
 	}
 
@@ -173,7 +186,9 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * @return this instance for fluent chaining
 	 */
 	public OvhOptionsBuilder smsCoding(SmsCoding smsCoding) {
-		this.smsCoding = smsCoding;
+		if (smsCoding != null) {
+			this.smsCoding = smsCoding;
+		}
 		return this;
 	}
 

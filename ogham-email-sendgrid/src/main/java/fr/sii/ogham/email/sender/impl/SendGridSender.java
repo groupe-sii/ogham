@@ -151,4 +151,8 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 		return ret;
 	}
 
+	public SendGridClient getService() {
+		return service;
+	}
+	
 }

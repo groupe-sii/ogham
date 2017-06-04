@@ -3,7 +3,6 @@ package fr.sii.ogham.sms.builder.ovh;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -74,7 +73,7 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  */
 public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder<OvhSmsSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(OvhSmsBuilder.class);
-	
+
 	private EnvironmentBuilder<OvhSmsBuilder> environmentBuilder;
 	private List<String> urls;
 	private List<String> accounts;
@@ -217,7 +216,11 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 * @return this instance for fluent chaining
 	 */
 	public OvhSmsBuilder url(String... url) {
-		urls.addAll(Arrays.asList(url));
+		for (String u : url) {
+			if (u != null) {
+				urls.add(u);
+			}
+		}
 		return this;
 	}
 
@@ -250,7 +253,11 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 * @return this instance for fluent chaining
 	 */
 	public OvhSmsBuilder account(String... account) {
-		accounts.addAll(Arrays.asList(account));
+		for (String a : account) {
+			if (a != null) {
+				accounts.add(a);
+			}
+		}
 		return this;
 	}
 
@@ -283,7 +290,11 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 * @return this instance for fluent chaining
 	 */
 	public OvhSmsBuilder login(String... login) {
-		logins.addAll(Arrays.asList(login));
+		for (String l : login) {
+			if (l != null) {
+				logins.add(l);
+			}
+		}
 		return this;
 	}
 
@@ -316,7 +327,11 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 * @return this instance for fluent chaining
 	 */
 	public OvhSmsBuilder password(String... password) {
-		passwords.addAll(Arrays.asList(password));
+		for (String p : password) {
+			if (p != null) {
+				passwords.add(p);
+			}
+		}
 		return this;
 	}
 

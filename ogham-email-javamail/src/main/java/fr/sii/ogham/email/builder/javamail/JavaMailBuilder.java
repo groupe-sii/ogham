@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -192,6 +191,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		super(parent);
 		hosts = new ArrayList<>();
 		ports = new ArrayList<>();
+		charsets = new ArrayList<>();
 	}
 
 	/**
@@ -224,7 +224,9 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public JavaMailBuilder host(String... host) {
 		for (String h : host) {
-			hosts.add(h);
+			if (h != null) {
+				hosts.add(h);
+			}
 		}
 		return this;
 	}
@@ -243,6 +245,26 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public JavaMailBuilder port(int port) {
 		this.port = port;
+		return this;
+	}
+
+	/**
+	 * Set the mail server port. This version allows {@code null} value. In this
+	 * case, the {@code null} value is skipped.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #port(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param port
+	 *            the port to use (may be null)
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder port(Integer port) {
+		if (port != null) {
+			this.port = port;
+		}
 		return this;
 	}
 
@@ -276,7 +298,9 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public JavaMailBuilder port(String... port) {
 		for (String p : port) {
-			ports.add(p);
+			if (p != null) {
+				ports.add(p);
+			}
 		}
 		return this;
 	}
@@ -310,7 +334,11 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder charset(String... charsets) {
-		this.charsets = new ArrayList<>(Arrays.asList(charsets));
+		for (String c : charsets) {
+			if (c != null) {
+				this.charsets.add(c);
+			}
+		}
 		return this;
 	}
 
@@ -623,7 +651,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		if (charset != null) {
 			return new FixedCharsetDetector(charset);
 		}
-		if (charsets != null) {
+		if (!charsets.isEmpty()) {
 			String charsetValue = BuilderUtils.evaluate(charsets, getPropertyResolver(), String.class);
 			return new FixedCharsetDetector(Charset.forName(charsetValue));
 		}

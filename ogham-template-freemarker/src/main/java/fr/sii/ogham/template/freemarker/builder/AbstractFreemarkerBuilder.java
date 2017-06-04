@@ -27,6 +27,7 @@ import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.freemarker.FreeMarkerFirstSupportingTemplateLoader;
 import fr.sii.ogham.template.freemarker.FreeMarkerParser;
+import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
 import fr.sii.ogham.template.freemarker.TemplateLoaderOptions;
 import fr.sii.ogham.template.freemarker.adapter.ClassPathResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.FileResolverAdapter;
@@ -227,7 +228,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 
 	@Override
 	public TemplateEngineDetector buildDetector() {
-		return detector;
+		return detector == null ? new FreeMarkerTemplateDetector(buildResolver(), ".ftl") : detector;
 	}
 
 	/**

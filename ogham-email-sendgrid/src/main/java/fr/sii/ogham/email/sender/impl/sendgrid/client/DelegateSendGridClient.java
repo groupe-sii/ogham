@@ -94,4 +94,16 @@ public final class DelegateSendGridClient implements SendGridClient {
 		}
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getApiKey() {
+		return apiKey;
+	}
+
 }

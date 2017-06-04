@@ -1,7 +1,6 @@
 package fr.sii.ogham.core.builder.retry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import fr.sii.ogham.core.builder.AbstractParent;
@@ -84,8 +83,10 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 *            the maximum number of retries
 	 * @return this instance for fluent chaining
 	 */
-	public FixedDelayBuilder<P> maxRetries(int maxRetries) {
-		this.maxRetries = maxRetries;
+	public FixedDelayBuilder<P> maxRetries(Integer maxRetries) {
+		if (maxRetries != null) {
+			this.maxRetries = maxRetries;
+		}
 		return this;
 	}
 
@@ -96,8 +97,10 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 *            the delay between two executions
 	 * @return this instance for fluent chaining
 	 */
-	public FixedDelayBuilder<P> delay(long delay) {
-		this.delay = delay;
+	public FixedDelayBuilder<P> delay(Long delay) {
+		if (delay != null) {
+			this.delay = delay;
+		}
 		return this;
 	}
 
@@ -130,7 +133,11 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * @return this instance for fluent chaining
 	 */
 	public FixedDelayBuilder<P> maxRetries(String... maxRetries) {
-		maxRetriesProps.addAll(Arrays.asList(maxRetries));
+		for (String m : maxRetries) {
+			if (m != null) {
+				maxRetriesProps.add(m);
+			}
+		}
 		return this;
 	}
 
@@ -163,7 +170,11 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * @return this instance for fluent chaining
 	 */
 	public FixedDelayBuilder<P> delay(String... delays) {
-		delayProps.addAll(Arrays.asList(delays));
+		for (String d : delays) {
+			if (d != null) {
+				delayProps.add(d);
+			}
+		}
 		return this;
 	}
 

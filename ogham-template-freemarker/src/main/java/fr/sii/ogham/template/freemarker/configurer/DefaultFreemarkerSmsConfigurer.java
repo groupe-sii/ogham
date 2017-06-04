@@ -47,23 +47,41 @@ import freemarker.template.TemplateExceptionHandler;
  * <li>Configures template prefix/suffix paths:
  * <ul>
  * <li>Uses the first property that has a value for classpath resolution prefix:
- * "ogham.sms.freemarker.classpath.path-prefix",
- * "ogham.sms.template.classpath.path-prefix",
- * "ogham.sms.freemarker.path-prefix", "ogham.sms.template.path-prefix",
- * "ogham.template.path-prefix"</li>
+ * <ol>
+ * <li>"ogham.sms.freemarker.classpath.path-prefix"</li>
+ * <li>"ogham.sms.template.classpath.path-prefix"</li>
+ * <li>"ogham.sms.freemarker.path-prefix"</li>
+ * <li>"ogham.sms.template.path-prefix"</li>
+ * <li>"ogham.template.path-prefix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for classpath resolution suffix:
- * "ogham.sms.freemarker.classpath.path-suffix",
- * "ogham.sms.template.classpath.path-suffix",
- * "ogham.sms.freemarker.path-suffix", "ogham.sms.template.path-suffix",
- * "ogham.template.path-suffix"</li>
+ * <ol>
+ * <li>"ogham.sms.freemarker.classpath.path-suffix"</li>
+ * <li>"ogham.sms.template.classpath.path-suffix"</li>
+ * <li>"ogham.sms.freemarker.path-suffix"</li>
+ * <li>"ogham.sms.template.path-suffix"</li>
+ * <li>"ogham.template.path-suffix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for file resolution prefix:
- * "ogham.sms.freemarker.file.path-prefix",
- * "ogham.sms.template.file.path-prefix", "ogham.sms.freemarker.path-prefix",
- * "ogham.sms.template.path-prefix", "ogham.template.path-prefix"</li>
+ * <ol>
+ * <li>"ogham.sms.freemarker.file.path-prefix"</li>
+ * <li>"ogham.sms.template.file.path-prefix"</li>
+ * <li>"ogham.sms.freemarker.path-prefix"</li>
+ * <li>"ogham.sms.template.path-prefix"</li>
+ * <li>"ogham.template.path-prefix"</li>
+ * </ol>
+ * </li>
  * <li>Uses the first property that has a value for file resolution suffix:
- * "ogham.sms.freemarker.file.path-suffix",
- * "ogham.sms.template.file.path-suffix", "ogham.sms.freemarker.path-suffix",
- * "ogham.sms.template.path-suffix", "ogham.template.path-suffix"</li>
+ * <ol>
+ * <li>"ogham.sms.freemarker.file.path-suffix"</li>
+ * <li>"ogham.sms.template.file.path-suffix"</li>
+ * <li>"ogham.sms.freemarker.path-suffix"</li>
+ * <li>"ogham.sms.template.path-suffix"</li>
+ * <li>"ogham.template.path-suffix"</li>
+ * </ol>
+ * </li>
  * </ul>
  * </li>
  * <li>Configures encoding:
@@ -109,18 +127,32 @@ public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
 			// @formatter:off
 			builder
 				.classpath()
-					.pathPrefix("${ogham.sms.freemarker.classpath.path-prefix}", "${ogham.sms.template.classpath.path-prefix}", "${ogham.sms.freemarker.prefix}", "${ogham.sms.template.path-prefix}", "${ogham.template.path-prefix}")
-					.pathSuffix("${ogham.sms.freemarker.classpath.path-suffix}", "${ogham.sms.template.classpath.path-suffix}", "${ogham.sms.freemarker.suffix}", "${ogham.sms.template.path-suffix}", "${ogham.template.path-suffix}")
+					.pathPrefix("${ogham.sms.freemarker.classpath.path-prefix}",
+								"${ogham.sms.template.classpath.path-prefix}", 
+								"${ogham.sms.freemarker.prefix}", 
+								"${ogham.sms.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.sms.freemarker.classpath.path-suffix}", 
+								"${ogham.sms.template.classpath.path-suffix}", 
+								"${ogham.sms.freemarker.suffix}", 
+								"${ogham.sms.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
 					.and()
 				.file()
-					.pathPrefix("${ogham.sms.freemarker.file.path-prefix}", "${ogham.sms.template.file.path-prefix}", "${ogham.sms.freemarker.prefix}", "${ogham.sms.template.path-prefix}", "${ogham.template.path-prefix}")
-					.pathSuffix("${ogham.sms.freemarker.file.path-suffix}", "${ogham.sms.template.file.path-suffix}", "${ogham.sms.freemarker.suffix}", "${ogham.sms.template.path-suffix}", "${ogham.template.path-suffix}")
+					.pathPrefix("${ogham.sms.freemarker.file.path-prefix}", 
+								"${ogham.sms.template.file.path-prefix}", 
+								"${ogham.sms.freemarker.prefix}", 
+								"${ogham.sms.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.pathSuffix("${ogham.sms.freemarker.file.path-suffix}", 
+								"${ogham.sms.template.file.path-suffix}", 
+								"${ogham.sms.freemarker.suffix}", 
+								"${ogham.sms.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
 					.and()
 				.configuration()
 					.defaultEncoding("${ogham.freemarker.default-encoding}", "UTF-8")
-					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)
-					.and()
-				.detector(new FreeMarkerTemplateDetector(".ftl"));
+					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 			// @formatter:on
 		}
 	}

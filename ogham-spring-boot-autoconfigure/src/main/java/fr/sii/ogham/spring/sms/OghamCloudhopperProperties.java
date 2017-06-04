@@ -49,7 +49,7 @@ public class OghamCloudhopperProperties {
 	 */
 	private String smppCharset = "GSM";
 	@NestedConfigurationProperty
-	private SessionProperties session;
+	private SessionProperties session = new SessionProperties();
 
 	public static class SessionProperties {
 		/**
@@ -88,7 +88,7 @@ public class OghamCloudhopperProperties {
 		 * (unacknowledged) at a given time. Must be > 0. Defaults to 1.
 		 * 
 		 */
-		private Long windowSize = 1L;
+		private Integer windowSize = 1;
 		/**
 		 * Set the amount of time (milliseconds) to wait until a slot opens up
 		 * in the sendWindow. Defaults to 60000.
@@ -122,7 +122,7 @@ public class OghamCloudhopperProperties {
 		 */
 		private Long unbindTimeout = 5000L;
 		@NestedConfigurationProperty
-		private ConnectRetryProperties connectRetry;
+		private ConnectRetryProperties connectRetry = new ConnectRetryProperties();
 
 		public String getSessionName() {
 			return sessionName;
@@ -164,11 +164,11 @@ public class OghamCloudhopperProperties {
 			this.windowMonitorInterval = windowMonitorInterval;
 		}
 
-		public Long getWindowSize() {
+		public Integer getWindowSize() {
 			return windowSize;
 		}
 
-		public void setWindowSize(Long windowSize) {
+		public void setWindowSize(Integer windowSize) {
 			this.windowSize = windowSize;
 		}
 

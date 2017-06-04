@@ -241,4 +241,12 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	public String toString() {
 		return "CloudhopperSMPPSender";
 	}
+
+	public SmppSessionConfiguration getSmppSessionConfiguration() {
+		return smppSessionConfiguration;
+	}
+
+	public CloudhopperOptions getOptions() {
+		return options;
+	}
 }

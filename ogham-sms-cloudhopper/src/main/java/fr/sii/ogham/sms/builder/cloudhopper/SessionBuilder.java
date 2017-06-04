@@ -104,8 +104,10 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            The maximum amount of time to wait (in ms)
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder bindTimeout(long timeout) {
-		bind.setValue(timeout);
+	public SessionBuilder bindTimeout(Long timeout) {
+		if (timeout != null) {
+			bind.setValue(timeout);
+		}
 		return this;
 	}
 
@@ -156,8 +158,10 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            The maximum amount of time to wait (in ms)
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder connectTimeout(long timeout) {
-		connect.setValue(timeout);
+	public SessionBuilder connectTimeout(Long timeout) {
+		if (timeout != null) {
+			connect.setValue(timeout);
+		}
 		return this;
 	}
 
@@ -230,8 +234,10 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            unacknowledged request expires. -1 disables.
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder requestExpiryTimeout(long timeout) {
-		requestExpiry.setValue(timeout);
+	public SessionBuilder requestExpiryTimeout(Long timeout) {
+		if (timeout != null) {
+			requestExpiry.setValue(timeout);
+		}
 		return this;
 	}
 
@@ -286,8 +292,10 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            of monitoring the window.
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder windowMonitorInterval(long interval) {
-		windowMonitorInverval.setValue(interval);
+	public SessionBuilder windowMonitorInterval(Long interval) {
+		if (interval != null) {
+			windowMonitorInverval.setValue(interval);
+		}
 		return this;
 	}
 
@@ -341,8 +349,10 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            The maximum number of requests
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder windowSize(int size) {
-		windowSize.setValue(size);
+	public SessionBuilder windowSize(Integer size) {
+		if (windowSize != null) {
+			windowSize.setValue(size);
+		}
 		return this;
 	}
 
@@ -394,8 +404,10 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            sendWindow becomes available.
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder windowWait(long timeout) {
-		this.windowWait.setValue(timeout);
+	public SessionBuilder windowWait(Long timeout) {
+		if (timeout != null) {
+			windowWait.setValue(timeout);
+		}
 		return this;
 	}
 
@@ -447,8 +459,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            The maximum amount of time to wait (in ms)
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder writeTimeout(long timeout) {
-		write.setValue(timeout);
+	public SessionBuilder writeTimeout(Long timeout) {
+		write.setValue(timeout == null ? 0 : timeout);
 		return this;
 	}
 
@@ -504,8 +516,10 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            The maximum amount of time to wait (in ms)
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder responseTimeout(long timeout) {
-		response.setValue(timeout);
+	public SessionBuilder responseTimeout(Long timeout) {
+		if (timeout != null) {
+			response.setValue(timeout);
+		}
 		return this;
 	}
 
@@ -563,8 +577,10 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *            The maximum amount of time to wait (in ms)
 	 * @return this instance for fluent chaining
 	 */
-	public SessionBuilder unbindTimeout(long timeout) {
-		unbind.setValue(timeout);
+	public SessionBuilder unbindTimeout(Long timeout) {
+		if (timeout != null) {
+			unbind.setValue(timeout);
+		}
 		return this;
 	}
 

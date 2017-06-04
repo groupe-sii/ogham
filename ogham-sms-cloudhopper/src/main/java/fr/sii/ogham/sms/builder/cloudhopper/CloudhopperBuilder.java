@@ -2,7 +2,6 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -270,7 +269,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperBuilder systemId(String... systemId) {
-		systemIds.addAll(Arrays.asList(systemId));
+		for (String s : systemId) {
+			if (s != null) {
+				systemIds.add(s);
+			}
+		}
 		return this;
 	}
 
@@ -310,7 +313,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperBuilder systemType(String... systemType) {
-		systemTypes.addAll(Arrays.asList(systemType));
+		for (String s : systemType) {
+			if (s != null) {
+				systemTypes.add(s);
+			}
+		}
 		return this;
 	}
 
@@ -351,7 +358,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperBuilder password(String... password) {
-		passwords.addAll(Arrays.asList(password));
+		for (String p : password) {
+			if (p != null) {
+				passwords.add(p);
+			}
+		}
 		return this;
 	}
 
@@ -384,7 +395,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperBuilder host(String... host) {
-		hosts.addAll(Arrays.asList(host));
+		for (String h : host) {
+			if (h != null) {
+				hosts.add(h);
+			}
+		}
 		return this;
 	}
 
@@ -417,7 +432,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperBuilder port(String... port) {
-		ports.addAll(Arrays.asList(port));
+		for (String p : port) {
+			if (port != null) {
+				ports.add(p);
+			}
+		}
 		return this;
 	}
 
@@ -435,6 +454,26 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public CloudhopperBuilder port(int port) {
 		this.port = port;
+		return this;
+	}
+
+	/**
+	 * Set the SMPP server port. This version allows {@code null} value. In this
+	 * case, the {@code null} value is skipped.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #port(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param port
+	 *            the port to use (may be null)
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder port(Integer port) {
+		if (port != null) {
+			this.port = port;
+		}
 		return this;
 	}
 
@@ -483,7 +522,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperBuilder interfaceVersion(String... version) {
-		interfaceVersions.addAll(Arrays.asList(version));
+		for (String v : version) {
+			if (v != null) {
+				interfaceVersions.add(v);
+			}
+		}
 		return this;
 	}
 
@@ -531,7 +574,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperBuilder bindType(String... bindType) {
-		bindTypes.addAll(Arrays.asList(bindType));
+		for (String b : bindType) {
+			if (b != null) {
+				bindTypes.add(b);
+			}
+		}
 		return this;
 	}
 
