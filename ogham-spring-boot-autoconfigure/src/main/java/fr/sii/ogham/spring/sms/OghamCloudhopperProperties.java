@@ -9,7 +9,9 @@ public class OghamCloudhopperProperties {
 	 * The system_id parameter is used to identify an ESME ( External Short
 	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
 	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
-	 * system_id provides an identification of the SMSC to the ESME.
+	 * system_id provides an identification of the SMSC to the ESME. This is an
+	 * alias of ogham.sms.smpp.system-id. If both properties are defined, this
+	 * value is used.
 	 * 
 	 */
 	private String systemId;
@@ -20,15 +22,18 @@ public class OghamCloudhopperProperties {
 	 * when binding to the SMSC. This password is normally issued by the SMSC
 	 * system administrator. The password parameter may also be used by the ESME
 	 * to authenticate the identity of the binding SMSC (e.g. in the case of the
-	 * outbind operation).
+	 * outbind operation). This is an alias of ogham.sms.smpp.password. If both
+	 * properties are defined, this value is used.
 	 */
 	private String password;
 	/**
-	 * The SMPP server host (IP or address).
+	 * The SMPP server host (IP or address). This is an alias of
+	 * ogham.sms.smpp.host. If both properties are defined, this value is used.
 	 */
 	private String host;
 	/**
-	 * The SMPP server port.
+	 * The SMPP server port. This is an alias of ogham.sms.smpp.port. If both
+	 * properties are defined, this value is used.
 	 */
 	private Integer port;
 	/**
