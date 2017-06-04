@@ -447,15 +447,8 @@
 					<argLine>${surefireArgLine}</argLine>
 					<!-- Skips unit tests if the value of skip.unit.tests property is true -->
 					<skipTests>${skip.unit.tests}</skipTests>
-					<!-- Excludes integration tests when unit tests are run. -->
-					<excludes>
-						<exclude>**/Abstract*.java</exclude>
-						<exclude>**/it/**/*.java</exclude>
-						<exclude>**/mock/**/*.java</exclude>
-						<exclude>**/helper/**/*.java</exclude>
-					</excludes>
 					<includes>
-						<include>**/*Spec.java</include>
+						<include>**/ut/**/*.java</include>
 					</includes>
 				</configuration>
 			</plugin>
