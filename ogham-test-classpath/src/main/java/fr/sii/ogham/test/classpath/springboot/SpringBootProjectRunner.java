@@ -64,6 +64,10 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		Path parentFolder = Paths.get(args.getNonOptionArgs().get(0));
+		if(isSkip(args, parentFolder)) {
+			log.info("Skipping creation of projects because projects already exist");
+			System.exit(0);
+		}
 		Files.createDirectories(parentFolder);
 		FileUtils.cleanDirectory(parentFolder.toFile());
 		List<String> modules = createProjects(parentFolder);
@@ -73,6 +77,10 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		}
 		log.info("{} projects created", modules.size());
 		System.exit(0);
+	}
+
+	private boolean isSkip(ApplicationArguments args, Path parentFolder) {
+		return parentFolder.toFile().exists() && args.getOptionValues("override")==null;
 	}
 
 	private List<String> filter(List<String> modules, JavaVersion javaVersion) {

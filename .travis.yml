@@ -46,3 +46,10 @@ notifications:
     - "Build: <%{build_url}|#%{build_number}> (%{duration})"
     - "Commit: <%{compare_url}|%{commit}> by %{author}"
     - "%{commit_message}"
+
+cache:
+  directories:
+    - target/classpath-tests
+    - $HOME/.m2
+before_cache:
+  - rm -f $HOME/.m2/repository/fr/sii
