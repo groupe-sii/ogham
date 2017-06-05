@@ -64,10 +64,10 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 		builder.email()
 			.sender(JavaMailBuilder.class)
 				.authenticator()
-					.username(properties.getAuthenticator()!=null ? properties.getAuthenticator().getUsername() : null)
-					.password(properties.getAuthenticator()!=null ? properties.getAuthenticator().getPassword() : null)
+					.username(properties.getAuthenticator().getUsername())
+					.password(properties.getAuthenticator().getPassword())
 					.and()
-				.charset(properties.getBody()!=null ? properties.getBody().getCharset() : null)
+				.charset(properties.getBody().getCharset())
 				.host(properties.getHost())
 				.port(properties.getPort());
 		// @formatter:on

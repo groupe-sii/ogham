@@ -1,10 +1,11 @@
 package fr.sii.ogham.core.condition.provider;
 
+import static fr.sii.ogham.core.condition.fluent.Conditions.alwaysTrue;
+
 import fr.sii.ogham.core.builder.annotation.RequiredProperties;
 import fr.sii.ogham.core.builder.annotation.RequiredProperty;
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
-import fr.sii.ogham.core.condition.FixedCondition;
 import fr.sii.ogham.core.condition.fluent.Conditions;
 import fr.sii.ogham.core.env.PropertyResolver;
 
@@ -33,7 +34,7 @@ public class RequiredPropertiesAnnotationProvider<T> implements ConditionProvide
 	@Override
 	public Condition<T> provide(RequiredProperties annotation) {
 		if (annotation == null) {
-			return new FixedCondition<>(true);
+			return alwaysTrue();
 		} else {
 			AndCondition<T> mainCondition = new AndCondition<>();
 			for (String requiredProperties : annotation.value()) {

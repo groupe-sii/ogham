@@ -229,7 +229,6 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		} else if (fallBackPhoneNumberTranslator != null) {
 			LOG.warn("Fallback addressing policy used for PhoneNumber '{}'. You might decorate your sender with a PhoneNumberTranslatorSender.", phoneNumber);
 			addressedPhoneNumber = fallBackPhoneNumberTranslator.translate(phoneNumber);
-
 		} else {
 			throw new IllegalStateException("Must provide addressing policy with the phone number or with a fallback phone number translator.");
 		}

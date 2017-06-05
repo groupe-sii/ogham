@@ -12,10 +12,10 @@ class FirstMatchningMimetypeReplacerSpec extends Specification {
 		given:
 			MimetypeReplacer delegate1 = Mock()
 			MimetypeReplacer delegate2 = Mock()
-
-		when:
 			delegate1.replace(_) >> { String m -> given1(m) }
 			delegate2.replace(_) >> { String m -> given2(m) }
+
+		when:
 			def result = new FirstMatchingMimetypeReplacer(Arrays.asList(delegate1, delegate2)).replace(mimetype)
 
 		then:

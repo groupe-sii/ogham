@@ -1,11 +1,17 @@
 package fr.sii.ogham.ut.core.mimetype.replace;
 
+import org.junit.Rule
+
 import fr.sii.ogham.core.mimetype.replace.ContainsMimetypeReplacer
+import fr.sii.ogham.helper.rule.LoggingTestRule
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @Unroll
 class ContainsMimetypeReplacerSpec extends Specification {
+	@Rule
+	LoggingTestRule logging;
+
 	def "replace #contains (ignoring case) by #replacement contains rule applied on #mimetype should be #expected"() {
 		expect:
 			new ContainsMimetypeReplacer(contains, true, replacement).replace(mimetype).equals(expected)

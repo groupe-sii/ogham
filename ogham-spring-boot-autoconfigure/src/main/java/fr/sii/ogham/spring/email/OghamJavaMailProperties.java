@@ -16,9 +16,9 @@ public class OghamJavaMailProperties {
 	 */
 	private Integer port;
 	@NestedConfigurationProperty
-	private AuthenticationProperties authenticator;
+	private AuthenticationProperties authenticator = new AuthenticationProperties();
 	@NestedConfigurationProperty
-	private BodyProperties body;
+	private BodyProperties body = new BodyProperties();
 
 	public String getHost() {
 		return host;

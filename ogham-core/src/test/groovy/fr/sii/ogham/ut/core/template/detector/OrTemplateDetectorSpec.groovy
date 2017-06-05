@@ -7,14 +7,14 @@ import spock.lang.Unroll
 
 @Unroll
 class OrTemplateDetectorSpec extends Specification {
-	def "OrTemplateDetector: #given1 or #given2 should return #expected"() {
+	def "#given1 or #given2 should return #expected"() {
 		given:
 			TemplateEngineDetector detector1 = Mock()
 			TemplateEngineDetector detector2 = Mock()
-
-		when:
 			detector1.canParse(_, _) >> given1
 			detector2.canParse(_, _) >> given2
+
+		when:
 			def result = new OrTemplateDetector(Arrays.asList(detector1, detector2)).canParse("foo", null)
 
 		then:

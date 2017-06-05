@@ -1,11 +1,17 @@
 package fr.sii.ogham.ut.core.mimetype.replace;
 
+import org.junit.Rule
+
 import fr.sii.ogham.core.mimetype.replace.PatternMimetypeReplacer
+import fr.sii.ogham.helper.rule.LoggingTestRule
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @Unroll
 class PatternMimetypeReplacerSpec extends Specification {
+	@Rule
+	LoggingTestRule logging;
+
 	def "replace application/xhtml by text/html pattern rule applied on #mimetype shoud be #expected"() {
 		expect:
 			new PatternMimetypeReplacer("application/xhtml[^;]*(;.*)?", "text/html\$1").replace(mimetype).equals(expected)

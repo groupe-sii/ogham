@@ -1,11 +1,11 @@
 package fr.sii.ogham.core.condition.provider;
 
+import static fr.sii.ogham.core.condition.fluent.Conditions.alwaysTrue;
 import static fr.sii.ogham.core.condition.fluent.Conditions.not;
 import static fr.sii.ogham.core.condition.fluent.Conditions.requiredClass;
 
 import fr.sii.ogham.core.builder.annotation.RequiredClass;
 import fr.sii.ogham.core.condition.Condition;
-import fr.sii.ogham.core.condition.FixedCondition;
 import fr.sii.ogham.core.condition.fluent.Conditions;
 import fr.sii.ogham.core.condition.fluent.FluentCondition;
 
@@ -22,7 +22,7 @@ public class RequiredClassAnnotationProvider<T> implements ConditionProvider<Req
 	@Override
 	public Condition<T> provide(RequiredClass annotation) {
 		if (annotation == null) {
-			return new FixedCondition<>(true);
+			return alwaysTrue();
 		} else {
 			FluentCondition<T> mainCondition = classNameOrAlternatives(annotation);
 			for (String exclude : annotation.excludes()) {
