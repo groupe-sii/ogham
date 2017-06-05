@@ -9,7 +9,6 @@ import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.retry.RetryBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
 import fr.sii.ogham.core.util.BuilderUtils;
 
@@ -622,7 +621,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	}
 
 	@Override
-	public CloudhopperSessionOptions build() throws BuildException {
+	public CloudhopperSessionOptions build() {
 		CloudhopperSessionOptions sessionOpts = new CloudhopperSessionOptions();
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		sessionOpts.setBindTimeout(getValue(propertyResolver, bind));

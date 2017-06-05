@@ -85,7 +85,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	}
 
 	@Override
-	public MimeTypeProvider build() throws BuildException {
+	public MimeTypeProvider build() {
 		try {
 			List<MimeTypeProvider> providers = new ArrayList<>();
 			buildTika(providers);

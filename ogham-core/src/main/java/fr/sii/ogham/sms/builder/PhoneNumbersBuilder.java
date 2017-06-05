@@ -3,7 +3,6 @@ package fr.sii.ogham.sms.builder;
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
 
@@ -78,7 +77,7 @@ public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements B
 	}
 
 	@Override
-	public PhoneNumberTranslatorPair build() throws BuildException {
+	public PhoneNumberTranslatorPair build() {
 		return new PhoneNumberTranslatorPair(senderNumberBuilder.build(), recipientNumberBuilder.build());
 	}
 }

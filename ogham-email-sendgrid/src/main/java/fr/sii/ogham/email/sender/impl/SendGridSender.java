@@ -99,7 +99,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 	}
 
 	private Set<String> validate(final Email message) {
-		final Set<String> violations = new HashSet<String>();
+		final Set<String> violations = new HashSet<>();
 
 		if (message.getContent() == null) {
 			violations.add("Missing content");

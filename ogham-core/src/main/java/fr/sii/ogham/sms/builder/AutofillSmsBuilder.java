@@ -8,7 +8,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.EveryFillerDecorator;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.sms.filler.SmsFiller;
@@ -78,7 +77,7 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 	}
 
 	@Override
-	public MessageFiller build() throws BuildException {
+	public MessageFiller build() {
 		EveryFillerDecorator filler = new EveryFillerDecorator();
 		Map<String, List<String>> props = new HashMap<>();
 		props.put("from", senderNumberBuilder.getDefaultValueProperties());

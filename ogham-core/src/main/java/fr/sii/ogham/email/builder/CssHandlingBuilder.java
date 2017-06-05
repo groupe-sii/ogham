@@ -3,7 +3,6 @@ package fr.sii.ogham.email.builder;
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 
 /**
@@ -49,7 +48,7 @@ public class CssHandlingBuilder extends AbstractParent<EmailBuilder> implements 
 	}
 
 	@Override
-	public ContentTranslator build() throws BuildException {
+	public ContentTranslator build() {
 		if (cssInliningBuilder == null) {
 			return null;
 		}

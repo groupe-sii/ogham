@@ -132,7 +132,7 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 	 * </ul>
 	 */
 	@Override
-	public PropertyResolver build() throws BuildException {
+	public PropertyResolver build() {
 		if (resolver != null) {
 			return resolver;
 		}

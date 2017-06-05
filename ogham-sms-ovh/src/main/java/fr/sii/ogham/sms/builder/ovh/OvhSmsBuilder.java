@@ -357,7 +357,7 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	}
 
 	@Override
-	public OvhSmsSender build() throws BuildException {
+	public OvhSmsSender build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		URL url = buildUrl(propertyResolver);
 		OvhAuthParams authParams = buildAuth(propertyResolver);

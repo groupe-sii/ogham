@@ -18,8 +18,8 @@ import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.inliner.ImageInlinerConstants;
-import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.ImageInlinerConstants.InlineModes;
+import fr.sii.ogham.html.inliner.ImageResource;
 
 /**
  * Image inliner that reads the image and converts it into a base64 string. The

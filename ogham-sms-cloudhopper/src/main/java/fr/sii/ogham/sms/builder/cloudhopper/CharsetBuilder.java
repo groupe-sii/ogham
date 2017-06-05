@@ -85,7 +85,7 @@ public class CharsetBuilder extends AbstractParent<CloudhopperBuilder> implement
 	}
 
 	@Override
-	public CloudhopperCharsetHandler build() throws BuildException {
+	public CloudhopperCharsetHandler build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		CharsetDetector charsetDetector = charsetDetectorBuilder.build();
 		MapCloudhopperCharsetHandler charsetHandler = new MapCloudhopperCharsetHandler(charsetDetector);

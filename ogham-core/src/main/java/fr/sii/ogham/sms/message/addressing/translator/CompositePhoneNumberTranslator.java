@@ -16,7 +16,7 @@ import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
  * 
  */
 public class CompositePhoneNumberTranslator implements PhoneNumberTranslator {
-	private final List<PhoneNumberHandler> handlerList = new ArrayList<PhoneNumberHandler>();
+	private final List<PhoneNumberHandler> handlerList = new ArrayList<>();
 
 	/**
 	 * Initializes the translator with the given handlers.

@@ -8,7 +8,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.EveryFillerDecorator;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.email.filler.EmailFiller;
@@ -142,7 +141,7 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	}
 
 	@Override
-	public MessageFiller build() throws BuildException {
+	public MessageFiller build() {
 		EveryFillerDecorator filler = new EveryFillerDecorator();
 		if (subjectBuilder != null) {
 			filler.addFiller(subjectBuilder.build());

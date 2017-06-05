@@ -7,7 +7,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
 import fr.sii.ogham.core.retry.RetryStrategy;
 import fr.sii.ogham.core.util.BuilderUtils;
@@ -179,11 +178,11 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	}
 
 	@Override
-	public RetryStrategy build() throws BuildException {
+	public RetryStrategy build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		int maxRetries = buildMaxRetries(propertyResolver);
-		long delay = buildDelay(propertyResolver);
-		return new FixedDelayRetry(maxRetries, delay);
+		int evaluatedMaxRetries = buildMaxRetries(propertyResolver);
+		long evaluatedDelay = buildDelay(propertyResolver);
+		return new FixedDelayRetry(evaluatedMaxRetries, evaluatedDelay);
 	}
 
 	private int buildMaxRetries(PropertyResolver propertyResolver) {

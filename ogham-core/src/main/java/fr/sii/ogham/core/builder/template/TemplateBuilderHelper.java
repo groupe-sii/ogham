@@ -183,7 +183,7 @@ public class TemplateBuilderHelper<P> {
 	 * @throws BuildException
 	 *             when template parser couldn't be initialized
 	 */
-	public TemplateParser buildTemplateParser() throws BuildException {
+	public TemplateParser buildTemplateParser() {
 		// TODO: handle enable?
 		List<TemplateImplementation> impls = buildTemplateParserImpls();
 		if (impls.isEmpty()) {

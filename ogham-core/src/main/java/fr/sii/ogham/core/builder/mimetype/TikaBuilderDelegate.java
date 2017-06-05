@@ -3,7 +3,6 @@ package fr.sii.ogham.core.builder.mimetype;
 import org.apache.tika.Tika;
 
 import fr.sii.ogham.core.builder.AbstractParent;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**
@@ -53,7 +52,7 @@ public class TikaBuilderDelegate<P> extends AbstractParent<P> implements TikaBui
 	}
 
 	@Override
-	public MimeTypeProvider build() throws BuildException {
+	public MimeTypeProvider build() {
 		return delegate.build();
 	}
 }

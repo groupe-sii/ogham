@@ -2,6 +2,7 @@ package fr.sii.ogham.helper.email;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -626,7 +627,7 @@ public class AssertEmail {
 			if(content instanceof String) {
 				return (String) content;
 			} else if(content instanceof InputStream) {
-				return IOUtils.toString((InputStream) content);
+				return IOUtils.toString((InputStream) content, Charset.defaultCharset());
 			} else {
 				return content.toString();
 			}

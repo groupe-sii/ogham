@@ -8,7 +8,6 @@ import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.ConverterRegistry;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.convert.SupportingConverter;
-import fr.sii.ogham.core.exception.builder.BuildException;
 
 /**
  * A {@link ConverterBuilder} that builds the converter:
@@ -79,16 +78,16 @@ public class SimpleConverterBuilder<P> extends AbstractParent<P> implements Conv
 	 * </ul>
 	 */
 	@Override
-	public Converter build() throws BuildException {
-		Converter converter = this.converter;
-		if (converter == null) {
-			converter = new DefaultConverter();
+	public Converter build() {
+		Converter builtConverter = this.converter;
+		if (builtConverter == null) {
+			builtConverter = new DefaultConverter();
 		}
-		if (converter instanceof ConverterRegistry) {
+		if (builtConverter instanceof ConverterRegistry) {
 			for (SupportingConverter conv : delegates) {
-				((ConverterRegistry) converter).register(conv);
+				((ConverterRegistry) builtConverter).register(conv);
 			}
 		}
-		return converter;
+		return builtConverter;
 	}
 }

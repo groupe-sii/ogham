@@ -18,7 +18,6 @@ import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
 import fr.sii.ogham.core.builder.template.VariantBuilder;
 import fr.sii.ogham.core.condition.fluent.MessageConditions;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
@@ -696,7 +695,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	}
 
 	@Override
-	public ConditionalSender build() throws BuildException {
+	public ConditionalSender build() {
 		EmailSender emailSender = new EmailSender();
 		ConditionalSender sender = emailSender;
 		senderBuilderHelper.addSenders(emailSender);

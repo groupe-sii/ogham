@@ -90,9 +90,9 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 	}
 
 	private Properties asProperties(Map<String, String> source) {
-		Properties properties = new Properties();
-		properties.putAll(source);
-		return properties;
+		Properties props = new Properties();
+		props.putAll(source);
+		return props;
 	}
 
 	@Override

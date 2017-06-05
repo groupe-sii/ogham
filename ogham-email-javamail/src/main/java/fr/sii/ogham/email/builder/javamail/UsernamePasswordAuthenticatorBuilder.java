@@ -9,7 +9,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.sender.impl.javamail.UpdatableUsernamePasswordAuthenticator;
 import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
@@ -154,7 +153,7 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	}
 
 	@Override
-	public Authenticator build() throws BuildException {
+	public Authenticator build() {
 		PropertyResolver propertyResolver = parent.environment().build();
 		if (updatable) {
 			if (!usernames.isEmpty() && !passwords.isEmpty()) {

@@ -23,7 +23,6 @@ import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
@@ -457,18 +456,18 @@ public class SendGridBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	@Override
-	public SendGridSender build() throws BuildException {
+	public SendGridSender build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		String apiKey = BuilderUtils.evaluate(this.apiKeys, propertyResolver, String.class);
 		String username = BuilderUtils.evaluate(this.usernames, propertyResolver, String.class);
 		String password = BuilderUtils.evaluate(this.passwords, propertyResolver, String.class);
-		SendGridClient client = buildClient(apiKey, username, password);
-		if (client == null) {
+		SendGridClient builtClient = buildClient(apiKey, username, password);
+		if (builtClient == null) {
 			return null;
 		}
 		LOG.info("Sending email using SendGrid API is registered");
 		LOG.debug("SendGrid account: apiKey={}, username={}", apiKey, username);
-		return new SendGridSender(client, buildContentHandler(), interceptor);
+		return new SendGridSender(builtClient, buildContentHandler(), interceptor);
 	}
 
 	private SendGridClient buildClient(String apiKey, String username, String password) {

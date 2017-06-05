@@ -32,7 +32,6 @@ public class OghamFreemarkerConfiguration {
 		freemarker.template.Configuration configuration = new freemarker.template.Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		configuration.setDefaultEncoding("UTF-8");
 		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-		// configuration.setLogTemplateExceptions(false);
 		return configuration;
 	}
 
@@ -43,7 +42,6 @@ public class OghamFreemarkerConfiguration {
 		freemarker.template.Configuration configuration = new freemarker.template.Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		configuration.setDefaultEncoding("UTF-8");
 		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-		// configuration.setLogTemplateExceptions(false);
 		return configuration;
 	}
 

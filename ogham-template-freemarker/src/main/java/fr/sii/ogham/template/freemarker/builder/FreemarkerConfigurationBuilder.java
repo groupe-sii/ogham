@@ -12,7 +12,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.util.BuilderUtils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -142,7 +141,7 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	}
 
 	@Override
-	public Configuration build() throws BuildException {
+	public Configuration build() {
 		Configuration configuration = version == null ? new Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS) : new Configuration(version);
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		String defaultEncoding = BuilderUtils.evaluate(defaultEncodings, propertyResolver, String.class);

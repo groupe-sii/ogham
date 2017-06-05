@@ -691,7 +691,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return loggingBuilder;
 	}
 
-	public CloudhopperSMPPSender build() throws BuildException {
+	public CloudhopperSMPPSender build() {
 		PropertyResolver propertyResolver = buildPropertyResolver();
 		CloudhopperSessionOptions sessionOpts = sessionBuilder.build();
 		SmppSessionConfiguration session = buildSession(sessionOpts, propertyResolver);
@@ -811,9 +811,9 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		if (this.port != null) {
 			return this.port;
 		}
-		Integer port = getIntValue(propertyResolver, ports);
-		if (port != null) {
-			return port;
+		Integer evaluatedPort = getIntValue(propertyResolver, ports);
+		if (evaluatedPort != null) {
+			return evaluatedPort;
 		}
 		return 0;
 	}

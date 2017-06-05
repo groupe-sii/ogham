@@ -1,7 +1,5 @@
 package fr.sii.ogham.ut.core.convert
 
-import static spock.lang.Specification.*
-
 import org.junit.Rule
 
 import fr.sii.ogham.core.convert.DelegateConverter

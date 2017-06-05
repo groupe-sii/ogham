@@ -3,7 +3,6 @@ package fr.sii.ogham.core.builder.env;
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.SupportingConverter;
-import fr.sii.ogham.core.exception.builder.BuildException;
 
 /**
  * Implementation that just delegates all operations to another builder.
@@ -52,7 +51,7 @@ public class ConverterBuilderDelegate<P> extends AbstractParent<P> implements Co
 	}
 
 	@Override
-	public Converter build() throws BuildException {
+	public Converter build() {
 		return delegate.build();
 	}
 }

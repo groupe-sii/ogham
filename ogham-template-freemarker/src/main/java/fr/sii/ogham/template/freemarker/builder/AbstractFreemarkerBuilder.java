@@ -20,7 +20,6 @@ import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
@@ -221,7 +220,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	}
 
 	@Override
-	public TemplateParser build() throws BuildException {
+	public TemplateParser build() {
 		LOG.info("Freemarker parser is registered");
 		return new FreeMarkerParser(buildConfiguration());
 	}
@@ -241,18 +240,18 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	}
 
 	private Configuration buildConfiguration() {
-		Configuration configuration;
+		Configuration builtConfiguration;
 		if (this.configuration != null) {
-			configuration = this.configuration;
+			builtConfiguration = this.configuration;
 		} else if (configurationBuilder != null) {
-			configuration = configurationBuilder.build();
+			builtConfiguration = configurationBuilder.build();
 		} else {
-			configuration = new Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-			configuration.setDefaultEncoding("UTF-8");
-			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+			builtConfiguration = new Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+			builtConfiguration.setDefaultEncoding("UTF-8");
+			builtConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 		}
-		configuration.setTemplateLoader(new FreeMarkerFirstSupportingTemplateLoader(buildResolver(), buildAdapters()));
-		return configuration;
+		builtConfiguration.setTemplateLoader(new FreeMarkerFirstSupportingTemplateLoader(buildResolver(), buildAdapters()));
+		return builtConfiguration;
 	}
 
 	protected List<ResourceResolver> buildResolvers() {

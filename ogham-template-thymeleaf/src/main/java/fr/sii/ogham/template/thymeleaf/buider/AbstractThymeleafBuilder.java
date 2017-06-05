@@ -20,7 +20,6 @@ import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
@@ -246,7 +245,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	}
 
 	@Override
-	public TemplateParser build() throws BuildException {
+	public TemplateParser build() {
 		LOG.info("Thymeleaf parser is registered");
 		return new ThymeleafParser(buildEngine(), buildContext());
 	}
@@ -266,19 +265,19 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	}
 
 	protected TemplateEngine buildEngine() {
-		TemplateEngine engine;
+		TemplateEngine builtEngine;
 		if (this.engine != null) {
 			LOG.debug("Using custom Thymeleaf engine");
-			engine = this.engine;
+			builtEngine = this.engine;
 		} else if (engineBuilder != null) {
 			LOG.debug("Using custom Thymeleaf engine built using engine()");
-			engine = engineBuilder.build();
+			builtEngine = engineBuilder.build();
 		} else {
 			LOG.debug("Using default Thymeleaf engine");
-			engine = new TemplateEngine();
+			builtEngine = new TemplateEngine();
 		}
-		engine.addTemplateResolver(new ThymeLeafFirstSupportingTemplateResolver(buildResolver(), buildAdapters()));
-		return engine;
+		builtEngine.addTemplateResolver(new ThymeLeafFirstSupportingTemplateResolver(buildResolver(), buildAdapters()));
+		return builtEngine;
 	}
 
 	protected ThymeleafContextConverter buildContext() {

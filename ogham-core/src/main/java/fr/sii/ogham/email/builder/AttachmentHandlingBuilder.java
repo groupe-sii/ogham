@@ -13,7 +13,6 @@ import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
@@ -76,7 +75,7 @@ public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> impl
 	}
 
 	@Override
-	public AttachmentResourceTranslator build() throws BuildException {
+	public AttachmentResourceTranslator build() {
 		EveryResourceTranslator translator = new EveryResourceTranslator();
 		LOG.info("Using translator that calls all registered translators");
 		translator.addTranslator(new LookupResourceTranslator(buildResolver()));

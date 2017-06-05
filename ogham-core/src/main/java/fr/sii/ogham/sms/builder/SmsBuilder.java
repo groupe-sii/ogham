@@ -18,7 +18,6 @@ import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
 import fr.sii.ogham.core.builder.template.VariantBuilder;
 import fr.sii.ogham.core.condition.fluent.MessageConditions;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
@@ -513,7 +512,7 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	}
 
 	@Override
-	public ConditionalSender build() throws BuildException {
+	public ConditionalSender build() {
 		SmsSender smsSender = new SmsSender();
 		ConditionalSender sender = smsSender;
 		senderBuilderHelper.addSenders(smsSender);

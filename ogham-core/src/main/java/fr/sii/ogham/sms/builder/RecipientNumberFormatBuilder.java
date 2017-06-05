@@ -8,7 +8,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
@@ -86,7 +85,7 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 	}
 
 	@Override
-	public PhoneNumberTranslator build() throws BuildException {
+	public PhoneNumberTranslator build() {
 		CompositePhoneNumberTranslator translator = new CompositePhoneNumberTranslator();
 		if (enabled(enableInternational, enableInternationalProps)) {
 			translator.add(new InternationalNumberFormatHandler());

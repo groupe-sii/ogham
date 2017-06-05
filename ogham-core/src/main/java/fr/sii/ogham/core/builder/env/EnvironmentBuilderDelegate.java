@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 
 /**
  * Implementation that just delegates all operations to another builder.
@@ -105,7 +104,7 @@ public class EnvironmentBuilderDelegate<P> extends AbstractParent<P> implements 
 
 
 	@Override
-	public PropertyResolver build() throws BuildException {
+	public PropertyResolver build() {
 		return delegate.build();
 	}
 

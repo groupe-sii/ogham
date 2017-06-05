@@ -1,7 +1,6 @@
 package fr.sii.ogham.core.builder.mimetype;
 
 import fr.sii.ogham.core.builder.AbstractParent;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**
@@ -55,7 +54,7 @@ public class MimetypeDetectionBuilderDelegate<P> extends AbstractParent<P> imple
 	}
 
 	@Override
-	public MimeTypeProvider build() throws BuildException {
+	public MimeTypeProvider build() {
 		return delegate.build();
 	}
 }

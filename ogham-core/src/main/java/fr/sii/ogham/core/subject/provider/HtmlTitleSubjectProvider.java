@@ -1,8 +1,8 @@
 package fr.sii.ogham.core.subject.provider;
 
 import fr.sii.ogham.core.message.Message;
-import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.util.HtmlUtils;
 
 /**

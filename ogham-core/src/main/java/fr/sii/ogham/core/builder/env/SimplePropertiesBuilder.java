@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Properties;
 
 import fr.sii.ogham.core.builder.AbstractParent;
-import fr.sii.ogham.core.exception.builder.BuildException;
 
 /**
  * A {@link PropertiesBuilder} that registers properties (key/value pairs) that
@@ -39,7 +38,7 @@ public class SimplePropertiesBuilder<P> extends AbstractParent<P> implements Pro
 	}
 
 	@Override
-	public Properties build() throws BuildException {
+	public Properties build() {
 		Properties props = new Properties();
 		for (Property prop : properties) {
 			props.put(prop.getKey(), prop.getValue());

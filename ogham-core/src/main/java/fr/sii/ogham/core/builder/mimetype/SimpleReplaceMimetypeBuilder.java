@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.mimetype.replace.ContainsMimetypeReplacer;
 import fr.sii.ogham.core.mimetype.replace.FirstMatchingMimetypeReplacer;
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
@@ -60,7 +59,7 @@ public class SimpleReplaceMimetypeBuilder<P> extends AbstractParent<P> implement
 	}
 
 	@Override
-	public MimetypeReplacer build() throws BuildException {
+	public MimetypeReplacer build() {
 		List<MimetypeReplacer> replacers = new ArrayList<>();
 		for (Builder<MimetypeReplacer> builder : delegates) {
 			replacers.add(builder.build());
@@ -79,7 +78,7 @@ public class SimpleReplaceMimetypeBuilder<P> extends AbstractParent<P> implement
 		}
 
 		@Override
-		public MimetypeReplacer build() throws BuildException {
+		public MimetypeReplacer build() {
 			return new PatternMimetypeReplacer(pattern, replacement);
 		}
 
@@ -98,7 +97,7 @@ public class SimpleReplaceMimetypeBuilder<P> extends AbstractParent<P> implement
 		}
 
 		@Override
-		public MimetypeReplacer build() throws BuildException {
+		public MimetypeReplacer build() {
 			return new ContainsMimetypeReplacer(contains, ignoreCase, replacement);
 		}
 

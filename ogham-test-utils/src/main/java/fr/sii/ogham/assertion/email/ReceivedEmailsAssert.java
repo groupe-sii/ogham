@@ -37,7 +37,7 @@ public class ReceivedEmailsAssert {
 	 * @return the fluent API for assertions on the particular message
 	 */
 	public EmailAssert<ReceivedEmailsAssert> receivedMessage(int index) {
-		return new EmailAssert<ReceivedEmailsAssert>(actual.get(index), this);
+		return new EmailAssert<>(actual.get(index), this);
 	}
 
 	/**
@@ -80,10 +80,25 @@ public class ReceivedEmailsAssert {
 	 * @return the fluent API for assertions on messages
 	 */
 	public EmailsAssert<ReceivedEmailsAssert> receivedMessages() {
-		return new EmailsAssert<ReceivedEmailsAssert>(actual, this);
+		return new EmailsAssert<>(actual, this);
 	}
 
-	public <E extends Message> EmailsAssert<ReceivedEmailsAssert> receivedMessages(Matcher<Collection<? extends Message>> matcher) {
+	/**
+	 * Fluent API to write assertions on received messages.
+	 * 
+	 * Make an assertion on received messages list (JavaMail message).
+	 * 
+	 * For example, for writing assertion on a single message, you can write:
+	 * 
+	 * <pre>
+	 * .receivedMessages(is(Matchers.&lt;Message&gt;empty()))
+	 * </pre>
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on message list
+	 * @return the fluent API for assertions on messages
+	 */
+	public EmailsAssert<ReceivedEmailsAssert> receivedMessages(Matcher<Collection<? extends Message>> matcher) {
 		assertThat(actual, matcher);
 		return receivedMessages();
 	}

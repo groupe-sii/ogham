@@ -12,7 +12,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
 import fr.sii.ogham.core.resource.resolver.RelativisableResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -99,7 +98,7 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 	}
 
 	@Override
-	public ResourceResolver build() throws BuildException {
+	public ResourceResolver build() {
 		ResourceResolver resolver = createResolver();
 		if (!(resolver instanceof RelativisableResourceResolver) || environmentBuilder == null) {
 			return resolver;

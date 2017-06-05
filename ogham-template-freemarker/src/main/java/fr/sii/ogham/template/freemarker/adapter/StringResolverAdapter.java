@@ -6,7 +6,9 @@ import freemarker.cache.StringTemplateLoader;
 import freemarker.cache.TemplateLoader;
 
 /**
- * Adapter that converts general {@link fr.sii.ogham.core.resource.resolver.StringResourceResolver} into FreeMarker specific {@link StringTemplateLoader}.
+ * Adapter that converts general
+ * {@link fr.sii.ogham.core.resource.resolver.StringResourceResolver} into
+ * FreeMarker specific {@link StringTemplateLoader}.
  * 
  * @author Cyril Dejonghe
  *
@@ -21,8 +23,7 @@ public class StringResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptio
 
 	@Override
 	public TemplateLoader adapt(ResourceResolver resolver) {
-		StringTemplateLoader templateResolver = new StringTemplateLoader();
-		return templateResolver;
+		return new StringTemplateLoader();
 	}
 
 }

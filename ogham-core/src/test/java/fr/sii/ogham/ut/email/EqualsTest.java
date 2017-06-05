@@ -1,8 +1,5 @@
 package fr.sii.ogham.ut.email;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
 import org.junit.Test;
 
 import fr.sii.ogham.core.message.content.MultiContent;
@@ -16,6 +13,8 @@ import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.message.Recipient;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 public class EqualsTest {
 	@Test

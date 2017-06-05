@@ -13,7 +13,6 @@ import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
@@ -86,7 +85,7 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 	}
 
 	@Override
-	public ContentTranslator build() throws BuildException {
+	public ContentTranslator build() {
 		ResourceResolver resourceResolver = buildResolver();
 		CssInliner cssInliner = buildInliner();
 		if (cssInliner == null) {

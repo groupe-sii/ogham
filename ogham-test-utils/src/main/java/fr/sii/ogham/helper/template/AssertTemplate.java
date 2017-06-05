@@ -1,6 +1,7 @@
 package fr.sii.ogham.helper.template;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -29,7 +30,7 @@ public class AssertTemplate {
 	 *             when the expected content couldn't be read
 	 */
 	public static void assertEquals(String expectedContentPath, Object content, boolean strict) throws IOException {
-		assertEquals(IOUtils.toString(AssertTemplate.class.getResourceAsStream(expectedContentPath)), content.toString(), strict);
+		assertEquals(IOUtils.toString(AssertTemplate.class.getResourceAsStream(expectedContentPath), Charset.defaultCharset()), content.toString(), strict);
 	}
 
 	/**

@@ -254,8 +254,7 @@ public final class BeanUtils {
 
 	
 	private static Map<String, Object> convertBean(Object bean) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
-		Map<String, Object> map;
-		map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		BeanInfo info = Introspector.getBeanInfo(bean.getClass());
 		for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
 			if(!"class".equals(pd.getName())) {

@@ -7,7 +7,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
 import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
@@ -193,12 +192,12 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	}
 
 	@Override
-	public OvhOptions build() throws BuildException {
+	public OvhOptions build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		boolean noStop = buildNoStop(propertyResolver);
-		String tag = buildTag(propertyResolver);
-		SmsCoding smsCoding = buildSmsCoding(propertyResolver);
-		return new OvhOptions(noStop, tag, smsCoding);
+		boolean builtNoStop = buildNoStop(propertyResolver);
+		String builtTag = buildTag(propertyResolver);
+		SmsCoding builtSmsCoding = buildSmsCoding(propertyResolver);
+		return new OvhOptions(builtNoStop, builtTag, builtSmsCoding);
 	}
 
 	private boolean buildNoStop(PropertyResolver propertyResolver) {

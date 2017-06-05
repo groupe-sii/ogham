@@ -15,7 +15,6 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 
 /**
  * Fluent builder to configure Thymeleaf engine.
@@ -462,7 +461,7 @@ public class ThymeleafEngineConfigBuilder<P> extends AbstractParent<P> implement
 	}
 
 	@Override
-	public TemplateEngine build() throws BuildException {
+	public TemplateEngine build() {
 		TemplateEngine engine = new TemplateEngine();
 		configureDialects(engine);
 		configureMessageResolvers(engine);

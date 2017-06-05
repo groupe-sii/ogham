@@ -34,7 +34,6 @@ import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -597,7 +596,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	@Override
-	public JavaMailSender build() throws BuildException {
+	public JavaMailSender build() {
 		Properties props = buildProperties();
 		MimeTypeProvider mimetypeProvider = mimetype().build();
 		LOG.info("Sending email using JavaMail API is registered");

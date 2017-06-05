@@ -4,7 +4,6 @@ import com.cloudhopper.smpp.ssl.SslConfiguration;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 
 /**
  * Enable or disable SSL configuration and configure how SSL is handled.
@@ -63,7 +62,7 @@ public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Bu
 	}
 
 	@Override
-	public SslConfiguration build() throws BuildException {
+	public SslConfiguration build() {
 		return enableSsl ? null : sslConfiguration;
 	}
 

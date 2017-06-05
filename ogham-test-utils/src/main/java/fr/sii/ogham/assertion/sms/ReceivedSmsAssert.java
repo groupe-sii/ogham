@@ -81,7 +81,22 @@ public class ReceivedSmsAssert {
 		return new SmsListAssert<>(actual, this);
 	}
 
-	public <E extends SubmitSm> SmsListAssert<ReceivedSmsAssert> receivedMessages(Matcher<Collection<? extends SubmitSm>> matcher) {
+	/**
+	 * Fluent API to write assertions on received messages.
+	 * 
+	 * Make an assertion on received messages list (JavaMail message).
+	 * 
+	 * For example, for writing assertion on a single message, you can write:
+	 * 
+	 * <pre>
+	 * .receivedMessages(is(Matchers.&lt;Message&gt;empty()))
+	 * </pre>
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on message list
+	 * @return the fluent API for assertions on messages
+	 */
+	public SmsListAssert<ReceivedSmsAssert> receivedMessages(Matcher<Collection<? extends SubmitSm>> matcher) {
 		MatcherAssert.assertThat(actual, matcher);
 		return receivedMessages();
 	}

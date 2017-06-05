@@ -1067,7 +1067,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *             when service couldn't be instantiated and configured
 	 */
 	@Override
-	public MessagingService build() throws BuildException {
+	public MessagingService build() {
 		LOG.info("Using service that calls all registered senders");
 		List<ConditionalSender> senders = buildSenders();
 		LOG.debug("Registered senders: {}", senders);

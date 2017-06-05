@@ -16,8 +16,8 @@ import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
-import fr.sii.ogham.email.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.email.sender.impl.sendgrid.handler.MultiContentHandler;
+import fr.sii.ogham.email.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.email.sender.impl.sendgrid.handler.StringContentHandler;
 
 /**

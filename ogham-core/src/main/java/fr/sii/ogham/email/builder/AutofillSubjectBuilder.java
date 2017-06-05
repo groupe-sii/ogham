@@ -10,7 +10,6 @@ import fr.sii.ogham.core.builder.AbstractAutofillDefaultValueBuilder;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.filler.SubjectFiller;
 import fr.sii.ogham.core.subject.provider.FirstSupportingSubjectProvider;
@@ -125,7 +124,7 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 	}
 
 	@Override
-	public MessageFiller build() throws BuildException {
+	public MessageFiller build() {
 		return new SubjectFiller(buildProvider());
 	}
 

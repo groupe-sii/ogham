@@ -3,7 +3,6 @@ package fr.sii.ogham.core.builder.mimetype;
 import java.util.regex.Pattern;
 
 import fr.sii.ogham.core.builder.AbstractParent;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
 
 /**
@@ -65,7 +64,7 @@ public class ReplaceMimetypeBuilderDelegate<P> extends AbstractParent<P> impleme
 	}
 
 	@Override
-	public MimetypeReplacer build() throws BuildException {
+	public MimetypeReplacer build() {
 		return delegate.build();
 	}
 }

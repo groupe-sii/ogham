@@ -3,7 +3,6 @@ package fr.sii.ogham.core.builder.env;
 import java.util.Properties;
 
 import fr.sii.ogham.core.builder.AbstractParent;
-import fr.sii.ogham.core.exception.builder.BuildException;
 
 /**
  * Implementation that just delegates all operations to another builder.
@@ -46,7 +45,7 @@ public class PropertiesBuilderDelegate<P> extends AbstractParent<P> implements P
 	}
 
 	@Override
-	public Properties build() throws BuildException {
+	public Properties build() {
 		return delegate.build();
 	}
 

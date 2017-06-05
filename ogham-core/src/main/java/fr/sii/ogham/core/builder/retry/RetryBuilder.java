@@ -3,7 +3,6 @@ package fr.sii.ogham.core.builder.retry;
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.retry.SimpleRetryExecutor;
@@ -89,7 +88,7 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 	}
 
 	@Override
-	public RetryExecutor build() throws BuildException {
+	public RetryExecutor build() {
 		if (fixedDelay == null) {
 			return null;
 		}

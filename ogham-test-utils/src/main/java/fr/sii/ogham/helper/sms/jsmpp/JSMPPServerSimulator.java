@@ -40,7 +40,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 
 	private static final Logger LOG = LoggerFactory.getLogger(JSMPPServerSimulator.class);
 	
-	private ExecutorService execService;// = Executors.newFixedThreadPool(5);
+	private ExecutorService execService;
 	private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(RECEIPT_THREAD_POOL_SIZE);
 	private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
 	private int port;

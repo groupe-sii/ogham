@@ -5,7 +5,6 @@ import com.cloudhopper.smpp.type.LoggingOptions;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 
 /**
  * * Configure logs:
@@ -50,7 +49,7 @@ public class LoggingBuilder extends AbstractParent<CloudhopperBuilder> implement
 	}
 
 	@Override
-	public LoggingOptions build() throws BuildException {
+	public LoggingOptions build() {
 		return options;
 	}
 

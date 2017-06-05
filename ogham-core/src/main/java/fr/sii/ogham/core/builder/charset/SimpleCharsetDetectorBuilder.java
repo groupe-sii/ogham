@@ -10,7 +10,6 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.charset.FixedCharsetDetector;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.util.BuilderUtils;
 
 public class SimpleCharsetDetectorBuilder<P> extends AbstractParent<P> implements CharsetDetectorBuilder<P> {
@@ -40,7 +39,7 @@ public class SimpleCharsetDetectorBuilder<P> extends AbstractParent<P> implement
 	}
 
 	@Override
-	public CharsetDetector build() throws BuildException {
+	public CharsetDetector build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		return new FixedCharsetDetector(getDefaultCharset(propertyResolver, charsets));
 	}

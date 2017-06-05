@@ -2,6 +2,7 @@ package fr.sii.ogham.helper.email;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -62,7 +63,7 @@ public class ExpectedContent {
 	 *             when the expected content stream is not readable
 	 */
 	public ExpectedContent(InputStream body, String mimetype) throws IOException {
-		this(IOUtils.toString(body), mimetype);
+		this(IOUtils.toString(body, Charset.defaultCharset()), mimetype);
 	}
 
 	public String getBody() {

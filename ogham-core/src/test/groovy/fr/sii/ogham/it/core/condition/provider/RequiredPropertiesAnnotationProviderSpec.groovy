@@ -2,13 +2,13 @@ package fr.sii.ogham.it.core.condition.provider
 
 import org.junit.Rule
 
+import fr.sii.ogham.core.builder.annotation.RequiredProperties
+import fr.sii.ogham.core.builder.annotation.RequiredProperty
 import fr.sii.ogham.core.condition.provider.RequiredPropertiesAnnotationProvider
 import fr.sii.ogham.core.env.PropertyResolver
 import fr.sii.ogham.helper.rule.LoggingTestRule
 import spock.lang.Specification
 import spock.lang.Unroll
-import fr.sii.ogham.core.builder.annotation.RequiredProperties
-import fr.sii.ogham.core.builder.annotation.RequiredProperty
 
 @Unroll
 class RequiredPropertiesAnnotationProviderSpec extends Specification {

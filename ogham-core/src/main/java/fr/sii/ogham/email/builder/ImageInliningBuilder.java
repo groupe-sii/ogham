@@ -20,7 +20,6 @@ import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -326,7 +325,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	}
 
 	@Override
-	public ContentTranslator build() throws BuildException {
+	public ContentTranslator build() {
 		ResourceResolver resourceResolver = buildResolver();
 		ImageInliner imageInliner = buildInliner();
 		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();

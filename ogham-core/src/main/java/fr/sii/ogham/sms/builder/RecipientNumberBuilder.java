@@ -4,7 +4,6 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
 import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
@@ -84,7 +83,7 @@ public class RecipientNumberBuilder extends AbstractParent<PhoneNumbersBuilder> 
 	}
 
 	@Override
-	public PhoneNumberTranslator build() throws BuildException {
+	public PhoneNumberTranslator build() {
 		if (customTranslator != null) {
 			return customTranslator;
 		}

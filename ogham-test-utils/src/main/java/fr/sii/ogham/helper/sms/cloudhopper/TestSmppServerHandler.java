@@ -13,7 +13,7 @@ import com.cloudhopper.smpp.pdu.BaseBindResp;
 import com.cloudhopper.smpp.type.SmppProcessingException;
 
 public class TestSmppServerHandler implements SmppServerHandler {
-	private Set<SmppServerSession> sessions = new HashSet<SmppServerSession>();
+	private Set<SmppServerSession> sessions = new HashSet<>();
 	private PollableSmppSessionHandler sessionHandler = new PollableSmppSessionHandler();
 
 	private String systemId;
@@ -37,9 +37,6 @@ public class TestSmppServerHandler implements SmppServerHandler {
 		if (!password.equals(bindRequest.getPassword())) {
 			throw new SmppProcessingException(SmppConstants.STATUS_INVPASWD);
 		}
-
-		// throw new SmppProcessingException(SmppConstants.STATUS_BINDFAIL,
-		// null);
 	}
 
 	@Override
