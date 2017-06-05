@@ -19,6 +19,10 @@
 		is designed to be easily extended.
 	</description>
 
+	<properties>
+		<sonar.tests>src/test/groovy,src/test/java</sonar.tests>
+	</properties>
+
 	<dependencies>
 		<!-- Utility -->
 		<dependency>
