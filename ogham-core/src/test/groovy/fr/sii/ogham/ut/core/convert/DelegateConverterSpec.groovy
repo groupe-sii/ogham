@@ -35,6 +35,7 @@ class DelegateConverterSpec extends Specification {
 			source   | targetType    | supports1   | convert1 | supports2  | convert2   || expected
 			"string" | Integer.class | true        | 1        | false      | null       || 1
 			"string" | Integer.class | false       | null     | true       | 2          || 2
+			null     | Integer.class | true        | 4        | true       | 2          || null
 	}
 
 	
