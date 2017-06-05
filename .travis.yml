@@ -49,7 +49,7 @@ notifications:
 
 cache:
   directories:
-    - target/classpath-tests
+    - ogham-test-classpath/target/classpath-tests
     - $HOME/.m2
 before_cache:
-  - rm -f $HOME/.m2/repository/fr/sii
+  - rm -rf $HOME/.m2/repository/fr/sii
