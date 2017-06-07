@@ -3,15 +3,7 @@ package fr.sii.ogham.core.condition.fluent;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
-import fr.sii.ogham.core.condition.FixedCondition;
-import fr.sii.ogham.core.condition.NotCondition;
-import fr.sii.ogham.core.condition.OrCondition;
-import fr.sii.ogham.core.condition.PropertyPatternCondition;
-import fr.sii.ogham.core.condition.PropertyValueCondition;
-import fr.sii.ogham.core.condition.RequiredClassCondition;
-import fr.sii.ogham.core.condition.RequiredPropertyCondition;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.Message;
 
@@ -66,7 +58,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> $(Condition<Message> condition) {
-		return new FluentCondition<>(condition);
+		return Conditions.$(condition);
 	}
 
 	/**
@@ -91,7 +83,7 @@ public class MessageConditions {
 	 */
 	@SafeVarargs
 	public static FluentCondition<Message> and(Condition<Message>... conditions) {
-		return new FluentCondition<>(new AndCondition<>(conditions));
+		return Conditions.and(conditions);
 	}
 
 	/**
@@ -120,7 +112,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> and(List<Condition<Message>> conditions) {
-		return new FluentCondition<>(new AndCondition<>(conditions));
+		return Conditions.and(conditions);
 	}
 
 	/**
@@ -145,7 +137,7 @@ public class MessageConditions {
 	 */
 	@SafeVarargs
 	public static FluentCondition<Message> or(Condition<Message>... conditions) {
-		return new FluentCondition<>(new OrCondition<>(conditions));
+		return Conditions.or(conditions);
 	}
 
 	/**
@@ -169,7 +161,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> or(List<Condition<Message>> conditions) {
-		return new FluentCondition<>(new OrCondition<>(conditions));
+		return Conditions.or(conditions);
 	}
 
 	/**
@@ -192,7 +184,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> not(Condition<Message> condition) {
-		return new FluentCondition<>(new NotCondition<>(condition));
+		return Conditions.not(condition);
 	}
 
 	/**
@@ -213,7 +205,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> requiredProperty(PropertyResolver propertyResolver, String property) {
-		return new FluentCondition<>(new RequiredPropertyCondition<Message>(property, propertyResolver));
+		return Conditions.requiredProperty(propertyResolver, property);
 	}
 
 	/**
@@ -238,7 +230,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> requiredPropertyValue(PropertyResolver propertyResolver, String property, String value) {
-		return new FluentCondition<>(new PropertyValueCondition<Message>(property, value, propertyResolver));
+		return Conditions.requiredPropertyValue(propertyResolver, property, value);
 	}
 
 	/**
@@ -263,7 +255,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> requiredPropertyValue(PropertyResolver propertyResolver, String property, Pattern pattern) {
-		return new FluentCondition<>(new PropertyPatternCondition<Message>(property, pattern, propertyResolver));
+		return Conditions.requiredPropertyValue(propertyResolver, property, pattern);
 	}
 
 	/**
@@ -281,7 +273,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> requiredClass(String className) {
-		return new FluentCondition<>(new RequiredClassCondition<Message>(className));
+		return Conditions.requiredClass(className);
 	}
 
 	/**
@@ -290,7 +282,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> alwaysTrue() {
-		return new FluentCondition<>(new FixedCondition<Message>(true));
+		return Conditions.alwaysTrue();
 	}
 
 	/**
@@ -299,7 +291,7 @@ public class MessageConditions {
 	 * @return the fluent condition
 	 */
 	public static FluentCondition<Message> alwaysFalse() {
-		return new FluentCondition<>(new FixedCondition<Message>(false));
+		return Conditions.alwaysFalse();
 	}
 
 	private MessageConditions() {

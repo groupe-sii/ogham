@@ -14,28 +14,45 @@ import fr.sii.ogham.core.exception.convert.ConversionException;
  */
 public class StringToNumberConverter implements SupportingConverter {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {	// NOSONAR: code from Spring
+	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {
 		String text = (String) source;
-		if (text.length() == 0) {
+		String trimmed = trimAllWhitespace(text);
+		if(trimmed==null) {
 			return null;
 		}
-		String trimmed = trimAllWhitespace(text);
+		try {
+			T value = convertNumber(trimmed, targetType);
+			if(value==null) {
+				throw new ConversionException("Cannot convert String [" + text + "] to target class [" + targetType.getName() + "]");
+			}
+			return value;
+		} catch(NumberFormatException e) {
+			throw new ConversionException("Failed to convert "+source+" to "+targetType.getSimpleName(), e);
+		}
+	}
+
+	@Override
+	public boolean supports(Class<?> sourceType, Class<?> targetType) {
+		return String.class.isAssignableFrom(sourceType) && Number.class.isAssignableFrom(targetType);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> T convertNumber(String trimmed, Class<T> targetType) {	// NOSONAR: code from Spring
 		if (Byte.class == targetType) {
-			return (T) (isHexNumber(trimmed) ? Byte.decode(trimmed) : Byte.valueOf(trimmed));
+			return (T) (isHexOrOctalNumber(trimmed) ? Byte.decode(trimmed) : Byte.valueOf(trimmed));
 		}
 		if (Short.class == targetType) {
-			return (T) (isHexNumber(trimmed) ? Short.decode(trimmed) : Short.valueOf(trimmed));
+			return (T) (isHexOrOctalNumber(trimmed) ? Short.decode(trimmed) : Short.valueOf(trimmed));
 		}
 		if (Integer.class == targetType) {
-			return (T) (isHexNumber(trimmed) ? Integer.decode(trimmed) : Integer.valueOf(trimmed));
+			return (T) (isHexOrOctalNumber(trimmed) ? Integer.decode(trimmed) : Integer.valueOf(trimmed));
 		}
 		if (Long.class == targetType) {
-			return (T) (isHexNumber(trimmed) ? Long.decode(trimmed) : Long.valueOf(trimmed));
+			return (T) (isHexOrOctalNumber(trimmed) ? Long.decode(trimmed) : Long.valueOf(trimmed));
 		}
 		if (BigInteger.class == targetType) {
-			return (T) (isHexNumber(trimmed) ? decodeBigInteger(trimmed) : new BigInteger(trimmed));
+			return (T) (isHexOrOctalNumber(trimmed) ? decodeBigInteger(trimmed) : new BigInteger(trimmed));
 		}
 		if (Float.class == targetType) {
 			return (T) Float.valueOf(trimmed);
@@ -46,22 +63,20 @@ public class StringToNumberConverter implements SupportingConverter {
 		if (BigDecimal.class == targetType || Number.class == targetType) {
 			return (T) new BigDecimal(trimmed);
 		}
-		throw new ConversionException("Cannot convert String [" + text + "] to target class [" + targetType.getName() + "]");
+		return null;
 	}
 
-	@Override
-	public boolean supports(Class<?> sourceType, Class<?> targetType) {
-		return String.class.isAssignableFrom(sourceType) && Number.class.isAssignableFrom(targetType);
-	}
-
-	private static boolean isHexNumber(String value) {
-		int index = (value.startsWith("-") ? 1 : 0);
-		return (value.startsWith("0x", index) || value.startsWith("0X", index) || value.startsWith("#", index));
+	private static boolean isHexOrOctalNumber(String value) {
+		int index = value.startsWith("-") ? 1 : 0;
+		return value.startsWith("0x", index) 
+				|| value.startsWith("0X", index) 
+				|| value.startsWith("#", index) 
+				|| value.startsWith("0", index);
 	}
 
 	private static String trimAllWhitespace(String str) {
 		if (str == null || str.length() == 0) {
-			return str;
+			return null;
 		}
 		int len = str.length();
 		StringBuilder sb = new StringBuilder(str.length());

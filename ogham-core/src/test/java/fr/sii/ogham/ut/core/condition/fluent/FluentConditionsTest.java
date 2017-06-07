@@ -1,4 +1,4 @@
-package fr.sii.ogham.ut.core.condition.provider;
+package fr.sii.ogham.ut.core.condition.fluent;
 
 import static fr.sii.ogham.core.condition.fluent.MessageConditions.$;
 import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredProperty;

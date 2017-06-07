@@ -56,7 +56,7 @@ public class SimpleRetryExecutorTest {
 	}
 	
 	@Test
-	public void noRetryStrategy() throws Exception {
+	public void noRetryStrategyCallFails() throws Exception {
 		// given an action that doesn't work and a provider that provides no strategy
 		when(action.call()).thenThrow(failure);
 		when(provider.provide()).thenReturn(null);
@@ -67,6 +67,16 @@ public class SimpleRetryExecutorTest {
 		} catch(Exception e) {
 			assertThat(e, instanceOf(FooException.class));
 		}
+		verify(action).call();
+	}
+	
+	@Test
+	public void noRetryStrategyWorks() throws Exception {
+		// given an action that doesn't work and a provider that provides no strategy
+		when(action.call()).thenReturn("hello");
+		when(provider.provide()).thenReturn(null);
+		// when trying to execute the action
+		retryExecutor.execute(action);
 		verify(action).call();
 	}
 	
@@ -113,7 +123,6 @@ public class SimpleRetryExecutorTest {
 		verify(action, times(4)).call();
 	}
 	
-	private static class FooException extends Exception {
-		
-	}
+	@SuppressWarnings("serial")
+	private static class FooException extends Exception {}
 }

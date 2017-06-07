@@ -31,30 +31,28 @@ public class FirstExistingResourceVariantResolver implements VariantResolver {
 
 	@Override
 	public String getRealPath(TemplateContent template) throws VariantResolutionException {
-		if (template instanceof HasVariant) {
-			for (VariantResolver delegate : delegates) {
-				if(delegate.variantExists(template)) {
-					return delegate.getRealPath(template);
-				}
-			}
-			return defaultResolver.getRealPath(template);
-		} else {
+		if (!(template instanceof HasVariant)) {
 			return template.getPath();
 		}
+		for (VariantResolver delegate : delegates) {
+			if(delegate.variantExists(template)) {
+				return delegate.getRealPath(template);
+			}
+		}
+		return defaultResolver.getRealPath(template);
 	}
 
 	@Override
 	public boolean variantExists(TemplateContent template) {
-		if (template instanceof HasVariant) {
-			for (VariantResolver delegate : delegates) {
-				if(delegate.variantExists(template)) {
-					return true;
-				}
-			}
-			return defaultResolver.variantExists(template);
-		} else {
+		if (!(template instanceof HasVariant)) {
 			return false;
 		}
+		for (VariantResolver delegate : delegates) {
+			if(delegate.variantExists(template)) {
+				return true;
+			}
+		}
+		return defaultResolver.variantExists(template);
 	}
 
 	public FirstExistingResourceVariantResolver addVariantResolver(VariantResolver variantResolver) {

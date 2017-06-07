@@ -38,14 +38,14 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 
 	@Override
 	public String getRealPath(TemplateContent template) throws VariantResolutionException {
-		if (template instanceof HasVariant) {
-			String extension = mapping.get(((HasVariant) template).getVariant());
-			if (extension == null) {
-				throw new UnknownVariantException("Failed to resolve template due to unknown variant/extension", template.getPath(), template.getContext(), ((HasVariant) template).getVariant());
-			}
-			return template.getPath() + extension;
+		if (!(template instanceof HasVariant)) {
+			return template.getPath();
 		}
-		return template.getPath();
+		String extension = mapping.get(((HasVariant) template).getVariant());
+		if (extension == null) {
+			throw new UnknownVariantException("Failed to resolve template due to unknown variant/extension", template.getPath(), template.getContext(), ((HasVariant) template).getVariant());
+		}
+		return template.getPath() + extension;
 	}
 
 	public ExtensionMappingVariantResolver register(Variant variant, String extension) {

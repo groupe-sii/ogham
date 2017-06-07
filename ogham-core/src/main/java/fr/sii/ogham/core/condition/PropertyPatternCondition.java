@@ -53,7 +53,7 @@ public class PropertyPatternCondition<T> implements Condition<T> {
 	@Override
 	public boolean accept(T obj) {
 		String value = propertyResolver.getProperty(key);
-		return value!=null && pattern.matcher(value).matches();
+		return value!=null && pattern!=null && pattern.matcher(value).matches();
 	}
 
 	@Override
