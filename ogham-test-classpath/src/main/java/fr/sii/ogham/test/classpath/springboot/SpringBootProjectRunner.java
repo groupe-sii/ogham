@@ -7,6 +7,7 @@ import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.DEVTOO
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.LOMBOK;
 import static java.util.Arrays.asList;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -84,7 +85,12 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 	}
 
 	private boolean isSkip(boolean override, Path parentFolder) {
-		return !override && parentFolder.toFile().exists();
+		return !override && parentFolder.toFile().exists() && hasContent(parentFolder);
+	}
+
+	private boolean hasContent(Path parentFolder) {
+		File f = parentFolder.toFile();
+		return f.isDirectory() && f.list().length>0;
 	}
 
 	private List<String> filter(List<String> modules, JavaVersion javaVersion) {
