@@ -26,14 +26,14 @@ install:
   - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dskip.integration.tests=true -Dskip.unit.tests=true -B -q
   # generate projects used to test the classpath on the current Ogham version
   - MVN_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
-  - mvn spring-boot:run -pl :ogham-test-classpath -Drun.arguments="target/classpath-tests" -Drun.jvmArguments="-Dogham-version=$MVN_VERSION"
+  - mvn spring-boot:run -pl :ogham-test-classpath -Drun.arguments="$HOME/classpath-tests" -Drun.jvmArguments="-Dogham-version=$MVN_VERSION -Dspring.initializer.url=$SPRING_INITIALIZER_URL"
 script:
   - mvn test verify javadoc:javadoc -Dmaven.test.redirectTestOutputToFile=true -fae -B
   # execute generated classpath tests for the right java version
   - set -o pipefail
   - TEST_FOLDER=$(java -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\..*"/JAVA_\2/p;')
   - echo $TEST_FOLDER
-  - mvn test -T 2.5C -f target/classpath-tests/$TEST_FOLDER/pom.xml -Dmaven.test.redirectTestOutputToFile=false -fae -q | grep -Ei '(error|exception)'
+  - mvn test -T 2.5C -f "$HOME/classpath-tests/$TEST_FOLDER/pom.xml" -Dmaven.test.redirectTestOutputToFile=false -fae -q | grep -Ei '(error|exception)'
 # TODO: after error -> grab logs and send it
 after_success:
   -  mvn sonar:sonar -B
@@ -49,7 +49,7 @@ notifications:
 
 cache:
   directories:
-    - ogham-test-classpath/target/classpath-tests
+    - $HOME/classpath-tests
     - $HOME/.m2
 before_cache:
   - rm -rf $HOME/.m2/repository/fr/sii

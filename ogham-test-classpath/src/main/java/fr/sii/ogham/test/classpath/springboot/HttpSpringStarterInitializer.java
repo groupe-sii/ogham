@@ -1,10 +1,13 @@
 package fr.sii.ogham.test.classpath.springboot;
 
+import static org.springframework.http.HttpHeaders.USER_AGENT;
+
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +17,7 @@ import fr.sii.ogham.test.classpath.core.Project;
 import fr.sii.ogham.test.classpath.core.ProjectInitializer;
 import fr.sii.ogham.test.classpath.core.ProjectVariables;
 import fr.sii.ogham.test.classpath.core.exception.ProjectInitializationException;
+import fr.sii.ogham.test.classpath.ogham.OghamProperties;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.core.ZipFile;
@@ -22,21 +26,23 @@ import net.lingala.zip4j.exception.ZipException;
 @Data
 @Slf4j
 @Service
-public class SpringStarterInitializer implements ProjectInitializer {
+public class HttpSpringStarterInitializer implements ProjectInitializer {
 	private final RestTemplate restTemplate;
+	private final SpringStarterProperties springStarterProperties;
+	private final OghamProperties oghamProperties;
 
 	@Override
 	public Project initialize(Path parentFolder, String identifier, ProjectVariables variables) throws ProjectInitializationException {
 		SpringBootProjectParams v = (SpringBootProjectParams) variables;
 
 		// @formatter:off
-		String url = "http://start.spring.io/starter.zip"
+		String url = springStarterProperties.getUrl()
 				+ "?name={artifactId}"
-				+ "&groupId=fr.aba"
+				+ "&groupId=fr.sii"
 				+ "&artifactId={artifactId}"
-				+ "&version=0.0.1-SNAPSHOT"
+				+ "&version={version}"
 				+ "&description="
-				+ "&packageName=fr.sii.ogham.runtime.testing"
+				+ "&packageName=fr.sii.spring.boot.runtime.testing"
 				+ "&type={type}"
 				+ "&packaging=jar"
 				+ "&javaVersion={javaVersion}"
@@ -49,11 +55,15 @@ public class SpringStarterInitializer implements ProjectInitializer {
 		UriTemplate template = new UriTemplate(url);
 		URI expanded = template.expand(identifier,
 				identifier,
+				oghamProperties.getOghamVersion(),
 				v.getBuildTool().getType(),
 				v.getJavaVersion().getVersion(),
 				v.getSpringBootVersion());
 		log.debug("Starter resolved url: {}", expanded);
-		ResponseEntity<byte[]> response = restTemplate.getForEntity(expanded, byte[].class);
+		RequestEntity<Void> request = RequestEntity.get(expanded)
+										.header(USER_AGENT, "ogham/"+oghamProperties.getOghamVersion())
+										.build();
+		ResponseEntity<byte[]> response = restTemplate.exchange(request, byte[].class);
 		if(response.getStatusCode().is2xxSuccessful()) {
 			try {
 				return new Project(unzip(response.getBody(), identifier, parentFolder), variables);

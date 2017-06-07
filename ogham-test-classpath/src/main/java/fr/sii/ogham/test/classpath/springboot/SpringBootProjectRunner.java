@@ -60,17 +60,21 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 
 	@Autowired
 	OghamProperties oghamProperties;
-
+	
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		Path parentFolder = Paths.get(args.getNonOptionArgs().get(0));
-		if(isSkip(args, parentFolder)) {
+		run(args.getNonOptionArgs().get(0), args.getOptionValues("override")!=null);
+	}
+
+	public void run(String parentFolderPath, boolean override) throws IOException, InterruptedException, ExecutionException, XmlPullParserException, ProjectInitializationException, AddDependencyException {
+		Path parentFolder = Paths.get(parentFolderPath);
+		if(isSkip(override, parentFolder)) {
 			log.info("Skipping creation of projects because projects already exist");
 			System.exit(0);
 		}
 		Files.createDirectories(parentFolder);
 		FileUtils.cleanDirectory(parentFolder.toFile());
-		List<String> modules = createProjects(parentFolder);
+		List<String> modules = createProjectsParallel(parentFolder);
 		for(JavaVersion javaVersion : springMatrixProperties.getJavaVersions()) {
 			log.info("Creating root project for {}", javaVersion);
 			createRootPom(parentFolder.resolve(javaVersion.name()), filter(modules, javaVersion));
@@ -79,8 +83,8 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		System.exit(0);
 	}
 
-	private boolean isSkip(ApplicationArguments args, Path parentFolder) {
-		return parentFolder.toFile().exists() && args.getOptionValues("override")==null;
+	private boolean isSkip(boolean override, Path parentFolder) {
+		return !override && parentFolder.toFile().exists();
 	}
 
 	private List<String> filter(List<String> modules, JavaVersion javaVersion) {
@@ -103,7 +107,7 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		write(rootPom, pom);
 	}
 
-	private List<String> createProjects(final Path parentFolder) throws InterruptedException, ExecutionException {
+	private List<String> createProjectsParallel(final Path parentFolder) throws InterruptedException, ExecutionException {
 		List<Future<String>> futures = new ArrayList<>();
 		CompletionService<String> service = new ExecutorCompletionService<>(Executors.newFixedThreadPool(8));
 		List<SpringBootProjectParams> expandedMatrix = generateSringBootMatrix();
@@ -121,6 +125,15 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		List<String> modules = new ArrayList<>();
 		for(Future<String> future : futures) {
 			modules.add(future.get());
+		}
+		return modules;
+	}
+
+	private List<String> createProjects(final Path parentFolder) throws InterruptedException, ExecutionException, ProjectInitializationException, AddDependencyException, IOException {
+		List<SpringBootProjectParams> expandedMatrix = generateSringBootMatrix();
+		List<String> modules = new ArrayList<>();
+		for (final SpringBootProjectParams params : expandedMatrix) {
+			modules.add(createProject(parentFolder, params));
 		}
 		return modules;
 	}
