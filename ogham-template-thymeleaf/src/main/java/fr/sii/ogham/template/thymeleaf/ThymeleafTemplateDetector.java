@@ -63,14 +63,13 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 
 	private boolean containsThymeleafNamespace(BufferedReader br) throws IOException {
 		String line;
-		boolean containsThymeleafNamespace = false;
 		do {
 			line = br.readLine();
-			if(line != null) {
-				containsThymeleafNamespace = NAMESPACE_PATTERN.matcher(line).find();
+			if(line != null && NAMESPACE_PATTERN.matcher(line).find()) {
+				return true;
 			}
-		} while (line != null && !containsThymeleafNamespace);
-		return containsThymeleafNamespace;
+		} while (line != null);
+		return false;
 	}
 	
 	private Resource getTemplate(String templateName) throws EngineDetectionException {

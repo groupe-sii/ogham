@@ -8,6 +8,7 @@ import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterConfigurationException;
+import fr.sii.ogham.template.exception.ResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
 import fr.sii.ogham.template.freemarker.adapter.FirstSupportingResolverAdapter;
 import freemarker.cache.MultiTemplateLoader;
@@ -56,7 +57,9 @@ public class FreeMarkerFirstSupportingTemplateLoader implements TemplateLoader {
 		} catch (NoResolverAdapterException e) {
 			throw new ResolverAdapterNotFoundException("Unable to find template source cause no adapter supporting template name '" + unresolvedTemplateName + "' was found. ", e);
 		} catch (ResolverAdapterConfigurationException e) {
-			throw new ResolverAdapterNotFoundException("Unable to find template source becauseof invalid adapter configuration for template anme ''" + unresolvedTemplateName + "'. ", e);
+			throw new ResolverAdapterNotFoundException("Unable to find template source because of invalid adapter configuration for template anme ''" + unresolvedTemplateName + "'. ", e);
+		} catch (ResolverAdapterException e) {
+			throw new IOException("Unable to find template source because of adapter failure for template anme ''" + unresolvedTemplateName + "'. ", e);
 		}
 	}
 

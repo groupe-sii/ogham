@@ -23,7 +23,7 @@ import fr.sii.ogham.core.resource.ResourcePath;
  * @author Aurélien Baudet
  * @see ResourceResolver
  */
-public class FirstSupportingResourceResolver implements ResourceResolver {
+public class FirstSupportingResourceResolver implements ResourceResolver, ResourceResolverRegistry {
 	private static final Logger LOG = LoggerFactory.getLogger(FirstSupportingResourceResolver.class);
 
 	/**
@@ -72,7 +72,8 @@ public class FirstSupportingResourceResolver implements ResourceResolver {
 	 *            the resolver to register
 	 * @return this instance for fluent chaining
 	 */
-	public FirstSupportingResourceResolver addResolver(ResourceResolver resolver) {
+	@Override
+	public FirstSupportingResourceResolver register(ResourceResolver resolver) {
 		resolvers.add(resolver);
 		return this;
 	}
@@ -89,6 +90,7 @@ public class FirstSupportingResourceResolver implements ResourceResolver {
 	 *            the name of the path of the resource
 	 * @return the first resolver supporting the path
 	 */
+	@Override
 	public ResourceResolver getSupportingResolver(String path) {
 		LOG.debug("Finding resolver for resource {}...", path);
 		for (ResourceResolver resolver : resolvers) {
@@ -102,6 +104,7 @@ public class FirstSupportingResourceResolver implements ResourceResolver {
 		return null;
 	}
 
+	@Override
 	public List<ResourceResolver> getResolvers() {
 		return resolvers;
 	}

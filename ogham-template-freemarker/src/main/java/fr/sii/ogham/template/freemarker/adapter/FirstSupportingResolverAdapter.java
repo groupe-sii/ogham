@@ -6,7 +6,7 @@ import java.util.List;
 
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
-import fr.sii.ogham.template.exception.ResolverAdapterConfigurationException;
+import fr.sii.ogham.template.exception.ResolverAdapterException;
 import fr.sii.ogham.template.freemarker.TemplateLoaderOptions;
 import freemarker.cache.TemplateLoader;
 
@@ -61,7 +61,7 @@ public class FirstSupportingResolverAdapter implements TemplateLoaderAdapter {
 	}
 
 	@Override
-	public TemplateLoader adapt(ResourceResolver resolver) throws NoResolverAdapterException, ResolverAdapterConfigurationException {
+	public TemplateLoader adapt(ResourceResolver resolver) throws ResolverAdapterException {
 		for (TemplateLoaderAdapter adapter : adapters) {
 			if (adapter.supports(resolver)) {
 				return adapter.adapt(resolver);

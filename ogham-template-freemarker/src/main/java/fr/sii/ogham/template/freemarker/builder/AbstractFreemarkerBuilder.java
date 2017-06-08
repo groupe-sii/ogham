@@ -22,11 +22,15 @@ import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.template.detector.FixedEngineDetector;
+import fr.sii.ogham.core.template.detector.OrTemplateDetector;
+import fr.sii.ogham.core.template.detector.SimpleResourceEngineDetector;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.freemarker.FreeMarkerFirstSupportingTemplateLoader;
 import fr.sii.ogham.template.freemarker.FreeMarkerParser;
 import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
+import fr.sii.ogham.template.freemarker.SkipLocaleForStringContentTemplateLookupStrategy;
 import fr.sii.ogham.template.freemarker.TemplateLoaderOptions;
 import fr.sii.ogham.template.freemarker.adapter.ClassPathResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.FileResolverAdapter;
@@ -227,7 +231,15 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 
 	@Override
 	public TemplateEngineDetector buildDetector() {
-		return detector == null ? new FreeMarkerTemplateDetector(buildResolver(), ".ftl") : detector;
+		return detector == null ? buildDefaultDetector() : detector;
+	}
+
+	private TemplateEngineDetector buildDefaultDetector() {
+		FirstSupportingResourceResolver resolver = buildResolver();
+		OrTemplateDetector or = new OrTemplateDetector();
+		or.addDetector(new FreeMarkerTemplateDetector(resolver, ".ftl"));
+		or.addDetector(new SimpleResourceEngineDetector(resolver, new FixedEngineDetector(true)));
+		return or;
 	}
 
 	/**
@@ -250,7 +262,10 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 			builtConfiguration.setDefaultEncoding("UTF-8");
 			builtConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 		}
-		builtConfiguration.setTemplateLoader(new FreeMarkerFirstSupportingTemplateLoader(buildResolver(), buildAdapters()));
+		FirstSupportingResourceResolver builtResolver = buildResolver();
+		FirstSupportingResolverAdapter builtAdapter = buildAdapter();
+		builtConfiguration.setTemplateLoader(new FreeMarkerFirstSupportingTemplateLoader(builtResolver, builtAdapter));
+		builtConfiguration.setTemplateLookupStrategy(new SkipLocaleForStringContentTemplateLookupStrategy(builtConfiguration.getTemplateLookupStrategy(), builtResolver, builtAdapter));
 		return builtConfiguration;
 	}
 
@@ -258,7 +273,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 		return resourceResolutionBuilderHelper.buildResolvers();
 	}
 
-	protected FirstSupportingResolverAdapter buildAdapters() {
+	protected FirstSupportingResolverAdapter buildAdapter() {
 		FirstSupportingResolverAdapter adapter = new FirstSupportingResolverAdapter();
 		for (TemplateLoaderAdapter custom : customAdapters) {
 			adapter.addAdapter(custom);

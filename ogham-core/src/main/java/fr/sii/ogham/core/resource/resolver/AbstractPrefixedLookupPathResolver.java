@@ -63,7 +63,7 @@ public abstract class AbstractPrefixedLookupPathResolver implements ResourceReso
 		ResourcePath result = null;
 		String lookup = getLookup(path);
 		if (lookup != null) {
-			result = new ResourcePath(path, lookup, path.replace(lookup, ""));
+			result = new ResourcePath(path, lookup, path.substring(lookup.length()));
 		}
 		return result;
 	}
