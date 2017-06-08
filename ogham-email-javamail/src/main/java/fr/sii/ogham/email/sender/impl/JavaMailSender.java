@@ -123,7 +123,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	 */
 	private MimeMessage createMimeMessage() {
 		// prepare the message
-		Session session = Session.getDefaultInstance(properties, authenticator);
+		Session session = Session.getInstance(properties, authenticator);
 		return new MimeMessage(session);
 	}
 
