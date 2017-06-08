@@ -46,4 +46,18 @@ public class FileResolver extends AbstractPrefixedLookupPathResolver implements 
 		LOG.debug("Resource {} found on the file system", resourcePath);
 		return resource;
 	}
+
+
+	@Override
+	public boolean isAbsolute(String path) {
+		ResourcePath resourcePath = getResourcePath(path);
+		return resourcePath.getResolvedPath().startsWith("/");
+	}
+
+	@Override
+	public String resolve(String relativePath, String prefixPath, String suffixPath) {
+		ResourcePath resourcePath = getResourcePath(relativePath);
+		String lookup = getLookup(relativePath);
+		return lookup + prefixPath + resourcePath.getResolvedPath() + suffixPath;
+	}
 }

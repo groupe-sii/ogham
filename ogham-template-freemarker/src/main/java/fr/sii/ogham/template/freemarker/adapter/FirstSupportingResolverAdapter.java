@@ -11,22 +11,27 @@ import fr.sii.ogham.template.freemarker.TemplateLoaderOptions;
 import freemarker.cache.TemplateLoader;
 
 /**
- * Decorator that will ask each resolver adapter if it is able to handle the template resolver. If the resolver adapter supports it, then this implementation
- * asks the resolver adapter to provide the FreeMarker template loader.
+ * Decorator that will ask each resolver adapter if it is able to handle the
+ * template resolver. If the resolver adapter supports it, then this
+ * implementation asks the resolver adapter to provide the FreeMarker template
+ * loader.
  * 
- * Only the first resolver adapter that can handle the template resolver is used.
+ * Only the first resolver adapter that can handle the template resolver is
+ * used.
  * 
  * @author Cyril Dejonghe
  */
 public class FirstSupportingResolverAdapter implements TemplateLoaderAdapter {
 
 	/**
-	 * The list of adapters used to convert the general resolvers into FreeMarker specific resolvers
+	 * The list of adapters used to convert the general resolvers into
+	 * FreeMarker specific resolvers
 	 */
 	private List<TemplateLoaderAdapter> adapters;
 
 	/**
-	 * Initialize the decorator with none, one or several resolver adapter implementations. The registration order may be important.
+	 * Initialize the decorator with none, one or several resolver adapter
+	 * implementations. The registration order may be important.
 	 * 
 	 * @param adapters
 	 *            the adapters to register
@@ -36,7 +41,8 @@ public class FirstSupportingResolverAdapter implements TemplateLoaderAdapter {
 	}
 
 	/**
-	 * Initialize the decorator with the provided resolver adapter implementations. The registration order may be important.
+	 * Initialize the decorator with the provided resolver adapter
+	 * implementations. The registration order may be important.
 	 * 
 	 * @param adapters
 	 *            the adapters to register

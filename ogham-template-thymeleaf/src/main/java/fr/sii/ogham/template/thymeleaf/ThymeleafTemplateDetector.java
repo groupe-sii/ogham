@@ -35,7 +35,7 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 	 * The template resolver used to find the template
 	 */
 	private final ResourceResolver resolver;
-	
+
 	public ThymeleafTemplateDetector(ResourceResolver resolver) {
 		super();
 		this.resolver = resolver;
@@ -45,12 +45,12 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
 		LOG.debug("Checking if Thymeleaf can handle the template {}", templateName);
 		Resource resolvedTemplate = getTemplate(templateName);
-		if(resolvedTemplate==null) {
+		if (resolvedTemplate == null) {
 			return false;
 		}
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(resolvedTemplate.getInputStream()))) {
 			boolean containsThymeleafNamespace = containsThymeleafNamespace(br);
-			if(containsThymeleafNamespace) {
+			if (containsThymeleafNamespace) {
 				LOG.debug("The template {} contains the namespace http://www.thymeleaf.org. Thymeleaf can be used", templateName);
 			} else {
 				LOG.debug("The template {} doesn't contain the namespace http://www.thymeleaf.org. Thymeleaf can't be used", templateName);
@@ -65,18 +65,19 @@ public class ThymeleafTemplateDetector implements TemplateEngineDetector {
 		String line;
 		do {
 			line = br.readLine();
-			if(line != null && NAMESPACE_PATTERN.matcher(line).find()) {
+			if (line != null && NAMESPACE_PATTERN.matcher(line).find()) {
 				return true;
 			}
 		} while (line != null);
 		return false;
 	}
-	
-	private Resource getTemplate(String templateName) throws EngineDetectionException {
+
+	private Resource getTemplate(String templateName) {
 		try {
 			return resolver.getResource(templateName);
 		} catch (ResourceResolutionException e) {
-			throw new EngineDetectionException("Failed to automatically detect parser because the template couldn't be resolved", e);
+			LOG.trace("Thymeleaf detector can't be applied because " + templateName + " couldn't be resolved", e);
+			return null;
 		}
 	}
 

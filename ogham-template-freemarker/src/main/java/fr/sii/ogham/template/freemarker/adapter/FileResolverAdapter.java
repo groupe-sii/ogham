@@ -1,5 +1,6 @@
 package fr.sii.ogham.template.freemarker.adapter;
 
+import java.io.File;
 import java.io.IOException;
 
 import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
@@ -10,12 +11,23 @@ import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.TemplateLoader;
 
 /**
- * Adapter that converts general {@link FileResolver} into FreeMarker specific {@link FileTemplateLoader}.
+ * Adapter that converts general {@link FileResolver} into FreeMarker specific
+ * {@link FileTemplateLoader}.
  * 
  * @author Cyril Dejonghe
  *
  */
 public class FileResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
+	private final File baseDir;
+	
+	public FileResolverAdapter() {
+		this(new File("/"));
+	}
+
+	public FileResolverAdapter(File baseDir) {
+		super();
+		this.baseDir = baseDir;
+	}
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {
@@ -25,14 +37,11 @@ public class FileResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptions
 
 	@Override
 	public TemplateLoader adapt(ResourceResolver resolver) throws ResolverAdapterConfigurationException {
-		TemplateLoader templateLoader;
 		try {
-			templateLoader = new FileTemplateLoader(null, true);
+			return new FileTemplateLoader(baseDir, true);
 		} catch (IOException e) {
 			throw new ResolverAdapterConfigurationException("Invalid configuration for " + FileTemplateLoader.class.getSimpleName(), resolver, e);
 		}
-
-		return templateLoader;
 	}
 
 }

@@ -5,6 +5,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Locale;
 
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
 import fr.sii.ogham.template.freemarker.SkipLocaleForStringContentTemplateLookupStrategy;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -49,11 +51,23 @@ public class StringContentTemplateLoader implements TemplateLoader {
 	}
 
 	private static class StringTemplateSource {
-		final String source;
+		private final String source;
 
 		public StringTemplateSource(String source) {
 			super();
 			this.source = source;
 		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder().append(source).hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			return new EqualsBuilder(this, obj).appendFields("source").isEqual();
+		}
+		
+		
 	}
 }

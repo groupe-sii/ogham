@@ -77,13 +77,12 @@ public class RelativeResolver implements DelegateResourceResolver {
 
 	@Override
 	public Resource getResource(String path) throws ResourceResolutionException {
-		boolean absolute = path.startsWith("/");
-		if (absolute) {
+		if (delegate.isAbsolute(path)) {
 			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
 			return delegate.getResource(path);
 		} else {
-			LOG.debug("Adding parentPath ({}) and extension ({}) to the resource path {}", parentPath, extension, path);
-			return delegate.getResource(parentPath + path + extension);
+			LOG.debug("Adding parentPath '{}' and extension '{}' to the resource path {}", parentPath, extension, path);
+			return delegate.getResource(delegate.resolve(path, parentPath, extension));
 		}
 	}
 
@@ -116,5 +115,10 @@ public class RelativeResolver implements DelegateResourceResolver {
 	@Override
 	public ResourceResolver getActualResourceResolver() {
 		return delegate instanceof DelegateResourceResolver ? ((RelativeResolver) delegate).getActualResourceResolver() : delegate;
+	}
+
+	@Override
+	public String toString() {
+		return "RelativeResolver [parentPath=" + parentPath + ", extension=" + extension + ", delegate=" + delegate + "]";
 	}
 }
