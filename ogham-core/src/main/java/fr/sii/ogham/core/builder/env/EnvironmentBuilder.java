@@ -85,6 +85,16 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * registration order is used.
 	 * 
 	 * 
+	 * <p>
+	 * The default priorities are:
+	 * <ul>
+	 * <li>using system properties = 100000</li>
+	 * <li>using custom {@link Properties} object = 90000</li>
+	 * <li>using custom properties through {@link #properties()} fluent API =
+	 * 90000</li>
+	 * <li>load properties from file = 80000</li>
+	 * </ul>
+	 * 
 	 * @param path
 	 *            the path to the property file
 	 * @return this instance for fluent chaining
@@ -137,6 +147,17 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * If several properties are registered with the same priority, then the
 	 * registration order is used.
 	 * 
+	 * 
+	 * <p>
+	 * The default priorities are:
+	 * <ul>
+	 * <li>using system properties = 100000</li>
+	 * <li>using custom {@link Properties} object = 90000</li>
+	 * <li>using custom properties through {@link #properties()} fluent API =
+	 * 90000</li>
+	 * <li>load properties from file = 80000</li>
+	 * </ul>
+	 * 
 	 * @param properties
 	 *            the custom properties
 	 * @return this instance for fluent chaining
@@ -181,6 +202,16 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * registration order is used.
 	 * 
 	 * 
+	 * <p>
+	 * The default priorities are:
+	 * <ul>
+	 * <li>using system properties = 100000</li>
+	 * <li>using custom {@link Properties} object = 90000</li>
+	 * <li>using custom properties through {@link #properties()} fluent API =
+	 * 90000</li>
+	 * <li>load properties from file = 80000</li>
+	 * </ul>
+	 * 
 	 * @return the builder to configure properties
 	 */
 	PropertiesBuilder<EnvironmentBuilder<P>> properties();
@@ -220,6 +251,16 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * If several properties are registered with the same priority, then the
 	 * registration order is used.
 	 * 
+	 * 
+	 * <p>
+	 * The default priorities are:
+	 * <ul>
+	 * <li>using system properties = 100000</li>
+	 * <li>using custom {@link Properties} object = 90000</li>
+	 * <li>using custom properties through {@link #properties()} fluent API =
+	 * 90000</li>
+	 * <li>load properties from file = 80000</li>
+	 * </ul>
 	 * 
 	 * @return this instance for fluent chaining
 	 */
