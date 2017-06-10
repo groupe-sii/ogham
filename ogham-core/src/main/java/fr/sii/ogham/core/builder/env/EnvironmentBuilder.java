@@ -75,8 +75,9 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * </ul>
 	 * 
 	 * <p>
-	 * The priority of the registered properties is 80000. The priority is used
-	 * to order all registered properties. Registered properties with higher
+	 * The priority of the registered properties depends on if the file is
+	 * loaded from the classpath or from the filesystem. The priority is used to
+	 * order all registered properties. Registered properties with higher
 	 * priorities are used first. It means that when requesting for a property
 	 * value the highest priority is requested first to get the value if it
 	 * exists. If it doesn't exist, the second is requested and so on.
@@ -89,10 +90,12 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * The default priorities are:
 	 * <ul>
 	 * <li>using system properties = 100000</li>
-	 * <li>using custom {@link Properties} object = 90000</li>
+	 * <li>load properties from file from the filesystem = 90000</li>
+	 * <li>using custom {@link Properties} object = 80000</li>
 	 * <li>using custom properties through {@link #properties()} fluent API =
-	 * 90000</li>
-	 * <li>load properties from file = 80000</li>
+	 * 80000</li>
+	 * <li>load properties from file in the classpath (inside the application) =
+	 * 70000</li>
 	 * </ul>
 	 * 
 	 * @param path
@@ -138,7 +141,7 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * Provide custom properties.
 	 * 
 	 * <p>
-	 * The priority of the registered properties is 90000. The priority is used
+	 * The priority of the registered properties is 80000. The priority is used
 	 * to order all registered properties. Registered properties with higher
 	 * priorities are used first. It means that when requesting for a property
 	 * value the highest priority is requested first to get the value if it
@@ -152,10 +155,12 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * The default priorities are:
 	 * <ul>
 	 * <li>using system properties = 100000</li>
-	 * <li>using custom {@link Properties} object = 90000</li>
+	 * <li>load properties from file from the filesystem = 90000</li>
+	 * <li>using custom {@link Properties} object = 80000</li>
 	 * <li>using custom properties through {@link #properties()} fluent API =
-	 * 90000</li>
-	 * <li>load properties from file = 80000</li>
+	 * 80000</li>
+	 * <li>load properties from file in the classpath (inside the application) =
+	 * 70000</li>
 	 * </ul>
 	 * 
 	 * @param properties
@@ -192,7 +197,7 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * other registered properties taking into account the priority.
 	 * 
 	 * <p>
-	 * The priority of the registered properties is 90000. The priority is used
+	 * The priority of the registered properties is 80000. The priority is used
 	 * to order all registered properties. Registered properties with higher
 	 * priorities are used first. It means that when requesting for a property
 	 * value the highest priority is requested first to get the value if it
@@ -206,10 +211,12 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * The default priorities are:
 	 * <ul>
 	 * <li>using system properties = 100000</li>
-	 * <li>using custom {@link Properties} object = 90000</li>
+	 * <li>load properties from file from the filesystem = 90000</li>
+	 * <li>using custom {@link Properties} object = 80000</li>
 	 * <li>using custom properties through {@link #properties()} fluent API =
-	 * 90000</li>
-	 * <li>load properties from file = 80000</li>
+	 * 80000</li>
+	 * <li>load properties from file in the classpath (inside the application) =
+	 * 70000</li>
 	 * </ul>
 	 * 
 	 * @return the builder to configure properties
@@ -256,10 +263,12 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * The default priorities are:
 	 * <ul>
 	 * <li>using system properties = 100000</li>
-	 * <li>using custom {@link Properties} object = 90000</li>
+	 * <li>load properties from file from the filesystem = 90000</li>
+	 * <li>using custom {@link Properties} object = 80000</li>
 	 * <li>using custom properties through {@link #properties()} fluent API =
-	 * 90000</li>
-	 * <li>load properties from file = 80000</li>
+	 * 80000</li>
+	 * <li>load properties from file in the classpath (inside the application) =
+	 * 70000</li>
 	 * </ul>
 	 * 
 	 * @return this instance for fluent chaining

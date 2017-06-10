@@ -17,21 +17,32 @@ public final class CoreConstants {
 	public static final int DEFAULT_SYSTEM_PROPERTY_PRIORITY = 100000;
 
 	/**
+	 * The default priority for MessagingBuilder
+	 * environment().properties("file:..."). This is the Ogham default priority
+	 * in order to let properties defined in a file to be used after system
+	 * properties defined externally and before properties defined in a
+	 * configuration file inside the application and before explicitly defined
+	 * in the application code
+	 */
+	public static final int DEFAULT_FILE_PROPERTY_PRIORITY = 90000;
+
+	/**
 	 * The default priority for MessagingBuilder environment().properties(new
 	 * Properties()). This is the Ogham default priority in order to let
 	 * properties defined in application code to be used before properties
-	 * defined in a file and after properties defined externally
+	 * defined in a configuration file inside the application and after
+	 * properties defined externally
 	 */
-	public static final int DEFAULT_MANUAL_PROPERTY_PRIORITY = 90000;
+	public static final int DEFAULT_MANUAL_PROPERTY_PRIORITY = 80000;
 
 	/**
 	 * The default priority for MessagingBuilder
 	 * environment().properties("classpath:..."). This is the Ogham default
-	 * priority in order to let properties defined in a file to be used after
-	 * properties defined externally and after properties explicitly defined in
-	 * the application code
+	 * priority in order to let properties defined in a file inside the
+	 * application to be used after properties defined externally and after
+	 * properties explicitly defined in the application code
 	 */
-	public static final int DEFAULT_PATH_PROPERTY_PRIORITY = 80000;
+	public static final int DEFAULT_CLASSPATH_PROPERTY_PRIORITY = 70000;
 
 	private CoreConstants() {
 		super();

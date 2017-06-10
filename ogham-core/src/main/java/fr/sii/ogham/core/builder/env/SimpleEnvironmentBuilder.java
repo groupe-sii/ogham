@@ -1,7 +1,8 @@
 package fr.sii.ogham.core.builder.env;
 
+import static fr.sii.ogham.core.CoreConstants.DEFAULT_CLASSPATH_PROPERTY_PRIORITY;
+import static fr.sii.ogham.core.CoreConstants.DEFAULT_FILE_PROPERTY_PRIORITY;
 import static fr.sii.ogham.core.CoreConstants.DEFAULT_MANUAL_PROPERTY_PRIORITY;
-import static fr.sii.ogham.core.CoreConstants.DEFAULT_PATH_PROPERTY_PRIORITY;
 import static fr.sii.ogham.core.CoreConstants.DEFAULT_SYSTEM_PROPERTY_PRIORITY;
 
 import java.io.File;
@@ -65,7 +66,11 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 
 	@Override
 	public EnvironmentBuilder<P> properties(String path) {
-		return properties(path, DEFAULT_PATH_PROPERTY_PRIORITY);
+		int priority = DEFAULT_CLASSPATH_PROPERTY_PRIORITY;
+		if(path.startsWith("file:")) {
+			priority = DEFAULT_FILE_PROPERTY_PRIORITY;
+		}
+		return properties(path, priority);
 	}
 
 	@Override
