@@ -1,0 +1,9 @@
+ifndef::relfileprefix[]
+:relfileprefix: {relative-path}
+endif::[]
+ifndef::images-dir[]
+:images-dir: {relative-path}images/
+endif::[]
+ifndef::sources-dir[]
+:sources-dir: ../../sources/
+endif::[]

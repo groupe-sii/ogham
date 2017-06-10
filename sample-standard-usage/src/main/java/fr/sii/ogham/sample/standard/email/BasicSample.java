@@ -18,13 +18,13 @@ public class BasicSample {
 		properties.put("ogham.email.from", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = MessagingBuilder.standard()
+		MessagingService service = MessagingBuilder.standard()		// <1>
 				.environment()
-					.properties(properties)
+					.properties(properties)							// <2>
 					.and()
-				.build();
+				.build();											// <3>
 		// send the email using fluent API
-		service.send(new Email()
+		service.send(new Email()									// <4>
 						.subject("subject")
 						.content("email content")
 						.to("ogham-test@yopmail.com"));

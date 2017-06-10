@@ -52,6 +52,8 @@
 		<guava.version>20.0</guava.version>
 		<httpclient.version>4.5.3</httpclient.version>
 		<spock.version>1.1-groovy-2.4</spock.version>
+		<asciidoctorj.diagram.version>1.5.4</asciidoctorj.diagram.version>
+		<asciidoctorj.version>1.5.5</asciidoctorj.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -90,6 +92,8 @@
 		<nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
+		<asciidoctor-plugin.version>1.5.3</asciidoctor-plugin.version>
+		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
 	</properties>
 
 
@@ -300,7 +304,6 @@
 				<artifactId>spock-core</artifactId>
 				<version>${spock.version}</version>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 
@@ -495,18 +498,90 @@
 				</executions>
 			</plugin>
 
-			<!-- Release -->
+			<!-- Generate Asciidoctor documentation -->
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>${asciidoctor-plugin.version}</version>
+				<inherited>false</inherited>
+				<dependencies>
+					<dependency>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctorj</artifactId>
+						<version>${asciidoctorj.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctorj-diagram</artifactId>
+						<version>${asciidoctorj.diagram.version}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>generate-docs</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${basedir}/src/docs/asciidoc</sourceDirectory>
+							<backend>html</backend>
+							<doctype>book</doctype>
+							<preserveDirectories>true</preserveDirectories>
+							<imagesDir></imagesDir>
+							<sourceHighlighter>coderay</sourceHighlighter>
+							<embedAssets>false</embedAssets>
+							<templateDir>${basedir}/src/docs/resources/templates</templateDir>
+							<requires>
+								<require>asciidoctor-diagram</require>
+							</requires>
+							<attributes>
+								<toc>left</toc>
+								<icons>font</icons>
+								<tabsize>3</tabsize>
+								<linkcss>true</linkcss>
+								<sectanchors>true</sectanchors>
+								<docinfo2>true</docinfo2>
+								<experimental>true</experimental>
+								<tabsize>4</tabsize>
+								<imagesdir></imagesdir>
+								<ogham-version>${docProjectVersion}</ogham-version>
+								<docdir>${basedir}/src/docs/asciidoc</docdir>
+								<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
+								<standard-samples-rootdir>${basedir}/sample-standard-usage</standard-samples-rootdir>
+								<standard-samples-sourcedir>${basedir}/sample-standard-usage/src/main/java</standard-samples-sourcedir>
+								<standard-email-samples-sourcedir>${basedir}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email</standard-email-samples-sourcedir>
+								<standard-sms-samples-sourcedir>${basedir}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms</standard-sms-samples-sourcedir>
+								<spring-samples-rootdir>${basedir}/sample-spring-usage</spring-samples-rootdir>
+								<spring-samples-sourcedir>${basedir}/sample-spring-usage/src/main/java</spring-samples-sourcedir>
+							</attributes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Copy doc resources (images, styles, js) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>${maven-release-plugin.version}</version>
-				<configuration>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<useReleaseProfile>false</useReleaseProfile>
-					<releaseProfiles>release</releaseProfiles>
-					<goals>deploy</goals>
-					<tagNameFormat>v@{project.version}</tagNameFormat>
-				</configuration>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>copy-asciidoc-resources</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>src/docs/resources</directory>
+								</resource>
+							</resources>
+							<outputDirectory>target/generated-docs</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<!-- Site generation -->
@@ -531,6 +606,20 @@
 					<generateReports>true</generateReports>
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
+				</configuration>
+			</plugin>
+
+			<!-- Release -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>${maven-release-plugin.version}</version>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<useReleaseProfile>false</useReleaseProfile>
+					<releaseProfiles>release</releaseProfiles>
+					<goals>deploy</goals>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
 		</plugins>
