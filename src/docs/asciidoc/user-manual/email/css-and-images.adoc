@@ -1,0 +1,91 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+
+When you develop a Web application, you can use HTML for the content and CSS for layout and theming. HTML and CSS can use images to make a beautiful Web page. Each concern is separated in a different file. This is a good practice.
+
+However, writing an HTML email is totally different. Indeed, email clients are not as evolved as Web browsers. Even worse, some clients disable some features on purpose (like Inbox that prevents using `style` tag). To make an email work on several clients, you should follow these rules:
+
+* `<img>` tags that use local images must be embedded
+* Use XHTML instead of HTML
+* Remove HTML comments (except conditional comments used to target Outlook)
+* Add border=0 on all images to avoid an ugly border
+* Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of `padding: 4px`)
+* Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
+* Background images on body should be moved on another node
+* CSS3 properties are not supported
+* ...
+
+There are many other rules but the developer should not be constrained and should be able to write its HTML and CSS like as usual in Web browsers. Ogham simplifies image and CSS integration and is able to partially rewrite the HTML.  
+
+[role="tab-container no-max-height"]
+Sample with template
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:32,33"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.java[]
+----
+<1> The path to the templates
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java[Source code of the sample]
+
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="highlight-lines:4"]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
+----
+
+{standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts=4[Source code of the HTML template]
+
+
+[role=tab]
+image:{images-dir}/icons/css.png[width=37,height=30] CSS and images
+
+[source, html, role="highlight-lines:4"]
+----
+----
+
+Images
+
+
+
+
+
+[role=tab]
+image:{images-dir}/icons/html.png[width=37,height=30] Sent HTML
+
+[source, html, role="highlight-lines:4"]
+----
+----
+
+
+
+[role=tab-container-end]
+-
+
+
+TODO: image inlining
+TODO: css inlining
+TODO: rewrite html
+TODO: you have control
+
+
+[X] `<img>` tags that use local images are embedded (using `cid` reference)
+[X] `<img>` tags that use local images are embedded (using base64 data URI)
+[ ] Use XHTML instead of HTML
+[X] Tables used for layout explicitly set default values
+[ ] Remove HTML comments (except conditional comments used to target Outlook)
+[ ] Add border=0 on all images to avoid an ugly border
+[ ] Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of `padding: 4px`)
+[ ] Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
+[ ] Background images on body should be moved on another node
+TODO: other rules

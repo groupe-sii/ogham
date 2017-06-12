@@ -1,0 +1,45 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+This sample shows how to send a basic email through GMail. {standard-email-samples-sourcedir-url}/gmail/GmailSSLBasicSample.java?ts=4[The sample is available here].
+
+The first lines configure the properties that will be used by the sender.
+Then you must create the service. You can use the MessagingBuilder to help you to create the service.
+Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
+
+[role=tab-container no-max-height]
+GMail SSL sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:-7 irrelevant-lines:-7 highlight-lines:16-22"]
+----
+include::{standard-email-samples-sourcedir}/gmail/GmailSSLBasicSample.java[]
+----
+<1> Use the standard builder to configure and instantiate the MessagingService
+<2> Use the fluent API to provide configuration properties (this is exactly the same as providing `java.util.Properties` object)
+<3> GMail requires authentication so property `mail.smtp.auth` must be set to true (this is the standard JavaMail behavior)
+<4> GMail SMTP host (using JavaMail standard property)
+<5> GMail SMTP port (using JavaMail standard property)
+<6> GMail uses SSL (JavaMail requires this special property to enable SSL)
+<7> Provide your GMail username
+<8> Provide your Gmail password
+<9> Provide your GMail email address
+<10> Send the email
+
+{standard-email-samples-sourcedir-url}/gmail/GmailSSLBasicSample.java[Source code of the sample]
+
+[role=tab-container-end]
+-
+
+
+Using GMail server is quite easy. This samples shows several things:
+
+1. The code to send email is still the same.
+2. The properties can be provided in a fluent way.
+3. SSL is enabled using standard JavaMail property.
+4. Authentication is done using properties. JavaMail doesn't provide this shortcut. Without Ogham, you have to implement an http://docs.oracle.com/javaee/7/api/javax/mail/Authenticator.html[Authenticator].
+
+

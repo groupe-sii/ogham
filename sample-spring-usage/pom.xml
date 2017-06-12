@@ -18,32 +18,19 @@
 		
 		<!-- Skip Sonar analysis -->
 		<sonar.skip>true</sonar.skip>
+		
+		<ogham.version>2.0.0-SNAPSHOT</ogham.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-spring-boot-starter-email</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-spring-boot-starter-sms</artifactId>
-			<version>${project.version}</version>
+			<artifactId>ogham-spring-boot-starter-all</artifactId>
+			<version>${ogham.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring.boot.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-			<version>${spring.boot.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-freemarker</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
 	</dependencies>

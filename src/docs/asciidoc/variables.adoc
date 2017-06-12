@@ -7,3 +7,6 @@ endif::[]
 ifndef::sources-dir[]
 :sources-dir: ../../sources/
 endif::[]
+ifndef::user-manual-dir[]
+:user-manual-dir: {docdir}/user-manual/
+endif::[]

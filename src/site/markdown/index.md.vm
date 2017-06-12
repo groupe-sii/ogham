@@ -129,7 +129,7 @@ To use Ogham without any framework, [add it to pom.xml][ogham-integration]:
 	  ...
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-core</artifactId>
+			<artifactId>ogham-all</artifactId>
 			<version>${docProjectVersion}</version>
 		</dependency>
 		...
@@ -145,7 +145,7 @@ To use Ogham with Spring Boot, just [add the following dependency][spring-integr
 	  ...
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-spring</artifactId>
+			<artifactId>ogham-spring-boot-starter-all</artifactId>
 			<version>${docProjectVersion}</version>
 		</dependency>
 		...

@@ -1,0 +1,40 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+[role=tab-container]
+Include Ogham standalone dependency
+
+[role=tab]
+image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+
+[source, xml, subs=attributes+]
+----
+<dependency>
+	<groupId>fr.sii.ogham</groupId>
+	<artifactId>ogham-all</artifactId>
+	<version>{ogham-version}</version>
+</dependency>
+----
+
+{standard-samples-url}/pom.xml?ts=4[View code of an example pom.xml]
+
+
+[role=tab]
+image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+
+TODO: gradle code sample
+
+[role=tab-container-end]
+-
+
+
+This will include:
+
+* Sending email through SMTP server (using https://javaee.github.io/javamail/[JavaMail])
+* Sending email through https://sendgrid.com/[SendGrid]
+* Sending SMS through SMPP server (using https://github.com/fizzed/cloudhopper-smpp[Cloudhopper])
+* Sending SMS through https://www.ovhtelecom.fr/sms/api-sms.xml[OVH SMS API]
+* http://freemarker.org/[FreeMarker] template engine available for building message contents
+* http://www.thymeleaf.org/[ThymeLeaf] template engine available for building message contents
+

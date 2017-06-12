@@ -1,0 +1,127 @@
+:relative-path: ../
+include::{docdir}/variables.adoc[]
+
+
+NOTE: All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, take a look at <<FreeMarker, FreeMarker section>>.
+
+
+
+
+== Send Email
+
+The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
+
+All samples shown bellow are using SMTP for sending email. See <<Sending email through SendGrid>> to know how to send email using SendGrid.
+
+=== First email using an existing SMTP server
+
+include::{user-manual-dir}/email/first-email.adoc[leveloffset=+2]
+
+=== Use an HTML template for email body
+
+include::{user-manual-dir}/email/template-body.adoc[leveloffset=+2]
+
+=== Use an HTML template for email subject
+
+include::{user-manual-dir}/email/template-subject.adoc[leveloffset=+2]
+
+=== HTML body with CSS and images
+
+include::{user-manual-dir}/email/css-and-images.adoc[leveloffset=+2]
+
+=== A working preview of the HTML body
+
+include::{user-manual-dir}/email/text-preview.adoc[leveloffset=+2]
+
+=== Attach files to the email
+
+include::{user-manual-dir}/email/attach-files.adoc[leveloffset=+2]
+
+=== Provide authentication
+
+TODO
+
+=== Use SSL
+
+TODO
+
+=== Send email through GMail
+
+include::{user-manual-dir}/email/gmail.adoc[leveloffset=+2]
+
+=== Sending email through SendGrid
+
+include::{user-manual-dir}/email/sendgrid.adoc[leveloffset=+2]
+
+TODO: locale
+
+
+== Send SMS
+
+=== First SMS using an existing SMPP server
+
+include::{user-manual-dir}/sms/first-sms.adoc[leveloffset=+2]
+
+=== use a template for SMS content
+
+include::{user-manual-dir}/sms/template-content.adoc[leveloffset=+2]
+
+=== Send a long SMS
+
+include::{user-manual-dir}/sms/long-sms.adoc[leveloffset=+2]
+
+=== Sending SMS through SmsGlobal
+
+include::{user-manual-dir}/sms/smsglobal.adoc[leveloffset=+2]
+
+=== Sending SMS through OVH
+
+include::{user-manual-dir}/sms/ovh.adoc[leveloffset=+2]
+
+
+
+== Resource resolution
+
+TODO: explain resource resolution
+
+
+== Properties handling
+
+=== Properties in a configuration file inside the application
+
+include::{user-manual-dir}/properties/classpath-configuration-file.adoc[leveloffset=+2]
+
+=== Use properties directly in the code
+
+include::{user-manual-dir}/properties/properties-in-code.adoc[leveloffset=+2]
+
+=== Externalize properties in a file
+
+include::{user-manual-dir}/properties/external-configuration-file.adoc[leveloffset=+2]
+
+=== Use system properties
+
+include::{user-manual-dir}/properties/system-properties.adoc[leveloffset=+2]
+
+=== Properties priority
+
+include::{user-manual-dir}/properties/priorities.adoc[leveloffset=+2]
+
+
+
+
+== Templating
+
+=== FreeMarker
+
+=== ThymeLeaf
+
+=== Mixed
+
+
+
+
+== Spring Boot
+
+
+

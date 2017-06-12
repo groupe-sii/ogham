@@ -16,7 +16,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 @SpringBootApplication
-@PropertySource("application-gmail-ssl.properties")
+@PropertySource("application-gmail-ssl.properties")				// <1>
 public class BasicGmailSSLSample {
 
 	public static void main(String[] args) throws MessagingException {
@@ -29,13 +29,13 @@ public class BasicGmailSSLSample {
 		// The configuration can be set into application-gmail-ssl.properties
 		// The configuration files are stored into src/main/resources
 		@Autowired
-		MessagingService messagingService;
+		MessagingService messagingService;						// <2>
 		
 		@RequestMapping(value="api/email/gmail", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
 			// send the email using fluent API
-			messagingService.send(new Email().
+			messagingService.send(new Email().					// <3>
 									subject(subject).
 									content(content).
 									to(to));

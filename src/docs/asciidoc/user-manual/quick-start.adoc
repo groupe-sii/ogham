@@ -1,0 +1,24 @@
+:relative-path: ../
+include::{docdir}/variables.adoc[]
+
+
+== Quick and simple inclusion
+
+
+=== Standalone
+
+include::{user-manual-dir}/installation/standalone-all.adoc[leveloffset=+1]
+
+=== With Spring Boot
+
+include::{user-manual-dir}/installation/springboot-all.adoc[leveloffset=+1]
+
+== Select the features you need
+
+=== Standalone
+
+include::{user-manual-dir}/installation/standalone-selective.adoc[leveloffset=+1]
+
+=== With Spring Boot
+
+include::{user-manual-dir}/installation/springboot-selective.adoc[leveloffset=+1]

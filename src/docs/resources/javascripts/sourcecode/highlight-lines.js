@@ -12,9 +12,9 @@
 	
 	var highlightElementLines = function(/*Node*/element, /*String*/lines, /*String*/type) {
 		if(lines) {
-			var lines = lineUtils.convert(lines);
 			var sourceElement = sourceUtils.getSourceElement(element);
 			var sourceLines = lineUtils.getSourceLines(sourceElement);
+			var lines = lineUtils.convert(sourceLines, lines);
 			for(var i=0 ; i<lines.length ; i++) {
 				var line = lines[i] - 1;
 				sourceLines[line] = decorate(sourceLines[line], type);

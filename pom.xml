@@ -68,6 +68,8 @@
 
 		<!-- URL -->
 		<github.url>https://github.com/groupe-sii/ogham</github.url>
+		<git.branch>master</git.branch>
+		<github.code.url>${github.url}/blob/${git.branch}</github.code.url>
 		<project.url>https://groupe-sii.github.io/ogham/</project.url>
 		<scm.url>git@github.com:groupe-sii/ogham.git</scm.url>
 		<site.url>http://groupe-sii.github.io/ogham</site.url>
@@ -548,8 +550,17 @@
 								<ogham-version>${docProjectVersion}</ogham-version>
 								<docdir>${basedir}/src/docs/asciidoc</docdir>
 								<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
+								<!-- URLs -->
+								<standard-samples-url>${github.code.url}/sample-standard-usage</standard-samples-url>
+								<standard-samples-sourcedir-url>${github.code.url}/sample-standard-usage/src/main/java</standard-samples-sourcedir-url>
+								<standard-samples-resourcesdir-url>${github.code.url}/sample-standard-usage/src/main/resources</standard-samples-resourcesdir-url>
+								<standard-email-samples-sourcedir-url>${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email</standard-email-samples-sourcedir-url>
+								<standard-sms-samples-sourcedir-url>${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms</standard-sms-samples-sourcedir-url>
+								<spring-samples-url>${github.code.url}/sample-spring-usage</spring-samples-url>
+								<!-- Directories -->
 								<standard-samples-rootdir>${basedir}/sample-standard-usage</standard-samples-rootdir>
 								<standard-samples-sourcedir>${basedir}/sample-standard-usage/src/main/java</standard-samples-sourcedir>
+								<standard-samples-resourcesdir>${basedir}/sample-standard-usage/src/main/resources</standard-samples-resourcesdir>
 								<standard-email-samples-sourcedir>${basedir}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email</standard-email-samples-sourcedir>
 								<standard-sms-samples-sourcedir>${basedir}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms</standard-sms-samples-sourcedir>
 								<spring-samples-rootdir>${basedir}/sample-spring-usage</spring-samples-rootdir>

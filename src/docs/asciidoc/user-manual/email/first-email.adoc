@@ -1,0 +1,35 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+This sample shows how to send a basic email.
+
+The first lines configure the properties that will be used by the sender.
+Then you must create the service. You can use the MessagingBuilder to help you to create the service.
+Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
+
+
+[role=tab-container no-max-height]
+Basic sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+----
+include::{standard-email-samples-sourcedir}/BasicSample.java[]
+----
+<1> Use the standard builder (predefined behavior)
+<2> Register the custom properties
+<3> Create a MessagingService instance
+<4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from` property
+
+{standard-email-samples-sourcedir-url}/BasicSample.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+
+The construction of the email is done using a fluent API in order to chain calls and to have a more readable code.
+
+Properties are directly provided in the code. You can instead <<Properties handling,use a configuration file>>.

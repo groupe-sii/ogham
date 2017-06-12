@@ -16,7 +16,7 @@
 		for(var i=0 ; i<tabs.length ; i++) {
 			var tab = tabs[i];
 			var tabTitleNode = $(tab).find('p');
-			var tabTitle = tabTitleNode.text();
+			var tabTitle = tabTitleNode.html();
 			var contentNodes = $(tab).nextUntil(tabs[i+1] || end);
 			var contentHeight = computeHeight($(contentNodes));
 			if(contentHeight>height) {
@@ -30,14 +30,16 @@
 			$(start).append(tab);
 			tabTitleNode.replaceWith('<label for="tab-'+group+'-'+i+'">'+tabTitle+'</label>');
 		}
-		$(start).css('height', (height+122)+'px');			// TODO: this is really bad :(
+		$(start).css('height', (height+45+42)+'px');			// TODO: height of tab... This is really bad :(
 		$(end).remove();
 	}
 	
 	var computeHeight = function(/*Node[]*/nodes) {
 		var totalHeight = 0;
 		for(var i=0 ; i<nodes.length ; i++) {
-			totalHeight += parseInt($(nodes[i]).css('height'));
+			var overflow = $(nodes[i]).css('overflow', 'hidden');
+			totalHeight += $(nodes[i]).outerHeight(true);
+			$(nodes[i]).css('overflow', overflow);
 		}
 		return totalHeight;
 	}

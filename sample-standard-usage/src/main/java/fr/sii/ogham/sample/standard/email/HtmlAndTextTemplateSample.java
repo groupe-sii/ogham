@@ -10,7 +10,6 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 public class HtmlAndTextTemplateSample {
-
 	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
@@ -31,8 +30,8 @@ public class HtmlAndTextTemplateSample {
 		// for the HTML template and '.txt' for text template
 		service.send(new Email()
 						.subject("subject")
-						.content(new MultiTemplateContent("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42)))
+						.content(new MultiTemplateContent("classpath:/template/thymeleaf/simple", 		// <1>
+															new SimpleBean("foo", 42)))					// <2>
 						.to("ogham-test@yopmail.com"));
 	}
-
 }

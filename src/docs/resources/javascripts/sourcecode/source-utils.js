@@ -1,5 +1,5 @@
 (function() {
-	var convert = function(/*String*/lines) {
+	var convert = function(/*String[]*/sourceLines, /*String*/lines) {
 		var hl = [];
 		var parts = lines.split(",");
 		// example: 1,5,10-25
@@ -8,8 +8,8 @@
 			if(part.indexOf("-")!=-1) {
 				// example: 10-25
 				var subpart = part.split("-");
-				var start = parseInt(subpart[0]);
-				var end = parseInt(subpart[1]);
+				var start = subpart[0] ? parseInt(subpart[0]) : 1;
+				var end = subpart[1] ? parseInt(subpart[1]) : sourceLines.length;
 				for(var j=start ; j<=end ; j++) {
 					hl.push(j);
 				}

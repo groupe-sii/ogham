@@ -1,17 +1,8 @@
-:relative-path: ./
+:relative-path: ../
 include::{docdir}/variables.adoc[]
 
-:toclevels: 2
-:sectnums:
-:sectnumlevels: 4
 
-
-= Ogham
-{ogham-version}
-
-
-
-= Existing libraries
+== Existing libraries
 
 Several libraries for sending email already exist: 
 
@@ -27,7 +18,7 @@ These libraries also provide only implementations based on Java Mail API. But in
 So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service... Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
 
 
-= The Ogham module
+== The Ogham module
 
 This module is designed for handling any kind of message the same way. It also provides several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can easily add your own implementation.
 
@@ -37,126 +28,3 @@ It is **framework and library agnostic** and provides bridges for **common frame
 
 When using the module to send email based on an HTML template, the templating system let you **design your HTML like a standard HTML page**. It automatically transforms the associated resources (images, css files...) to be usable in an email context (automatic inline css, embed images...). You don't need to write your HTML specifically for email.
 
-
-= Usage
-
-== Include Ogham in your project
-
-=== Include all features
-
-==== Maven
-
-==== Gradle
-
-=== Select the features you need
-
-==== Maven
-
-==== Gradle
-
-== Send Email
-
-TODO: all samples are using FreeMarker -> see ThymeLeaf section
-
-=== Your first email using an existing SMTP server
-
-[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
-----
-include::{standard-email-samples-sourcedir}/BasicSample.java[]
-----
-<1> Use the standard builder (predefined behavior)
-<2> Register the custom properties
-<3> Create a MessagingService instance
-<4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from` property
-
-
-=== Send email through GMail
-
-
-=== Use an HTML template for email body
-
-
-=== Use an HTML template for email subject
-
-=== A working preview of the HTML body
-
-
-=== Attach files to the email
-
-
-
-=== Sending email through SendGrid
-
-
-
-== Send SMS
-
-=== Your first SMS using an existing SMPP server
-
-=== use a template for SMS content
-
-=== Send a long SMS
-
-
-=== Sending SMS through SmsGlobal
-
-=== Sending SMS through OVH
-
-
-
-== Properties handling
-
-=== Externalize properties in a file
-
-=== Use system properties
-
-=== Use properties directly in the code
-
-=== Properties priority
-
-
-
-== Templating
-
-=== FreeMarker
-
-=== ThymeLeaf
-
-=== Mixed
-
-
-== Spring Boot
-
-
-= Testing
-
-== Use a local SMTP server in tests
-
-== Use a local SMPP server in tests
-
-== Assert that the email is as expected
-
-== Assert that the SMS is as expected
-
- 
-= Advanced configuration
-
-TODO: Builders
-TODO: Configurers
-TODO: implementation selection
-TODO: Add custom implementation
-TODO: ...
-
-
-= Extend
-
-== Create your own configurer
-
-== Use a custom message sender
-
-== Use your custom template engine
-
-
-= Tips
-
-TODO: codes d'erreur connus avec aide

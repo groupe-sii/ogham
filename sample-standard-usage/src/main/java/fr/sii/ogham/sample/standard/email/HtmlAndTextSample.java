@@ -9,6 +9,16 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 public class HtmlAndTextSample {
+	private static String html = "<!DOCTYPE html>"
+								+ "<html>"
+								+ 	"<head><meta charset=\"utf-8\" /></head>"
+								+ 	"<body>"
+								+ 		"<h1 class=\"title\">Hello World</h1>"
+								+ 		"<p class=\"text\">Foo bar</p>"
+								+ 	"</body>"
+								+ "</html>";
+	private static String text = "Hello World !\r\n"
+								+ "Foo bar";
 
 	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
@@ -24,13 +34,10 @@ public class HtmlAndTextSample {
 					.properties(properties)
 					.and()
 				.build();
-		String html = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /></head><body><h1 class=\"title\">Hello World</h1><p class=\"text\">Foo bar</p></body></html>";
-		String text = "Hello World !\r\nFoo bar";
 		// send the email using the fluent API
 		service.send(new Email()
 						.subject("subject")
-						.content(new MultiContent(html, text))
+						.content(new MultiContent(text, html))		// <1>
 						.to("ogham-test@yopmail.com"));
 	}
-
 }

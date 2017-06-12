@@ -5,6 +5,10 @@
 	max-height: 700px;
 }
 
+.tab-container.no-max-height {
+	max-height: none;
+}
+
 .tab-container>p:first-child {
 	display: none;
 }
@@ -22,7 +26,13 @@
 	left: 1px;
 	text-align: center;
 	line-height: normal;
-	display: inline;
+	display: block;
+	overflow: hidden;
+	height: 45px;
+}
+
+.tab>label .image {
+	margin-right: 10px;
 }
 
 .tab>[type=radio] {
@@ -40,7 +50,7 @@
 
 .tab>.content {
 	position: absolute;
-	top: 28px;
+	top: 44px;
 	left: 0;
 	background: white;
 	right: 0;

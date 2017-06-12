@@ -1,0 +1,125 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+Sending an email with HTML content **and** text content might be really important, at least for smartphones. When a smartphone receives an email, it displays the sender, the subject and also a preview of the message, using the text alternative. If the message is only HTML, the preview might be unreadable.
+
+
+[role="tab-container no-max-height"]
+Sample using HTML and text
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10 irrelevant-lines:1-10,12-21,24-31 highlight-lines:40"]
+----
+include::{standard-email-samples-sourcedir}/HtmlAndTextSample.java[]
+----
+<1> The content is using the type `MultiContent` with a text and HTML content
+
+{standard-email-samples-sourcedir-url}/HtmlAndTextSample.java?ts=4[Source code of the sample]
+
+[role=tab-container-end]
+-
+
+Just switching to a `MultiContent` let you provide a main content and an alternative content.
+
+
+Obviously, you can use templates too. Even better, the following sample shows the shorthand version that avoids specifying twice the path to the templates (a single path without extension for both HTML and text template files).
+
+[role="tab-container no-max-height"]
+Sample using HTML and text templates
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:33,34"]
+----
+include::{standard-email-samples-sourcedir}/HtmlAndTextTemplateSample.java[]
+----
+<1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
+<2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
+
+{standard-email-samples-sourcedir-url}/HtmlAndTextTemplateSample.java?ts=4[Source code of the sample]
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-text.jpg[width=30,height=30] Text template
+
+.Text template located in `src/main/resources/template/thymeleaf/simple.txt`
+[source, txt]
+----
+include::{standard-samples-resourcesdir}/template/thymeleaf/simple.txt[]
+----
+
+{standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts=4[Source code of the text template]
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] HTML template
+
+.HTML template located at `src/main/resources/template/thymeleaf/simple.html`
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/thymeleaf/simple.html[]
+----
+
+{standard-samples-resourcesdir-url}/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
+
+[role=tab-container-end]
+-
+
+Ogham will automatically determine file extensions to append according to the kind of message you are sending. For email, Ogham will search a HTML and a text file by default:
+
+* Using ThymeLeaf, the file extensions are `.html` and `.txt` (configurable).
+* Using FreeMarker, Ogham will search files with extensions `.html.ftl` and `.txt.ftl` (configurable).
+
+
+If you are using a `MultiTemplateContent` and you only provide one template (only `HTML` for example). Ogham will not fail by default (configurable). Therefore, you can start your code with only a HTML template and add the text template later when you need it. That way, your Java code doesn't require any change.
+
+
+
+It is possible to mix templates in the same application. Even better, you can use a template engine that is better suited for HTML like Thymeleaf and FreeMarker that is better for textual version for the same email. Just write your templates with the engine you want.
+
+
+[role="tab-container no-max-height"]
+Sample using HTML with ThymeLeaf and text with FreeMarker
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:33,34"]
+----
+include::{standard-email-samples-sourcedir}/HtmlAndTextMixedTemplateEnginesSample.java[]
+----
+<1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
+<2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
+
+{standard-email-samples-sourcedir-url}/HtmlAndTextMixedTemplateEnginesSample.java?ts=4[Source code of the sample]
+
+[role=tab]
+image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+
+.Text template located in `src/main/resources/template/mixed/simple.txt.ftl`
+[source, txt]
+----
+include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
+----
+
+{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts=4[Source code of the text template]
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+
+.HTML template located at `src/main/resources/template/mixed/simple.html`
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
+----
+
+{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts=4[Source code of the HTML template]
+
+[role=tab-container-end]
+-
+
+You can notice that the Java code has not changed at all (only the path for the sample). The aim is to use the template engine that best suits your needs.

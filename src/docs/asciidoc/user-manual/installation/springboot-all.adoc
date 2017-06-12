@@ -1,0 +1,90 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+[role=tab-container]
+Include Ogham dependency for Spring Boot
+
+[role=tab]
+image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+
+[source, xml, subs=attributes+]
+----
+<dependency>
+	<groupId>fr.sii.ogham</groupId>
+	<artifactId>ogham-spring-boot-starter-all</artifactId>
+	<version>{ogham-version}</version>
+</dependency>
+----
+
+{spring-samples-url}/pom.xml?ts=4[View code of an example pom.xml with Spring Boot starter]
+
+
+[role=tab]
+image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+
+TODO: gradle code sample
+
+[role=tab-container-end]
+-
+
+
+This will include:
+
+* Sending email through SMTP server (using https://javaee.github.io/javamail/[JavaMail])
+* Sending email through https://sendgrid.com/[SendGrid]
+* Sending SMS through SMPP server (using https://github.com/fizzed/cloudhopper-smpp[Cloudhopper])
+* Sending SMS through https://www.ovhtelecom.fr/sms/api-sms.xml[OVH SMS API]
+* http://freemarker.org/[FreeMarker] template engine available for building message contents
+* http://www.thymeleaf.org/[ThymeLeaf] template engine available for building message contents
+* Support of https://projects.spring.io/spring-boot/[Spring Boot] auto-detection mechanism and configuration properties
+
+You can combine Ogham with existing Spring Boot dependencies:
+
+[role=tab-container]
+Ogham with Spring Boot dependencies
+
+[role=tab]
+image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+
+
+[source, xml, subs=attributes+]
+----
+<dependency>
+	<groupId>fr.sii.ogham</groupId>
+	<artifactId>ogham-spring-boot-starter-all</artifactId>
+	<version>{ogham-version}</version>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-freemarker</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-mail</artifactId>
+</dependency>
+----
+
+[role=tab]
+image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+
+TODO: gradle code sample
+
+[role=tab-container-end]
+-
+
+
+Ogham will auto-configure to use Spring Boot additions and support Spring Boot configuration properties like `spring.mail.host` for example.
+
+Ogham has been tested with following Spring Boot versions:
+
+* 1.3.8
+* 1.4.6
+* 1.5.3
+
+Using Java 8 and Java 7.
+

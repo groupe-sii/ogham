@@ -10,7 +10,6 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 public class HtmlTemplateWithSubjectSample {
-
 	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
@@ -28,9 +27,9 @@ public class HtmlTemplateWithSubjectSample {
 		// send the email using fluent API (do not specify subject)
 		// subject is set to null to let automatic mechanism to read the title
 		// of the HTML and use it as subject of your email
-		service.send(new Email()
-						.content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", new SimpleBean("foo", 42)))
+		service.send(new Email()																				// <1>
+						.content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", 
+													new SimpleBean("foo", 42)))
 						.to("ogham-test@yopmail.com"));
 	}
-
 }

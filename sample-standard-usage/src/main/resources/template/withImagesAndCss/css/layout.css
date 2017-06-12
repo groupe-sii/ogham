@@ -1,0 +1,37 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.main-content {
+	margin: 10px auto 30px auto;
+	width: 600px;
+	border: 1px solid #ccc;
+}
+
+
+.content {
+	padding: 40px 30px;
+}
+
+.left,
+.right {
+	width: 250px;
+	display: inline-block;
+}
+
+.left {
+	margin-right: 36px;
+}
+
+.footer {
+	padding: 30px;
+	color:#ffffff;
+	font-family:Arial, sans-serif;
+	font-size:14px;
+	background: #ee4c50;
+}
+
+.white {
+	color:#ffffff;
+}

@@ -13,9 +13,9 @@
 	
 	var collapseElementLines = function(/*Node*/element, /*String*/lines) {
 		if(lines) {
-			var lines = lineUtils.convert(lines);
 			var sourceElement = sourceUtils.getSourceElement(element);
 			var sourceLines = lineUtils.getSourceLines(sourceElement);
+			var lines = lineUtils.convert(sourceLines, lines);
 			lines.sort(function(a, b) { return a-b; });
 			var start;
 			var previous;
