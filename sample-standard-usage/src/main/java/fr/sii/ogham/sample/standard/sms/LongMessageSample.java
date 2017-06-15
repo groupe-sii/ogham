@@ -8,7 +8,6 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
 public class LongMessageSample {
-
 	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)

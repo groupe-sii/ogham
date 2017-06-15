@@ -1,3 +1,33 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+[role="tab-container no-max-height"]
+Sample with attachment
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:32-34"]
+----
+include::{standard-email-samples-sourcedir}/WithAttachmentSample.java[]
+----
+<1> Attach a PDF file that exists in the classpath to the email
+<2> Use an `InputStream` and name the attachment
+
+{standard-email-samples-sourcedir-url}/WithAttachmentSample.java?ts=4[Source code of the sample]
+
+[role=tab-container-end]
+-
+
+Attaching a file the the email is quite simple. You just need to provide the path to the file. The file is loaded from classpath but could also be loaded from file system or anywhere else (see <<resource-resolution, resource resolution section>>). In case you are using a file, the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
+
+It is often not possible to handle files directly. In that case you will use `InputStream` or `byte[]`. In that case, you need to name the attachment explicitly.
+
+In both cases, the mimetype is automatically determined (`application/pdf` in this case). Mimetype is really important to ensure that the recipient(s) will be able to download or view the files correctly.
+
+The file content is link to the email using `ContentDisposition.ATTACHMENT`.
+
+
+NOTE: If you are using `InputStream`, you need to close the stream after sending the email.
+
+TIP: You can also add a custom description for any attachment and link the file content to the email using `ContentDisposition.INLINE`

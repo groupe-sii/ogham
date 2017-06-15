@@ -19,7 +19,7 @@ However, writing an HTML email is totally different. Indeed, email clients are n
 
 There are many other rules but the developer should not be constrained and should be able to write its HTML and CSS like as usual in Web browsers. Ogham simplifies image and CSS integration and is able to partially rewrite the HTML.  
 
-[role="tab-container no-max-height"]
+[role="tab-container"]
 Sample with template
 
 [role=tab]
@@ -32,7 +32,7 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 <1> The path to the templates
 <2> The template context
 
-{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java[Source code of the sample]
+{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts=4[Source code of the sample]
 
 
 

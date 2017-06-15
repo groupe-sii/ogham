@@ -1,3 +1,47 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+This sample shows how to send a SMS with a content following a template engine language.
+
+[role="tab-container no-max-height"]
+Sample with template
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-23 highlight-lines:31,32"]
+----
+include::{standard-sms-samples-sourcedir}/TemplateSample.java[]
+----
+<1> Use the standard builder (predefined behavior)
+<2> Register the custom properties
+<3> Create a MessagingService instance
+<4> Send a SMS with message that comes from the evaluated template. The sender address is automatically set using `ogham.sms.from` property
+<5> Indicate the path to the template file (in the classpath)
+<6> Use any bean object for replacing variables in template
+
+{standard-sms-samples-sourcedir-url}/TemplateSample.java?ts=4[Source code of the sample].
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/thymeleaf/simple.txt[]
+----
+
+{standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts=4[Source code of the template]
+
+[role=tab-container-end]
+-
+
+
+Using a template is straightforward. Instead of providing a string content, you provide a `TemplateContent`.
+The `TemplateContent` requires two information:
+
+* The path to the template
+* The variables to evaluate in the template
+
+The path to the template is a string with a *lookup* prefix. The lookup prefix is used to indicate where to search the template (from file system, from classpath or anywhere else). Here we explicitly ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
+
+The variables are any object you are using in your application. No need to convert your object to a particular format. Directly use what you want.

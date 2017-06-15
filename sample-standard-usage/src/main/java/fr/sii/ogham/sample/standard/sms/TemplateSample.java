@@ -10,7 +10,6 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
 public class TemplateSample {
-
 	public static void main(String[] args) throws MessagingException {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
@@ -22,14 +21,15 @@ public class TemplateSample {
 		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = MessagingBuilder.standard()
+		MessagingService service = MessagingBuilder.standard()										// <1>
 				.environment()
-					.properties(properties)
+					.properties(properties)															// <2>
 					.and()
-				.build();
+				.build();																			// <3>
 		// send the sms using fluent API
-		service.send(new Sms()
-						.content(new TemplateContent("classpath:/template/thymeleaf/simple.txt", new SimpleBean("foo", 42)))
+		service.send(new Sms()																		// <4>
+						.content(new TemplateContent("classpath:/template/thymeleaf/simple.txt", 	// <5>
+													new SimpleBean("foo", 42)))						// <6>
 						.to("+33752962193"));
 	}
 

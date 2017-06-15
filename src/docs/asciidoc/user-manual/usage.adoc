@@ -2,7 +2,7 @@
 include::{docdir}/variables.adoc[]
 
 
-NOTE: All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, take a look at <<FreeMarker, FreeMarker section>>.
+NOTE: All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, take a look at <<freemarker, FreeMarker section>>.
 
 
 
@@ -11,7 +11,7 @@ NOTE: All samples with templates are using ThymeLeaf as template engine. For Fre
 
 The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
 
-All samples shown bellow are using SMTP for sending email. See <<Sending email through SendGrid>> to know how to send email using SendGrid.
+All samples shown bellow are using SMTP for sending email. See <<sendgrid, Sending email through SendGrid>> to know how to send email using SendGrid HTTP API.
 
 === First email using an existing SMTP server
 
@@ -21,7 +21,7 @@ include::{user-manual-dir}/email/first-email.adoc[leveloffset=+2]
 
 include::{user-manual-dir}/email/template-body.adoc[leveloffset=+2]
 
-=== Use an HTML template for email subject
+=== Use HTML title as email subject
 
 include::{user-manual-dir}/email/template-subject.adoc[leveloffset=+2]
 
@@ -39,7 +39,8 @@ include::{user-manual-dir}/email/attach-files.adoc[leveloffset=+2]
 
 === Provide authentication
 
-TODO
+TODO: username/password
+TODO: custom Authenticator
 
 === Use SSL
 
@@ -49,6 +50,7 @@ TODO
 
 include::{user-manual-dir}/email/gmail.adoc[leveloffset=+2]
 
+[[sendgrid]]
 === Sending email through SendGrid
 
 include::{user-manual-dir}/email/sendgrid.adoc[leveloffset=+2]
@@ -57,6 +59,12 @@ TODO: locale
 
 
 == Send SMS
+
+The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
+
+All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS.
+
+See <<ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
 
 === First SMS using an existing SMPP server
 
@@ -79,12 +87,13 @@ include::{user-manual-dir}/sms/smsglobal.adoc[leveloffset=+2]
 include::{user-manual-dir}/sms/ovh.adoc[leveloffset=+2]
 
 
-
+[[resource-resolution]]
 == Resource resolution
 
 TODO: explain resource resolution
 
 
+[[properties-handling]]
 == Properties handling
 
 === Properties in a configuration file inside the application
@@ -112,6 +121,7 @@ include::{user-manual-dir}/properties/priorities.adoc[leveloffset=+2]
 
 == Templating
 
+[[freemarker]]
 === FreeMarker
 
 === ThymeLeaf

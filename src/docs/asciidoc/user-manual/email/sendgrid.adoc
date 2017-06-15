@@ -1,3 +1,37 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+Sending an email using SendGrid HTTP API is exactly the same in term of code. The only difference is the configuration of Ogham.
+
+[role="tab-container no-max-height"]
+Sample using SendGrid
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-43 irrelevant-lines:1-43 highlight-lines:52"]
+----
+include::{standard-email-samples-sourcedir}/sendgrid/SendGridFullSample.java[]
+----
+<1> Load properties from a file that is in the classpath.
+<2> Use an `InputStream` and name the attachment
+
+{standard-email-samples-sourcedir-url}/SendGridFullSample.java?ts=4[Source code of the sample]
+
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] Properties
+
+[source, python]
+----
+include::{standard-samples-resourcesdir}/sendgrid-template.properties[]
+----
+<1> The sender email address
+<2> A prefix for all template paths. In this example, the template paths are `/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt`.
+
+{standard-samples-resourcesdir-url}/sendgrid-template.properties?ts=4[Source code of the configuration file]
+
+[role=tab-container-end]
+-
+
+

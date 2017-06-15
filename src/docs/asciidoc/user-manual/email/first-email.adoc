@@ -32,4 +32,4 @@ include::{standard-email-samples-sourcedir}/BasicSample.java[]
 
 The construction of the email is done using a fluent API in order to chain calls and to have a more readable code.
 
-Properties are directly provided in the code. You can instead <<Properties handling,use a configuration file>>.
+Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.

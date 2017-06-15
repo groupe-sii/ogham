@@ -1,4 +1,4 @@
-package fr.sii.ogham.sample.standard.email;
+package fr.sii.ogham.sample.standard.email.sendgrid;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ import fr.sii.ogham.email.message.Email;
  * <li>The subject is extracted from templates</li>
  * <li>Send HTML email with text fallback</li>
  * <li>Add attachments to the email</li>
- * <li>Properties are loaded from external file</li>
+ * <li>Properties are loaded from external file and API key is set in code</li>
  * </ul>
  * 
  * <p>
@@ -41,23 +41,23 @@ import fr.sii.ogham.email.message.Email;
  * @author Aurélien Baudet
  *
  */
-public class FullSample {
-
+public class SendGridFullSample {
 	public static void main(String[] args) throws MessagingException, IOException {
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
 				.environment()
-					.properties("/email-template.properties")
+					.properties("/sendgrid-template.properties")									// <1>
+					.properties()
+						.set("ogham.email.sengrid.api-key", "<your sendgrid API key>")				// <2>
+						.and()
 					.and()
 				.build();
 		// send the email using fluent API
-		// @formatter:off
 		service.send(new Email()
-						.content(new MultiTemplateContent("full", new SimpleBean("foo", 42)))
+						.content(new MultiTemplateContent("full", new SimpleBean("foo", 42)))		// <3>
 						.to("ogham-test@yopmail.com")
 						.attach(new Attachment("/attachment/test.pdf")));
-		// @formatter:on
 	}
 
 }

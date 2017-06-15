@@ -2,11 +2,7 @@
 include::{docdir}/variables.adoc[]
 
 
-This sample shows how to send a basic email through GMail. {standard-email-samples-sourcedir-url}/gmail/GmailSSLBasicSample.java?ts=4[The sample is available here].
-
-The first lines configure the properties that will be used by the sender.
-Then you must create the service. You can use the MessagingBuilder to help you to create the service.
-Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.
+This sample shows how to send a basic email through GMail. Sending through GMail is simply using username/password authentication and enabling SSL.
 
 [role=tab-container no-max-height]
 GMail SSL sample
@@ -29,7 +25,7 @@ include::{standard-email-samples-sourcedir}/gmail/GmailSSLBasicSample.java[]
 <9> Provide your GMail email address
 <10> Send the email
 
-{standard-email-samples-sourcedir-url}/gmail/GmailSSLBasicSample.java[Source code of the sample]
+{standard-email-samples-sourcedir-url}/gmail/GmailSSLBasicSample.java?ts=4[Source code of the sample]
 
 [role=tab-container-end]
 -

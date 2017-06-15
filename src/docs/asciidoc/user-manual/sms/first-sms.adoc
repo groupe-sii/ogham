@@ -1,3 +1,33 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+This sample defines two properties mandatory (system ID and password) by this protocol in order to use it.
+
+[role="tab-container no-max-height"]
+Simple sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+----
+include::{standard-sms-samples-sourcedir}/BasicSample.java[]
+----
+<1> Configure the SMPP server host
+<2> Configure the SMPP server port
+<3> The SMPP system ID
+<4> The SMPP password
+<5> The phone number of the sender
+<6> Use the standard builder (predefined behavior)
+<7> Register the custom properties
+<8> Create a MessagingService instance
+<9> Send a SMS with a simple message. The sender phone number is automatically set using `ogham.sms.from` property
+
+{standard-sms-samples-sourcedir-url}/BasicSample.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+The construction of the SMS is done using a fluent API in order to chain calls and to have a more readable code.
+
+Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.
