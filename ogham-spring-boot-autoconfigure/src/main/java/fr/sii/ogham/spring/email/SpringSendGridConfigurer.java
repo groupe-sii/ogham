@@ -3,10 +3,13 @@ package fr.sii.ogham.spring.email;
 import org.springframework.boot.autoconfigure.sendgrid.SendGridProperties;
 import org.springframework.boot.bind.RelaxedNames;
 
+import com.sendgrid.SendGrid;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.email.SendGridConstants;
 import fr.sii.ogham.email.builder.sendgrid.SendGridBuilder;
 import fr.sii.ogham.email.sender.impl.SendGridSender;
+import fr.sii.ogham.email.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 /**
@@ -37,11 +40,13 @@ import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 public class SpringSendGridConfigurer implements SpringMessagingConfigurer {
 	private final OghamSendGridProperties properties;
 	private final SendGridProperties springProperties;
+	private final SendGrid sendGrid;
 
-	public SpringSendGridConfigurer(OghamSendGridProperties properties, SendGridProperties springProperties) {
+	public SpringSendGridConfigurer(OghamSendGridProperties properties, SendGridProperties springProperties, SendGrid sendGrid) {
 		super();
 		this.properties = properties;
 		this.springProperties = springProperties;
+		this.sendGrid = sendGrid;
 	}
 
 	@Override
@@ -68,6 +73,23 @@ public class SpringSendGridConfigurer implements SpringMessagingConfigurer {
 	}
 
 	private void applySpringConfiguration(MessagingBuilder builder) {
+		if(sendGrid!=null) {
+			useSpringSendGridClient(builder);
+		} else {
+			useOghamSendGridClient(builder);
+		}
+	}
+
+	private void useSpringSendGridClient(MessagingBuilder builder) {
+		// @formatter:off
+		builder.email()
+			.sender(SendGridBuilder.class)
+				.client(new DelegateSendGridClient(sendGrid));
+		// @formatter:on
+	}
+	
+
+	private void useOghamSendGridClient(MessagingBuilder builder) {
 		// @formatter:off
 		builder.email()
 			.sender(SendGridBuilder.class)

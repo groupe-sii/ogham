@@ -1,3 +1,30 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+You can send SMS using https://www.smsglobal.com/[SmsGlobal] SMPP server:
+
+[role="tab-container no-max-height"]
+SmsGlobal sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 highlight-lines:15-18"]
+----
+include::{standard-sms-samples-sourcedir}/smsglobal/BasicSmsglobalSmppSample.java[]
+----
+<1> The SmsGlobal server host
+<2> The SmsGlobal server port
+<3> Your SmsGlobal username
+<4> Your SmsGlobal password
+<5> The sender phone number
+<6> Use the standard builder to configure and instantiate the MessagingService as usual
+<7> Provide configuration properties to Ogham as usual
+<8> Instantiate the service as usual
+<9> Send the SMS as usual
+
+{standard-sms-samples-sourcedir-url}/smsglobal/BasicSmsglobalSmppSample.java?ts=4[Source code of the sample].
+
+
+[role=tab-container-end]
+-

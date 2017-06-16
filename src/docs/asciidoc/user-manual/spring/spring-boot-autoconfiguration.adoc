@@ -1,0 +1,24 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+Ogham provides auto-configuration modules for Spring Boot (<<install-spring-boot, see how to include auto-configuration modules>>). To use Ogham in Spring, you can directly inject (autowire) `MessagingService` bean.
+
+In addition to standalone behaviors, Ogham also supports Spring Boot modules and auto-configuration:
+
+* If `spring-boot-starter-thymeleaf` is included, Ogham uses Spring ThymeLeaf template engine (using `SpringTemplateEngine` bean), configuration and properties (`spring.thymeleaf` properties)
+* If `spring-boot-starter-freemarker` is included, Ogham uses Spring FreeMarker properties (`spring.freemarker` properties) 
+* If `spring-boot-starter-mail` is included, Ogham uses Spring mail properties (`spring.mail` properties)
+* If `sendgrid-java` is included, Ogham uses Spring SendGrid bean and properties (`spring.sendgrid` properties)
+* Provide properties metadata for auto-completion
+
+
+[NOTE]
+.SendGrid auto-configuration 
+====
+Including all Ogham features adds `sendgrid-java` dependency. This means that Spring Boot auto-configuration for SendGrid automatically defines the `sendGrid` bean instance if `spring.sendgrid.api-key` property is defined. In this case, the `sendGrid` bean is always used by Ogham.
+Before Spring Boot 2.0.0, `spring.sendgrid.username` and `spring.sendgrid.password` can be provided instead of `spring.sendgrid.api-key`.
+====
+
+
+

@@ -1,6 +1,8 @@
 package fr.sii.ogham.spring.it.autoconfigure;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
 
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.cloudhopper.smpp.SmppConstants;
+import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.email.builder.sendgrid.SendGridBuilder;
@@ -35,6 +38,8 @@ public class SpringPropertiesTest {
 	@Autowired
 	MessagingBuilder builder;
 	
+	@Autowired
+	SendGrid springSendGridClient;
 
 	@Test
 	public void cloudhopperPropertiesDefinedInAppPropertiesOrInSystemPropertiesShouldOverrideOghamDefaultProperties() {
@@ -55,8 +60,9 @@ public class SpringPropertiesTest {
 	@Test
 	public void sendGridPropertiesDefinedInAppPropertiesOrInSystemPropertiesShouldOverrideOghamDefaultProperties() {
 		SendGridSender sender = builder.email().sender(SendGridBuilder.class).build();
-		DelegateSendGridClient service = (DelegateSendGridClient) sender.getService();
-		assertThat(service.getApiKey(), equalTo("toto"));
+		DelegateSendGridClient delegate = (DelegateSendGridClient) sender.getDelegate();
+		assertThat(delegate.getApiKey(), nullValue());		// null and not 'toto' because SendGrid Spring bean is used instead of Ogham default SendGrid instance
+		assertThat(delegate.getClient(), sameInstance(springSendGridClient));
 	}
 
 }

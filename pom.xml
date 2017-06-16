@@ -81,7 +81,6 @@
 
 		<!-- Plugins -->
 		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
-		<maven-resources-plugin.version>2.7</maven-resources-plugin.version>
 		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
@@ -321,11 +320,6 @@
 					<downloadJavadocs>true</downloadJavadocs>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>${maven-resources-plugin.version}</version>
-			</plugin>
 
 			<!-- The gmavenplus plugin is used to compile Groovy code used by Spock 
 				framework -->
@@ -557,6 +551,10 @@
 								<standard-email-samples-sourcedir-url>${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email</standard-email-samples-sourcedir-url>
 								<standard-sms-samples-sourcedir-url>${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms</standard-sms-samples-sourcedir-url>
 								<spring-samples-url>${github.code.url}/sample-spring-usage</spring-samples-url>
+								<spring-samples-sourcedir-url>${github.code.url}/sample-spring-usage/src/main/java</spring-samples-sourcedir-url>
+								<spring-samples-resourcesdir-url>${github.code.url}/sample-spring-usage/src/main/resources</spring-samples-resourcesdir-url>
+								<spring-email-samples-sourcedir-url>${github.code.url}/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email</spring-email-samples-sourcedir-url>
+								<spring-sms-samples-sourcedir-url>${github.code.url}/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms</spring-sms-samples-sourcedir-url>
 								<!-- Directories -->
 								<standard-samples-rootdir>${basedir}/sample-standard-usage</standard-samples-rootdir>
 								<standard-samples-sourcedir>${basedir}/sample-standard-usage/src/main/java</standard-samples-sourcedir>
@@ -565,6 +563,9 @@
 								<standard-sms-samples-sourcedir>${basedir}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms</standard-sms-samples-sourcedir>
 								<spring-samples-rootdir>${basedir}/sample-spring-usage</spring-samples-rootdir>
 								<spring-samples-sourcedir>${basedir}/sample-spring-usage/src/main/java</spring-samples-sourcedir>
+								<spring-samples-resourcesdir>${basedir}/sample-spring-usage/src/main/resources</spring-samples-resourcesdir>
+								<spring-email-samples-sourcedir>${basedir}/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email</spring-email-samples-sourcedir>
+								<spring-sms-samples-sourcedir>${basedir}/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms</spring-sms-samples-sourcedir>
 							</attributes>
 						</configuration>
 					</execution>

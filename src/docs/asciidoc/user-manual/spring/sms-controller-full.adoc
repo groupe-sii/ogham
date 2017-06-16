@@ -1,0 +1,61 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+Usage of `MessagingService` is exactly the same as standalone usage. The only difference is that `MessagingService` is automatically created and injectable.
+The following sample shows a Spring Web that exposes one simple endpoint for sending SMS using Ogham. The sample shows several Ogham features at once:
+
+* Using text template (using FreeMarker)
+* Templates are located in a sub-folder and prefix for SMS templates is configured through Ogham property 
+* SMS template extension is configured globally in order to avoid extension in Java code
+* Using a configuration property to define the sender phone number
+* The SMPP server host, port and authentication are defined using properties
+
+
+[role="tab-container no-max-height"]
+SMS Sample with Spring Boot
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19 highlight-lines:33,34,40-43"]
+----
+include::{spring-sms-samples-sourcedir}/TemplateSample.java[]
+----
+<1> Inject Ogham service
+<2> Use the Ogham service to send a SMS
+<3> Use a text template as SMS content
+<4> Use any Java object for evaluating template variables
+<5> The sender phone number that comes from request parameter
+
+{spring-sms-samples-sourcedir-url}/TemplateSample.java?ts=4[Source code of the sample].
+
+[role=tab]
+image:{images-dir}/icons/freemarker-logo.png[width=37,height=30] Template
+
+[source]
+----
+include::{spring-samples-resourcesdir}/sms/register.txt.ftl[]
+----
+
+{spring-samples-resourcesdir-url}/sms/register.txt.ftl?ts=4[Source code of the template]
+
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] Spring properties
+
+[source, python]
+----
+include::{spring-samples-resourcesdir}/application-sms-template.properties[]
+----
+<1> The SMPP host
+<2> The SMPP port
+<3> The SMPP system ID (account)
+<4> The SMPP password
+<5> The sender phone number that is declared globally
+<6> The path prefix for SMS templates
+<7> The path suffix for SMS templates (FreeMarker extension in this case)
+
+{spring-samples-resourcesdir-url}/application-sms-template.properties?ts=4[Source code of the properties]
+
+[role=tab-container-end]
+-

@@ -26,7 +26,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SendGridSender.class);
 
-	private final SendGridClient service;
+	private final SendGridClient delegate;
 	private final SendGridContentHandler handler;
 	private final SendGridInterceptor interceptor;
 
@@ -62,7 +62,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 			throw new IllegalArgumentException("[handler] cannot be null");
 		}
 
-		this.service = service;
+		this.delegate = service;
 		this.handler = handler;
 		this.interceptor = interceptor;
 	}
@@ -82,7 +82,7 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 			final SendGrid.Email sgEmail = intercept(toSendGridEmail(message), message);
 
 			LOG.debug("Sending email {}", sgEmail);
-			service.send(sgEmail);
+			delegate.send(sgEmail);
 			LOG.debug("Email has been successfully sent");
 		} catch (ContentHandlerException e) {
 			throw new MessageException("A content-related error occurred when trying to build an email", message, e);
@@ -151,8 +151,8 @@ public final class SendGridSender extends AbstractSpecializedSender<Email> {
 		return ret;
 	}
 
-	public SendGridClient getService() {
-		return service;
+	public SendGridClient getDelegate() {
+		return delegate;
 	}
 	
 }

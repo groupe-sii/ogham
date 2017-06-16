@@ -32,15 +32,16 @@ public class ThymeleafHtmlAndFreemarkerTextSample {
 		// The configuration files are stored into src/main/resources
 		// The configuration file set the prefix for templates into email folder available in src/main/resources
 		@Autowired
-		MessagingService messagingService;
+		MessagingService messagingService;															// <1>
 		
 		@RequestMapping(value="api/email/multitemplate/mixed", method=RequestMethod.POST)
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
 			// using fluent API
-			messagingService.send(new Email().
-									content(new MultiTemplateContent("mixed", new SimpleBean(name, value))).
-									to(to));
+			messagingService.send(new Email()														// <2>
+									.content(new MultiTemplateContent("mixed", 						// <3>
+																	new SimpleBean(name, value)))	// <4>
+									.to(to));														// <5>
 		}
 	}
 

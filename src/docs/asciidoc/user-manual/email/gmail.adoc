@@ -14,7 +14,7 @@ image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 ----
 include::{standard-email-samples-sourcedir}/gmail/GmailSSLBasicSample.java[]
 ----
-<1> Use the standard builder to configure and instantiate the MessagingService
+<1> Use the standard builder to configure and instantiate the MessagingService as usual
 <2> Use the fluent API to provide configuration properties (this is exactly the same as providing `java.util.Properties` object)
 <3> GMail requires authentication so property `mail.smtp.auth` must be set to true (this is the standard JavaMail behavior)
 <4> GMail SMTP host (using JavaMail standard property)

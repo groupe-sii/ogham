@@ -1,0 +1,73 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+Usage of `MessagingService` is exactly the same as standalone usage. The only difference is that `MessagingService` is automatically created and injectable.
+The following sample shows a Spring Web that exposes one simple endpoint for sending email using Ogham. The sample shows several Ogham features at once:
+
+* Using both HTML (using ThymeLeaf) and text templates (using FreeMarker)
+* Templates are located in a sub-folder and prefixes for templates are configured using Spring standard properties 
+* Using a configuration property to define the sender address
+* The SMTP server host and port are defined using Spring standard properties
+* The email subject is provided by the `title` tag of the HTML template
+
+
+[role="tab-container no-max-height"]
+Email sample with Spring Boot
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19 highlight-lines:34,35,41-44"]
+----
+include::{spring-email-samples-sourcedir}/ThymeleafHtmlAndFreemarkerTextSample.java[]
+----
+<1> Inject Ogham service
+<2> Use the Ogham service to send an email
+<3> Use HTML and text templates that are available in classpath. Spring is configured to use a path prefix for both ThymeLeaf and FreeMarker (see properties configuration tab). Both HTML and text templates are then located respectively at `src/main/resources/email/mixed.html` and `src/main/resources/email/mixed.txt/ftl`.
+<4> Use any Java object for evaluating template variables
+<5> The sender email address that comes from request parameter
+
+{spring-email-samples-sourcedir-url}/ThymeleafHtmlAndFreemarkerTextSample.java?ts=4[Source code of the sample].
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+
+[source, html]
+----
+include::{spring-samples-resourcesdir}/email/mixed.html[]
+----
+<1> Include the ThymeLeaf namespace
+<2> Use the `title` tag to define the subject of the email
+<3> Evaluate the `name` attribute value of `SimpleBean` in the template
+<4> Evaluate the `value` attribute value of `SimpleBean` in the template
+
+{spring-samples-resourcesdir-url}/email/mixed.html?ts=4[Source code of the HTML template]
+
+[role=tab]
+image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+
+[source, txt]
+----
+include::{spring-samples-resourcesdir}/email/mixed.txt.ftl[]
+----
+
+{spring-samples-resourcesdir-url}/email/mixed.txt.ftl?ts=4[Source code of the text template]
+
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] Spring properties
+
+[source, python]
+----
+include::{spring-samples-resourcesdir}/application-email-template.properties[]
+----
+<1> The SMTP host using Spring property
+<2> The SMTP port using Spring property
+<3> The sender address that is declared globally
+<4> The path prefix for ThymeLeaf templates
+<5> The path prefix for FreeMarker templates
+
+{spring-samples-resourcesdir-url}/application-email-template.properties?ts=4[Source code of the properties]
+
+[role=tab-container-end]
+-

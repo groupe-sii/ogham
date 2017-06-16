@@ -4,7 +4,7 @@ include::{docdir}/variables.adoc[]
 As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters if character encoding is using 7bits. Using a 8-bit character encoding decreases the limit to 140 characters and 70 characters for a 16-bit encoding. If needed, the library will split your messages into several parts the right way to be recomposed by clients later (according to the message encoding). Therefore, you don't need to handle the split of messages in your code:
 
 [role="tab-container no-max-height"]
-Sample with template
+Long SMS Sample
 
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
@@ -25,3 +25,7 @@ include::{standard-sms-samples-sourcedir}/LongMessageSample.java[]
 ====
 Larger content (concatenated SMS, multipart or segmented SMS, or "long SMS") can be sent using multiple messages, in which case each message will start with a User Data Header (UDH) containing segmentation information. Since UDH is part of the payload, the number of available characters per segment is lower: 153 for 7-bit encoding, 134 for 8-bit encoding and 67 for 16-bit encoding. The receiving handset is then responsible for reassembling the message and presenting it to the user as one long message. While the standard theoretically permits up to 255 segments, 6 to 8 segment messages are the practical maximum.
 ====
+
+NOTE: By default, Ogham sends the SMS using 8-bit encoding.
+
+TODO: explain how to use different encoding

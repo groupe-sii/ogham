@@ -38,9 +38,10 @@ public class HtmlAndTextTemplateWithSubjectSample {
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
 			// send the email using fluent API
-			messagingService.send(new Email().
-									content(new MultiTemplateContent("register", new SimpleBean(name, value))).
-									to(to));
+			messagingService.send(new Email()
+									.content(new MultiTemplateContent("register", 
+																	new SimpleBean(name, value)))
+									.to(to));
 		}
 	}
 

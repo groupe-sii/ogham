@@ -35,10 +35,10 @@ public class BasicGmailSSLSample {
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
 			// send the email using fluent API
-			messagingService.send(new Email().					// <3>
-									subject(subject).
-									content(content).
-									to(to));
+			messagingService.send(new Email()					// <3>
+									.subject(subject)
+									.content(content)
+									.to(to));
 		}
 	}
 

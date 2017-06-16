@@ -1,0 +1,1 @@
+Hello ${name}, the confirmation code is ${value}

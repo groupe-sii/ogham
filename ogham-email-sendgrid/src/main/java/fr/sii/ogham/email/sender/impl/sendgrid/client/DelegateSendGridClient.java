@@ -106,4 +106,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 		return apiKey;
 	}
 
+	public SendGrid getClient() {
+		return delegate;
+	}
 }
