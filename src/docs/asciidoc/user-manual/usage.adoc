@@ -90,27 +90,12 @@ include::{user-manual-dir}/sms/ovh.adoc[leveloffset=+2]
 [[resource-resolution]]
 == Resource resolution
 
-TODO: explain resource resolution
-
+include::{user-manual-dir}/resolution/resource-resolution.adoc[leveloffset=+1]
 
 [[properties-handling]]
 == Properties handling
 
-=== Properties in a configuration file inside the application
-
-include::{user-manual-dir}/properties/classpath-configuration-file.adoc[leveloffset=+2]
-
-=== Use properties directly in the code
-
-include::{user-manual-dir}/properties/properties-in-code.adoc[leveloffset=+2]
-
-=== Externalize properties in a file
-
-include::{user-manual-dir}/properties/external-configuration-file.adoc[leveloffset=+2]
-
-=== Use system properties
-
-include::{user-manual-dir}/properties/system-properties.adoc[leveloffset=+2]
+include::{user-manual-dir}/properties/properties-variants.adoc[leveloffset=+1]
 
 === Properties priority
 
@@ -124,10 +109,16 @@ include::{user-manual-dir}/properties/priorities.adoc[leveloffset=+2]
 [[freemarker]]
 === FreeMarker
 
+TODO
+
 === ThymeLeaf
+
+TODO
 
 === Mixed
 
+TODO: configuration des prefix/suffix ici ou dans advanced configuration (parler de toutes les variantes) ?
+TODO: variantes ?
 
 
 == Using Ogham in a Spring Boot application

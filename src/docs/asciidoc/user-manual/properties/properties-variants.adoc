@@ -1,0 +1,58 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+Property configuration is a good way to separate code from configuration. Ogham allows you to configure values using builders. For example, you can configure the SMTP host and port like this:
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, highlight="4-5"]
+----
+MessagingBuilder.standard()
+	.email()
+		.sender(JavaMailBuilder.class)
+			.host("localhost")
+			.port(25);
+----
+
+[role=tab-container-end]
+-
+
+
+However, when using a library, it is simpler that this library provides a way to configure some values without the need of writing code to configure it. The integration is easier. The configuration should also be done in several ways to let the developer choose what fits his needs. 
+
+  
+You can use configuration properties that are defined several ways:
+
+* in a properties file that is present in the classpath (inside the application)
+* in a properties file that is present on the file system (outside the application)
+* using standard `java.util.Properties`
+* using standard `System.getProperties()`
+* define properties directly in code in a fluent way
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+----
+include::{standard-samples-sourcedir}/fr/sii/ogham/sample/standard/PropertiesSample.java[]
+----
+<1> Use standard `java.util.Properties`
+<2> Load the file from the classpath (relative to root of the classpath)
+<3> Load the file from the file system
+<4> Directly set a property with its value in a fluent way
+<5> Use standard `System.getProperties()`
+
+{standard-email-samples-sourcedir-url}/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+This sample shows that configuration may come from several sources (code, shared properties, file inside the application, file outside the application and from system properties).
+ 

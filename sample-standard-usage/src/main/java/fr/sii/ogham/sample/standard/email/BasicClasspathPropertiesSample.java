@@ -1,24 +1,19 @@
 package fr.sii.ogham.sample.standard.email;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class BasicSampleExternalProperties {
-
+public class BasicClasspathPropertiesSample {
 	public static void main(String[] args) throws MessagingException, IOException {
-		// load properties (available at src/main/resources)
-		Properties properties = new Properties();
-		properties.load(BasicSampleExternalProperties.class.getResourceAsStream("/email.properties"));
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
 				.environment()
-					.properties(properties)
+					.properties("classpath:email.properties")		// <1>
 					.and()
 				.build();
 		// send the email using fluent API

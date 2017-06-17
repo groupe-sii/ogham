@@ -1,3 +1,221 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+
+If you define properties using several different ways, you may have the same key several times. In that case, which value will be used by Ogham ?
+
+By default (using `MessagingBuilder.standard()` or `MessagingBuilder.minimal()`), Ogham defines the following order (first is used if defined):
+
+* `.systemProperties()`
+* `.properties("file:..")`
+* `.properties(new Properties())` or `.properties().set(...)`
+* `.properties("classpath:...")`
+
+== Why this order ?
+
+Configuration outside the application should override configuration that is inside the application. This is necessary if you want to be able to deploy the same application in different environments without changing code or needing to rebuild with a different profile.
+
+For configuration outside the application, system properties (defined either in system environment or using java command line arguments) has higher priority than a configuration file outside the application. This is useful to have a configuration file that is shared between several applications or instances and override only some values explicitly.
+
+For configuration inside the application, code has higher priority than configuration defined in a classpath file. This is useful to define global configuration for the application using a configuration file and let the possibility to override explicitly some values in code. This is useful in tests for example.
+
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+----
+include::{standard-samples-sourcedir}/fr/sii/ogham/sample/standard/PropertiesSample.java[]
+----
+<1> Use standard `java.util.Properties`
+<2> Load the file from the classpath (relative to root of the classpath)
+<3> Load the file from the file system
+<4> Directly set a property with its value in a fluent way
+<5> Use standard `System.getProperties()`
+
+
+{standard-email-samples-sourcedir-url}/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
+
+
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] classpath:email.properties
+
+[source, python]
+----
+mail.smtp.host=localhost
+mail.smtp.port=25
+ogham.email.from=foo@test.com
+----
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] file:/etc/app/email.properties
+
+[source, python]
+----
+mail.smtp.host=smtp.domain.com
+----
+
+[role=tab]
+Result
+
+Running this sample with the following command line:
+
+[source]
+----
+$ java -Dogham.email.from="bar@domain.com" fr.sii.ogham.sample.standard.PropertiesSample
+----
+
+Gives the following property values:
+
+[cols="2" options="header"]
+|===
+|Property
+|Result value
+
+|mail.smtp.host
+|*smtp.domain.com*
+
+|mail.smtp.port
+|*10*
+
+|ogham.email.from
+|*bar@domain.com*
+
+|===
+
+[role=tab-container-end]
+-
+
+NOTE: See the {sourcedir-url}/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts=4[test that ensures this order].
+
+== What happens if there are several values for the same property and for the same source ?
+
+For example, if you use two configuration files defined in the classpath:
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java]
+----
+	MessagingService service = MessagingBuilder.standard()
+			.environment()
+				.properties("classpath:common.properties")
+				.properties("classpath:email.properties")
+				.and()
+			.build();
+----
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] common.properties
+
+[source, python]
+----
+mail.smtp.host=localhost
+mail.smtp.port=25
+----
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] email.properties
+
+[source, python]
+----
+mail.smtp.host=smtp.domain.com
+----
+
+[role=tab]
+Result
+
+[cols="2" options="header"]
+|===
+|Property
+|Result value
+
+|mail.smtp.host
+|*smtp.domain.com*
+
+|mail.smtp.port
+|25
+
+|===
+
+[role=tab-container-end]
+-
+
+For the same level of priority, this is the declaration order that prevails.
+
+
+== How to use custom priorities ?
+
+If you want to use a different priority order, you can explicitly register properties with a custom priority:
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java]
+----
+	MessagingService service = MessagingBuilder.standard()
+			.environment()
+				.properties("classpath:common.properties", 2)
+				.properties("classpath:email.properties", 1)
+				.and()
+			.build();
+----
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] common.properties
+
+[source, python]
+----
+mail.smtp.host=localhost
+mail.smtp.port=25
+----
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] email.properties
+
+[source, python]
+----
+mail.smtp.host=smtp.domain.com
+----
+
+[role=tab]
+Result
+
+[cols="2" options="header"]
+|===
+|Property
+|Result value
+
+|mail.smtp.host
+|*localhost*
+
+|mail.smtp.port
+|25
+
+|===
+
+[role=tab-container-end]
+-
+
+You can notice that the result is now different than using default priorities.
+
+[NOTE]
+====
+Default priority values are:
+
+* Using `.systemProperties()`: 100000
+* Load property file from the filesystem (`properties("file:...")`: 90000
+* Using custom `java.util.Properties` object (`properties(new Properties())`): 80000
+* Using custom properties through `.properties()` fluent API: 80000
+* Load property file from the classpath (`properties("classpath:...")`): 70000
+====
