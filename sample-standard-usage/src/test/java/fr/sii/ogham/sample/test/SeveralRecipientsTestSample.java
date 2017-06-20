@@ -1,6 +1,8 @@
-package fr.sii.ogham.it.email;
+package fr.sii.ogham.sample.test;
 
+import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
@@ -8,64 +10,60 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 
-public class EmailSMTPAuthenticationTest {
+public class SeveralRecipientsTestSample {
 	private MessagingService oghamService;
-
+	
 	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
 	@Before
 	public void setUp() throws IOException {
-		greenMail.setUser("test.sender@sii.fr", "test.sender", "password");								// <1>
-		Properties additionalProps = new Properties();
-		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		additionalProps.setProperty("mail.smtp.auth", "true");											// <2>
-		additionalProps.setProperty("ogham.email.javamail.authenticator.username", "test.sender");		// <3>
-		additionalProps.setProperty("ogham.email.javamail.authenticator.password", "password");			// <4>
 		oghamService = MessagingBuilder.standard()
 				.environment()
-					.properties("/application.properties")
-					.properties(additionalProps)
+					.properties()
+						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+						.set("mail.smtp.host", SMTP.getBindAddress())
+						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+						.and()
 					.and()
 				.build();
 	}
-	
+
 	@Test
-	public void authenticated() throws MessagingException, javax.mail.MessagingException {
+	public void severalRecipients() throws MessagingException, javax.mail.MessagingException {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")
 								.content("string body")
-								.to("Recipient Name <recipient@sii.fr>"));
+								.to("recipient1@sii.fr", "recipient2@sii.fr", "recipient3@sii.fr")
+								.cc("recipient4@sii.fr", "recipient5@sii.fr")
+								.bcc("recipient6@sii.fr"));
 		assertThat(greenMail).receivedMessages()
-			.count(is(1))
-			.message(0)
+			.count(is(6))																// <1>
+			.forEach()																	// <2>
 				.subject(is("Simple"))
 				.from()
 					.address(hasItems("test.sender@sii.fr"))
 					.personal(hasItems("Sender Name")).and()
 				.to()
-					.address(hasItems("recipient@sii.fr"))
-					.personal(hasItems("Recipient Name")).and()
+					.address(containsInAnyOrder("recipient1@sii.fr", 					// <3>
+												"recipient2@sii.fr", 
+												"recipient3@sii.fr")).and()
+				.cc()
+					.address(containsInAnyOrder("recipient4@sii.fr", 					// <4>
+												"recipient5@sii.fr")).and()
 				.body()
 					.contentAsString(is("string body"))
 					.contentType(startsWith("text/plain")).and()

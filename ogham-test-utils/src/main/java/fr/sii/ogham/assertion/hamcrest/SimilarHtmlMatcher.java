@@ -1,9 +1,12 @@
 package fr.sii.ogham.assertion.hamcrest;
 
 import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Difference;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.ComparisonFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import fr.sii.ogham.assertion.OghamAssertions;
@@ -26,8 +29,11 @@ import fr.sii.ogham.helper.html.HtmlUtils;
  * @author Aurélien Baudet
  *
  */
-public class SimilarHtmlMatcher extends BaseMatcher<String> implements ExpectedValueProvider<String> {
+public class SimilarHtmlMatcher extends BaseMatcher<String> implements ExpectedValueProvider<String>, ComparisonAwareMatcher {
+	private static final Logger LOG = LoggerFactory.getLogger(SimilarHtmlMatcher.class);
+	
 	private final String expected;
+	private DetailedDiff diff;
 
 	public SimilarHtmlMatcher(String expected) {
 		super();
@@ -36,8 +42,12 @@ public class SimilarHtmlMatcher extends BaseMatcher<String> implements ExpectedV
 
 	@Override
 	public boolean matches(Object item) {
-		DetailedDiff diff = HtmlUtils.compare(expected, (String) item);
-		return diff.similar();
+		diff = HtmlUtils.compare(expected, (String) item);
+		boolean similar = diff.similar();
+		if(!similar) {
+			LOG.warn(comparisonMessage());
+		}
+		return similar;
 	}
 
 	@Override
@@ -48,6 +58,19 @@ public class SimilarHtmlMatcher extends BaseMatcher<String> implements ExpectedV
 	@Override
 	public String getExpectedValue() {
 		return expected;
+	}
+
+	@Override
+	public String comparisonMessage() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("The two HTML documents are not similar.\n");
+		sb.append("Here are the differences found:\n");
+		for(Object o : diff.getAllDifferences()) {
+			Difference d = (Difference) o;
+			sb.append("  - ").append(d.toString()).append("\n");
+		}
+		sb.append("\n");
+		return sb.toString();
 	}
 
 }

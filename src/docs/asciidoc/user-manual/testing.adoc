@@ -1,11 +1,16 @@
 :relative-path: ../
 include::{docdir}/variables.adoc[]
 
+== Include test utilities
 
-== Use a local SMTP server in tests
+include::{user-manual-dir}/testing/install.adoc[leveloffset=+1]
 
-== Use a local SMPP server in tests
+== Testing emails
 
-== Assert that the email is as expected
+include::{user-manual-dir}/testing/email-testing.adoc[leveloffset=+1]
 
-== Assert that the SMS is as expected
+== Tesing SMS
+
+include::{user-manual-dir}/testing/sms-testing.adoc[leveloffset=+1]
+
+

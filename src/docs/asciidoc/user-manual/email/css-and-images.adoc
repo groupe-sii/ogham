@@ -52,6 +52,7 @@ image:{images-dir}/icons/css.png[width=37,height=30] CSS and images
 
 [source, html, role="highlight-lines:4"]
 ----
+TODO: add CSS file
 ----
 
 Images
@@ -65,6 +66,7 @@ image:{images-dir}/icons/html.png[width=37,height=30] Sent HTML
 
 [source, html, role="highlight-lines:4"]
 ----
+TODO: sent HTML
 ----
 
 
@@ -79,13 +81,14 @@ TODO: rewrite html
 TODO: you have control
 
 
-[X] `<img>` tags that use local images are embedded (using `cid` reference)
-[X] `<img>` tags that use local images are embedded (using base64 data URI)
-[ ] Use XHTML instead of HTML
-[X] Tables used for layout explicitly set default values
-[ ] Remove HTML comments (except conditional comments used to target Outlook)
-[ ] Add border=0 on all images to avoid an ugly border
-[ ] Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of `padding: 4px`)
-[ ] Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
-[ ] Background images on body should be moved on another node
+* [x] `<img>` tags that use local images are embedded (using `cid` reference)
+* [x] `<img>` tags that use local images are embedded (using base64 data URI)
+* [ ] Use XHTML instead of HTML
+* [x] Tables used for layout explicitly set default values
+* [ ] Remove HTML comments (except conditional comments used to target Outlook)
+* [ ] Add border=0 on all images to avoid an ugly border
+* [ ] Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of `padding: 4px`)
+* [ ] Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
+* [ ] Background images on body should be moved on another node
+
 TODO: other rules

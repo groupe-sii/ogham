@@ -4,9 +4,41 @@ endif::[]
 ifndef::images-dir[]
 :images-dir: {relative-path}images/
 endif::[]
-ifndef::sources-dir[]
-:sources-dir: ../../sources/
-endif::[]
 ifndef::user-manual-dir[]
 :user-manual-dir: {docdir}/user-manual/
 endif::[]
+
+
+:ogham-all-testsourcedir-url: {sourcedir-url}/ogham-all/src/test/java
+
+:standard-samples-url: {sourcedir-url}/sample-standard-usage
+:standard-samples-sourcedir-url: {standard-samples-url}/src/main/java
+:standard-samples-resourcesdir-url: {standard-samples-url}/src/main/resources
+:standard-email-samples-sourcedir-url: {standard-samples-sourcedir-url}/fr/sii/ogham/sample/standard/email
+:standard-sms-samples-sourcedir-url: {standard-samples-sourcedir-url}/fr/sii/ogham/sample/standard/sms
+:standard-samples-testsourcedir-url: {standard-samples-url}/src/test/java
+:standard-samples-testresourcesdir-url: {standard-samples-url}/src/test/resources
+
+:spring-samples-url: {sourcedir-url}/sample-spring-usage
+:spring-samples-sourcedir-url: {spring-samples-url}/src/main/java
+:spring-samples-resourcesdir-url: {spring-samples-url}/src/main/resources
+:spring-email-samples-sourcedir-url: {spring-samples-sourcedir-url}/fr/sii/ogham/sample/springboot/email
+:spring-sms-samples-sourcedir-url: {spring-samples-sourcedir-url}/fr/sii/ogham/sample/springboot/sms
+
+			
+:ogham-all-testsourcedir: {sourcedir}/ogham-all/src/test/java
+					
+:standard-samples-rootdir: {sourcedir}/sample-standard-usage
+:standard-samples-sourcedir: {standard-samples-rootdir}/src/main/java
+:standard-samples-resourcesdir: {standard-samples-rootdir}/src/main/resources
+:standard-email-samples-sourcedir: {standard-samples-sourcedir}/fr/sii/ogham/sample/standard/email
+:standard-sms-samples-sourcedir: {standard-samples-sourcedir}/fr/sii/ogham/sample/standard/sms
+:standard-samples-testsourcedir: {standard-samples-rootdir}/src/test/java
+:standard-samples-testresourcesdir: {standard-samples-rootdir}/src/test/resources
+
+:spring-samples-rootdir: {sourcedir}/sample-spring-usage
+:spring-samples-sourcedir: {spring-samples-rootdir}/src/main/java
+:spring-samples-resourcesdir: {spring-samples-rootdir}/src/main/resources
+:spring-email-samples-sourcedir: {spring-samples-sourcedir}/fr/sii/ogham/sample/springboot/email
+:spring-sms-samples-sourcedir: {spring-samples-sourcedir}/fr/sii/ogham/sample/springboot/sms
+								

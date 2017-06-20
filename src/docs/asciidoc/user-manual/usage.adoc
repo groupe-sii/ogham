@@ -37,6 +37,11 @@ include::{user-manual-dir}/email/text-preview.adoc[leveloffset=+2]
 
 include::{user-manual-dir}/email/attach-files.adoc[leveloffset=+2]
 
+=== Globally configure default recipients
+
+TODO: cf EmailPropertiesTest
+TODO: parsing lists
+
 === Provide authentication
 
 TODO: username/password
@@ -44,7 +49,7 @@ TODO: custom Authenticator
 
 === Use SSL
 
-TODO
+TODO: ssl
 
 === Send email through GMail
 
@@ -56,6 +61,7 @@ include::{user-manual-dir}/email/gmail.adoc[leveloffset=+2]
 include::{user-manual-dir}/email/sendgrid.adoc[leveloffset=+2]
 
 TODO: locale
+TODO: address format "address <personal>"
 
 
 == Send SMS
@@ -102,18 +108,22 @@ include::{user-manual-dir}/properties/properties-variants.adoc[leveloffset=+1]
 include::{user-manual-dir}/properties/priorities.adoc[leveloffset=+2]
 
 
-
+TODO: conversions
 
 == Templating
 
 [[freemarker]]
 === FreeMarker
 
-TODO
+TODO: exemples avec FreeMarker
+TODO: specificités FreeMarker
+TODO: configuration avancées pour FreeMarker
 
 === ThymeLeaf
 
-TODO
+TODO: exemples avec ThymeLeaf
+TODO: specificités ThymeLeaf
+TODO: configuration avancées pour ThymeLeaf
 
 === Mixed
 

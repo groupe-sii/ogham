@@ -61,5 +61,10 @@
 			<groupId>org.spockframework</groupId>
 			<artifactId>spock-core</artifactId>
 		</dependency>
+		<!-- This is needed to force guava version in projects that uses ogham-test-utils -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
 	</dependencies>
 </project>

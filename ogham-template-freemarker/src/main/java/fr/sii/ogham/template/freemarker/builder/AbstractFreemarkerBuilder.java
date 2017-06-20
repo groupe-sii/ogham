@@ -53,6 +53,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	private Configuration configuration;
 	private List<TemplateLoaderAdapter> customAdapters;
 	private FreemarkerConfigurationBuilder<MYSELF> configurationBuilder;
+	private ClassLoader classLoader;
 
 	protected AbstractFreemarkerBuilder(Class<?> selfType) {
 		this(selfType, null, null);
@@ -223,6 +224,27 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 		return myself;
 	}
 
+	/**
+	 * Set the {@link ClassLoader} to use for loading classpath resources.
+	 * 
+	 * <p>
+	 * Loading resources from classpath requires a {@link ClassLoader}. Several
+	 * class loaders may be defined in an application to isolate parts of the
+	 * application. FreeMarker requires you to provide a {@link ClassLoader} for
+	 * finding resources in the classpath. This is done for security reasons.
+	 * 
+	 * <p>
+	 * By default, Ogham uses the current thread class loader.
+	 * 
+	 * @param classLoader
+	 *            the class loader to use
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF classLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+		return myself;
+	}
+
 	@Override
 	public TemplateParser build() {
 		LOG.info("Freemarker parser is registered");
@@ -278,7 +300,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 		for (TemplateLoaderAdapter custom : customAdapters) {
 			adapter.addAdapter(custom);
 		}
-		adapter.addAdapter(new ClassPathResolverAdapter());
+		adapter.addAdapter(new ClassPathResolverAdapter(classLoader));
 		adapter.addAdapter(new FileResolverAdapter());
 		adapter.addAdapter(new StringResolverAdapter());
 		adapter.setOptions(new TemplateLoaderOptions());

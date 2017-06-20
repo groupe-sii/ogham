@@ -6,6 +6,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.StringDescription;
 import org.junit.ComparisonFailure;
 
+import fr.sii.ogham.assertion.hamcrest.ComparisonAwareMatcher;
 import fr.sii.ogham.assertion.hamcrest.CustomReason;
 import fr.sii.ogham.assertion.hamcrest.DecoratorMatcher;
 import fr.sii.ogham.assertion.hamcrest.ExpectedValueProvider;
@@ -100,9 +101,35 @@ public class AssertionHelper {
 	}
 
 	private static <T> Description getDescription(String reason, T actual, Matcher<? super T> matcher) {
+		String additionalText = null;
+		ComparisonAwareMatcher cam = getComparisonAwareMatcher(matcher);
+		if(cam!=null) {
+			additionalText = cam.comparisonMessage();
+		}
+		return getDescription(reason, actual, matcher, additionalText);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> ComparisonAwareMatcher getComparisonAwareMatcher(Matcher<? super T> matcher) {
+		if (matcher instanceof ComparisonAwareMatcher) {
+			return (ComparisonAwareMatcher) matcher;
+		}
+		if (matcher instanceof DecoratorMatcher) {
+			return getComparisonAwareMatcher(((DecoratorMatcher<T>) matcher).getDecoree());
+		}
+		return null;
+	}
+
+	private static <T> Description getDescription(String reason, T actual, Matcher<? super T> matcher, String additionalText) {
+		// @formatter:off
 		Description description = new StringDescription();
-		description.appendText(getReason(reason, matcher)).appendText("\nExpected: ").appendDescriptionOf(matcher).appendText("\n     but: ");
+		description.appendText(getReason(reason, matcher))
+					.appendText(additionalText==null ? "" : ("\n"+additionalText))
+					.appendText("\nExpected: ")
+					.appendDescriptionOf(matcher)
+					.appendText("\n     but: ");
 		matcher.describeMismatch(actual, description);
+		// @formatter:on
 		return description;
 	}
 

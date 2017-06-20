@@ -1,6 +1,9 @@
-package fr.sii.ogham.it.email;
+package fr.sii.ogham.sample.test;
 
+import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.assertion.OghamAssertions.isSimilarHtml;
+import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
@@ -8,58 +11,50 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.mock.context.SimpleBean;
 
-public class EmailSMTPAuthenticationTest {
+public class EmailHtmlTestSample {
 	private MessagingService oghamService;
-
+	
 	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
 	@Before
 	public void setUp() throws IOException {
-		greenMail.setUser("test.sender@sii.fr", "test.sender", "password");								// <1>
-		Properties additionalProps = new Properties();
-		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		additionalProps.setProperty("mail.smtp.auth", "true");											// <2>
-		additionalProps.setProperty("ogham.email.javamail.authenticator.username", "test.sender");		// <3>
-		additionalProps.setProperty("ogham.email.javamail.authenticator.password", "password");			// <4>
 		oghamService = MessagingBuilder.standard()
 				.environment()
-					.properties("/application.properties")
-					.properties(additionalProps)
+					.properties()
+						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+						.set("mail.smtp.host", SMTP.getBindAddress())
+						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+						.and()
 					.and()
 				.build();
 	}
-	
+
 	@Test
-	public void authenticated() throws MessagingException, javax.mail.MessagingException {
+	public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
-								.subject("Simple")
-								.content("string body")
+								.content(new TemplateContent("/template/register.html", 			// <1>
+															new SimpleBean("foo", 42)))				// <2>
 								.to("Recipient Name <recipient@sii.fr>"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(1))
 			.message(0)
-				.subject(is("Simple"))
+				.subject(is("foo - Confirm your registration"))
 				.from()
 					.address(hasItems("test.sender@sii.fr"))
 					.personal(hasItems("Sender Name")).and()
@@ -67,8 +62,8 @@ public class EmailSMTPAuthenticationTest {
 					.address(hasItems("recipient@sii.fr"))
 					.personal(hasItems("Recipient Name")).and()
 				.body()
-					.contentAsString(is("string body"))
-					.contentType(startsWith("text/plain")).and()
+					.contentAsString(isSimilarHtml(resourceAsString("/expected/register.html")))	// <3>
+					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(emptyIterable());
 		// @formatter:on

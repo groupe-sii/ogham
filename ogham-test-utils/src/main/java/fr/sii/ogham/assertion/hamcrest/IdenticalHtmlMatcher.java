@@ -1,9 +1,12 @@
 package fr.sii.ogham.assertion.hamcrest;
 
 import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Difference;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.ComparisonFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import fr.sii.ogham.assertion.OghamAssertions;
@@ -26,8 +29,11 @@ import fr.sii.ogham.helper.html.HtmlUtils;
  * @author Aurélien Baudet
  *
  */
-public class IdenticalHtmlMatcher extends BaseMatcher<String> implements ExpectedValueProvider<String> {
+public class IdenticalHtmlMatcher extends BaseMatcher<String> implements ExpectedValueProvider<String>, ComparisonAwareMatcher {
+	private static final Logger LOG = LoggerFactory.getLogger(IdenticalHtmlMatcher.class);
+	
 	private final String expected;
+	private DetailedDiff diff;
 
 	public IdenticalHtmlMatcher(String expected) {
 		super();
@@ -36,8 +42,12 @@ public class IdenticalHtmlMatcher extends BaseMatcher<String> implements Expecte
 
 	@Override
 	public boolean matches(Object item) {
-		DetailedDiff diff = HtmlUtils.compare(expected, (String) item);
-		return diff.identical();
+		diff = HtmlUtils.compare(expected, (String) item);
+		boolean identical = diff.identical();
+		if(!identical) {
+			LOG.warn(comparisonMessage());
+		}
+		return identical;
 	}
 
 	@Override
@@ -48,6 +58,19 @@ public class IdenticalHtmlMatcher extends BaseMatcher<String> implements Expecte
 	@Override
 	public String getExpectedValue() {
 		return expected;
+	}
+
+	@Override
+	public String comparisonMessage() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("The two HTML documents are not identical.\n");
+		sb.append("Here are the differences found:\n");
+		for(Object o : diff.getAllDifferences()) {
+			Difference d = (Difference) o;
+			sb.append("  - ").append(d.toString()).append("\n");
+		}
+		sb.append("\n");
+		return sb.toString();
 	}
 
 }

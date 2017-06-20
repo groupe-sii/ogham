@@ -1,0 +1,98 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+[role=tab-container]
+Include Ogham test dependency
+
+[role=tab]
+image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+
+[source, xml, subs=attributes+]
+----
+<dependency>
+	<groupId>fr.sii.ogham</groupId>
+	<artifactId>ogham-test-utils</artifactId>
+	<version>{ogham-version}</version>
+	<scope>test</scope>
+</dependency>
+----
+
+{standard-samples-url}/pom.xml?ts=4[View code of an example pom.xml]
+
+
+[role=tab]
+image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+
+TODO: gradle code sample
+
+[role=tab-container-end]
+-
+
+
+This will include:
+
+* http://junit.org/junit4/[JUnit to run tests]
+* http://site.mockito.org/[Mockito for mocking Java code]
+* http://hamcrest.org/JavaHamcrest/[Hamcrest for assertions]
+* http://www.icegreen.com/greenmail/[GreenMail for mocking a SMTP server]
+* https://jsmpp.org/[jSMPP for mocking a SMPP server]
+* http://wiremock.org/[WireMock for mocking HTTP server]
+* http://spockframework.org/[Spockframework for writing very very readable unit tests]
+* and some utilities that may be useful
+
+
+== Configure static method imports for Eclipse
+
+Ogham uses Hamcrest, Mockito and also provides test utilities. Those utilities provide many static methods. Static methods are convenient for code readability. However, Eclipse needs some configuration to help you to import static methods with autocompletion.
+
+In Eclipse, select menu:Window[Preferences]. In the preferences window, select menu:Java[Editor > Content Assist > Favorites].
+
+.Preferences window
+image::{images-dir}/eclipse/static-import-empty.png[role="text-center"]
+
+To add all static methods of a class, click on btn:[New Type...].
+
+.Add all static methods and attributes of a class
+image::{images-dir}/eclipse/static-import-newtype.png[role="text-center"]
+
+Type the class that contains the static methods (you can also click the browse button to search classes from classpath).
+
+
+.Example for Ogham assersions
+image::{images-dir}/eclipse/static-import-newtype-search.png[role="text-center"]
+
+.Search for a class
+image::{images-dir}/eclipse/static-import-search.png[role="text-center"]
+
+Click on btn:[OK]
+
+Recommended imports to add:
+
+* `fr.sii.ogham.assertion.OghamAssertions.*`
+* `org.hamcrest.Matchers.*`
+* `org.hamcrest.CoreMatchers.*`
+
+Optional assertions that may be useful:
+
+* `org.mockito.Matchers.*`
+* `org.mockito.Mockito.*`
+* `org.junit.*`
+* `org.junit.Assert.*`
+* `org.junit.matchers.JUnitMatchers.*`
+* `org.junit.Assume.*`
+* `org.assertj.core.api.Assertions.*`
+
+
+.Result with all static imports described above
+image::{images-dir}/eclipse/static-import-all.png[role="text-center"]
+
+Once you have added all static imports you need, click on btn:[OK].
+
+Now you can use autocompletion and Eclipse will automatically add the static import.
+
+.Autocompletion now suggests static methods
+image::{images-dir}/eclipse/static-import-autocomplete.png[role="text-center"]
+
+TIP: Eclipse can rewrite a call to a static method prefixed by class. For example in your code you have `OghamAssertions.assertThat`, pressing kbd:[Ctrl+M] shortcut (cursor must be placed in the method name), Eclipse will add the static import and the code is just `assertThat`.
+
