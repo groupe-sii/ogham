@@ -1,3 +1,69 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+== First test
+
+To test your application SMS, you can start a local SMPP server. You can then use Ogham to make assertions on you SMS (recipient phone number, sender phone number and message). Ogham uses https://jsmpp.org/[jSMPP] as local SMPP server.
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SmsTestSample.java[]
+----
+<1> Declare and initialize the JUnit rule that encapsulates jSMPP for starting a local SMPP server in tests (you can set a different port than the default one)
+<2> Configure Ogham to use `localhost` for SMPP host
+<3> Get the local SMPP server port and configure Ogham to use this value
+<4> Entry point for declaring assertion on received SMS using a fluent API
+<5> Assert that one and only one SMS has been received
+<6> Access the first received message for declaring assertions for that message using fluent API
+<7> Assert that the received message text is exactly `sms content`
+<8> Assert that the sender phone number is `+33603040506`
+<9> Assert that the recipient phone number is `0601020304`
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SmsTestSample.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+== Testing long messages and several recipients
+
+When a long message is sent, it must be split. Each part of the message is received by the SMPP server as distinct messages. The first message doesn't have any additional information indicating that it is split. Successive messages have an additional header (contained in the body). Ogham hides this protocol specific complexity. So you can test your SMS without needing to know about the header. Ogham provides `message` method to access a particular message for doing assertions on it. Ogham also provides `forEach` to apply same assertions on all received messages.
+
+Sending a SMS to several recipients is the same as sending several distinct SMS. So the SMPP server receives the same number as SMS as the number of recipients. In that case, you can use `forEach` to make same assertions on all messages. 
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19,21-38 highlight-lines:56"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/LongSmsTestSample.java[]
+----
+<1> Message is split so the SMPP server receives two messages
+<2> Access first message to declare assertions on it
+<3> Assert that the first message is correctly split (contains the beginning of the message)
+<4> Access second message to declare assertions on it
+<5> Assert that the second message contains the end of the whole message
+<6> `forEach` applies all later defined assertions to all messages (the 2 messages here)
+<7> Assert that the sender phone number is `+33603040506` for every message
+<8> Assert that the recipient phone number is `0601020304` for every message
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/LongSmsTestSample.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+////
+TODO: type of number (explanation + why it is important + sample)
+TODO: numbering plan indicator (explanation + why it is important + sample)
+TODO: test ovh?
+////

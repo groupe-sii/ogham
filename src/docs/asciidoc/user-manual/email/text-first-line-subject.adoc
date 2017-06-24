@@ -1,0 +1,36 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+For text templates, the subject is automatically used (like for HTML title) if the first line starts with `Subject:` (spaces can be added after colon). Other lines are used as content of the email.
+
+
+[role="tab-container no-max-height"]
+Sample with template
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21"]
+----
+include::{standard-email-samples-sourcedir}/TextTemplateWithSubjectSample.java[]
+----
+<1> Subject is no more in Java code
+
+{standard-email-samples-sourcedir-url}/TextTemplateWithSubjectSample.java?ts=4[Source code of the sample]
+
+[role=tab]
+
+image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+
+[source, text, role="highlight-lines:1"]
+----
+include::{standard-samples-resourcesdir}/template/freemarker/simpleWithSubject.txt.ftl[]
+----
+
+NOTE: The subject of the email will be `Welcome foo !`
+
+{standard-samples-resourcesdir-url}/template/freemarker/simpleWithSubject.txt.ftl?ts=4[Source code of the text template]
+
+[role=tab-container-end]
+-

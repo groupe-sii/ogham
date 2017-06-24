@@ -74,11 +74,12 @@ TODO: sent HTML
 [role=tab-container-end]
 -
 
-
+////
 TODO: image inlining
 TODO: css inlining
 TODO: rewrite html
 TODO: you have control
+////
 
 
 * [x] `<img>` tags that use local images are embedded (using `cid` reference)
@@ -91,4 +92,6 @@ TODO: you have control
 * [ ] Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
 * [ ] Background images on body should be moved on another node
 
+////
 TODO: other rules
+////

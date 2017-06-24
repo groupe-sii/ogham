@@ -293,7 +293,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachme
 
 == Testing several emails at once
 
-When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `forEach` method to apply defined assertion on all messages.
+When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `forEach` method to apply defined assertions on all messages.
 
 [role="tab-container no-max-height"]
 Sample
@@ -375,4 +375,6 @@ NOTE: Only the setup differs, the test is the same.
 [role=tab-container-end]
 -
 
-
+////
+TODO: test sendgrid?
+////

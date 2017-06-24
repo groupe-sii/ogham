@@ -7,6 +7,11 @@ NOTE: All samples with templates are using ThymeLeaf as template engine. For Fre
 
 
 
+////
+TODO: default subject as property
+////
+
+
 == Send Email
 
 The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
@@ -23,7 +28,8 @@ include::{user-manual-dir}/email/template-body.adoc[leveloffset=+2]
 
 === Use HTML title as email subject
 
-include::{user-manual-dir}/email/template-subject.adoc[leveloffset=+2]
+include::{user-manual-dir}/email/html-title-subject.adoc[leveloffset=+2]
+include::{user-manual-dir}/email/text-first-line-subject.adoc[leveloffset=+2]
 
 === HTML body with CSS and images
 
@@ -39,17 +45,23 @@ include::{user-manual-dir}/email/attach-files.adoc[leveloffset=+2]
 
 === Globally configure default recipients
 
+////
 TODO: cf EmailPropertiesTest
 TODO: parsing lists
+////
 
 === Provide authentication
 
+////
 TODO: username/password
 TODO: custom Authenticator
+////
 
 === Use SSL
 
+////
 TODO: ssl
+////
 
 === Send email through GMail
 
@@ -60,9 +72,10 @@ include::{user-manual-dir}/email/gmail.adoc[leveloffset=+2]
 
 include::{user-manual-dir}/email/sendgrid.adoc[leveloffset=+2]
 
+////
 TODO: locale
 TODO: address format "address <personal>"
-
+////
 
 == Send SMS
 
@@ -107,29 +120,35 @@ include::{user-manual-dir}/properties/properties-variants.adoc[leveloffset=+1]
 
 include::{user-manual-dir}/properties/priorities.adoc[leveloffset=+2]
 
-
+////
 TODO: conversions
+////
 
 == Templating
 
 [[freemarker]]
 === FreeMarker
 
+////
 TODO: exemples avec FreeMarker
 TODO: specificités FreeMarker
 TODO: configuration avancées pour FreeMarker
+////
 
 === ThymeLeaf
 
+////
 TODO: exemples avec ThymeLeaf
 TODO: specificités ThymeLeaf
 TODO: configuration avancées pour ThymeLeaf
+////
 
 === Mixed
 
+////
 TODO: configuration des prefix/suffix ici ou dans advanced configuration (parler de toutes les variantes) ?
 TODO: variantes ?
-
+////
 
 == Using Ogham in a Spring Boot application
 

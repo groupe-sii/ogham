@@ -11,9 +11,15 @@ The history of Ogham releases is documented below. For details of changes refer 
 
 ### Features
 
-- New builder API (TODO: lien)
+////
+TODO: ajouter des liens pour chaque fonctionnalité
+////
+
+- New builder API
 - Only fluent API (remove all Email/SMS constructors)
 - Follow Spring Boot starter conventions
+- Better Spring Boot integration with existing module (spring-boot-start-mail, spring-boot-starter-thymeleaf, spring-boot-starter-freemarker, spring-boot-starter-sendgrid)
+- Add possibility to create its own configurer
 
 ### Internal
 

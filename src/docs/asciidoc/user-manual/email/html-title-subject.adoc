@@ -32,6 +32,3 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simpleWithSubject.ht
 [role=tab-container-end]
 -
 
-For text templates, the subject is automatically used (like for HTML title) if the first line starts with `Subject:` (spaces can be added after colon). Other lines are used as content of the email.
-
-TODO: exemple avec template text contenant subject
