@@ -7,11 +7,10 @@
 	<packaging>pom</packaging>
 	<name>ogham</name>
 	<description>
-		Open, General and Highly Adaptative Messaging library. It is a reusable
-		Java library for sending any kind of message (email, SMS, mobile notification,
-		tweet...). The content of the message can comes from any
+		Email, SMS, mobile notification made simple without knowing RFCs. 
+		The content of the message can comes from any
 		templating engine (Thymeleaf, FreeMarker, ...). It also
-		provides bridges for framework integration (Spring, JSF, ...). It
+		provides integration with frameworks (Spring, JSF, ...). It
 		is designed to be easily extended.
 	</description>
 	<url>${project.url}</url>
@@ -579,7 +578,22 @@
 							<outputDirectory>target/generated-docs</outputDirectory>
 						</configuration>
 					</execution>
-				</executions>
+					<execution>
+						<id>copy-asciidoc-resources-for-site</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>target/generated-docs</directory>
+								</resource>
+							</resources>
+							<outputDirectory>target/site</outputDirectory>
+						</configuration>
+					</execution>
+ 				</executions>
 			</plugin>
 
 			<!-- Site generation -->
@@ -599,11 +613,44 @@
 						<artifactId>velocity</artifactId>
 						<version>1.7</version>
 					</dependency>
+					<dependency>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctor-maven-plugin</artifactId>
+						<version>${asciidoctorj.version}</version>
+					</dependency>
 				</dependencies>
 				<configuration>
 					<generateReports>true</generateReports>
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
+					<asciidoc>
+						<baseDir>${basedir}/src/docs/asciidoc</baseDir>
+						<preserveDirectories>true</preserveDirectories>
+						<imagesDir></imagesDir>
+						<sourceHighlighter>coderay</sourceHighlighter>
+						<embedAssets>false</embedAssets>
+						<requires>
+							<require>asciidoctor-diagram</require>
+						</requires>
+						<attributes>
+							<source-highlighter>coderay</source-highlighter>
+							<nofooter>true</nofooter>
+							<toc>left</toc>
+							<icons>font</icons>
+							<tabsize>3</tabsize>
+							<linkcss>true</linkcss>
+							<sectanchors>true</sectanchors>
+							<docinfo2>true</docinfo2>
+							<experimental>true</experimental>
+							<tabsize>4</tabsize>
+							<imagesdir></imagesdir>
+							<ogham-version>${docProjectVersion}</ogham-version>
+							<docdir>${basedir}/src/docs/asciidoc</docdir>
+							<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
+							<sourcedir-url>${github.code.url}</sourcedir-url>
+							<sourcedir>${basedir}</sourcedir>
+						</attributes>
+					</asciidoc>
 				</configuration>
 			</plugin>
 

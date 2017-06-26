@@ -1,23 +1,109 @@
-.source pre {
-	font-size: 12px;
-	overflow-x: auto;
-	white-space: nowrap;
-	color: black;
+pre>code {
+	background: none;
+	padding: 0;
+	font-size: 0.85em !important;
 }
 
-h1[id]:before,
-h2[id]:before,
-h3[id]:before,
-h4[id]:before,
-h5[id]:before,
-h6[id]:before,
-a[name]:before {
-	height: 0;
+.page-user-manual .main-body #toc {
+	position: fixed;
+	top: 50px;
+	left: 0;
+	bottom: 0;
+	width: 315px;
+	overflow: auto;
+	background: #f8f8f7;
+}
+
+.page-user-manual .main-body .body-content {
+	margin-left: 50px;
+}
+
+.page-user-manual .main-body .body-content {
+	color: rgba(0, 0, 0, 0.8);
+}
+
+.page-user-manual .main-body i.fa {
+	font-style: normal;
+}
+
+.page-user-manual .main-body [class^="icon-"],
+.page-user-manual .main-body [class*=" icon-"] {
+	background: none;
+	width: auto;
+	height: auto;
+}
+
+.page-user-manual .main-body .imageblock.text-center .title {
+	text-align: center;
+}
+
+.page-user-manual .main-body h1,
+.page-user-manual .main-body h2,
+.page-user-manual .main-body h3,
+.page-user-manual .main-body h4,
+.page-user-manual .main-body h5,
+.page-user-manual .main-body h6 {
+	color: #317eac;
+	font-weight: bold;
+}
+
+
+.page-user-manual .main-body ol>li p, 
+.page-user-manual .main-body ul>li p, 
+.page-user-manual .main-body ul dd, 
+.page-user-manual .main-body ol dd, 
+.page-user-manual .main-body .olist .olist, 
+.page-user-manual .main-body .ulist .ulist, 
+.page-user-manual .main-body .ulist .olist, 
+.page-user-manual .main-body .olist .ulist {
+	margin-bottom: .025em;
+}
+
+.page-user-manual .main-body .paragraph ~ ul,
+.page-user-manual .main-body .paragraph ~ .ulist > ul,
+.page-user-manual .main-body .paragraph ~ ol,
+.page-user-manual .main-body .paragraph ~ .olist > ol {
+	margin-top: -1em;
+}
+
+.page-index h2 {
+    text-align: center;
+    margin-top: 70px;
+    border-top: 1px solid #eee;
+    padding-top: 40px;
+    padding-bottom: 20px;
+}
+
+.page-index #features {
+	border: none;
 	margin-top: 0;
 }
 
-@media (min-width: 980px) {
-  .navbar.affix {
-    top: 50px;
-  }
+.page-index #features + .sectionbody {
+	text-align: center;
+}
+.page-index .feature {
+	display: inline-block;
+	width: 150px;
+	height: 200px;
+	border: 1px solid #317eac;
+	margin: 20px;
+	vertical-align: top;
+}
+.page-index .feature .image {
+	display: inline-block;
+	width: 100px;
+	height: 100px;
+}
+
+.page-index h3 .image {
+	display: inline-block;
+	margin-right: 10px;
+}
+.page-index h3 .image img {
+	vertical-align: top;
+	padding-top: 4px;
+}
+.page-index pre {
+	font-size: 15px;
 }

@@ -24,3 +24,15 @@ li code {
 .imageblock.text-center .title {
 	text-align: center;
 }
+
+.no-callout .conum,
+.no-callout .conum + b,
+.no-callout + .colist {
+	display: none;
+}
+
+
+h1[id]:before, h2[id]:before, h3[id]:before, h4[id]:before, h5[id]:before, h6[id]:before, a[name]:before {
+	position: absolute;
+	z-index: -1;
+}

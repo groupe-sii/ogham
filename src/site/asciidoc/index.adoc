@@ -1,0 +1,175 @@
+:relative-path: ./
+include::{docdir}/variables.adoc[]
+
+== Features
+
+[role="feature feature-email"]
+====
+image:{images-dir}/icons/email.png[Email,width=100,height=100]
+
+
+Send Email
+====
+
+
+[role="feature feature-sms"]
+====
+image:{images-dir}/icons/sms.png[Email,width=100,height=100]
+
+Send SMS
+====
+
+
+[role="feature feature-templating"]
+====
+image:{images-dir}/icons/email.png[Email,width=100,height=100]
+
+Templating
+====
+
+
+[role="feature feature-spring"]
+====
+image:{images-dir}/icons/spring-boot.png[Email,width=100,height=100]
+
+Spring
+====
+
+[role="feature feature-customizable"]
+====
+image:{images-dir}/icons/email.png[Email,width=100,height=100]
+
+Customizable
+====
+
+////
+TODO: schéma
+////
+
+---
+
+
+include::{user-manual-dir}/introduction.adoc[leveloffset=+1]
+
+
+---
+
+
+== Usage
+
+
+---
+
+
+=== image:{images-dir}/icons/email.png[Email,width=30,height=30] Send Email
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,13-20 no-callout"]
+----
+include::{standard-email-samples-sourcedir}/BasicSample.java[]
+----
+<1> Use the standard builder (predefined behavior)
+<2> Register the custom properties
+<3> Create a MessagingService instance
+<4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from` property
+
+
+<<user-manual.adoc#email-usage, Read more about email usages &raquo;>>
+
+
+=== image:{images-dir}/icons/sms.png[SMS,width=30,height=30] Send SMS
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,12-21 no-callout"]
+----
+include::{standard-sms-samples-sourcedir}/BasicSample.java[]
+----
+<1> Configure the SMPP server host
+<2> Configure the SMPP server port
+<3> The SMPP system ID
+<4> The SMPP password
+<5> The phone number of the sender
+<6> Use the standard builder (predefined behavior)
+<7> Register the custom properties
+<8> Create a MessagingService instance
+<9> Send a SMS with a simple message. The sender phone number is automatically set using `ogham.sms.from` property
+
+
+<<user-manual.adoc#sms-usage, Read more about SMS usages &raquo;>>
+
+
+---
+
+
+== Get it now
+
+
+---
+
+
+=== image:{images-dir}/icons/java-logo.png[Java,width=16,height=30] Standalone usage
+
+
+To use Ogham without any framework:
+
+[role=tab-container]
+Include Ogham standalone dependency
+
+[role=tab]
+image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+
+
+[source, xml, subs=attributes+]
+----
+<dependency>
+	<groupId>fr.sii.ogham</groupId>
+	<artifactId>ogham-all</artifactId>
+	<version>{ogham-version}</version>
+</dependency>
+----
+
+[role=tab]
+image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+
+////
+TODO: gradle code sample
+////
+
+[role=tab-container-end]
+-
+
+<<user-manual.adoc#install, Installation instructions &raquo;>>
+
+
+
+=== image:{images-dir}/icons/spring-boot.png[Spring Boot,width=30,height=30] Spring Boot starter
+
+To use Ogham with Spring Boot, just add the following dependency:
+
+
+[role=tab-container]
+Include Ogham dependency for Spring Boot
+
+[role=tab]
+image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+
+[source, xml, subs=attributes+]
+----
+<dependency>
+	<groupId>fr.sii.ogham</groupId>
+	<artifactId>ogham-spring-boot-starter-all</artifactId>
+	<version>{ogham-version}</version>
+</dependency>
+----
+
+
+[role=tab]
+image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+
+////
+TODO: gradle code sample
+////
+
+[role=tab-container-end]
+-
+
+
+<<user-manual.adoc#install, Installation instructions &raquo;>>

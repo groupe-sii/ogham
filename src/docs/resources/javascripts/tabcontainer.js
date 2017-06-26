@@ -23,12 +23,12 @@
 				height = contentHeight;
 			}
 			$(tab).prepend('<input type="radio" id="tab-'+group+'-'+i+'" name="tab-group-'+group+'" '+(i==0 ? 'checked' : '')+'>');
-			$(tab).append('<div class="content">');
-			var tabContentNode = $(tab).find('.content');
+			$(tab).append('<div class="tab-content">');
+			var tabContentNode = $(tab).find('.tab-content');
 			$(tabContentNode).append(contentNodes);
 			$(tab).append(tabContentNode);
 			$(start).append(tab);
-			tabTitleNode.replaceWith('<label for="tab-'+group+'-'+i+'">'+tabTitle+'</label>');
+			tabTitleNode.replaceWith('<label class="tab-label" for="tab-'+group+'-'+i+'">'+tabTitle+'</label>');
 		}
 		$(start).css('height', (height+45+42)+'px');			// TODO: height of tab... This is really bad :(
 		$(end).remove();

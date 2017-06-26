@@ -1,4 +1,7 @@
-# Release notes
+:relative-path: ./
+include::{docdir}/variables.adoc[]
+
+== Release notes
 
 The history of Ogham releases is documented below. For details of changes refer to the [project's GitHub issues][issues] or the [GitHub report][github-report].
 
@@ -7,9 +10,9 @@ The history of Ogham releases is documented below. For details of changes refer 
 
 
 
-## 2.0.0 
+=== 2.0.0 
 
-### Features
+==== Features
 
 ////
 TODO: ajouter des liens pour chaque fonctionnalité
@@ -21,25 +24,25 @@ TODO: ajouter des liens pour chaque fonctionnalité
 - Better Spring Boot integration with existing module (spring-boot-start-mail, spring-boot-starter-thymeleaf, spring-boot-starter-freemarker, spring-boot-starter-sendgrid)
 - Add possibility to create its own configurer
 
-### Internal
+==== Internal
 
 - Split projects to separate core from implementations
 - Creating a new implementation is easier
 - Add annotations to indicate that an implementation needs some preconditions in order to work
 
 
-## 1.1.0 / 2017-03-14
+=== 1.1.0 / 2017-03-14
 
-### Features
+==== Features
 
 - Support FreeMarker templates
 - It is possible to mix Thymeleaf and FreeMarker templates
 - Tested with Spring Boot 1.3.8+ latest releases (1.3.8, 1.4.5 and 1.5.2)
 
 
-## 1.0.0 / 2015-10-08
+=== 1.0.0 / 2015-10-08
 
-### Features
+==== Features
 
 - [Add Spring integration with Spring Boot](usage/integration.html#integrate-with-spring-boot)
 - [Add Spring integration using Java config or XML config](usage/integration.html#manual-integration-with-spring)
@@ -50,9 +53,9 @@ TODO: ajouter des liens pour chaque fonctionnalité
 - Allow to configure different template prefixes/suffixes for each kind of message 
 
 
-## 0.0.1 / 2015-06-22
+=== 0.0.1 / 2015-06-22
 
-### Features
+==== Features
 
 - [APIs for multi-implementation support](config/select-implementation.html)
 - [APIs for multi-channel support](usage/index.html)

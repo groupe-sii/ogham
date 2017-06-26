@@ -15,7 +15,7 @@ These libraries help you send an email but if you want to use a templated conten
 
 These libraries also provide only implementations based on Java Mail API. But in some environments, you might NOT want to send the email directly but to use a web service to do it for you (https://sendgrid.com/[SendGrid] for example). Furthermore, those libraries are bound by design to frameworks or libraries that you might not want to use in your own context.
 
-So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service... Is email the only possible message type ? No, so why not sending SMS, Tweet, SNMP or anything the same way ?
+So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service... Is email the only possible message type ? No, so why not sending SMS, Tweet or anything the same way ?
 
 
 == The Ogham module

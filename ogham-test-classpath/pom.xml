@@ -23,6 +23,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
 		<sonar.skip>true</sonar.skip>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<maven.site.skip>true</maven.site.skip>
 	</properties>
 
 	<dependencies>

@@ -1,4 +1,7 @@
-# Contributing to this project
+:relative-path: ./
+include::{docdir}/variables.adoc[]
+
+== Contributing to this project
 
 Please take a moment to review this document in order to make the contribution
 process easy and effective for everyone involved.
@@ -9,7 +12,7 @@ they should reciprocate that respect in addressing your issue or assessing
 patches and features.
 
 
-## Using the issue tracker
+=== Using the issue tracker
 
 The issue tracker is the preferred channel for [bug reports](#bug-reports),
 [features requests](#feature-requests) and [submitting pull
@@ -22,7 +25,7 @@ requests](#pull-requests), but please respect the following restrictions:
   respect the opinions of others.
 
 
-## Bug reports
+=== Bug reports
 
 A bug is a _demonstrable problem_ that is caused by the code in the repository.
 Good bug reports are extremely helpful - thank you!
@@ -63,7 +66,7 @@ Example:
 > merits).
 
 
-## Feature requests
+=== Feature requests
 
 Feature requests are welcome. But take a moment to find out whether your idea
 fits with the scope and aims of the project. It's up to *you* to make a strong
@@ -71,7 +74,7 @@ case to convince the project's developers of the merits of this feature. Please
 provide as much detail and context as possible.
 
 
-## Pull requests
+=== Pull requests
 
 Good pull requests - patches, improvements, new features - are a fantastic
 help. They should remain focused in scope and avoid containing unrelated
