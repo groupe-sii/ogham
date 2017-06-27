@@ -1,6 +1,6 @@
 
 = Ogham
-{ogham-version}
+ogham-version
 
 
 == Introduction
@@ -47,32 +47,32 @@ When using the module to send email based on an HTML template, the templating sy
 
 
 [role=tab-container]
-Include Ogham standalone dependency
+_____
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 
 [source, xml, subs=attributes+]
 ----
 <dependency>
-	<groupId>fr.sii.ogham</groupId>
-	<artifactId>ogham-all</artifactId>
-	<version>{ogham-version}</version>
+    <groupId>fr.sii.ogham</groupId>
+    <artifactId>ogham-all</artifactId>
+    <version>ogham-version</version>
 </dependency>
 ----
 
-{standard-samples-url}/pom.xml?ts=4[View code of an example pom.xml]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/pom.xml?ts=4[View code of an example pom.xml]
 
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,height=30]
 
 ////
 TODO: gradle code sample
 ////
 
 [role=tab-container-end]
--
+_____
 
 
 This will include:
@@ -91,32 +91,32 @@ This will include:
 
 
 [role=tab-container]
-Include Ogham dependency for Spring Boot
+_____
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 
 [source, xml, subs=attributes+]
 ----
 <dependency>
-	<groupId>fr.sii.ogham</groupId>
-	<artifactId>ogham-spring-boot-starter-all</artifactId>
-	<version>{ogham-version}</version>
+    <groupId>fr.sii.ogham</groupId>
+    <artifactId>ogham-spring-boot-starter-all</artifactId>
+    <version>ogham-version</version>
 </dependency>
 ----
 
-{spring-samples-url}/pom.xml?ts=4[View code of an example pom.xml with Spring Boot starter]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/pom.xml?ts=4[View code of an example pom.xml with Spring Boot starter]
 
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,height=30]
 
 ////
 TODO: gradle code sample
 ////
 
 [role=tab-container-end]
--
+_____
 
 
 This will include:
@@ -132,42 +132,42 @@ This will include:
 You can combine Ogham with existing Spring Boot dependencies:
 
 [role=tab-container]
-Ogham with Spring Boot dependencies
+_____
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 
 
 [source, xml, subs=attributes+]
 ----
 <dependency>
-	<groupId>fr.sii.ogham</groupId>
-	<artifactId>ogham-spring-boot-starter-all</artifactId>
-	<version>{ogham-version}</version>
+    <groupId>fr.sii.ogham</groupId>
+    <artifactId>ogham-spring-boot-starter-all</artifactId>
+    <version>ogham-version</version>
 </dependency>
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-freemarker</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-freemarker</artifactId>
 </dependency>
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-thymeleaf</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
 </dependency>
 <dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-mail</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
 </dependency>
 ----
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,height=30]
 
 ////
 TODO: gradle code sample
 ////
 
 [role=tab-container-end]
--
+_____
 
 
 Ogham will auto-configure to use Spring Boot additions and support Spring Boot configuration properties like `spring.mail.host` for example.
@@ -216,7 +216,7 @@ TODO: default subject as property
 [[email-usage]]
 === Send Email
 
-The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
+The samples are available in the https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMTP for sending email. See <<sendgrid, Sending email through SendGrid>> to know how to send email using SendGrid HTTP API.
 
@@ -232,10 +232,10 @@ Finally, the last line sends the email. The specified email is really basic. It 
 
 
 [role=tab-container no-max-height]
-Basic sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -248,28 +248,28 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class BasicSample {
+public class BasicSample 
 
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "<your server host>");
-		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()		// <1>
-				.environment()
-					.properties(properties)							// <2>
-					.and()
-				.build();											// <3>
-		// send the email using fluent API
-		service.send(new Email()									// <4>
-						.subject("subject")
-						.content("email content")
-						.to("ogham-test@yopmail.com"));
-	}
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "<your server host>");
+        properties.put("mail.smtp.port", "<your server port>");
+        properties.put("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()        // <1>
+                .environment()
+                    .properties(properties)                            // <2>
+                    .and()
+                .build();                                            // <3>
+        // send the email using fluent API
+        service.send(new Email()                                    // <4>
+                        .subject("subject")
+                        .content("email content")
+                        .to("ogham-test@yopmail.com"));
+    
 
 }
 ----
@@ -278,10 +278,10 @@ public class BasicSample {
 <3> Create a MessagingService instance
 <4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from` property
 
-{standard-email-samples-sourcedir-url}/BasicSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
--
+_____
 
 
 The construction of the email is done using a fluent API in order to chain calls and to have a more readable code.
@@ -295,10 +295,10 @@ Properties are directly provided in the code. You can instead <<properties-handl
 This sample shows how to send an email with a content following a template engine language.
 
 [role="tab-container no-max-height"]
-Sample with template
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:30,31"]
 ----
@@ -313,28 +313,28 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlTemplateSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()											// <1>
-				.environment()
-					.properties(properties)																// <2>
-					.and()
-				.build();																				// <3>
-		// send the email using fluent API
-		service.send(new Email()																		// <4>
-						.subject("subject")
-						.content(new TemplateContent("classpath:/template/thymeleaf/simple.html", 		// <5>
-													new SimpleBean("foo", 42)))							// <6>
-						.to("ogham-test@yopmail.com"));
-	}
+public class HtmlTemplateSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()                                            // <1>
+                .environment()
+                    .properties(properties)                                                                // <2>
+                    .and()
+                .build();                                                                                // <3>
+        // send the email using fluent API
+        service.send(new Email()                                                                        // <4>
+                        .subject("subject")
+                        .content(new TemplateContent("classpath:/template/thymeleaf/simple.html",         // <5>
+                                                    new SimpleBean("foo", 42)))                            // <6>
+                        .to("ogham-test@yopmail.com"));
+    
 }
 ----
 <1> Use the standard builder (predefined behavior)
@@ -344,21 +344,21 @@ public class HtmlTemplateSample {
 <5> Indicate the path to the HTML template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-{standard-email-samples-sourcedir-url}/HtmlTemplateSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java?ts=4[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
+image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
 
 [source, html]
 ----
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">				<!--1-->
+<html xmlns:th="http://www.thymeleaf.org">                <!--1-->
     <head>
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="${name}"></h1>		<!--2-->
-        <p class="text" th:text="${value}"></p>			<!--3-->
+        <h1 class="title" th:text="$name"></h1>        <!--2-->
+        <p class="text" th:text="$value"></p>            <!--3-->
     </body>
 </html>
 ----
@@ -366,10 +366,10 @@ image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
 <2> Use the `name` attribute value in the template
 <3> Use the `value` attribute value in the template
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
 
 [role=tab-container-end]
--
+_____
 
 
 Using a template is straightforward. Instead of providing a string content, you provide a `TemplateContent`.
@@ -389,10 +389,10 @@ The variables are any object you are using in your application. No need to conve
 This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to mutualize the code and to avoid to create a new file just for one line.
 
 [role="tab-container no-max-height"]
-Sample with template
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21"]
 ----
@@ -407,58 +407,58 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlTemplateWithSubjectSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(properties)
-					.and()
-				.build();
-		// send the email using fluent API (do not specify subject)
-		// subject is set to null to let automatic mechanism to read the title
-		// of the HTML and use it as subject of your email
-		service.send(new Email()																				// <1>
-						.content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", 
-													new SimpleBean("foo", 42)))
-						.to("ogham-test@yopmail.com"));
-	}
+public class HtmlTemplateWithSubjectSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API (do not specify subject)
+        // subject is set to null to let automatic mechanism to read the title
+        // of the HTML and use it as subject of your email
+        service.send(new Email()                                                                                // <1>
+                        .content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", 
+                                                    new SimpleBean("foo", 42)))
+                        .to("ogham-test@yopmail.com"));
+    
 }
 ----
 <1> Subject is no more in Java code
 
-{standard-email-samples-sourcedir-url}/HtmlTemplateWithSubjectSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateWithSubjectSample.java?ts=4[Source code of the sample]
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
+image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
 
 [source, html, role="highlight-lines:4"]
 ----
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Subject of the email - ${name}</title>				<!--1-->
+        <title>Subject of the email - $name</title>                <!--1-->
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="${name}"></h1>
-        <p class="text" th:text="${value}"></p>
+        <h1 class="title" th:text="$name"></h1>
+        <p class="text" th:text="$value"></p>
     </body>
 </html>
 ----
 <1> The subject is defined in the template and can use same evaluation context (`SimpleBean`)
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simpleWithSubject.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html?ts=4[Source code of the HTML template]
 
 [role=tab-container-end]
--
+_____
 
 
 
@@ -466,10 +466,10 @@ For text templates, the subject is automatically used (like for HTML title) if t
 
 
 [role="tab-container no-max-height"]
-Sample with template
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21"]
 ----
@@ -484,53 +484,53 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class TextTemplateWithSubjectSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(properties)
-					.and()
-				.build();
-		// send the email using fluent API (do not specify subject)
-		// subject is set to null to let automatic mechanism to read the title
-		// of the first line if prefixed by "Subject:" and use it as subject of your email
-		service.send(new Email()																				// <1>
-						.content(new TemplateContent("classpath:/template/freemarker/simpleWithSubject.txt.ftl", 
-													new SimpleBean("foo", 42)))
-						.to("ogham-test@yopmail.com"));
-	}
+public class TextTemplateWithSubjectSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API (do not specify subject)
+        // subject is set to null to let automatic mechanism to read the title
+        // of the first line if prefixed by "Subject:" and use it as subject of your email
+        service.send(new Email()                                                                                // <1>
+                        .content(new TemplateContent("classpath:/template/freemarker/simpleWithSubject.txt.ftl", 
+                                                    new SimpleBean("foo", 42)))
+                        .to("ogham-test@yopmail.com"));
+    
 }
 ----
 <1> Subject is no more in Java code
 
-{standard-email-samples-sourcedir-url}/TextTemplateWithSubjectSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/TextTemplateWithSubjectSample.java?ts=4[Source code of the sample]
 
 [role=tab]
 
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
 
 [source, text, role="highlight-lines:1"]
 ----
-Subject: Welcome ${name} !
-Hello ${name},
+Subject: Welcome $name !
+Hello $name,
 
-Foo bar ${value}
+Foo bar $value
 ----
 
 NOTE: The subject of the email will be `Welcome foo !`
 
-{standard-samples-resourcesdir-url}/template/freemarker/simpleWithSubject.txt.ftl?ts=4[Source code of the text template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts=4[Source code of the text template]
 
 [role=tab-container-end]
--
+_____
 
 ==== HTML body with CSS and images
 
@@ -554,10 +554,10 @@ However, writing an HTML email is totally different. Indeed, email clients are n
 There are many other rules but the developer should not be constrained and should be able to write its HTML and CSS like as usual in Web browsers. Ogham simplifies image and CSS integration and is able to partially rewrite the HTML.  
 
 [role="tab-container"]
-Sample with template
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:32,33"]
 ----
@@ -572,41 +572,41 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlWithImagesAndCssTemplateSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(properties)
-					.and()
-				.build();
-		// send the email using fluent API
-		// Note that the extension of the template is not given. This version
-		// automatically takes the provided path and adds the '.html' extension
-		// for the HTML template and '.txt.ftl' for text template
-		service.send(new Email()
-						.content(new MultiTemplateContent("classpath:/template/withImagesAndCss/resources",		// <1>
-															new SimpleBean("foo", 42)))							// <2>
-						.to("ogham-test@yopmail.com"));
-	}
+public class HtmlWithImagesAndCssTemplateSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template
+        service.send(new Email()
+                        .content(new MultiTemplateContent("classpath:/template/withImagesAndCss/resources",        // <1>
+                                                            new SimpleBean("foo", 42)))                            // <2>
+                        .to("ogham-test@yopmail.com"));
+    
 }
 ----
 <1> The path to the templates
 <2> The template context
 
-{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts=4[Source code of the sample]
 
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
 
 [source, html, role="highlight-lines:4"]
 ----
@@ -620,111 +620,111 @@ image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf templa
 <link href="classpath:/template/withImagesAndCss/css/external2.css" rel="stylesheet" />
 </head>
 <body id="body_2a02_0">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%">	
-		<tr>
-			<td id="td_2a02_0">
-				<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" id="table_2a02_0">
-					<tr>
-						<td align="center" bgcolor="#70bbd9" id="td_2a02_1">
-							<img src="classpath:/template/withImagesAndCss/images/h1.gif" alt="Creating Email Magic" width="300" height="230" />
-						</td>
-					</tr>
-					<tr>
-						<td bgcolor="#ffffff" id="td_2a02_2">
-							<table border="0" cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td id="td_2a02_3">
-										<b th:text="${name}">${name}</b>
-									</td>
-								</tr>
-								<tr>
-									<td id="td_2a02_4" class="paragraph" th:text="${value}">
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<table border="0" cellpadding="0" cellspacing="0" width="100%">
-											<tr>
-												<td width="260" valign="top">
-													<table border="0" cellpadding="0" cellspacing="0" width="100%">
-														<tr>
-															<td>
-																<img src="classpath:/template/withImagesAndCss/images/left.gif" alt="" width="100%" height="140" />
-															</td>
-														</tr>
-														<tr>
-															<td class="paragraph">
-																Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
-															</td>
-														</tr>
-													</table>
-												</td>
-												<td id="td_2a02_6" width="20">
-													&nbsp;
-												</td>
-												<td width="260" valign="top">
-													<table border="0" cellpadding="0" cellspacing="0" width="100%">
-														<tr>
-															<td>
-																<img src="classpath:/template/withImagesAndCss/images/right.gif" alt="" width="100%" height="140" />
-															</td>
-														</tr>
-														<tr>
-															<td class="paragraph">
-																Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td bgcolor="#ee4c50" id="td_2a02_8">
-							<table border="0" cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td id="td_2a02_9" class="white" width="75%">
-										&reg; Someone, somewhere 2013<br/>
-										<a href="#" id="a_2a02_0" class="white"><font color="#ffffff">Unsubscribe</font></a> to this newsletter instantly
-									</td>
-									<td align="right" width="25%">
-										<table border="0" cellpadding="0" cellspacing="0">
-											<tr>
-												<td class="link">
-													<a href="http://www.twitter.com/" class="white">
-														<img src="classpath:/template/withImagesAndCss/images/tw.gif" alt="Twitter" width="38" height="38" border="0" />
-													</a>
-												</td>
-												<td id="td_2a02_11" width="20">&nbsp;</td>
-												<td class="link">
-													<a href="http://www.twitter.com/" class="white">
-														<img src="classpath:/template/withImagesAndCss/images/fb.gif" alt="Facebook" width="38" height="38" border="0" />
-													</a>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">    
+        <tr>
+            <td id="td_2a02_0">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" id="table_2a02_0">
+                    <tr>
+                        <td align="center" bgcolor="#70bbd9" id="td_2a02_1">
+                            <img src="classpath:/template/withImagesAndCss/images/h1.gif" alt="Creating Email Magic" width="300" height="230" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#ffffff" id="td_2a02_2">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td id="td_2a02_3">
+                                        <b th:text="$name">$name</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td id="td_2a02_4" class="paragraph" th:text="$value">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td width="260" valign="top">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td>
+                                                                <img src="classpath:/template/withImagesAndCss/images/left.gif" alt="" width="100%" height="140" />
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="paragraph">
+                                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td id="td_2a02_6" width="20">
+                                                    &nbsp;
+                                                </td>
+                                                <td width="260" valign="top">
+                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr>
+                                                            <td>
+                                                                <img src="classpath:/template/withImagesAndCss/images/right.gif" alt="" width="100%" height="140" />
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="paragraph">
+                                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#ee4c50" id="td_2a02_8">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td id="td_2a02_9" class="white" width="75%">
+                                        &reg; Someone, somewhere 2013<br/>
+                                        <a href="#" id="a_2a02_0" class="white"><font color="#ffffff">Unsubscribe</font></a> to this newsletter instantly
+                                    </td>
+                                    <td align="right" width="25%">
+                                        <table border="0" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td class="link">
+                                                    <a href="http://www.twitter.com/" class="white">
+                                                        <img src="classpath:/template/withImagesAndCss/images/tw.gif" alt="Twitter" width="38" height="38" border="0" />
+                                                    </a>
+                                                </td>
+                                                <td id="td_2a02_11" width="20">&nbsp;</td>
+                                                <td class="link">
+                                                    <a href="http://www.twitter.com/" class="white">
+                                                        <img src="classpath:/template/withImagesAndCss/images/fb.gif" alt="Facebook" width="38" height="38" border="0" />
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
 ----
 
-{standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts=4[Source code of the HTML template]
 
 
 [role=tab]
-image:{images-dir}/icons/css.png[width=37,height=30] CSS and images
+image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS and images
 
 [source, html, role="highlight-lines:4"]
 ----
@@ -738,7 +738,7 @@ Images
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Sent HTML
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Sent HTML
 
 [source, html, role="highlight-lines:4"]
 ----
@@ -748,7 +748,7 @@ TODO: sent HTML
 
 
 [role=tab-container-end]
--
+_____
 
 ////
 TODO: image inlining
@@ -780,10 +780,10 @@ Sending an email with HTML content **and** text content might be really importan
 
 
 [role="tab-container no-max-height"]
-Sample using HTML and text
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-10 irrelevant-lines:1-10,12-21,24-31 highlight-lines:40"]
 ----
@@ -797,46 +797,46 @@ import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlAndTextSample {
-	private static String html = "<!DOCTYPE html>"
-								+ "<html>"
-								+ 	"<head><meta charset=\"utf-8\" /></head>"
-								+ 	"<body>"
-								+ 		"<h1 class=\"title\">Hello World</h1>"
-								+ 		"<p class=\"text\">Foo bar</p>"
-								+ 	"</body>"
-								+ "</html>";
-	private static String text = "Hello World !\r\n"
-								+ "Foo bar";
+public class HtmlAndTextSample 
+    private static String html = "<!DOCTYPE html>"
+                                + "<html>"
+                                +     "<head><meta charset=\"utf-8\" /></head>"
+                                +     "<body>"
+                                +         "<h1 class=\"title\">Hello World</h1>"
+                                +         "<p class=\"text\">Foo bar</p>"
+                                +     "</body>"
+                                + "</html>";
+    private static String text = "Hello World !\r\n"
+                                + "Foo bar";
 
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "<your server host>");
-		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(properties)
-					.and()
-				.build();
-		// send the email using the fluent API
-		service.send(new Email()
-						.subject("subject")
-						.content(new MultiContent(text, html))		// <1>
-						.to("ogham-test@yopmail.com"));
-	}
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "<your server host>");
+        properties.put("mail.smtp.port", "<your server port>");
+        properties.put("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using the fluent API
+        service.send(new Email()
+                        .subject("subject")
+                        .content(new MultiContent(text, html))        // <1>
+                        .to("ogham-test@yopmail.com"));
+    
 }
 ----
 <1> The content is using the type `MultiContent` with a text and HTML content
 
-{standard-email-samples-sourcedir-url}/HtmlAndTextSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts=4[Source code of the sample]
 
 [role=tab-container-end]
--
+_____
 
 Just switching to a `MultiContent` let you provide a main content and an alternative content.
 
@@ -844,10 +844,10 @@ Just switching to a `MultiContent` let you provide a main content and an alterna
 Obviously, you can use templates too. Even better, the following sample shows the shorthand version that avoids specifying twice the path to the templates (a single path without extension for both HTML and text template files).
 
 [role="tab-container no-max-height"]
-Sample using HTML and text templates
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:33,34"]
 ----
@@ -862,74 +862,74 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlAndTextTemplateSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(properties)
-					.and()
-				.build();
-		// send the email using fluent API
-		// Note that the extension of the template is not given. This version
-		// automatically takes the provided path and adds the '.html' extension
-		// for the HTML template and '.txt' for text template
-		service.send(new Email()
-						.subject("subject")
-						.content(new MultiTemplateContent("classpath:/template/thymeleaf/simple", 		// <1>
-															new SimpleBean("foo", 42)))					// <2>
-						.to("ogham-test@yopmail.com"));
-	}
+public class HtmlAndTextTemplateSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt' for text template
+        service.send(new Email()
+                        .subject("subject")
+                        .content(new MultiTemplateContent("classpath:/template/thymeleaf/simple",         // <1>
+                                                            new SimpleBean("foo", 42)))                    // <2>
+                        .to("ogham-test@yopmail.com"));
+    
 }
 ----
 <1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
-{standard-email-samples-sourcedir-url}/HtmlAndTextTemplateSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts=4[Source code of the sample]
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-text.jpg[width=30,height=30] Text template
+image:src/docs/resources/images/icons/thymeleaf-text.jpg[width=30,height=30] Text template
 
 .Text template located in `src/main/resources/template/thymeleaf/simple.txt`
 [source, txt]
 ----
 <html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">
-[[${name}]] [[${value}]]
+[[$name]] [[$value]]
 </html>
 ----
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts=4[Source code of the text template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=4[Source code of the text template]
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] HTML template
+image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] HTML template
 
 .HTML template located at `src/main/resources/template/thymeleaf/simple.html`
 [source, html]
 ----
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">				<!--1-->
+<html xmlns:th="http://www.thymeleaf.org">                <!--1-->
     <head>
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="${name}"></h1>		<!--2-->
-        <p class="text" th:text="${value}"></p>			<!--3-->
+        <h1 class="title" th:text="$name"></h1>        <!--2-->
+        <p class="text" th:text="$value"></p>            <!--3-->
     </body>
 </html>
 ----
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
 
 [role=tab-container-end]
--
+_____
 
 Ogham will automatically determine file extensions to append according to the kind of message you are sending. For email, Ogham will search a HTML and a text file by default:
 
@@ -945,10 +945,10 @@ It is possible to mix templates in the same application. Even better, you can us
 
 
 [role="tab-container no-max-height"]
-Sample using HTML with ThymeLeaf and text with FreeMarker
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:33,34"]
 ----
@@ -963,52 +963,52 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlAndTextMixedTemplateEnginesSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.host", "<your server host>");
-		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(properties)
-					.and()
-				.build();
-		// send the email using fluent API
-		// Note that the extension of the template is not given. This version
-		// automatically takes the provided path and adds the '.html' extension
-		// for the HTML template and '.txt.ftl' for text template
-		service.send(new Email()
-						.subject("subject")
-						.content(new MultiTemplateContent("classpath:/template/mixed/simple", 		// <1>
-															new SimpleBean("foo", 42)))				// <2>
-						.to("ogham-test@yopmail.com"));
-	}
+public class HtmlAndTextMixedTemplateEnginesSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template
+        service.send(new Email()
+                        .subject("subject")
+                        .content(new MultiTemplateContent("classpath:/template/mixed/simple",         // <1>
+                                                            new SimpleBean("foo", 42)))                // <2>
+                        .to("ogham-test@yopmail.com"));
+    
 }
 ----
 <1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
-{standard-email-samples-sourcedir-url}/HtmlAndTextMixedTemplateEnginesSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=4[Source code of the sample]
 
 [role=tab]
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
 
 .Text template located in `src/main/resources/template/mixed/simple.txt.ftl`
 [source, txt]
 ----
-${name} ${value}
+$name $value
 ----
 
-{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts=4[Source code of the text template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=4[Source code of the text template]
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
 
 .HTML template located at `src/main/resources/template/mixed/simple.html`
 [source, html]
@@ -1019,16 +1019,16 @@ image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="${name}"></h1>
-        <p class="text" th:text="${value}"></p>
+        <h1 class="title" th:text="$name"></h1>
+        <p class="text" th:text="$value"></p>
     </body>
 </html>
 ----
 
-{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=4[Source code of the HTML template]
 
 [role=tab-container-end]
--
+_____
 
 You can notice that the Java code has not changed at all (only the path for the sample). The aim is to use the template engine that best suits your needs.
 
@@ -1036,10 +1036,10 @@ You can notice that the Java code has not changed at all (only the path for the 
 
 
 [role="tab-container no-max-height"]
-Sample with attachment
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:32-34"]
 ----
@@ -1055,42 +1055,42 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
-public class WithAttachmentSample {
-	public static void main(String[] args) throws MessagingException, IOException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.put("mail.smtp.host", "<your server host>");
-		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("ogham.email.from", "<email address to display for the sender user>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(properties)
-					.and()
-				.build();
-		// send the email using fluent API
-		service.send(new Email()
-						.subject("subject")
-						.content("content of the email")
-						.to("ogham-test@yopmail.com")
-						.attach(new Attachment("classpath:/attachment/test.pdf"))			// <1>
-						.attach(new Attachment("from-stream.pdf", loadInputStream())));		// <2>
-	}
+public class WithAttachmentSample 
+    public static void main(String[] args) throws MessagingException, IOException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "<your server host>");
+        properties.put("mail.smtp.port", "<your server port>");
+        properties.put("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        service.send(new Email()
+                        .subject("subject")
+                        .content("content of the email")
+                        .to("ogham-test@yopmail.com")
+                        .attach(new Attachment("classpath:/attachment/test.pdf"))            // <1>
+                        .attach(new Attachment("from-stream.pdf", loadInputStream())));        // <2>
+    
 
-	private static InputStream loadInputStream() {
-		return WithAttachmentSample.class.getResourceAsStream("/attachment/test.pdf");
-	}
+    private static InputStream loadInputStream() 
+        return WithAttachmentSample.class.getResourceAsStream("/attachment/test.pdf");
+    
 }
 ----
 <1> Attach a PDF file that exists in the classpath to the email
 <2> Use an `InputStream` and name the attachment
 
-{standard-email-samples-sourcedir-url}/WithAttachmentSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts=4[Source code of the sample]
 
 [role=tab-container-end]
--
+_____
 
 Attaching a file the the email is quite simple. You just need to provide the path to the file. The file is loaded from classpath but could also be loaded from file system or anywhere else (see <<resource-resolution, resource resolution section>>). In case you are using a file, the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
 
@@ -1132,10 +1132,10 @@ TODO: ssl
 This sample shows how to send a basic email through GMail. Sending through GMail is simply using username/password authentication and enabling SSL.
 
 [role=tab-container no-max-height]
-GMail SSL sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:-7 irrelevant-lines:-7 highlight-lines:16-22"]
 ----
@@ -1146,30 +1146,30 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class GmailSSLBasicSample {
+public class GmailSSLBasicSample 
 
-	public static void main(String[] args) throws MessagingException {
-		// Instantiate the messaging service using default behavior and
-		// provided properties (properties can be externalized)
-		MessagingService service = MessagingBuilder.standard()										// <1>
-			.environment()
-				.properties()																		// <2>
-					.set("mail.smtp.auth", "true")													// <3>
-					.set("mail.smtp.host", "smtp.gmail.com")										// <4>
-					.set("mail.smtp.port", "465")													// <5>
-					.set("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory")			// <6>
-					.set("ogham.email.javamail.authenticator.username", "<your gmail username>")	// <7>
-					.set("ogham.email.javamail.authenticator.password", "<your gmail password>")	// <8>
-					.set("ogham.email.from", "<your gmail address>")								// <9>
-					.and()
-				.and()
-			.build();
-		// send the mail using fluent API
-		service.send(new Email()																	// <10>
-						.subject("subject")
-						.content("email content")
-						.to("ogham-test@yopmail.com"));
-	}
+    public static void main(String[] args) throws MessagingException {
+        // Instantiate the messaging service using default behavior and
+        // provided properties (properties can be externalized)
+        MessagingService service = MessagingBuilder.standard()                                        // <1>
+            .environment()
+                .properties()                                                                        // <2>
+                    .set("mail.smtp.auth", "true")                                                    // <3>
+                    .set("mail.smtp.host", "smtp.gmail.com")                                        // <4>
+                    .set("mail.smtp.port", "465")                                                    // <5>
+                    .set("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory")            // <6>
+                    .set("ogham.email.javamail.authenticator.username", "<your gmail username>")    // <7>
+                    .set("ogham.email.javamail.authenticator.password", "<your gmail password>")    // <8>
+                    .set("ogham.email.from", "<your gmail address>")                                // <9>
+                    .and()
+                .and()
+            .build();
+        // send the mail using fluent API
+        service.send(new Email()                                                                    // <10>
+                        .subject("subject")
+                        .content("email content")
+                        .to("ogham-test@yopmail.com"));
+    
 }
 ----
 <1> Use the standard builder to configure and instantiate the MessagingService as usual
@@ -1183,10 +1183,10 @@ public class GmailSSLBasicSample {
 <9> Provide your GMail email address
 <10> Send the email
 
-{standard-email-samples-sourcedir-url}/gmail/GmailSSLBasicSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/gmail/GmailSSLBasicSample.java?ts=4[Source code of the sample]
 
 [role=tab-container-end]
--
+_____
 
 
 Using GMail server is quite easy. This samples shows several things:
@@ -1209,10 +1209,10 @@ TODO: configuration de l'authent pour application
 Sending an email using SendGrid HTTP API is exactly the same in term of code. The only difference is the configuration of Ogham.
 
 [role="tab-container no-max-height"]
-Sample using SendGrid
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-43 irrelevant-lines:1-43 highlight-lines:52"]
 ----
@@ -1259,49 +1259,49 @@ import fr.sii.ogham.email.message.Email;
  * @author Aurélien Baudet
  *
  */
-public class SendGridFullSample {
-	public static void main(String[] args) throws MessagingException, IOException {
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties("/sendgrid-template.properties")									// <1>
-					.properties()
-						.set("ogham.email.sengrid.api-key", "<your sendgrid API key>")				// <2>
-						.and()
-					.and()
-				.build();
-		// send the email using fluent API
-		service.send(new Email()
-						.content(new MultiTemplateContent("full", new SimpleBean("foo", 42)))		// <3>
-						.to("ogham-test@yopmail.com")
-						.attach(new Attachment("/attachment/test.pdf")));
-	}
+public class SendGridFullSample 
+    public static void main(String[] args) throws MessagingException, IOException {
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties("/sendgrid-template.properties")                                    // <1>
+                    .properties()
+                        .set("ogham.email.sengrid.api-key", "<your sendgrid API key>")                // <2>
+                        .and()
+                    .and()
+                .build();
+        // send the email using fluent API
+        service.send(new Email()
+                        .content(new MultiTemplateContent("full", new SimpleBean("foo", 42)))        // <3>
+                        .to("ogham-test@yopmail.com")
+                        .attach(new Attachment("/attachment/test.pdf")));
+    
 
 }
 ----
 <1> Load properties from a file that is in the classpath.
 <2> Use an `InputStream` and name the attachment
 
-{standard-email-samples-sourcedir-url}/SendGridFullSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/SendGridFullSample.java?ts=4[Source code of the sample]
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] Properties
 
 [source, python]
 ----
 # ogham additional properties
-ogham.email.from=<sender email address>								# <1>
-ogham.email.template.path-prefix=/template/thymeleaf/email/			# <2>
+ogham.email.from=<sender email address>                                # <1>
+ogham.email.template.path-prefix=/template/thymeleaf/email/            # <2>
 ----
 <1> The sender email address
 <2> A prefix for all template paths. In this example, the template paths are `/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt`.
 
-{standard-samples-resourcesdir-url}/sendgrid-template.properties?ts=4[Source code of the configuration file]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/sendgrid-template.properties?ts=4[Source code of the configuration file]
 
 [role=tab-container-end]
--
+_____
 
 
 
@@ -1313,7 +1313,7 @@ TODO: address format "address <personal>"
 [[sms-usage]]
 === Send SMS
 
-The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
+The samples are available in the https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS.
 
@@ -1325,10 +1325,10 @@ See <<ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
 This sample defines two properties mandatory (system ID and password) by this protocol in order to use it.
 
 [role="tab-container no-max-height"]
-Simple sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -1341,28 +1341,28 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class BasicSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("ogham.sms.smpp.host", "<your server host>");						// <1>
-		properties.setProperty("ogham.sms.smpp.port", "<your server port>");						// <2>
-		properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");				// <3>
-		properties.setProperty("ogham.sms.smpp.password", "<your server password>");				// <4>
-		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");		// <5>
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()										// <6>
-				.environment()
-					.properties(properties)															// <7>
-					.and()
-				.build();																			// <8>
-		// send the sms using fluent API
-		service.send(new Sms()																		// <9>
-						.content("sms content")
-						.to("+33752962193"));
-	}
+public class BasicSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("ogham.sms.smpp.host", "<your server host>");                        // <1>
+        properties.setProperty("ogham.sms.smpp.port", "<your server port>");                        // <2>
+        properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");                // <3>
+        properties.setProperty("ogham.sms.smpp.password", "<your server password>");                // <4>
+        properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");        // <5>
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()                                        // <6>
+                .environment()
+                    .properties(properties)                                                            // <7>
+                    .and()
+                .build();                                                                            // <8>
+        // send the sms using fluent API
+        service.send(new Sms()                                                                        // <9>
+                        .content("sms content")
+                        .to("+33752962193"));
+    
 
 }
 ----
@@ -1376,10 +1376,10 @@ public class BasicSample {
 <8> Create a MessagingService instance
 <9> Send a SMS with a simple message. The sender phone number is automatically set using `ogham.sms.from` property
 
-{standard-sms-samples-sourcedir-url}/BasicSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
--
+_____
 
 The construction of the SMS is done using a fluent API in order to chain calls and to have a more readable code.
 
@@ -1391,10 +1391,10 @@ Properties are directly provided in the code. You can instead <<properties-handl
 This sample shows how to send a SMS with a content following a template engine language.
 
 [role="tab-container no-max-height"]
-Sample with template
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-23 highlight-lines:31,32"]
 ----
@@ -1409,29 +1409,29 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class TemplateSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("ogham.sms.smpp.host", "<your server host>");
-		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
-		properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");
-		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
-		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()										// <1>
-				.environment()
-					.properties(properties)															// <2>
-					.and()
-				.build();																			// <3>
-		// send the sms using fluent API
-		service.send(new Sms()																		// <4>
-						.content(new TemplateContent("classpath:/template/thymeleaf/simple.txt", 	// <5>
-													new SimpleBean("foo", 42)))						// <6>
-						.to("+33752962193"));
-	}
+public class TemplateSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("ogham.sms.smpp.host", "<your server host>");
+        properties.setProperty("ogham.sms.smpp.port", "<your server port>");
+        properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");
+        properties.setProperty("ogham.sms.smpp.password", "<your server password>");
+        properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()                                        // <1>
+                .environment()
+                    .properties(properties)                                                            // <2>
+                    .and()
+                .build();                                                                            // <3>
+        // send the sms using fluent API
+        service.send(new Sms()                                                                        // <4>
+                        .content(new TemplateContent("classpath:/template/thymeleaf/simple.txt",     // <5>
+                                                    new SimpleBean("foo", 42)))                        // <6>
+                        .to("+33752962193"));
+    
 
 }
 ----
@@ -1442,22 +1442,22 @@ public class TemplateSample {
 <5> Indicate the path to the template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-{standard-sms-samples-sourcedir-url}/TemplateSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java?ts=4[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
+image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
 
 [source, html]
 ----
 <html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">
-[[${name}]] [[${value}]]
+[[$name]] [[$value]]
 </html>
 ----
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts=4[Source code of the template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=4[Source code of the template]
 
 [role=tab-container-end]
--
+_____
 
 
 Using a template is straightforward. Instead of providing a string content, you provide a `TemplateContent`.
@@ -1476,10 +1476,10 @@ The variables are any object you are using in your application. No need to conve
 As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters if character encoding is using 7bits. Using a 8-bit character encoding decreases the limit to 140 characters and 70 characters for a 16-bit encoding. If needed, the library will split your messages into several parts the right way to be recomposed by clients later (according to the message encoding). Therefore, you don't need to handle the split of messages in your code:
 
 [role="tab-container no-max-height"]
-Long SMS Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,12-21 highlight-lines:27-30"]
 ----
@@ -1492,47 +1492,47 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class LongMessageSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("ogham.sms.smpp.host", "<your server host>");
-		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
-		properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");
-		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
-		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(properties)
-					.and()
-				.build();
-		String longMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
-							+ "minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehender"
-							+ "it in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui o"
-							+ "fficia deserunt mollit anim id est laborum.";
-		// send the sms using fluent API
-		service.send(new Sms()
-						.content(longMessage)
-						.to("+33752962193"));
-	}
+public class LongMessageSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("ogham.sms.smpp.host", "<your server host>");
+        properties.setProperty("ogham.sms.smpp.port", "<your server port>");
+        properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");
+        properties.setProperty("ogham.sms.smpp.password", "<your server password>");
+        properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        String longMessage = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad "
+                            + "minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehender"
+                            + "it in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui o"
+                            + "fficia deserunt mollit anim id est laborum.";
+        // send the sms using fluent API
+        service.send(new Sms()
+                        .content(longMessage)
+                        .to("+33752962193"));
+    
 
 }
 ----
 
-{standard-sms-samples-sourcedir-url}/LongMessageSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
--
+_____
 
 
 [NOTE]
-======
+====
 Larger content (concatenated SMS, multipart or segmented SMS, or "long SMS") can be sent using multiple messages, in which case each message will start with a User Data Header (UDH) containing segmentation information. Since UDH is part of the payload, the number of available characters per segment is lower: 153 for 7-bit encoding, 134 for 8-bit encoding and 67 for 16-bit encoding. The receiving handset is then responsible for reassembling the message and presenting it to the user as one long message. While the standard theoretically permits up to 255 segments, 6 to 8 segment messages are the practical maximum.
-======
+====
 
 NOTE: By default, Ogham sends the SMS using 8-bit encoding.
 
@@ -1546,10 +1546,10 @@ TODO: explain how to use different encoding
 You can send SMS using https://www.smsglobal.com/[SmsGlobal] SMPP server:
 
 [role="tab-container no-max-height"]
-SmsGlobal sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-9 highlight-lines:15-18"]
 ----
@@ -1562,28 +1562,28 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class BasicSmsglobalSmppSample {
-	public static void main(String[] args) throws MessagingException {
-		// configure properties (could be stored in a properties file or defined
-		// in System properties)
-		Properties properties = new Properties();
-		properties.setProperty("ogham.sms.smpp.host", "smsglobal.com");											// <1>
-		properties.setProperty("ogham.sms.smpp.port", "1775");													// <2>
-		properties.setProperty("ogham.sms.smpp.system-id", "<your smsglobal username available in API keys>");	// <3>
-		properties.setProperty("ogham.sms.smpp.password", "<your smsglobal password available in API keys>");	// <4>
-		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");					// <5>
-		// Instantiate the messaging service using default behavior and
-		// provided properties
-		MessagingService service = MessagingBuilder.standard()													// <6>
-				.environment()
-					.properties(properties)																		// <7>
-					.and()
-				.build();																						// <8>
-		// send the sms using fluent API
-		service.send(new Sms()																					// <9>
-						.content("sms content")
-						.to("+33752962193"));
-	}
+public class BasicSmsglobalSmppSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("ogham.sms.smpp.host", "smsglobal.com");                                            // <1>
+        properties.setProperty("ogham.sms.smpp.port", "1775");                                                    // <2>
+        properties.setProperty("ogham.sms.smpp.system-id", "<your smsglobal username available in API keys>");    // <3>
+        properties.setProperty("ogham.sms.smpp.password", "<your smsglobal password available in API keys>");    // <4>
+        properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");                    // <5>
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()                                                    // <6>
+                .environment()
+                    .properties(properties)                                                                        // <7>
+                    .and()
+                .build();                                                                                        // <8>
+        // send the sms using fluent API
+        service.send(new Sms()                                                                                    // <9>
+                        .content("sms content")
+                        .to("+33752962193"));
+    
 
 }
 ----
@@ -1597,11 +1597,11 @@ public class BasicSmsglobalSmppSample {
 <8> Instantiate the service as usual
 <9> Send the SMS as usual
 
-{standard-sms-samples-sourcedir-url}/smsglobal/BasicSmsglobalSmppSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/smsglobal/BasicSmsglobalSmppSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
--
+_____
 
 ==== Sending SMS through OVH
 
@@ -1743,22 +1743,22 @@ TODO: alias + exemples pour montrer cas d'usages (mixer fichier/classpath + swit
 Property configuration is a good way to separate code from configuration. Ogham allows you to configure values using builders. For example, you can configure the SMTP host and port like this:
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, highlight="4-5"]
 ----
 MessagingBuilder.standard()
-	.email()
-		.sender(JavaMailBuilder.class)
-			.host("localhost")
-			.port(25);
+    .email()
+        .sender(JavaMailBuilder.class)
+            .host("localhost")
+            .port(25);
 ----
 
 [role=tab-container-end]
--
+_____
 
 
 However, when using a library, it is simpler that this library provides a way to configure some values without the need of writing code to configure it. The integration is easier. The configuration should also be done in several ways to let the developer choose what fits his needs. 
@@ -1773,10 +1773,10 @@ You can use configuration properties that are defined several ways:
 * define properties directly in code in a fluent way
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -1789,22 +1789,22 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 
-public class PropertiesSample {
-	public static void main(String[] args) throws MessagingException, IOException {
-		Properties props = new Properties();
-		props.setProperty("ogham.email.from", "hello@world.com");
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(props)										// <1>
-					.properties("classpath:email.properties")				// <2>
-					.properties("file:/etc/app/email.properties")			// <3>
-					.properties()
-						.set("mail.smtp.port", "10")						// <4>
-						.and()
-					.systemProperties()										// <5>
-					.and()
-				.build();
-	}
+public class PropertiesSample 
+    public static void main(String[] args) throws MessagingException, IOException {
+        Properties props = new Properties();
+        props.setProperty("ogham.email.from", "hello@world.com");
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(props)                                        // <1>
+                    .properties("classpath:email.properties")                // <2>
+                    .properties("file:/etc/app/email.properties")            // <3>
+                    .properties()
+                        .set("mail.smtp.port", "10")                        // <4>
+                        .and()
+                    .systemProperties()                                        // <5>
+                    .and()
+                .build();
+    
 
 }
 ----
@@ -1814,10 +1814,10 @@ public class PropertiesSample {
 <4> Directly set a property with its value in a fluent way
 <5> Use standard `System.getProperties()`
 
-{standard-email-samples-sourcedir-url}/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
--
+_____
 
 This sample shows that configuration may come from several sources (code, shared properties, file inside the application, file outside the application and from system properties).
  
@@ -1835,7 +1835,7 @@ By default (using `MessagingBuilder.standard()` or `MessagingBuilder.minimal()`)
 * `.properties(new Properties())` or `.properties().set(...)`
 * `.properties("classpath:...")`
 
-==== Why this order ?
+===== Why this order ?
 
 Configuration outside the application should override configuration that is inside the application. This is necessary if you want to be able to deploy the same application in different environments without changing code or needing to rebuild with a different profile.
 
@@ -1845,10 +1845,10 @@ For configuration inside the application, code has higher priority than configur
 
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -1861,22 +1861,22 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 
-public class PropertiesSample {
-	public static void main(String[] args) throws MessagingException, IOException {
-		Properties props = new Properties();
-		props.setProperty("ogham.email.from", "hello@world.com");
-		MessagingService service = MessagingBuilder.standard()
-				.environment()
-					.properties(props)										// <1>
-					.properties("classpath:email.properties")				// <2>
-					.properties("file:/etc/app/email.properties")			// <3>
-					.properties()
-						.set("mail.smtp.port", "10")						// <4>
-						.and()
-					.systemProperties()										// <5>
-					.and()
-				.build();
-	}
+public class PropertiesSample 
+    public static void main(String[] args) throws MessagingException, IOException {
+        Properties props = new Properties();
+        props.setProperty("ogham.email.from", "hello@world.com");
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(props)                                        // <1>
+                    .properties("classpath:email.properties")                // <2>
+                    .properties("file:/etc/app/email.properties")            // <3>
+                    .properties()
+                        .set("mail.smtp.port", "10")                        // <4>
+                        .and()
+                    .systemProperties()                                        // <5>
+                    .and()
+                .build();
+    
 
 }
 ----
@@ -1887,12 +1887,12 @@ public class PropertiesSample {
 <5> Use standard `System.getProperties()`
 
 
-{standard-email-samples-sourcedir-url}/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
 
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] classpath:email.properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] classpath:email.properties
 
 [source, python]
 ----
@@ -1902,7 +1902,7 @@ ogham.email.from=foo@test.com
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] file:/etc/app/email.properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] file:/etc/app/email.properties
 
 [source, python]
 ----
@@ -1938,32 +1938,32 @@ Gives the following property values:
 |===
 
 [role=tab-container-end]
--
+_____
 
-NOTE: See the {sourcedir-url}/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts=4[test that ensures this order].
+NOTE: See the https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts=4[test that ensures this order].
 
-==== What happens if there are several values for the same property and for the same source ?
+===== What happens if there are several values for the same property and for the same source ?
 
 For example, if you use two configuration files defined in the classpath:
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java]
 ----
-	MessagingService service = MessagingBuilder.standard()
-			.environment()
-				.properties("classpath:common.properties")
-				.properties("classpath:email.properties")
-				.and()
-			.build();
+    MessagingService service = MessagingBuilder.standard()
+            .environment()
+                .properties("classpath:common.properties")
+                .properties("classpath:email.properties")
+                .and()
+            .build();
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] common.properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] common.properties
 
 [source, python]
 ----
@@ -1972,7 +1972,7 @@ mail.smtp.port=25
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] email.properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] email.properties
 
 [source, python]
 ----
@@ -1996,33 +1996,33 @@ Result
 |===
 
 [role=tab-container-end]
--
+_____
 
 For the same level of priority, this is the declaration order that prevails.
 
 
-==== How to use custom priorities ?
+===== How to use custom priorities ?
 
 If you want to use a different priority order, you can explicitly register properties with a custom priority:
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java]
 ----
-	MessagingService service = MessagingBuilder.standard()
-			.environment()
-				.properties("classpath:common.properties", 2)
-				.properties("classpath:email.properties", 1)
-				.and()
-			.build();
+    MessagingService service = MessagingBuilder.standard()
+            .environment()
+                .properties("classpath:common.properties", 2)
+                .properties("classpath:email.properties", 1)
+                .and()
+            .build();
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] common.properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] common.properties
 
 [source, python]
 ----
@@ -2031,7 +2031,7 @@ mail.smtp.port=25
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] email.properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] email.properties
 
 [source, python]
 ----
@@ -2055,12 +2055,12 @@ Result
 |===
 
 [role=tab-container-end]
--
+_____
 
 You can notice that the result is now different than using default priorities.
 
 [NOTE]
-======
+====
 Default priority values are:
 
 * Using `.systemProperties()`: 100000
@@ -2117,10 +2117,10 @@ In addition to standalone behaviors, Ogham also supports Spring Boot modules and
 
 [NOTE]
 .SendGrid auto-configuration 
-=====
+====
 Including all Ogham features adds `sendgrid-java` dependency. This means that Spring Boot auto-configuration for SendGrid automatically defines the `sendGrid` bean instance if `spring.sendgrid.api-key` property is defined. In this case, the `sendGrid` bean is always used by Ogham.
 Before Spring Boot 2.0.0, `spring.sendgrid.username` and `spring.sendgrid.password` can be provided instead of `spring.sendgrid.api-key`.
-=====
+====
 
 
 
@@ -2139,10 +2139,10 @@ The following sample shows a Spring Web that exposes one simple endpoint for sen
 
 
 [role="tab-container no-max-height"]
-Email sample with Spring Boot
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19 highlight-lines:34,35,41-44"]
 ----
@@ -2166,32 +2166,32 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
 @SpringBootApplication
-@PropertySource("application-email-template.properties")	// just needed to be able to run the sample
-public class ThymeleafHtmlAndFreemarkerTextSample {
+@PropertySource("application-email-template.properties")    // just needed to be able to run the sample
+public class ThymeleafHtmlAndFreemarkerTextSample 
 
-	public static void main(String[] args) throws MessagingException {
-		SpringApplication.run(ThymeleafHtmlAndFreemarkerTextSample.class, args);
-	}
-	
-	@RestController
-	public static class EmailController {
-		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-email-template.properties
-		// The configuration files are stored into src/main/resources
-		// The configuration file set the prefix for templates into email folder available in src/main/resources
-		@Autowired
-		MessagingService messagingService;															// <1>
-		
-		@RequestMapping(value="api/email/multitemplate/mixed", method=RequestMethod.POST)
-		@ResponseStatus(HttpStatus.CREATED)
-		public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
-			// using fluent API
-			messagingService.send(new Email()														// <2>
-									.content(new MultiTemplateContent("mixed", 						// <3>
-																	new SimpleBean(name, value)))	// <4>
-									.to(to));														// <5>
-		}
-	}
+    public static void main(String[] args) throws MessagingException {
+        SpringApplication.run(ThymeleafHtmlAndFreemarkerTextSample.class, args);
+    
+    
+    @RestController
+    public static class EmailController 
+        // Messaging service is automatically created using Spring Boot features
+        // The configuration can be set into application-email-template.properties
+        // The configuration files are stored into src/main/resources
+        // The configuration file set the prefix for templates into email folder available in src/main/resources
+        @Autowired
+        MessagingService messagingService;                                                            // <1>
+        
+        @RequestMapping(value="api/email/multitemplate/mixed", method=RequestMethod.POST)
+        @ResponseStatus(HttpStatus.CREATED)
+        public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
+            // using fluent API
+            messagingService.send(new Email()                                                        // <2>
+                                    .content(new MultiTemplateContent("mixed",                         // <3>
+                                                                    new SimpleBean(name, value)))    // <4>
+                                    .to(to));                                                        // <5>
+        
+    }
 
 }
 ----
@@ -2201,22 +2201,22 @@ public class ThymeleafHtmlAndFreemarkerTextSample {
 <4> Use any Java object for evaluating template variables
 <5> The sender email address that comes from request parameter
 
-{spring-email-samples-sourcedir-url}/ThymeleafHtmlAndFreemarkerTextSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/ThymeleafHtmlAndFreemarkerTextSample.java?ts=4[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
 
 [source, html]
 ----
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">				<!--1-->
+<html xmlns:th="http://www.thymeleaf.org">                <!--1-->
     <head>
-        <title>Subject of the mail</title>				<!--2-->
+        <title>Subject of the mail</title>                <!--2-->
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="${name}"></h1>		<!--3-->
-        <p class="text" th:text="${value}"></p>			<!--4-->
+        <h1 class="title" th:text="$name"></h1>        <!--3-->
+        <p class="text" th:text="$value"></p>            <!--4-->
     </body>
 </html>
 ----
@@ -2225,31 +2225,31 @@ image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
 <3> Evaluate the `name` attribute value of `SimpleBean` in the template
 <4> Evaluate the `value` attribute value of `SimpleBean` in the template
 
-{spring-samples-resourcesdir-url}/email/mixed.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/src/main/resources/email/mixed.html?ts=4[Source code of the HTML template]
 
 [role=tab]
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
 
 [source, txt]
 ----
-${name} ${value}
+$name $value
 ----
 
-{spring-samples-resourcesdir-url}/email/mixed.txt.ftl?ts=4[Source code of the text template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/src/main/resources/email/mixed.txt.ftl?ts=4[Source code of the text template]
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Spring properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] Spring properties
 
 [source, python]
 ----
 # configuration for email
-spring.mail.host=<your server host>		# <1>
-spring.mail.port=<your server port>		# <2>
-ogham.email.from=<your gmail address>	# <3>
+spring.mail.host=<your server host>        # <1>
+spring.mail.port=<your server port>        # <2>
+ogham.email.from=<your gmail address>    # <3>
 # configuration for template engines
-spring.thymeleaf.prefix=/email/			# <4>
-spring.freemarker.prefix=/email/		# <5>
+spring.thymeleaf.prefix=/email/            # <4>
+spring.freemarker.prefix=/email/        # <5>
 ----
 <1> The SMTP host using Spring property
 <2> The SMTP port using Spring property
@@ -2257,10 +2257,10 @@ spring.freemarker.prefix=/email/		# <5>
 <4> The path prefix for ThymeLeaf templates
 <5> The path prefix for FreeMarker templates
 
-{spring-samples-resourcesdir-url}/application-email-template.properties?ts=4[Source code of the properties]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/src/main/resources/application-email-template.properties?ts=4[Source code of the properties]
 
 [role=tab-container-end]
--
+_____
 
 ==== Send SMS
 
@@ -2276,10 +2276,10 @@ The following sample shows a Spring Web that exposes one simple endpoint for sen
 
 
 [role="tab-container no-max-height"]
-SMS Sample with Spring Boot
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19 highlight-lines:33,34,40-43"]
 ----
@@ -2303,31 +2303,31 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
 @SpringBootApplication
-@PropertySource("application-sms-template.properties")	// just needed to be able to run the sample
-public class TemplateSample {
+@PropertySource("application-sms-template.properties")    // just needed to be able to run the sample
+public class TemplateSample 
 
-	public static void main(String[] args) throws MessagingException {
-		SpringApplication.run(TemplateSample.class, args);
-	}
-	
-	@RestController
-	public static class SmsController {
-		// Messaging service is automatically created using Spring Boot features
-		// The configuration can be set into application-sms-template.properties
-		// The configuration files are stored into src/main/resources
-		@Autowired
-		MessagingService messagingService;														// <1>
-		
-		@RequestMapping(value="api/sms/template", method=RequestMethod.POST)
-		@ResponseStatus(HttpStatus.CREATED)
-		public void sendSms(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
-			// send the SMS using fluent API
-			messagingService.send(new Sms()														// <2>
-									.content(new TemplateContent("register",	 				// <3>
-																new SimpleBean(name, value)))	// <4>
-									.to(to));													// <5>
-		}
-	}
+    public static void main(String[] args) throws MessagingException {
+        SpringApplication.run(TemplateSample.class, args);
+    
+    
+    @RestController
+    public static class SmsController 
+        // Messaging service is automatically created using Spring Boot features
+        // The configuration can be set into application-sms-template.properties
+        // The configuration files are stored into src/main/resources
+        @Autowired
+        MessagingService messagingService;                                                        // <1>
+        
+        @RequestMapping(value="api/sms/template", method=RequestMethod.POST)
+        @ResponseStatus(HttpStatus.CREATED)
+        public void sendSms(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
+            // send the SMS using fluent API
+            messagingService.send(new Sms()                                                        // <2>
+                                    .content(new TemplateContent("register",                     // <3>
+                                                                new SimpleBean(name, value)))    // <4>
+                                    .to(to));                                                    // <5>
+        
+    }
 
 }
 ----
@@ -2337,32 +2337,32 @@ public class TemplateSample {
 <4> Use any Java object for evaluating template variables
 <5> The sender phone number that comes from request parameter
 
-{spring-sms-samples-sourcedir-url}/TemplateSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/TemplateSample.java?ts=4[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Template
+image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Template
 
 [source]
 ----
-Hello ${name}, the confirmation code is ${value}
+Hello $name, the confirmation code is $value
 ----
 
-{spring-samples-resourcesdir-url}/sms/register.txt.ftl?ts=4[Source code of the template]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/src/main/resources/sms/register.txt.ftl?ts=4[Source code of the template]
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Spring properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] Spring properties
 
 [source, python]
 ----
 # ogham configuration for SMS
-ogham.sms.smpp.host=<your server host>						# <1>
-ogham.sms.smpp.port=<your server port>						# <2>
-ogham.sms.smpp.system-id=<your server system ID>			# <3>
-ogham.sms.smpp.password=<your server password>				# <4>
-ogham.sms.from=<phone number to display for the sender>		# <5>
-ogham.sms.template.path-prefix=/sms/						# <6>
-ogham.sms.template.path-suffix=.txt.ftl						# <7>
+ogham.sms.smpp.host=<your server host>                        # <1>
+ogham.sms.smpp.port=<your server port>                        # <2>
+ogham.sms.smpp.system-id=<your server system ID>            # <3>
+ogham.sms.smpp.password=<your server password>                # <4>
+ogham.sms.from=<phone number to display for the sender>        # <5>
+ogham.sms.template.path-prefix=/sms/                        # <6>
+ogham.sms.template.path-suffix=.txt.ftl                        # <7>
 ----
 <1> The SMPP host
 <2> The SMPP port
@@ -2372,10 +2372,10 @@ ogham.sms.template.path-suffix=.txt.ftl						# <7>
 <6> The path prefix for SMS templates
 <7> The path suffix for SMS templates (FreeMarker extension in this case)
 
-{spring-samples-resourcesdir-url}/application-sms-template.properties?ts=4[Source code of the properties]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/src/main/resources/application-sms-template.properties?ts=4[Source code of the properties]
 
 [role=tab-container-end]
--
+_____
 
 
 
@@ -2388,33 +2388,33 @@ ogham.sms.template.path-suffix=.txt.ftl						# <7>
 
 
 [role=tab-container]
-Include Ogham test dependency
+_____
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 
 [source, xml, subs=attributes+]
 ----
 <dependency>
-	<groupId>fr.sii.ogham</groupId>
-	<artifactId>ogham-test-utils</artifactId>
-	<version>{ogham-version}</version>
-	<scope>test</scope>
+    <groupId>fr.sii.ogham</groupId>
+    <artifactId>ogham-test-utils</artifactId>
+    <version>ogham-version</version>
+    <scope>test</scope>
 </dependency>
 ----
 
-{standard-samples-url}/pom.xml?ts=4[View code of an example pom.xml]
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/pom.xml?ts=4[View code of an example pom.xml]
 
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,height=30]
 
 ////
 TODO: gradle code sample
 ////
 
 [role=tab-container-end]
--
+_____
 
 
 This will include:
@@ -2429,28 +2429,28 @@ This will include:
 * and some utilities that may be useful
 
 
-=== Configure static method imports for Eclipse
+==== Configure static method imports for Eclipse
 
 Ogham uses Hamcrest, Mockito and also provides test utilities. Those utilities provide many static methods. Static methods are convenient for code readability. However, Eclipse needs some configuration to help you to import static methods with autocompletion.
 
 In Eclipse, select menu:Window[Preferences]. In the preferences window, select menu:Java[Editor > Content Assist > Favorites].
 
 .Preferences window
-image::{images-dir}/eclipse/static-import-empty.png[role="text-center"]
+image::src/docs/resources/images/eclipse/static-import-empty.png[role="text-center"]
 
 To add all static methods of a class, click on btn:[New Type...].
 
 .Add all static methods and attributes of a class
-image::{images-dir}/eclipse/static-import-newtype.png[role="text-center"]
+image::src/docs/resources/images/eclipse/static-import-newtype.png[role="text-center"]
 
 Type the class that contains the static methods (you can also click the browse button to search classes from classpath).
 
 
 .Example for Ogham assersions
-image::{images-dir}/eclipse/static-import-newtype-search.png[role="text-center"]
+image::src/docs/resources/images/eclipse/static-import-newtype-search.png[role="text-center"]
 
 .Search for a class
-image::{images-dir}/eclipse/static-import-search.png[role="text-center"]
+image::src/docs/resources/images/eclipse/static-import-search.png[role="text-center"]
 
 Click on btn:[OK]
 
@@ -2472,14 +2472,14 @@ Optional assertions that may be useful:
 
 
 .Result with all static imports described above
-image::{images-dir}/eclipse/static-import-all.png[role="text-center"]
+image::src/docs/resources/images/eclipse/static-import-all.png[role="text-center"]
 
 Once you have added all static imports you need, click on btn:[OK].
 
 Now you can use autocompletion and Eclipse will automatically add the static import.
 
 .Autocompletion now suggests static methods
-image::{images-dir}/eclipse/static-import-autocomplete.png[role="text-center"]
+image::src/docs/resources/images/eclipse/static-import-autocomplete.png[role="text-center"]
 
 TIP: Eclipse can rewrite a call to a static method prefixed by class. For example in your code you have `OghamAssertions.assertThat`, pressing kbd:[Ctrl+M] shortcut (cursor must be placed in the method name), Eclipse will add the static import and the code is just `assertThat`.
 
@@ -2488,15 +2488,15 @@ TIP: Eclipse can rewrite a call to a static method prefixed by class. For exampl
 
 
 
-=== First test
+==== First test
 
 To test your application emails, you can start a local SMTP server. You can then use Ogham to make assertions on your email (right recipients, right sender, right body...). Ogham uses http://www.icegreen.com/greenmail/[GreenMail] as local SMTP server.
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-23 irrelevant-lines:1-23"]
 ----
@@ -2523,49 +2523,49 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class EmailTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);						// <1>
+public class EmailTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(SMTP);                        // <1>
 
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
-						.set("mail.smtp.host", SMTP.getBindAddress())					// <2>
-						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))			// <3>
-						.and()
-					.and()
-				.build();
-	}
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+                        .set("mail.smtp.host", SMTP.getBindAddress())                    // <2>
+                        .set("mail.smtp.port", String.valueOf(SMTP.getPort()))            // <3>
+                        .and()
+                    .and()
+                .build();
+    
 
-	@Test
-	public void simple() throws MessagingException, javax.mail.MessagingException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.subject("Simple")
-								.content("string body")
-								.to("Recipient Name <recipient@sii.fr>"));
-		assertThat(greenMail).receivedMessages()										// <4>
-			.count(is(1))																// <5>
-			.message(0)																	// <6>
-				.subject(is("Simple"))													// <7>
-				.from()
-					.address(hasItems("test.sender@sii.fr"))							// <8>
-					.personal(hasItems("Sender Name")).and()							// <9>
-				.to()
-					.address(hasItems("recipient@sii.fr"))								// <10>
-					.personal(hasItems("Recipient Name")).and()							// <11>
-				.body()
-					.contentAsString(is("string body"))									// <12>
-					.contentType(startsWith("text/plain")).and()						// <13>
-				.alternative(nullValue())												// <14>
-				.attachments(emptyIterable());											// <15>
-		// @formatter:on
-	}
+    @Test
+    public void simple() throws MessagingException, javax.mail.MessagingException 
+        // @formatter:off
+        oghamService.send(new Email()
+                                .subject("Simple")
+                                .content("string body")
+                                .to("Recipient Name <recipient@sii.fr>"));
+        assertThat(greenMail).receivedMessages()                                        // <4>
+            .count(is(1))                                                                // <5>
+            .message(0)                                                                    // <6>
+                .subject(is("Simple"))                                                    // <7>
+                .from()
+                    .address(hasItems("test.sender@sii.fr"))                            // <8>
+                    .personal(hasItems("Sender Name")).and()                            // <9>
+                .to()
+                    .address(hasItems("recipient@sii.fr"))                                // <10>
+                    .personal(hasItems("Recipient Name")).and()                            // <11>
+                .body()
+                    .contentAsString(is("string body"))                                    // <12>
+                    .contentType(startsWith("text/plain")).and()                        // <13>
+                .alternative(nullValue())                                                // <14>
+                .attachments(emptyIterable());                                            // <15>
+        // @formatter:on
+    
 }
 ----
 <1> Declare and initialize the GreenMail JUnit rule to start a local SMTP server
@@ -2585,12 +2585,12 @@ public class EmailTestSample {
 <15> Assert that recevied email has no attachment
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailTestSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
--
+_____
 
-=== Testing HTML message
+==== Testing HTML message
 
 Comparing two HTML documents can be tricky. Indeed, the HTML attributes can be declared in a different order, number of spaces/tabs can be different, some attributes may be declared differently but corresponding to the same behavior (for example `disabled` attribute can be declared only `disabled` with no value, `disabled="true"` or `disabled="disabled"`).
 
@@ -2603,10 +2603,10 @@ In addition to comparison helpers, Ogham provides an helper to load files from c
 
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-27 highlight-lines:65"]
 ----
@@ -2637,49 +2637,49 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.mock.context.SimpleBean;
 
-public class EmailHtmlTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
+public class EmailHtmlTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
-						.set("mail.smtp.host", SMTP.getBindAddress())
-						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
-						.and()
-					.and()
-				.build();
-	}
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+                        .set("mail.smtp.host", SMTP.getBindAddress())
+                        .set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+                        .and()
+                    .and()
+                .build();
+    
 
-	@Test
-	public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.content(new TemplateContent("/template/register.html", 			// <1>
-															new SimpleBean("foo", 42)))				// <2>
-								.to("Recipient Name <recipient@sii.fr>"));
-		assertThat(greenMail).receivedMessages()
-			.count(is(1))
-			.message(0)
-				.subject(is("foo - Confirm your registration"))
-				.from()
-					.address(hasItems("test.sender@sii.fr"))
-					.personal(hasItems("Sender Name")).and()
-				.to()
-					.address(hasItems("recipient@sii.fr"))
-					.personal(hasItems("Recipient Name")).and()
-				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/expected/register.html")))	// <3>
-					.contentType(startsWith("text/html")).and()
-				.alternative(nullValue())
-				.attachments(emptyIterable());
-		// @formatter:on
-	}
+    @Test
+    public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException 
+        // @formatter:off
+        oghamService.send(new Email()
+                                .content(new TemplateContent("/template/register.html",             // <1>
+                                                            new SimpleBean("foo", 42)))                // <2>
+                                .to("Recipient Name <recipient@sii.fr>"));
+        assertThat(greenMail).receivedMessages()
+            .count(is(1))
+            .message(0)
+                .subject(is("foo - Confirm your registration"))
+                .from()
+                    .address(hasItems("test.sender@sii.fr"))
+                    .personal(hasItems("Sender Name")).and()
+                .to()
+                    .address(hasItems("recipient@sii.fr"))
+                    .personal(hasItems("Recipient Name")).and()
+                .body()
+                    .contentAsString(isSimilarHtml(resourceAsString("/expected/register.html")))    // <3>
+                    .contentType(startsWith("text/html")).and()
+                .alternative(nullValue())
+                .attachments(emptyIterable());
+        // @formatter:on
+    
 }
 ----
 <1> Use an HTML template
@@ -2687,69 +2687,69 @@ public class EmailHtmlTestSample {
 <3> Assert that HTML is similar as an expected HTML content
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
 
 [source, html]
 ----
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
  <head>
-  <title th:text="|${name} - Confirm your registration|"></title>
+  <title th:text="|$name - Confirm your registration|"></title>
   <meta charset="utf-8" />
  </head>
  <body>
-  <h1 title="foo" class="title" th:text="|Hello ${name}|"></h1>
+  <h1 title="foo" class="title" th:text="|Hello $name|"></h1>
   
-  <p class="text" th:text="${value}">
+  <p class="text" th:text="$value">
   </p>
  </body>
 </html>
 ----
 
 
-{standard-samples-resourcesdir-url}/template/register.html?ts=4[Source code of the template].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/register.html?ts=4[Source code of the template].
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Expected HTML
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Expected HTML
 
 [source, html]
 ----
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>foo - Confirm your registration</title>
-		<meta charset="utf-8"></meta>
-	</head>
+    <head>
+        <title>foo - Confirm your registration</title>
+        <meta charset="utf-8"></meta>
+    </head>
     <body>
-		<h1 class="title" title="foo">Hello foo</h1>
-		<p class="text">42</p>
-	</body>
+        <h1 class="title" title="foo">Hello foo</h1>
+        <p class="text">42</p>
+    </body>
 </html>
 ----
 
 
-{standard-samples-testresourcesdir-url}/expected/register.html?ts=4[Source code of the expected HTML].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/resources/expected/register.html?ts=4[Source code of the expected HTML].
 
 
 [role=tab-container-end]
--
+_____
 
 
-=== Help in Eclipse for failing tests
+==== Help in Eclipse for failing tests
 
 When your tests report errors due to HTML differences, Ogham helps with Eclipse integration. The following sample is voluntary in error due to differences between actual HTML and expected HTML (this is the expected HTML that is incorrect) in order to show how Ogham helps you.
 
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-23 highlight-lines:65"]
 ----
@@ -2780,49 +2780,49 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.mock.context.SimpleBean;
 
-public class EmailHtmlTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
+public class EmailHtmlTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
-						.set("mail.smtp.host", SMTP.getBindAddress())
-						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
-						.and()
-					.and()
-				.build();
-	}
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+                        .set("mail.smtp.host", SMTP.getBindAddress())
+                        .set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+                        .and()
+                    .and()
+                .build();
+    
 
-	@Test
-	public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.content(new TemplateContent("/template/register.html", 			// <1>
-															new SimpleBean("foo", 42)))				// <2>
-								.to("Recipient Name <recipient@sii.fr>"));
-		assertThat(greenMail).receivedMessages()
-			.count(is(1))
-			.message(0)
-				.subject(is("foo - Confirm your registration"))
-				.from()
-					.address(hasItems("test.sender@sii.fr"))
-					.personal(hasItems("Sender Name")).and()
-				.to()
-					.address(hasItems("recipient@sii.fr"))
-					.personal(hasItems("Recipient Name")).and()
-				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/expected/register.html")))	// <3>
-					.contentType(startsWith("text/html")).and()
-				.alternative(nullValue())
-				.attachments(emptyIterable());
-		// @formatter:on
-	}
+    @Test
+    public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException 
+        // @formatter:off
+        oghamService.send(new Email()
+                                .content(new TemplateContent("/template/register.html",             // <1>
+                                                            new SimpleBean("foo", 42)))                // <2>
+                                .to("Recipient Name <recipient@sii.fr>"));
+        assertThat(greenMail).receivedMessages()
+            .count(is(1))
+            .message(0)
+                .subject(is("foo - Confirm your registration"))
+                .from()
+                    .address(hasItems("test.sender@sii.fr"))
+                    .personal(hasItems("Sender Name")).and()
+                .to()
+                    .address(hasItems("recipient@sii.fr"))
+                    .personal(hasItems("Recipient Name")).and()
+                .body()
+                    .contentAsString(isSimilarHtml(resourceAsString("/expected/register.html")))    // <3>
+                    .contentType(startsWith("text/html")).and()
+                .alternative(nullValue())
+                .attachments(emptyIterable());
+        // @formatter:on
+    
 }
 ----
 <1> Use an HTML template
@@ -2830,48 +2830,48 @@ public class EmailHtmlTestSample {
 <3> Assert that HTML is similar as an expected HTML content
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
 
 [source, html]
 ----
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
  <head>
-  <title th:text="|${name} - Confirm your registration|"></title>
+  <title th:text="|$name - Confirm your registration|"></title>
   <meta charset="utf-8" />
  </head>
  <body>
-  <h1 title="foo" class="title" th:text="|Hello ${name}|"></h1>
+  <h1 title="foo" class="title" th:text="|Hello $name|"></h1>
   
-  <p class="text" th:text="${value}">
+  <p class="text" th:text="$value">
   </p>
  </body>
 </html>
 ----
 
 
-{standard-samples-resourcesdir-url}/template/register.html?ts=4[Source code of the template].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/register.html?ts=4[Source code of the template].
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Expected HTML
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Expected HTML
 
 [source, html, role="highlight-lines:4,8"]
 ----
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>bar - Confirm your registration</title>
-		<meta charset="utf-8"></meta>
-	</head>
+    <head>
+        <title>bar - Confirm your registration</title>
+        <meta charset="utf-8"></meta>
+    </head>
     <body>
-		<h1 class="title" title="foo">Hello bar</h1>
-		<p class="text">42</p>
-	</body>
+        <h1 class="title" title="foo">Hello bar</h1>
+        <p class="text">42</p>
+    </body>
 </html>
 ----
 
@@ -2884,38 +2884,38 @@ All other differences are not reported as errors as the resulting HTML interpret
 
 
 [role=tab-container-end]
--
+_____
 
 .JUnit view
-image::{images-dir}/eclipse/tests-junit-error.png[role="text-center"]
+image::src/docs/resources/images/eclipse/tests-junit-error.png[role="text-center"]
 
 Double-clicking on the exception:
 
 .Exception message is clickable
-image::{images-dir}/eclipse/tests-junit-error-open-comparison.png[role="text-center"]
+image::src/docs/resources/images/eclipse/tests-junit-error-open-comparison.png[role="text-center"]
 
 Opens a comparison window:
 
 .Comparison window
-image::{images-dir}/eclipse/tests-comparison.png[role="text-center"]
+image::src/docs/resources/images/eclipse/tests-comparison.png[role="text-center"]
 
 
 
 WARNING: Spaces, tag closing and attributes order are reported by the comparison window provided by Eclipse. Indeed, Eclipse just compares two strings (not HTML documents). This window is just an helper to visualize where the problems are. But the real errors to fix are displayed both in logs and in the error summary.
 
 .Useful part of the error summary
-image::{images-dir}/eclipse/tests-junit-error-useful-part.png[role="text-center"]
+image::src/docs/resources/images/eclipse/tests-junit-error-useful-part.png[role="text-center"]
 
 
-=== Testing email with an HTML body and text alternative
+==== Testing email with an HTML body and text alternative
 
 Tesing an email sent with two main parts (HTML and text fallback) is straightforward.
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-27 highlight-lines:61-66"]
 ----
@@ -2946,48 +2946,48 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.mock.context.SimpleBean;
 
-public class EmailHtmlAndTextTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
+public class EmailHtmlAndTextTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
-						.set("mail.smtp.host", SMTP.getBindAddress())
-						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
-						.and()
-					.and()
-				.build();
-	}
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+                        .set("mail.smtp.host", SMTP.getBindAddress())
+                        .set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+                        .and()
+                    .and()
+                .build();
+    
 
-	@Test
-	public void multiTemplateContent() throws MessagingException, javax.mail.MessagingException, IOException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.subject("Multi")
-								.content(new MultiTemplateContent("template/mixed/simple", 
-																	new SimpleBean("bar", 42)))
-								.to("recipient@sii.fr"));
-		assertThat(greenMail).receivedMessages()
-			.count(is(1))
-			.message(0)
-				.subject(is("Multi"))
-				.from().address(hasItems("test.sender@sii.fr")).and()
-				.to().address(hasItems("recipient@sii.fr")).and()
-				.body()																								// <1>
-					.contentAsString(isSimilarHtml(resourceAsString("/expected/simple_bar_42.html")))				// <2>
-					.contentType(startsWith("text/html")).and()														// <3>
-				.alternative()																						// <4>
-					.contentAsString(equalToIgnoringWhiteSpace(resourceAsString("/expected/simple_bar_42.txt")))	// <5>
-					.contentType(startsWith("text/plain")).and()													// <6>
-				.attachments(emptyIterable());
-		// @formatter:on
-	}
+    @Test
+    public void multiTemplateContent() throws MessagingException, javax.mail.MessagingException, IOException 
+        // @formatter:off
+        oghamService.send(new Email()
+                                .subject("Multi")
+                                .content(new MultiTemplateContent("template/mixed/simple", 
+                                                                    new SimpleBean("bar", 42)))
+                                .to("recipient@sii.fr"));
+        assertThat(greenMail).receivedMessages()
+            .count(is(1))
+            .message(0)
+                .subject(is("Multi"))
+                .from().address(hasItems("test.sender@sii.fr")).and()
+                .to().address(hasItems("recipient@sii.fr")).and()
+                .body()                                                                                                // <1>
+                    .contentAsString(isSimilarHtml(resourceAsString("/expected/simple_bar_42.html")))                // <2>
+                    .contentType(startsWith("text/html")).and()                                                        // <3>
+                .alternative()                                                                                        // <4>
+                    .contentAsString(equalToIgnoringWhiteSpace(resourceAsString("/expected/simple_bar_42.txt")))    // <5>
+                    .contentType(startsWith("text/plain")).and()                                                    // <6>
+                .attachments(emptyIterable());
+        // @formatter:on
+    
 }
 ----
 <1> Access to main body assertions
@@ -2998,11 +2998,11 @@ public class EmailHtmlAndTextTestSample {
 <6> Assert that alternative body message mimetype is `text/plain`
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
 
 [source, html]
 ----
@@ -3012,30 +3012,30 @@ image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="${name}"></h1>
-        <p class="text" th:text="${value}"></p>
+        <h1 class="title" th:text="$name"></h1>
+        <p class="text" th:text="$value"></p>
     </body>
 </html>
 ----
 
 
-{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts=4[Source code of the template].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=4[Source code of the template].
 
 
 [role=tab]
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
 
 [source, html]
 ----
-${name} ${value}
+$name $value
 ----
 
 
-{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts=4[Source code of the template].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=4[Source code of the template].
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Expected HTML
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Expected HTML
 
 [source, html]
 ----
@@ -3053,11 +3053,11 @@ image:{images-dir}/icons/html.png[width=37,height=30] Expected HTML
 ----
 
 
-{standard-samples-testresourcesdir-url}/expected/simple_bar_42.html?ts=4[Source code of the expected HTML].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/resources/expected/simple_bar_42.html?ts=4[Source code of the expected HTML].
 
 
 [role=tab]
-image:{images-dir}/icons/txt.png[width=30,height=30] Expected text
+image:src/docs/resources/images/icons/txt.png[width=30,height=30] Expected text
 
 [source]
 ----
@@ -3065,24 +3065,24 @@ bar 42
 ----
 
 
-{standard-samples-testresourcesdir-url}/expected/simple_bar_42.txt?ts=4[Source code of the expected text].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/resources/expected/simple_bar_42.txt?ts=4[Source code of the expected text].
 
 
 [role=tab-container-end]
--
+_____
 
 
 
-=== Testing attachments
+==== Testing attachments
 
 
 You can also test that attachments are sent correctly.
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-26,28-45 irrelevant-lines:1-26 highlight-lines:64-69"]
 ----
@@ -3112,51 +3112,51 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
-public class EmailAttachmentTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
+public class EmailAttachmentTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
-						.set("mail.smtp.host", SMTP.getBindAddress())
-						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
-						.and()
-					.and()
-				.build();
-	}
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+                        .set("mail.smtp.host", SMTP.getBindAddress())
+                        .set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+                        .and()
+                    .and()
+                .build();
+    
 
-	@Test
-	public void simple() throws MessagingException, javax.mail.MessagingException, IOException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.subject("Test")
-								.content("body")
-								.to("recipient@sii.fr")
-								.attach(new Attachment("/attachment/test.pdf")));
-		assertThat(greenMail).receivedMessages()
-			.count(is(1))
-			.message(0)
-				.subject(is("Test"))
-				.from().address(hasItems("test.sender@sii.fr")).and()
-				.to().address(hasItems("recipient@sii.fr")).and()
-				.body()
-					.contentAsString(is("body"))
-					.contentType(startsWith("text/plain")).and()
-				.alternative(nullValue())
-				.attachments(hasSize(1))									// <1>
-				.attachment(0)												// <2>
-					.content(is(resource("/attachment/test.pdf")))			// <3>
-					.contentType(startsWith("application/pdf"))				// <4>
-					.filename(is("test.pdf"))								// <5>
-					.disposition(is(ATTACHMENT_DISPOSITION));				// <6>
-		// @formatter:on
-	}
+    @Test
+    public void simple() throws MessagingException, javax.mail.MessagingException, IOException 
+        // @formatter:off
+        oghamService.send(new Email()
+                                .subject("Test")
+                                .content("body")
+                                .to("recipient@sii.fr")
+                                .attach(new Attachment("/attachment/test.pdf")));
+        assertThat(greenMail).receivedMessages()
+            .count(is(1))
+            .message(0)
+                .subject(is("Test"))
+                .from().address(hasItems("test.sender@sii.fr")).and()
+                .to().address(hasItems("recipient@sii.fr")).and()
+                .body()
+                    .contentAsString(is("body"))
+                    .contentType(startsWith("text/plain")).and()
+                .alternative(nullValue())
+                .attachments(hasSize(1))                                    // <1>
+                .attachment(0)                                                // <2>
+                    .content(is(resource("/attachment/test.pdf")))            // <3>
+                    .contentType(startsWith("application/pdf"))                // <4>
+                    .filename(is("test.pdf"))                                // <5>
+                    .disposition(is(ATTACHMENT_DISPOSITION));                // <6>
+        // @formatter:on
+    
 }
 ----
 <1> Assert that exactly one attachment is attached to the received email
@@ -3167,24 +3167,24 @@ public class EmailAttachmentTestSample {
 <6> Assert that the attachment disposition is correct
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
--
+_____
 
 
 
 
-=== Testing several emails at once
+==== Testing several emails at once
 
 When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `forEach` method to apply defined assertions on all messages.
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-24,26-43 irrelevant-lines:1-24 highlight-lines:55"]
 ----
@@ -3212,55 +3212,55 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class SeveralRecipientsTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
+public class SeveralRecipientsTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
-						.set("mail.smtp.host", SMTP.getBindAddress())
-						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
-						.and()
-					.and()
-				.build();
-	}
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+                        .set("mail.smtp.host", SMTP.getBindAddress())
+                        .set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+                        .and()
+                    .and()
+                .build();
+    
 
-	@Test
-	public void severalRecipients() throws MessagingException, javax.mail.MessagingException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.subject("Simple")
-								.content("string body")
-								.to("recipient1@sii.fr", "recipient2@sii.fr", "recipient3@sii.fr")
-								.cc("recipient4@sii.fr", "recipient5@sii.fr")
-								.bcc("recipient6@sii.fr"));
-		assertThat(greenMail).receivedMessages()
-			.count(is(6))																// <1>
-			.forEach()																	// <2>
-				.subject(is("Simple"))
-				.from()
-					.address(hasItems("test.sender@sii.fr"))
-					.personal(hasItems("Sender Name")).and()
-				.to()
-					.address(containsInAnyOrder("recipient1@sii.fr", 					// <3>
-												"recipient2@sii.fr", 
-												"recipient3@sii.fr")).and()
-				.cc()
-					.address(containsInAnyOrder("recipient4@sii.fr", 					// <4>
-												"recipient5@sii.fr")).and()
-				.body()
-					.contentAsString(is("string body"))
-					.contentType(startsWith("text/plain")).and()
-				.alternative(nullValue())
-				.attachments(emptyIterable());
-		// @formatter:on
-	}
+    @Test
+    public void severalRecipients() throws MessagingException, javax.mail.MessagingException 
+        // @formatter:off
+        oghamService.send(new Email()
+                                .subject("Simple")
+                                .content("string body")
+                                .to("recipient1@sii.fr", "recipient2@sii.fr", "recipient3@sii.fr")
+                                .cc("recipient4@sii.fr", "recipient5@sii.fr")
+                                .bcc("recipient6@sii.fr"));
+        assertThat(greenMail).receivedMessages()
+            .count(is(6))                                                                // <1>
+            .forEach()                                                                    // <2>
+                .subject(is("Simple"))
+                .from()
+                    .address(hasItems("test.sender@sii.fr"))
+                    .personal(hasItems("Sender Name")).and()
+                .to()
+                    .address(containsInAnyOrder("recipient1@sii.fr",                     // <3>
+                                                "recipient2@sii.fr", 
+                                                "recipient3@sii.fr")).and()
+                .cc()
+                    .address(containsInAnyOrder("recipient4@sii.fr",                     // <4>
+                                                "recipient5@sii.fr")).and()
+                .body()
+                    .contentAsString(is("string body"))
+                    .contentType(startsWith("text/plain")).and()
+                .alternative(nullValue())
+                .attachments(emptyIterable());
+        // @formatter:on
+    
 }
 ----
 <1> Assert that 6 distinct messages are received
@@ -3269,26 +3269,26 @@ public class SeveralRecipientsTestSample {
 <4> Assert that each received messages has exactly 2 `cc` recipients
 
 [TIP]
-=====
+====
 The `bcc` recipient is not testable. Indeed, `bcc` recipients are hidden recipients that must not be visible. So the email is received (there are 6 received messages not 5). But `bcc` field of each email are empty because they are not present in the sent email. The `bcc` field is just used for routing.
-=====
+====
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
--
+_____
 
 
 Sometimes you also need to send several different emails. The emails may have some identical information (sender or subject for example). So you can mix `forEach` (define assertions all messages) with `message` (define assertion for one particular message).
 
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-23,25-42 irrelevant-lines:1-23 highlight-lines:60,70,78,86"]
 ----
@@ -3315,76 +3315,76 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class SeveralEmailsTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);
+public class SeveralEmailsTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(SMTP);
 
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
-						.set("mail.smtp.host", SMTP.getBindAddress())
-						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
-						.and()
-					.and()
-				.build();
-	}
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+                        .set("mail.smtp.host", SMTP.getBindAddress())
+                        .set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+                        .and()
+                    .and()
+                .build();
+    
 
-	@Test
-	public void severalDisctinctMessages() throws MessagingException, javax.mail.MessagingException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.subject("Simple")
-								.content("string body 1")
-								.to("recipient1@sii.fr"));
-		oghamService.send(new Email()
-								.subject("Simple")
-								.content("string body 2")
-								.to("recipient2@sii.fr"));
-		oghamService.send(new Email()
-								.subject("Simple")
-								.content("string body 3")
-								.to("recipient3@sii.fr"));
-		assertThat(greenMail).receivedMessages()
-			.count(is(3))
-			.forEach()													// <1>
-				.subject(is("Simple"))
-				.from()
-					.address(hasItems("test.sender@sii.fr"))
-					.personal(hasItems("Sender Name")).and()
-				.body()
-					.contentType(startsWith("text/plain")).and()
-				.alternative(nullValue())
-				.attachments(emptyIterable())
-				.and()
-			.message(0)													// <2>
-				.body()
-					.contentAsString(is("string body 1"))
-					.and()
-				.to()
-					.address(hasItems("recipient1@sii.fr"))
-					.and()
-				.and()
-			.message(1)													// <3>
-				.body()
-					.contentAsString(is("string body 2"))
-					.and()
-				.to()
-					.address(hasItems("recipient2@sii.fr"))
-					.and()
-				.and()
-			.message(2)													// <4>
-				.body()
-					.contentAsString(is("string body 3"))
-					.and()
-				.to()
-					.address(hasItems("recipient3@sii.fr"));
-		// @formatter:on
-	}
+    @Test
+    public void severalDisctinctMessages() throws MessagingException, javax.mail.MessagingException 
+        // @formatter:off
+        oghamService.send(new Email()
+                                .subject("Simple")
+                                .content("string body 1")
+                                .to("recipient1@sii.fr"));
+        oghamService.send(new Email()
+                                .subject("Simple")
+                                .content("string body 2")
+                                .to("recipient2@sii.fr"));
+        oghamService.send(new Email()
+                                .subject("Simple")
+                                .content("string body 3")
+                                .to("recipient3@sii.fr"));
+        assertThat(greenMail).receivedMessages()
+            .count(is(3))
+            .forEach()                                                    // <1>
+                .subject(is("Simple"))
+                .from()
+                    .address(hasItems("test.sender@sii.fr"))
+                    .personal(hasItems("Sender Name")).and()
+                .body()
+                    .contentType(startsWith("text/plain")).and()
+                .alternative(nullValue())
+                .attachments(emptyIterable())
+                .and()
+            .message(0)                                                    // <2>
+                .body()
+                    .contentAsString(is("string body 1"))
+                    .and()
+                .to()
+                    .address(hasItems("recipient1@sii.fr"))
+                    .and()
+                .and()
+            .message(1)                                                    // <3>
+                .body()
+                    .contentAsString(is("string body 2"))
+                    .and()
+                .to()
+                    .address(hasItems("recipient2@sii.fr"))
+                    .and()
+                .and()
+            .message(2)                                                    // <4>
+                .body()
+                    .contentAsString(is("string body 3"))
+                    .and()
+                .to()
+                    .address(hasItems("recipient3@sii.fr"));
+        // @formatter:on
+    
 }
 ----
 <1> Shared assertions (subject, sender and body mimetype)
@@ -3393,21 +3393,21 @@ public class SeveralEmailsTestSample {
 <4> Specific assertions for third sent message (recipient and message content)
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
--
+_____
 
-=== Testing with SMTP authentication
+==== Testing with SMTP authentication
 
 GreenMail allows to start the SMTP server with user and credentials.
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,52-75 highlight-lines:37,41-43"]
 ----
@@ -3436,56 +3436,56 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 
-public class EmailSMTPAuthenticationTest {
-	private MessagingService oghamService;
+public class EmailSMTPAuthenticationTest 
+    private MessagingService oghamService;
 
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
+    @Rule
+    public final LoggingTestRule loggingRule = new LoggingTestRule();
 
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
-	@Before
-	public void setUp() throws IOException {
-		greenMail.setUser("test.sender@sii.fr", "test.sender", "password");								// <1>
-		Properties additionalProps = new Properties();
-		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		additionalProps.setProperty("mail.smtp.auth", "true");											// <2>
-		additionalProps.setProperty("ogham.email.javamail.authenticator.username", "test.sender");		// <3>
-		additionalProps.setProperty("ogham.email.javamail.authenticator.password", "password");			// <4>
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties("/application.properties")
-					.properties(additionalProps)
-					.and()
-				.build();
-	}
-	
-	@Test
-	public void authenticated() throws MessagingException, javax.mail.MessagingException {
-		// @formatter:off
-		oghamService.send(new Email()
-								.subject("Simple")
-								.content("string body")
-								.to("Recipient Name <recipient@sii.fr>"));
-		assertThat(greenMail).receivedMessages()
-			.count(is(1))
-			.message(0)
-				.subject(is("Simple"))
-				.from()
-					.address(hasItems("test.sender@sii.fr"))
-					.personal(hasItems("Sender Name")).and()
-				.to()
-					.address(hasItems("recipient@sii.fr"))
-					.personal(hasItems("Recipient Name")).and()
-				.body()
-					.contentAsString(is("string body"))
-					.contentType(startsWith("text/plain")).and()
-				.alternative(nullValue())
-				.attachments(emptyIterable());
-		// @formatter:on
-	}
+    @Before
+    public void setUp() throws IOException {
+        greenMail.setUser("test.sender@sii.fr", "test.sender", "password");                                // <1>
+        Properties additionalProps = new Properties();
+        additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
+        additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+        additionalProps.setProperty("mail.smtp.auth", "true");                                            // <2>
+        additionalProps.setProperty("ogham.email.javamail.authenticator.username", "test.sender");        // <3>
+        additionalProps.setProperty("ogham.email.javamail.authenticator.password", "password");            // <4>
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties("/application.properties")
+                    .properties(additionalProps)
+                    .and()
+                .build();
+    
+    
+    @Test
+    public void authenticated() throws MessagingException, javax.mail.MessagingException 
+        // @formatter:off
+        oghamService.send(new Email()
+                                .subject("Simple")
+                                .content("string body")
+                                .to("Recipient Name <recipient@sii.fr>"));
+        assertThat(greenMail).receivedMessages()
+            .count(is(1))
+            .message(0)
+                .subject(is("Simple"))
+                .from()
+                    .address(hasItems("test.sender@sii.fr"))
+                    .personal(hasItems("Sender Name")).and()
+                .to()
+                    .address(hasItems("recipient@sii.fr"))
+                    .personal(hasItems("Recipient Name")).and()
+                .body()
+                    .contentAsString(is("string body"))
+                    .contentType(startsWith("text/plain")).and()
+                .alternative(nullValue())
+                .attachments(emptyIterable());
+        // @formatter:on
+    
 }
 ----
 <1> Configure GreenMail to register a user
@@ -3494,12 +3494,12 @@ public class EmailSMTPAuthenticationTest {
 <4> Configure Ogham to provide the authentication password
 
 
-{ogham-all-testsourcedir-url}/fr/sii/ogham/it/email/EmailSMTPAuthenticationTest.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/ogham-all/src/test/java/fr/sii/ogham/it/email/EmailSMTPAuthenticationTest.java?ts=4[Source code of the sample].
 
 NOTE: Only the setup differs, the test is the same.
 
 [role=tab-container-end]
--
+_____
 
 ////
 TODO: test sendgrid?
@@ -3508,15 +3508,15 @@ TODO: test sendgrid?
 === Tesing SMS
 
 
-=== First test
+==== First test
 
 To test your application SMS, you can start a local SMPP server. You can then use Ogham to make assertions on you SMS (recipient phone number, sender phone number and message). Ogham uses https://jsmpp.org/[jSMPP] as local SMPP server.
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19"]
 ----
@@ -3539,42 +3539,42 @@ import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
 import fr.sii.ogham.sms.message.Sms;
 
-public class SmsTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();					// <1>
-	
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.sms.from", "+33603040506")
-						.set("ogham.sms.smpp.host", "localhost")								// <2>
-						.set("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()))		// <3>
-						.and()
-					.and()
-				.build();
-	}
-	
-	@Test
-	public void simple() throws MessagingException {
-		// @formatter:off
-		oghamService.send(new Sms()
-							.content("sms content")
-							.to("0601020304"));
-		assertThat(smppServer).receivedMessages()												// <4>
-			.count(is(1))																		// <5>
-			.message(0)																			// <6>
-				.content(is("sms content"))														// <7>
-				.from()
-					.number(is("+33603040506"))													// <8>
-					.and()
-				.to()
-					.number(is("0601020304"));													// <9>
-		// @formatter:on
-	}
+public class SmsTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();                    // <1>
+    
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.sms.from", "+33603040506")
+                        .set("ogham.sms.smpp.host", "localhost")                                // <2>
+                        .set("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()))        // <3>
+                        .and()
+                    .and()
+                .build();
+    
+    
+    @Test
+    public void simple() throws MessagingException 
+        // @formatter:off
+        oghamService.send(new Sms()
+                            .content("sms content")
+                            .to("0601020304"));
+        assertThat(smppServer).receivedMessages()                                                // <4>
+            .count(is(1))                                                                        // <5>
+            .message(0)                                                                            // <6>
+                .content(is("sms content"))                                                        // <7>
+                .from()
+                    .number(is("+33603040506"))                                                    // <8>
+                    .and()
+                .to()
+                    .number(is("0601020304"));                                                    // <9>
+        // @formatter:on
+    
 }
 ----
 <1> Declare and initialize the JUnit rule that encapsulates jSMPP for starting a local SMPP server in tests (you can set a different port than the default one)
@@ -3588,22 +3588,22 @@ public class SmsTestSample {
 <9> Assert that the recipient phone number is `0601020304`
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SmsTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SmsTestSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
--
+_____
 
-=== Testing long messages and several recipients
+==== Testing long messages and several recipients
 
 When a long message is sent, it must be split. Each part of the message is received by the SMPP server as distinct messages. The first message doesn't have any additional information indicating that it is split. Successive messages have an additional header (contained in the body). Ogham hides this protocol specific complexity. So you can test your SMS without needing to know about the header. Ogham provides `message` method to access a particular message for doing assertions on it. Ogham also provides `forEach` to apply same assertions on all received messages.
 
 Sending a SMS to several recipients is the same as sending several distinct SMS. So the SMPP server receives the same number as SMS as the number of recipients. In that case, you can use `forEach` to make same assertions on all messages. 
 
 [role="tab-container no-max-height"]
-Sample
+_____
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19,21-38 highlight-lines:56"]
 ----
@@ -3626,50 +3626,50 @@ import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
 import fr.sii.ogham.sms.message.Sms;
 
-public class LongSmsTestSample {
-	private MessagingService oghamService;
-	
-	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
-	
-	@Before
-	public void setUp() throws IOException {
-		oghamService = MessagingBuilder.standard()
-				.environment()
-					.properties()
-						.set("ogham.sms.from", "+33603040506")
-						.set("ogham.sms.smpp.host", "localhost")
-						.set("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()))
-						.and()
-					.and()
-				.build();
-	}
-	
-	@Test
-	public void longMessage() throws MessagingException, IOException {
-		// @formatter:off
-		oghamService.send(new Sms()
-							.content("sms content with a very very very loooooooooo"
-									+ "oooooooooonnnnnnnnnnnnnnnnng message that is"
-									+ " over 160 characters in order to test the be"
-									+ "havior of the sender when message has to be split")
-							.to("0601020304"));
-		assertThat(smppServer).receivedMessages()
-			.count(is(2))																	// <1>
-			.message(0)																		// <2>
-				.content(is("sms content with a very very very looooooooooooooooooo"		// <3>
-						+ "onnnnnnnnnnnnnnnnng message that is over 160 characters "
-						+ "in order to test the beh")).and()
-			.message(1)																		// <4>
-				.content(is("avior of the sender when message has to be split")).and()		// <5>
-			.forEach()																		// <6>
-				.from()
-					.number(is("+33603040506"))												// <7>
-					.and()
-				.to()
-					.number(is("0601020304"));												// <8>
-		// @formatter:on
-	}
+public class LongSmsTestSample 
+    private MessagingService oghamService;
+    
+    @Rule
+    public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+    
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.sms.from", "+33603040506")
+                        .set("ogham.sms.smpp.host", "localhost")
+                        .set("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()))
+                        .and()
+                    .and()
+                .build();
+    
+    
+    @Test
+    public void longMessage() throws MessagingException, IOException 
+        // @formatter:off
+        oghamService.send(new Sms()
+                            .content("sms content with a very very very loooooooooo"
+                                    + "oooooooooonnnnnnnnnnnnnnnnng message that is"
+                                    + " over 160 characters in order to test the be"
+                                    + "havior of the sender when message has to be split")
+                            .to("0601020304"));
+        assertThat(smppServer).receivedMessages()
+            .count(is(2))                                                                    // <1>
+            .message(0)                                                                        // <2>
+                .content(is("sms content with a very very very looooooooooooooooooo"        // <3>
+                        + "onnnnnnnnnnnnnnnnng message that is over 160 characters "
+                        + "in order to test the beh")).and()
+            .message(1)                                                                        // <4>
+                .content(is("avior of the sender when message has to be split")).and()        // <5>
+            .forEach()                                                                        // <6>
+                .from()
+                    .number(is("+33603040506"))                                                // <7>
+                    .and()
+                .to()
+                    .number(is("0601020304"));                                                // <8>
+        // @formatter:on
+    
 }
 ----
 <1> Message is split so the SMPP server receives two messages
@@ -3682,10 +3682,10 @@ public class LongSmsTestSample {
 <8> Assert that the recipient phone number is `0601020304` for every message
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/LongSmsTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/LongSmsTestSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
--
+_____
 
 ////
 TODO: type of number (explanation + why it is important + sample)
