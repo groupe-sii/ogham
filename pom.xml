@@ -618,6 +618,11 @@
 						<artifactId>asciidoctor-maven-plugin</artifactId>
 						<version>${asciidoctorj.version}</version>
 					</dependency>
+					<dependency>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctorj-diagram</artifactId>
+						<version>${asciidoctorj.diagram.version}</version>
+					</dependency>
 				</dependencies>
 				<configuration>
 					<generateReports>true</generateReports>

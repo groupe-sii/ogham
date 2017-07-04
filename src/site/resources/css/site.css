@@ -79,23 +79,6 @@ pre>code {
 	margin-top: 0;
 }
 
-.page-index #features + .sectionbody {
-	text-align: center;
-}
-.page-index .feature {
-	display: inline-block;
-	width: 150px;
-	height: 200px;
-	border: 1px solid #317eac;
-	margin: 20px;
-	vertical-align: top;
-}
-.page-index .feature .image {
-	display: inline-block;
-	width: 100px;
-	height: 100px;
-}
-
 .page-index h3 .image {
 	display: inline-block;
 	margin-right: 10px;
@@ -106,4 +89,95 @@ pre>code {
 }
 .page-index pre {
 	font-size: 15px;
+}
+
+.roadmap {
+	font-weight: bold;
+}
+
+.roadmap .paragraph {
+	margin: 20px 0;
+}
+
+
+
+.page-index .feature {
+	width: 500px;
+	height: 200px;
+	margin: 40px 0 0 0;
+}
+
+.page-index .feature .image {
+	display: block;
+	margin: auto;
+	width: 100px;
+	height: 100px;
+}
+
+.page-index .feature .content {
+	height: 100%;
+}
+.page-index .feature .content > .paragraph {
+	text-align: center;
+	width: 150px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.page-index .feature .content > .ulist {
+	width: 330px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.page-index .feature .content > .ulist > ul {
+	list-style: none;
+	margin-left: 0;
+}
+.page-index .feature .content > .ulist > ul p {
+	margin: 2px 0;
+}
+
+
+.page-index .feature .paragraph {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+
+
+.page-index .feature:nth-child(2n+1) {
+	clear: both;
+	float: left;
+}
+.page-index .feature:nth-child(2n+1) .content > .paragraph {
+	float: right;
+}
+.page-index .feature:nth-child(2n+1) .content > .ulist {
+	float: left;
+	text-align: right;
+}
+
+.page-index .feature:nth-child(2n) {
+	float: right;
+}
+.page-index .feature:nth-child(2n) .content > .paragraph {
+	float: left;
+}
+.page-index .feature:nth-child(2n) .content > .ulist {
+	float: right;
+	text-align: left;
+}
+
+ #features + .sectionbody::after,
+.page-index .feature .content::after {
+	content: "";
+	width: 0;
+	height: 0;
+	display: block;
+	clear: both;
+	line-height: 0;
 }

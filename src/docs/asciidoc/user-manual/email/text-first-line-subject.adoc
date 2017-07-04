@@ -11,7 +11,7 @@ Sample with template
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21"]
+[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-20"]
 ----
 include::{standard-email-samples-sourcedir}/TextTemplateWithSubjectSample.java[]
 ----

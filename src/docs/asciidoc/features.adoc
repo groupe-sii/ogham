@@ -1,0 +1,65 @@
+:relative-path: ./
+include::{docdir}/variables.adoc[]
+
+
+[role="feature feature-email"]
+====
+image:{images-dir}/icons/email.png[Email,width=100,height=100] Send Email
+
+* No need to know RFCs
+* <<user-manual.adoc#email-template, Use templates for email body>>
+* <<user-manual.adoc#text-alternative, HTML body and text alternative>>
+* <<user-manual.adoc#css-images-inlining, Automatic inlining of CSS and image>>
+* <<user-manual.adoc#html-title-subject, Subject extracted from template>>
+* Make HTML compatible with email clients
+* Send email through SMTP (using https://javaee.github.io/javamail/[JavaMail]) or HTTP (through https://sendgrid.com/[SendGrid])
+====
+
+
+[role="feature feature-sms"]
+====
+image:{images-dir}/icons/sms.png[Email,width=100,height=100] Send SMS
+
+* No need to know SMPP protocol
+* <<user-manual.adoc#sms-template, Use templates for SMS message>>
+* <<user-manual.adoc#auto-split-sms, Automatic split of long SMS>>
+* Send SMS through SMPP (using https://github.com/fizzed/cloudhopper-smpp[Cloudhopper], through https://www.smsglobal.com/smpp-api/[SmsGlobal] for example) or HTTP (through https://www.ovh.com/fr/g2153.envoyer_des_sms_depuis_une_url_-_http2sms[OVH])
+====
+
+
+[role="feature feature-templating"]
+====
+image:{images-dir}/icons/templating.png[Email,width=100,height=100] Templating
+
+* Easy <<user-manual.adoc#resource-resolution, file loading>>
+* <<user-manual.adoc#thymeleaf, ThymeLeaf>> integration
+* <<user-manual.adoc#freemarker, FreeMarker>> integration
+====
+
+
+[role="feature feature-spring"]
+====
+image:{images-dir}/icons/spring-boot.png[Email,width=100,height=100] Framework support
+
+* https://projects.spring.io/spring-boot/[Spring Boot]
+** <<user-manual.adoc#spring-boot-usage, Autoconfiguration>>
+** Spring Boot starter
+** Compatible with other Spring Boot modules
+====
+
+[role="feature testing"]
+====
+image:{images-dir}/icons/test.png[Email,width=100,height=100] Testing tools
+
+* <<user-manual.adoc#testing-tools, Fluent testing API>>
+* Mock <<user-manual.adoc#testing-email, SMTP>>/<<user-manual.adoc#testing-sms, SMPP>> servers
+====
+
+[role="feature implementation-selection"]
+====
+image:{images-dir}/icons/configuration.png[Email,width=100,height=100] Automatic configuration
+
+* Protocol selection based on classpath and configuration
+* Template engine selection based on classpath and template content
+====
+

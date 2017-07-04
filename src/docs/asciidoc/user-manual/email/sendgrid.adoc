@@ -9,7 +9,7 @@ Sample using SendGrid
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-43 irrelevant-lines:1-43 highlight-lines:52"]
+[source, java, role="collapse-lines:1-42,63-75 irrelevant-lines:1-42 highlight-lines:51"]
 ----
 include::{standard-email-samples-sourcedir}/sendgrid/SendGridFullSample.java[]
 ----

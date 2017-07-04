@@ -2,7 +2,6 @@ package fr.sii.ogham.sample.standard.email.sendgrid;
 
 import java.io.IOException;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
@@ -60,4 +59,19 @@ public class SendGridFullSample {
 						.attach(new Attachment("/attachment/test.pdf")));
 	}
 
+	public static class SimpleBean {
+		private String name;
+		private int value;
+		public SimpleBean(String name, int value) {
+			super();
+			this.name = name;
+			this.value = value;
+		}
+		public String getName() {
+			return name;
+		}
+		public int getValue() {
+			return value;
+		}
+	}
 }

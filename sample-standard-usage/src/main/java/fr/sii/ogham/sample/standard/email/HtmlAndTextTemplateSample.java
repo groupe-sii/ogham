@@ -2,7 +2,6 @@ package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
@@ -33,5 +32,21 @@ public class HtmlAndTextTemplateSample {
 						.content(new MultiTemplateContent("classpath:/template/thymeleaf/simple", 		// <1>
 															new SimpleBean("foo", 42)))					// <2>
 						.to("ogham-test@yopmail.com"));
+	}
+	
+	public static class SimpleBean {
+		private String name;
+		private int value;
+		public SimpleBean(String name, int value) {
+			super();
+			this.name = name;
+			this.value = value;
+		}
+		public String getName() {
+			return name;
+		}
+		public int getValue() {
+			return value;
+		}
 	}
 }

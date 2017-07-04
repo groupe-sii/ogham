@@ -23,20 +23,24 @@ All samples shown bellow are using SMTP for sending email. See <<sendgrid, Sendi
 
 include::{user-manual-dir}/email/first-email.adoc[leveloffset=+2]
 
+[[email-template]]
 === Use an HTML template for email body
 
 include::{user-manual-dir}/email/template-body.adoc[leveloffset=+2]
 
+[[html-title-subject]]
 === Use HTML title as email subject
 
 include::{user-manual-dir}/email/html-title-subject.adoc[leveloffset=+2]
 include::{user-manual-dir}/email/text-first-line-subject.adoc[leveloffset=+2]
 
+[[css-images-inlining]]
 === HTML body with CSS and images
 
 include::{user-manual-dir}/email/css-and-images.adoc[leveloffset=+2]
 
-=== A working preview of the HTML body
+[[text-alternative]]
+=== A working preview of the HTML body (text alternative)
 
 include::{user-manual-dir}/email/text-preview.adoc[leveloffset=+2]
 
@@ -91,10 +95,12 @@ See <<ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
 
 include::{user-manual-dir}/sms/first-sms.adoc[leveloffset=+2]
 
+[[sms-template]]
 === use a template for SMS content
 
 include::{user-manual-dir}/sms/template-content.adoc[leveloffset=+2]
 
+[[auto-split-sms]]
 === Send a long SMS
 
 include::{user-manual-dir}/sms/long-sms.adoc[leveloffset=+2]
@@ -137,6 +143,7 @@ TODO: specificités FreeMarker
 TODO: configuration avancées pour FreeMarker
 ////
 
+[[thymeleaf]]
 === ThymeLeaf
 
 ////
@@ -152,6 +159,7 @@ TODO: configuration des prefix/suffix ici ou dans advanced configuration (parler
 TODO: variantes ?
 ////
 
+[[spring-boot-usage]]
 == Using Ogham in a Spring Boot application
 
 include::{user-manual-dir}/spring/spring-boot-autoconfiguration.adoc[leveloffset=+1]

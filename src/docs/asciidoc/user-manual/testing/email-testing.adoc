@@ -56,7 +56,7 @@ Sample
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-27 highlight-lines:65"]
+[source, java, role="collapse-lines:1-26,28-45,72-84 irrelevant-lines:1-26 highlight-lines:64"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java[]
 ----
@@ -107,7 +107,7 @@ Sample
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-23 highlight-lines:65"]
+[source, java, role="collapse-lines:1-26,28-45,72-84 irrelevant-lines:1-22 highlight-lines:64"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java[]
 ----
@@ -191,7 +191,7 @@ Sample
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-27 highlight-lines:61-66"]
+[source, java, role="collapse-lines:1-26,28-45,71-83 irrelevant-lines:1-26 highlight-lines:60-65"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java[]
 ----

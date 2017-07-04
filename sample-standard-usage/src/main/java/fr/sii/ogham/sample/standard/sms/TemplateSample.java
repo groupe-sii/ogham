@@ -2,7 +2,6 @@ package fr.sii.ogham.sample.standard.sms;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -33,4 +32,19 @@ public class TemplateSample {
 						.to("+33752962193"));
 	}
 
+	public static class SimpleBean {
+		private String name;
+		private int value;
+		public SimpleBean(String name, int value) {
+			super();
+			this.name = name;
+			this.value = value;
+		}
+		public String getName() {
+			return name;
+		}
+		public int getValue() {
+			return value;
+		}
+	}
 }

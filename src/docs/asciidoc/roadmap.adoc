@@ -1,0 +1,70 @@
+:relative-path: ./
+include::{docdir}/variables.adoc[]
+
+== image:{images-dir}/icons/email.png[Email,width=30,height=30] Email
+
+[role=roadmap]
+====
+[.progress:100]*Send email via SMTP*
+[.progress:90]*Send email via SendGrid HTTP API*
+[.progress:90]*Automatic inlining of images and CSS*
+[.progress:10]*Make HTML compatible with many email clients*
+====
+
+
+== image:{images-dir}/icons/sms.png[SMS,width=30,height=30] SMS
+
+[role=roadmap]
+====
+[.progress:90]*Send SMS via SMPP*
+[.progress:90]*Send SMS via OVH HTTP API*
+====
+
+
+== image:{images-dir}/icons/templating.png[SMS,width=30,height=30] Templating
+
+[role=roadmap]
+====
+[.progress:50]*Internationalization*
+[.progress:90]*Template engine integration*
+====
+
+
+
+== image:{images-dir}/icons/spring-boot.png[Spring Boot,width=30,height=30] Spring Boot
+
+[role=roadmap]
+====
+[.progress:100]*Autoconfiguration*
+[.progress:100]*Configuration properties*
+[.progress:100]*Spring Boot starters*
+====
+
+
+== RCS
+
+[role=roadmap]
+====
+[.progress:0]*Send RCS messages*
+====
+
+
+== image:{images-dir}/icons/push-notification.png[Push notification,width=30,height=30] Mobile notification
+
+[role=roadmap]
+====
+[.progress:0]*Android*
+[.progress:0]*iOS*
+[.progress:0]*Windows Phone*
+====
+
+
+
+== image:{images-dir}/icons/twitter.png[Tweet,width=30,height=30] Tweet
+
+[role=roadmap]
+====
+[.progress:0]*Send Tweets*
+[.progress:0]*Use template for tweet content*
+[.progress:0]*Automatic rewrite (URLs, refrences...)*
+====

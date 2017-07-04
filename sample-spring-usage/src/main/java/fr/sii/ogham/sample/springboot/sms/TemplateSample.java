@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
@@ -44,4 +43,19 @@ public class TemplateSample {
 		}
 	}
 
+	public static class SimpleBean {
+		private String name;
+		private int value;
+		public SimpleBean(String name, int value) {
+			super();
+			this.name = name;
+			this.value = value;
+		}
+		public String getName() {
+			return name;
+		}
+		public int getValue() {
+			return value;
+		}
+	}
 }

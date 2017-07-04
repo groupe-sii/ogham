@@ -33,7 +33,7 @@ Sample using HTML and text templates
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:33,34"]
+[source, java, role="collapse-lines:1-10,38-50 irrelevant-lines:1-10,13-20 highlight-lines:32-33"]
 ----
 include::{standard-email-samples-sourcedir}/HtmlAndTextTemplateSample.java[]
 ----
@@ -87,7 +87,7 @@ Sample using HTML with ThymeLeaf and text with FreeMarker
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:33,34"]
+[source, java, role="collapse-lines:1-10,38-50 irrelevant-lines:1-10,13-20 highlight-lines:32-33"]
 ----
 include::{standard-email-samples-sourcedir}/HtmlAndTextMixedTemplateEnginesSample.java[]
 ----

@@ -9,7 +9,7 @@ Sample with template
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-23 highlight-lines:31,32"]
+[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-22 highlight-lines:30,31"]
 ----
 include::{standard-sms-samples-sourcedir}/TemplateSample.java[]
 ----

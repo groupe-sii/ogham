@@ -3,48 +3,15 @@ include::{docdir}/variables.adoc[]
 
 == Features
 
-[role="feature feature-email"]
-====
-image:{images-dir}/icons/email.png[Email,width=100,height=100]
+
+include::{docdir}/features.adoc[]
 
 
-Send Email
-====
+---
 
 
-[role="feature feature-sms"]
-====
-image:{images-dir}/icons/sms.png[Email,width=100,height=100]
+== Introduction
 
-Send SMS
-====
-
-
-[role="feature feature-templating"]
-====
-image:{images-dir}/icons/email.png[Email,width=100,height=100]
-
-Templating
-====
-
-
-[role="feature feature-spring"]
-====
-image:{images-dir}/icons/spring-boot.png[Email,width=100,height=100]
-
-Spring
-====
-
-[role="feature feature-customizable"]
-====
-image:{images-dir}/icons/email.png[Email,width=100,height=100]
-
-Customizable
-====
-
-////
-TODO: schéma
-////
 
 ---
 
@@ -173,3 +140,18 @@ TODO: gradle code sample
 
 
 <<user-manual.adoc#install, Installation instructions &raquo;>>
+
+
+---
+
+
+== Roadmap
+
+
+---
+
+
+
+include::{docdir}/roadmap.adoc[leveloffset=+1]
+
+

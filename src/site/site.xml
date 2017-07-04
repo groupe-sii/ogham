@@ -62,6 +62,9 @@
 					<highlightJs>false</highlightJs>
 					<sections>
 						<columns>1</columns>
+						<columns>1</columns>
+						<columns>2</columns>
+						<columns>1</columns>
 						<columns>2</columns>
 						<columns>1</columns>
 						<columns>2</columns>
@@ -107,6 +110,7 @@
 			</pages>
 			<endContent>
  				<script src="$resourcePath/js/site.js"></script>
+ 				<script src="$resourcePath/javascripts/progress.js"></script>
  				<script src="$resourcePath/javascripts/sourcecode/source-utils.js"></script>
 				<script src="$resourcePath/javascripts/sourcecode/highlight-lines.js"></script>
 				<script src="$resourcePath/javascripts/sourcecode/collapse-lines.js"></script>
@@ -123,6 +127,7 @@
 			<link rel="stylesheet" href="$resourcePath/css/prefixed-asciidoctor.css" />
  			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" />
 			<link rel="stylesheet" href="$resourcePath/css/prefixed-coderay-asciidoctor.css" />
+			<link rel="stylesheet" href="$resourcePath/styles/progress.css" />
 			<link rel="stylesheet" href="$resourcePath/styles/tabcontainer.css" />
 			<link rel="stylesheet" href="$resourcePath/styles/sourcecode/collapse-lines.css" />
  			<link rel="stylesheet" href="$resourcePath/styles/sourcecode/highlight-lines.css" />

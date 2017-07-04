@@ -23,7 +23,6 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.mock.context.SimpleBean;
 
 public class EmailHtmlAndTextTestSample {
 	private MessagingService oghamService;
@@ -66,5 +65,21 @@ public class EmailHtmlAndTextTestSample {
 					.contentType(startsWith("text/plain")).and()													// <6>
 				.attachments(emptyIterable());
 		// @formatter:on
+	}
+
+	public static class SimpleBean {
+		private String name;
+		private int value;
+		public SimpleBean(String name, int value) {
+			super();
+			this.name = name;
+			this.value = value;
+		}
+		public String getName() {
+			return name;
+		}
+		public int getValue() {
+			return value;
+		}
 	}
 }
