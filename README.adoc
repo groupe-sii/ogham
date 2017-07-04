@@ -1,3 +1,7 @@
+////
+Do no edit this file, it is automatically generated. Sources are in src/docs/asciidoc.
+////
+
 
 = Ogham
 ogham-version
@@ -288,6 +292,7 @@ The construction of the email is done using a fluent API in order to chain calls
 
 Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.
 
+[[email-template]]
 ==== Use an HTML template for email body
 
 
@@ -300,13 +305,12 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:30,31"]
+[source, java, role="collapse-lines:1-10,35-47 irrelevant-lines:1-10,13-20 highlight-lines:29-30"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -335,6 +339,22 @@ public class HtmlTemplateSample
                                                     new SimpleBean("foo", 42)))                            // <6>
                         .to("ogham-test@yopmail.com"));
     
+
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Use the standard builder (predefined behavior)
@@ -382,6 +402,7 @@ The path to the template is a string with a *lookup* prefix. The lookup prefix i
 
 The variables are any object you are using in your application. No need to convert your object to a particular format. Directly use what you want.
 
+[[html-title-subject]]
 ==== Use HTML title as email subject
 
 
@@ -394,13 +415,12 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21"]
+[source, java, role="collapse-lines:1-11,36-48 irrelevant-lines:1-11,13-20"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -430,6 +450,22 @@ public class HtmlTemplateWithSubjectSample
                                                     new SimpleBean("foo", 42)))
                         .to("ogham-test@yopmail.com"));
     
+    
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Subject is no more in Java code
@@ -471,13 +507,12 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21"]
+[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-20"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -507,6 +542,22 @@ public class TextTemplateWithSubjectSample
                                                     new SimpleBean("foo", 42)))
                         .to("ogham-test@yopmail.com"));
     
+    
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Subject is no more in Java code
@@ -532,6 +583,7 @@ https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/s
 [role=tab-container-end]
 _____
 
+[[css-images-inlining]]
 ==== HTML body with CSS and images
 
 
@@ -559,13 +611,12 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:32,33"]
+[source, java, role="collapse-lines:1-10,37-49 irrelevant-lines:1-10,13-20 highlight-lines:31,32"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
@@ -596,6 +647,22 @@ public class HtmlWithImagesAndCssTemplateSample
                                                             new SimpleBean("foo", 42)))                            // <2>
                         .to("ogham-test@yopmail.com"));
     
+
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> The path to the templates
@@ -772,7 +839,8 @@ TODO: you have control
 TODO: other rules
 ////
 
-==== A working preview of the HTML body
+[[text-alternative]]
+==== A working preview of the HTML body (text alternative)
 
 
 
@@ -849,13 +917,12 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:33,34"]
+[source, java, role="collapse-lines:1-10,38-50 irrelevant-lines:1-10,13-20 highlight-lines:32-33"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
@@ -887,6 +954,22 @@ public class HtmlAndTextTemplateSample
                                                             new SimpleBean("foo", 42)))                    // <2>
                         .to("ogham-test@yopmail.com"));
     
+    
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
@@ -950,13 +1033,12 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:33,34"]
+[source, java, role="collapse-lines:1-10,38-50 irrelevant-lines:1-10,13-20 highlight-lines:32-33"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
@@ -988,6 +1070,22 @@ public class HtmlAndTextMixedTemplateEnginesSample
                                                             new SimpleBean("foo", 42)))                // <2>
                         .to("ogham-test@yopmail.com"));
     
+    
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
@@ -1041,7 +1139,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-21 highlight-lines:32-34"]
+[source, java, role="collapse-lines:1-12 irrelevant-lines:1-12,15-22 highlight-lines:33-34"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -1214,13 +1312,12 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-43 irrelevant-lines:1-43 highlight-lines:52"]
+[source, java, role="collapse-lines:1-42,63-75 irrelevant-lines:1-42 highlight-lines:51"]
 ----
 package fr.sii.ogham.sample.standard.email.sendgrid;
 
 import java.io.IOException;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
@@ -1278,6 +1375,21 @@ public class SendGridFullSample
                         .attach(new Attachment("/attachment/test.pdf")));
     
 
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Load properties from a file that is in the classpath.
@@ -1385,6 +1497,7 @@ The construction of the SMS is done using a fluent API in order to chain calls a
 
 Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.
 
+[[sms-template]]
 ==== use a template for SMS content
 
 
@@ -1396,13 +1509,12 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11 irrelevant-lines:1-11,14-23 highlight-lines:31,32"]
+[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-22 highlight-lines:30,31"]
 ----
 package fr.sii.ogham.sample.standard.sms;
 
 import java.util.Properties;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -1433,6 +1545,21 @@ public class TemplateSample
                         .to("+33752962193"));
     
 
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Use the standard builder (predefined behavior)
@@ -1470,6 +1597,7 @@ The path to the template is a string with a *lookup* prefix. The lookup prefix i
 
 The variables are any object you are using in your application. No need to convert your object to a particular format. Directly use what you want.
 
+[[auto-split-sms]]
 ==== Send a long SMS
 
 
@@ -2085,6 +2213,7 @@ TODO: specificités FreeMarker
 TODO: configuration avancées pour FreeMarker
 ////
 
+[[thymeleaf]]
 ==== ThymeLeaf
 
 ////
@@ -2100,6 +2229,7 @@ TODO: configuration des prefix/suffix ici ou dans advanced configuration (parler
 TODO: variantes ?
 ////
 
+[[spring-boot-usage]]
 === Using Ogham in a Spring Boot application
 
 
@@ -2144,7 +2274,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19 highlight-lines:34,35,41-44"]
+[source, java, role="collapse-lines:1-18,48-60 irrelevant-lines:1-18 highlight-lines:33,34,40-43"]
 ----
 package fr.sii.ogham.sample.springboot.email;
 
@@ -2159,7 +2289,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
@@ -2193,6 +2322,21 @@ public class ThymeleafHtmlAndFreemarkerTextSample
         
     }
 
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Inject Ogham service
@@ -2281,7 +2425,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19 highlight-lines:33,34,40-43"]
+[source, java, role="collapse-lines:1-18,47-59 irrelevant-lines:1-18 highlight-lines:32,33,39-42"]
 ----
 package fr.sii.ogham.sample.springboot.sms;
 
@@ -2296,7 +2440,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.sii.ogham.context.SimpleBean;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
@@ -2329,6 +2472,21 @@ public class TemplateSample
         
     }
 
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Inject Ogham service
@@ -2383,6 +2541,7 @@ _____
 == Testing
 
 
+[[testing-tools]]
 === Include test utilities
 
 
@@ -2484,6 +2643,7 @@ image::src/docs/resources/images/eclipse/static-import-autocomplete.png[role="te
 TIP: Eclipse can rewrite a call to a static method prefixed by class. For example in your code you have `OghamAssertions.assertThat`, pressing kbd:[Ctrl+M] shortcut (cursor must be placed in the method name), Eclipse will add the static import and the code is just `assertThat`.
 
 
+[[testing-email]]
 === Testing emails
 
 
@@ -2608,7 +2768,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-27 highlight-lines:65"]
+[source, java, role="collapse-lines:1-26,28-45,72-84 irrelevant-lines:1-26 highlight-lines:64"]
 ----
 package fr.sii.ogham.sample.test;
 
@@ -2635,7 +2795,6 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.mock.context.SimpleBean;
 
 public class EmailHtmlTestSample 
     private MessagingService oghamService;
@@ -2680,6 +2839,22 @@ public class EmailHtmlTestSample
                 .attachments(emptyIterable());
         // @formatter:on
     
+    
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Use an HTML template
@@ -2751,7 +2926,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-23 highlight-lines:65"]
+[source, java, role="collapse-lines:1-26,28-45,72-84 irrelevant-lines:1-22 highlight-lines:64"]
 ----
 package fr.sii.ogham.sample.test;
 
@@ -2778,7 +2953,6 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.mock.context.SimpleBean;
 
 public class EmailHtmlTestSample 
     private MessagingService oghamService;
@@ -2823,6 +2997,22 @@ public class EmailHtmlTestSample
                 .attachments(emptyIterable());
         // @formatter:on
     
+    
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Use an HTML template
@@ -2917,7 +3107,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-27,29-46 irrelevant-lines:1-27 highlight-lines:61-66"]
+[source, java, role="collapse-lines:1-26,28-45,71-83 irrelevant-lines:1-26 highlight-lines:60-65"]
 ----
 package fr.sii.ogham.sample.test;
 
@@ -2944,7 +3134,6 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.mock.context.SimpleBean;
 
 public class EmailHtmlAndTextTestSample 
     private MessagingService oghamService;
@@ -2988,6 +3177,22 @@ public class EmailHtmlAndTextTestSample
                 .attachments(emptyIterable());
         // @formatter:on
     
+
+    public static class SimpleBean 
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        
+        public String getName() 
+            return name;
+        
+        public int getValue() 
+            return value;
+        
+    }
 }
 ----
 <1> Access to main body assertions
@@ -3505,6 +3710,7 @@ _____
 TODO: test sendgrid?
 ////
 
+[[testing-sms]]
 === Tesing SMS
 
 
