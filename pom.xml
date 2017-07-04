@@ -78,6 +78,8 @@
 		<!-- Documentation -->
 		<docProjectVersion>${project.version}</docProjectVersion>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
+		<site.staging.dir>${project.build.outputDirectory}/staging</site.staging.dir>
+		<site.output.dir>${site.staging.dir}/v${docProjectVersion}</site.output.dir>
 
 		<!-- Plugins -->
 		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
@@ -628,6 +630,7 @@
 					<generateReports>true</generateReports>
 					<inputEncoding>UTF-8</inputEncoding>
 					<outputEncoding>UTF-8</outputEncoding>
+					<stagingDirectory>${site.output.dir}</stagingDirectory>
 					<asciidoc>
 						<baseDir>${basedir}/src/docs/asciidoc</baseDir>
 						<preserveDirectories>true</preserveDirectories>
