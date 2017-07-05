@@ -1,6 +1,11 @@
 :relative-path: ./
 include::{docdir}/variables.adoc[]
 
+
+////
+TODO: link to github issues (use filters)
+////
+
 == image:{images-dir}/icons/email.png[Email,width=30,height=30] Email
 
 [role=roadmap]
@@ -38,6 +43,20 @@ include::{docdir}/variables.adoc[]
 [.progress:100]*Autoconfiguration*
 [.progress:100]*Configuration properties*
 [.progress:100]*Spring Boot starters*
+====
+
+
+== image:{images-dir}/icons/javaee.png[Java EE,width=30,height=30] Java EE
+
+[role=roadmap]
+====
+[.progress:0]*Easy integration with any Java EE server (Wildfly, Glassfish, WebSphere...)*
+[.progress:0]*Load resources using JNDI*
+[.progress:0]*CDI integration*
+[.progress:0]*JAX-RS integration*
+[.progress:0]*JSF integration*
+[.progress:0]*JSP/JSTL support*
+[.progress:0]*JSP/JSTL support*
 ====
 
 

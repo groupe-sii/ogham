@@ -102,7 +102,7 @@ pre>code {
 
 
 .page-index .feature {
-	width: 500px;
+	width: 580px;
 	height: 200px;
 	margin: 40px 0 0 0;
 }
@@ -126,7 +126,7 @@ pre>code {
 	justify-content: center;
 }
 .page-index .feature .content > .ulist {
-	width: 330px;
+	width: 415px;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -180,4 +180,48 @@ pre>code {
 	display: block;
 	clear: both;
 	line-height: 0;
+}
+
+
+@media (min-width: 1200px) {
+}
+
+@media (max-width: 979px) and (min-width: 768px) {
+	.page-index .feature {
+		width: 450px;
+	}
+	
+	.page-index .feature .content > .ulist {
+		width: 300px;
+	}
+}
+
+@media (max-width: 767px) {
+	.page-index .feature {
+		float: none !important;
+		width: 100%;
+		height: auto;
+	}
+	.page-index .feature .content > .paragraph {
+		float: none !important;
+		width: 100%;
+	}
+	.page-index .feature .content > .ulist {
+		float: none !important;
+		width: 100%;
+		text-align: center !important;
+	}
+	.page-index .feature .content > .ulist ul {
+		list-style: none;
+		margin-left: 0;
+	}
+
+	.page-user-manual .main-body #toc {
+		position: static;
+		width: auto;
+	}	
+	.page-user-manual .main-body .body-content {
+		margin-left: 0;
+	}
+
 }
