@@ -72,12 +72,12 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Samples <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li ><a href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email" title="Email" class="externalLink">Email</a></li>
-									<li ><a href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms" title="SMS" class="externalLink">SMS</a></li>
-									<li ><a href="https://github.com/groupe-sii/ogham/tree/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/" title="Spring" class="externalLink">Spring</a></li>
-									<li ><a href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/template/thymeleaf" title="Thymeleaf" class="externalLink">Thymeleaf</a></li>
-									<li ><a href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/template/freemarker" title="FreeMarker" class="externalLink">FreeMarker</a></li>
-									<li ><a href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java" title="Mixing Thymeleaf & FreeMarker" class="externalLink">Mixing Thymeleaf & FreeMarker</a></li>
+									<li ><a href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email" title="Email" class="externalLink">Email</a></li>
+									<li ><a href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms" title="SMS" class="externalLink">SMS</a></li>
+									<li ><a href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/" title="Spring" class="externalLink">Spring</a></li>
+									<li ><a href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/template/thymeleaf" title="Thymeleaf" class="externalLink">Thymeleaf</a></li>
+									<li ><a href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/template/freemarker" title="FreeMarker" class="externalLink">FreeMarker</a></li>
+									<li ><a href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java" title="Mixing Thymeleaf & FreeMarker" class="externalLink">Mixing Thymeleaf & FreeMarker</a></li>
 								</ul>
 							</li>
 							<li class="dropdown">
@@ -204,11 +204,11 @@
  <div class="page-header">
   <h2 id="Email">Email</h2>
  </div> 
- <p>The samples are available in the <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage">sample-standard-usage sub-project</a>.</p> 
+ <p>The samples are available in the <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage">sample-standard-usage sub-project</a>.</p> 
  <p>All samples shown bellow are using SMTP for sending email. See <a href="../config/select-implementation.html">select implementation</a> to know other ways to send email.</p> 
  <div class="section"> 
   <h3 id="Basic"><a name="basic"></a>Basic</h3> 
-  <p>This sample shows how to send a basic email. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java">here</a>.</p> 
+  <p>This sample shows how to send a basic email. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java">here</a>.</p> 
   <p>The first lines configure the properties that will be used by the sender. Then you must create the service. You can use the MessagingBuilder to help you to create the service. Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.</p> 
   <p>See other examples for advanced usages (using a templated content or adding attachments).</p> 
   <p><span class="highlight" data-irrelevant-lines="1-9"></span> <span class="collapse" data-lines="1-9"></span></p> 
@@ -281,7 +281,7 @@ public class BasicSample {
   </div> 
   <div class="section"> 
    <h4 id="Load_properties_from_file"><a name="load-properties-from-file"></a>Load properties from file</h4> 
-   <p>This sample shows how to send a basic email. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSampleExternalProperties.java">here</a>.</p> 
+   <p>This sample shows how to send a basic email. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSampleExternalProperties.java">here</a>.</p> 
    <p>If you want to put properties in a configuration file, you can create a properties file (email.properties for example) in src/main/resources folder with the following content:</p> 
    <div class="source"> 
     <div class="source"> 
@@ -332,7 +332,7 @@ public class BasicSampleExternalProperties {
    <h4 id="Gmail_sample">Gmail sample</h4> 
    <div class="section"> 
     <h5 id="SSL">SSL</h5> 
-    <p>This sample shows how to send a basic email through GMail. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/gmail/BasicGmailSSLSample.java">here</a>.</p> 
+    <p>This sample shows how to send a basic email through GMail. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/gmail/BasicGmailSSLSample.java">here</a>.</p> 
     <p>The first lines configure the properties that will be used by the sender. Then you must create the service. You can use the MessagingBuilder to help you to create the service. Finally, the last line sends the email. The specified email is really basic. It only contains the subject, the textual content and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.</p> 
     <p>See other examples for advanced usages (using a templated content or adding attachments).</p> 
     <p><span class="highlight" data-lines="13-23" data-irrelevant-lines="1-9"></span> <span class="collapse" data-lines="1-9"></span></p> 
@@ -385,7 +385,7 @@ public class BasicGmailSSLSample {
   <h3 id="Using_templates"><a name="using-a-template"></a>Using templates</h3> 
   <div class="section"> 
    <h4 id="Sending_email_with_template"><a name="sending-email-with-template"></a>Sending email with template</h4> 
-   <p>This sample shows how to send an email with a content following a template engine language. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java">here</a>.</p> 
+   <p>This sample shows how to send an email with a content following a template engine language. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java">here</a>.</p> 
    <p>The first lines configure the properties that will be used by the sender. Then you must create the service. You can use the MessagingBuilder to help you to create the service. Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the content based on a templated content available in the classpath, a bean to use as source of variable substitutions and the receiver address. The sender address is automatically added to the email by the service based on configuration properties.</p> 
    <p>See other examples for advanced usages (adding attachments).</p> 
    <p><span class="highlight" data-lines="25,29" data-irrelevant-lines="1-11,15-24"></span> <span class="collapse" data-lines="1-11,15-24"></span></p> 
@@ -445,7 +445,7 @@ public class HtmlTemplateSample {
 </pre> 
     </div> 
    </div> 
-   <p>The template is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html">here</a></p> 
+   <p>The template is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html">here</a></p> 
   </div> 
   <div class="section"> 
    <h4 id="Sending_email_with_subject_from_template"><a name="sending-email-with-subject-from-template"></a>Sending email with subject from template</h4> 
@@ -511,13 +511,13 @@ public class HtmlTemplateWithSubjectSample {
 </pre> 
     </div> 
    </div> 
-   <p>You can look directly at the sample codes: <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java">Java</a> and <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html">HTML</a>.</p> 
+   <p>You can look directly at the sample codes: <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java">Java</a> and <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html">HTML</a>.</p> 
    <p>For text templates, the subject is automatically used (like for HTML title) if the first line starts with <tt>Subject:</tt> (spaces can be added after colon). Other lines are used as content of the email.</p> 
   </div> 
   <div class="section"> 
    <h4 id="Both_HTML_and_text"><a name="both-html-and-text"></a>Both HTML and text</h4> 
    <p>Sending an email with HTML content <b>and</b> text content might be really important, at least for smartphones. When a smartphone receives an email, it displays the sender, the subject and also a preview of the message, using the text alternative. If the message is only HTML, the preview might be unreadable.</p> 
-   <p>This sample shows how to provide both HTML content and text content. This sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java">here</a>.</p> 
+   <p>This sample shows how to provide both HTML content and text content. This sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java">here</a>.</p> 
    <p><span class="highlight" data-lines="24-26,30" data-irrelevant-lines="1-9,14-21"></span> <span class="collapse" data-lines="1-9,14-21"></span></p> 
    <div class="source"> 
     <div class="source"> 
@@ -558,7 +558,7 @@ public class HtmlAndTextSample {
 </pre> 
     </div> 
    </div> 
-   <p>This sample shows how to provide both HTML content and text content following a template engine language. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java">here</a>.</p> 
+   <p>This sample shows how to provide both HTML content and text content following a template engine language. The sample shows the shorthand version that avoids specifying twice the path to the template. This sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java">here</a>.</p> 
    <p><span class="highlight" data-lines="28,32,25-27" data-irrelevant-lines="1-10,15-23"></span> <span class="collapse" data-lines="1-10,15-23"></span></p> 
    <div class="source"> 
     <div class="source"> 
@@ -601,7 +601,7 @@ public class HtmlAndTextTemplateSample {
 </pre> 
     </div> 
    </div> 
-   <p>Here is the content of the HTML template (available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html">here</a>):</p> 
+   <p>Here is the content of the HTML template (available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html">here</a>):</p> 
    <div class="source"> 
     <div class="source"> 
      <pre>&lt;!DOCTYPE html&gt;
@@ -617,7 +617,7 @@ public class HtmlAndTextTemplateSample {
 </pre> 
     </div> 
    </div> 
-   <p>And the templated content (available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt">here</a>):</p> 
+   <p>And the templated content (available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt">here</a>):</p> 
    <div class="source"> 
     <div class="source"> 
      <pre>&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot; th:inline=&quot;text&quot; th:remove=&quot;tag&quot;&gt;
@@ -703,18 +703,18 @@ public class HtmlAndTextTemplateSample {
    <div class="section"> 
     <h5 id="Mixing_Thymeleaf_and_FreeMarker">Mixing Thymeleaf and FreeMarker</h5> 
     <p>It is possible to mix templates in the same application. Even better, you can use a template engine that is better suited for HTML like Thymeleaf and FreeMarker that is better for textual version for the same email. Just write your templates with the engine you want.</p> 
-    <p>See samples to <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java">ensure that Java code is still the same</a>.</p> 
+    <p>See samples to <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java">ensure that Java code is still the same</a>.</p> 
     <p>Only the templates are different:</p> 
     <ul> 
-     <li><a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/mixed/simple.html">HTML template using Thymeleaf</a></li> 
-     <li><a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl">Text template using FreeMarker</a></li> 
+     <li><a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/mixed/simple.html">HTML template using Thymeleaf</a></li> 
+     <li><a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl">Text template using FreeMarker</a></li> 
     </ul> 
    </div> 
   </div> 
  </div> 
  <div class="section"> 
   <h3 id="Attachments"><a name="attachments"></a>Attachments</h3> 
-  <p>This sample shows how to send an email with attached file. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java">here</a></p> 
+  <p>This sample shows how to send an email with attached file. The sample is available <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java">here</a></p> 
   <p>The first lines configure the properties that will be used by the sender. Then you must create the service. You can use the MessagingBuilder to help you to create the service. Finally, the last line sends the email. The specified email is really basic too. It only contains the subject, the textual content, the receiver address and the attachment file that is available in the classpath. You may use several attachments too. The sender address is automatically added to the email by the service based on configuration properties.</p> 
   <p><span class="highlight" data-lines="24,30" data-irrelevant-lines="1-10,14-23"></span> <span class="collapse" data-lines="1-10,14-23"></span></p> 
   <div class="source"> 
@@ -766,7 +766,7 @@ public class WithAttachmentSample {
    <li>The subject is directly extracted from template</li> 
    <li>The email is sent with one attachment</li> 
   </ul> 
-  <p>Here is the Java code (<a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/FullSample.java">available here</a>):</p> 
+  <p>Here is the Java code (<a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/FullSample.java">available here</a>):</p> 
   <p><span class="highlight" data-irrelevant-lines="1-13"></span> <span class="collapse" data-lines="1-13"></span></p> 
   <div class="source"> 
    <div class="source"> 
@@ -827,7 +827,7 @@ ogham.email.template.prefix=/template/thymeleaf/email/
 </pre> 
    </div> 
   </div> 
-  <p>The HTML template content is <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.html">available here</a>. The content of the HTML is not displayed entirely. Just useful parts are shown here:</p> 
+  <p>The HTML template content is <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.html">available here</a>. The content of the HTML is not displayed entirely. Just useful parts are shown here:</p> 
   <p><span class="highlight" data-lines="4,8,13,17"></span></p> 
   <div class="source"> 
    <div class="source"> 
@@ -854,7 +854,7 @@ ogham.email.template.prefix=/template/thymeleaf/email/
 </pre> 
    </div> 
   </div> 
-  <p>Now the content of the header (<a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/fragments/header.html">available here</a>). The header contains the subject of the email (with title tag) and references external CSS files that will be interned directly in the HTML:</p> 
+  <p>Now the content of the header (<a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/thymeleaf/email/fragments/header.html">available here</a>). The header contains the subject of the email (with title tag) and references external CSS files that will be interned directly in the HTML:</p> 
   <p><span class="highlight" data-lines="5,7-8"></span></p> 
   <div class="source"> 
    <div class="source"> 
@@ -871,8 +871,8 @@ ogham.email.template.prefix=/template/thymeleaf/email/
 </pre> 
    </div> 
   </div> 
-  <p>The content of the CSS files are not displayed here but <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/resources/css/">can be found in samples</a>. Useful classes are <tt>name</tt> and <tt>value</tt>.</p> 
-  <p>The text template is <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/master/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.txt">available here</a>.</p> 
+  <p>The content of the CSS files are not displayed here but <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/resources/css/">can be found in samples</a>. Useful classes are <tt>name</tt> and <tt>value</tt>.</p> 
+  <p>The text template is <a class="externalLink" href="https://github.com/groupe-sii/ogham/tree/v1.1.0/sample-standard-usage/src/main/resources/template/thymeleaf/email/full.txt">available here</a>.</p> 
  </div> 
  <div class="section"> 
   <h3 id="Spring_Boot"><a name="spring-boot"></a>Spring Boot</h3> 
