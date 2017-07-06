@@ -18,14 +18,18 @@ pre>code {
 	margin-left: 50px;
 }
 
+.page-release-notes .main-body .body-content,
 .page-user-manual .main-body .body-content {
 	color: rgba(0, 0, 0, 0.8);
 }
 
+.page-release-notes .main-body i.fa,
 .page-user-manual .main-body i.fa {
 	font-style: normal;
 }
 
+.page-release-notes .main-body [class^="icon-"],
+.page-release-notes .main-body [class*=" icon-"],
 .page-user-manual .main-body [class^="icon-"],
 .page-user-manual .main-body [class*=" icon-"] {
 	background: none;
@@ -33,10 +37,17 @@ pre>code {
 	height: auto;
 }
 
+.page-release-notes .main-body .imageblock.text-center .title,
 .page-user-manual .main-body .imageblock.text-center .title {
 	text-align: center;
 }
 
+.page-release-notes .main-body h1,
+.page-release-notes .main-body h2,
+.page-release-notes .main-body h3,
+.page-release-notes .main-body h4,
+.page-release-notes .main-body h5,
+.page-release-notes .main-body h6,
 .page-user-manual .main-body h1,
 .page-user-manual .main-body h2,
 .page-user-manual .main-body h3,
@@ -66,6 +77,30 @@ pre>code {
 	margin-top: -1em;
 }
 
+
+
+
+
+.page-release-notes .main-body .sect3 {
+	margin-left: 20px;
+}
+
+
+
+.roadmap {
+	font-weight: bold;
+}
+
+.roadmap .paragraph {
+	margin: 20px 0;
+}
+
+
+
+
+
+
+
 .page-index h2 {
     text-align: center;
     margin-top: 70px;
@@ -91,18 +126,8 @@ pre>code {
 	font-size: 15px;
 }
 
-.roadmap {
-	font-weight: bold;
-}
-
-.roadmap .paragraph {
-	margin: 20px 0;
-}
-
-
-
 .page-index .feature {
-	width: 500px;
+	width: 580px;
 	height: 200px;
 	margin: 40px 0 0 0;
 }
@@ -126,7 +151,7 @@ pre>code {
 	justify-content: center;
 }
 .page-index .feature .content > .ulist {
-	width: 330px;
+	width: 415px;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -172,7 +197,7 @@ pre>code {
 	text-align: left;
 }
 
- #features + .sectionbody::after,
+#features + .sectionbody::after,
 .page-index .feature .content::after {
 	content: "";
 	width: 0;
@@ -180,4 +205,48 @@ pre>code {
 	display: block;
 	clear: both;
 	line-height: 0;
+}
+
+
+@media (min-width: 1200px) {
+}
+
+@media (max-width: 979px) and (min-width: 768px) {
+	.page-index .feature {
+		width: 450px;
+	}
+	
+	.page-index .feature .content > .ulist {
+		width: 300px;
+	}
+}
+
+@media (max-width: 767px) {
+	.page-index .feature {
+		float: none !important;
+		width: 100%;
+		height: auto;
+	}
+	.page-index .feature .content > .paragraph {
+		float: none !important;
+		width: 100%;
+	}
+	.page-index .feature .content > .ulist {
+		float: none !important;
+		width: 100%;
+		text-align: center !important;
+	}
+	.page-index .feature .content > .ulist ul {
+		list-style: none;
+		margin-left: 0;
+	}
+
+	.page-user-manual .main-body #toc {
+		position: static;
+		width: auto;
+	}	
+	.page-user-manual .main-body .body-content {
+		margin-left: 0;
+	}
+
 }

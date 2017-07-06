@@ -50,8 +50,14 @@ class Versions:
 			self.versions.append(Version(versionName))
 		self.versions.sort(reverse=True)
 		
-	def getCurrentVersion(self):
+	def getLast(self):
 		return self.versions[0]
+
+	def getLastRelease(self):
+		for version in self.versions:
+			if not version.snapshot:
+				return version
+		return None
 
 
 sitedir = os.path.dirname(os.path.realpath(__file__))
@@ -59,4 +65,4 @@ sitedir = os.path.dirname(os.path.realpath(__file__))
 versions = loadVersions(sitedir)
 print(map(lambda v: v.name, versions.versions))
 generateVersions(sitedir, versions)
-generateIndex(sitedir, 'http://groupe-sii.github.io/ogham/', versions.getCurrentVersion())
+generateIndex(sitedir, 'http://groupe-sii.github.io/ogham/', versions.getLastRelease())
