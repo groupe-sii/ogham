@@ -1,0 +1,101 @@
+.page-user-manual .main-body .tab-container,
+.tab-container {
+	position: relative;
+	clear: both;
+	margin: 25px 0;
+	max-height: 900px;
+}
+
+.page-user-manual .main-body .tab-container.no-max-height,
+.tab-container.no-max-height {
+	max-height: none;
+}
+
+.page-user-manual .main-body .tab-container>p:first-child,
+.tab-container>p:first-child {
+	display: none;
+}
+
+.page-user-manual .main-body .tab,
+.tab {
+	float: left;
+}
+
+.page-user-manual .main-body .tab>.tab-label,
+.tab>.tab-label {
+	background: #eee;
+	padding: 10px;
+	border: 1px solid #ccc;
+	margin-left: -1px;
+	position: relative;
+	left: 1px;
+	text-align: center;
+	line-height: normal;
+	display: block;
+	overflow: hidden;
+	height: 45px;
+	font-size: 1.0625rem;
+	line-height: 23px;
+	box-sizing: border-box;
+}
+
+.page-user-manual .main-body .tab>.tab-label .image,
+.tab>.tab-label .image {
+	margin-right: 5px;
+	display: inline-block;
+}
+
+.page-user-manual .main-body .tab>[type=radio],
+.tab>[type=radio] {
+	display: none;
+}
+
+
+.page-user-manual .main-body .tab>p:first-child,
+.tab>p:first-child {
+	background: #eee;
+	padding: 10px;
+	border: 1px solid #ccc;
+	margin-left: -1px;
+	position: relative;
+	left: 1px;
+}
+
+.page-user-manual .main-body .tab>.tab-content,
+.tab>.tab-content {
+	position: absolute;
+	top: 44px;
+	left: 0;
+	background: white;
+	right: 0;
+	bottom: 0;
+	padding: 20px;
+	border: 1px solid #ccc;
+	visibility: hidden;
+	overflow: auto;
+}
+
+.page-user-manual .main-body .tab>[type=radio]:checked ~ .tab-label,
+.tab>[type=radio]:checked ~ .tab-label {
+	background: white;
+	border-bottom: 1px solid white;
+	z-index: 2;
+}
+
+.page-user-manual .main-body .tab>[type=radio]:checked ~ .tab-label ~ .tab-content,
+.tab>[type=radio]:checked ~ .tab-label ~ .tab-content {
+	z-index: 1;
+	visibility: visible;
+}
+
+.page-user-manual .main-body .tab-multiline .tab>.tab-label,
+.tab-multiline .tab>.tab-label {
+	white-space: pre;
+	display: block;
+	height: 50px;
+}
+
+.page-user-manual .main-body .tab-multiline .tab>.tab-content,
+.tab-multiline .tab>.tab-content {
+	top: 49px;
+}
