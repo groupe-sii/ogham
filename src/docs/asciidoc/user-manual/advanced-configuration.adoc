@@ -1,6 +1,11 @@
 :relative-path: ../
 include::{docdir}/variables.adoc[]
 
+[[advanced-smpp-configuration]]
+== SMPP configuration
+
+include::{user-manual-dir}/sms/smpp-configuration.adoc[leveloffset=+2]
+
 == Use the builder to define your own behaviors
 
 === Standard builder

@@ -1,0 +1,21 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+== Configure username and password
+
+Some SMTP servers need credentials. When using Java Mail API, you need to provide an `Authenticator`. 
+
+Ogham has a shortcut to declare default authentication mechanism using a username and a password. Just set the two following properties:
+
+* `ogham.email.javamail.authenticator.username`
+* `ogham.email.javamail.authenticator.password`
+ 
+It will automatically create an `Authenticator` with the provided values.
+
+See <<user-manual.adoc#gmail, Send email through GMail sample>>.
+
+== Custom Authenticator
+
+////
+TODO: custom Authenticator
+////

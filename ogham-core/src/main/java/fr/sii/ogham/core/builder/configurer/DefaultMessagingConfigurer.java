@@ -163,7 +163,7 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 					.text("${ogham.email.subject-first-line-prefix}", "Subject:")
 					.and()
 				.from()
-					.defaultValueProperty("${ogham.email.from}", "${mail.smtp.from}")
+					.defaultValueProperty("${ogham.email.from}", "${mail.smtp.from}", "${mail.from}")
 					.and()
 				.to()
 					.defaultValueProperty("${ogham.email.to}")

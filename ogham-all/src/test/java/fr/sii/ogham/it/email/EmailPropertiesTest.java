@@ -38,9 +38,9 @@ public class EmailPropertiesTest {
 		additional.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
 		additional.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
 		additional.setProperty("ogham.email.from", "test.sender@sii.fr");
-		additional.setProperty("ogham.email.to", "recipient.to1@sii.fr,recipient.to2@sii.fr,recipient.to3@sii.fr");
-		additional.setProperty("ogham.email.cc", "recipient.cc1@sii.fr,recipient.cc2@sii.fr");
-		additional.setProperty("ogham.email.bcc", "recipient.bcc@sii.fr");
+		additional.setProperty("ogham.email.to", "recipient.to1@sii.fr,recipient.to2@sii.fr,recipient.to3@sii.fr");		// <1>
+		additional.setProperty("ogham.email.cc", "recipient.cc1@sii.fr,recipient.cc2@sii.fr");							// <2>
+		additional.setProperty("ogham.email.bcc", "recipient.bcc@sii.fr");												// <3>
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties("/application.properties")

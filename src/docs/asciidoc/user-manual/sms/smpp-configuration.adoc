@@ -1,0 +1,65 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+http://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] is the standard protocol to send SMS. SMPP is quite complex and has many configurable properties:
+
+[cols="2,4,1,1"]
+|===
+| Property | Description | Required | Default value
+
+| ogham.sms.smpp.host
+| The host of the SMPP or SMSC server
+| Yes
+|
+
+| ogham.sms.smpp.port
+| The port of the SMPP or SMSC server
+| Yes
+|
+
+| ogham.sms.smpp.systemId
+| The system identifier used for authenticating
+| Yes
+|
+
+| ogham.sms.smpp.password
+| The password for the system identifier
+| Yes
+|
+
+| ogham.sms.smpp.window.size
+| Message exchange may be synchronous, where each peer waits for a response for each PDU being sent, or asynchronous, where multiple requests can be issued 7 without waiting and acknowledged in a skew order by the other peer; the number of unacknowledged requests is called a window
+| No
+| 1
+
+| ogham.sms.smpp.window.monitor.interval
+| Time to wait between two window checks
+| No
+| disabled
+
+| ogham.sms.smpp.timeout.connection
+| The timeout TCP/IP connection for SMPP session
+| No
+| 10 seconds
+
+| ogham.sms.smpp.timeout.bind
+| The maximum time to wait for the bind response
+| No
+| 5 seconds
+
+| ogham.sms.smpp.timeout.unbind
+| The maximum time to wait for unbind response
+| No
+| 5 seconds
+
+| ogham.sms.smpp.timeout.request
+| The maximum time to wait for an endpoint to respond to a request
+| No
+| disabled
+
+| ogham.sms.smpp.timeout.window
+| The maximum time to wait for window response
+| No
+| 1 minute
+|===

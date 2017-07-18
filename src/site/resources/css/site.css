@@ -219,6 +219,14 @@ pre>code {
 	.page-index .feature .content > .ulist {
 		width: 300px;
 	}
+
+	.page-user-manual .main-body #toc {
+		position: static;
+		width: auto;
+	}	
+	.page-user-manual .main-body .body-content {
+		margin-left: 0;
+	}
 }
 
 @media (max-width: 767px) {

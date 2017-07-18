@@ -1,0 +1,85 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+== Globally configure default sender
+
+You can configure sender address for all sent email by setting the property `ogham.email.from`. The value can either be an email address (`user@domain.host`) or an address with personal information (`User Name <user@domain.host>`). This property is used for every implementation (through SMTP, through SendGrid, ...).
+
+This global address is used only if nothing is specified in the email. If you explicitly set the sender address in the email constructor or using the setter, this value is used instead of the global one.
+
+[role=tab-container no-max-height]
+Basic sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:17,35"]
+----
+include::{standard-email-samples-sourcedir}/OverrideDefaultSenderSample.java[]
+----
+<1> Set the default sender address globally using properties
+<2> Do not provide `from` field so the sender address is `foo.bar@test.com`
+<3> Override the default sender address by providing a `from` field. The address is now `override@test.com`
+
+{standard-email-samples-sourcedir-url}/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+TIP: `mail.from` and `mail.smtp.from` also work
+
+
+== Globally configure default subject
+
+As for sender address, you can define globally a default subject for emails if none is explicitly provided (neither using `.subject(String)` method nor defining a subject directly in the template). The property is `ogham.email.subject`.
+
+
+== Globally configure default recipients
+
+You can also use properties to define default recipients if none are provided:
+
+* `ogham.email.to`: set one or several recipient addresses (`to` field)
+* `ogham.email.cc`: set one or several recipient addresses (`cc` field)
+* `ogham.email.bcc`: set one or several recipient addresses (`bcc` field)
+
+This can be convenient to set a `bcc` address for all sent messages for example (the `bcc` address will never be seen in received emails).
+
+To define several recipient addresses, you can provide a string separated by `,`.
+
+
+[role=tab-container no-max-height]
+Basic sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-24,26-34,51-70 irrelevant-lines:1-24 highlight-lines:41-43"]
+----
+include::{ogham-all-testsourcedir}/fr/sii/ogham/it/email/EmailPropertiesTest.java[]
+----
+<1> Define 3 `to` recipients
+<2> Define 2 `cc` recipients
+<3> Define a single `bcc` recipient
+
+{ogham-all-testsourcedir-url}/fr/sii/ogham/it/email/EmailPropertiesTest.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+
+[TIP] 
+====
+The email addresses are trimmed:
+
+[source, java]
+----
+additional.setProperty("ogham.email.to", "  foo@example.com  ,    John Doe <bar@example.com>,   abc@example.com");
+----
+
+The email addresses will be:
+
+* `foo@example.com`
+* `John Doe <bar@example.com>`
+* `abc@example.com`
+
+====

@@ -48,19 +48,13 @@ include::{user-manual-dir}/email/text-preview.adoc[leveloffset=+2]
 
 include::{user-manual-dir}/email/attach-files.adoc[leveloffset=+2]
 
-=== Globally configure default recipients
+=== Globally configure default email fields
 
-////
-TODO: cf EmailPropertiesTest
-TODO: parsing lists
-////
+include::{user-manual-dir}/email/global-default-values.adoc[leveloffset=+2]
 
-=== Provide authentication
+=== Provide SMTP authentication
 
-////
-TODO: username/password
-TODO: custom Authenticator
-////
+include::{user-manual-dir}/email/smtp-authentication.adoc[leveloffset=+2]
 
 === Use SSL
 
@@ -68,6 +62,7 @@ TODO: custom Authenticator
 TODO: ssl
 ////
 
+[[gmail]]
 === Send email through GMail
 
 include::{user-manual-dir}/email/gmail.adoc[leveloffset=+2]
@@ -87,7 +82,7 @@ TODO: address format "address <personal>"
 
 The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
 
-All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS.
+All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS. Only a subset of SMPP properties are used in following samples. The whole list of SMPP properties is available in <<user-manual.adoc#advanced-smpp-configuration, advanced configuration>>.
 
 See <<ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
 
@@ -113,6 +108,9 @@ include::{user-manual-dir}/sms/smsglobal.adoc[leveloffset=+2]
 
 include::{user-manual-dir}/sms/ovh.adoc[leveloffset=+2]
 
+=== Globally configure default sender phone number
+
+include::{user-manual-dir}/sms/global-default-values.adoc[leveloffset=+2]
 
 [[resource-resolution]]
 == Resource resolution
