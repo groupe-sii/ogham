@@ -214,10 +214,6 @@ NOTE: All samples with templates are using ThymeLeaf as template engine. For Fre
 
 
 
-////
-TODO: default subject as property
-////
-
 
 [[email-usage]]
 === Send Email
@@ -823,7 +819,58 @@ _____
 TODO: image inlining
 TODO: css inlining
 TODO: rewrite html
-TODO: you have control
+TODO: you have control: attributes to enable/disable rules
+
+
+
+TODO: explanation from old README
+#### Working with HTML content
+
+To be sure that most of Email clients will handle an HTML content, there are many rules to follow when writing the content. They might be very complex and time consuming. The library do all this headache work for you.
+
+All these features can be either disabled or use another implementation instead of the default one.
+
+##### Inline CSS and images
+
+For Web developers, it is important to write clean code and separate the concerns. So when writing HTML, developers want to externalize CSS files and images. This is also really important to mutualize the code of CSS files and images for reuse.
+
+However, email clients doesn't handle external CSS files. Styles can be included in a `style` tag but Gmail doesn't support it. So all rules provided in the CSS *MUST* be inlined directly in the HTML. Writing code like this is just awful and error prone. Moreover, images can be references externally but there are many constraints to use it this way. You have to know in advance what is the URL of the final image. And even then, the email client might block those images for safety purpose. Not mentioning offline issues.
+
+The library will automatically inlines CSS rules directly on the HTML tags. The images are either inlined as base64 encoded in `img` `src` attribute or images are attached with the email (with inline content disposition and references in the HTML).
+
+##### Use expanded CSS properties
+
+CSS properties can be written using shorthand version:
+```css
+padding: 4px 2px;
+```
+This is equivalent to:
+```css
+padding: 4px 2px 4px 2px;
+```
+
+Some email clients do not understand shorthand properties. So all properties written in shorthand version must be expanded in order to work everywhere.
+
+The library will automatically expand properties from shorthand versions.
+
+##### Add extra attributes for old email clients
+
+Several attributes must be added on some HTML tags in order to be compliant with email clients. For example, tables and images must have attribute `border="0"`in order to prevent an ugly border on some clients.
+
+The library will automatically add these attributes.
+
+##### Use XHTML
+
+It is recommended to write XHTML instead of HTML due to some mail clients. The library do it for you.
+
+##### Background images
+
+Background images are not correctly handled by several mail clients. And again, some workarounds to apply to fix this issue.
+
+The library will apply those workarounds to your HTML.
+
+##### Use tables for layouts
+
 ////
 
 
@@ -1205,17 +1252,219 @@ NOTE: If you are using `InputStream`, you need to close the stream after sending
 
 TIP: You can also add a custom description for any attachment and link the file content to the email using `ContentDisposition.INLINE`
 
-==== Globally configure default recipients
+==== Globally configure default email fields
+
+
+===== Globally configure default sender
+
+You can configure sender address for all sent email by setting the property `ogham.email.from`. The value can either be an email address (`user@domain.host`) or an address with personal information (`User Name <user@domain.host>`). This property is used for every implementation (through SMTP, through SendGrid, ...).
+
+This global address is used only if nothing is specified in the email. If you explicitly set the sender address in the email constructor or using the setter, this value is used instead of the global one.
+
+[role=tab-container no-max-height]
+_____
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:17,35"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class OverrideDefaultSenderSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "<your server host>");
+        properties.put("mail.smtp.port", "<your server port>");
+        properties.put("ogham.email.from", "foo.bar@test.com");                // <1>
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        service.send(new Email()                                            // <2>
+                        .subject("subject")
+                        .content("email content")
+                        .to("ogham-test@yopmail.com"));
+        // => the sender address is foo.bar@test.com
+
+        service.send(new Email()
+                .subject("subject")
+                .content("email content")
+                .from("override@test.com")                                    // <3>
+                .to("ogham-test@yopmail.com"));
+        // => the sender address is now override@test.com
+    
+}
+----
+<1> Set the default sender address globally using properties
+<2> Do not provide `from` field so the sender address is `foo.bar@test.com`
+<3> Override the default sender address by providing a `from` field. The address is now `override@test.com`
+
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+_____
+
+TIP: `mail.from` and `mail.smtp.from` also work
+
+
+===== Globally configure default subject
+
+As for sender address, you can define globally a default subject for emails if none is explicitly provided (neither using `.subject(String)` method nor defining a subject directly in the template). The property is `ogham.email.subject`.
+
+
+===== Globally configure default recipients
+
+You can also use properties to define default recipients if none are provided:
+
+* `ogham.email.to`: set one or several recipient addresses (`to` field)
+* `ogham.email.cc`: set one or several recipient addresses (`cc` field)
+* `ogham.email.bcc`: set one or several recipient addresses (`bcc` field)
+
+This can be convenient to set a `bcc` address for all sent messages for example (the `bcc` address will never be seen in received emails).
+
+To define several recipient addresses, you can provide a string separated by `,`.
+
+
+[role=tab-container no-max-height]
+_____
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-24,26-34,51-70 irrelevant-lines:1-24 highlight-lines:41-43"]
+----
+package fr.sii.ogham.it.email;
+
+import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
+
+import java.io.IOException;
+import java.util.Properties;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.util.ServerSetupTest;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.helper.rule.LoggingTestRule;
+
+public class EmailPropertiesTest 
+
+    private MessagingService oghamService;
+    
+    @Rule
+    public final LoggingTestRule loggingRule = new LoggingTestRule();
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+    
+    @Before
+    public void setUp() throws IOException {
+        Properties additional = new Properties();
+        additional.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
+        additional.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+        additional.setProperty("ogham.email.from", "test.sender@sii.fr");
+        additional.setProperty("ogham.email.to", "recipient.to1@sii.fr,recipient.to2@sii.fr,recipient.to3@sii.fr");        // <1>
+        additional.setProperty("ogham.email.cc", "recipient.cc1@sii.fr,recipient.cc2@sii.fr");                            // <2>
+        additional.setProperty("ogham.email.bcc", "recipient.bcc@sii.fr");                                                // <3>
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties("/application.properties")
+                    .properties(additional)
+                    .and()
+                .build();
+    
+    
+    @Test
+    public void simple() throws MessagingException, javax.mail.MessagingException 
+        oghamService.send(new Email()
+                            .subject("Simple")
+                            .content("string body"));
+        assertThat(greenMail).receivedMessages()
+                .count(is(6))
+                .forEach()
+                    .subject(is("Simple"))
+                    .body()
+                        .contentAsString(is("string body"))
+                        .contentType(startsWith("text/plain")).and()
+                    .from()
+                        .address(contains("test.sender@sii.fr")).and()
+                    .to()
+                        .address(containsInAnyOrder("recipient.to1@sii.fr", "recipient.to2@sii.fr", "recipient.to3@sii.fr")).and()
+                    .cc()
+                        .address(containsInAnyOrder("recipient.cc1@sii.fr", "recipient.cc2@sii.fr"));
+    
+}
+----
+<1> Define 3 `to` recipients
+<2> Define 2 `cc` recipients
+<3> Define a single `bcc` recipient
+
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/ogham-all/src/test/java/fr/sii/ogham/it/email/EmailPropertiesTest.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+_____
+
+
+[TIP] 
+====
+The email addresses are trimmed:
+
+[source, java]
+----
+additional.setProperty("ogham.email.to", "  foo@example.com  ,    John Doe <bar@example.com>,   abc@example.com");
+----
+
+The email addresses will be:
+
+* `foo@example.com`
+* `John Doe <bar@example.com>`
+* `abc@example.com`
+
+====
+
+==== Provide SMTP authentication
+
+
+===== Configure username and password
+
+Some SMTP servers need credentials. When using Java Mail API, you need to provide an `Authenticator`. 
+
+Ogham has a shortcut to declare default authentication mechanism using a username and a password. Just set the two following properties:
+
+* `ogham.email.javamail.authenticator.username`
+* `ogham.email.javamail.authenticator.password`
+ 
+It will automatically create an `Authenticator` with the provided values.
+
+See <<user-manual.adoc#gmail, Send email through GMail sample>>.
+
+===== Custom Authenticator
 
 ////
-TODO: cf EmailPropertiesTest
-TODO: parsing lists
-////
-
-==== Provide authentication
-
-////
-TODO: username/password
 TODO: custom Authenticator
 ////
 
@@ -1225,6 +1474,7 @@ TODO: custom Authenticator
 TODO: ssl
 ////
 
+[[gmail]]
 ==== Send email through GMail
 
 
@@ -1429,7 +1679,7 @@ TODO: address format "address <personal>"
 
 The samples are available in the https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage[sample-standard-usage sub-project].
 
-All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS.
+All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS. Only a subset of SMPP properties are used in following samples. The whole list of SMPP properties is available in <<user-manual.adoc#advanced-smpp-configuration, advanced configuration>>.
 
 See <<ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
 
@@ -1745,6 +1995,71 @@ TODO: limitation pour les messages longs ?
 
 ////
 
+==== Globally configure default sender phone number
+
+
+
+Ogham lets you set the sender phone number directly into properties. This phone number is automatically used for all sent SMS. 
+
+If you explicitly specify the sender phone number, this value is used instead of the global one:
+
+
+[role=tab-container no-max-height]
+_____
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:19,35"]
+----
+package fr.sii.ogham.sample.standard.sms;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.message.Sms;
+
+public class OverrideDefaultSenderSample 
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.put("ogham.sms.smpp.host", "<your server host>");
+        properties.put("ogham.sms.smpp.port", "<your server port>");
+        properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");
+        properties.setProperty("ogham.sms.smpp.password", "<your server password>");
+        properties.put("ogham.sms.from", "+33699999999");                    // <1>
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the sms using fluent API
+        service.send(new Sms()                                                // <2>
+                .content("sms content")
+                .to("+33752962193"));
+        // => the sender phone number is +33699999999
+
+        service.send(new Sms()
+                .content("sms content")
+                .from("+33700000000")                                        // <3>
+                .to("+33752962193"));
+        // => the sender phone number is now +33700000000
+    
+}
+----
+<1> Set the default sender phone number globally using properties
+<2> Do not provide `from` field so the sender phone number is `+33699999999`
+<3> Override the default sender phone number by providing a `from` field. The phone number is now `+33700000000`
+
+https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
+
+[role=tab-container-end]
+_____
 
 [[resource-resolution]]
 === Resource resolution
@@ -2255,8 +2570,6 @@ Before Spring Boot 2.0.0, `spring.sendgrid.username` and `spring.sendgrid.passwo
 ====
 
 
-
-
 ==== Send email
 
 
@@ -2536,7 +2849,6 @@ https://github.com/groupe-sii/ogham/blob/doc/asciidoctor/sample-spring-usage/src
 
 [role=tab-container-end]
 _____
-
 
 
 
@@ -3906,6 +4218,81 @@ TODO: test ovh?
 == Advanced configuration
 
 
+
+=== Catalog of SMTP properties
+
+////
+TODO: whole list of email properties
+////
+
+[[advanced-smpp-configuration]]
+=== Catalog of SMPP properties
+
+
+
+http://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] is the standard protocol to send SMS. SMPP is quite complex and has many configurable properties:
+
+[cols="2,4,1,1"]
+|===
+| Property | Description | Required | Default value
+
+| ogham.sms.smpp.host
+| The host of the SMPP or SMSC server
+| Yes
+|
+
+| ogham.sms.smpp.port
+| The port of the SMPP or SMSC server
+| Yes
+|
+
+| ogham.sms.smpp.systemId
+| The system identifier used for authenticating
+| Yes
+|
+
+| ogham.sms.smpp.password
+| The password for the system identifier
+| Yes
+|
+
+| ogham.sms.smpp.window.size
+| Message exchange may be synchronous, where each peer waits for a response for each PDU being sent, or asynchronous, where multiple requests can be issued 7 without waiting and acknowledged in a skew order by the other peer; the number of unacknowledged requests is called a window
+| No
+| 1
+
+| ogham.sms.smpp.window.monitor.interval
+| Time to wait between two window checks
+| No
+| disabled
+
+| ogham.sms.smpp.timeout.connection
+| The timeout TCP/IP connection for SMPP session
+| No
+| 10 seconds
+
+| ogham.sms.smpp.timeout.bind
+| The maximum time to wait for the bind response
+| No
+| 5 seconds
+
+| ogham.sms.smpp.timeout.unbind
+| The maximum time to wait for unbind response
+| No
+| 5 seconds
+
+| ogham.sms.smpp.timeout.request
+| The maximum time to wait for an endpoint to respond to a request
+| No
+| disabled
+
+| ogham.sms.smpp.timeout.window
+| The maximum time to wait for window response
+| No
+| 1 minute
+|===
+
+
 === Use the builder to define your own behaviors
 
 ==== Standard builder
@@ -3926,7 +4313,7 @@ TODO: code des configurers par défaut
 TODO: relation entre builders et configurers
 ////
 
-==== Interceptors
+=== Intercept messages just before sending
 
 ////
 TODO: custom interceptors
@@ -3939,16 +4326,31 @@ TODO: custom interceptors
 
 === Create your own configurer
 
-=== Use a custom message sender
+=== Custom email sender implementation
+
+////
+TODO: implementation selection
+
+Conditions:
+Classpath
+Properties
+Custom condition
+////
+
+=== Custom SMS sender implementation
+
 
 === Use your custom template engine
 
 ////
-TODO: implementation selection
+TODO: template engine selection (detector)
 ////
 
 [[custom-resource-resolver]]
 === Create custom resource resolver
+
+
+=== Add new type of message
 
 == Tips
 
@@ -3957,4 +4359,12 @@ TODO: implementation selection
 TODO: codes d'erreur connus avec aide
 TODO: toutes les propriétés de conf + valeurs par défaut + effets + description...
 TODO: props pour Spring Boot avec props supportées par Ogham et conditions de support
+
+
+TODO: problème de connexion à GMail (mettre à jour)
+## Gmail throws javax.mail.AuthenticationFailedException: 534-5.7.14
+
+You must log in via your web browser. You may have received an email asking to allow or not the connection.
+See [this post on stackoverflow](http://stackoverflow.com/questions/25341198/javax-mail-authenticationfailedexception-is-thrown-while-sending-email-in-java)
+
 ////
