@@ -7,10 +7,6 @@ NOTE: All samples with templates are using ThymeLeaf as template engine. For Fre
 
 
 
-////
-TODO: default subject as property
-////
-
 
 [[email-usage]]
 == Send Email
@@ -169,6 +165,5 @@ include::{user-manual-dir}/spring/email-controller-full.adoc[leveloffset=+2]
 === Send SMS
 
 include::{user-manual-dir}/spring/sms-controller-full.adoc[leveloffset=+2]
-
 
 

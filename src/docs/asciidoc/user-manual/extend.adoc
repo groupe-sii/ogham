@@ -4,13 +4,28 @@ include::{docdir}/variables.adoc[]
 
 == Create your own configurer
 
-== Use a custom message sender
+== Custom email sender implementation
+
+////
+TODO: implementation selection
+
+Conditions:
+Classpath
+Properties
+Custom condition
+////
+
+== Custom SMS sender implementation
+
 
 == Use your custom template engine
 
 ////
-TODO: implementation selection
+TODO: template engine selection (detector)
 ////
 
 [[custom-resource-resolver]]
 == Create custom resource resolver
+
+
+== Add new type of message

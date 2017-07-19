@@ -1,10 +1,18 @@
 :relative-path: ../
 include::{docdir}/variables.adoc[]
 
+
+== Catalog of SMTP properties
+
+////
+TODO: whole list of email properties
+////
+
 [[advanced-smpp-configuration]]
-== SMPP configuration
+== Catalog of SMPP properties
 
 include::{user-manual-dir}/sms/smpp-configuration.adoc[leveloffset=+2]
+
 
 == Use the builder to define your own behaviors
 
@@ -26,7 +34,7 @@ TODO: code des configurers par défaut
 TODO: relation entre builders et configurers
 ////
 
-=== Interceptors
+== Intercept messages just before sending
 
 ////
 TODO: custom interceptors

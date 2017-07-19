@@ -1,0 +1,29 @@
+:relative-path: ../
+include::{docdir}/variables.adoc[]
+
+
+== Hidden complexity
+
+One of the main aim of the library is to hide the implementation complexity. It provides automatic behaviors to simplify the development and focus on useful code.
+
+
+=== Mime Type detection
+
+When you send an email, it is really important to indicate what is the type of the message (html, text or maybe anything else). The library automatically detects for you the https://en.wikipedia.org/wiki/Internet_media_type[Mime Type] of the email content and add this information into the real sent mail for you.
+
+Moreover, every attached file must also provide the Mime Type in order to be correctly handled by the email client. Besides, some email clients can provide a preview of attached file. This can be possible only by providing the right Mime Type. The library will detect the Mime Type for every attached file for you.
+
+
+=== SMS
+
+There are some implementation constraints for sending a SMS following SMPP protocol. The library will help you handle these constraints.
+
+==== Phone number TON and NPI policy
+
+SMPP defines two main properties related to the sender and recipient phone number formats: https://docs.aerialink.net/api/smpp/ton-npi-settings/[TON and NPI].
+
+The library provides a default policy : Just pass the phone numbers and the library will guess the TON and NPI. You can also directly provide the TON and NPI in order to prevent this automatic behavior.
+
+==== Character encoding
+
+Sending SMS with the wrong charset might cause your message to be unreadable. But SMPP Charset are quite different from the common charset definition. The charset resolution is done using a simple mapping between Java charsets and SMPP charsets. By default, Java uses UTF-8 charset and the librairy will map to the SMPP charset https://en.wikipedia.org/wiki/GSM_03.38[GSM]. The library offers you the ability to provide your own charset when sending SMS if need.
