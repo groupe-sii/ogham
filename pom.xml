@@ -553,6 +553,7 @@
 								<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 								<sourcedir-url>${github.code.url}</sourcedir-url>
 								<sourcedir>${basedir}</sourcedir>
+								<site-url>${site.url}</site-url>
 							</attributes>
 						</configuration>
 					</execution>
@@ -657,6 +658,7 @@
 							<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 							<sourcedir-url>${github.code.url}</sourcedir-url>
 							<sourcedir>${basedir}</sourcedir>
+							<site-url>${site.url}</site-url>
 						</attributes>
 					</asciidoc>
 				</configuration>

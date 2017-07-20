@@ -6,7 +6,7 @@ http://groupe-sii.github.io/ogham/[Full documentation]
 
 
 = Ogham
-ogham-version
+2.0.0-SNAPSHOT
 
 
 == Introduction
@@ -63,7 +63,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 <dependency>
     <groupId>fr.sii.ogham</groupId>
     <artifactId>ogham-all</artifactId>
-    <version>ogham-version</version>
+    <version>2.0.0-SNAPSHOT</version>
 </dependency>
 ----
 
@@ -107,7 +107,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 <dependency>
     <groupId>fr.sii.ogham</groupId>
     <artifactId>ogham-spring-boot-starter-all</artifactId>
-    <version>ogham-version</version>
+    <version>2.0.0-SNAPSHOT</version>
 </dependency>
 ----
 
@@ -149,7 +149,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 <dependency>
     <groupId>fr.sii.ogham</groupId>
     <artifactId>ogham-spring-boot-starter-all</artifactId>
-    <version>ogham-version</version>
+    <version>2.0.0-SNAPSHOT</version>
 </dependency>
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -2871,7 +2871,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 <dependency>
     <groupId>fr.sii.ogham</groupId>
     <artifactId>ogham-test-utils</artifactId>
-    <version>ogham-version</version>
+    <version>2.0.0-SNAPSHOT</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -4217,154 +4217,12 @@ TODO: test ovh?
 
 == Advanced configuration
 
-
-
-=== Catalog of SMTP properties
-
-////
-TODO: whole list of email properties
-////
-
-[[advanced-smpp-configuration]]
-=== Catalog of SMPP properties
-
-
-
-http://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] is the standard protocol to send SMS. SMPP is quite complex and has many configurable properties:
-
-[cols="2,4,1,1"]
-|===
-| Property | Description | Required | Default value
-
-| ogham.sms.smpp.host
-| The host of the SMPP or SMSC server
-| Yes
-|
-
-| ogham.sms.smpp.port
-| The port of the SMPP or SMSC server
-| Yes
-|
-
-| ogham.sms.smpp.systemId
-| The system identifier used for authenticating
-| Yes
-|
-
-| ogham.sms.smpp.password
-| The password for the system identifier
-| Yes
-|
-
-| ogham.sms.smpp.window.size
-| Message exchange may be synchronous, where each peer waits for a response for each PDU being sent, or asynchronous, where multiple requests can be issued 7 without waiting and acknowledged in a skew order by the other peer; the number of unacknowledged requests is called a window
-| No
-| 1
-
-| ogham.sms.smpp.window.monitor.interval
-| Time to wait between two window checks
-| No
-| disabled
-
-| ogham.sms.smpp.timeout.connection
-| The timeout TCP/IP connection for SMPP session
-| No
-| 10 seconds
-
-| ogham.sms.smpp.timeout.bind
-| The maximum time to wait for the bind response
-| No
-| 5 seconds
-
-| ogham.sms.smpp.timeout.unbind
-| The maximum time to wait for unbind response
-| No
-| 5 seconds
-
-| ogham.sms.smpp.timeout.request
-| The maximum time to wait for an endpoint to respond to a request
-| No
-| disabled
-
-| ogham.sms.smpp.timeout.window
-| The maximum time to wait for window response
-| No
-| 1 minute
-|===
-
-
-=== Use the builder to define your own behaviors
-
-==== Standard builder
-
-////
-TODO: code des configurers par défaut
-////
-
-==== Minimal builder
-
-==== Empty builder
-
-////
-TODO: code des configurers par défaut
-////
-
-////
-TODO: relation entre builders et configurers
-////
-
-=== Intercept messages just before sending
-
-////
-TODO: custom interceptors
-////
-
+http://groupe-sii.github.io/ogham/v2.0.0-SNAPSHOT/user-manual.html#section-advanced-configuration[See advanced configuration in full documentation]
 
 == Extend
 
-
-
-=== Create your own configurer
-
-=== Custom email sender implementation
-
-////
-TODO: implementation selection
-
-Conditions:
-Classpath
-Properties
-Custom condition
-////
-
-=== Custom SMS sender implementation
-
-
-=== Use your custom template engine
-
-////
-TODO: template engine selection (detector)
-////
-
-[[custom-resource-resolver]]
-=== Create custom resource resolver
-
-
-=== Add new type of message
+http://groupe-sii.github.io/ogham/v2.0.0-SNAPSHOT/user-manual.html#section-extend[See how to extend in full documentation]
 
 == Tips
 
-
-////
-TODO: codes d'erreur connus avec aide
-TODO: toutes les propriétés de conf + valeurs par défaut + effets + description...
-TODO: props pour Spring Boot avec props supportées par Ogham et conditions de support
-
-
-TODO: problème de connexion à GMail (mettre à jour)
-## Gmail throws javax.mail.AuthenticationFailedException: 534-5.7.14
-
-You must log in via your web browser. You may have received an email asking to allow or not the connection.
-See [this post on stackoverflow](http://stackoverflow.com/questions/25341198/javax-mail-authenticationfailedexception-is-thrown-while-sending-email-in-java)
-
-////
+http://groupe-sii.github.io/ogham/v2.0.0-SNAPSHOT/user-manual.html#section-tips[See tips in full documentation]

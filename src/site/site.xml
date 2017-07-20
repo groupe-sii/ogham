@@ -26,7 +26,7 @@
 			<!-- <absoluteResourceURL>http://groupe-sii.github.io/ogham/</absoluteResourceURL> -->
 			<brand>
 				<name>Ogham</name>
-				<href>http://groupe-sii.github.io/ogham</href>
+				<href>${site.url}</href>
 			</brand>
 			<slogan>Email, SMS, mobile notification made simple</slogan>
 			<titleTemplate>%2$s | %1$s</titleTemplate>
@@ -122,7 +122,6 @@
 	</custom>
 
 	<body>
-		<!-- Add a rel to Google profile for all pages -->
 		<head>
 			<link rel="author" href="https://github.com/aurelien-baudet" />
 			<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700" />
@@ -139,7 +138,7 @@
 
 		<links>
 			<item name="Download" href="user-manual.html#install" />
-			<item name="GitHub project" href="http://github.com/groupe-sii/ogham/" />
+			<item name="GitHub project" href="${github.url}" />
 		</links>
 
 		<breadcrumbs>
@@ -148,7 +147,7 @@
 
 		<menu name="Main" inherit="top">
 			<item name="Home" href="./" />
-			<item name="GitHub project" href="http://github.com/groupe-sii/ogham/" />
+			<item name="GitHub project" href="${github.url}" />
 			<item name="Release notes" href="release-notes.html" />
 		</menu>
 		<menu name="Download" inherit="top">
@@ -161,22 +160,22 @@
 		</menu>
 		<menu name="Samples" inherit="bottom">
 			<item name="Email"
-				href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email?" />
+				href="${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email?" />
 			<item name="SMS"
-				href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms" />
+				href="${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms" />
 			<item name="Spring"
-				href="https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/" />
+				href="${github.code.url}/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/" />
 			<item name="Thymeleaf"
-				href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/template/thymeleaf" />
+				href="${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/template/thymeleaf" />
 			<item name="FreeMarker"
-				href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/template/freemarker" />
+				href="${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/template/freemarker" />
 			<item name="Mixing Thymeleaf &amp; FreeMarker"
-				href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=4" />
+				href="${github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=4" />
 		</menu>
 		<menu name="Contribute" inherit="bottom">
 			<item name="Contribute" href="contribute.html" />
-			<item name="Issues" href="http://github.com/groupe-sii/ogham/issues/" />
-			<item name="Fork on GitHub" href="http://github.com/groupe-sii/ogham/" />
+			<item name="Issues" href="${github.url}/issues" />
+			<item name="Fork on GitHub" href="${github.url}" />
 		</menu>
 		<menu name="Versions" inherit="bottom">
 			<item name="[version]" href="release-notes.html" />
