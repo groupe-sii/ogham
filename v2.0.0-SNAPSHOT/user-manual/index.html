@@ -61,20 +61,30 @@
 <li><a href="#testing-sms">4.3. Tesing SMS</a></li>
 </ul>
 </li>
-<li><a href="#_advanced_configuration">5. Advanced configuration</a>
+<li><a href="#section-advanced-configuration">5. Advanced configuration</a>
 <ul class="sectlevel2">
-<li><a href="#_use_the_builder_to_define_your_own_behaviors">5.1. Use the builder to define your own behaviors</a></li>
+<li><a href="#_catalog_of_smtp_properties">5.1. Catalog of SMTP properties</a></li>
+<li><a href="#advanced-smpp-configuration">5.2. Catalog of SMPP properties</a></li>
+<li><a href="#_use_the_builder_to_define_your_own_behaviors">5.3. Use the builder to define your own behaviors</a></li>
+<li><a href="#_intercept_messages_just_before_sending">5.4. Intercept messages just before sending</a></li>
 </ul>
 </li>
-<li><a href="#_extend">6. Extend</a>
+<li><a href="#section-extend">6. Extend</a>
 <ul class="sectlevel2">
 <li><a href="#_create_your_own_configurer">6.1. Create your own configurer</a></li>
-<li><a href="#_use_a_custom_message_sender">6.2. Use a custom message sender</a></li>
-<li><a href="#_use_your_custom_template_engine">6.3. Use your custom template engine</a></li>
-<li><a href="#custom-resource-resolver">6.4. Create custom resource resolver</a></li>
+<li><a href="#_custom_email_sender_implementation">6.2. Custom email sender implementation</a></li>
+<li><a href="#_custom_sms_sender_implementation">6.3. Custom SMS sender implementation</a></li>
+<li><a href="#_use_your_custom_template_engine">6.4. Use your custom template engine</a></li>
+<li><a href="#custom-resource-resolver">6.5. Create custom resource resolver</a></li>
+<li><a href="#_add_new_type_of_message">6.6. Add new type of message</a></li>
 </ul>
 </li>
-<li><a href="#_tips">7. Tips</a></li>
+<li><a href="#section-tips">7. Tips</a></li>
+<li><a href="#_useful_information">8. Useful information</a>
+<ul class="sectlevel2">
+<li><a href="#_hidden_complexity">8.1. Hidden complexity</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -1517,19 +1527,307 @@ You can also add a custom description for any attachment and link the file conte
 </div>
 </div>
 <div class="sect3">
-<h4 id="_globally_configure_default_recipients"><a class="anchor" href="#_globally_configure_default_recipients"></a>3.1.7. Globally configure default recipients</h4>
+<h4 id="_globally_configure_default_email_fields"><a class="anchor" href="#_globally_configure_default_email_fields"></a>3.1.7. Globally configure default email fields</h4>
+<div class="sect4">
+<h5 id="_globally_configure_default_sender"><a class="anchor" href="#_globally_configure_default_sender"></a>3.1.7.1. Globally configure default sender</h5>
+<div class="paragraph">
+<p>You can configure sender address for all sent email by setting the property <code>ogham.email.from</code>. The value can either be an email address (<code>user@domain.host</code>) or an address with personal information (<code>User Name &lt;<a href="mailto:user@domain.host">user@domain.host</a>&gt;</code>). This property is used for every implementation (through SMTP, through SendGrid, &#8230;&#8203;).</p>
+</div>
+<div class="paragraph">
+<p>This global address is used only if nothing is specified in the email. If you explicitly set the sender address in the email constructor or using the setter, this value is used instead of the global one.</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Basic sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:17,35">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
 
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">OverrideDefaultSenderSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+        <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+        <span class="comment">// in System properties)</span>
+        <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">foo.bar@test.com</span><span class="delimiter">&quot;</span></span>);             <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="comment">// Instantiate the messaging service using default behavior and</span>
+        <span class="comment">// provided properties</span>
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        <span class="comment">// send the email using fluent API</span>
+        service.send(<span class="keyword">new</span> Email()                                            <i class="conum" data-value="2"></i><b>(2)</b>
+                        .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">subject</span><span class="delimiter">&quot;</span></span>)
+                        .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+                        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+        <span class="comment">// =&gt; the sender address is foo.bar@test.com</span>
+
+        service.send(<span class="keyword">new</span> Email()
+                .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">subject</span><span class="delimiter">&quot;</span></span>)
+                .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+                .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">override@test.com</span><span class="delimiter">&quot;</span></span>)                                  <i class="conum" data-value="3"></i><b>(3)</b>
+                .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+        <span class="comment">// =&gt; the sender address is now override@test.com</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the default sender address globally using properties</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Do not provide <code>from</code> field so the sender address is <code>foo.bar@test.com</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Override the default sender address by providing a <code>from</code> field. The address is now <code>override@test.com</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/OverrideDefaultSenderSample.java?ts=4">Source code of the sample</a>.</p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>mail.from</code> and <code>mail.smtp.from</code> also work
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_globally_configure_default_subject"><a class="anchor" href="#_globally_configure_default_subject"></a>3.1.7.2. Globally configure default subject</h5>
+<div class="paragraph">
+<p>As for sender address, you can define globally a default subject for emails if none is explicitly provided (neither using <code>.subject(String)</code> method nor defining a subject directly in the template). The property is <code>ogham.email.subject</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_globally_configure_default_recipients"><a class="anchor" href="#_globally_configure_default_recipients"></a>3.1.7.3. Globally configure default recipients</h5>
+<div class="paragraph">
+<p>You can also use properties to define default recipients if none are provided:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.to</code>: set one or several recipient addresses (<code>to</code> field)</p>
+</li>
+<li>
+<p><code>ogham.email.cc</code>: set one or several recipient addresses (<code>cc</code> field)</p>
+</li>
+<li>
+<p><code>ogham.email.bcc</code>: set one or several recipient addresses (<code>bcc</code> field)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This can be convenient to set a <code>bcc</code> address for all sent messages for example (the <code>bcc</code> address will never be seen in received emails).</p>
+</div>
+<div class="paragraph">
+<p>To define several recipient addresses, you can provide a string separated by <code>,</code>.</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Basic sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-24,26-34,51-70 irrelevant-lines:1-24 highlight-lines:41-43">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.it.email</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.assertion.OghamAssertions.assertThat</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.contains</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.containsInAnyOrder</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.is</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.startsWith</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">org.junit.Before</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Rule</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
+
+<span class="keyword">import</span> <span class="include">com.icegreen.greenmail.junit.GreenMailRule</span>;
+<span class="keyword">import</span> <span class="include">com.icegreen.greenmail.util.ServerSetupTest</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.helper.rule.LoggingTestRule</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">EmailPropertiesTest</span> {
+
+    <span class="directive">private</span> MessagingService oghamService;
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> <span class="directive">final</span> LoggingTestRule loggingRule = <span class="keyword">new</span> LoggingTestRule();
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> <span class="directive">final</span> GreenMailRule greenMail = <span class="keyword">new</span> GreenMailRule(ServerSetupTest.SMTP);
+
+    <span class="annotation">@Before</span>
+    <span class="directive">public</span> <span class="type">void</span> setUp() <span class="directive">throws</span> <span class="exception">IOException</span> {
+        <span class="predefined-type">Properties</span> additional = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, ServerSetupTest.SMTP.getBindAddress());
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.valueOf(ServerSetupTest.SMTP.getPort()));
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">test.sender@sii.fr</span><span class="delimiter">&quot;</span></span>);
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.to</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.to1@sii.fr,recipient.to2@sii.fr,recipient.to3@sii.fr</span><span class="delimiter">&quot;</span></span>);     <i class="conum" data-value="1"></i><b>(1)</b>
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.cc</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.cc1@sii.fr,recipient.cc2@sii.fr</span><span class="delimiter">&quot;</span></span>);                          <i class="conum" data-value="2"></i><b>(2)</b>
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.bcc</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.bcc@sii.fr</span><span class="delimiter">&quot;</span></span>);                                              <i class="conum" data-value="3"></i><b>(3)</b>
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/application.properties</span><span class="delimiter">&quot;</span></span>)
+                    .properties(additional)
+                    .and()
+                .build();
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="directive">public</span> <span class="type">void</span> simple() <span class="directive">throws</span> MessagingException, javax.mail.MessagingException {
+        oghamService.send(<span class="keyword">new</span> Email()
+                            .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+                            .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>));
+        assertThat(greenMail).receivedMessages()
+                .count(is(<span class="integer">6</span>))
+                .forEach()
+                    .subject(is(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>))
+                    .body()
+                        .contentAsString(is(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>))
+                        .contentType(startsWith(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/plain</span><span class="delimiter">&quot;</span></span>)).and()
+                    .from()
+                        .address(contains(<span class="string"><span class="delimiter">&quot;</span><span class="content">test.sender@sii.fr</span><span class="delimiter">&quot;</span></span>)).and()
+                    .to()
+                        .address(containsInAnyOrder(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.to1@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.to2@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.to3@sii.fr</span><span class="delimiter">&quot;</span></span>)).and()
+                    .cc()
+                        .address(containsInAnyOrder(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.cc1@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.cc2@sii.fr</span><span class="delimiter">&quot;</span></span>));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define 3 <code>to</code> recipients</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Define 2 <code>cc</code> recipients</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Define a single <code>bcc</code> recipient</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/ogham-all/src/test/java/fr/sii/ogham/it/email/EmailPropertiesTest.java?ts=4">Source code of the sample</a>.</p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The email addresses are trimmed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.to</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">  foo@example.com  ,    John Doe &lt;bar@example.com&gt;,   abc@example.com</span><span class="delimiter">&quot;</span></span>);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The email addresses will be:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>foo@example.com</code></p>
+</li>
+<li>
+<p><code>John Doe &lt;<a href="mailto:bar@example.com">bar@example.com</a>&gt;</code></p>
+</li>
+<li>
+<p><code>abc@example.com</code></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_provide_authentication"><a class="anchor" href="#_provide_authentication"></a>3.1.8. Provide authentication</h4>
+<h4 id="_provide_smtp_authentication"><a class="anchor" href="#_provide_smtp_authentication"></a>3.1.8. Provide SMTP authentication</h4>
+<div class="sect4">
+<h5 id="_configure_username_and_password"><a class="anchor" href="#_configure_username_and_password"></a>3.1.8.1. Configure username and password</h5>
+<div class="paragraph">
+<p>Some SMTP servers need credentials. When using Java Mail API, you need to provide an <code>Authenticator</code>.</p>
+</div>
+<div class="paragraph">
+<p>Ogham has a shortcut to declare default authentication mechanism using a username and a password. Just set the two following properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.javamail.authenticator.username</code></p>
+</li>
+<li>
+<p><code>ogham.email.javamail.authenticator.password</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It will automatically create an <code>Authenticator</code> with the provided values.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../user-manual.html#gmail">Send email through GMail sample</a>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_custom_authenticator"><a class="anchor" href="#_custom_authenticator"></a>3.1.8.2. Custom Authenticator</h5>
 
+</div>
 </div>
 <div class="sect3">
 <h4 id="_use_ssl"><a class="anchor" href="#_use_ssl"></a>3.1.9. Use SSL</h4>
 
 </div>
 <div class="sect3">
-<h4 id="_send_email_through_gmail"><a class="anchor" href="#_send_email_through_gmail"></a>3.1.10. Send email through GMail</h4>
+<h4 id="gmail"><a class="anchor" href="#gmail"></a>3.1.10. Send email through GMail</h4>
 <div class="paragraph">
 <p>This sample shows how to send a basic email through GMail. Sending through GMail is simply using username/password authentication and enabling SSL.</p>
 </div>
@@ -1788,7 +2086,7 @@ ogham.email.template.path-prefix=/template/thymeleaf/email/         <i class="co
 <p>The samples are available in the <a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage">sample-standard-usage sub-project</a>.</p>
 </div>
 <div class="paragraph">
-<p>All samples shown bellow are using SMPP for sending SMS. The <a href="https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer">SMPP</a> protocol is the standard way to send SMS.</p>
+<p>All samples shown bellow are using SMPP for sending SMS. The <a href="https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer">SMPP</a> protocol is the standard way to send SMS. Only a subset of SMPP properties are used in following samples. The whole list of SMPP properties is available in <a href="../user-manual.html#advanced-smpp-configuration">advanced configuration</a>.</p>
 </div>
 <div class="paragraph">
 <p>See <a href="#ovh">Sending SMS through OVH</a> to know how to send SMS using OVH HTTP API.</p>
@@ -2211,6 +2509,86 @@ By default, Ogham sends the SMS using 8-bit encoding.
 <h4 id="_sending_sms_through_ovh"><a class="anchor" href="#_sending_sms_through_ovh"></a>3.2.5. Sending SMS through OVH</h4>
 <div class="paragraph">
 <p>You can send SMS using <a href="http://guides.ovh.com/Http2Sms">OVH</a> HTTP API:</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_globally_configure_default_sender_phone_number"><a class="anchor" href="#_globally_configure_default_sender_phone_number"></a>3.2.6. Globally configure default sender phone number</h4>
+<div class="paragraph">
+<p>Ogham lets you set the sender phone number directly into properties. This phone number is automatically used for all sent SMS.</p>
+</div>
+<div class="paragraph">
+<p>If you explicitly specify the sender phone number, this value is used instead of the global one:</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Basic sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:19,35">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.sms</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">OverrideDefaultSenderSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+        <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+        <span class="comment">// in System properties)</span>
+        <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.system-id</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server system ID&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.password</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server password&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">+33699999999</span><span class="delimiter">&quot;</span></span>);                   <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="comment">// Instantiate the messaging service using default behavior and</span>
+        <span class="comment">// provided properties</span>
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        <span class="comment">// send the sms using fluent API</span>
+        service.send(<span class="keyword">new</span> Sms()                                              <i class="conum" data-value="2"></i><b>(2)</b>
+                .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+                .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+        <span class="comment">// =&gt; the sender phone number is +33699999999</span>
+
+        service.send(<span class="keyword">new</span> Sms()
+                .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+                .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33700000000</span><span class="delimiter">&quot;</span></span>)                                       <i class="conum" data-value="3"></i><b>(3)</b>
+                .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+        <span class="comment">// =&gt; the sender phone number is now +33700000000</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the default sender phone number globally using properties</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Do not provide <code>from</code> field so the sender phone number is <code>+33699999999</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Override the default sender phone number by providing a <code>from</code> field. The phone number is now <code>+33700000000</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/OverrideDefaultSenderSample.java?ts=4">Source code of the sample</a>.</p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
 </div>
 </div>
 </div>
@@ -5110,60 +5488,203 @@ Only the setup differs, the test is the same.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_advanced_configuration"><a class="anchor" href="#_advanced_configuration"></a>5. Advanced configuration</h2>
+<h2 id="section-advanced-configuration"><a class="anchor" href="#section-advanced-configuration"></a>5. Advanced configuration</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_use_the_builder_to_define_your_own_behaviors"><a class="anchor" href="#_use_the_builder_to_define_your_own_behaviors"></a>5.1. Use the builder to define your own behaviors</h3>
+<h3 id="_catalog_of_smtp_properties"><a class="anchor" href="#_catalog_of_smtp_properties"></a>5.1. Catalog of SMTP properties</h3>
+
+</div>
+<div class="sect2">
+<h3 id="advanced-smpp-configuration"><a class="anchor" href="#advanced-smpp-configuration"></a>5.2. Catalog of SMPP properties</h3>
+<div class="paragraph">
+<p><a href="http://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer">SMPP</a> is the standard protocol to send SMS. SMPP is quite complex and has many configurable properties:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 50%;">
+<col style="width: 12.5%;">
+<col style="width: 12.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Required</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.host</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The host of the SMPP or SMSC server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The port of the SMPP or SMSC server</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.systemId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system identifier used for authenticating</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.password</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The password for the system identifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.window.size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Message exchange may be synchronous, where each peer waits for a response for each PDU being sent, or asynchronous, where multiple requests can be issued 7 without waiting and acknowledged in a skew order by the other peer; the number of unacknowledged requests is called a window</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.window.monitor.interval</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time to wait between two window checks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">disabled</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.timeout.connection</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The timeout TCP/IP connection for SMPP session</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10 seconds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.timeout.bind</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum time to wait for the bind response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5 seconds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.timeout.unbind</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum time to wait for unbind response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5 seconds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.timeout.request</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum time to wait for an endpoint to respond to a request</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">disabled</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.sms.smpp.timeout.window</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum time to wait for window response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 minute</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_use_the_builder_to_define_your_own_behaviors"><a class="anchor" href="#_use_the_builder_to_define_your_own_behaviors"></a>5.3. Use the builder to define your own behaviors</h3>
 <div class="sect3">
-<h4 id="_standard_builder"><a class="anchor" href="#_standard_builder"></a>5.1.1. Standard builder</h4>
+<h4 id="_standard_builder"><a class="anchor" href="#_standard_builder"></a>5.3.1. Standard builder</h4>
 
 </div>
 <div class="sect3">
-<h4 id="_minimal_builder"><a class="anchor" href="#_minimal_builder"></a>5.1.2. Minimal builder</h4>
+<h4 id="_minimal_builder"><a class="anchor" href="#_minimal_builder"></a>5.3.2. Minimal builder</h4>
 
 </div>
 <div class="sect3">
-<h4 id="_empty_builder"><a class="anchor" href="#_empty_builder"></a>5.1.3. Empty builder</h4>
+<h4 id="_empty_builder"><a class="anchor" href="#_empty_builder"></a>5.3.3. Empty builder</h4>
 
 </div>
-<div class="sect3">
-<h4 id="_interceptors"><a class="anchor" href="#_interceptors"></a>5.1.4. Interceptors</h4>
-
 </div>
+<div class="sect2">
+<h3 id="_intercept_messages_just_before_sending"><a class="anchor" href="#_intercept_messages_just_before_sending"></a>5.4. Intercept messages just before sending</h3>
+
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_extend"><a class="anchor" href="#_extend"></a>6. Extend</h2>
+<h2 id="section-extend"><a class="anchor" href="#section-extend"></a>6. Extend</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_create_your_own_configurer"><a class="anchor" href="#_create_your_own_configurer"></a>6.1. Create your own configurer</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_use_a_custom_message_sender"><a class="anchor" href="#_use_a_custom_message_sender"></a>6.2. Use a custom message sender</h3>
+<h3 id="_custom_email_sender_implementation"><a class="anchor" href="#_custom_email_sender_implementation"></a>6.2. Custom email sender implementation</h3>
 
 </div>
 <div class="sect2">
-<h3 id="_use_your_custom_template_engine"><a class="anchor" href="#_use_your_custom_template_engine"></a>6.3. Use your custom template engine</h3>
+<h3 id="_custom_sms_sender_implementation"><a class="anchor" href="#_custom_sms_sender_implementation"></a>6.3. Custom SMS sender implementation</h3>
 
 </div>
 <div class="sect2">
-<h3 id="custom-resource-resolver"><a class="anchor" href="#custom-resource-resolver"></a>6.4. Create custom resource resolver</h3>
+<h3 id="_use_your_custom_template_engine"><a class="anchor" href="#_use_your_custom_template_engine"></a>6.4. Use your custom template engine</h3>
+
+</div>
+<div class="sect2">
+<h3 id="custom-resource-resolver"><a class="anchor" href="#custom-resource-resolver"></a>6.5. Create custom resource resolver</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_add_new_type_of_message"><a class="anchor" href="#_add_new_type_of_message"></a>6.6. Add new type of message</h3>
 
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_tips"><a class="anchor" href="#_tips"></a>7. Tips</h2>
+<h2 id="section-tips"><a class="anchor" href="#section-tips"></a>7. Tips</h2>
 <div class="sectionbody">
 
+</div>
+</div>
+<div class="sect1">
+<h2 id="_useful_information"><a class="anchor" href="#_useful_information"></a>8. Useful information</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_hidden_complexity"><a class="anchor" href="#_hidden_complexity"></a>8.1. Hidden complexity</h3>
+<div class="paragraph">
+<p>One of the main aim of the library is to hide the implementation complexity. It provides automatic behaviors to simplify the development and focus on useful code.</p>
+</div>
+<div class="sect3">
+<h4 id="_mime_type_detection"><a class="anchor" href="#_mime_type_detection"></a>8.1.1. Mime Type detection</h4>
+<div class="paragraph">
+<p>When you send an email, it is really important to indicate what is the type of the message (html, text or maybe anything else). The library automatically detects for you the <a href="https://en.wikipedia.org/wiki/Internet_media_type">Mime Type</a> of the email content and add this information into the real sent mail for you.</p>
+</div>
+<div class="paragraph">
+<p>Moreover, every attached file must also provide the Mime Type in order to be correctly handled by the email client. Besides, some email clients can provide a preview of attached file. This can be possible only by providing the right Mime Type. The library will detect the Mime Type for every attached file for you.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sms"><a class="anchor" href="#_sms"></a>8.1.2. SMS</h4>
+<div class="paragraph">
+<p>There are some implementation constraints for sending a SMS following SMPP protocol. The library will help you handle these constraints.</p>
+</div>
+<div class="sect4">
+<h5 id="_phone_number_ton_and_npi_policy"><a class="anchor" href="#_phone_number_ton_and_npi_policy"></a>8.1.2.1. Phone number TON and NPI policy</h5>
+<div class="paragraph">
+<p>SMPP defines two main properties related to the sender and recipient phone number formats: <a href="https://docs.aerialink.net/api/smpp/ton-npi-settings/">TON and NPI</a>.</p>
+</div>
+<div class="paragraph">
+<p>The library provides a default policy : Just pass the phone numbers and the library will guess the TON and NPI. You can also directly provide the TON and NPI in order to prevent this automatic behavior.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_character_encoding"><a class="anchor" href="#_character_encoding"></a>8.1.2.2. Character encoding</h5>
+<div class="paragraph">
+<p>Sending SMS with the wrong charset might cause your message to be unreadable. But SMPP Charset are quite different from the common charset definition. The charset resolution is done using a simple mapping between Java charsets and SMPP charsets. By default, Java uses UTF-8 charset and the librairy will map to the SMPP charset <a href="https://en.wikipedia.org/wiki/GSM_03.38">GSM</a>. The library offers you the ability to provide your own charset when sending SMS if need.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-06-16 23:41:42 CEST
+Last updated 2017-07-20 08:35:56 CEST
 </div>
 </div>
 </body>
