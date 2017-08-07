@@ -1,0 +1,120 @@
+:relative-path: ../
+include::{docdir}/variables.adoc[]
+
+You write your business code once. Ogham handles environment switching just by providing different configuration:
+
+[role="tab-container no-max-height"]
+Switch sender according to environment (tests/dev/prod)
+
+[role=tab]
+Development
+
+In development phase, you may want to send email through any SMTP server (GMail for example) and SMS through any SMPP server (SmsGlobal for example).
+Your templates can be embedded in classpath.
+
+[ditaa, role="text-center"]
+....
+
++---------------------------------------------+
+|              Your application               |               
++---------------------------------------------+ 
+|                                             |                    +----------+      
+|  +---------------+                          |                    |  GMail   |
+|  |     Your      |                          |  +---- SMTP ------>|  server  |
+|  |   Business    |                          |  |                 +----------+
+|  |     code      |                          |  |
+|  +---------------+                          |  |
+|                                             |  |         
+|          +                      /-------\   |  |
+|                                 | Ogham |---|--+
+|    +-----------+                \-------/   |  |
+|    |           |                            |  |  
+|    | Templates |                            |  |
+|    |    in     |                            |  |
+|    | classpath |                            |  |                 +-----------+
+|    |        {d}|                            |  |                 | SmsGlobal |
+|    +-----------+                            |  +---- SMPP ------>|  server   | 
+|                                             |                    +-----------+ 
++---------------------------------------------+                         
+
+....
+
+
+
+
+[role=tab]
+Tests
+
+You can test your emails content through an embedded local SMTP.
+You can do the same with SMS through an embedded local SMPP server.
+
+Ogham directly provides embedded servers for testing. Your templates can be embedded in test sources.
+
+[ditaa, role="text-center"]
+....
+
++---------------------------------------------+
+|              Your application               |               
++---------------------------------------------+ 
+|                                             |                    +----------------+      
+|  +---------------+                          |                    | Local embedded |
+|  |     Your      |                          |  +---- SMTP ------>|      SMTP      |
+|  |   Business    |                          |  |                 |     server     |
+|  |     code      |                          |  |                 +----------------+
+|  +---------------+                          |  | 
+|                                             |  | 
+|          +                      /-------\   |  |
+|                                 | Ogham |---|--+
+|    +-----------+                \-------/   |  |
+|    |{d}        |                            |  |  
+|    | Templates |                            |  |
+|    |    in     |                            |  |                 +----------------+
+|    |   test    |                            |  |                 | Local embedded |
+|    | classpath |                            |  +---- SMPP ------>|      SMPP      |
+|    +-----------+                            |                    |     server     | 
+|                                             |                    +----------------+ 
++---------------------------------------------+
+
+....
+
+
+[role=tab]
+Production
+
+In production, your enterprise may use external services for sending emails or SMS (like SendGrid HTTP API for emails and OVH HTTP API for SMS).
+
+Externalizing templates let the possibility to update them without needing to deploy the application again.
+
+[ditaa, role="text-center"]
+....
+
++---------------------------------------------+
+|              Your application               |               
++---------------------------------------------+ 
+|                                             |                  +----------+  
+|  +---------------+                          |                  | SendGrid |
+|  |     Your      |                          |  +---- HTTP ---->|    API   |
+|  |   Business    |                          |  |               +----------+
+|  |     code      |                          |  |
+|  +---------------+                          |  |
++-----------------------+                     |  |          
+           +            |         /-------\   |  |
+                        |         | Ogham |---|--+
+     +-----------+      |         \-------/   |  |
+     |{d}        |      |                     |  |
+     | Templates |      |                     |  |
+     |    on     |      |                     |  |               
+     | external  |      |                     |  |               +---------+
+     |file system|      |                     |  +---- HTTP ---->|   OVH   |
+     +-----------+      |                     |                  |   API   |
+                        |                     |                  +---------+
+                        +---------------------+
+
+....
+
+
+[role=tab-container-end]
+-
+
+In all cases, the code never changes. Only Ogham configuration differs.
+
