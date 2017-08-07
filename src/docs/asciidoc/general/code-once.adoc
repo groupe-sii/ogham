@@ -12,7 +12,7 @@ Development
 In development phase, you may want to send email through any SMTP server (GMail for example) and SMS through any SMPP server (SmsGlobal for example).
 Your templates can be embedded in classpath.
 
-[ditaa, role="text-center"]
+[ditaa, role="code-once-diagram text-center"]
 ....
 
 +---------------------------------------------+
@@ -50,7 +50,7 @@ You can do the same with SMS through an embedded local SMPP server.
 
 Ogham directly provides embedded servers for testing. Your templates can be embedded in test sources.
 
-[ditaa, role="text-center"]
+[ditaa, role="code-once-diagram text-center"]
 ....
 
 +---------------------------------------------+
@@ -85,7 +85,7 @@ In production, your enterprise may use external services for sending emails or S
 
 Externalizing templates let the possibility to update them without needing to deploy the application again.
 
-[ditaa, role="text-center"]
+[ditaa, role="code-once-diagram text-center"]
 ....
 
 +---------------------------------------------+
