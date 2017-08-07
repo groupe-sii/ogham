@@ -137,6 +137,62 @@
 <div class="paragraph">
 <p>When using the module to send email based on an HTML template, the templating system let you <strong>design your HTML like a standard HTML page</strong>. It automatically transforms the associated resources (images, css files&#8230;&#8203;) to be usable in an email context (automatic inline css, embed images&#8230;&#8203;). You don&#8217;t need to write your HTML specifically for email.</p>
 </div>
+<div class="sect3">
+<h4 id="_code_once_adapt_to_environment"><a class="anchor" href="#_code_once_adapt_to_environment"></a>1.2.1. Code once, adapt to environment</h4>
+<div class="paragraph">
+<p>You write your business code once. Ogham handles environment switching just by providing different configuration:</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Switch sender according to environment (tests/dev/prod)</p>
+</div>
+<div class="paragraph tab">
+<p>Development</p>
+</div>
+<div class="paragraph">
+<p>In development phase, you may want to send email through any SMTP server (GMail for example) and SMS through any SMPP server (SmsGlobal for example).
+Your templates can be embedded in classpath.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-00e3e9baba63754a3d72101cb05d282a.png" alt="diag 00e3e9baba63754a3d72101cb05d282a" width="840" height="364">
+</div>
+</div>
+<div class="paragraph tab">
+<p>Tests</p>
+</div>
+<div class="paragraph">
+<p>You can test your emails content through an embedded local SMTP.
+You can do the same with SMS through an embedded local SMPP server.</p>
+</div>
+<div class="paragraph">
+<p>Ogham directly provides embedded servers for testing. Your templates can be embedded in test sources.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-cc09b7cedfcb774097ecbb72fe2ecaf1.png" alt="diag cc09b7cedfcb774097ecbb72fe2ecaf1" width="890" height="364">
+</div>
+</div>
+<div class="paragraph tab">
+<p>Production</p>
+</div>
+<div class="paragraph">
+<p>In production, your enterprise may use external services for sending emails or SMS (like SendGrid HTTP API for emails and OVH HTTP API for SMS).</p>
+</div>
+<div class="paragraph">
+<p>Externalizing templates let the possibility to update them without needing to deploy the application again.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="diag-ed85954f9be6c413e7b91e802823478f.png" alt="diag ed85954f9be6c413e7b91e802823478f" width="810" height="364">
+</div>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="paragraph">
+<p>In all cases, the code never changes. Only Ogham configuration differs.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -5684,7 +5740,7 @@ Only the setup differs, the test is the same.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-20 08:35:56 CEST
+Last updated 2017-08-07 20:56:43 CEST
 </div>
 </div>
 </body>
