@@ -1,21 +1,19 @@
 language: java
 dist: trusty
 jdk:
-- oraclejdk9
-- openjdk9
+#- oraclejdk9
+#- openjdk9
 - oraclejdk8
 - openjdk8
-- oraclejdk7
 - openjdk7
 sudo: required
 addons:
   apt:
     packages:
-    - oracle-java7-installer
     - oracle-java8-installer
-    - oracle-java9-installer
+#    - oracle-java9-installer
     - graphviz
-  sonarqube:
+  sonarcloud:
     organization: aurelien-baudet-github
     branches:
       - master
@@ -38,6 +36,9 @@ script:
   - set -o pipefail
   - TEST_FOLDER=$(java -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\..*"/JAVA_\2/p;')
   - echo $TEST_FOLDER
+  - ls -l "$HOME"
+  - ls -l "$HOME/classpath-tests"
+  - ls -l "$HOME/classpath-tests/$TEST_FOLDER"
   - mvn test -T 2.5C -f "$HOME/classpath-tests/$TEST_FOLDER/pom.xml" -Dmaven.test.redirectTestOutputToFile=false -fae -q | grep -Ei '(error|exception)'
 # TODO: after error -> grab logs and send it
 after_success:
