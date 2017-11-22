@@ -21,6 +21,7 @@ import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.message.content.UpdatableStringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.util.HtmlUtils;
@@ -120,7 +121,7 @@ public class InlineImageTranslator implements ContentTranslator {
 
 	private void load(List<ImageResource> imageResources, String path) throws ContentTranslatorException {
 		try {
-			byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
+			byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(new UnresolvedPath(path)).getInputStream());
 			String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
 			String imgName = new File(path).getName();
 			imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));

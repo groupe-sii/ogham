@@ -2,6 +2,7 @@ package fr.sii.ogham.core.template.detector;
 
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
 import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.template.context.Context;
 
 /**
@@ -44,7 +45,7 @@ public class FixedEngineDetector implements TemplateEngineDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
+	public boolean canParse(ResourcePath template, Context ctx) throws EngineDetectionException {
 		return canParse;
 	}
 

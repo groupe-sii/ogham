@@ -3,7 +3,8 @@ package fr.sii.ogham.template.freemarker;
 import java.io.IOException;
 import java.io.Reader;
 
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
@@ -16,10 +17,10 @@ import freemarker.cache.TemplateLoader;
 
 /**
  * <p>
- * Decorator resolver that is able to manage {@link ResourcePath}.
+ * Decorator resolver that is able to manage {@link ResolvedResourcePath}.
  * </p>
  * <p>
- * It delegates to a {@link FirstSupportingResourceResolver} the link between path, {@link ResourcePath} and {@link ResourceResolver}. each lookup to a
+ * It delegates to a {@link FirstSupportingResourceResolver} the link between path, {@link ResolvedResourcePath} and {@link ResourceResolver}. each lookup to a
  * dedicated {@link ResourceResolver}.
  * </p>
  * <p>
@@ -46,11 +47,11 @@ public class FreeMarkerFirstSupportingTemplateLoader implements TemplateLoader {
 
 	@Override
 	public Object findTemplateSource(String unresolvedTemplateName) throws IOException {
-		ResourceResolver supportingResolver = resolver.getSupportingResolver(unresolvedTemplateName);
+		ResourceResolver supportingResolver = resolver.getSupportingResolver(new UnresolvedPath(unresolvedTemplateName));
 		TemplateLoader templateLoader;
 		try {
 			templateLoader = resolverAdapter.adapt(supportingResolver);
-			String resolvedPath = supportingResolver.getResourcePath(unresolvedTemplateName).getResolvedPath();
+			String resolvedPath = supportingResolver.resolve(new UnresolvedPath(unresolvedTemplateName)).getResolvedPath();
 			Object source = templateLoader.findTemplateSource(resolvedPath);
 			return source == null ? null : new AdaptedSource(source, templateLoader);
 

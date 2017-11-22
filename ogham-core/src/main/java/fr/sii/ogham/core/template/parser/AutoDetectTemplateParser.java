@@ -9,6 +9,7 @@ import fr.sii.ogham.core.exception.template.EngineDetectionException;
 import fr.sii.ogham.core.exception.template.NoEngineDetectionException;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 
@@ -38,27 +39,31 @@ public class AutoDetectTemplateParser implements TemplateParser {
 	}
 
 	@Override
-	public Content parse(String templateName, Context ctx) throws ParseException {
+	public Content parse(ResourcePath templatePath, Context ctx) throws ParseException {
 		try {
-			LOG.info("Start template engine automatic detection for {}", templateName);
-			TemplateParser parser = null;
-			for (TemplateImplementation impl : implementations) {
-				if (impl.getDetector().canParse(templateName, ctx)) {
-					LOG.debug("Template engine {} is used for {}", parser, templateName);
-					parser = impl.getParser();
-					break;
-				} else {
-					LOG.debug("Template engine {} can't be used for {}", parser, templateName);
-				}
-			}
+			LOG.info("Start template engine automatic detection for {}", templatePath);
+			TemplateParser parser = findParser(templatePath, ctx);
 			if (parser == null) {
-				throw new NoEngineDetectionException("Auto detection couldn't find any parser able to handle the template " + templateName);
+				throw new NoEngineDetectionException("Auto detection couldn't find any parser able to handle the template " + templatePath);
 			}
-			LOG.info("Parse the template {} using template engine {}", templateName, parser);
-			return parser.parse(templateName, ctx);
+			LOG.info("Parse the template {} using template engine {}", templatePath, parser);
+			return parser.parse(templatePath, ctx);
 		} catch (EngineDetectionException e) {
-			throw new ParseException("Failed to automatically detect parser due to detection error", templateName, ctx, e);
+			throw new ParseException("Failed to automatically detect parser due to detection error", templatePath, ctx, e);
 		}
+	}
+
+	private TemplateParser findParser(ResourcePath templatePath, Context ctx) throws EngineDetectionException {
+		for (TemplateImplementation impl : implementations) {
+			if (impl.getDetector().canParse(templatePath, ctx)) {
+				TemplateParser parser = impl.getParser();
+				LOG.debug("Template engine {} is used for {}", parser, templatePath);
+				return parser;
+			} else {
+				LOG.debug("Template engine {} can't be used for {}", impl.getParser(), templatePath);
+			}
+		}
+		return null;
 	}
 
 	public static class TemplateImplementation {

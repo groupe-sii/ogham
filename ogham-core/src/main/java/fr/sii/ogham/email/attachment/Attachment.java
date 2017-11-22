@@ -8,6 +8,8 @@ import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.resource.LookupResource;
 import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
@@ -144,7 +146,7 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(String path, String description, String disposition) {
-		this(new LookupResource(path), description, disposition);
+		this(new UnresolvedPath(path), description, disposition);
 	}
 
 	/**
@@ -170,7 +172,7 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(String path, String description) {
-		this(new LookupResource(path), description);
+		this(new UnresolvedPath(path), description);
 	}
 
 	/**
@@ -196,6 +198,83 @@ public class Attachment {
 	 *            the path to the attachment
 	 */
 	public Attachment(String path) {
+		this(new UnresolvedPath(path));
+	}
+
+	/**
+	 * <p>
+	 * Initialize the attachment with the provided path, description of the
+	 * attachment and disposition (how to include the attachment into the mail).
+	 * </p>
+	 * <p>
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * </p>
+	 * <p>
+	 * For example, a path could be "classpath:/email/hello.pdf". The lookup is
+	 * "classpath:".
+	 * </p>
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 */
+	public Attachment(ResourcePath path, String description, String disposition) {
+		this(new LookupResource(path), description, disposition);
+	}
+
+	/**
+	 * <p>
+	 * Initialize the attachment with the provided path and description of the
+	 * attachment.
+	 * </p>
+	 * <p>
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * </p>
+	 * <p>
+	 * For example, a path could be "classpath:/email/hello.pdf". The lookup is
+	 * "classpath:".
+	 * </p>
+	 * <p>
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * </p>
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 */
+	public Attachment(ResourcePath path, String description) {
+		this(new LookupResource(path), description);
+	}
+
+	/**
+	 * <p>
+	 * Initialize the attachment with the provided path.
+	 * </p>
+	 * <p>
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * </p>
+	 * <p>
+	 * For example, a path could be "classpath:/email/hello.pdf". The lookup is
+	 * "classpath:".
+	 * </p>
+	 * <p>
+	 * The description is not used (set to null)
+	 * </p>
+	 * <p>
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * </p>
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 */
+	public Attachment(ResourcePath path) {
 		this(new LookupResource(path));
 	}
 

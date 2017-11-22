@@ -13,6 +13,8 @@ import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.message.content.UpdatableStringContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.util.HtmlUtils;
@@ -73,12 +75,12 @@ public class InlineCssTranslator implements ContentTranslator {
 	private List<ExternalCss> load(List<String> cssFiles) throws ContentTranslatorException {
 		List<ExternalCss> cssResources = new ArrayList<>(cssFiles.size());
 		for (String path : cssFiles) {
-			load(cssResources, path);
+			load(cssResources, new UnresolvedPath(path));
 		}
 		return cssResources;
 	}
 
-	private void load(List<ExternalCss> cssResources, String path) throws ContentTranslatorException {
+	private void load(List<ExternalCss> cssResources, ResourcePath path) throws ContentTranslatorException {
 		try {
 			cssResources.add(new ExternalCss(path, IOUtils.toString(resourceResolver.getResource(path).getInputStream())));
 		} catch (IOException e) {

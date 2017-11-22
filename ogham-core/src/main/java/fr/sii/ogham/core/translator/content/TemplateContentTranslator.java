@@ -8,6 +8,7 @@ import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.message.content.TemplateVariantContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.common.adapter.VariantResolver;
@@ -59,7 +60,7 @@ public class TemplateContentTranslator implements ContentTranslator {
 		if (content instanceof TemplateContent) {
 			try {
 				TemplateContent template = (TemplateContent) content;
-				String realPath = getRealPath(template);
+				ResourcePath realPath = getRealPath(template);
 				if(realPath==null) {
 					LOG.debug("No template found for {}", template.getPath());
 					return null;
@@ -78,7 +79,7 @@ public class TemplateContentTranslator implements ContentTranslator {
 	}
 
 
-	private String getRealPath(TemplateContent template) throws VariantResolutionException {
+	private ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
 		if(variantResolver==null) {
 			return template.getPath();
 		}

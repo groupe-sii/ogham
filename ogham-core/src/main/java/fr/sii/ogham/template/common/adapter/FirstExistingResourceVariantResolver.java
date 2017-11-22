@@ -6,6 +6,7 @@ import java.util.List;
 
 import fr.sii.ogham.core.message.capability.HasVariant;
 import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.template.exception.VariantResolutionException;
 
 /**
@@ -30,7 +31,7 @@ public class FirstExistingResourceVariantResolver implements VariantResolver {
 	}
 
 	@Override
-	public String getRealPath(TemplateContent template) throws VariantResolutionException {
+	public ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
 		if (!(template instanceof HasVariant)) {
 			return template.getPath();
 		}

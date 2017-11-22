@@ -270,7 +270,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * @return this instance for fluent chaining
 	 */
 	public Sms to(Recipient... recipients) {
-		this.recipients.addAll(Arrays.asList(recipients));
+		recipient(recipients);
 		return this;
 	}
 

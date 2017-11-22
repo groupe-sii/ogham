@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 
 /**
  * Resource resolver that searches for the resource into the classpath. This
@@ -36,24 +38,24 @@ public class ClassPathResolver extends AbstractPrefixedLookupPathResolver implem
 	}
 
 	@Override
-	public Resource getResource(String path) throws ResourceResolutionException {
-		ResourcePath resourcePath = getResourcePath(path);
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
+		ResolvedPath resourcePath = resolve(path);
 		return getResource(resourcePath);
 	}
 
 	@Override
-	protected Resource getResource(ResourcePath resourcePath) throws ResourceResolutionException {
+	protected Resource getResource(ResolvedPath resourcePath) throws ResourceResolutionException {
 		try {
 			LOG.debug("Loading resource {} from classpath...", resourcePath);
 			String resolvedPath = resourcePath.getResolvedPath();
 			InputStream stream = getClass().getClassLoader().getResourceAsStream(resolvedPath.startsWith("/") ? resolvedPath.substring(1) : resolvedPath);
 			if (stream == null) {
-				throw new ResourceResolutionException("Resource " + resolvedPath + " not found in the classpath", resolvedPath);
+				throw new ResourceResolutionException("Resource " + resolvedPath + " not found in the classpath", resourcePath);
 			}
 			LOG.debug("Resource {} available in the classpath...", resourcePath);
 			return new ByteResource(extractName(resolvedPath), stream);
 		} catch (IOException e) {
-			throw new ResourceResolutionException("The resource " + resourcePath + " is not readable", resourcePath.getPath(), e);
+			throw new ResourceResolutionException("The resource " + resourcePath.getOriginalPath() + " is not readable", resourcePath, e);
 		}
 	}
 
@@ -70,15 +72,15 @@ public class ClassPathResolver extends AbstractPrefixedLookupPathResolver implem
 
 
 	@Override
-	public boolean isAbsolute(String path) {
-		ResourcePath resourcePath = getResourcePath(path);
+	public boolean isAbsolute(ResourcePath path) {
+		ResolvedPath resourcePath = resolve(path);
 		return resourcePath.getResolvedPath().startsWith("/");
 	}
 
 	@Override
-	public String resolve(String relativePath, String prefixPath, String suffixPath) {
-		ResourcePath resourcePath = getResourcePath(relativePath);
+	public ResolvedPath resolve(ResourcePath relativePath, String prefixPath, String suffixPath) {
+		ResolvedPath resourcePath = resolve(relativePath);
 		String lookup = getLookup(relativePath);
-		return lookup + prefixPath + resourcePath.getResolvedPath() + suffixPath;
+		return new ResolvedResourcePath(relativePath, lookup, prefixPath + resourcePath.getResolvedPath() + suffixPath);
 	}
 }

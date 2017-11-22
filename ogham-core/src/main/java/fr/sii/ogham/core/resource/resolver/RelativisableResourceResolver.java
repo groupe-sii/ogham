@@ -1,5 +1,8 @@
 package fr.sii.ogham.core.resource.resolver;
 
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+
 /**
  * Indicates that the {@link ResourceResolver} can be decorated by
  * {@link RelativeResolver}.
@@ -15,7 +18,7 @@ public interface RelativisableResourceResolver extends ResourceResolver {
 	 *            the path to qualify
 	 * @return true if absolute, false if relative
 	 */
-	boolean isAbsolute(String path);
+	boolean isAbsolute(ResourcePath path);
 
 	/**
 	 * Resolve the relative path with provided prefix and suffix.
@@ -31,5 +34,5 @@ public interface RelativisableResourceResolver extends ResourceResolver {
 	 *            the suffix to apply to the relative path
 	 * @return the resolved path
 	 */
-	String resolve(String relativePath, String prefixPath, String suffixPath);
+	ResolvedPath resolve(ResourcePath relativePath, String prefixPath, String suffixPath);
 }

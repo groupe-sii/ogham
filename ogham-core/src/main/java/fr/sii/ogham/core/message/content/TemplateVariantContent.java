@@ -1,6 +1,8 @@
 package fr.sii.ogham.core.message.content;
 
 import fr.sii.ogham.core.message.capability.HasVariant;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
@@ -22,11 +24,19 @@ public class TemplateVariantContent extends TemplateContent implements HasVarian
 	private final Variant variant;
 
 	public TemplateVariantContent(String path, Variant variant, Context context) {
+		this(new UnresolvedPath(path), variant, context);
+	}
+
+	public TemplateVariantContent(String path, Variant variant, Object bean) {
+		this(new UnresolvedPath(path), variant, bean);
+	}
+
+	public TemplateVariantContent(ResourcePath path, Variant variant, Context context) {
 		super(path, context);
 		this.variant = variant;
 	}
 
-	public TemplateVariantContent(String path, Variant variant, Object bean) {
+	public TemplateVariantContent(ResourcePath path, Variant variant, Object bean) {
 		super(path, bean);
 		this.variant = variant;
 	}

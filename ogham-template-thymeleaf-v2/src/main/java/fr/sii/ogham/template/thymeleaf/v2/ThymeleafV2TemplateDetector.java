@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
 import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
@@ -42,18 +43,18 @@ public class ThymeleafV2TemplateDetector implements TemplateEngineDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
-		LOG.debug("Checking if Thymeleaf can handle the template {}", templateName);
-		Resource resolvedTemplate = getTemplate(templateName);
+	public boolean canParse(ResourcePath template, Context ctx) throws EngineDetectionException {
+		LOG.debug("Checking if Thymeleaf can handle the template {}", template);
+		Resource resolvedTemplate = getTemplate(template);
 		if (resolvedTemplate == null) {
 			return false;
 		}
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(resolvedTemplate.getInputStream()))) {
 			boolean containsThymeleafNamespace = containsThymeleafNamespace(br);
 			if (containsThymeleafNamespace) {
-				LOG.debug("The template {} contains the namespace http://www.thymeleaf.org. Thymeleaf can be used", templateName);
+				LOG.debug("The template {} contains the namespace http://www.thymeleaf.org. Thymeleaf can be used", template);
 			} else {
-				LOG.debug("The template {} doesn't contain the namespace http://www.thymeleaf.org. Thymeleaf can't be used", templateName);
+				LOG.debug("The template {} doesn't contain the namespace http://www.thymeleaf.org. Thymeleaf can't be used", template);
 			}
 			return containsThymeleafNamespace;
 		} catch (IOException e) {
@@ -72,7 +73,7 @@ public class ThymeleafV2TemplateDetector implements TemplateEngineDetector {
 		return false;
 	}
 
-	private Resource getTemplate(String templateName) {
+	private Resource getTemplate(ResourcePath templateName) {
 		try {
 			return resolver.getResource(templateName);
 		} catch (ResourceResolutionException e) {

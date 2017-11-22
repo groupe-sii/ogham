@@ -2,7 +2,9 @@ package fr.sii.ogham.core.resource.resolver;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 
 /**
  * Decorates an {@link AbstractPrefixedLookupPathResolver} to manage a default
@@ -29,22 +31,22 @@ public class DefaultResourceResolver implements DelegateResourceResolver {
 	}
 
 	@Override
-	public ResourcePath getResourcePath(String path) {
-		ResourcePath result = delegate.getResourcePath(path);
+	public ResolvedPath resolve(ResourcePath path) {
+		ResolvedPath result = delegate.resolve(path);
 		if (result == null) {
-			result = new ResourcePath(path, null, path);
+			result = new ResolvedResourcePath(path, null, path.getOriginalPath());
 		}
 		return result;
 	}
 
 	@Override
-	public boolean supports(String path) {
+	public boolean supports(ResourcePath path) {
 		return true;
 	}
 
 	@Override
-	public Resource getResource(String path) throws ResourceResolutionException {
-		return delegate.getResource(getResourcePath(path));
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
+		return delegate.getResource(resolve(path));
 	}
 
 	@Override

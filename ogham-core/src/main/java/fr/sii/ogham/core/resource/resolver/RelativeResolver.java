@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 
 /**
  * <p>
@@ -76,7 +78,7 @@ public class RelativeResolver implements DelegateResourceResolver {
 	}
 
 	@Override
-	public Resource getResource(String path) throws ResourceResolutionException {
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
 		if (delegate.isAbsolute(path)) {
 			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
 			return delegate.getResource(path);
@@ -95,21 +97,20 @@ public class RelativeResolver implements DelegateResourceResolver {
 	}
 
 	@Override
-	public boolean supports(String path) {
+	public boolean supports(ResourcePath path) {
 		return delegate.supports(path);
 	}
 
 	@Override
-	public ResourcePath getResourcePath(String path) {
-		ResourcePath resourcePath = delegate.getResourcePath(path);
+	public ResolvedPath resolve(ResourcePath path) {
+		ResolvedPath resourcePath = delegate.resolve(path);
 		boolean absolute = resourcePath.getResolvedPath().startsWith("/");
 		if (absolute) {
 			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
-		} else {
-			LOG.debug("Adding parentPath ({}) and extension ({}) to the resource path {}", parentPath, extension, path);
-			resourcePath.setResolvedPath(parentPath + resourcePath.getResolvedPath() + extension);
+			return resourcePath;
 		}
-		return resourcePath;
+		LOG.debug("Adding parentPath ({}) and extension ({}) to the resource path {}", parentPath, extension, path);
+		return new ResolvedResourcePath(path, resourcePath.getLookup(), parentPath + resourcePath.getResolvedPath() + extension);
 	}
 
 	@Override

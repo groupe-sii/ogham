@@ -4,7 +4,8 @@ import org.thymeleaf.TemplateProcessingParameters;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolution;
 
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
@@ -13,11 +14,11 @@ import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAda
 
 /**
  * <p>
- * Decorator resolver that is able to manage {@link ResourcePath}.
+ * Decorator resolver that is able to manage {@link ResolvedResourcePath}.
  * </p>
  * <p>
  * It delegates to a {@link FirstSupportingResourceResolver} the link between
- * path, {@link ResourcePath} and {@link ResourceResolver}. each lookup to a
+ * path, {@link ResolvedResourcePath} and {@link ResourceResolver}. each lookup to a
  * dedicated {@link ResourceResolver}.
  * </p>
  * <p>
@@ -56,7 +57,7 @@ public class ThymeLeafV2FirstSupportingTemplateResolver implements ITemplateReso
 	@Override
 	public TemplateResolution resolveTemplate(TemplateProcessingParameters templateProcessingParameters) {
 		String unresolvedTemplateName = templateProcessingParameters.getTemplateName();
-		ResourceResolver supportingResolver = resolver.getSupportingResolver(unresolvedTemplateName);
+		ResourceResolver supportingResolver = resolver.getSupportingResolver(new UnresolvedPath(unresolvedTemplateName));
 		ITemplateResolver templateResolver;
 		try {
 			templateResolver = resolverAdapter.adapt(supportingResolver);
@@ -64,7 +65,7 @@ public class ThymeLeafV2FirstSupportingTemplateResolver implements ITemplateReso
 				// we must initialize the new templateResolver
 				templateResolver.initialize();
 			}
-			String resolvedPath = supportingResolver.getResourcePath(unresolvedTemplateName).getResolvedPath();
+			String resolvedPath = supportingResolver.resolve(new UnresolvedPath(unresolvedTemplateName)).getResolvedPath();
 			TemplateProcessingParameters resolvedTemplateProcessingParameters = new TemplateProcessingParameters(templateProcessingParameters.getConfiguration(), resolvedPath,
 					templateProcessingParameters.getContext());
 			return templateResolver.resolveTemplate(resolvedTemplateProcessingParameters);

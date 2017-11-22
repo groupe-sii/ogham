@@ -5,7 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
@@ -41,29 +42,29 @@ public class FreeMarkerTemplateDetector implements TemplateEngineDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
-		LOG.debug("Checking if FreeMarker can handle the template {}", templateName);
+	public boolean canParse(ResourcePath templatePath, Context ctx) throws EngineDetectionException {
+		LOG.debug("Checking if FreeMarker can handle the template {}", templatePath);
 
-		ResourcePath resolvedTemplatePath = resolver.getResourcePath(templateName);
+		ResolvedPath resolvedTemplatePath = resolver.resolve(templatePath);
 		if (resolvedTemplatePath == null) {
 			return false;
 		}
 
 		for (String extension : extensions) {
 			if (resolvedTemplatePath.getResolvedPath().endsWith(extension) && exists(resolvedTemplatePath)) {
-				LOG.debug("The template {} ends with {}. FreeMarker can be used", templateName, extension);
+				LOG.debug("The template {} ends with {}. FreeMarker can be used", templatePath, extension);
 				return true;
 			}
 		}
 
-		LOG.debug("The template {} doesn't end with any of {}. FreeMarker can't be used", templateName, extensions);
+		LOG.debug("The template {} doesn't end with any of {}. FreeMarker can't be used", templatePath, extensions);
 		return false;
 
 	}
 
-	private boolean exists(ResourcePath resolvedTemplatePath) {
+	private boolean exists(ResolvedPath resolvedTemplatePath) {
 		try {
-			resolver.getResource(resolvedTemplatePath.getPath());
+			resolver.getResource(resolvedTemplatePath);
 			return true;
 		} catch(ResourceResolutionException e) {
 			return false;

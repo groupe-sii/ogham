@@ -9,6 +9,7 @@ import fr.sii.ogham.core.exception.template.ContextException;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.exception.TemplateRuntimeException;
@@ -43,17 +44,17 @@ public class ThymeleafParser implements TemplateParser {
 	}
 	
 	@Override
-	public Content parse(String templateName, Context ctx) throws ParseException {
+	public Content parse(ResourcePath template, Context ctx) throws ParseException {
 		try {
-			LOG.debug("Parsing Thymeleaf template {} with context {}...", templateName, ctx);
-			String result = engine.process(templateName, contextConverter.convert(ctx));
-			LOG.debug("Template {} successfully parsed with context {}. Result:", templateName, ctx);
+			LOG.debug("Parsing Thymeleaf template {} with context {}...", template, ctx);
+			String result = engine.process(template.getOriginalPath(), contextConverter.convert(ctx));
+			LOG.debug("Template {} successfully parsed with context {}. Result:", template, ctx);
 			LOG.debug(result);
 			return new StringContent(result);
 		} catch (TemplateEngineException | TemplateRuntimeException e) {
-			throw new ParseException("Failed to parse template with thymeleaf", templateName, ctx, e);
+			throw new ParseException("Failed to parse template with thymeleaf", template, ctx, e);
 		} catch (ContextException e) {
-			throw new ParseException("Failed to parse template with thymeleaf due to conversion error", templateName, ctx, e);
+			throw new ParseException("Failed to parse template with thymeleaf due to conversion error", template, ctx, e);
 		}
 	}
 

@@ -2,6 +2,7 @@ package fr.sii.ogham.core.template.parser;
 
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.context.Context;
 
@@ -31,5 +32,5 @@ public interface TemplateParser {
 	 *             when the template couldn't be parsed either if the template
 	 *             couldn't be read or if the template could't be processed
 	 */
-	public Content parse(String templateName, Context ctx) throws ParseException;
+	public Content parse(ResourcePath templateName, Context ctx) throws ParseException;
 }

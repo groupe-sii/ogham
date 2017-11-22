@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.message.content;
 
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.template.context.BeanContext;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.util.EqualsBuilder;
@@ -16,13 +18,14 @@ public class TemplateContent implements Content {
 	/**
 	 * The path to the template
 	 */
-	private String path;
+	private ResourcePath path;
 
 	/**
 	 * The context (variable values)
 	 */
 	private Context context;
 
+	
 	/**
 	 * Initialize the content with the path to the template and the context.
 	 * 
@@ -31,10 +34,35 @@ public class TemplateContent implements Content {
 	 * @param context
 	 *            the context (variable values)
 	 */
-	public TemplateContent(String path, Context context) {
+	public TemplateContent(ResourcePath path, Context context) {
 		super();
 		this.path = path;
 		this.context = context;
+	}
+
+	/**
+	 * Initialize the content with the path to the template and the context.
+	 * 
+	 * @param path
+	 *            the path to the template as string
+	 * @param context
+	 *            the context (variable values)
+	 */
+	public TemplateContent(String path, Context context) {
+		this(new UnresolvedPath(path), context);
+	}
+
+	/**
+	 * Shortcut for directly using any object as source for variable
+	 * substitutions.
+	 * 
+	 * @param path
+	 *            the path to the template
+	 * @param bean
+	 *            the object that contains the variable values
+	 */
+	public TemplateContent(ResourcePath path, Object bean) {
+		this(path, new BeanContext(bean));
 	}
 
 	/**
@@ -50,7 +78,7 @@ public class TemplateContent implements Content {
 		this(path, new BeanContext(bean));
 	}
 
-	public String getPath() {
+	public ResourcePath getPath() {
 		return path;
 	}
 

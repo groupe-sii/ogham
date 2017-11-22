@@ -7,11 +7,15 @@ import java.util.List;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 
 /**
- * ResourceResolver using a list of supported lookups to compute a simple {@link ResourcePath} where resolved path is simply the given path without the lookup.
- * Eg : classpath resource "classpath:/package/file" to resolved path is "package/file".
+ * ResourceResolver using a list of supported lookups to compute a simple
+ * {@link ResolvedResourcePath} where resolved path is simply the given path
+ * without the lookup. Eg : classpath resource "classpath:/package/file" to
+ * resolved path is "package/file".
  * 
  * @author Cyril Dejonghe
  *
@@ -29,13 +33,13 @@ public abstract class AbstractPrefixedLookupPathResolver implements ResourceReso
 	}
 
 	@Override
-	public boolean supports(String path) {
+	public boolean supports(ResourcePath path) {
 		return getLookup(path) != null;
 	}
 
-	public String getLookup(String path) {
+	public String getLookup(ResourcePath path) {
 		for (String lookup : lookups) {
-			if (path.startsWith(lookup)) {
+			if (path.getOriginalPath().startsWith(lookup)) {
 				return lookup;
 			}
 		}
@@ -51,19 +55,22 @@ public abstract class AbstractPrefixedLookupPathResolver implements ResourceReso
 	 * @throws ResourceResolutionException
 	 *             when the resource couldn't be found
 	 */
-	protected abstract Resource getResource(ResourcePath resourcePath) throws ResourceResolutionException;
+	protected abstract Resource getResource(ResolvedPath resourcePath) throws ResourceResolutionException;
 
 	@Override
-	public Resource getResource(String path) throws ResourceResolutionException {
-		return getResource(getResourcePath(path));
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
+		return getResource(resolve(path));
 	}
 
 	@Override
-	public ResourcePath getResourcePath(String path) {
-		ResourcePath result = null;
+	public ResolvedPath resolve(ResourcePath path) {
+		if (path instanceof ResolvedPath) {
+			return (ResolvedPath) path;
+		}
+		ResolvedPath result = null;
 		String lookup = getLookup(path);
 		if (lookup != null) {
-			result = new ResourcePath(path, lookup, path.substring(lookup.length()));
+			result = new ResolvedResourcePath(path, lookup, path.getOriginalPath().substring(lookup.length()));
 		}
 		return result;
 	}

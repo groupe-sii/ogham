@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolverRegistry;
 import fr.sii.ogham.template.exception.ResolverAdapterException;
@@ -42,7 +43,7 @@ public class SkipLocaleForStringContentTemplateLookupStrategy extends TemplateLo
 	@Override
 	public TemplateLookupResult lookup(TemplateLookupContext ctx) throws IOException {
 		try {
-			ResourceResolver matchingResolver = resolverRegistry.getSupportingResolver(ctx.getTemplateName());
+			ResourceResolver matchingResolver = resolverRegistry.getSupportingResolver(new UnresolvedPath(ctx.getTemplateName()));
 			// no match, delegate to let delegate decide
 			if (matchingResolver == null) {
 				return delegate.lookup(ctx);

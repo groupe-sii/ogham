@@ -13,6 +13,7 @@ import org.junit.Test;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.template.context.BeanContext;
 import fr.sii.ogham.core.template.context.LocaleContext;
 import fr.sii.ogham.core.template.parser.TemplateParser;
@@ -54,7 +55,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void html() throws ParseException, IOException {
-		Content content = parser.parse("classpath:simple.html.ftl", new BeanContext(new SimpleBean("foo", 42)));
+		Content content = parser.parse(new UnresolvedPath("classpath:simple.html.ftl"), new BeanContext(new SimpleBean("foo", 42)));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/simple_foo_42.html", content);
@@ -62,7 +63,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void text() throws ParseException, IOException {
-		Content content = parser.parse("classpath:simple.txt.ftl", new BeanContext(new SimpleBean("foo", 42)));
+		Content content = parser.parse(new UnresolvedPath("classpath:simple.txt.ftl"), new BeanContext(new SimpleBean("foo", 42)));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/simple_foo_42.txt", content);
@@ -70,7 +71,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void nested() throws ParseException, IOException {
-		Content content = parser.parse("classpath:nested.html.ftl", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
+		Content content = parser.parse(new UnresolvedPath("classpath:nested.html.ftl"), new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/nested_foo_42.html", content);
@@ -78,7 +79,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void layout() throws ParseException, IOException {
-		Content content = parser.parse("classpath:layout.html.ftl", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
+		Content content = parser.parse(new UnresolvedPath("classpath:layout.html.ftl"), new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/layout_foo_42.html", content);
@@ -86,7 +87,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void french() throws ParseException, IOException {
-		Content content = parser.parse("classpath:locale.txt.ftl", new LocaleContext(new SimpleBean("foo", 42, date), Locale.FRENCH));
+		Content content = parser.parse(new UnresolvedPath("classpath:locale.txt.ftl"), new LocaleContext(new SimpleBean("foo", 42, date), Locale.FRENCH));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/locale_foo_42_fr.txt", content);
@@ -94,7 +95,7 @@ public class FreeMarkerParserTest {
 
 	@Test
 	public void english() throws ParseException, IOException {
-		Content content = parser.parse("classpath:locale.txt.ftl", new LocaleContext(new SimpleBean("foo", 42, date), Locale.ENGLISH));
+		Content content = parser.parse(new UnresolvedPath("classpath:locale.txt.ftl"), new LocaleContext(new SimpleBean("foo", 42, date), Locale.ENGLISH));
 		Assert.assertNotNull("content should not be null", content);
 		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
 		AssertTemplate.assertSimilar("/template/freemarker/expected/locale_foo_42_en.txt", content);
@@ -102,6 +103,6 @@ public class FreeMarkerParserTest {
 
 	@Test(expected = ParseException.class)
 	public void invalid() throws ParseException, IOException {
-		parser.parse("classpath:invalid.html.ftl", new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
+		parser.parse(new UnresolvedPath("classpath:invalid.html.ftl"), new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 	}
 }

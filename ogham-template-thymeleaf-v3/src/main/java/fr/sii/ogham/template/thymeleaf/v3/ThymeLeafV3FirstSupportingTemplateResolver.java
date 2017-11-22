@@ -6,12 +6,15 @@ import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolution;
 
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.v3.exception.TemplateResolutionException;
 
 /**
  * <p>
@@ -57,17 +60,17 @@ public class ThymeLeafV3FirstSupportingTemplateResolver implements ITemplateReso
 	@Override
 	public TemplateResolution resolveTemplate(IEngineConfiguration configuration, String ownerTemplate, String template, Map<String, Object> templateResolutionAttributes) {
 		try {
-			ResourceResolver supportingResolver = resolver.getSupportingResolver(template);
+			ResourceResolver supportingResolver = resolver.getSupportingResolver(new UnresolvedPath(template));
 			ITemplateResolver templateResolver = resolverAdapter.adapt(supportingResolver);
-			ResourcePath resourcePath = supportingResolver.getResourcePath(template);
+			ResolvedPath resourcePath = supportingResolver.resolve(new UnresolvedPath(template));
 			String resolvedPath = resourcePath.getResolvedPath();
 			TemplateResolution resolution = templateResolver.resolveTemplate(configuration, ownerTemplate, resolvedPath, templateResolutionAttributes);
-//			if(!templateExists(resolution)) {
-//				throw new TemplateResolutionException("Failed to find template "+template+" ("+resolvedPath+")", template, resourcePath);
-//			}
+			if(!templateExists(resolution)) {
+				throw new TemplateResolutionException("Failed to find template "+template+" ("+resolvedPath+")", template, resourcePath);
+			}
 			return resolution;
 		} catch (NoResolverAdapterException e) {
-			throw new ResolverAdapterNotFoundException("Unable to resolver template cause no adapter supporting template name '" + template + "' was found. ", e);
+			throw new ResolverAdapterNotFoundException("Unable to resolve template cause no adapter supporting template name '" + template + "' was found.", e);
 
 		}
 	}

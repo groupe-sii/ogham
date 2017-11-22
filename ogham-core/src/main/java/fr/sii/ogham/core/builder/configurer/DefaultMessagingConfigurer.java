@@ -1,6 +1,9 @@
 package fr.sii.ogham.core.builder.configurer;
 
+import static fr.sii.ogham.core.CoreConstants.CLASSPATH_LOOKUPS;
 import static fr.sii.ogham.core.CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIORITY;
+import static fr.sii.ogham.core.CoreConstants.FILE_LOOKUPS;
+import static fr.sii.ogham.core.CoreConstants.STRING_LOOKUPS;
 
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -139,13 +142,13 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		// @formatter:off
 		builder
 			.string()
-				.lookup("string:", "s:")
+				.lookup(STRING_LOOKUPS)
 				.and()
 			.file()
-				.lookup("file:")
+				.lookup(FILE_LOOKUPS)
 				.and()
 			.classpath()
-				.lookup("classpath:", "");
+				.lookup(CLASSPATH_LOOKUPS);
 		// @formatter:on
 	}
 

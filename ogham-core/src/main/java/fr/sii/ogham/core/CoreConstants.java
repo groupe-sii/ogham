@@ -44,6 +44,20 @@ public final class CoreConstants {
 	 */
 	public static final int DEFAULT_CLASSPATH_PROPERTY_PRIORITY = 70000;
 
+	/**
+	 * Default lookups that are used when the path is not really a path but it
+	 * references directly the content as a string
+	 */
+	public static final String[] STRING_LOOKUPS = new String[] { "string:", "s:" };
+	/**
+	 * Default lookups when a path to an external file is used
+	 */
+	public static final String[] FILE_LOOKUPS = new String[] { "file:" };
+	/**
+	 * Default lookups when a path to a resource in the classpath is used
+	 */
+	public static final String[] CLASSPATH_LOOKUPS = new String[] { "classpath:", "" };
+
 	private CoreConstants() {
 		super();
 	}

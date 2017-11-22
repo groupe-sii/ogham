@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 
 /**
  * Resource resolver that searches for the resource on the file system. The
@@ -35,12 +37,12 @@ public class FileResolver extends AbstractPrefixedLookupPathResolver implements 
 	}
 
 	@Override
-	protected Resource getResource(ResourcePath resourcePath) throws ResourceResolutionException {
+	protected Resource getResource(ResolvedPath resourcePath) throws ResourceResolutionException {
 		LOG.debug("Loading resource {} from file system", resourcePath);
 		String resolvedPath = resourcePath.getResolvedPath();
 		File file = new File(resolvedPath);
 		if (!file.exists()) {
-			throw new ResourceResolutionException("Resource " + resourcePath + " not found on file system", resolvedPath);
+			throw new ResourceResolutionException("Resource " + resolvedPath + " not found on file system", resourcePath);
 		}
 		Resource resource = new FileResource(file);
 		LOG.debug("Resource {} found on the file system", resourcePath);
@@ -49,15 +51,15 @@ public class FileResolver extends AbstractPrefixedLookupPathResolver implements 
 
 
 	@Override
-	public boolean isAbsolute(String path) {
-		ResourcePath resourcePath = getResourcePath(path);
+	public boolean isAbsolute(ResourcePath path) {
+		ResolvedPath resourcePath = resolve(path);
 		return resourcePath.getResolvedPath().startsWith("/");
 	}
 
 	@Override
-	public String resolve(String relativePath, String prefixPath, String suffixPath) {
-		ResourcePath resourcePath = getResourcePath(relativePath);
+	public ResolvedPath resolve(ResourcePath relativePath, String prefixPath, String suffixPath) {
+		ResolvedPath resourcePath = resolve(relativePath);
 		String lookup = getLookup(relativePath);
-		return lookup + prefixPath + resourcePath.getResolvedPath() + suffixPath;
+		return new ResolvedResourcePath(relativePath, lookup, prefixPath + resourcePath.getResolvedPath() + suffixPath);
 	}
 }

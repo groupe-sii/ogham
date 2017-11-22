@@ -74,7 +74,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 				execService.execute(new WaitBindTask(serverSession));
 			}
 		} catch (IOException e) {
-			if(!stopped) {
+			if(!stopped) {	// NOSONAR
 				LOG.error("Failed to initialize SMPP server simulator", e);
 				close();
 			}

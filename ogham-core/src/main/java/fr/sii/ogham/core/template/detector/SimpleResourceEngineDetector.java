@@ -7,6 +7,7 @@ import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
 import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.resource.SimpleResource;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.context.Context;
 
@@ -45,8 +46,8 @@ public class SimpleResourceEngineDetector implements TemplateEngineDetector {
 	}
 
 	@Override
-	public boolean canParse(String templateName, Context ctx) throws EngineDetectionException {
-		Resource resource = getResource(templateName);
+	public boolean canParse(ResourcePath template, Context ctx) throws EngineDetectionException {
+		Resource resource = getResource(template);
 		// no resource matches requested template
 		// => can't parse (we need a SimpleResource)
 		if (resource == null) {
@@ -61,14 +62,14 @@ public class SimpleResourceEngineDetector implements TemplateEngineDetector {
 
 		// it is a SimpleResource
 		// => may be able to parse, it depends on delegate
-		return delegate.canParse(templateName, ctx);
+		return delegate.canParse(template, ctx);
 	}
 
-	private Resource getResource(String templateName) {
+	private Resource getResource(ResourcePath template) {
 		try {
-			return resolver.getResource(templateName);
+			return resolver.getResource(template);
 		} catch (ResourceResolutionException e) {
-			LOG.trace("resource resolution couldn't resolve template " + templateName + " while trying detect template engine", e);
+			LOG.trace("resource resolution couldn't resolve template " + template + " while trying detect template engine", e);
 			return null;
 		}
 	}

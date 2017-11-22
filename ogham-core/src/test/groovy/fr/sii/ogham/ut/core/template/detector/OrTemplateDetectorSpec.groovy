@@ -1,5 +1,6 @@
 package fr.sii.ogham.ut.core.template.detector
 
+import fr.sii.ogham.core.resource.path.UnresolvedPath
 import fr.sii.ogham.core.template.detector.OrTemplateDetector
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector
 import spock.lang.Specification
@@ -15,7 +16,7 @@ class OrTemplateDetectorSpec extends Specification {
 			detector2.canParse(_, _) >> given2
 
 		when:
-			def result = new OrTemplateDetector(Arrays.asList(detector1, detector2)).canParse("foo", null)
+			def result = new OrTemplateDetector(Arrays.asList(detector1, detector2)).canParse(new UnresolvedPath("foo"), null)
 
 		then:
 			result.equals(expected)

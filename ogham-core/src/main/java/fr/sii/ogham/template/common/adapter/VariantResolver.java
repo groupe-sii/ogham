@@ -1,6 +1,7 @@
 package fr.sii.ogham.template.common.adapter;
 
 import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.template.exception.VariantResolutionException;
 
 /**
@@ -19,7 +20,7 @@ public interface VariantResolver {
 	 * @throws VariantResolutionException
 	 *             when template has variant but the variant is not known
 	 */
-	String getRealPath(TemplateContent template) throws VariantResolutionException;
+	ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException;
 
 	/**
 	 * Check if the variant exists

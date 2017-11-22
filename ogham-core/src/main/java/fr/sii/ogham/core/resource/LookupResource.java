@@ -3,6 +3,7 @@ package fr.sii.ogham.core.resource;
 import java.io.IOException;
 import java.io.InputStream;
 
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
@@ -31,7 +32,7 @@ public class LookupResource implements NamedResource {
 	/**
 	 * The path that may contain a lookup
 	 */
-	private String path;
+	private ResourcePath path;
 
 	/**
 	 * The name of the attachment
@@ -47,7 +48,7 @@ public class LookupResource implements NamedResource {
 	 * @param name
 	 *            the name to display for the resource
 	 */
-	public LookupResource(String path, String name) {
+	public LookupResource(ResourcePath path, String name) {
 		super();
 		this.path = path;
 		this.name = name;
@@ -61,11 +62,11 @@ public class LookupResource implements NamedResource {
 	 * @param path
 	 *            the path to the resource (may contain a lookup)
 	 */
-	public LookupResource(String path) {
+	public LookupResource(ResourcePath path) {
 		this(path, extractName(path));
 	}
 
-	public String getPath() {
+	public ResourcePath getPath() {
 		return path;
 	}
 
@@ -79,7 +80,8 @@ public class LookupResource implements NamedResource {
 		return name;
 	}
 
-	private static String extractName(String path) {
+	private static String extractName(ResourcePath resolvedPath) {
+		String path = resolvedPath.getOriginalPath();
 		String name;
 		int lastSeparatorIdx = Math.max(path.lastIndexOf(UNIX_SEPARATOR), path.lastIndexOf(WINDOWS_SEPARATOR));
 		if (lastSeparatorIdx >= 0) {

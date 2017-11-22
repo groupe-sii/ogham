@@ -2,7 +2,9 @@ package fr.sii.ogham.core.resource.resolver;
 
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 
 /**
  * <p>
@@ -29,7 +31,7 @@ public interface ResourceResolver {
 	 * @throws ResourceResolutionException
 	 *             when the resource couldn't be found
 	 */
-	Resource getResource(String path) throws ResourceResolutionException;
+	Resource getResource(ResourcePath path) throws ResourceResolutionException;
 
 	/**
 	 * Indicates if the resource path can be handled by this resource resolver
@@ -40,14 +42,14 @@ public interface ResourceResolver {
 	 * @return true if the resource path can be handled by this resource
 	 *         resolver, false otherwise
 	 */
-	boolean supports(String path);
+	boolean supports(ResourcePath path);
 
 	/**
-	 * Transforms a string path in a {@link ResourcePath}.
+	 * Resolves an unresolved/string path into a {@link ResolvedResourcePath}.
 	 * 
 	 * @param path
 	 *            the path to the resource
 	 * @return the resolved resource path or null if it does not support it.
 	 */
-	ResourcePath getResourcePath(String path);
+	ResolvedPath resolve(ResourcePath path);
 }

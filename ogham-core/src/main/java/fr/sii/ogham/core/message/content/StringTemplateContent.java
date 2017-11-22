@@ -1,5 +1,6 @@
 package fr.sii.ogham.core.message.content;
 
+import fr.sii.ogham.core.resource.path.ResolvedString;
 import fr.sii.ogham.core.template.context.Context;
 
 /**
@@ -27,7 +28,7 @@ public class StringTemplateContent extends TemplateContent {
 	 *            the context (variable values)
 	 */
 	public StringTemplateContent(String template, Context context) {
-		super("string:" + template, context);
+		super(new ResolvedString(template), context);
 	}
 
 	/**
@@ -40,6 +41,6 @@ public class StringTemplateContent extends TemplateContent {
 	 *            the object that contains the variable values
 	 */
 	public StringTemplateContent(String template, Object bean) {
-		super("string:" + template, bean);
+		super(new ResolvedString(template), bean);
 	}
 }

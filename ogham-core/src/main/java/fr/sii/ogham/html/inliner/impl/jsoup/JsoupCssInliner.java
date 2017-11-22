@@ -81,7 +81,7 @@ public class JsoupCssInliner implements CssInliner {
 
 	private String getCss(List<ExternalCss> cssContents, String path) {
 		for (ExternalCss css : cssContents) {
-			if (css.getPath().contains(path)) {
+			if (css.getPath().getOriginalPath().contains(path)) {
 				return css.getContent();
 			}
 		}

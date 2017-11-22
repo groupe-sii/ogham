@@ -10,6 +10,8 @@ import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.capability.HasVariant;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.UnknownVariantException;
 import fr.sii.ogham.template.exception.VariantResolutionException;
@@ -37,15 +39,15 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 	}
 
 	@Override
-	public String getRealPath(TemplateContent template) throws VariantResolutionException {
+	public ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
 		if (!(template instanceof HasVariant)) {
-			return template.getPath();
+			return resourceResolver.resolve(new UnresolvedPath(template.getPath().getOriginalPath()));
 		}
 		String extension = mapping.get(((HasVariant) template).getVariant());
 		if (extension == null) {
 			throw new UnknownVariantException("Failed to resolve template due to unknown variant/extension", template.getPath(), template.getContext(), ((HasVariant) template).getVariant());
 		}
-		return template.getPath() + extension;
+		return resourceResolver.resolve(new UnresolvedPath(template.getPath().getOriginalPath() + extension));
 	}
 
 	public ExtensionMappingVariantResolver register(Variant variant, String extension) {
@@ -64,9 +66,9 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 			return false;
 		}
 
-		String templatePath = template.getPath();
+		ResourcePath templatePath = template.getPath();
 		try {
-			resourceResolver.getResource(templatePath + extension);
+			resourceResolver.getResource(new UnresolvedPath(templatePath.getOriginalPath() + extension));
 			return true;
 		} catch (ResourceResolutionException e) {
 			LOG.trace("template {}.{} not found", templatePath, extension, e);

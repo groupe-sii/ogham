@@ -3,12 +3,13 @@ package fr.sii.ogham.template.common.adapter;
 import fr.sii.ogham.core.message.capability.HasVariant;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.template.exception.VariantResolutionException;
 
 public class FailIfNotFoundVariantResolver implements VariantResolver {
 
 	@Override
-	public String getRealPath(TemplateContent template) throws VariantResolutionException {
+	public ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
 		if (!(template instanceof HasVariant)) {
 			return template.getPath();
 		}

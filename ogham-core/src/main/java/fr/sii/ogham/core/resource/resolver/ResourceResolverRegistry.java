@@ -2,6 +2,8 @@ package fr.sii.ogham.core.resource.resolver;
 
 import java.util.List;
 
+import fr.sii.ogham.core.resource.path.ResourcePath;
+
 /**
  * Registry for {@link ResourceResolver}s.
  * 
@@ -26,7 +28,7 @@ public interface ResourceResolverRegistry {
 	 *            the path that will be later resolved
 	 * @return the matching resolver
 	 */
-	ResourceResolver getSupportingResolver(String path);
+	ResourceResolver getSupportingResolver(ResourcePath path);
 
 	/**
 	 * Get the list of registered resolvers

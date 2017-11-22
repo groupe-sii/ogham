@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.resource.NoResolverException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.ResourcePath;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 
 /**
  * Decorator that will ask each resource resolver if it is able to handle the
@@ -56,13 +57,13 @@ public class FirstSupportingResourceResolver implements ResourceResolver, Resour
 	}
 
 	@Override
-	public Resource getResource(String path) throws ResourceResolutionException {
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
 		LOG.debug("Finding a resolver able to handle the lookup {}...", path);
 		ResourceResolver supportingResolver = getSupportingResolver(path);
 		if (supportingResolver != null) {
 			return supportingResolver.getResource(path);
 		}
-		throw new NoResolverException("No resource resolver available to find resource " + path, path);
+		throw new NoResolverException("No resource resolver available to find resource " + path.getOriginalPath(), path);
 	}
 
 	/**
@@ -79,7 +80,7 @@ public class FirstSupportingResourceResolver implements ResourceResolver, Resour
 	}
 
 	@Override
-	public boolean supports(String path) {
+	public boolean supports(ResourcePath path) {
 		return getSupportingResolver(path) != null;
 	}
 
@@ -91,7 +92,7 @@ public class FirstSupportingResourceResolver implements ResourceResolver, Resour
 	 * @return the first resolver supporting the path
 	 */
 	@Override
-	public ResourceResolver getSupportingResolver(String path) {
+	public ResourceResolver getSupportingResolver(ResourcePath path) {
 		LOG.debug("Finding resolver for resource {}...", path);
 		for (ResourceResolver resolver : resolvers) {
 			if (resolver.supports(path)) {
@@ -110,10 +111,10 @@ public class FirstSupportingResourceResolver implements ResourceResolver, Resour
 	}
 
 	@Override
-	public ResourcePath getResourcePath(String path) {
+	public ResolvedPath resolve(ResourcePath path) {
 		ResourceResolver supportingResolver = getSupportingResolver(path);
 		if (supportingResolver != null) {
-			return supportingResolver.getResourcePath(path);
+			return supportingResolver.resolve(path);
 		} else {
 			return null;
 		}
