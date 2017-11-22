@@ -1,6 +1,8 @@
 language: java
 dist: trusty
 jdk:
+- oraclejdk9
+- openjdk9
 - oraclejdk8
 - openjdk8
 - oraclejdk7
@@ -10,6 +12,7 @@ addons:
   apt:
     packages:
     - oracle-java8-installer
+    - graphviz
   sonarqube:
     organization: aurelien-baudet-github
     branches:
@@ -21,7 +24,6 @@ branches:
   - test/.*
   - gh-.*
 before_install:
-  - apt-get install -qq -y graphviz
   - echo "MAVEN_OPTS='-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m'" > ~/.mavenrc # see https://github.com/travis-ci/travis-ci/issues/4613
 install:
   - mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dskip.integration.tests=true -Dskip.unit.tests=true -B -q
