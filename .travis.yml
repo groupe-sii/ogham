@@ -42,7 +42,8 @@ script:
   - mvn test -T 2.5C -f "$HOME/classpath-tests/$TEST_FOLDER/pom.xml" -Dmaven.test.redirectTestOutputToFile=false -fae -q | grep -Ei '(error|exception)'
 # TODO: after error -> grab logs and send it
 after_success:
-  -  mvn sonar:sonar -B
+  - mvn sonar:sonar -B
+  - mvn deploy
 notifications:
   slack:
     rooms:
