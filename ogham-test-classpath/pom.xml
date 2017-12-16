@@ -25,6 +25,7 @@
 		<sonar.skip>true</sonar.skip>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 		<maven.site.skip>true</maven.site.skip>
+		<maven.deploy.skip>true</maven.deploy.skip>
 	</properties>
 
 	<dependencies>
