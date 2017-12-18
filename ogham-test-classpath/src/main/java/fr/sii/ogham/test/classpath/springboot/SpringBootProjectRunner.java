@@ -5,6 +5,12 @@ import static fr.sii.ogham.test.classpath.springboot.IdentifierGenerator.isIdent
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.CONFIGURATION_PROCESSOR;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.DEVTOOLS;
 import static fr.sii.ogham.test.classpath.springboot.SpringBootDependency.LOMBOK;
+import static java.nio.file.attribute.PosixFilePermission.GROUP_EXECUTE;
+import static java.nio.file.attribute.PosixFilePermission.GROUP_READ;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_READ;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
 import static java.util.Arrays.asList;
 
 import java.io.File;
@@ -14,7 +20,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -79,6 +87,7 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		for(JavaVersion javaVersion : springMatrixProperties.getJavaVersions()) {
 			log.info("Creating root project for {}", javaVersion);
 			createRootPom(parentFolder.resolve(javaVersion.name()), filter(modules, javaVersion));
+			addMavenWrapper(parentFolder.resolve(javaVersion.name()));
 		}
 		log.info("{} projects created", modules.size());
 		System.exit(0);
@@ -111,6 +120,15 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 			pom.addModule(module);
 		}
 		write(rootPom, pom);
+	}
+
+	private void addMavenWrapper(Path parentFolder) throws IOException {
+		Files.copy(getClass().getResourceAsStream("/mvnwrapper-for-projects/mvnw"), parentFolder.resolve("mvnw"));
+		Files.setPosixFilePermissions(parentFolder.resolve("mvnw"), new HashSet<>(asList(GROUP_READ, GROUP_EXECUTE, OTHERS_READ, OTHERS_EXECUTE, OWNER_READ, OWNER_EXECUTE)));
+		Files.copy(getClass().getResourceAsStream("/mvnwrapper-for-projects/mvnw.cmd"), parentFolder.resolve("mvnw.cmd"));
+		parentFolder.resolve(".mvn/wrapper").toFile().mkdirs();
+		Files.copy(getClass().getResourceAsStream("/mvnwrapper-for-projects/.mvn/wrapper/maven-wrapper.jar"), parentFolder.resolve(".mvn/wrapper/maven-wrapper.jar"));
+		Files.copy(getClass().getResourceAsStream("/mvnwrapper-for-projects/.mvn/wrapper/maven-wrapper.properties"), parentFolder.resolve(".mvn/wrapper/maven-wrapper.properties"));
 	}
 
 	private List<String> createProjectsParallel(final Path parentFolder) throws InterruptedException, ExecutionException {
