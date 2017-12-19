@@ -9,7 +9,6 @@ import java.nio.file.Path;
 
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
@@ -25,7 +24,6 @@ import net.lingala.zip4j.exception.ZipException;
 
 @Data
 @Slf4j
-@Service
 public class HttpSpringStarterInitializer implements ProjectInitializer {
 	private final RestTemplate restTemplate;
 	private final SpringStarterProperties springStarterProperties;
@@ -67,7 +65,7 @@ public class HttpSpringStarterInitializer implements ProjectInitializer {
 		if(response.getStatusCode().is2xxSuccessful()) {
 			try {
 				return new Project(unzip(response.getBody(), identifier, parentFolder), variables);
-			} catch(IOException | ZipException e) {
+			} catch(IOException | ZipException | RuntimeException e) {
 				throw new ProjectInitializationException("Failed to initialize Spring Boot project while trying to unzip Spring starter zip", e);
 			}
 		}
