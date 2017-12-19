@@ -44,7 +44,7 @@ script:
 # TODO: after error -> grab logs and send it
 after_success:
   - ./mvnw sonar:sonar -B | grep -Ei '(warn|error|ANALYSIS SUCCESSFUL)'
-  - ./mvnw deploy -B | grep -Ei '(Uploading|Downloading|Uploaded|Downloaded)'
+  - ./mvnw deploy --settings .travis-settings.xml -DskipTests=true -B | grep -Ei '(Uploading|Downloading|Uploaded|Downloaded)'
 notifications:
   slack:
     rooms:
