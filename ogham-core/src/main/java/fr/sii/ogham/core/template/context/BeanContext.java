@@ -3,11 +3,12 @@ package fr.sii.ogham.core.template.context;
 import java.util.Map;
 
 import fr.sii.ogham.core.exception.template.BeanContextException;
-import fr.sii.ogham.core.exception.template.BeanException;
 import fr.sii.ogham.core.exception.template.ContextException;
+import fr.sii.ogham.core.exception.util.BeanWrapperException;
 import fr.sii.ogham.core.util.BeanUtils;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
+import fr.sii.ogham.core.util.bean.MapBeanReadWrapper;
 
 /**
  * Template context that provides variable values using a Java object. Each
@@ -73,8 +74,8 @@ public class BeanContext implements Context {
 	@Override
 	public Map<String, Object> getVariables() throws ContextException {
 		try {
-			return BeanUtils.convert(bean);
-		} catch (BeanException e) {
+			return new MapBeanReadWrapper(bean);
+		} catch (BeanWrapperException e) {
 			throw new BeanContextException("Failed to generate context from bean", bean, e);
 		}
 	}

@@ -1,12 +1,6 @@
 package fr.sii.ogham.core.util;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -18,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.template.BeanException;
+import fr.sii.ogham.core.util.bean.MapBeanReadWrapper;
 import fr.sii.ogham.core.util.converter.EmailAddressConverter;
 import fr.sii.ogham.core.util.converter.SmsSenderConverter;
 import fr.sii.ogham.email.message.EmailAddress;
@@ -59,7 +54,7 @@ public final class BeanUtils {
 		ConvertUtils.register(new SmsSenderConverter(), Sender.class);
 		BeanUtilsBean.getInstance().getConvertUtils().register(true, false, 0);
 	}
-	
+
 	/**
 	 * <p>
 	 * Convert a Java object into a map. Each property of the bean is added to
@@ -67,7 +62,9 @@ public final class BeanUtils {
 	 * each entry is the value of the property.
 	 * 
 	 * <p>
-	 * If the provided object is already a Map then it is returned as-is
+	 * There is no copy of values into a new map. Actually, the bean is wrapped
+	 * and access to properties is done lazily. Then a special map
+	 * implementation decorates the bean wrapper.
 	 * 
 	 * @param bean
 	 *            the bean to convert into a map
@@ -76,18 +73,7 @@ public final class BeanUtils {
 	 *             when the conversion has failed
 	 */
 	public static Map<String, Object> convert(Object bean) throws BeanException {
-		try {
-			Map<String, Object> map;
-			if(bean instanceof Map) {
-				// TODO: handle Map with object keys
-				map = (Map<String, Object>) bean;
-			} else {
-				map = convertBean(bean);
-			}
-			return map;
-		} catch (ReflectiveOperationException | IntrospectionException e) {
-			throw new BeanException("failed to convert bean to map", bean, e);
-		}
+		return new MapBeanReadWrapper(bean);
 	}
 
 	/**
@@ -252,22 +238,6 @@ public final class BeanUtils {
 		populate(bean, values, new Options(false, true));
 	}
 
-	
-	private static Map<String, Object> convertBean(Object bean) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
-		Map<String, Object> map = new HashMap<>();
-		BeanInfo info = Introspector.getBeanInfo(bean.getClass());
-		for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
-			if(!"class".equals(pd.getName())) {
-				Method reader = pd.getReadMethod();
-				// TODO: convert recursively ?
-				if (reader != null) {
-					map.put(pd.getName(), reader.invoke(bean));
-				}
-			}
-		}
-		return map;
-	}
-
 	private static void handleUnknown(Object bean, Options options, Entry<String, Object> entry, Exception e) throws BeanException {
 		if (options.isSkipUnknown()) {
 			LOG.debug("skipping property " + entry.getKey() + ": it doesn't exist or is not accessible", e);
@@ -283,7 +253,6 @@ public final class BeanUtils {
 			throw new BeanException("Failed to populate bean due to conversion error", bean, e);
 		}
 	}
-
 
 	public static class Options {
 		private boolean override;
