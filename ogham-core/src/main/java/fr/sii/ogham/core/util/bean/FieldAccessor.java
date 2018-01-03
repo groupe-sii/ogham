@@ -70,7 +70,7 @@ public class FieldAccessor<T> implements Accessor<T> {
 			}
 			return (T) field.get(bean);
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | ClassCastException e) {
-			throw new InvalidPropertyException("Failed to get value for property " + name + " on bean " + getClassName(), bean, name, e);
+			throw new InvalidPropertyException("Failed to get value for property '" + name + "' on bean '" + getClassName() + "'", bean, name, e);
 		}
 	}
 
@@ -82,6 +82,6 @@ public class FieldAccessor<T> implements Accessor<T> {
 	}
 
 	private String getClassName() {
-		return bean == null ? "null" : bean.getClass().getSimpleName();
+		return bean == null ? "null" : bean.getClass().getName();
 	}
 }

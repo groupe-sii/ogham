@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.util.bean;
 
-import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
+import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.isInvalid;
 
 import java.util.List;
 
@@ -16,15 +16,23 @@ import fr.sii.ogham.core.exception.util.InvalidPropertyException;
  * @author Aurélien Baudet
  *
  */
-public class RecursiveReadMethodBeanReadWrapper implements BeanReadWrapper {
+public class RecursiveBeanReadWrapper implements BeanReadWrapper {
 	private final BeanReadWrapper delegate;
 	private final BeanReadWrapperFactory recursiveFactory;
 
-	public RecursiveReadMethodBeanReadWrapper(BeanReadWrapper delegate) {
-		this(delegate, new DefaultRecursiveReadMethodBeanReadWrapperFactory());
+	public RecursiveBeanReadWrapper(Object bean) {
+		this(new SimpleBeanReadWrapper(bean));
 	}
 
-	public RecursiveReadMethodBeanReadWrapper(BeanReadWrapper delegate, BeanReadWrapperFactory recursiveFactory) {
+	public RecursiveBeanReadWrapper(BeanReadWrapper delegate) {
+		this(delegate, new DefaultRecursiveBeanReadWrapperFactory());
+	}
+
+	public RecursiveBeanReadWrapper(Object bean, BeanReadWrapperFactory recursiveFactory) {
+		this(new SimpleBeanReadWrapper(bean), recursiveFactory);
+	}
+	
+	public RecursiveBeanReadWrapper(BeanReadWrapper delegate, BeanReadWrapperFactory recursiveFactory) {
 		super();
 		this.delegate = delegate;
 		this.recursiveFactory = recursiveFactory;
@@ -36,7 +44,7 @@ public class RecursiveReadMethodBeanReadWrapper implements BeanReadWrapper {
 		if (value == null) {
 			return null;
 		}
-		if (isPrimitiveOrWrapper(value.getClass())) {
+		if (isInvalid(value)) {
 			return value;
 		}
 		return recursiveFactory.create(value);

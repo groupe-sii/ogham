@@ -19,27 +19,44 @@ import fr.sii.ogham.core.exception.util.InvalidPropertyException;
  * and doesn't support access to values directly (values, containsValue).
  * 
  * This implementation delegates access to real bean properties through a
- * {@link SimpleReadMethodBeanReadWrapper} instance (by default). You can
+ * {@link SimpleBeanReadWrapper} instance (by default). You can
  * override this default wrapper using the constructor
  * {@link #MapBeanReadWrapper(BeanReadWrapper)}.
  * 
  * @author Aurélien Baudet
  *
  */
-public class MapBeanReadWrapper implements Map<String, Object> {
+public class MapBeanReadWrapper implements BeanReadWrapper, Map<String, Object> {
 	private final BeanReadWrapper delegate;
 
 	/**
 	 * Initializes the wrapper for the provided bean.
 	 * 
-	 * {@link SimpleReadMethodBeanReadWrapper} is used to access bean
+	 * {@link SimpleBeanReadWrapper} is used to access bean
 	 * properties.
 	 * 
 	 * @param bean
 	 *            the bean to wrap
 	 */
 	public MapBeanReadWrapper(Object bean) {
-		this(new SimpleReadMethodBeanReadWrapper(bean));
+		this(bean, true);
+	}
+
+	/**
+	 * Initializes the wrapper for the provided bean.
+	 * 
+	 * {@link SimpleBeanReadWrapper} is used to access bean
+	 * properties.
+	 * 
+	 * @param bean
+	 *            the bean to wrap
+	 * @param failOnMissingProperty
+	 *            if false null is returned if the property doesn't exist, if
+	 *            true an {@link InvalidPropertyException} is thrown if the
+	 *            property doesn't exist
+	 */
+	public MapBeanReadWrapper(Object bean, boolean failOnMissingProperty) {
+		this(new SimpleBeanReadWrapper(bean, failOnMissingProperty));
 	}
 
 	/**
@@ -125,12 +142,19 @@ public class MapBeanReadWrapper implements Map<String, Object> {
 		return entries;
 	}
 
-	private Object getPropertyValue(String name) throws InvalidPropertyException {
+	@Override
+	public Object getPropertyValue(String name) throws InvalidPropertyException {
 		return delegate.getPropertyValue(name);
 	}
 
-	private List<String> getProperties() {
+	@Override
+	public List<String> getProperties() {
 		return delegate.getProperties();
+	}
+
+	@Override
+	public Object getWrappedBean() {
+		return delegate.getWrappedBean();
 	}
 
 	/**

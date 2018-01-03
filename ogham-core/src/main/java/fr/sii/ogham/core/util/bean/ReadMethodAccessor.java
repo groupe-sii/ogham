@@ -1,13 +1,10 @@
 package fr.sii.ogham.core.util.bean;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
+import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.getReadMethod;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import fr.sii.ogham.core.exception.util.BeanWrapperException;
 import fr.sii.ogham.core.exception.util.InvalidPropertyException;
 
 /**
@@ -103,7 +100,7 @@ public class ReadMethodAccessor<T> implements Accessor<T> {
 	@SuppressWarnings("unchecked")
 	public T getValue() {
 		if (readMethod == null && defaultAccessor == null) {
-			throw new InvalidPropertyException("Can't get value for property " + name + " on bean " + getClassName() + ": no getter and no default accessor provided.", bean, name);
+			throw new InvalidPropertyException("Can't get value for property '" + name + "' on bean '" + getClassName() + "': no getter and no default accessor provided.", bean, name);
 		}
 		if (readMethod == null) {
 			return defaultAccessor.getValue();
@@ -112,34 +109,12 @@ public class ReadMethodAccessor<T> implements Accessor<T> {
 		try {
 			return (T) readMethod.invoke(bean, NULL_ARGUMENTS);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassCastException e) {
-			throw new InvalidPropertyException("Failed to get value for property " + name + " on bean " + getClassName(), bean, name, e);
+			throw new InvalidPropertyException("Failed to get value for property '" + name + "' on bean '" + getClassName() + "'", bean, name, e);
 		}
 	}
 
 	private String getClassName() {
-		return bean == null ? "null" : bean.getClass().getSimpleName();
+		return bean == null ? "null" : bean.getClass().getName();
 	}
 
-	private static Method getReadMethod(Object bean, String name) {
-		Class<? extends Object> beanClass = bean.getClass();
-		try {
-			final BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
-			final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-			if (propertyDescriptors != null) {
-				for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-					if (propertyDescriptor != null) {
-						final String n = propertyDescriptor.getName();
-						final Method readMethod = propertyDescriptor.getReadMethod();
-
-						if (n.equals(name) && readMethod != null) {
-							return readMethod;
-						}
-					}
-				}
-			}
-			return null;
-		} catch (final IntrospectionException e) {
-			throw new BeanWrapperException("Failed to initialize bean wrapper on " + beanClass, e);
-		}
-	}
 }
