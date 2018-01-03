@@ -1,8 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.sii.ogham</groupId>
 	<artifactId>ogham-parent</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>ogham</name>
 	<description>
@@ -530,7 +531,7 @@
 							<backend>html</backend>
 							<doctype>book</doctype>
 							<preserveDirectories>true</preserveDirectories>
-							<imagesDir />
+							<imagesDir></imagesDir>
 							<sourceHighlighter>coderay</sourceHighlighter>
 							<embedAssets>false</embedAssets>
 							<templateDir>${basedir}/src/docs/resources/templates</templateDir>
@@ -546,7 +547,7 @@
 								<docinfo2>true</docinfo2>
 								<experimental>true</experimental>
 								<tabsize>4</tabsize>
-								<imagesdir />
+								<imagesdir></imagesdir>
 								<ogham-version>${docProjectVersion}</ogham-version>
 								<docdir>${basedir}/src/docs/asciidoc</docdir>
 								<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
@@ -634,7 +635,7 @@
 					<asciidoc>
 						<baseDir>${basedir}/src/docs/asciidoc</baseDir>
 						<preserveDirectories>true</preserveDirectories>
-						<imagesDir />
+						<imagesDir></imagesDir>
 						<sourceHighlighter>coderay</sourceHighlighter>
 						<embedAssets>false</embedAssets>
 						<requires>
@@ -651,7 +652,7 @@
 							<docinfo2>true</docinfo2>
 							<experimental>true</experimental>
 							<tabsize>4</tabsize>
-							<imagesdir />
+							<imagesdir></imagesdir>
 							<ogham-version>${docProjectVersion}</ogham-version>
 							<docdir>${basedir}/src/docs/asciidoc</docdir>
 							<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
@@ -807,7 +808,7 @@
 		<url>${github.url}</url>
 		<connection>scm:git:${scm.url}</connection>
 		<developerConnection>scm:git:${scm.url}</developerConnection>
-		<tag>v2.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
