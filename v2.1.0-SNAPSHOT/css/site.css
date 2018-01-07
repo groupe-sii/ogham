@@ -1,0 +1,337 @@
+pre>code {
+	background: none;
+	padding: 0;
+	font-size: 0.85em !important;
+}
+
+.page-user-manual .main-body #toc {
+	position: fixed;
+	top: 50px;
+	left: 0;
+	bottom: 0;
+	width: 315px;
+	overflow: auto;
+	background: #f8f8f7;
+}
+
+.page-user-manual .main-body .body-content {
+	margin-left: 50px;
+}
+
+.page-release-notes .main-body .body-content,
+.page-user-manual .main-body .body-content {
+	color: rgba(0, 0, 0, 0.8);
+}
+
+.page-release-notes .main-body i.fa,
+.page-user-manual .main-body i.fa {
+	font-style: normal;
+}
+
+.page-release-notes .main-body [class^="icon-"],
+.page-release-notes .main-body [class*=" icon-"],
+.page-user-manual .main-body [class^="icon-"],
+.page-user-manual .main-body [class*=" icon-"] {
+	background: none;
+	width: auto;
+	height: auto;
+}
+
+.page-release-notes .main-body .imageblock.text-center .title,
+.page-user-manual .main-body .imageblock.text-center .title {
+	text-align: center;
+}
+
+.page-release-notes .main-body h1,
+.page-release-notes .main-body h2,
+.page-release-notes .main-body h3,
+.page-release-notes .main-body h4,
+.page-release-notes .main-body h5,
+.page-release-notes .main-body h6,
+.page-user-manual .main-body h1,
+.page-user-manual .main-body h2,
+.page-user-manual .main-body h3,
+.page-user-manual .main-body h4,
+.page-user-manual .main-body h5,
+.page-user-manual .main-body h6 {
+	color: #317eac;
+	font-weight: bold;
+}
+
+
+.page-user-manual .main-body ol>li p, 
+.page-user-manual .main-body ul>li p, 
+.page-user-manual .main-body ul dd, 
+.page-user-manual .main-body ol dd, 
+.page-user-manual .main-body .olist .olist, 
+.page-user-manual .main-body .ulist .ulist, 
+.page-user-manual .main-body .ulist .olist, 
+.page-user-manual .main-body .olist .ulist {
+	margin-bottom: .025em;
+}
+
+.page-user-manual .main-body .paragraph ~ ul,
+.page-user-manual .main-body .paragraph ~ .ulist > ul,
+.page-user-manual .main-body .paragraph ~ ol,
+.page-user-manual .main-body .paragraph ~ .olist > ol {
+	margin-top: -1em;
+}
+
+
+
+
+
+.page-release-notes .main-body .sect3 {
+	margin-left: 20px;
+}
+
+
+
+.roadmap {
+	font-weight: bold;
+}
+
+.roadmap .paragraph {
+	margin: 20px 0;
+}
+
+
+
+
+
+
+
+.page-index h2 {
+    text-align: center;
+    margin-top: 70px;
+    border-top: 1px solid #eee;
+    padding-top: 40px;
+    padding-bottom: 20px;
+}
+
+.page-index #features {
+	border: none;
+	margin-top: 0;
+}
+
+.page-index h3 .image {
+	display: inline-block;
+	margin-right: 10px;
+}
+.page-index h3 .image img {
+	vertical-align: top;
+	padding-top: 4px;
+}
+.page-index pre {
+	font-size: 15px;
+}
+
+.page-index .feature {
+	width: 580px;
+	height: 200px;
+	margin: 40px 0 0 0;
+}
+
+.page-index .feature .image {
+	display: block;
+	margin: auto;
+	width: 100px;
+	height: 100px;
+}
+
+.page-index .feature .content {
+	height: 100%;
+}
+.page-index .feature .content > .paragraph {
+	text-align: center;
+	width: 150px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.page-index .feature .content > .ulist {
+	width: 415px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.page-index .feature .content > .ulist > ul {
+	list-style: none;
+	margin-left: 0;
+}
+.page-index .feature .content > .ulist > ul p {
+	margin: 2px 0;
+}
+
+
+.page-index .feature .paragraph {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+
+
+.page-index .feature:nth-child(2n+1) {
+	clear: both;
+	float: left;
+}
+.page-index .feature:nth-child(2n+1) .content > .paragraph {
+	float: right;
+}
+.page-index .feature:nth-child(2n+1) .content > .ulist {
+	float: left;
+	text-align: right;
+}
+
+.page-index .feature:nth-child(2n) {
+	float: right;
+}
+.page-index .feature:nth-child(2n) .content > .paragraph {
+	float: left;
+}
+.page-index .feature:nth-child(2n) .content > .ulist {
+	float: right;
+	text-align: left;
+}
+
+#features + .sectionbody::after,
+.page-index .feature .content::after {
+	content: "";
+	width: 0;
+	height: 0;
+	display: block;
+	clear: both;
+	line-height: 0;
+}
+
+
+@media (min-width: 1701px) {
+	.container,
+	.navbar-static-top .container, 
+	.navbar-fixed-top .container, 
+	.navbar-fixed-bottom .container {
+	    width: 1270px;
+	    padding-left: 315px;
+	}
+	.span12 {
+		width: 1270px;
+	}
+	.span3 {
+		width: 295px;
+	}
+}
+
+@media (max-width: 1700px) and  (min-width: 1501px) {
+	.container,
+	.navbar-static-top .container, 
+	.navbar-fixed-top .container, 
+	.navbar-fixed-bottom .container {
+	    width: 1170px;
+	    padding-left: 315px;
+	}
+	.span12 {
+		width: 1170px;
+	}
+	.span3 {
+		width: 270px;
+	}
+}
+
+@media (max-width: 1500px) and (min-width: 1401px) {
+	.container,
+	.navbar-static-top .container, 
+	.navbar-fixed-top .container, 
+	.navbar-fixed-bottom .container {
+	    width: 1000px;
+	    padding-left: 315px;
+	}
+	.span12 {
+		width: 1000px;
+	}
+	.span3 {
+		width: 230px;
+	}
+}
+
+@media (max-width: 1400px) and (min-width: 1173px) {
+	.container,
+	.navbar-static-top .container, 
+	.navbar-fixed-top .container, 
+	.navbar-fixed-bottom .container {
+	    width: 855px;
+	    padding-left: 315px;
+	}
+	.span12 {
+		width: 855px;
+	}
+	.span3 {
+		width: 194px;
+	}
+}
+
+@media (max-width: 1172px) and (min-width: 1142px) {
+	.container,
+	.navbar-static-top .container, 
+	.navbar-fixed-top .container, 
+	.navbar-fixed-bottom .container {
+	    width: 800px;
+	    padding-left: 315px;
+	}
+	.span12 {
+		width: 800px;
+	}
+	.span3 {
+		width: 186px;
+	}
+}
+
+@media (max-width: 1141px) and (min-width: 768px) {
+	.page-index .feature {
+		width: 450px;
+	}
+	
+	.page-index .feature .content > .ulist {
+		width: 300px;
+	}
+
+	.page-user-manual .main-body #toc {
+		position: static;
+		width: auto;
+	}	
+	.page-user-manual .main-body .body-content {
+		margin-left: 0;
+	}
+}
+
+@media (max-width: 767px) {
+	.page-index .feature {
+		float: none !important;
+		width: 100%;
+		height: auto;
+	}
+	.page-index .feature .content > .paragraph {
+		float: none !important;
+		width: 100%;
+	}
+	.page-index .feature .content > .ulist {
+		float: none !important;
+		width: 100%;
+		text-align: center !important;
+	}
+	.page-index .feature .content > .ulist ul {
+		list-style: none;
+		margin-left: 0;
+	}
+
+	.page-user-manual .main-body #toc {
+		position: static;
+		width: auto;
+	}	
+	.page-user-manual .main-body .body-content {
+		margin-left: 0;
+	}
+
+}
