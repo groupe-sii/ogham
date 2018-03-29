@@ -46,7 +46,7 @@ public class ThymeleafParser implements TemplateParser {
 		try {
 			LOG.debug("Parsing Thymeleaf template {} with context {}...", templateName, ctx);
 			String result = engine.process(templateName, contextConverter.convert(ctx));
-			LOG.debug("Template {} successfully parsed with context {}. Result:", templateName);
+			LOG.debug("Template {} successfully parsed with context {}. Result:", templateName, ctx);
 			LOG.debug(result);
 			return new StringContent(result);
 		} catch (TemplateEngineException e) {

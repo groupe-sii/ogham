@@ -45,7 +45,7 @@ public class FreeMarkerParser implements TemplateParser {
 			StringWriter out = new StringWriter();
 			template.process(ctx.getVariables(), out);
 
-			LOG.debug("Template {} successfully parsed with context {}. Result:", templateName);
+			LOG.debug("Template {} successfully parsed with context {}. Result:", templateName, ctx);
 			String templateString = out.toString();
 			LOG.debug("{}", templateString);
 			return new StringContent(templateString);

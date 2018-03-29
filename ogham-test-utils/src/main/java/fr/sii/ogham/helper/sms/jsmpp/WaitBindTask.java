@@ -25,7 +25,7 @@ class WaitBindTask implements Runnable {
 	public void run() {
 		try {
 			BindRequest bindRequest = serverSession.waitForBind(WAIT_DURATION);
-			LOG.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId());
+			LOG.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), InterfaceVersion.IF_34);
 			try {
 				bindRequest.accept("sys", InterfaceVersion.IF_34);
 			} catch (PDUStringException e) {
