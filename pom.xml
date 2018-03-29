@@ -653,6 +653,7 @@
 							<tabsize>4</tabsize>
 							<imagesdir />
 							<ogham-version>${docProjectVersion}</ogham-version>
+							<badges-branch>${git.branch}</badges-branch>
 							<docdir>${basedir}/src/docs/asciidoc</docdir>
 							<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 							<sourcedir-url>${github.code.url}</sourcedir-url>
