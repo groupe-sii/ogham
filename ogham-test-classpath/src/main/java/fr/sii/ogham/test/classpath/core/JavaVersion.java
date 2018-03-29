@@ -11,4 +11,12 @@ public enum JavaVersion {
 	
 	private final String version;
 	private final int number;
+	
+	public String getDirectoryName() {
+		return name();
+	}
+	
+	public String getNormalizedName() {
+		return name().toLowerCase().replace("_", "");
+	}
 }

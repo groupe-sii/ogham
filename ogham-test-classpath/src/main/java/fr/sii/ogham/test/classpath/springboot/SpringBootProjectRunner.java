@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -75,6 +74,7 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		run(args.getNonOptionArgs().get(0), args.getOptionValues("override")!=null);
 	}
 
+	@SuppressWarnings("javadoc")
 	public void run(String parentFolderPath, boolean override) throws IOException, InterruptedException, ExecutionException, XmlPullParserException, ProjectInitializationException, AddDependencyException {
 		Path parentFolder = Paths.get(parentFolderPath);
 		if(isSkip(override, parentFolder)) {
@@ -85,9 +85,10 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		FileUtils.cleanDirectory(parentFolder.toFile());
 		List<String> modules = createProjectsParallel(parentFolder);
 		for(JavaVersion javaVersion : springMatrixProperties.getJavaVersions()) {
-			log.info("Creating root project for {}", javaVersion);
-			createRootPom(parentFolder.resolve(javaVersion.name()), filter(modules, javaVersion));
-			addMavenWrapper(parentFolder.resolve(javaVersion.name()));
+			Path javaVersionPath = parentFolder.resolve(javaVersion.getDirectoryName());
+			log.info("Creating root project for {} into {}", javaVersion, javaVersionPath);
+			createRootPom(javaVersionPath, filter(modules, javaVersion));
+			addMavenWrapper(javaVersionPath);
 		}
 		log.info("{} projects created", modules.size());
 		System.exit(0);
@@ -99,7 +100,16 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 
 	private boolean hasContent(Path parentFolder) {
 		File f = parentFolder.toFile();
-		return f.isDirectory() && f.list().length>0;
+		if(!f.isDirectory()) {
+			return false;
+		}
+		for(JavaVersion javaVersion : springMatrixProperties.getJavaVersions()) {
+			File javaVersionDir = parentFolder.resolve(javaVersion.getDirectoryName()).toFile();
+			if(!javaVersionDir.exists() || !javaVersionDir.isDirectory()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private List<String> filter(List<String> modules, JavaVersion javaVersion) {
@@ -153,6 +163,7 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		return modules;
 	}
 
+	@SuppressWarnings("unused")
 	private List<String> createProjects(final Path parentFolder) throws InterruptedException, ExecutionException, ProjectInitializationException, AddDependencyException, IOException {
 		List<SpringBootProjectParams> expandedMatrix = generateSringBootMatrix();
 		List<String> modules = new ArrayList<>();

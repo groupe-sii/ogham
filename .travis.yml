@@ -30,6 +30,8 @@ install:
   # generate projects used to test the classpath on the current Ogham version
   - MVN_VERSION=$(./mvnw -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
   - ./mvnw spring-boot:run -pl :ogham-test-classpath -Drun.arguments="$HOME/classpath-tests" -Drun.jvmArguments="-Dogham-version=$MVN_VERSION -Dspring.initializer.url=$SPRING_INITIALIZER_URL"
+  - ls -l "$HOME"
+  - ls -l "$HOME/classpath-tests"
 script:
   - ./mvnw test verify -Dmaven.test.redirectTestOutputToFile=true -fae -B -q
   - ./mvnw javadoc:javadoc -fae -B | grep -Ei '(error|warn)'

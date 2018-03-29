@@ -11,7 +11,7 @@ import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 public class IdentifierGenerator {
 	public static String generateIdentifier(SpringBootProjectParams params, List<SpringBootDependency> exclude) {
 		// @formatter;off
-		return params.getJavaVersion().name().toLowerCase().replace("_", "") + "." 
+		return params.getJavaVersion().getNormalizedName() + "." 
 				+ params.getBuildTool().name().toLowerCase() + "." 
 				+ "boot-" + params.getSpringBootVersion()+"."
 				+ toBootDepsString(params.getSpringBootDependencies(), exclude) + "."
@@ -20,7 +20,7 @@ public class IdentifierGenerator {
 	}
 	
 	public static boolean isIdentifierForJavaVersion(String identifier, JavaVersion javaVersion) {
-		return identifier.startsWith(javaVersion.name().toLowerCase().replace("_", ""));
+		return identifier.startsWith(javaVersion.getNormalizedName());
 	}
 
 	private static String toOghamDepsString(List<Dependency> deps) {
