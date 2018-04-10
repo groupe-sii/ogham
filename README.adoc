@@ -5,11 +5,15 @@ Do no edit this file, it is automatically generated. Sources are in src/docs/asc
 http://groupe-sii.github.io/ogham/[Full documentation]
 
 
+
+image:https://img.shields.io/maven-central/v/fr.sii.ogham/ogham-all.svg["Latest Release Standalone", link="https://mvnrepository.com/artifact/fr.sii.ogham/ogham-all/2.0.0"]
 image:https://travis-ci.org/groupe-sii/ogham.svg?branch=master["Build Status", link="https://travis-ci.org/groupe-sii/ogham"]
+
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=alert_status["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=sqale_rating["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=reliability_rating["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=security_rating["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
+
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=coverage["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=sqale_index["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=bugs["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
@@ -286,6 +290,17 @@ public class BasicSample
                         .to("ogham-test@yopmail.com"));
     
 
+    public void test() 
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("mail.smtp.host", "host01")
+                        .set("mail.smtp.port", "587")
+                        .and()
+                    .and()
+                .build();
+                        
+    
 }
 ----
 <1> Use the standard builder (predefined behavior)

@@ -6,7 +6,7 @@
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;resources&gt;&#10;&lt;item path=&quot;/ogham/src/docs&quot; type=&quot;2&quot;/&gt;&#10;&lt;/resources&gt;}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${system_path:mvn}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="auto,"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="spring-boot:run &#10;-Drun.arguments=&quot;--generator.doc.source.root-directory=${workspace_loc:/ogham},--generator.github.branch=${git_branch},--generator.ogham.version=2.0.0-SNAPSHOT,--readme,--wiki&quot;"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="spring-boot:run &#10;-Drun.arguments=&quot;--generator.doc.source.root-directory=${workspace_loc:/ogham},--generator.github.branch=${OGHAM_CURRENT_RELEASE_BRANCH},--generator.ogham.version=${OGHAM_CURRENT_RELEASE_VERSION},--readme,--wiki&quot;"/>
 <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/ogham-documentation-generator}"/>
 </launchConfiguration>
