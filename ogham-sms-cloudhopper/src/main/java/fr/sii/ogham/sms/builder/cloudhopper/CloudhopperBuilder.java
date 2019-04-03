@@ -127,6 +127,15 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	private SslBuilder sslBuilder;
 	private LoggingBuilder loggingBuilder;
 
+	// dainv5 add for keep smpp session
+	private boolean keepSession = false;
+
+	public CloudhopperBuilder keepSession(boolean keepSession) {
+		this.keepSession = keepSession;
+		return this;
+	}
+	// dainv5 end of modified
+
 	/**
 	 * Default constructor when using without all Ogham work.
 	 * 
@@ -703,7 +712,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		PhoneNumberTranslator phoneNumberTranslator = buildPhoneNumberTranslator();
 		LOG.info("Sending SMS using Cloudhopper is registered");
 		LOG.debug("SMPP server address: {}:{}", session.getHost(), session.getPort());
-		return new CloudhopperSMPPSender(session, options, charsetHandler, phoneNumberTranslator);
+		return new CloudhopperSMPPSender(session, options, charsetHandler, phoneNumberTranslator, keepSession);
 	}
 
 	private PropertyResolver buildPropertyResolver() {
