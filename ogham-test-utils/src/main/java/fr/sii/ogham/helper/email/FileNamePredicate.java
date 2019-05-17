@@ -4,7 +4,6 @@ import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 
 import com.google.common.base.Predicate;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class FileNamePredicate implements Predicate<BodyPart> {
 	private final String filename;
@@ -21,11 +20,6 @@ public class FileNamePredicate implements Predicate<BodyPart> {
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to access message", e);
 		}
-	}
-
-	@Override
-	public boolean test(@Nullable BodyPart input) {
-		return false;
 	}
 
 	@Override
