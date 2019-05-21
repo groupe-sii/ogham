@@ -14,6 +14,7 @@ public class CloudhopperSessionOptions {
 	private Long responseTimeout;
 	private Long unbindTimeout;
 	private RetryExecutor connectRetry;
+	private boolean keepSession;
 
 	public String getSessionName() {
 		return sessionName;
@@ -101,5 +102,13 @@ public class CloudhopperSessionOptions {
 
 	public void setConnectRetry(RetryExecutor connectRetry) {
 		this.connectRetry = connectRetry;
+	}
+
+	public boolean isKeepSession() {
+		return keepSession;
+	}
+
+	public void setKeepSession(boolean keepSession) {
+		this.keepSession = keepSession;
 	}
 }

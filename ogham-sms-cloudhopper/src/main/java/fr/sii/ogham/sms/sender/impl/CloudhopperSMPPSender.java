@@ -9,10 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cloudhopper.commons.gsm.GsmUtil;
+import com.cloudhopper.smpp.SmppClient;
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.SmppSessionConfiguration;
-import com.cloudhopper.smpp.impl.DefaultSmppClient;
+import com.cloudhopper.smpp.SmppSessionHandler;
 import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.RecoverablePduException;
@@ -28,6 +29,8 @@ import fr.sii.ogham.core.exception.retry.RetryExecutionInterruptedException;
 import fr.sii.ogham.core.retry.NamedCallable;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppSessionHandlerSupplier;
 import fr.sii.ogham.sms.exception.message.EncodingException;
 import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
 import fr.sii.ogham.sms.message.PhoneNumber;
@@ -38,10 +41,9 @@ import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperCharsetHandler;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperOptions;
 
-
 /**
- * Implementation based on <a
- * href="https://github.com/twitter/cloudhopper-smpp">cloudhopper-smpp</a>
+ * Implementation based on
+ * <a href="https://github.com/twitter/cloudhopper-smpp">cloudhopper-smpp</a>
  * library.
  * 
  * @author Aurélien Baudet
@@ -64,12 +66,32 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	 * This phone number translator will handle the fallback addressing policy
 	 * (TON / NPI).
 	 */
-	private PhoneNumberTranslator fallBackPhoneNumberTranslator;
+	private final PhoneNumberTranslator fallBackPhoneNumberTranslator;
 
 	/**
 	 * Handle sms charset detection.
 	 */
 	private final CloudhopperCharsetHandler charsetHandler;
+
+	/**
+	 * A supplier that provides an instance of a {@link SmppClient}
+	 */
+	private final SmppClientSupplier clientSupplier;
+
+	/**
+	 * A supplier that provides an instance of a {@link SmppSessionHandler}
+	 */
+	private final SmppSessionHandlerSupplier smppSessionHandlerSupplier;
+
+	/**
+	 * The current connected session if any
+	 */
+	private SmppSession currentSession;
+
+	/**
+	 * The current client if any
+	 */
+	private SmppClient currentClient;
 
 	/**
 	 * Initializes a CloudhopperSMPPSender with SMPP session configuration, some
@@ -81,17 +103,28 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	 *            Dedicated CloudHopper options
 	 * @param charsetHandler
 	 *            Handles charset detection for messages content
+	 * @param clientSupplier
+	 *            provides an instance of a {@link SmppClient}
+	 * @param smppSessionHandlerSupplier
+	 *            provides and instance of a {@link SmppSessionHandler}.
+	 *            Supplier may return null.
+	 * @param phoneNumberTranslator
+	 *            Fallback phone translator to handle addressing policy
 	 */
-	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options, CloudhopperCharsetHandler charsetHandler) {
+	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options, CloudhopperCharsetHandler charsetHandler, SmppClientSupplier clientSupplier,
+			SmppSessionHandlerSupplier smppSessionHandlerSupplier, PhoneNumberTranslator phoneNumberTranslator) {
 		super();
 		this.smppSessionConfiguration = smppSessionConfiguration;
 		this.options = options;
 		this.charsetHandler = charsetHandler;
+		this.clientSupplier = clientSupplier;
+		this.smppSessionHandlerSupplier = smppSessionHandlerSupplier;
+		this.fallBackPhoneNumberTranslator = phoneNumberTranslator;
 	}
 
 	/**
-	 * Initializes a CloudhopperSMPPSender with SMPP session configuration, some
-	 * options and a default phone translator to handle addressing policy.
+	 * Initializes a CloudhopperSMPPSender with SMPP session configuration and some
+	 * options.
 	 * 
 	 * @param smppSessionConfiguration
 	 *            SMPP session configuration
@@ -100,22 +133,40 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 	 * @param charsetHandler
 	 *            Handler that is able to provide a charset for the provided
 	 *            message
-	 * @param phoneNumberTranslator
-	 *            Fallback phone translator to handle addressing policy
+	 * @param clientSupplier
+	 *            provides an instance of a {@link SmppClient}
+	 * @param smppSessionHandlerSupplier
+	 *            provides and instance of a {@link SmppSessionHandler}.
+	 *            Supplier may return null.
 	 */
-	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options, CloudhopperCharsetHandler charsetHandler, PhoneNumberTranslator phoneNumberTranslator) {
-		this(smppSessionConfiguration, options, charsetHandler);
+	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options, CloudhopperCharsetHandler charsetHandler, SmppClientSupplier clientSupplier,
+			SmppSessionHandlerSupplier smppSessionHandlerSupplier) {
+		this(smppSessionConfiguration, options, charsetHandler, clientSupplier, smppSessionHandlerSupplier, null);
+	}
 
-		this.fallBackPhoneNumberTranslator = phoneNumberTranslator;
+	/**
+	 * Initializes a CloudhopperSMPPSender with SMPP session configuration and some
+	 * options. Uses the default supplier for {@link SmppSessionHandler}.
+	 * 
+	 * @param smppSessionConfiguration
+	 *            SMPP session configuration
+	 * @param options
+	 *            Dedicated CloudHopper options
+	 * @param charsetHandler
+	 *            Handler that is able to provide a charset for the provided
+	 *            message
+	 * @param clientSupplier
+	 *            provides an instance of a {@link SmppClient}
+	 */
+	public CloudhopperSMPPSender(SmppSessionConfiguration smppSessionConfiguration, CloudhopperOptions options, CloudhopperCharsetHandler charsetHandler, SmppClientSupplier clientSupplier) {
+		this(smppSessionConfiguration, options, charsetHandler, clientSupplier, () -> null);
 	}
 
 	@Override
 	public void send(Sms message) throws MessageException {
-		DefaultSmppClient client = new DefaultSmppClient();
-		SmppSession session = null;
 		try {
 			LOG.debug("Creating a new SMPP session...");
-			session = connect(client);
+			SmppSession session = connectOrReuseSession();
 			LOG.info("SMPP session bounded");
 			send(message, session);
 		} catch (PhoneNumberTranslatorException | EncodingException e) {
@@ -128,13 +179,41 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		} catch (RetryException e) {
 			throw new MessageException("Failed to initialize SMPP session", message, e);
 		} finally {
-			if (session != null) {
-				session.unbind(options.getUnbindTimeout());
-				session.close();
-				session.destroy();
-			}
-			client.destroy();
+			clean();
 		}
+	}
+
+	private SmppSession connectOrReuseSession() throws RetryException {
+		// if no client or always use a new client => create a new instance
+		if (currentClient == null || !options.isKeepSession()) {
+			LOG.debug("Requesting a new SmppClient instance");
+			currentClient = clientSupplier.get();
+		}
+		// if no session or always use a new session => connect to force a new
+		// session
+		if (currentSession == null || !options.isKeepSession()) {
+			LOG.debug("Requesting a new SMPP session");
+			currentSession = connect(currentClient);
+		}
+		return currentSession;
+	}
+
+	private void clean() {
+		// do not close and destroy anything if session should stay open
+		if (options.isKeepSession()) {
+			LOG.debug("Keep current SMPP session open");
+			return;
+		}
+		if (currentSession != null) {
+			LOG.debug("Closing SMPP session");
+			currentSession.unbind(options.getUnbindTimeout());
+			currentSession.close();
+			currentSession.destroy();
+			currentSession = null;
+		}
+		LOG.debug("Destroying SMPP client");
+		currentClient.destroy();
+		currentClient = null;
 	}
 
 	private void send(Sms message, SmppSession session) throws MessageException, PhoneNumberTranslatorException, EncodingException {
@@ -142,7 +221,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 			for (SubmitSm msg : createMessages(message)) {
 				session.submit(msg, options.getResponseTimeout());
 			}
-		} catch(RecoverablePduException | UnrecoverablePduException | SmppTimeoutException | SmppChannelException e) {
+		} catch (RecoverablePduException | UnrecoverablePduException | SmppTimeoutException | SmppChannelException e) {
 			throw new MessageException("Failed to send SMPP message", message, e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
@@ -150,9 +229,10 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		}
 	}
 
-	private SmppSession connect(final DefaultSmppClient client) throws RetryException {
+	private SmppSession connect(final SmppClient client) throws RetryException {
 		RetryExecutor retry = options.getConnectRetry();
-		return retry.execute(new NamedCallable<>("Connection to SMPP server", () -> client.bind(smppSessionConfiguration)));
+		return retry.execute(new NamedCallable<>("Connection to SMPP server", () -> client.bind(smppSessionConfiguration, smppSessionHandlerSupplier.get())));
+
 	}
 
 	private List<SubmitSm> createMessages(Sms message) throws SmppInvalidArgumentException, PhoneNumberTranslatorException, EncodingException {
@@ -186,7 +266,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 
 	private void addEsmClassSubmit(Sms message, Recipient recipient, List<SubmitSm> messages, byte[][] msgs, int i) throws SmppInvalidArgumentException, PhoneNumberTranslatorException {
 		SubmitSm submit = createMessage(message, recipient, msgs[i]);
-		if(LOG.isDebugEnabled()) {
+		if (LOG.isDebugEnabled()) {
 			LOG.debug("SubmitSm generated with content '{}'", new String(Arrays.copyOfRange(msgs[i], BODY_OFFSET, msgs[i].length)));
 		}
 		submit.setEsmClass(SmppConstants.ESM_CLASS_UDHI_MASK);
@@ -195,7 +275,7 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 
 	private void addSubmit(Sms message, Recipient recipient, List<SubmitSm> messages, byte[] textBytes) throws SmppInvalidArgumentException, PhoneNumberTranslatorException {
 		SubmitSm submit = createMessage(message, recipient, textBytes);
-		if(LOG.isDebugEnabled()) {
+		if (LOG.isDebugEnabled()) {
 			LOG.debug("SubmitSm generated with content '{}'", new String(textBytes));
 		}
 		messages.add(submit);

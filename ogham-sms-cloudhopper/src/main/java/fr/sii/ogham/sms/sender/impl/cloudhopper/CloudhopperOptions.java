@@ -6,12 +6,14 @@ public class CloudhopperOptions {
 	private long responseTimeout;
 	private long unbindTimeout;
 	private RetryExecutor connectRetry;
+	private boolean keepSession;
 
-	public CloudhopperOptions(long responseTimeout, long unbindTimeout, RetryExecutor connectRetry) {
+	public CloudhopperOptions(long responseTimeout, long unbindTimeout, RetryExecutor connectRetry, boolean keepSession) {
 		super();
 		this.responseTimeout = responseTimeout;
 		this.unbindTimeout = unbindTimeout;
 		this.connectRetry = connectRetry;
+		this.keepSession = keepSession;
 	}
 
 	public long getResponseTimeout() {
@@ -36,5 +38,13 @@ public class CloudhopperOptions {
 
 	public void setConnectRetry(RetryExecutor connectRetry) {
 		this.connectRetry = connectRetry;
+	}
+
+	public boolean isKeepSession() {
+		return keepSession;
+	}
+
+	public void setKeepSession(boolean keepSession) {
+		this.keepSession = keepSession;
 	}
 }

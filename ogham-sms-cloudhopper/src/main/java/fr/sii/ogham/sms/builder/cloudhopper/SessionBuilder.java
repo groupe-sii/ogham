@@ -31,6 +31,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	private ValueOrProperties<Long> unbind;
 	private RetryBuilder<SessionBuilder> connectRetryBuilder;
 	private List<String> sessionNames;
+	private boolean keepSession;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -55,6 +56,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		response = new ValueOrProperties<>();
 		unbind = new ValueOrProperties<>();
 		sessionNames = new ArrayList<>();
+		keepSession = false;
 	}
 
 	/**
@@ -620,6 +622,19 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return this;
 	}
 
+	/**
+	 * Keep the previous session open instead of closing and reopening one.
+	 * 
+	 * @param keepSessionOpen
+	 *            true to reuse the same session for every sent SMS, false to
+	 *            close the previous session after the SMS has been sent
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder keepSession(boolean keepSessionOpen) {
+		this.keepSession = keepSessionOpen;
+		return this;
+	}
+
 	@Override
 	public CloudhopperSessionOptions build() {
 		CloudhopperSessionOptions sessionOpts = new CloudhopperSessionOptions();
@@ -633,6 +648,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		sessionOpts.setWriteTimeout(getValue(propertyResolver, write));
 		sessionOpts.setResponseTimeout(getValue(propertyResolver, response));
 		sessionOpts.setUnbindTimeout(getValue(propertyResolver, unbind));
+		sessionOpts.setKeepSession(keepSession);
 		if (connectRetryBuilder != null) {
 			sessionOpts.setConnectRetry(connectRetryBuilder.build());
 		}

@@ -10,8 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.smpp.SmppBindType;
+import com.cloudhopper.smpp.SmppClient;
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.SmppSessionConfiguration;
+import com.cloudhopper.smpp.SmppSessionHandler;
+import com.cloudhopper.smpp.impl.DefaultSmppClient;
+import com.cloudhopper.smpp.impl.DefaultSmppSessionHandler;
 import com.cloudhopper.smpp.pdu.Pdu;
 import com.cloudhopper.smpp.ssl.SslConfiguration;
 import com.cloudhopper.smpp.type.Address;
@@ -126,6 +130,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	private Address addressRange;
 	private SslBuilder sslBuilder;
 	private LoggingBuilder loggingBuilder;
+	private SmppClientSupplier clientSupplier;
+	private SmppSessionHandlerSupplier smppSessionHandler;
 
 	/**
 	 * Default constructor when using without all Ogham work.
@@ -691,6 +697,34 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return loggingBuilder;
 	}
 
+	/**
+	 * By default, {@link CloudhopperSMPPSender} uses {@link DefaultSmppClient}
+	 * client. This option provides a way to use another {@link SmppClient}.
+	 * 
+	 * @param supplier
+	 *            an implementation that provides an instance of a
+	 *            {@link SmppClient}
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder clientSupplier(SmppClientSupplier supplier) {
+		this.clientSupplier = supplier;
+		return this;
+	}
+
+	/**
+	 * By default, {@link CloudhopperSMPPSender} uses {@link DefaultSmppSessionHandler}. 
+	 * This option provides a way to use another {@link SmppSessionHandler}.
+	 * 
+	 * @param supplier
+	 *            an implementation that provides an instance of a
+	 *            {@link SmppSessionHandler}
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder smppSessionHandlerSupplier(SmppSessionHandlerSupplier supplier) {
+		this.smppSessionHandler = supplier;
+		return this;
+	}
+
 	public CloudhopperSMPPSender build() {
 		PropertyResolver propertyResolver = buildPropertyResolver();
 		CloudhopperSessionOptions sessionOpts = sessionBuilder.build();
@@ -703,7 +737,21 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		PhoneNumberTranslator phoneNumberTranslator = buildPhoneNumberTranslator();
 		LOG.info("Sending SMS using Cloudhopper is registered");
 		LOG.debug("SMPP server address: {}:{}", session.getHost(), session.getPort());
-		return new CloudhopperSMPPSender(session, options, charsetHandler, phoneNumberTranslator);
+		return new CloudhopperSMPPSender(session, options, charsetHandler, buildClientSupplier(), buildSmppSessionHandler(), phoneNumberTranslator);
+	}
+
+	private SmppClientSupplier buildClientSupplier() {
+		if(clientSupplier == null) {
+			return () -> new DefaultSmppClient();
+		}
+		return clientSupplier;
+	}
+
+	private SmppSessionHandlerSupplier buildSmppSessionHandler() {
+		if(smppSessionHandler == null) {
+			return () -> null;
+		}
+		return smppSessionHandler;
 	}
 
 	private PropertyResolver buildPropertyResolver() {
@@ -838,6 +886,6 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		Long responseTimeout = sessionOpts.getResponseTimeout() == null ? 5000L : sessionOpts.getResponseTimeout();
 		Long unbindTimeout = sessionOpts.getUnbindTimeout() == null ? 5000L : sessionOpts.getUnbindTimeout();
 		RetryExecutor connectRetry = sessionOpts.getConnectRetry();
-		return new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry);
+		return new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry, sessionOpts.isKeepSession());
 	}
 }
