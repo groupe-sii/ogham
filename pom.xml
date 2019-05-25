@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.sii.ogham</groupId>
 	<artifactId>ogham-parent</artifactId>
@@ -86,12 +87,18 @@
 		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
 		<maven-release-plugin.version>2.5.2</maven-release-plugin.version>
 		<maven-site-plugin.version>3.4</maven-site-plugin.version>
+		<maven-project-info-reports-plugin.version>2.9</maven-project-info-reports-plugin.version>
+		<reflow-skin.version>1.1.1</reflow-skin.version>
+		<velocity.version>1.7</velocity.version>
 		<sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
 		<nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
 		<asciidoctor-plugin.version>1.5.3</asciidoctor-plugin.version>
 		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+		<maven-scm-provider-gitexe.version>1.9.4</maven-scm-provider-gitexe.version>
+		<maven-scm-manager-plexus.version>1.9.4</maven-scm-manager-plexus.version>
+		<wagon-gitsite.version>0.5</wagon-gitsite.version>
 	</properties>
 
 
@@ -591,7 +598,7 @@
 							<outputDirectory>target/site</outputDirectory>
 						</configuration>
 					</execution>
- 				</executions>
+				</executions>
 			</plugin>
 
 			<!-- Site generation -->
@@ -603,13 +610,13 @@
 					<dependency>
 						<groupId>lt.velykis.maven.skins</groupId>
 						<artifactId>reflow-velocity-tools</artifactId>
-						<version>1.1.1</version>
+						<version>${reflow-skin.version}</version>
 					</dependency>
 					<!-- Reflow skin requires Velocity >= 1.7 -->
 					<dependency>
 						<groupId>org.apache.velocity</groupId>
 						<artifactId>velocity</artifactId>
-						<version>1.7</version>
+						<version>${velocity.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>org.asciidoctor</groupId>
@@ -659,6 +666,11 @@
 					</asciidoc>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${maven-project-info-reports-plugin.version}</version>
+			</plugin>
 
 			<!-- Release -->
 			<plugin>
@@ -678,17 +690,17 @@
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>
 				<artifactId>maven-scm-provider-gitexe</artifactId>
-				<version>1.9.4</version>
+				<version>${maven-scm-provider-gitexe.version}</version>
 			</extension>
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>
 				<artifactId>maven-scm-manager-plexus</artifactId>
-				<version>1.9.4</version>
+				<version>${maven-scm-manager-plexus.version}</version>
 			</extension>
 			<extension>
 				<groupId>com.github.stephenc.wagon</groupId>
 				<artifactId>wagon-gitsite</artifactId>
-				<version>0.5</version>
+				<version>${wagon-gitsite.version}</version>
 			</extension>
 		</extensions>
 		<pluginManagement>

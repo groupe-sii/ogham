@@ -1,3 +1,16 @@
+.navbar .nav > li:nth-child(2) {
+	float: right;
+	font-size: 0;
+}
+.navbar .nav > li:nth-child(2) a {
+	display: block;
+	width: 32px;
+	height: 32px;
+	background: url(../img/GitHub-Mark-Light-64px.png) center center no-repeat;
+	background-size: 32px 32px;
+	padding-bottom: 0;
+}
+
 pre>code {
 	background: none;
 	padding: 0;
@@ -303,6 +316,17 @@ pre>code {
 	}	
 	.page-user-manual .main-body .body-content {
 		margin-left: 0;
+	}
+}
+
+@media (max-width: 980px) {
+	.navbar .nav > li:nth-child(2) {
+		float: none;
+	}
+	.navbar .nav > li:nth-child(2) a {
+		padding: 9px 15px;
+		width: auto;
+		background-position: 15px 9px;
 	}
 }
 
