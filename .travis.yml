@@ -1,10 +1,13 @@
 language: java
 dist: trusty
 jdk:
-#- oraclejdk9
-#- openjdk9
-- oraclejdk8
-- openjdk8
+  - oraclejdk9
+  - openjdk9
+  - oraclejdk8
+  - openjdk8
+  - openjdk10
+  - oraclejdk11
+  - openjdk11
 sudo: required
 addons:
   apt:
@@ -35,8 +38,6 @@ before_install:
   - ls -l "$HOME"
   - ls -l "$HOME/classpath-tests"
   # stop spring initializr
-  - cat "$HOME/spring-initializr.log"
-  - cat "$HOME/spring-initializr.pid"
   - kill `cat "$HOME/spring-initializr.pid"`
 install:
   - ./mvnw test verify -Dmaven.test.redirectTestOutputToFile=true -fae -B -q
@@ -49,19 +50,21 @@ install:
   - ls -l "$HOME/classpath-tests"
   - ls -l "$HOME/classpath-tests/$TEST_FOLDER"
   - $HOME/classpath-tests/$TEST_FOLDER/./mvnw test -T 2.5C -f "$HOME/classpath-tests/$TEST_FOLDER/pom.xml" -Dmaven.test.redirectTestOutputToFile=true -fae -q -B | grep -Ei '(error|exception|Tests run:)'
-# TODO: after error -> grab logs and send it
 after_success:
   - ./mvnw sonar:sonar -B | grep -Ei '(warn|error|ANALYSIS SUCCESSFUL)'
   - ./mvnw deploy --settings .travis-settings.xml -DskipTests=true -B | grep -Ei '(Uploading|Downloading|Uploaded|Downloaded)'
+# TODO: after error -> grab logs and send it
+after_failure:
+  - cat "$HOME/spring-initializr.log"
 notifications:
   slack:
     rooms:
       - secure: NdaSwFJ16HC93H1iimYB07/0rGwQfVCto2/XLrVJNeMcvdRsHbuhBnKwwUkNCTLeLLtB1DVmoNeCBdo2pmtAvoyTnl9OXhG3GWjoB++Al+/66x/TzC1g891y59JI/F7btVqZRKMi5URdcXt7VqSTUyu3Qjf6rxxeRMfiCgg4eLP2ABWQTvNpi7AgV9ArkVqat5Fo1p98iuxpUL0kByXmyuoN15f0azVm0Mhwv2LtMyHAf5Lq1gKOt7TfKccMEJaZXPZMfFWkXblZUWggx6EYXB2ylXJ7e45UeunsroqPYuXJtepwOjcT00NSm7tR+wDaVZl3hXDfexwb35wP+g/tcIiQYTWgQQvr5b6Z0tUX3WgZt7aBMH9gaJPRolC7FXwukXkdBwjvyDLsra147M2pm7fc5zj73TV0gaEdqDewd+UgFA12Vm1gwC0eWH/HVhOZ0HGOQdYmtYkZJ67KTwes9B+SKDkrSF4Nq7T3svOWvGxzDCaw4CCOBY5U1xRc3VVOo/xtFa8dAKfxpo0IFy/qaHS4vIb2BDHJ0LU7+WarcjcmADxJXvhvOvvByS5k0sqkUXF4uB+QpxQqQEGNMzLC2iMog0UnBIIEZEe6pvrzchoQIpKyom4GvnAi+Xco8aJaMgrLZY9JwmlLP8r1YFyMawH4kmJ8XpPZ5+fIN2HSkD4=
     template:
-    - "branch %{branch} %{result}"
-    - "Build: <%{build_url}|#%{build_number}> (%{duration})"
-    - "Commit: <%{compare_url}|%{commit}> by %{author}"
-    - "%{commit_message}"
+      - "branch %{branch} %{result}"
+      - "Build: <%{build_url}|#%{build_number}> (%{duration})"
+      - "Commit: <%{compare_url}|%{commit}> by %{author}"
+      - "%{commit_message}"
 
 cache:
   directories:

@@ -12,10 +12,12 @@ initializr:
       name: 1.5.9
       default: true
   javaVersions:
+    - id: 1.12
+      default: false
+    - id: 1.11
+      default: false
     - id: 1.8
       default: true
-    - id: 1.7
-      default: false
   languages:
     - name: Java
       id: java
