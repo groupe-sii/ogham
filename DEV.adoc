@@ -1,0 +1,114 @@
+= Build
+
+```
+./mvnw clean install -DskipTests
+```
+
+
+= Test
+
+== Execute Unit and Integration tests
+
+```
+./mvnw test
+```
+
+
+== Test Ogham against different Java and Spring Boot versions
+
+1) First you need to start `spring-initializr`:
+
+```
+cd spring-initializr
+./mvnw spring-boot:run
+```
+
+This project is just the spring-iniailizr provided by spring on http://start.spring.io
+The aim is to generate working Spring Boot projects based on real spring-initializr.
+The only difference is the metadata configuration defined in `application.yml`. 
+
+2) Launch `ogham-test-classpath` to generate a list of projects:
+
+```
+cd ogham-test-classpath
+./mvnw spring-boot:run -Drun.arguments="<output directory>" -Drun.jvmArguments="-Dogham-version=<ogham version to test> -Dspring.initializer.url=http://localhost:8050"
+```
+
+This project generates several projects in `<output directory>`. Each project uses a different Spring Boot version and includes or not some Spring Boot features.
+
+3) Run tests for a particular Java version:
+
+```
+cd <output directory>
+/mvnw test -T 2.5C -f "<java version>/pom.xml"
+```
+
+
+
+
+= Release a version
+
+```
+./mvnw release:prepare release:perform
+```
+
+
+
+= Documentation
+
+== Update site
+
+=== Generate Asciidoctor documentation and site
+
+First you need to clone `Ogham` project a second time and to checkout branch `gh-pages`:
+
+```
+git clone git@github.com:groupe-sii/ogham.git ogham-site
+git checkout gh-pages
+```
+
+The new folder `ogham-site` in the example will be the folder where generated documentation and site will placed.
+
+
+```
+./mvnw clean site post-site site:stage -Dsite.staging.dir=<path to ogham-site> -DdocProjectVersion=<ogham version>
+```
+
+This generates the documentation based on Asciidoctor and also the site with reports.
+
+
+=== Update versions
+
+As you have generated the documentation for a new version, you need to register this version. A Python script is used for that:
+
+```
+cd ogham-site
+py generate.py
+```
+
+
+=== Update site on Github
+
+Once generated, just push `gh-pages` branch on Github
+
+
+
+== Update README and Wiki on Github
+
+```
+cd documentation-generator
+./mvnw spring-boot:run -Drun.arguments="--generator.doc.source.root-directory=<ogham root directory>,--generator.github.branch=${OGHAM_CURRENT_RELEASE_BRANCH},--generator.ogham.version=${OGHAM_CURRENT_RELEASE_VERSION},--readme,--wiki"
+```
+
+Once generated, just push on Github
+
+
+
+== Generate Asciidoctor Documentation only
+
+```
+./mvnw post-site -Dmaven.site.skip -N
+```
+
+The documentation is generated in target folder
+

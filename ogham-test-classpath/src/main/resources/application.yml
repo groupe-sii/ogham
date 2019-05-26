@@ -1,7 +1,6 @@
 spring-matrix:
   java:
     - 1.8
-    - 1.7
   build:
     - maven
   spring-boot-version:
@@ -25,7 +24,6 @@ spring-matrix:
 standalone-matrix:
   java:
     - 1.8
-    - 1.7
   build:
     - maven
   ogham-dependencies:

@@ -1,0 +1,89 @@
+server:
+  port: 8050
+initializr:
+  bootVersions:
+    - id: 1.3.8.RELEASE
+      name: 1.3.8
+      default: false
+    - id: 1.4.6.RELEASE
+      name: 1.4.6
+      default: false
+    - id: 1.5.9.RELEASE
+      name: 1.5.9
+      default: true
+  javaVersions:
+    - id: 1.8
+      default: true
+    - id: 1.7
+      default: false
+  languages:
+    - name: Java
+      id: java
+      default: true
+  types:
+    - name: Maven Project
+      id: maven-project
+      description: Generate a Maven based project archive
+      tags:
+        build: maven
+        format: project
+      default: true
+      action: /starter.zip
+  packagings:
+    - name: Jar
+      id: jar
+      default: true
+    - name: War
+      id: war
+      default: false
+  dependencies:
+    - name: Core
+      content:
+        - name: Configuration Processor
+          id: configuration-processor
+          groupId: org.springframework.boot
+          artifactId: spring-boot-configuration-processor
+          scope: compileOnly
+          description: Generate metadata for your custom configuration keys
+          starter: false
+        - name: DevTools
+          id: devtools
+          groupId: org.springframework.boot
+          artifactId: spring-boot-devtools
+          scope: runtime
+          description: Spring Boot Development Tools
+          starter: false
+        - name: Lombok
+          id: lombok
+          groupId: org.projectlombok
+          artifactId: lombok
+          scope: compileOnly
+          description: Java annotation library which helps to reduce boilerplate code and code faster
+          starter: false
+          mappings:
+            - versionRange: "[1.3.0.RELEASE,1.4.0.RELEASE)"
+              version: 1.16.6
+    - name: Web
+      content:
+        - name: Web
+          id: web
+          description: Full-stack web development with Tomcat and Spring MVC
+          facets:
+            - web
+    - name: Template Engines
+      content:
+        - name: Thymeleaf
+          id: thymeleaf
+          description: Thymeleaf templating engine, including integration with Spring
+          facets:
+            - web
+        - name: Freemarker
+          id: freemarker
+          description: FreeMarker templating engine
+          facets:
+            - web
+    - name: I/O
+      content:
+        - name: Mail
+          id: mail
+          description: javax.mail

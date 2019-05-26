@@ -185,27 +185,33 @@ public class RequiredClassesAnnotationProviderTest {
 				new AndCondition<>(															// and for required classes that comes from @RequiredClasses#value()
 					new RequiredClassCondition<>("class.required.2"),
 					new RequiredClassCondition<>("class.required.3"),
-					new AndCondition<>(														// and for @RequiredClass number 1
+					// FIXME: Java should infer Message argument
+					new AndCondition<Message>(														// and for @RequiredClass number 1
 							new OrCondition<>(
 									new RequiredClassCondition<>("class.required.1")),		// or for @RequiredClass#alternatives()
-							new NotCondition<>(new OrCondition<>(							// not for @RequiredClass#excludes()
+							// FIXME: Java should infer Message argument
+							new NotCondition<Message>(new OrCondition<>(							// not for @RequiredClass#excludes()
 									new RequiredClassCondition<>("class.exclude.1"),
 									new RequiredClassCondition<>("class.exclude.2")))),
-					new AndCondition<>(														// and for @RequiredClass number 2
+					// FIXME: Java should infer Message argument
+					new AndCondition<Message>(														// and for @RequiredClass number 2
 							new OrCondition<>(
 									new RequiredClassCondition<>("class.alt.1"),			// or for @RequiredClass#alternatives()
 									new RequiredClassCondition<>("class.alt.2"),
 									new RequiredClassCondition<>("class.required.4")),
 							new NotCondition<>(new OrCondition<>())),						// not for @RequiredClass#excludes()
-					new AndCondition<>(														// and for @RequiredClass number 3
+					// FIXME: Java should infer Message argument
+					new AndCondition<Message>(														// and for @RequiredClass number 3
 							new OrCondition<>(
 									new RequiredClassCondition<>("class.alt.3"),			// or for @RequiredClass#alternatives()
 									new RequiredClassCondition<>("class.alt.4"),
 									new RequiredClassCondition<>("class.required.5")),
-							new NotCondition<>(new OrCondition<>(							// not for @RequiredClass#excludes()
+							// FIXME: Java should infer Message argument
+							new NotCondition<Message>(new OrCondition<>(							// not for @RequiredClass#excludes()
 									new RequiredClassCondition<>("class.exclude.3"),
 									new RequiredClassCondition<>("class.exclude.4")))),
-					new AndCondition<>(														// and for @RequiredClass number 4
+					// FIXME: Java should infer Message argument
+					new AndCondition<Message>(														// and for @RequiredClass number 4
 							new OrCondition<>(
 									new RequiredClassCondition<>("class.required.6")),		// or for @RequiredClass#alternatives()
 							new NotCondition<>(new OrCondition<>()))),						// not for @RequiredClass#excludes()

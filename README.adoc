@@ -291,17 +291,6 @@ public class BasicSample
                         .to("ogham-test@yopmail.com"));
     
 
-    public void test() 
-        MessagingService service = MessagingBuilder.standard()
-                .environment()
-                    .properties()
-                        .set("mail.smtp.host", "host01")
-                        .set("mail.smtp.port", "587")
-                        .and()
-                    .and()
-                .build();
-                        
-    
 }
 ----
 <1> Use the standard builder (predefined behavior)
