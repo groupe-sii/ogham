@@ -357,7 +357,7 @@ public class ThymeleafEngineConfigBuilder<P> extends AbstractParent<P> implement
 	 * {@link #addMessageResolver(IMessageResolver)} methods.
 	 * </p>
 	 * <p>
-	 * This method is useful for creating subclasses of <tt>TemplateEngine</tt>
+	 * This method is useful for creating subclasses of {@link TemplateEngine}
 	 * that establish default configurations for message resolvers.
 	 * </p>
 	 * <p>
@@ -436,7 +436,7 @@ public class ThymeleafEngineConfigBuilder<P> extends AbstractParent<P> implement
 	 * {@link #addTemplateModeHandler(ITemplateModeHandler)} methods.
 	 * </p>
 	 * <p>
-	 * This method is useful for creating subclasses of <tt>TemplateEngine</tt>
+	 * This method is useful for creating subclasses of {@link TemplateEngine}
 	 * that establish default configurations for Template Mode Handlers.
 	 * </p>
 	 * <p>

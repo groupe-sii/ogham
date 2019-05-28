@@ -1,4 +1,4 @@
-package fr.sii.ogham.test.classpath.springboot;
+package fr.sii.ogham.test.classpath.runner.springboot;
 
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
@@ -14,7 +14,6 @@ import org.springframework.web.util.UriTemplate;
 
 import fr.sii.ogham.test.classpath.core.Project;
 import fr.sii.ogham.test.classpath.core.ProjectInitializer;
-import fr.sii.ogham.test.classpath.core.ProjectVariables;
 import fr.sii.ogham.test.classpath.core.exception.ProjectInitializationException;
 import fr.sii.ogham.test.classpath.ogham.OghamProperties;
 import lombok.Data;
@@ -24,15 +23,13 @@ import net.lingala.zip4j.exception.ZipException;
 
 @Data
 @Slf4j
-public class HttpSpringStarterInitializer implements ProjectInitializer {
+public class HttpSpringStarterInitializer implements ProjectInitializer<SpringBootProjectParams> {
 	private final RestTemplate restTemplate;
 	private final SpringStarterProperties springStarterProperties;
 	private final OghamProperties oghamProperties;
 
 	@Override
-	public Project initialize(Path parentFolder, String identifier, ProjectVariables variables) throws ProjectInitializationException {
-		SpringBootProjectParams v = (SpringBootProjectParams) variables;
-
+	public Project<SpringBootProjectParams> initialize(Path parentFolder, String identifier, SpringBootProjectParams variables) throws ProjectInitializationException {
 		// @formatter:off
 		String url = springStarterProperties.getUrl()
 				+ "?name={artifactId}"
@@ -47,16 +44,16 @@ public class HttpSpringStarterInitializer implements ProjectInitializer {
 				+ "&language=java"
 				+ "&bootVersion={springBootVersion}";
 		// @formatter:on
-		for (SpringBootDependency dependency : v.getSpringBootDependencies()) {
+		for (SpringBootDependency dependency : variables.getSpringBootDependencies()) {
 			url += "&dependencies=" + dependency.getModule();
 		}
 		UriTemplate template = new UriTemplate(url);
 		URI expanded = template.expand(identifier,
 				identifier,
 				oghamProperties.getOghamVersion(),
-				v.getBuildTool().getType(),
-				v.getJavaVersion().getVersion(),
-				v.getSpringBootVersion());
+				variables.getBuildTool().getType(),
+				variables.getJavaVersion().getVersion(),
+				variables.getSpringBootVersion());
 		log.debug("Starter resolved url: {}", expanded);
 		RequestEntity<Void> request = RequestEntity.get(expanded)
 										.header(USER_AGENT, "ogham/"+oghamProperties.getOghamVersion())
@@ -64,7 +61,7 @@ public class HttpSpringStarterInitializer implements ProjectInitializer {
 		ResponseEntity<byte[]> response = restTemplate.exchange(request, byte[].class);
 		if(response.getStatusCode().is2xxSuccessful()) {
 			try {
-				return new Project(unzip(response.getBody(), identifier, parentFolder), variables);
+				return new Project<>(unzip(response.getBody(), identifier, parentFolder), variables);
 			} catch(IOException | ZipException | RuntimeException e) {
 				throw new ProjectInitializationException("Failed to initialize Spring Boot project while trying to unzip Spring starter zip", e);
 			}

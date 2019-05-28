@@ -8,12 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Slf4j
-public class RetryProjectInitializer implements ProjectInitializer {
-	private final ProjectInitializer delegate;
+public class RetryProjectInitializer<P> implements ProjectInitializer<P> {
+	private final ProjectInitializer<P> delegate;
 	private final RetryStrategySupplier retryStrategySupplier;
 	
 	@Override
-	public Project initialize(Path parentFolder, String identifier, ProjectVariables variables) throws ProjectInitializationException {
+	public Project<P> initialize(Path parentFolder, String identifier, P variables) throws ProjectInitializationException {
 		RetryStrategy retryStrategy = retryStrategySupplier.get();
 		do {
 			try {

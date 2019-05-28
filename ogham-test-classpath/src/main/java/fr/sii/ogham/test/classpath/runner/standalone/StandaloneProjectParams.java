@@ -1,11 +1,11 @@
-package fr.sii.ogham.test.classpath.springboot;
+package fr.sii.ogham.test.classpath.runner.standalone;
 
 import java.util.List;
 
 import fr.sii.ogham.test.classpath.core.BuildTool;
 import fr.sii.ogham.test.classpath.core.JavaVersion;
 import fr.sii.ogham.test.classpath.core.ProjectVariables;
-import fr.sii.ogham.test.classpath.core.dependency.Dependency;
+import fr.sii.ogham.test.classpath.ogham.OghamDependency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,11 +16,9 @@ import lombok.Singular;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpringBootProjectParams implements ProjectVariables {
+public class StandaloneProjectParams implements ProjectVariables {
 	private JavaVersion javaVersion;
 	private BuildTool buildTool;
-	private String springBootVersion;
 	@Singular("addDependency")
-	private List<SpringBootDependency> springBootDependencies;
-	private List<Dependency> oghamDependencies;
+	private List<OghamDependency> oghamDependencies;
 }

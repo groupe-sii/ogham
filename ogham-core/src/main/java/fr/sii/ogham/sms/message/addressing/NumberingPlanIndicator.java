@@ -44,7 +44,7 @@ public enum NumberingPlanIndicator {
 	}
 
 	/**
-	 * Get the <tt>NumberingPlanIdentification</tt> based on the specified byte
+	 * Get the NumberingPlanIndicator based on the specified byte
 	 * value representation.
 	 * 
 	 * @param value

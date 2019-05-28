@@ -4,6 +4,6 @@ import java.nio.file.Path;
 
 import fr.sii.ogham.test.classpath.core.exception.ProjectInitializationException;
 
-public interface ProjectInitializer {
-	Project initialize(Path parentFolder, String identifier, ProjectVariables variables) throws ProjectInitializationException;
+public interface ProjectInitializer<P> {
+	Project<P> initialize(Path parentFolder, String identifier, P variables) throws ProjectInitializationException;
 }

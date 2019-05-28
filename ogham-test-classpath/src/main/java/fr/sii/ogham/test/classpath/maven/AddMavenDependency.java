@@ -21,7 +21,7 @@ import lombok.Data;
 @Data
 public class AddMavenDependency implements DependencyAdder {
 	
-	public void addDependencies(Project project, List<Dependency> dependencies) throws AddDependencyException {
+	public void addDependencies(Project<?> project, List<Dependency> dependencies) throws AddDependencyException {
 		Model model = read(project);
 		for(Dependency dep : dependencies) {
 			model.addDependency(convert(dep));
@@ -29,7 +29,7 @@ public class AddMavenDependency implements DependencyAdder {
 		write(project, model);
 	}
 
-	private Model read(Project project) throws AddDependencyException {
+	private Model read(Project<?> project) throws AddDependencyException {
 		try(FileReader fileReader = new FileReader(project.getPath().resolve("pom.xml").toFile())) {
 			MavenXpp3Reader reader = new MavenXpp3Reader();
 			return reader.read(fileReader);
@@ -38,7 +38,7 @@ public class AddMavenDependency implements DependencyAdder {
 		}
 	}
 
-	private void write(Project project, Model model) throws AddDependencyException {
+	private void write(Project<?> project, Model model) throws AddDependencyException {
 		try {
 			MavenXpp3Writer writer = new MavenXpp3Writer();
 			writer.write(new FileWriter(project.getPath().resolve("pom.xml").toFile()), model);

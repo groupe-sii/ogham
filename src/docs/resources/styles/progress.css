@@ -1,40 +1,23 @@
-
-.progress-bar {
-	display: inline-block;
-	width: 300px;
-	height: 20px;
-	border-radius: 10px;
-	position: relative;
-	background: #eee;
-	margin: 5px 0;
-	text-align: center;
-	color: #fff;
-}
-
-[class^="progress:"] {
+strong[class^="progress:"] {
 	display: block;
-	clear: both;
+	margin-top: 10px;
 	font-weight: normal;
-	margin: 10px 20px;
+	max-width: 300px;
+	margin: auto;
 }
 
-[class^="progress:"] .text {
-	display: block;
-	height: 20px;
+strong[class^="progress:"] .progress {
+	margin-bottom: 15px;
 }
-[class^="progress:0"] .progress-bar::after {
+
+[class^="progress:0"] .progress .progress-bar {
+	font-size: 0;
+	color: transparent;
+}
+[class^="progress:0"] .progress::after {
 	content: "Not started";
+	display: block;
+	width: 100%;
 	color: #999;
+	text-align: center;
 }
-
-.progress-bar .progress {
-	content: "";
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 100%;
-	background: #2fa3e6;
-	background-image: linear-gradient(to bottom,#3daae9,#1a99e2);
-	border-radius: 10px;
-}
-

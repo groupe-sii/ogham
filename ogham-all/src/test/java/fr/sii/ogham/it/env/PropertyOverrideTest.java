@@ -42,7 +42,8 @@ public class PropertyOverrideTest {
 	 * <li>In a property file (internal configuration file)</li>
 	 * </ul>
 	 * 
-	 * <table summary="">
+	 * <table>
+	 * <caption>Property values for the test</caption>
 	 * <thead>
 	 * <tr><td>property</td><td>value in system properties</td><td>value in conf file outside app</td><td>value in code</td><td>value in conf file inside app</td></tr>
 	 * </thead>

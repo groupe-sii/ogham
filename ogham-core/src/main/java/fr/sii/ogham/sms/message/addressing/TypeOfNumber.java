@@ -38,7 +38,7 @@ public enum TypeOfNumber {
 	}
 
 	/**
-	 * Get the <tt>TypeOfNumber</tt> based on the specified byte value
+	 * Get the TypeOfNumber based on the specified byte value
 	 * representation.
 	 * 
 	 * @param value

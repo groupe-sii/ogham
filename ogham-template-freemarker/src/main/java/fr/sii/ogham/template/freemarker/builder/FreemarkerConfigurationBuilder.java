@@ -70,7 +70,7 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 * 
 	 * <p>
 	 * Note that individual templates may specify their own charset by starting
-	 * with <tt>&lt;#ftl encoding="..."&gt;</tt>
+	 * with {@code <#ftl encoding="...">}
 	 * 
 	 * You can specify a direct value. For example:
 	 * 

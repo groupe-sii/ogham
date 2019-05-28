@@ -1,4 +1,4 @@
-package fr.sii.ogham.test.classpath.springboot;
+package fr.sii.ogham.test.classpath.runner.springboot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.sii.ogham.test.classpath.core.JavaVersion;
 import fr.sii.ogham.test.classpath.core.dependency.Dependency;
+import fr.sii.ogham.test.classpath.ogham.OghamDependency;
+import fr.sii.ogham.test.classpath.runner.standalone.StandaloneProjectParams;
 
 public class IdentifierGenerator {
 	public static String generateIdentifier(SpringBootProjectParams params, List<SpringBootDependency> exclude) {
@@ -15,15 +17,23 @@ public class IdentifierGenerator {
 				+ params.getBuildTool().name().toLowerCase() + "." 
 				+ "boot-" + params.getSpringBootVersion()+"."
 				+ toBootDepsString(params.getSpringBootDependencies(), exclude) + "."
-				+ toOghamDepsString(params.getOghamDependencies());
+				+ toOghamBootDepsString(params.getOghamDependencies());
 		// @formatter:on
 	}
 	
+	public static String generateIdentifier(StandaloneProjectParams params, List<OghamDependency> exclude) {
+		// @formatter;off
+		return params.getJavaVersion().getNormalizedName() + "." 
+				+ params.getBuildTool().name().toLowerCase() + "." 
+				+ toOghamDepsString(params.getOghamDependencies());
+		// @formatter:on
+	}
+
 	public static boolean isIdentifierForJavaVersion(String identifier, JavaVersion javaVersion) {
 		return identifier.startsWith(javaVersion.getNormalizedName());
 	}
 
-	private static String toOghamDepsString(List<Dependency> deps) {
+	private static String toOghamBootDepsString(List<Dependency> deps) {
 		List<String> depsStr = new ArrayList<>();
 		for(Dependency dep : deps) {
 			depsStr.add(dep.getArtifactId().replace("ogham-spring-boot-", ""));
@@ -41,4 +51,11 @@ public class IdentifierGenerator {
 		return StringUtils.join(depsStr, "_");
 	}
 
+	private static String toOghamDepsString(List<OghamDependency> deps) {
+		List<String> depsStr = new ArrayList<>();
+		for(OghamDependency dep : deps) {
+			depsStr.add(dep.getArtifactId().replace("ogham-", "").replace("spring-boot-", ""));
+		}
+		return StringUtils.join(depsStr, "_");
+	}
 }

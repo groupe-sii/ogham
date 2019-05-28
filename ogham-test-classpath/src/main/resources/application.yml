@@ -1,14 +1,13 @@
 spring-matrix:
   java:
     - 1.8
-    - 1.11
-    - 1.12
+    - 11
+    - 12
   build:
     - maven
   spring-boot-version:
-    - 1.3.8.RELEASE
-    - 1.4.6.RELEASE
-    - 1.5.9.RELEASE
+    - 1.5.21.RELEASE
+#    - 2.1.5.RELEASE
   spring-boot-dependencies:
     -
     - web
@@ -26,10 +25,10 @@ spring-matrix:
 standalone-matrix:
   java:
     - 1.8
-    - 1.9
-    - 1.10
-    - 1.11
-    - 1.12
+    - 9
+    - 10
+    - 11
+    - 12
   build:
     - maven
   ogham-dependencies:
@@ -39,7 +38,14 @@ standalone-matrix:
     - sms-ovh
     - sms-cloudhopper
     - all
-    - spring-boot-autoconfigure
-    - spring-boot-starter
+    - spring-boot-autoconfigure+core
+    - spring-boot-autoconfigure+email-javamail
+    - spring-boot-autoconfigure+email-sendgrid
+    - spring-boot-autoconfigure+sms-cloudhopper
+    - spring-boot-autoconfigure+sms-ovh
+    - spring-boot-autoconfigure+all
+    - spring-boot-starter-email
+    - spring-boot-starter-sms
+    - spring-boot-starter-all
 
 spring.initializer.url: http://localhost:8050/starter.zip

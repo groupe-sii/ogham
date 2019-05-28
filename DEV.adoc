@@ -31,7 +31,7 @@ The only difference is the metadata configuration defined in `application.yml`.
 
 ```
 cd ogham-test-classpath
-./mvnw spring-boot:run -Drun.arguments="<output directory>" -Drun.jvmArguments="-Dogham-version=<ogham version to test> -Dspring.initializer.url=http://localhost:8050"
+./mvnw spring-boot:run -Dspring-boot.run.arguments="<output directory>" -Dspring-boot.run.jvmArguments="-Dogham-version=<ogham version to test>"
 ```
 
 This project generates several projects in `<output directory>`. Each project uses a different Spring Boot version and includes or not some Spring Boot features.
@@ -48,8 +48,22 @@ cd <output directory>
 
 = Release a version
 
+== Test the release
+
 ```
-./mvnw release:prepare release:perform
+./mvnw release:prepare -Prelease -DdryRun=true
+```
+
+Check that everything works fine and then clean everything:
+
+```
+./mvnw release:clean -Prelease
+```
+
+== Perform the release
+
+```
+./mvnw release:prepare release:perform -Prelease
 ```
 
 
@@ -97,7 +111,7 @@ Once generated, just push `gh-pages` branch on Github
 
 ```
 cd documentation-generator
-./mvnw spring-boot:run -Drun.arguments="--generator.doc.source.root-directory=<ogham root directory>,--generator.github.branch=${OGHAM_CURRENT_RELEASE_BRANCH},--generator.ogham.version=${OGHAM_CURRENT_RELEASE_VERSION},--readme,--wiki"
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--generator.doc.source.root-directory=<ogham root directory>,--generator.github.branch=${OGHAM_CURRENT_RELEASE_BRANCH},--generator.ogham.version=${OGHAM_CURRENT_RELEASE_VERSION},--readme,--wiki"
 ```
 
 Once generated, just push on Github

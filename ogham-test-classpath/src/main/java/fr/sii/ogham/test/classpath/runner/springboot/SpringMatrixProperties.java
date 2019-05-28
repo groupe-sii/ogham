@@ -1,4 +1,4 @@
-package fr.sii.ogham.test.classpath.springboot;
+package fr.sii.ogham.test.classpath.runner.springboot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class SpringMatrixProperties {
 			deps.add(bootDeps);
 			if(!dep.isEmpty()) {
 				for(String d : dep.split("\\+")) {
-					bootDeps.add(SpringBootDependency.valueOf(d.toUpperCase()));
+					bootDeps.add(SpringBootDependency.fromModule(d));
 				}
 			}
 		}
@@ -38,7 +38,7 @@ public class SpringMatrixProperties {
 	public List<JavaVersion> getJavaVersions() {
 		List<JavaVersion> javaVersions = new ArrayList<>();
 		for(String version : java) {
-			javaVersions.add(JavaVersion.valueOf("JAVA"+version.replace("1.", "_")));
+			javaVersions.add(JavaVersion.fromVersion(version));
 		}
 		return javaVersions;
 	}

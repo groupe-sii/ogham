@@ -25,4 +25,22 @@ public enum OghamDependency {
 	public Dependency toDependency(String version) {
 		return new Dependency("fr.sii.ogham", artifactId, version);
 	}
+
+	public static OghamDependency fromArtifactId(String artifactId) {
+		for(OghamDependency o : OghamDependency.values()) {
+			if(o.getArtifactId().equals(artifactId)) {
+				return o;
+			}
+		}
+		throw new IllegalArgumentException("No matching OghamDependency for "+artifactId);
+	}
+	
+	public static OghamDependency fromArtifactName(String artifactName) {
+		for(OghamDependency o : OghamDependency.values()) {
+			if(o.getArtifactId().equals("ogham-"+artifactName)) {
+				return o;
+			}
+		}
+		throw new IllegalArgumentException("No matching OghamDependency for "+artifactName);
+	}
 }
