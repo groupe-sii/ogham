@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.sii.ogham</groupId>
 	<artifactId>ogham-parent</artifactId>
@@ -6,18 +8,17 @@
 	<packaging>pom</packaging>
 	<name>ogham</name>
 	<description>
-		Email, SMS, mobile notification made simple without knowing RFCs. 
-		The content of the message can comes from any
-		templating engine (Thymeleaf, FreeMarker, ...). It also
-		provides integration with frameworks (Spring, JSF, ...). It
-		is designed to be easily extended.
+		The message is important, not how you send it
 	</description>
 	<url>${project.url}</url>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
 		<!-- Java version -->
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<!-- Dependencies -->
 		<commons-io.version>2.5</commons-io.version>
@@ -25,34 +26,38 @@
 		<thymeleaf.version>2.1.5.RELEASE</thymeleaf.version>
 		<freemarker.version>2.3.25-incubating</freemarker.version>
 		<javamail.version>1.5.6</javamail.version>
-		<junit.version>4.12</junit.version>
-		<mockito.version>1.10.19</mockito.version>
-		<greenmail.version>1.5.3</greenmail.version>
 		<slf4j.version>1.7.24</slf4j.version>
 		<logback.version>1.1.11</logback.version>
 		<commons-lang.version>3.5</commons-lang.version>
-		<equalsverifier.version>2.2.1</equalsverifier.version>
 		<cloudhopper.version>5.0.9</cloudhopper.version>
 		<cloudhopper-gsm.version>3.0.0</cloudhopper-gsm.version>
 		<jsmpp.version>2.3.4</jsmpp.version>
 		<jsoup.version>1.10.2</jsoup.version>
 		<commons-codec.version>1.10</commons-codec.version>
-		<xmlunit.version>1.6</xmlunit.version>
-		<cloning.version>1.9.3</cloning.version>
 		<sendgrid-java.version>2.2.2</sendgrid-java.version>
 		<commons-logging.version>1.2</commons-logging.version>
-		<wiremock.version>2.5.1</wiremock.version>
 		<libphonenumber.version>8.3.2</libphonenumber.version>
-		<tika.version>1.14</tika.version>
+		<tika.version>1.20</tika.version>
+		<javax-activation.version>1.2.0</javax-activation.version>
 		<jackson.version>2.8.7</jackson.version>
-		<hamcrest.version>1.3</hamcrest.version>
 		<reflections.version>0.9.11</reflections.version>
-		<guava.version>27.1-android</guava.version> <!-- Add support for JDK 7-->
+		<guava.version>27.1-jre</guava.version>
 		<httpclient.version>4.5.3</httpclient.version>
+		<spring.boot.version>1.5.3.RELEASE</spring.boot.version>
+		<!-- Dependencies - tests -->
+		<junit.version>4.12</junit.version>
+		<xmlunit.version>1.6</xmlunit.version>
+		<mockito.version>1.10.19</mockito.version>
+		<cloning.version>1.9.3</cloning.version>
+		<greenmail.version>1.5.3</greenmail.version>
+		<equalsverifier.version>3.1.9</equalsverifier.version>
+		<wiremock.version>2.5.1</wiremock.version>
+		<hamcrest.version>1.3</hamcrest.version>
 		<spock.version>1.1-groovy-2.4</spock.version>
-		<asciidoctorj.diagram.version>1.5.4</asciidoctorj.diagram.version>
-		<asciidoctorj.version>1.5.5</asciidoctorj.version>
-		<asciidoctorj.monotree.version>0.0.1</asciidoctorj.monotree.version>
+		<!-- Dependencies - documentation -->
+		<asciidoctorj-diagram.version>1.5.16</asciidoctorj-diagram.version>
+		<asciidoctorj.version>1.5.6</asciidoctorj.version>
+		<asciidoctorj-monotree.version>0.0.1</asciidoctorj-monotree.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -82,20 +87,32 @@
 
 		<!-- Plugins -->
 		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
-		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
-		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
-		<maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
-		<maven-release-plugin.version>2.5.2</maven-release-plugin.version>
-		<maven-site-plugin.version>3.4</maven-site-plugin.version>
-		<sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
-		<nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-source-plugin.version>3.1.0</maven-source-plugin.version>
+		<!-- Plugins - tests -->
+		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+		<!-- Plugins - documentation -->
+		<maven-site-plugin.version>3.7</maven-site-plugin.version>
+		<maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
+		<reflow-skin.version>2.0.2</reflow-skin.version>
+		<velocity.version>1.7</velocity.version>
+		<asciidoctor-plugin.version>1.5.6</asciidoctor-plugin.version>
+		<sass-maven-plugin.version>3.7.2</sass-maven-plugin.version>
+		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+		<maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
+		<!-- Plugins - code quality -->
+		<sonar-maven-plugin.version>3.6.0.1398</sonar-maven-plugin.version>
+		<!-- Plugins - release -->
+		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+		<nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-		<gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
-		<asciidoctor-plugin.version>1.5.3</asciidoctor-plugin.version>
-		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+		<gmavenplus-plugin.version>1.7.0</gmavenplus-plugin.version>
+		<maven-scm-provider-gitexe.version>1.11.2</maven-scm-provider-gitexe.version>
+		<maven-scm-manager-plexus.version>1.11.2</maven-scm-manager-plexus.version>
+		<wagon-gitsite.version>0.5</wagon-gitsite.version>
+		<maven-replacer-plugin.version>1.5.2</maven-replacer-plugin.version>
 	</properties>
 
 
@@ -124,6 +141,12 @@
 				<groupId>com.sun.mail</groupId>
 				<artifactId>javax.mail</artifactId>
 				<version>${javamail.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.activation</groupId>
+						<artifactId>activation</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>javax.mail</groupId>
@@ -230,6 +253,11 @@
 				<artifactId>tika-core</artifactId>
 				<version>${tika.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.sun.activation</groupId>
+				<artifactId>javax.activation</artifactId>
+				<version>${javax-activation.version}</version>
+			</dependency>
 
 			<!-- CSS inliners -->
 			<dependency>
@@ -322,7 +350,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- The gmavenplus plugin is used to compile Groovy code used by Spock 
+			<!-- The gmavenplus plugin is used to compile Groovy code used by Spock
 				framework -->
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
@@ -332,7 +360,7 @@
 					<execution>
 						<goals>
 							<goal>compile</goal>
-							<goal>testCompile</goal>
+							<goal>compileTests</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -345,7 +373,7 @@
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.source}</target>
+					<target>${maven.compiler.target}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
@@ -367,7 +395,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven-javadoc-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -384,7 +411,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco-maven-plugin.version}</version>
 				<executions>
-					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
+					<!-- Prepares the property pointing to the JaCoCo runtime agent which
 						is passed as VM argument when Maven the Surefire plugin is executed. -->
 					<execution>
 						<id>pre-unit-test</id>
@@ -394,13 +421,13 @@
 						<configuration>
 							<!-- Sets the path to the file which contains the execution data. -->
 							<destFile>${jacoco.ut.execution.data.file}</destFile>
-							<!-- Sets the name of the property containing the settings for JaCoCo 
+							<!-- Sets the name of the property containing the settings for JaCoCo
 								runtime agent. -->
 							<propertyName>surefireArgLine</propertyName>
 							<append>true</append>
 						</configuration>
 					</execution>
-					<!-- Ensures that the code coverage report for unit tests is created 
+					<!-- Ensures that the code coverage report for unit tests is created
 						after unit tests have been run. -->
 					<execution>
 						<id>post-unit-test</id>
@@ -416,7 +443,7 @@
 							<append>true</append>
 						</configuration>
 					</execution>
-					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
+					<!-- Prepares the property pointing to the JaCoCo runtime agent which
 						is passed as VM argument when Maven the Failsafe plugin is executed. -->
 					<execution>
 						<id>pre-integration-test</id>
@@ -427,12 +454,12 @@
 						<configuration>
 							<!-- Sets the path to the file which contains the execution data. -->
 							<destFile>${jacoco.it.execution.data.file}</destFile>
-							<!-- Sets the name of the property containing the settings for JaCoCo 
+							<!-- Sets the name of the property containing the settings for JaCoCo
 								runtime agent. -->
 							<propertyName>failsafeArgLine</propertyName>
 						</configuration>
 					</execution>
-					<!-- Ensures that the code coverage report for integration tests after 
+					<!-- Ensures that the code coverage report for integration tests after
 						integration tests have been run. -->
 					<execution>
 						<id>post-integration-test</id>
@@ -470,7 +497,7 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven-failsafe-plugin.version}</version>
 				<executions>
-					<!-- Ensures that both integration-test and verify goals of the Failsafe 
+					<!-- Ensures that both integration-test and verify goals of the Failsafe
 						Maven plugin are executed. -->
 					<execution>
 						<id>integration-tests</id>
@@ -482,7 +509,7 @@
 							<!-- Sets the VM argument line used when integration tests are run. -->
 							<argLine>${failsafeArgLine}</argLine>
 
-							<!-- Skips integration tests if the value of skip.integration.tests 
+							<!-- Skips integration tests if the value of skip.integration.tests
 								property is true -->
 							<skipTests>${skip.integration.tests}</skipTests>
 							<includes>
@@ -510,12 +537,12 @@
 					<dependency>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctorj-diagram</artifactId>
-						<version>${asciidoctorj.diagram.version}</version>
+						<version>${asciidoctorj-diagram.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>com.github.allati.asciidoctor.monotree</groupId>
 						<artifactId>asciidoctor-extension-monotree</artifactId>
-						<version>${asciidoctorj.monotree.version}</version>
+						<version>${asciidoctorj-monotree.version}</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -595,7 +622,7 @@
 							<outputDirectory>target/site</outputDirectory>
 						</configuration>
 					</execution>
- 				</executions>
+				</executions>
 			</plugin>
 
 			<!-- Site generation -->
@@ -605,25 +632,19 @@
 				<version>${maven-site-plugin.version}</version>
 				<dependencies>
 					<dependency>
-						<groupId>lt.velykis.maven.skins</groupId>
+						<groupId>io.github.devacfr.maven.skins</groupId>
 						<artifactId>reflow-velocity-tools</artifactId>
-						<version>1.1.1</version>
-					</dependency>
-					<!-- Reflow skin requires Velocity >= 1.7 -->
-					<dependency>
-						<groupId>org.apache.velocity</groupId>
-						<artifactId>velocity</artifactId>
-						<version>1.7</version>
+						<version>${reflow-skin.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctor-maven-plugin</artifactId>
-						<version>${asciidoctorj.version}</version>
+						<version>${asciidoctor-plugin.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>org.asciidoctor</groupId>
 						<artifactId>asciidoctorj-diagram</artifactId>
-						<version>${asciidoctorj.diagram.version}</version>
+						<version>${asciidoctorj-diagram.version}</version>
 					</dependency>
 				</dependencies>
 				<configuration>
@@ -663,6 +684,62 @@
 					</asciidoc>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${maven-project-info-reports-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>io.github.devacfr.maven.skins</groupId>
+									<artifactId>reflow-default-webdeps</artifactId>
+									<version>${reflow-skin.version}</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<includes>
+										**/css/fontawesome/**/*,
+										**/css/themes/cerulean/*.css,
+										**/js/*.js,
+										**/js/languages/*,
+										**/js/styles/github.min.css
+									</includes>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${session.executionRootDirectory}/target/site</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>nl.geodienstencentrum.maven</groupId>
+				<artifactId>sass-maven-plugin</artifactId>
+				<version>${sass-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>compile-sass</id>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>update-stylesheets</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<sassSourceDirectory>src/site/resources/scss</sassSourceDirectory>
+					<destination>${project.build.directory}/site/css</destination>
+				</configuration>
+			</plugin>
+
 
 			<!-- Release -->
 			<plugin>
@@ -675,6 +752,8 @@
 					<releaseProfiles>release</releaseProfiles>
 					<goals>deploy</goals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<preparationGoals>com.google.code.maven-replacer-plugin:replacer:replace -N</preparationGoals>
+					<completionGoals>com.google.code.maven-replacer-plugin:replacer:replace -N</completionGoals>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -682,17 +761,17 @@
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>
 				<artifactId>maven-scm-provider-gitexe</artifactId>
-				<version>1.9.4</version>
+				<version>${maven-scm-provider-gitexe.version}</version>
 			</extension>
 			<extension>
 				<groupId>org.apache.maven.scm</groupId>
 				<artifactId>maven-scm-manager-plexus</artifactId>
-				<version>1.9.4</version>
+				<version>${maven-scm-manager-plexus.version}</version>
 			</extension>
 			<extension>
 				<groupId>com.github.stephenc.wagon</groupId>
 				<artifactId>wagon-gitsite</artifactId>
-				<version>0.5</version>
+				<version>${wagon-gitsite.version}</version>
 			</extension>
 		</extensions>
 		<pluginManagement>
@@ -701,6 +780,87 @@
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>${sonar-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${maven-javadoc-plugin.version}</version>
+					<configuration>
+						<source>${maven.compiler.source}</source>
+						<doclint>all</doclint>
+						<additionalDependencies>
+							<additionalDependency>
+								<groupId>org.springframework.boot</groupId>
+								<artifactId>spring-boot</artifactId>
+								<version>${spring.boot.version}</version>
+							</additionalDependency>
+							<additionalDependency>
+								<groupId>org.springframework.boot</groupId>
+								<artifactId>spring-boot-autoconfigure</artifactId>
+								<version>${spring.boot.version}</version>
+							</additionalDependency>
+							<additionalDependency>
+								<groupId>org.springframework.boot</groupId>
+								<artifactId>spring-boot-configuration-processor</artifactId>
+								<version>${spring.boot.version}</version>
+							</additionalDependency>
+						</additionalDependencies>
+					</configuration>
+				</plugin>
+
+				<!-- Version update in samples too -->
+				<plugin>
+					<groupId>com.google.code.maven-replacer-plugin</groupId>
+					<artifactId>replacer</artifactId>
+					<version>${maven-replacer-plugin.version}</version>
+					<configuration>
+						<includes>
+							<include>*/pom.xml</include>
+						</includes>
+						<regex>true</regex>
+						<token>&lt;ogham\.version&gt;[^$&lt;]+&lt;/ogham\.version&gt;</token>
+						<value>&lt;ogham.version&gt;${project.version}&lt;/ogham.version&gt;</value>
+					</configuration>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings
+					only. It has no influence on the Maven build itself. -->
+				<!-- FIXME: This is required since Eclipse 4.11 as GGTS is not supported.
+					Groovy Eclipse plugin doesn't work with maven test dependencies: https://github.com/groovy/groovy-eclipse/issues/900.
+					For now, Eclipse m2e Groovy plugin should not be installed. With this configuration,
+					everything works fine even with JUnit in Eclipse except that Eclipse Groovy
+					reports compilation errors. These errors can be ignored -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.gmavenplus
+										</groupId>
+										<artifactId>
+											gmavenplus-plugin
+										</artifactId>
+										<versionRange>
+											[0.0,)
+										</versionRange>
+										<goals>
+											<goal>compile</goal>
+											<goal>compileTests</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnIncremental>true</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -712,9 +872,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven-javadoc-plugin.version}</version>
-				<configuration>
-				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -784,6 +941,15 @@
 					</plugin>
 				</plugins>
 			</build>
+		</profile>
+		<profile>
+			<id>build-jdk9+</id>
+			<activation>
+				<jdk>[9,)</jdk>
+			</activation>
+			<properties>
+				<maven.compiler.release>8</maven.compiler.release>
+			</properties>
 		</profile>
 	</profiles>
 
