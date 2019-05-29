@@ -24,6 +24,18 @@
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf</artifactId>
+			<exclusions>
+				<!-- OGNL (3.0.8) includes in thymeleaf 2.1.5 is vulnerable to DOS attack: https://app.snyk.io/vuln/SNYK-JAVA-OGNL-30474 -->
+				<exclusion>
+					<artifactId>ognl</artifactId>
+					<groupId>ognl</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<artifactId>ognl</artifactId>
+			<groupId>ognl</groupId>
+			<version>3.0.21</version>
 		</dependency>
 
 		<!-- Tests -->

@@ -21,7 +21,7 @@ public class FileNamePredicate implements Predicate<BodyPart> {
 			throw new AssertionError("Failed to access message", e);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "named "+filename;
