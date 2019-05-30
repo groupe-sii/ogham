@@ -1,0 +1,52 @@
+$primary:       $blue;
+// $secondary:     $gray-200 !default;
+// $success:       $green !default;
+// $info:          $blue !default;
+// $warning:       $yellow !default;
+// $danger:        $red !default;
+// $light:         $gray-100 !default;
+// $dark:          $gray-800 !default;
+
+// Body
+
+// $body-color:    $gray-700 !default;
+
+// Fonts
+
+$headings-color:         $blue;
+
+// Dropdowns
+
+$dropdown-link-color:            $body-color !default;
+$dropdown-link-hover-color:      $white !default;
+$dropdown-link-hover-bg:         $primary;
+$dropdown-link-active-bg:        $primary;
+
+// Navbar
+
+$navbar-dark-color:                 rgba($white,.8) !default;
+$navbar-dark-hover-color:           $white !default;
+
+
+$jumbotron-bg: rgba($blue, 0.1);
+$progress-bar-bg: $primary;
+$link-color: $primary;
+
+.navbar {
+	@extend .navbar-dark;
+	@extend .bg-primary;
+}
+
+footer {
+	color: var(--dark);
+	@extend .bg-light;
+	
+	.nav-header {
+		color: var(--dark) !important;
+	}
+
+	.nav-list>.active>a, 
+	.nav-list>.active>a:focus {
+		background-color: $blue !important;
+	}
+}

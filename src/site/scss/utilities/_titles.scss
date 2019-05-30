@@ -1,0 +1,6 @@
+@mixin doc-title-adjacent-margin($level) {
+	& + .sectionbody > .sect#{$level}:first-child > h#{$level+1}:first-child,
+	& + .sect#{$level} > h#{$level+1}:first-child {
+		margin-top: 1rem;
+	}
+}

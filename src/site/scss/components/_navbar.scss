@@ -1,0 +1,16 @@
+
+.navbar .nav {
+	& > li:nth-child(2) {
+		order: 99;
+		font-size: 0;
+	
+		a {
+			display: block;
+			width: 32px;
+			height: 32px;
+			background: url(../img/GitHub-Mark-Light-64px.png) center center no-repeat;
+			background-size: 32px 32px;
+			padding-bottom: 0;
+		}
+	}
+}

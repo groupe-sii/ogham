@@ -1,0 +1,27 @@
+// general utilities
+@import "utilities";
+
+// external dependencies (asciidoctor, bootstrap and bootswatch)
+@import "asciidoctor/asciidoctor-default";
+@import "asciidoctor/coderay-asciidoctor";
+@import "bootswatch-cerulean/variables";
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+@import "bootswatch/cerulean-cyan";	// colors override for bootswatch theme
+// @import "bootswatch/cerulean-blue";	// colors override for bootswatch theme
+@import "bootstrap/bootstrap";
+@import "bootswatch-cerulean/bootswatch";
+
+// general
+@import "headings";
+@import "components/admonition";
+@import "components/code";
+@import "components/jumbotron";
+@import "components/navbar";
+@import "components/progress";
+@import "components/tabcontainer";
+@import "layout";
+
+// page specifics
+@import "pages/index";
+@import "pages/user-manual";

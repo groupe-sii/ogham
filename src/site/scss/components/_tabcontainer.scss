@@ -1,0 +1,24 @@
+// .tab <=> .nav-item
+// .tab>.tab-label <=> .nav-link
+
+.tab>.tab-label {
+	line-height: 29px;
+	background: transparent;
+    @include border-top-radius($nav-tabs-border-radius);
+    border: $nav-tabs-border-width solid transparent;
+
+    @include hover-focus {
+      border-color: $nav-tabs-link-hover-border-color;
+    }
+}
+.tab>[type=radio]:checked ~ .tab-label {
+    color: $nav-tabs-link-active-color;
+    background-color: $nav-tabs-link-active-bg;
+    border-color: $nav-tabs-link-active-border-color;
+    border-bottom: $nav-tabs-border-width solid transparent;
+}
+
+.tab>.tab-content {
+	border-color: $nav-tabs-border-color;
+    @include border-top-right-radius($nav-tabs-border-radius);
+}

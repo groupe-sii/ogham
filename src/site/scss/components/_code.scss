@@ -1,0 +1,15 @@
+.literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] {
+    font-size: .7em;
+}
+
+@media only screen and (min-width: 768px) {
+	.literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] {
+	    font-size: .75em;
+	}
+}
+
+@media only screen and (min-width: 1280px) {
+	.literalblock pre, .literalblock pre[class], .listingblock pre, .listingblock pre[class] {
+	    font-size: .8em;
+	}
+}

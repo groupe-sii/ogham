@@ -1,0 +1,16 @@
+$jumbotron-bg: rgba(lighten($cyan, 40%), 0.5);
+
+.navbar {
+	@extend .navbar-dark;
+	@extend .bg-primary;
+}
+
+footer {
+	color: var(--dark);
+	@extend .bg-light;
+	
+	.nav-header {
+		color: var(--dark) !important;
+	}
+}
+

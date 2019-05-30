@@ -58,6 +58,8 @@
 		<asciidoctorj-diagram.version>1.5.16</asciidoctorj-diagram.version>
 		<asciidoctorj.version>1.5.6</asciidoctorj.version>
 		<asciidoctorj-monotree.version>0.0.1</asciidoctorj-monotree.version>
+		<bootstrap.version>4.3.1</bootstrap.version>
+		<bootswatch.version>4.2.1</bootswatch.version>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -84,6 +86,7 @@
 		<dependency.locations.enabled>false</dependency.locations.enabled>
 		<site.staging.dir>${project.build.outputDirectory}/staging</site.staging.dir>
 		<site.output.dir>${site.staging.dir}/v${docProjectVersion}</site.output.dir>
+		<doc-theme>cerulean</doc-theme>
 
 		<!-- Plugins -->
 		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
@@ -102,6 +105,8 @@
 		<sass-maven-plugin.version>3.7.2</sass-maven-plugin.version>
 		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
 		<maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
+		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+		<maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
 		<!-- Plugins - code quality -->
 		<sonar-maven-plugin.version>3.6.0.1398</sonar-maven-plugin.version>
 		<!-- Plugins - release -->
@@ -686,15 +691,12 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>${maven-project-info-reports-plugin.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${maven-dependency-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>unpack</id>
+						<inherited>false</inherited>
 						<phase>pre-site</phase>
 						<goals>
 							<goal>unpack</goal>
@@ -709,14 +711,85 @@
 									<overWrite>false</overWrite>
 									<includes>
 										**/css/fontawesome/**/*,
-										**/css/themes/cerulean/*.css,
+										**/css/themes/${doc-theme}/*.css,
 										**/js/*.js,
 										**/js/languages/*,
 										**/js/styles/github.min.css
 									</includes>
+									<outputDirectory>${session.executionRootDirectory}/target/site</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.asciidoctor</groupId>
+									<artifactId>asciidoctorj</artifactId>
+									<version>${asciidoctorj.version}</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<includes>
+										/gems/asciidoctor-*/data/stylesheets/*,
+									</includes>
+									<outputDirectory>${session.executionRootDirectory}/target/unpacked</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.webjars</groupId>
+									<artifactId>bootstrap</artifactId>
+									<version>${bootstrap.version}</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<includes>
+										**/*.scss
+									</includes>
+									<outputDirectory>${session.executionRootDirectory}/target/unpacked</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.webjars</groupId>
+									<artifactId>bootswatch-${doc-theme}</artifactId>
+									<version>${bootswatch.version}</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<includes>
+										**/*.scss
+									</includes>
+									<outputDirectory>${session.executionRootDirectory}/target/unpacked</outputDirectory>
 								</artifactItem>
 							</artifactItems>
-							<outputDirectory>${session.executionRootDirectory}/target/site</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin.version}</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>copy-scss-dependencies</id>
+						<inherited>false</inherited>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<copy todir="target/generated-scss/asciidoctor">
+									<fileset dir="target/unpacked/gems">
+										<include name="**/*.css" />
+									</fileset>
+									<regexpmapper from="^.*/(.+)\.css$$" to="_\1.scss" />
+								</copy>
+								<copy todir="target/generated-scss/bootstrap">
+									<fileset dir="target/unpacked">
+										<include name="**/bootstrap/**/*.scss" />
+									</fileset>
+									<regexpmapper from="^.*/scss/(.+/)*_?(.+\.scss)$$" to="\1_\2" />
+								</copy>
+								<copy todir="target/generated-scss/bootswatch-${doc-theme}">
+									<fileset dir="target/unpacked">
+										<include name="**/bootswatch-${doc-theme}/**/*.scss" />
+									</fileset>
+									<regexpmapper from="^.*/(.+\.scss)$$" to="\1" />
+								</copy>
+							</target>
 						</configuration>
 					</execution>
 				</executions>
@@ -725,6 +798,7 @@
 				<groupId>nl.geodienstencentrum.maven</groupId>
 				<artifactId>sass-maven-plugin</artifactId>
 				<version>${sass-maven-plugin.version}</version>
+				<inherited>false</inherited>
 				<executions>
 					<execution>
 						<id>compile-sass</id>
@@ -735,11 +809,30 @@
 					</execution>
 				</executions>
 				<configuration>
-					<sassSourceDirectory>src/site/resources/scss</sassSourceDirectory>
-					<destination>${project.build.directory}/site/css</destination>
+					<!-- Add resources in order to import files like it was in same source 
+						folder -->
+					<resources>
+						<resource>
+							<source>
+								<directory>src/docs/resources</directory>
+							</source>
+							<destination>${project.build.directory}/ignored</destination>
+						</resource>
+						<resource>
+							<source>
+								<directory>target/generated-scss</directory>
+							</source>
+							<destination>${project.build.directory}/ignored</destination>
+						</resource>
+						<resource>
+							<source>
+								<directory>src/site/scss</directory>
+							</source>
+							<destination>${project.build.directory}/site/css</destination>
+						</resource>
+					</resources>
 				</configuration>
 			</plugin>
-
 
 			<!-- Release -->
 			<plugin>
@@ -752,8 +845,10 @@
 					<releaseProfiles>release</releaseProfiles>
 					<goals>deploy</goals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
-					<preparationGoals>com.google.code.maven-replacer-plugin:replacer:replace -N</preparationGoals>
-					<completionGoals>com.google.code.maven-replacer-plugin:replacer:replace -N</completionGoals>
+					<preparationGoals>com.google.code.maven-replacer-plugin:replacer:replace
+						-N</preparationGoals>
+					<completionGoals>com.google.code.maven-replacer-plugin:replacer:replace
+						-N</completionGoals>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -776,6 +871,11 @@
 		</extensions>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>${maven-project-info-reports-plugin.version}</version>
+				</plugin>
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
