@@ -1,35 +1,81 @@
 :relative-path: ./
 include::{docdir}/variables.adoc[]
 
-== Features
+
+== Hero
+
+[.hero]
+====
+[.get-started]
+<<user-manual.adoc#install, Get Started>>
+
+[.belief]
+We believe that developers should focus on business code instead of wasting time on technical concerns.
+====
 
 
-include::{docdir}/general/features.adoc[]
+[.benefits]
+====
+.Code fast
+[verse, role="benefit code-fast", subs="+verbatim"]
+____
+Ogham is designed to get you up and running as quickly as possible, with minimal upfront configuration.
+Our aim is to provide a library that keeps developers focused on business code. 
+Therefore, Ogham saves you painful steps. Developers don't need to be experts in RFCs or low level protocols anymore.
+Even testing of message sending are simplified with Ogham.
+____
 
 
----
+.Send everything
+[verse, role="benefit send-everything", subs="+verbatim"]
+____
+Email, sms or whatever, Ogham provides everything to send any kind of messages.
+As Ogham is natively extensible, any kind of message that is not yet supported can be added easily.
+____
 
 
-== Introduction
+.Integrate with everything
+[verse, role="benefit integrate-with-everything", subs="+verbatim"]
+____
+Ogham is designed to work with real world applications.
+It integrates natively with most popular frameworks.
+In real world applications, sending email, sms or whatever often need to use an external service instead of the protocols.
+Ogham is designed to support several implementations for sending any kind of message.
+The aim is to code once and still be able to choose the implementation/protocol to use at runtime.
+____
 
 
-include::{user-manual-dir}/introduction.adoc[leveloffset=+1]
+[.features]
+<<features.adoc#, See Ogham features &raquo;>>
 
+====
 
----
-
-
-== Code once, adapt to environment
-
-include::{general-dir}/code-once.adoc[leveloffset=+2]
 
 ---
 
 
 == Usage
 
+[.send-email]
+====
 
-=== image:{images-dir}/icons/email.png[Email,width=30,height=30] Send Email
+[.explanations]
+=====
+
+[.title]
+Send a simple email
+
+Ogham provides a single entry point (`MessagingService`) to send any message.
+To send an email, just prepare the email content using the `Email` class.
+The fluent API lets you chain API calls and also helps to guide developers.
+
+In standalone mode (without framework integration), `MessagingService` has to be instantiated.
+In this sample, the predefined behavior is used. The properties are used to configure
+the SMTP protocol/implementation.
+=====
+
+[.code-example]
+=====
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,13-20 no-callout"]
 ----
@@ -39,12 +85,35 @@ include::{standard-email-samples-sourcedir}/BasicSample.java[]
 <2> Register the custom properties
 <3> Create a MessagingService instance
 <4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from` property
+=====
 
 
+[.more]
 <<user-manual.adoc#email-usage, Read more about email usages &raquo;>>
+====
 
 
-=== image:{images-dir}/icons/sms.png[SMS,width=30,height=30] Send SMS
+[.send-sms]
+====
+
+[.explanations]
+=====
+
+[.title]
+Send a simple SMS
+
+As mentioned above, Ogham provides a single entrypoint. Sending SMS is exactly
+the same way as for email.
+ 
+Prepare the SMS content and recipients using the `Sms` class.
+
+The standard protocol to send SMS is SMPP. Therefore to reach the SMPP server,
+properties are adapted to provide SMPP server configuration.
+
+=====
+
+[.code-example]
+=====
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,12-21 no-callout"]
 ----
@@ -59,10 +128,63 @@ include::{standard-sms-samples-sourcedir}/BasicSample.java[]
 <7> Register the custom properties
 <8> Create a MessagingService instance
 <9> Send a SMS with a simple message. The sender phone number is automatically set using `ogham.sms.from` property
+=====
 
-
+[.more]
 <<user-manual.adoc#sms-usage, Read more about SMS usages &raquo;>>
+====
 
+
+
+[.send-templated-email]
+====
+
+[.explanations]
+=====
+
+[.title]
+Send using a template
+
+In real world applications, messages content need to be constructed with variable parts.
+That's why Ogham provides integration with several templating engines.
+
+The only difference here is the use of `TemplateContent` instead of a string.
+This indicates to Ogham that the content is a template to evaluate.
+
+The template is located in the classpath (use of `classpath:`).
+The template contains variables (`name` and `value`).
+To evaluate the template, a model is needed to provide values for `name` and `value`.
+In the example, the class `SimpleBean` is defined with the properties and used as model.
+
+Templates can be used for SMS or whatever in the same way.
+
+In the sample, Thymeleaf template engine is used but it could be any template engine.
+=====
+
+[.code-example]
+=====
+
+[source, java, role="collapse-lines:1-10,35-47 irrelevant-lines:1-10,13-20 no-callout"]
+----
+include::{standard-email-samples-sourcedir}/HtmlTemplateSample.java[]
+----
+<1> Use the standard builder (predefined behavior)
+<2> Register the custom properties
+<3> Create a MessagingService instance
+<4> Send an email with a subject and a simple body that comes from the evaluated template. The sender address is automatically set using `ogham.email.from` property
+<5> Indicate the path to the HTML template file (in the classpath)
+<6> Use any bean object for replacing variables in template
+
+[source, html, role="no-callout"]
+----
+include::{standard-samples-resourcesdir}/template/thymeleaf/simple.html[]
+----
+<1> Include the ThymeLeaf namespace
+<2> Use the `name` attribute value in the template
+<3> Use the `value` attribute value in the template
+=====
+
+====
 
 ---
 
@@ -70,11 +192,27 @@ include::{standard-sms-samples-sourcedir}/BasicSample.java[]
 == Get it now
 
 
-=== image:{images-dir}/icons/java-logo.png[Java,width=16,height=30] Standalone usage
+[.install-standalone]
+====
+
+[.explanations]
+=====
+
+[.title]
+image:{images-dir}/icons/java-logo.png[Java,width=16,height=30] Standalone usage
 
 
-To use Ogham without any framework:
+`ogham-all` dependency provides all Ogham features. All implementations/protocols 
+are included for all kind of messages. All supported templated engines are also included.
 
+The aim is to start quickly and avoid wasting time on choosing dependencies.
+
+Later, developers can adapt included features by <<user-manual.adoc#select-features-standalone, selecting Ogham dependencies>> (no need
+to exclude some dependencies).
+=====
+
+[.code-example]
+=====
 [role=tab-container]
 Include Ogham standalone dependency
 
@@ -100,16 +238,31 @@ TODO: gradle code sample
 
 [role=tab-container-end]
 -
+=====
 
-<<user-manual.adoc#install, Installation instructions &raquo;>>
+====
 
-
-
-=== image:{images-dir}/icons/spring-boot.png[Spring Boot,width=30,height=30] Spring Boot starter
-
-To use Ogham with Spring Boot, just add the following dependency:
+[.more]
+<<user-manual.adoc#install-standalone, Installation instructions &raquo;>>
 
 
+[.install-spring-boot]
+====
+
+[.explanations]
+=====
+
+[.title]
+image:{images-dir}/icons/spring-boot.png[Spring Boot,width=30,height=30] Spring Boot starter
+
+Ogham natively provides Spring Boot integration. `ogham-spring-boot-starter-all` is like
+`ogham-all` but uses Spring Boot starters instead for implementations/template engines.
+
+Developers can also select features by <<user-manual.adoc#select-features-spring-boot, selecting Ogham dependencies for Spring Boot>>. 
+=====
+
+[.code-example]
+=====
 [role=tab-container]
 Include Ogham dependency for Spring Boot
 
@@ -135,17 +288,10 @@ TODO: gradle code sample
 
 [role=tab-container-end]
 -
+=====
 
+====
 
-<<user-manual.adoc#install, Installation instructions &raquo;>>
-
-
----
-
-
-== Roadmap
-
-
-include::{docdir}/general/roadmap.adoc[leveloffset=+1]
-
+[.more]
+<<user-manual.adoc#install-spring-boot, Installation instructions &raquo;>>
 

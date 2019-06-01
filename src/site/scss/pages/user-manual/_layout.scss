@@ -1,17 +1,17 @@
-.page-user-manual {
+& {
 	@extend .toc2;
 	
 	#toc {
 		@extend #toc, .toc2;
 		
-		top: 58px;
+		top: $navbar-height;
 		height: auto;
 		bottom: 0;
 	}
 }
 
 @media only screen and (min-width: 768px) {
-	.page-user-manual #toc {
+	& #toc {
 		ul {
 			font-size: .92em;
 		}

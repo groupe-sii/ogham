@@ -1,0 +1,234 @@
+@mixin title-icon($icon) {
+	&::before {
+		content: "#{$icon}";
+		display: inline-block;
+		color: $primary;
+		font-family: "Font Awesome 5 Free";
+		font-weight: 900;
+		visibility: visible;
+		margin-right: 5px;
+	}
+}
+
+#toc,
+#hero {
+	display: none;
+}
+
+.navbar.border-bottom {
+	border-bottom-color: darken($primary, 4%) !important;
+}
+
+.main-body {
+	& {
+		margin-top: 0 !important;
+	}
+	& > .row {
+		overflow-x: hidden;
+	}
+}
+.header {
+	height: $hero-height;
+	text-align: center;
+	
+	.bannerLeft.float-left {
+		float: none !important;
+	}
+	
+	.jumbotron {
+		position: absolute;
+		top: -1px;
+		left: -50vw;
+		right: -50vw;
+		padding-left: 50vw;
+		padding-right: 50vw;
+		height: $hero-height;
+		background: $hero-bg-color;
+		color: $hero-text-color;
+		overflow: hidden;
+		
+		&::after {
+			content: "";
+			display: block;
+			width: $hero-bg-size;
+			height: $hero-bg-size;
+			opacity: 0.1;
+			background: url(../img/ogham-grey-900x900.png) no-repeat center center;
+			background-size: $hero-bg-size;
+			position: absolute;
+			right: 50vw;
+			bottom: (- $hero-bg-size * 0.2);
+			transform: rotate(35deg);
+		}
+		
+		h1 {
+			color: $hero-brand-color;
+		}
+		
+		.lead {
+			font-size: $hero-lead-font-size;
+		}
+	}
+}
+
+main > .header + .row > div {
+	position: static;
+}
+
+.hero {
+	text-align: center;
+	
+	& > .content {
+		background: transparent;
+		border: none;
+		box-shadow: none;
+	}
+	
+	.get-started {
+		position: absolute;
+		top: ($hero-height * 0.7);
+		left: 0;
+		right: 0;
+		
+		a {
+			@extend .btn, .btn-primary;
+		}
+	}
+
+	.belief p {
+		color: $hero-belief-color;
+		font-size: $hero-belief-font-size;
+	}
+}
+
+.benefits {
+	& > .content {
+		background: transparent;
+		border: none;
+		box-shadow: none;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		padding-left: 0;
+		padding-right: 0;
+		margin-left: (- $index-benefit-spacing);
+		margin-right: (- $index-benefit-spacing);
+	}
+
+	.benefit {
+		flex: 1 0 30%;
+		margin-left: $index-benefit-spacing;
+		margin-right: $index-benefit-spacing;
+		
+		.title {
+			color: $primary;
+			font-style: normal;
+			text-align: center;
+			font-size: 1.5rem;
+			font-family: $headings-font-family;
+
+			&::before {
+				display: block;
+				margin: auto;
+				font-size: 2.5rem;
+			}
+		}
+		.content {
+			text-align: left;
+			font-family: $font-family-base;
+			overflow: hidden;
+			white-space: normal;
+		}
+	}
+
+	.features {
+		flex-basis: 100%;
+		margin-left: $index-benefit-spacing;
+	}
+}
+
+
+#usage,
+#get_it_now {
+	display: none;
+}
+.send-email,
+.send-templated-email,
+.send-sms,
+.install-standalone,
+.install-spring-boot {
+	margin-top: 4rem;
+	
+	& > .content,
+	.exampleblock > .content {
+		background: transparent;
+		border: none;
+		box-shadow: none;
+		padding: 0;
+	}
+	& > .content {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		margin-left: (- $index-code-samples-spacing);
+		margin-right: (- $index-code-samples-spacing);
+	}
+	pre {
+		overflow: hidden;
+	}
+
+	.title p {
+		color: $gray-700;
+		font-size: $h3-font-size;
+	}
+
+	.explanations {
+		flex: 1 0 30%;
+		margin-left: $index-code-samples-spacing;
+		margin-right: $index-code-samples-spacing;
+	}
+	.code-example {
+		flex: 1 0 65%;
+		margin-left: $index-code-samples-spacing;
+		margin-right: $index-code-samples-spacing;
+	}
+	.more {
+		flex: 0 0 100%;
+		margin-left: $index-code-samples-spacing;
+		margin-right: $index-code-samples-spacing;
+	}
+}
+
+/* icons */
+.code-fast {
+	.title {
+		@include title-icon("\f561");
+	}
+}
+.send-everything {
+	.title {
+		@include title-icon("\f1d8");
+	}
+}
+.integrate-with-everything {
+	.title {
+		@include title-icon("\f542");
+	}
+}
+
+.send-email {
+	.title p {
+		@include title-icon("\f1fa");
+	}
+}
+.send-sms {
+	.title p {
+		@include title-icon("\f4ad");
+	}
+}
+.send-templated-email {
+	.title p {
+		@include title-icon("\f121");
+	}
+}
+

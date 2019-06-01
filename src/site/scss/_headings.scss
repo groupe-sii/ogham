@@ -1,3 +1,12 @@
+/*
+:target {
+  display: block;
+  position: relative;
+  top: -$navbar-height; 
+  visibility: hidden;
+}
+*/
+
 h1,
 h2,
 h3,
@@ -7,4 +16,40 @@ h4,
 h5,
 h6 {
 	font-family: $headings-font-family;
+}
+
+// add space between sections
+h2 {
+	margin-top: 4rem;
+	@include doc-title-fix-anchor(4rem);
+}
+h3 {
+	margin-top: 3rem;
+	@include doc-title-fix-anchor(3rem);
+}
+h4 {
+	margin-top: 2rem;
+	@include doc-title-fix-anchor(2rem);
+}
+h5,
+h6 {
+	margin-top: 1rem;
+	@include doc-title-fix-anchor(1rem);
+}
+
+// remove space for titles following a title
+h2 {
+	@include doc-title-adjacent-margin(2);
+}
+h3 {
+	@include doc-title-adjacent-margin(3);
+}
+h4 {
+	@include doc-title-adjacent-margin(4);
+}
+h5 {
+	@include doc-title-adjacent-margin(5);
+}
+h6 {
+	@include doc-title-adjacent-margin(6);
 }

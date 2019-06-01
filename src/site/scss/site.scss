@@ -13,6 +13,8 @@
 @import "bootswatch-cerulean/bootswatch";
 
 // general
+@import "font";
+@import "site-variables";
 @import "headings";
 @import "components/admonition";
 @import "components/code";
@@ -23,5 +25,9 @@
 @import "layout";
 
 // page specifics
-@import "pages/index";
-@import "pages/user-manual";
+.page-index {
+	@import "pages/index";
+}
+.page-user-manual {
+	@import "pages/user-manual";
+}

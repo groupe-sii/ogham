@@ -2,5 +2,17 @@
 	& + .sectionbody > .sect#{$level}:first-child > h#{$level+1}:first-child,
 	& + .sect#{$level} > h#{$level+1}:first-child {
 		margin-top: 1rem;
+		@include doc-title-fix-anchor(1rem);
 	}
 }
+
+@mixin doc-title-fix-anchor($margin) {
+	/*& > a.anchor {
+		margin-top: -$margin;
+		
+		&::before {
+			margin-top: $margin;
+		}
+	}*/
+}
+

@@ -1,0 +1,12 @@
+@font-face {
+	font-family: Ogham;
+	src: url(../fonts/KellsFLF.ttf);
+}
+
+.navbar-brand,
+.header .jumbotron h1 {
+	font-family: Ogham;
+}
+.navbar-brand {
+	font-size: 1.6rem;
+}

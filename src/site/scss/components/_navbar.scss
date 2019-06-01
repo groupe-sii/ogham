@@ -1,4 +1,3 @@
-
 .navbar .nav {
 	& > li:nth-child(2) {
 		order: 99;
@@ -12,5 +11,17 @@
 			background-size: 32px 32px;
 			padding-bottom: 0;
 		}
+	}
+}
+
+.navbar .navbar-brand {
+	&::before {
+		content: "";
+		display: inline-block;
+		background: url(../img/ogham-white-256x256.png) no-repeat left center;
+		background-size: 30px 30px;
+		width: 30px;
+		height: 30px;
+		vertical-align: -7px;
 	}
 }
