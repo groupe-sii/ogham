@@ -47,14 +47,14 @@ public class LoggingTestRule implements TestRule {
 			String header = "┌"+dashLine+"┐";
 			String footer = "└"+dashLine+"┘";
 			LOG.info(header);
-			LOG.info("│{}│", format("Starting test "+testName));
+			LOG.info("│{}│", format("Starting test "+testName));					// NOSONAR
 			LOG.info(footer);
 			try {
 				base.evaluate();
 				LOG.info(header);
-				LOG.info("│{}│", format("Test "+testName+" successfully done"));
+				LOG.info("│{}│", format("Test "+testName+" successfully done"));	// NOSONAR
 				LOG.info("{}\r\n\r\n", footer);
-			} catch(Exception e) {
+			} catch(Exception e) {													// NOSONAR
 				LOG.error(header);
 				LOG.error("│{}│", format("Test "+testName+" has failed"));
 				LOG.error("│{}│", format("Cause: "+e));

@@ -7,6 +7,7 @@ import static java.util.Collections.list;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,8 +17,6 @@ import javax.mail.Part;
 
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matcher;
-
-import com.google.common.base.Charsets;
 
 import fr.sii.ogham.assertion.HasParent;
 
@@ -62,7 +61,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public PartAssert<P> contentAsString(Matcher<String> matcher) {
-		return contentAsString(matcher, Charsets.UTF_8);
+		return contentAsString(matcher, StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -289,13 +288,12 @@ public class PartAssert<P> extends HasParent<P> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public PartAssert<P> headers(Matcher<Iterable<? extends Header>> matcher) {
 		try {
 			String message = "headers of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : (Iterable<? extends Header>) list(part.getAllHeaders()), usingContext(message, partWithContext, matcher));
+				assertThat(part == null ? null : list(part.getAllHeaders()), usingContext(message, partWithContext, matcher));
 			}
 			return this;
 		} catch (MessagingException e) {

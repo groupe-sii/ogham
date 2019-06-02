@@ -123,4 +123,14 @@ public class PropertiesBridge extends Properties {
 	public synchronized String toString() {
 		return propertyResolver.toString();
 	}
+	
+	@Override
+	public synchronized boolean equals(Object other) {
+		return super.equals(other);
+	}
+
+	@Override
+	public synchronized int hashCode() {
+		return super.hashCode();
+	}
 }

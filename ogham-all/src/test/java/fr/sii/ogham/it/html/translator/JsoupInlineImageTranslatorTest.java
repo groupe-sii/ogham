@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
@@ -37,7 +37,7 @@ import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
-import fr.sii.ogham.template.thymeleaf.buider.ThymeleafEmailBuilder;
+import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JsoupInlineImageTranslatorTest {
@@ -62,7 +62,7 @@ public class JsoupInlineImageTranslatorTest {
 		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
 		ResourceResolver resourceResolver = MessagingBuilder.standard()
 				.email()
-					.template(ThymeleafEmailBuilder.class)
+					.template(ThymeleafV3EmailBuilder.class)
 						.classpath()
 							.pathPrefix(SOURCE_FOLDER)
 							.and()

@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.function.Predicate;
 
-import org.apache.commons.collections4.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class FilterableClassLoader extends ClassLoader {
 
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		if(predicate.evaluate(name)) {
+		if(predicate.test(name)) {
 			return delegate.loadClass(name);
 		} else {
 			LOG.info("Class {} not accepted", name);
@@ -34,7 +34,7 @@ public class FilterableClassLoader extends ClassLoader {
 
 	@Override
 	public URL getResource(String name) {
-		if(predicate.evaluate(name)) {
+		if(predicate.test(name)) {
 			return delegate.getResource(name);
 		} else {
 			LOG.info("Resource {} not accepted", name);
@@ -44,17 +44,17 @@ public class FilterableClassLoader extends ClassLoader {
 
 	@Override
 	public Enumeration<URL> getResources(String name) throws IOException {
-		if(predicate.evaluate(name)) {
+		if(predicate.test(name)) {
 			return delegate.getResources(name);
 		} else {
-			LOG.info("Resource {} not accepted", name);
+			LOG.info("Resources {} not accepted", name);
 			return Collections.emptyEnumeration();
 		}
 	}
 
 	@Override
 	public InputStream getResourceAsStream(String name) {
-		if(predicate.evaluate(name)) {
+		if(predicate.test(name)) {
 			return delegate.getResourceAsStream(name);
 		} else {
 			LOG.info("Resource {} not accepted", name);

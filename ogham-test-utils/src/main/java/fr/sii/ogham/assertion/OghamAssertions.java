@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import org.hamcrest.Matcher;
 import org.jsmpp.bean.SubmitSm;
 import org.w3c.dom.Document;
 
-import com.google.common.base.Charsets;
 import com.icegreen.greenmail.junit.GreenMailRule;
 
 import fr.sii.ogham.assertion.context.Context;
@@ -231,7 +231,7 @@ public class OghamAssertions {
 	 *             when resource can't be read or doesn't exist
 	 */
 	public static String resourceAsString(String path) throws IOException {
-		return resourceAsString(path, Charsets.UTF_8);
+		return resourceAsString(path, StandardCharsets.UTF_8);
 	}
 
 	/**

@@ -11,7 +11,7 @@ import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.sender.MessageSender;

@@ -1,0 +1,164 @@
+package fr.sii.ogham.template.thymeleaf.common.configure;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.message.content.EmailVariant;
+import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiContentBuilder;
+
+/**
+ * Default configurer for Thymeleaf template engine that is automatically
+ * applied every time a {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()} or {@link MessagingBuilder#minimal()}.
+ * 
+ * <p>
+ * The configurer has a priority of 90000 in order to be applied after global
+ * configurer but before any sender implementation.
+ * </p>
+ * 
+ * This configurer is applied only if {@code org.thymeleaf.TemplateEngine} is
+ * present in the classpath. If not present, template engine is not registered
+ * at all.
+ * 
+ * <p>
+ * This configurer inherits environment configuration (see
+ * {@link EnvironmentBuilder})
+ * </p>
+ * <p>
+ * It also copies resource resolution configuration of
+ * {@link DefaultMessagingConfigurer} to inherit resource resolution lookups
+ * (see {@link ResourceResolutionBuilder}).
+ * </p>
+ * 
+ * <p>
+ * This configurer applies the following configuration:
+ * <ul>
+ * <li>Configures template prefix/suffix paths:
+ * <ul>
+ * <li>Uses the first property that has a value for classpath resolution prefix:
+ * <ol>
+ * <li>"ogham.email.thymeleaf.classpath.path-prefix"</li>
+ * <li>"ogham.email.template.classpath.path-prefix"</li>
+ * <li>"ogham.email.thymeleaf.path-prefix"</li>
+ * <li>"ogham.email.template.path-prefix"</li>
+ * <li>"ogham.template.path-prefix"</li>
+ * </ol>
+ * </li>
+ * <li>Uses the first property that has a value for classpath resolution suffix:
+ * <ol>
+ * <li>"ogham.email.thymeleaf.classpath.path-suffix"</li>
+ * <li>"ogham.email.template.classpath.path-suffix"</li>
+ * <li>"ogham.email.thymeleaf.path-suffix"</li>
+ * <li>"ogham.email.template.path-suffix"</li>
+ * <li>"ogham.template.path-suffix"</li>
+ * </ol>
+ * </li>
+ * <li>Uses the first property that has a value for file resolution prefix:
+ * <ol>
+ * <li>"ogham.email.thymeleaf.file.path-prefix"</li>
+ * <li>"ogham.email.template.file.path-prefix"</li>
+ * <li>"ogham.email.thymeleaf.path-prefix"</li>
+ * <li>"ogham.email.template.path-prefix"</li>
+ * <li>"ogham.template.path-prefix"</li>
+ * </ol>
+ * </li>
+ * <li>Uses the first property that has a value for file resolution suffix:
+ * <ol>
+ * <li>"ogham.email.thymeleaf.file.path-suffix"</li>
+ * <li>"ogham.email.template.file.path-suffix"</li>
+ * <li>"ogham.email.thymeleaf.path-suffix"</li>
+ * <li>"ogham.email.template.path-suffix"</li>
+ * <li>"ogham.template.path-suffix"</li>
+ * </ol>
+ * </li>
+ * </ul>
+ * </li>
+ * <li>Configures email alternative content:
+ * <ul>
+ * <li>Automatically loads HTML template if extension is .html</li>
+ * <li>Automatically loads text template if extension is .txt</li>
+ * </ul>
+ * </li>
+ * <li>Configures template detection:
+ * <ul>
+ * <li>Uses ThymeleafTemplateDetector to detect if templates are
+ * parseable by Thymeleaf</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public abstract class AbstractDefaultThymeleafEmailConfigurer implements MessagingConfigurer {
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractDefaultThymeleafEmailConfigurer.class);
+	
+	private final MessagingConfigurerAdapter delegate;
+
+	public AbstractDefaultThymeleafEmailConfigurer() {
+		this(new DefaultMessagingConfigurer());
+	}
+
+	public AbstractDefaultThymeleafEmailConfigurer(MessagingConfigurerAdapter delegate) {
+		super();
+		this.delegate = delegate;
+	}
+
+	@Override
+	public void configure(MessagingBuilder msgBuilder) {
+		if (!canUseThymeleaf()) {
+			LOG.debug("[{}] skip configuration", this);
+			return;
+		}
+		LOG.debug("[{}] apply configuration", this);
+		AbstractThymeleafMultiContentBuilder<?, ?, ?> builder = msgBuilder.email().template(getBuilderClass());
+		// use same environment as parent builder
+		builder.environment(msgBuilder.environment());
+		// apply default resource resolution configuration
+		if (delegate != null) {
+			delegate.configure(builder);
+		}
+		// @formatter:off
+		builder
+			.classpath()
+				.pathPrefix("${ogham.email.thymeleaf.classpath.path-prefix}", 
+							"${ogham.email.template.classpath.path-prefix}", 
+							"${ogham.email.thymeleaf.path-prefix}", 
+							"${ogham.email.template.path-prefix}", 
+							"${ogham.template.path-prefix}")
+				.pathSuffix("${ogham.email.thymeleaf.classpath.path-suffix}", 
+							"${ogham.email.template.classpath.path-suffix}", 
+							"${ogham.email.thymeleaf.path-suffix}", 
+							"${ogham.email.template.path-suffix}", 
+							"${ogham.template.path-suffix}")
+				.and()
+			.file()
+				.pathPrefix("${ogham.email.thymeleaf.file.path-prefix}", 
+							"${ogham.email.template.file.path-prefix}", 
+							"${ogham.email.thymeleaf.path-prefix}", 
+							"${ogham.email.template.path-prefix}", 
+							"${ogham.template.path-prefix}")
+				.pathSuffix("${ogham.email.thymeleaf.file.path-suffix}", 
+							"${ogham.email.template.file.path-suffix}", 
+							"${ogham.email.thymeleaf.path-suffix}", 
+							"${ogham.email.template.path-suffix}", 
+							"${ogham.template.path-suffix}")
+				.and()
+			.string()
+				.and()
+			.variant(EmailVariant.HTML, "html")
+			.variant(EmailVariant.TEXT, "txt");
+		// @formatter:on
+	}
+
+	protected abstract Class<? extends AbstractThymeleafMultiContentBuilder<?, ?, ?>> getBuilderClass();
+
+	protected abstract boolean canUseThymeleaf();
+
+}

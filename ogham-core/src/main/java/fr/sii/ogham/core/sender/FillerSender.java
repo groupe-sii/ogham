@@ -58,7 +58,10 @@ public class FillerSender implements ConditionalSender {
 
 	@Override
 	public boolean supports(Message message) {
-		return delegate instanceof ConditionalSender ? ((ConditionalSender) delegate).supports(message) : true;
+		if (delegate instanceof ConditionalSender) {
+			return ((ConditionalSender) delegate).supports(message);
+		}
+		return true;
 	}
 
 	@Override

@@ -20,5 +20,8 @@ public class MatrixUtils {
 		return expandedValues;
 	}
 
+	private MatrixUtils() {
+		super();
+	}
 
 }

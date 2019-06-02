@@ -1,6 +1,6 @@
 package fr.sii.ogham.it.template.fremarker;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import org.junit.Assert;
@@ -33,7 +33,6 @@ public class FreeMarkerTemplateDetectorTest {
 	@Mock Resource resource;
 	
 	@Before
-	@SuppressWarnings("unchecked")
 	public void setUp() throws ResourceResolutionException {
 		when(resolver.getResourcePath(eq("template.txt.ftl"))).thenReturn(new ResourcePath("template.txt.ftl", "", "template.txt.ftl"));
 		when(resolver.getResource(eq("template.txt.ftl"))).thenReturn(resource);

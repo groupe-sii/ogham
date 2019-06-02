@@ -45,7 +45,7 @@ public class SimilarHtmlMatcher extends BaseMatcher<String> implements ExpectedV
 		diff = HtmlUtils.compare(expected, (String) item);
 		boolean similar = diff.similar();
 		if(!similar) {
-			LOG.warn(comparisonMessage());
+			LOG.warn(comparisonMessage());	// NOSONAR
 		}
 		return similar;
 	}

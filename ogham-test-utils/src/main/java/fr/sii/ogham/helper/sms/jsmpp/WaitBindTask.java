@@ -26,19 +26,22 @@ class WaitBindTask implements Runnable {
 		try {
 			BindRequest bindRequest = serverSession.waitForBind(WAIT_DURATION);
 			LOG.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), InterfaceVersion.IF_34);
-			try {
-				bindRequest.accept("sys", InterfaceVersion.IF_34);
-			} catch (PDUStringException e) {
-				LOG.error("Invalid system id", e);
-				bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
-			}
-
+			bind(bindRequest);
 		} catch (IllegalStateException e) {
 			LOG.error("System error", e);
 		} catch (TimeoutException e) {
 			LOG.warn("Wait for bind has reach timeout", e);
 		} catch (IOException e) {
 			LOG.error("Failed accepting bind request for session {}", serverSession.getSessionId(), e);
+		}
+	}
+
+	private void bind(BindRequest bindRequest) throws IOException {
+		try {
+			bindRequest.accept("sys", InterfaceVersion.IF_34);
+		} catch (PDUStringException e) {
+			LOG.error("Invalid system id", e);
+			bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
 		}
 	}
 }

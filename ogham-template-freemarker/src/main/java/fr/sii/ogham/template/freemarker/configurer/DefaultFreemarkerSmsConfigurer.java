@@ -2,6 +2,9 @@ package fr.sii.ogham.template.freemarker.configurer;
 
 import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
@@ -103,6 +106,8 @@ import freemarker.template.TemplateExceptionHandler;
  */
 @ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
 public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultFreemarkerSmsConfigurer.class);
+	
 	private final MessagingConfigurerAdapter delegate;
 
 	public DefaultFreemarkerSmsConfigurer() {
@@ -116,45 +121,48 @@ public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
-		if (canUseFreemaker()) {
-			FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);
-			// use same environment as parent builder
-			builder.environment(msgBuilder.environment());
-			// apply default resource resolution configuration
-			if (delegate != null) {
-				delegate.configure(builder);
-			}
-			// @formatter:off
-			builder
-				.classpath()
-					.pathPrefix("${ogham.sms.freemarker.classpath.path-prefix}",
-								"${ogham.sms.template.classpath.path-prefix}", 
-								"${ogham.sms.freemarker.prefix}", 
-								"${ogham.sms.template.path-prefix}", 
-								"${ogham.template.path-prefix}")
-					.pathSuffix("${ogham.sms.freemarker.classpath.path-suffix}", 
-								"${ogham.sms.template.classpath.path-suffix}", 
-								"${ogham.sms.freemarker.suffix}", 
-								"${ogham.sms.template.path-suffix}", 
-								"${ogham.template.path-suffix}")
-					.and()
-				.file()
-					.pathPrefix("${ogham.sms.freemarker.file.path-prefix}", 
-								"${ogham.sms.template.file.path-prefix}", 
-								"${ogham.sms.freemarker.prefix}", 
-								"${ogham.sms.template.path-prefix}", 
-								"${ogham.template.path-prefix}")
-					.pathSuffix("${ogham.sms.freemarker.file.path-suffix}", 
-								"${ogham.sms.template.file.path-suffix}", 
-								"${ogham.sms.freemarker.suffix}", 
-								"${ogham.sms.template.path-suffix}", 
-								"${ogham.template.path-suffix}")
-					.and()
-				.configuration()
-					.defaultEncoding("${ogham.freemarker.default-encoding}", "UTF-8")
-					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-			// @formatter:on
+		if (!canUseFreemaker()) {
+			LOG.debug("[{}] skip configuration", this);
+			return;
 		}
+		LOG.debug("[{}] apply configuration", this);
+		FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);
+		// use same environment as parent builder
+		builder.environment(msgBuilder.environment());
+		// apply default resource resolution configuration
+		if (delegate != null) {
+			delegate.configure(builder);
+		}
+		// @formatter:off
+		builder
+			.classpath()
+				.pathPrefix("${ogham.sms.freemarker.classpath.path-prefix}",
+							"${ogham.sms.template.classpath.path-prefix}", 
+							"${ogham.sms.freemarker.prefix}", 
+							"${ogham.sms.template.path-prefix}", 
+							"${ogham.template.path-prefix}")
+				.pathSuffix("${ogham.sms.freemarker.classpath.path-suffix}", 
+							"${ogham.sms.template.classpath.path-suffix}", 
+							"${ogham.sms.freemarker.suffix}", 
+							"${ogham.sms.template.path-suffix}", 
+							"${ogham.template.path-suffix}")
+				.and()
+			.file()
+				.pathPrefix("${ogham.sms.freemarker.file.path-prefix}", 
+							"${ogham.sms.template.file.path-prefix}", 
+							"${ogham.sms.freemarker.prefix}", 
+							"${ogham.sms.template.path-prefix}", 
+							"${ogham.template.path-prefix}")
+				.pathSuffix("${ogham.sms.freemarker.file.path-suffix}", 
+							"${ogham.sms.template.file.path-suffix}", 
+							"${ogham.sms.freemarker.suffix}", 
+							"${ogham.sms.template.path-suffix}", 
+							"${ogham.template.path-suffix}")
+				.and()
+			.configuration()
+				.defaultEncoding("${ogham.freemarker.default-encoding}", "UTF-8")
+				.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+		// @formatter:on
 	}
 
 	private boolean canUseFreemaker() {

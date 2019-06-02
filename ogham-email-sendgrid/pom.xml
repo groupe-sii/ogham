@@ -16,14 +16,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-core</artifactId>
+			<artifactId>ogham-email-sendgrid-v2</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<!-- Mail -->
 		<dependency>
-			<groupId>com.sendgrid</groupId>
-			<artifactId>sendgrid-java</artifactId>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-email-sendgrid-v4</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Tests -->

@@ -95,7 +95,7 @@ public class AssertHtml {
 	@SuppressWarnings("unchecked")
 	private static void logDifferences(DetailedDiff diff) {
 		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
-			LOG.error(difference.toString());
+			LOG.error(difference.toString());	// NOSONAR
 		}
 	}
 
@@ -103,7 +103,7 @@ public class AssertHtml {
 	private static void logUnrecoverableDifferences(DetailedDiff diff) {
 		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
 			if (!difference.isRecoverable()) {
-				LOG.error(difference.toString());
+				LOG.error(difference.toString());	// NOSONAR
 			}
 		}
 	}

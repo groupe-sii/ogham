@@ -31,7 +31,7 @@ public class StandaloneSingleProjectCreator implements SingleProjectCreator<Stan
 	private final OghamProperties oghamProperties;
 
 	public String createProject(Path parentFolder, boolean override, StandaloneProjectParams params, List<OghamDependency> exclude) throws SingleProjectCreationException {
-		String identifier = generateIdentifier(params, exclude);
+		String identifier = generateIdentifier(params);
 		if (isSkip(override, parentFolder.resolve(params.getJavaVersion().name()).resolve(identifier))) {
 			log.info("Skipping creation of project {} because projects already exist", identifier);
 			return identifier;

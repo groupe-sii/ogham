@@ -2,6 +2,9 @@ package fr.sii.ogham.email.builder.javamail;
 
 import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
@@ -69,33 +72,37 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  */
 @ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY)
 public class DefaultJavaMailConfigurer implements MessagingConfigurer {
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultJavaMailConfigurer.class);
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
-		if (canUseJavaMail()) {
-			JavaMailBuilder builder = msgBuilder.email().sender(JavaMailBuilder.class);
-			// use same environment as parent builder
-			builder.environment(msgBuilder.environment());
-			// @formatter:off
-			builder
-				.host("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}")
-				.port("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}", "25")
-				.authenticator()
-					.username("${ogham.email.javamail.authenticator.username}")
-					.password("${ogham.email.javamail.authenticator.password}")
-					.and()
-				.charset("${ogham.email.javamail.body.charset}", "UTF-8")
-				.mimetype()
-					.tika()
-						.failIfOctetStream(false)
-						.and()
-					.replace()
-						// the distinction between xhtml and html can be useful in some cases
-						// most email clients don't understand xhtml mimetype
-						// for emails, this distinction must not be done
-						.pattern("application/xhtml[^;]*(;.*)?", "text/html$1");
-			// @formatter:on
+		if (!canUseJavaMail()) {
+			LOG.debug("[{}] skip configuration", this);
+			return;
 		}
+		LOG.debug("[{}] apply configuration", this);
+		JavaMailBuilder builder = msgBuilder.email().sender(JavaMailBuilder.class);
+		// use same environment as parent builder
+		builder.environment(msgBuilder.environment());
+		// @formatter:off
+		builder
+			.host("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}")
+			.port("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}", "25")
+			.authenticator()
+				.username("${ogham.email.javamail.authenticator.username}")
+				.password("${ogham.email.javamail.authenticator.password}")
+				.and()
+			.charset("${ogham.email.javamail.body.charset}", "UTF-8")
+			.mimetype()
+				.tika()
+					.failIfOctetStream(false)
+					.and()
+				.replace()
+					// the distinction between xhtml and html can be useful in some cases
+					// most email clients don't understand xhtml mimetype
+					// for emails, this distinction must not be done
+					.pattern("application/xhtml[^;]*(;.*)?", "text/html$1");
+		// @formatter:on
 	}
 
 	private boolean canUseJavaMail() {

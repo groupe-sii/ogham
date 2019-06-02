@@ -16,14 +16,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
-			<artifactId>ogham-core</artifactId>
+			<artifactId>ogham-template-thymeleaf-v3</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<!-- Template parser -->
 		<dependency>
-			<groupId>org.thymeleaf</groupId>
-			<artifactId>thymeleaf</artifactId>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-template-thymeleaf-v2</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Tests -->

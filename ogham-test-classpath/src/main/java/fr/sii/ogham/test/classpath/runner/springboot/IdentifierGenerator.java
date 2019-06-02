@@ -21,7 +21,7 @@ public class IdentifierGenerator {
 		// @formatter:on
 	}
 	
-	public static String generateIdentifier(StandaloneProjectParams params, List<OghamDependency> exclude) {
+	public static String generateIdentifier(StandaloneProjectParams params) {
 		// @formatter;off
 		return params.getJavaVersion().getNormalizedName() + "." 
 				+ params.getBuildTool().name().toLowerCase() + "." 
@@ -57,5 +57,9 @@ public class IdentifierGenerator {
 			depsStr.add(dep.getArtifactId().replace("ogham-", "").replace("spring-boot-", ""));
 		}
 		return StringUtils.join(depsStr, "_");
+	}
+	
+	private IdentifierGenerator() {
+		super();
 	}
 }

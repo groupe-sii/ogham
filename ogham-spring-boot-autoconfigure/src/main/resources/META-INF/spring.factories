@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-fr.sii.ogham.spring.autoconfigure.OghamAutoConfiguration
+fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration,\
+fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration

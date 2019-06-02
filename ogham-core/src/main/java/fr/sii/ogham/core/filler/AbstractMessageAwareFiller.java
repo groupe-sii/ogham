@@ -74,7 +74,7 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	 */
 	protected boolean containsProperty(String alias) {
 		String k = resolveKey(alias);
-		return k == null ? false : resolver.containsProperty(k);
+		return k != null && resolver.containsProperty(k);
 	}
 
 	/**

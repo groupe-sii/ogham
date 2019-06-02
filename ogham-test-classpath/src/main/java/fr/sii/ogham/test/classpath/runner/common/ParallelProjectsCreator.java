@@ -32,7 +32,10 @@ public class ParallelProjectsCreator<P, D> implements ProjectsCreator<P, D> {
 				modules.add(future.get());
 			}
 			return modules;
-		} catch (ExecutionException | InterruptedException e) {
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new SingleProjectCreationException("Failed to generate project (interrupted)", e);
+		} catch (ExecutionException e) {
 			throw new SingleProjectCreationException("Failed to generate project", e);
 		}
 	}

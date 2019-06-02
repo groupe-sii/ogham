@@ -23,7 +23,8 @@ public class RetryProjectInitializer<P> implements ProjectInitializer<P> {
 				try {
 					retryStrategy.shouldRetry(e);
 				} catch (InterruptedException e1) {
-					// skip it
+					log.error("Failed to initialize project (interrupted)", e1);
+					Thread.currentThread().interrupt();
 				}
 			}
 		} while(true);

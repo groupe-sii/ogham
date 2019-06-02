@@ -49,6 +49,9 @@ public final class BuilderUtils {
 	}
 	
 	public static <T> T evaluate(List<String> properties, PropertyResolver propertyResolver, Class<T> resultClass) {
+		if(properties == null) {
+			return null;
+		}
 		for(String prop : properties) {
 			T value = evaluate(prop, propertyResolver, resultClass);
 			if(value!=null) {

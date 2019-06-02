@@ -65,7 +65,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	@Override
 	public TikaBuilder<MimetypeDetectionBuilder<P>> tika() {
 		if (tikaBuilder == null) {
-			tikaBuilder = new SimpleTikaBuilder<MimetypeDetectionBuilder<P>>(this);
+			tikaBuilder = new SimpleTikaBuilder<>(this);
 		}
 		return tikaBuilder;
 	}
@@ -79,7 +79,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	@Override
 	public ReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replace() {
 		if(replaceMimetypeBuilder == null) {
-			replaceMimetypeBuilder = new SimpleReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>>(this);
+			replaceMimetypeBuilder = new SimpleReplaceMimetypeBuilder<>(this);
 		}
 		return replaceMimetypeBuilder;
 	}

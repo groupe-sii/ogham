@@ -39,7 +39,7 @@ public class MimetypeDetectionBuilderDelegate<P> extends AbstractParent<P> imple
 
 	@Override
 	public TikaBuilder<MimetypeDetectionBuilder<P>> tika() {
-		return new TikaBuilderDelegate<MimetypeDetectionBuilder<P>>(this, delegate.tika());
+		return new TikaBuilderDelegate<>(this, delegate.tika());
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class MimetypeDetectionBuilderDelegate<P> extends AbstractParent<P> imple
 
 	@Override
 	public ReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replace() {
-		return new ReplaceMimetypeBuilderDelegate<MimetypeDetectionBuilder<P>>(this, delegate.replace());
+		return new ReplaceMimetypeBuilderDelegate<>(this, delegate.replace());
 	}
 
 	@Override

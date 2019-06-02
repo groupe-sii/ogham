@@ -43,7 +43,7 @@ public class RunnerUtils {
 		}
 	}
 	
-	public static void addMavenWrapper(Path parentFolder, List<JavaVersion> javaVersions) throws IOException, XmlPullParserException {
+	public static void addMavenWrapper(Path parentFolder, List<JavaVersion> javaVersions) throws IOException {
 		for(JavaVersion javaVersion : javaVersions) {
 			Path javaVersionPath = parentFolder.resolve(javaVersion.getDirectoryName());
 			addMavenWrapper(javaVersionPath);
@@ -72,7 +72,7 @@ public class RunnerUtils {
 		return filteredModules;
 	}
 	
-	private static void addRootPom(Path parentFolder) throws IOException, XmlPullParserException {
+	private static void addRootPom(Path parentFolder) throws IOException {
 		Path rootPom = parentFolder.resolve("pom.xml");
 		if(rootPom.toFile().exists()) {
 			return;
@@ -115,4 +115,7 @@ public class RunnerUtils {
 		writer.write(new FileWriter(rootPom.toFile()), model);
 	}
 
+	private RunnerUtils() {
+		super();
+	}
 }

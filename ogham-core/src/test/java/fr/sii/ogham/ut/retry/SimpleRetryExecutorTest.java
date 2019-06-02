@@ -17,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import fr.sii.ogham.core.exception.retry.ExecutionFailedNotRetriedException;
+import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
 import fr.sii.ogham.core.retry.RetryStrategy;
 import fr.sii.ogham.core.retry.RetryStrategyProvider;
 import fr.sii.ogham.core.retry.SimpleRetryExecutor;
@@ -65,7 +67,7 @@ public class SimpleRetryExecutorTest {
 			retryExecutor.execute(action);
 			fail("should not succeed");
 		} catch(Exception e) {
-			assertThat(e, instanceOf(FooException.class));
+			assertThat(e, instanceOf(ExecutionFailedNotRetriedException.class));
 		}
 		verify(action).call();
 	}
@@ -118,7 +120,7 @@ public class SimpleRetryExecutorTest {
 			retryExecutor.execute(action);
 			fail("should not succeed");
 		} catch(Exception e) {
-			assertThat(e, instanceOf(FooException.class));
+			assertThat(e, instanceOf(MaximumAttemptsReachedException.class));
 		}
 		verify(action, times(4)).call();
 	}

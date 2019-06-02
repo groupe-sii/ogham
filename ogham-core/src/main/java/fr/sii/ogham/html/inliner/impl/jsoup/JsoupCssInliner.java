@@ -44,11 +44,13 @@ public class JsoupCssInliner implements CssInliner {
 	 */
 	private void extractStyles(Document doc, String stylesheet) {
 		String trimmedStylesheet = stylesheet.replaceAll("\n", "").replaceAll("/\\*.*?\\*/", "").replaceAll(" +", " ");
-		String styleRules = trimmedStylesheet.trim(), delims = "{}";
+		String styleRules = trimmedStylesheet.trim();
+		String delims = "{}";
 		StringTokenizer st = new StringTokenizer(styleRules, delims);
 		while (st.countTokens() > 1) {
-			String selector = st.nextToken(), properties = st.nextToken();
-			Elements selectedElements = doc.select(selector);
+			String selector = st.nextToken();
+			String properties = st.nextToken();
+			Elements selectedElements = doc.select(selector.trim());
 			for (Element selElem : selectedElements) {
 				String oldProperties = selElem.attr(TEMP_STYLE_ATTR);
 				selElem.attr(TEMP_STYLE_ATTR, oldProperties.length() > 0 ? concatenateProperties(oldProperties, properties) : properties);
@@ -71,7 +73,7 @@ public class JsoupCssInliner implements CssInliner {
 			if (!TRUE_VALUE.equals(e.attr(SKIP_INLINE))) {
 				String path = e.attr(HREF_ATTR);
 				Element style = new Element(Tag.valueOf(STYLE_TAG), "");
-				style.appendChild(new DataNode(getCss(cssContents, path), ""));
+				style.appendChild(new DataNode(getCss(cssContents, path)));
 				e.replaceWith(style);
 			}
 		}

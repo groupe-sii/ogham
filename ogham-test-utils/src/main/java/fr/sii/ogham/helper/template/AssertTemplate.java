@@ -61,10 +61,8 @@ public class AssertTemplate {
 	 * @param strict
 	 *            true to enable strict checking or false to allow comparison by
 	 *            ignoring new lines
-	 * @throws IOException
-	 *             when the expected content couldn't be read
 	 */
-	public static void assertEquals(String expectedContent, String content, boolean strict) throws IOException {
+	public static void assertEquals(String expectedContent, String content, boolean strict) {
 		Assert.assertEquals("parsed template is different to expected content", strict ? expectedContent : sanitize(expectedContent), strict ? content : sanitize(content));
 	}
 

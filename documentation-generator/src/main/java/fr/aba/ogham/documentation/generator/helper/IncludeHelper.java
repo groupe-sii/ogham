@@ -25,7 +25,7 @@ public class IncludeHelper {
 		while(m.find()) {
 			String includeContent = reader.getContent(resolve(asciidocDir, m.group(1), variables));
 			int offset = getLevelOffset(m);
-			includeContent = applyLeveloffset(m, includeContent, currentOffset + offset);
+			includeContent = applyLeveloffset(includeContent, currentOffset + offset);
 			includeContent = include(asciidocDir, includeContent, variables, currentOffset + offset);
 			m.appendReplacement(sb, Matcher.quoteReplacement(includeContent));
 		}
@@ -43,7 +43,7 @@ public class IncludeHelper {
 		return 0;
 	}
 	
-	private String applyLeveloffset(Matcher m, String includeContent, int offset) {
+	private String applyLeveloffset(String includeContent, int offset) {
 		if(offset!=0) {
 			includeContent = updateTitles(includeContent, offset);
 		}
@@ -55,12 +55,12 @@ public class IncludeHelper {
 		StringBuffer sb = new StringBuffer();
 		while(matcher.find()) {
 			int equalSigns = matcher.group(1).length();
-			String newTitle = "";
+			StringBuilder newTitle = new StringBuilder();
 			for(int i = 0 ; i<equalSigns+offset ; i++) {
-				newTitle += "=";
+				newTitle.append("=");
 			}
-			newTitle += matcher.group(2);
-			matcher.appendReplacement(sb, Matcher.quoteReplacement(newTitle));
+			newTitle.append(matcher.group(2));
+			matcher.appendReplacement(sb, Matcher.quoteReplacement(newTitle.toString()));
 		}
 		matcher.appendTail(sb);
 		return sb.toString();

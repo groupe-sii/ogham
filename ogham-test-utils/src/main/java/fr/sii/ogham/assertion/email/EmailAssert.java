@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -23,8 +24,6 @@ import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.hamcrest.Matcher;
 import org.junit.Assert;
-
-import com.google.common.base.Predicate;
 
 import fr.sii.ogham.assertion.HasParent;
 import fr.sii.ogham.assertion.context.SingleMessageContext;
@@ -210,7 +209,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Part> EmailAssert<P> body(Matcher<? super Part> matcher) {
+	public <T extends Part> EmailAssert<P> body(Matcher<? super Part> matcher) {	// NOSONAR
 		try {
 			String desc = "body of message ${messageIndex}";
 			int index = 0;
@@ -266,7 +265,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Part> EmailAssert<P> alternative(Matcher<? super Part> matcher) {
+	public <T extends Part> EmailAssert<P> alternative(Matcher<? super Part> matcher) {	// NOSONAR
 		try {
 			String desc = "alternative of message ${messageIndex}";
 			int index = 0;
@@ -426,7 +425,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Collection<? extends BodyPart>> EmailAssert<P> attachments(Matcher<? super Collection<? extends BodyPart>> matcher) {
+	public <T extends Collection<? extends BodyPart>> EmailAssert<P> attachments(Matcher<? super Collection<? extends BodyPart>> matcher) {	// NOSONAR
 		try {
 			String desc = "attachments of message ${messageIndex}";
 			int index = 0;

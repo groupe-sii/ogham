@@ -18,7 +18,7 @@ public class SmsglobalRestSender extends AbstractSpecializedSender<Sms> {
 
 	@Override
 	public void send(Sms message) throws MessageException {
-
+		// TODO: implement Smsglobal using HTTP API
 	}
 
 	@Override

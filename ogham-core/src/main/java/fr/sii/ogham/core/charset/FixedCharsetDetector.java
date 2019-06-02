@@ -2,6 +2,7 @@ package fr.sii.ogham.core.charset;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,7 +14,6 @@ import java.util.List;
  *
  */
 public class FixedCharsetDetector implements CharsetDetector {
-	private static final String DEFAULT_CHARSET = "UTF-8";
 
 	/**
 	 * The charset to use
@@ -24,7 +24,7 @@ public class FixedCharsetDetector implements CharsetDetector {
 	 * Initialize the provider with the default charset (UTF-8)
 	 */
 	public FixedCharsetDetector() {
-		this(Charset.forName(DEFAULT_CHARSET));
+		this(StandardCharsets.UTF_8);
 	}
 
 	/**

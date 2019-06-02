@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.service;
 
 import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.exception.MessagingRuntimeException;
 import fr.sii.ogham.core.message.Message;
 
 /**
@@ -39,6 +40,8 @@ public class WrapExceptionMessagingService implements MessagingService {
 		} catch (MessagingException e) {
 			throw e; // this is wanted to avoid wrapping MessagingException with
 						// MessagingException
+		} catch (MessagingRuntimeException e) {
+			throw new MessagingException("Message can't be sent due to technical exception. Cause: " + e.getMessage(), e);
 		} catch (IllegalArgumentException e) {
 			throw new MessagingException("Message can't be sent due to precondition not met. Cause: " + e.getMessage(), e);
 		} catch (IllegalStateException e) {

@@ -3,6 +3,9 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
@@ -75,44 +78,48 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  */
 @ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY)
 public class DefaultCloudhopperConfigurer implements MessagingConfigurer {
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultCloudhopperConfigurer.class);
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
-		if (canUseCloudhopper()) {
-			CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);
-			// use same environment as parent builder
-			builder.environment(msgBuilder.environment());
-			// @formatter:off
-			builder
-				.charset()
-					.convert("${ogham.sms.cloudhopper.default-app-charset}", "${ogham.sms.cloudhopper.smpp-charset}")
-					.convert("UTF-8", NAME_GSM)
-					.detector()
-						.defaultCharset("${ogham.sms.cloudhopper.default-app-charset}", "UTF-8")
-						.and()
-					.and()
-				.systemId("${ogham.sms.cloudhopper.system-id}", "${ogham.sms.smpp.system-id}")
-				.password("${ogham.sms.cloudhopper.password}", "${ogham.sms.smpp.password}")
-				.host("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}")
-				.port("${ogham.sms.cloudhopper.port}", "${ogham.sms.smpp.port}", "2775")
-				.interfaceVersion("${ogham.sms.cloudhopper.interface-version}", "3.4")
-				.session()
-					.sessionName("${ogham.sms.cloudhopper.session-name}")
-					.bindTimeout("${ogham.sms.cloudhopper.bind-timeout}", "5000")
-					.connectTimeout("${ogham.sms.cloudhopper.connect-timeout}", "10000")
-					.requestExpiryTimeout("${ogham.sms.cloudhopper.request-expiry-timeout}", "-1")
-					.windowMonitorInterval("${ogham.sms.cloudhopper.window-monitor-interval}", "-1")
-					.windowSize("${ogham.sms.cloudhopper.window-size}", "1")
-					.windowWait("${ogham.sms.cloudhopper.window-wait-timeout}", "60000")
-					.writeTimeout("${ogham.sms.cloudhopper.write-timeout}", "0")
-					.responseTimeout("${ogham.sms.cloudhopper.response-timeout}", "5000")
-					.unbindTimeout("${ogham.sms.cloudhopper.unbind-timeout}", "5000")
-					.connectRetry()
-						.fixedDelay()
-							.maxRetries("${ogham.sms.cloudhopper.connect-max-retry}", "5")
-							.delay("${ogham.sms.cloudhopper.connect-retry-delay}", "500");
-			// @formatter:on
+		if (!canUseCloudhopper()) {
+			LOG.debug("[{}] skip configuration", this);
+			return;
 		}
+		LOG.debug("[{}] apply configuration", this);
+		CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);
+		// use same environment as parent builder
+		builder.environment(msgBuilder.environment());
+		// @formatter:off
+		builder
+			.charset()
+				.convert("${ogham.sms.cloudhopper.default-app-charset}", "${ogham.sms.cloudhopper.smpp-charset}")
+				.convert("UTF-8", NAME_GSM)
+				.detector()
+					.defaultCharset("${ogham.sms.cloudhopper.default-app-charset}", "UTF-8")
+					.and()
+				.and()
+			.systemId("${ogham.sms.cloudhopper.system-id}", "${ogham.sms.smpp.system-id}")
+			.password("${ogham.sms.cloudhopper.password}", "${ogham.sms.smpp.password}")
+			.host("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}")
+			.port("${ogham.sms.cloudhopper.port}", "${ogham.sms.smpp.port}", "2775")
+			.interfaceVersion("${ogham.sms.cloudhopper.interface-version}", "3.4")
+			.session()
+				.sessionName("${ogham.sms.cloudhopper.session-name}")
+				.bindTimeout("${ogham.sms.cloudhopper.bind-timeout}", "5000")
+				.connectTimeout("${ogham.sms.cloudhopper.connect-timeout}", "10000")
+				.requestExpiryTimeout("${ogham.sms.cloudhopper.request-expiry-timeout}", "-1")
+				.windowMonitorInterval("${ogham.sms.cloudhopper.window-monitor-interval}", "-1")
+				.windowSize("${ogham.sms.cloudhopper.window-size}", "1")
+				.windowWait("${ogham.sms.cloudhopper.window-wait-timeout}", "60000")
+				.writeTimeout("${ogham.sms.cloudhopper.write-timeout}", "0")
+				.responseTimeout("${ogham.sms.cloudhopper.response-timeout}", "5000")
+				.unbindTimeout("${ogham.sms.cloudhopper.unbind-timeout}", "5000")
+				.connectRetry()
+					.fixedDelay()
+						.maxRetries("${ogham.sms.cloudhopper.connect-max-retry}", "5")
+						.delay("${ogham.sms.cloudhopper.connect-retry-delay}", "500");
+		// @formatter:on
 	}
 
 	private boolean canUseCloudhopper() {

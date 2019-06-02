@@ -3,6 +3,8 @@ package fr.sii.ogham.core.builder.configurer;
 import static fr.sii.ogham.core.CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIORITY;
 
 import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -113,9 +115,11 @@ import fr.sii.ogham.sms.message.Sms;
  */
 @ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_MESSAGING_CONFIGURER_PRIORITY)
 public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultMessagingConfigurer.class);
 
 	@Override
 	public void configure(MessagingBuilder builder) {
+		LOG.debug("[{}] apply configuration", this);
 		super.configure(builder);
 		builder.wrapUncaught(true);
 	}

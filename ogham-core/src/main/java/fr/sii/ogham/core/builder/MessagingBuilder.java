@@ -280,6 +280,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * @return this instance for fluent chaining
 	 */
 	public MessagingBuilder register(MessagingConfigurer configurer, int priority) {
+		LOG.debug("[{}] registered with priority={}", configurer, priority);
 		configurers.add(new PrioritizedConfigurer(priority, configurer));
 		return this;
 	}
@@ -294,6 +295,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	public void configure() {
 		Collections.sort(configurers, new PriorityComparator());
 		for (PrioritizedConfigurer configurer : configurers) {
+			LOG.debug("[{}] configuring...", configurer);
 			configurer.getConfigurer().configure(this);
 		}
 	}
@@ -1879,7 +1881,6 @@ public class MessagingBuilder implements Builder<MessagingService> {
 				try {
 					builder.register(configurerClass.newInstance(), annotation.priority());
 				} catch (InstantiationException | IllegalAccessException e) {
-					LOG.error("Failed to register custom auto-discovered configurer (" + configurerClass.getSimpleName() + ") for standard messaging builder", e);
 					throw new BuildException("Failed to register custom auto-discovered configurer (" + configurerClass.getSimpleName() + ") for standard messaging builder", e);
 				}
 			}
@@ -1889,9 +1890,11 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	private List<ConditionalSender> buildSenders() {
 		List<ConditionalSender> senders = new ArrayList<>();
 		if (emailBuilder != null) {
+			LOG.debug("building email sender with {}", emailBuilder);
 			senders.add(emailBuilder.build());
 		}
 		if (smsBuilder != null) {
+			LOG.debug("building email sender with {}", emailBuilder);
 			senders.add(smsBuilder.build());
 		}
 		return senders;
@@ -1920,6 +1923,11 @@ public class MessagingBuilder implements Builder<MessagingService> {
 
 		public MessagingConfigurer getConfigurer() {
 			return configurer;
+		}
+
+		@Override
+		public String toString() {
+			return configurer.toString();
 		}
 	}
 

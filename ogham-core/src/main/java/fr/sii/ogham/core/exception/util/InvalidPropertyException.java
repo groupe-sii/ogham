@@ -4,7 +4,7 @@ import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
 public class InvalidPropertyException extends BeanWrapperException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
-	private final Object bean;
+	private final transient Object bean;
 	private final String property;
 
 	public InvalidPropertyException(String message, Object bean, String property, Throwable cause) {

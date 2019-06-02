@@ -17,9 +17,9 @@ import fr.sii.ogham.email.message.Email;
 
 /**
  * Decorator sender that transforms the attachments of the message before really
- * sending it. This sender relies on {@link AttachmentResourceTranslator} to transform attachments.
- * Once the attachments are transformed, this sender delegates to a real implementation
- * the sending of the message.
+ * sending it. This sender relies on {@link AttachmentResourceTranslator} to
+ * transform attachments. Once the attachments are transformed, this sender
+ * delegates to a real implementation the sending of the message.
  * 
  * @author Aurélien Baudet
  * @see ResourceResolver
@@ -40,12 +40,12 @@ public class AttachmentResourceTranslatorSender implements ConditionalSender {
 
 	/**
 	 * Initialize the sender with the provided translator and decorated sender.
-	 * The translator implementation will transform attachments of the message. The
-	 * decorated sender will really send the message.
+	 * The translator implementation will transform attachments of the message.
+	 * The decorated sender will really send the message.
 	 * 
 	 * @param translator
-	 *            the translator implementation that will transform the attachments of
-	 *            the message
+	 *            the translator implementation that will transform the
+	 *            attachments of the message
 	 * @param delegate
 	 *            The decorated sender will really send the message
 	 */
@@ -57,13 +57,16 @@ public class AttachmentResourceTranslatorSender implements ConditionalSender {
 
 	@Override
 	public boolean supports(Message message) {
-		return delegate instanceof ConditionalSender ? ((ConditionalSender) delegate).supports(message) : true;
+		if (delegate instanceof ConditionalSender) {
+			return ((ConditionalSender) delegate).supports(message);
+		}
+		return true;
 	}
 
 	@Override
 	public void send(Message message) throws MessageException {
 		try {
-			for(Attachment attachment : ((Email) message).getAttachments()) {
+			for (Attachment attachment : ((Email) message).getAttachments()) {
 				LOG.debug("Translate attachment {} for the message {} using {}", attachment, message, translator);
 				attachment.setResource((NamedResource) translator.translate(attachment.getResource()));
 			}

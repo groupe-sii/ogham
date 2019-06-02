@@ -29,10 +29,10 @@ public class VariablesHelper {
 	public static class Variables {
 		private static final Pattern VARIABLE_REFERENCE = Pattern.compile("\\{([^}]+)\\}");
 
-		private Map<String, String> variables = new HashMap<>();
+		private Map<String, String> vars = new HashMap<>();
 
 		public void add(String variable, String value) {
-			variables.put(variable, value);
+			vars.put(variable, value);
 		}
 
 		public String evaluate(String str) {
@@ -42,7 +42,7 @@ public class VariablesHelper {
 			Matcher m = VARIABLE_REFERENCE.matcher(str);
 			StringBuffer sb = new StringBuffer();
 			while (m.find()) {
-				String value = evaluate(variables.get(m.group(1)));
+				String value = evaluate(vars.get(m.group(1)));
 				if (value == null) {
 					value = m.group(1);
 				}

@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Order(1)
 public class SpringBootProjectRunner implements ApplicationRunner {
-	public static final List<SpringBootDependency> STANDARD_BOOT_DEPS = asList(CONFIGURATION_PROCESSOR, DEVTOOLS, LOMBOK);
+	private static final List<SpringBootDependency> STANDARD_BOOT_DEPS = asList(CONFIGURATION_PROCESSOR, DEVTOOLS, LOMBOK);
 
 	@Autowired
 	SpringMatrixProperties springMatrixProperties;

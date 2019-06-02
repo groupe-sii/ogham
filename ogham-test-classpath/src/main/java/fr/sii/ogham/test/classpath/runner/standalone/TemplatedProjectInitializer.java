@@ -33,7 +33,7 @@ public class TemplatedProjectInitializer implements ProjectInitializer<Standalon
 			copy(resourceFolder, generatedProjectPath);
 			// evaluate templates
 			write(resourceFolder + "/pom.xml.ftl", new TemplateModel(new GeneratedProject(identifier, identifier)), generatedProjectPath.resolve("pom.xml"));
-			return new Project<StandaloneProjectParams>(generatedProjectPath, variables);
+			return new Project<>(generatedProjectPath, variables);
 		} catch (IOException | TemplateException e) {
 			log.error("Failed to initialize project {}: {}", identifier, e.getMessage());
 			throw new ProjectInitializationException("Failed to initialize project " + identifier, e);
@@ -44,10 +44,10 @@ public class TemplatedProjectInitializer implements ProjectInitializer<Standalon
 		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		Resource[] resources = resolver.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + resourceFolder + "/**");
 		for (Resource resource : resources) {
-			if (resource.exists() & resource.isReadable() && resource.contentLength() > 0) {
+			if (resource.exists() && resource.isReadable() && resource.contentLength() > 0) {
 				URL url = resource.getURL();
 				String urlString = url.toExternalForm();
-				String targetName = urlString.substring(urlString.indexOf(resourceFolder)+resourceFolder.length()+1);
+				String targetName = urlString.substring(urlString.indexOf(resourceFolder) + resourceFolder.length() + 1);
 				Path destination = generatedProjectPath.resolve(targetName);
 				Files.createDirectories(destination.getParent());
 				Files.copy(resource.getInputStream(), destination);
@@ -56,15 +56,16 @@ public class TemplatedProjectInitializer implements ProjectInitializer<Standalon
 	}
 
 	private void write(String template, Object model, Path out) throws IOException, TemplateException {
-		FileWriter writer = new FileWriter(out.toFile());
-		freemarkerConfig.getTemplate(template).process(model, writer);
+		try (FileWriter writer = new FileWriter(out.toFile())) {
+			freemarkerConfig.getTemplate(template).process(model, writer);
+		}
 	}
 
 	@Data
 	public static class TemplateModel {
 		private final GeneratedProject project;
 	}
-	
+
 	@Data
 	public static class GeneratedProject {
 		private final String name;

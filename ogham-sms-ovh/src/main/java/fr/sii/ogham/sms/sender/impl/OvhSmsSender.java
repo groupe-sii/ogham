@@ -133,7 +133,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 				LOG.debug("Sent SMS: {}", message);
 				LOG.debug("Response status {}", response.getStatus());
 				LOG.debug("Response body {}", response.getBody());
-				throw new MessageNotSentException("SMS couldn't be sent through OVH: " + json.get("message").asText(), message);
+				throw new MessageNotSentException("SMS couldn't be sent through OVH: " + json.get(MESSAGE).asText(), message);
 			} else {
 				LOG.info("SMS successfully sent through OVH");
 				LOG.debug("Sent SMS: {}", message);

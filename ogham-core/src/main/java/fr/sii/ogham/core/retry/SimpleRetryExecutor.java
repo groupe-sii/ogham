@@ -1,9 +1,16 @@
 package fr.sii.ogham.core.retry;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.retry.ExecutionFailedNotRetriedException;
+import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
+import fr.sii.ogham.core.exception.retry.RetryException;
+import fr.sii.ogham.core.exception.retry.RetryExecutionInterruptedException;
 
 /**
  * A simple implementation that tries to execute the action, if it fails (any
@@ -45,25 +52,45 @@ public class SimpleRetryExecutor implements RetryExecutor {
 	}
 
 	@Override
-	public <V> V execute(Callable<V> actionToRetry) throws Exception {
+	public <V> V execute(Callable<V> actionToRetry) throws RetryException {
 		// new instance for each execution
 		RetryStrategy retry = retryProvider.provide();
 		if (retry == null) {
-			return actionToRetry.call();
+			try {
+				return actionToRetry.call();
+			} catch (Exception e) {
+				throw new ExecutionFailedNotRetriedException("Failed to execute action "+getActionName(actionToRetry)+" and no retry strategy configured", e);
+			}
 		}
-		Exception last;
+		List<Exception> failures = new ArrayList<>();
 		do {
 			try {
 				return actionToRetry.call();
 			} catch (Exception e) {
+				failures.add(e);
 				long delay = Math.max(0, retry.nextDate() - System.currentTimeMillis());
-				LOG.debug("{} failed. Retrying in {}ms...", actionToRetry, delay);
-				last = e;
-				Thread.sleep(delay);
+				LOG.debug("{} failed. Retrying in {}ms...", getActionName(actionToRetry), delay);
+				pause(delay);
 			}
 		} while (!retry.terminated());
-		// throw the last exception
-		throw last;
+		// action couldn't be executed
+		throw new MaximumAttemptsReachedException("Maximum attempts to execute action "+getActionName(actionToRetry)+" is reached", failures);
+	}
+
+	private void pause(long delay) throws RetryExecutionInterruptedException {
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new RetryExecutionInterruptedException(e);
+		}
+	}
+
+	private <V> String getActionName(Callable<V> actionToRetry) {
+		if(actionToRetry instanceof NamedCallable) {
+			return ((NamedCallable<?>) actionToRetry).getName();
+		}
+		return "unnamed";
 	}
 
 }

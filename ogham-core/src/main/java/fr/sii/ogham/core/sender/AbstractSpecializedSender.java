@@ -12,22 +12,11 @@ import fr.sii.ogham.core.message.Message;
  * @param <M>
  *            The type of message that the sub-class is able to handle
  */
-public abstract class AbstractSpecializedSender<M> implements MessageSender {
+public abstract class AbstractSpecializedSender<M> implements SpecializedSender<M> {
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public void send(Message message) throws MessageException {
 		send((M) message);
 	}
-
-	/**
-	 * Sends the message. The message can be anything with any content and that
-	 * must be delivered to something or someone.
-	 * 
-	 * @param message
-	 *            the message to send
-	 * @throws MessageException
-	 *             when the message couldn't be sent
-	 */
-	public abstract void send(M message) throws MessageException;
 }

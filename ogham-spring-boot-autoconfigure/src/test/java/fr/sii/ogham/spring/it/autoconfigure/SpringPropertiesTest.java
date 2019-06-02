@@ -17,9 +17,9 @@ import com.cloudhopper.smpp.SmppConstants;
 import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.email.builder.sendgrid.SendGridBuilder;
-import fr.sii.ogham.email.sender.impl.SendGridSender;
-import fr.sii.ogham.email.sender.impl.sendgrid.client.DelegateSendGridClient;
+import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.builder.ovh.OvhSmsBuilder;
@@ -29,8 +29,8 @@ import fr.sii.ogham.spring.mock.MockApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = MockApplication.class, webEnvironment = NONE, 
-	properties = { "OGHAM_SMS_CLOUDHOPPER_HOST=localhost", 
-				   "OGHAM_SMS_OVH_PASSWORD=bar"})
+	properties = { "ogham.sms.cloudhopper.host=localhost", 
+				   "ogham.sms.ovh.password=bar"})
 public class SpringPropertiesTest {
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
@@ -59,10 +59,10 @@ public class SpringPropertiesTest {
 
 	@Test
 	public void sendGridPropertiesDefinedInAppPropertiesOrInSystemPropertiesShouldOverrideOghamDefaultProperties() {
-		SendGridSender sender = builder.email().sender(SendGridBuilder.class).build();
+		SendGridV4Sender sender = builder.email().sender(SendGridV4Builder.class).build();
 		DelegateSendGridClient delegate = (DelegateSendGridClient) sender.getDelegate();
 		assertThat(delegate.getApiKey(), nullValue());		// null and not 'toto' because SendGrid Spring bean is used instead of Ogham default SendGrid instance
-		assertThat(delegate.getClient(), sameInstance(springSendGridClient));
+		assertThat(delegate.getDelegate(), sameInstance(springSendGridClient));
 	}
 
 }

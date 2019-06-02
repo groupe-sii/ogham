@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import javax.mail.BodyPart;
@@ -14,7 +15,6 @@ import javax.mail.Part;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.common.base.Predicate;
 
 public class EmailUtils {
 	private static final Pattern TEXT_OR_HTML_MIMETYPES = Pattern.compile("^((text/)|(application/x?html)).*", Pattern.CASE_INSENSITIVE);
@@ -160,7 +160,7 @@ public class EmailUtils {
 		List<BodyPart> found = new ArrayList<>();
 		for (int i = 0; i < multipart.getCount(); i++) {
 			BodyPart bodyPart = multipart.getBodyPart(i);
-			if (filter.apply(bodyPart)) {
+			if (filter.test(bodyPart)) {
 				found.add(bodyPart);
 			}
 		}

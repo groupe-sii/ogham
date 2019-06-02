@@ -246,13 +246,13 @@ public class EqualsBuilder {
 		return org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals(object, other, excludeFields);
 	}
 
-	private static Object getFieldValue(Object object, String fieldName) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	private static Object getFieldValue(Object object, String fieldName) throws IllegalAccessException, NoSuchFieldException {
 		Field field = getField(object, fieldName);
 		field.setAccessible(true);
 		return field.get(object);
 	}
 
-	private static Field getField(Object object, String fieldName) {
+	private static Field getField(Object object, String fieldName) throws NoSuchFieldException {
 		Class<?> clazz = object.getClass();
 		while(clazz!=null) {
 			Field[] fields = clazz.getDeclaredFields();
@@ -263,6 +263,6 @@ public class EqualsBuilder {
 			}
 			clazz = clazz.getSuperclass();
 		}
-		throw new IllegalArgumentException("Field "+fieldName+" not found on object "+object.getClass());
+		throw new NoSuchFieldException("Field "+fieldName+" not found on object "+object.getClass());
 	}
 }

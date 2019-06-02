@@ -45,7 +45,7 @@ public class IdenticalHtmlMatcher extends BaseMatcher<String> implements Expecte
 		diff = HtmlUtils.compare(expected, (String) item);
 		boolean identical = diff.identical();
 		if(!identical) {
-			LOG.warn(comparisonMessage());
+			LOG.warn(comparisonMessage());	// NOSONAR
 		}
 		return identical;
 	}

@@ -104,7 +104,7 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 	@Override
 	public ConverterBuilder<EnvironmentBuilder<P>> converter() {
 		if (converterBuilder == null) {
-			converterBuilder = new SimpleConverterBuilder<EnvironmentBuilder<P>>(this);
+			converterBuilder = new SimpleConverterBuilder<>(this);
 		}
 		return converterBuilder;
 	}
@@ -122,7 +122,7 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 
 	@Override
 	public PropertiesBuilder<EnvironmentBuilder<P>> properties(int priority) {
-		PropertiesBuilder<EnvironmentBuilder<P>> propsBuilder = new SimplePropertiesBuilder<EnvironmentBuilder<P>>(this);
+		PropertiesBuilder<EnvironmentBuilder<P>> propsBuilder = new SimplePropertiesBuilder<>(this);
 		props.add(new PropsBuilder(propsBuilder, priority, currentIndex++));
 		return propsBuilder;
 	}
@@ -178,7 +178,7 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 
 	}
 
-	private static abstract class AbstractProps {
+	private abstract static class AbstractProps {
 		protected final int priority;
 		protected final int index;
 

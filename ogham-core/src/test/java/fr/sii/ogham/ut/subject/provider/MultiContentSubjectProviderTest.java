@@ -1,13 +1,15 @@
 package fr.sii.ogham.ut.subject.provider;
 
+import static org.mockito.quality.Strictness.LENIENT;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -16,10 +18,12 @@ import fr.sii.ogham.core.subject.provider.SubjectProvider;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 
-@RunWith(MockitoJUnitRunner.class)
 public class MultiContentSubjectProviderTest {
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
+	
+	@Rule
+	public final MockitoRule mockito = MockitoJUnit.rule().strictness(LENIENT);
 	
 	private MultiContentSubjectProvider provider;
 	

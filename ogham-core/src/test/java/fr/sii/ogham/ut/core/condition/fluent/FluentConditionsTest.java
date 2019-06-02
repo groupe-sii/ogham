@@ -4,7 +4,7 @@ import static fr.sii.ogham.core.condition.fluent.MessageConditions.$;
 import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredProperty;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.junit.Rule;

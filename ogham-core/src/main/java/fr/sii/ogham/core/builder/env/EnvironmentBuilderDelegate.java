@@ -77,7 +77,7 @@ public class EnvironmentBuilderDelegate<P> extends AbstractParent<P> implements 
 
 	@Override
 	public ConverterBuilder<EnvironmentBuilder<P>> converter() {
-		return new ConverterBuilderDelegate<EnvironmentBuilder<P>>(this, delegate.converter());
+		return new ConverterBuilderDelegate<>(this, delegate.converter());
 	}
 
 	@Override
@@ -88,12 +88,12 @@ public class EnvironmentBuilderDelegate<P> extends AbstractParent<P> implements 
 
 	@Override
 	public PropertiesBuilder<EnvironmentBuilder<P>> properties() {
-		return new PropertiesBuilderDelegate<EnvironmentBuilder<P>>(this, delegate.properties());
+		return new PropertiesBuilderDelegate<>(this, delegate.properties());
 	}
 
 	@Override
 	public PropertiesBuilder<EnvironmentBuilder<P>> properties(int priority) {
-		return new PropertiesBuilderDelegate<EnvironmentBuilder<P>>(this, delegate.properties(priority));
+		return new PropertiesBuilderDelegate<>(this, delegate.properties(priority));
 	}
 	
 	@Override

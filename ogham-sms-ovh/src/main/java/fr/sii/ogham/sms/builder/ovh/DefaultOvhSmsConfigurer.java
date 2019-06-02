@@ -2,6 +2,9 @@ package fr.sii.ogham.sms.builder.ovh;
 
 import static fr.sii.ogham.sms.OvhSmsConstants.DEFAULT_OVHSMS_CONFIGURER_PRIORITY;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
@@ -63,9 +66,12 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  */
 @ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_OVHSMS_CONFIGURER_PRIORITY)
 public class DefaultOvhSmsConfigurer implements MessagingConfigurer {
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultOvhSmsConfigurer.class);
+	
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
+		LOG.debug("[{}] apply configuration", this);
 		OvhSmsBuilder builder = msgBuilder.sms().sender(OvhSmsBuilder.class);
 		// use same environment as parent builder
 		builder.environment(msgBuilder.environment());
