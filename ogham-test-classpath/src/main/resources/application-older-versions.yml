@@ -1,0 +1,49 @@
+spring-matrix:
+  java:
+    - 1.8
+  build:
+    - maven
+  spring-boot-version:
+#    - 1.3.8.RELEASE
+    - 1.4.7.RELEASE
+  spring-boot-dependencies:
+    -
+    - web
+    - thymeleaf
+    - freemarker
+    - mail
+    - web+thymeleaf
+    - web+freemarker
+  ogham-dependencies:
+    - spring-boot-autoconfigure
+    - spring-boot-starter-email
+    - spring-boot-starter-sms
+    - spring-boot-starter-all
+        
+standalone-matrix:
+  java:
+    - 1.8
+#    - 9
+#    - 10
+#    - 11
+#    - 12
+  build:
+    - maven
+  ogham-dependencies:
+    - core
+    - email-javamail
+    - email-sendgrid
+    - sms-ovh
+    - sms-cloudhopper
+    - all
+    - spring-boot-autoconfigure+core
+    - spring-boot-autoconfigure+email-javamail
+    - spring-boot-autoconfigure+email-sendgrid
+    - spring-boot-autoconfigure+sms-cloudhopper
+    - spring-boot-autoconfigure+sms-ovh
+    - spring-boot-autoconfigure+all
+    - spring-boot-starter-email
+    - spring-boot-starter-sms
+    - spring-boot-starter-all
+
+spring.initializer.url: http://localhost:8052/starter.zip
