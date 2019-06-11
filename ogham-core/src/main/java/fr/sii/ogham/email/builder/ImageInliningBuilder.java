@@ -21,6 +21,8 @@ import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
+import fr.sii.ogham.core.resource.path.RelativePathResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
@@ -334,7 +336,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 			return null;
 		}
 		LOG.info("Images will be inlined");
-		return new InlineImageTranslator(imageInliner, resourceResolver, mimetypeProvider);
+		return new InlineImageTranslator(imageInliner, resourceResolver, mimetypeProvider, buildRelativePathProvider());
 	}
 
 	private MimeTypeProvider buildMimetypeProvider() {
@@ -360,4 +362,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 		return new FirstSupportingResourceResolver(resolvers);
 	}
 
+	private RelativePathResolver buildRelativePathProvider() {
+		return new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups());
+	}
 }

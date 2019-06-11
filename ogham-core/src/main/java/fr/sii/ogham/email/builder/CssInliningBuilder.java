@@ -13,6 +13,8 @@ import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
+import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
+import fr.sii.ogham.core.resource.path.RelativePathResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
@@ -92,7 +94,7 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 			LOG.info("CSS won't be applied on HTML content of your emails because no inliner is configured");
 			return null;
 		}
-		return new InlineCssTranslator(cssInliner, resourceResolver);
+		return new InlineCssTranslator(cssInliner, resourceResolver, buildRelativePathProvider());
 	}
 
 	private CssInliner buildInliner() {
@@ -107,4 +109,7 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 		return new FirstSupportingResourceResolver(resolvers);
 	}
 
+	private RelativePathResolver buildRelativePathProvider() {
+		return new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups());
+	}
 }

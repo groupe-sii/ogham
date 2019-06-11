@@ -10,9 +10,11 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.HasResourcePath;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.message.content.UpdatableStringContent;
+import fr.sii.ogham.core.resource.path.RelativePathResolver;
 import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -38,17 +40,23 @@ public class InlineCssTranslator implements ContentTranslator {
 	/**
 	 * The CSS inliner
 	 */
-	private CssInliner cssInliner;
+	private final CssInliner cssInliner;
 
 	/**
 	 * The resource resolver to find the CSS files
 	 */
-	private ResourceResolver resourceResolver;
+	private final ResourceResolver resourceResolver;
+	
+	/**
+	 * Provides an instance used to resolve relative path from source path and relative path
+	 */
+	private final RelativePathResolver relativePathProvider;
 
-	public InlineCssTranslator(CssInliner cssInliner, ResourceResolver resourceResolver) {
+	public InlineCssTranslator(CssInliner cssInliner, ResourceResolver resourceResolver, RelativePathResolver relativePathProvider) {
 		super();
 		this.cssInliner = cssInliner;
 		this.resourceResolver = resourceResolver;
+		this.relativePathProvider = relativePathProvider;
 	}
 
 	@Override
@@ -59,7 +67,7 @@ public class InlineCssTranslator implements ContentTranslator {
 				List<String> cssFiles = HtmlUtils.getDistinctCssUrls(stringContent);
 				if (!cssFiles.isEmpty()) {
 					// prepare list of css files/urls with their content
-					List<ExternalCss> cssResources = load(cssFiles);
+					List<ExternalCss> cssResources = load(getSourcePath(content), cssFiles);
 					// generate the content with inlined css
 					String inlinedContentStr = cssInliner.inline(stringContent, cssResources);
 					// update the HTML content
@@ -72,10 +80,17 @@ public class InlineCssTranslator implements ContentTranslator {
 		return content;
 	}
 
-	private List<ExternalCss> load(List<String> cssFiles) throws ContentTranslatorException {
+	private ResourcePath getSourcePath(Content content) {
+		if(content instanceof HasResourcePath) {
+			return ((HasResourcePath) content).getPath();
+		}
+		return new UnresolvedPath("");
+	}
+
+	private List<ExternalCss> load(ResourcePath sourcePath, List<String> cssFiles) throws ContentTranslatorException {
 		List<ExternalCss> cssResources = new ArrayList<>(cssFiles.size());
 		for (String path : cssFiles) {
-			load(cssResources, new UnresolvedPath(path));
+			load(cssResources, relativePathProvider.resolve(sourcePath, path));
 		}
 		return cssResources;
 	}

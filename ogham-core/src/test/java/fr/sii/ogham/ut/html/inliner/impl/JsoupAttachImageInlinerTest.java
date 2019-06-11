@@ -20,6 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.resource.ByteResource;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.attachment.ContentDisposition;
 import fr.sii.ogham.helper.html.AssertHtml;
@@ -122,7 +123,7 @@ public class JsoupAttachImageInlinerTest {
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
 		List<ImageResource> resources = new ArrayList<>(imageNames.length);
 		for(String imageName : imageNames) {
-			resources.add(new ImageResource(imageName, "images/"+imageName, resource(SOURCE_FOLDER+"images/"+imageName), "image/gif"));
+			resources.add(new ImageResource(imageName, "images/"+imageName, new UnresolvedPath("images/"+imageName), resource(SOURCE_FOLDER+"images/"+imageName), "image/gif"));
 		}
 		return resources;
 	}

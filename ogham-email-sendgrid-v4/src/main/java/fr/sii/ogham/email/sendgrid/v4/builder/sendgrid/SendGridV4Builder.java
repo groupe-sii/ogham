@@ -13,8 +13,8 @@ import com.sendgrid.SendGrid;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
-import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.builder.EmailBuilder;
@@ -361,7 +361,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		MimeTypeProvider mimetypeProvider = mimetypeBuilder.build();
 		MapContentHandler contentHandler = new MapContentHandler();
 		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
-		contentHandler.register(StringContent.class, new StringContentHandler(mimetypeProvider));
+		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider));
 		return contentHandler;
 	}
 }

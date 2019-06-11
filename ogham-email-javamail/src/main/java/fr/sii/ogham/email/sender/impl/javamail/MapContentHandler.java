@@ -2,6 +2,7 @@ package fr.sii.ogham.email.sender.impl.javamail;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.mail.Multipart;
 import javax.mail.internet.MimePart;
@@ -43,7 +44,7 @@ public class MapContentHandler implements JavaMailContentHandler {
 
 	@Override
 	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
-		JavaMailContentHandler contentHandler = map.get(content.getClass());
+		JavaMailContentHandler contentHandler = getContentHandler(content);
 		if (contentHandler == null) {
 			throw new NoContentHandlerException("there is no content handler defined for managing " + content.getClass().getSimpleName() + " content class", content);
 		}
@@ -62,4 +63,12 @@ public class MapContentHandler implements JavaMailContentHandler {
 		map.put(clazz, handler);
 	}
 
+	private JavaMailContentHandler getContentHandler(Content content) {
+		for(Entry<Class<? extends Content>, JavaMailContentHandler> entry : map.entrySet()) {
+			if(entry.getKey().isAssignableFrom(content.getClass())) {
+				return entry.getValue();
+			}
+		}
+		return null;
+	}
 }

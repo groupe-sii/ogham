@@ -27,14 +27,14 @@ public class StringContent implements MayHaveStringContent, UpdatableStringConte
 		this.content = content;
 	}
 
-	/**
-	 * Get the content as string.
-	 * 
-	 * @return the content as string
-	 */
-	public String getContent() {
-		return content;
-	}
+//	/**
+//	 * Get the content as string.
+//	 * 
+//	 * @return the content as string
+//	 */
+//	public String getContent() {
+//		return content;
+//	}
 
 	@Override
 	public String toString() {

@@ -10,7 +10,7 @@ import javax.mail.internet.MimePart;
 import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.message.content.Content;
-import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.email.exception.javamail.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
@@ -43,7 +43,7 @@ public class StringContentHandler implements JavaMailContentHandler {
 	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
 		try {
 			MimeBodyPart part = new MimeBodyPart();
-			String strContent = ((StringContent) content).getContent();
+			String strContent = ((MayHaveStringContent) content).asString();
 			Charset charset = charsetProvider.detect(strContent);
 			String charsetParam = charset == null ? "" : (";charset=" + charset.name());
 			part.setContent(strContent, mimetypeProvider.detect(strContent).toString() + charsetParam);

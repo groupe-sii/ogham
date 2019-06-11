@@ -1,24 +1,26 @@
 package fr.sii.ogham.it.template.thymeleaf;
 
+import static fr.sii.ogham.helper.template.AssertTemplate.assertSimilar;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
-import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.template.context.BeanContext;
 import fr.sii.ogham.core.template.context.LocaleContext;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
-import fr.sii.ogham.helper.template.AssertTemplate;
 import fr.sii.ogham.mock.context.NestedBean;
 import fr.sii.ogham.mock.context.SimpleBean;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3SmsBuilder;
@@ -57,49 +59,49 @@ public class ThymeleafParserTest {
 	@Test
 	public void html() throws ParseException, IOException {
 		Content content = parser.parse(new UnresolvedPath("classpath:simple.html"), new BeanContext(new SimpleBean("foo", 42)));
-		Assert.assertNotNull("content should not be null", content);
-		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertSimilar("/template/thymeleaf/expected/simple_foo_42.html", content);
+		assertNotNull("content should not be null", content);
+		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
+		assertSimilar("/template/thymeleaf/expected/simple_foo_42.html", content);
 	}
 	
 	@Test
 	public void text() throws ParseException, IOException {
 		Content content = parser.parse(new UnresolvedPath("classpath:simple.txt"), new BeanContext(new SimpleBean("foo", 42)));
-		Assert.assertNotNull("content should not be null", content);
-		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertSimilar("/template/thymeleaf/expected/simple_foo_42.txt", content);
+		assertNotNull("content should not be null", content);
+		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
+		assertSimilar("/template/thymeleaf/expected/simple_foo_42.txt", content);
 	}
 	
 	@Test
 	public void nested() throws ParseException, IOException {
 		Content content = parser.parse(new UnresolvedPath("classpath:nested.html"), new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
-		Assert.assertNotNull("content should not be null", content);
-		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertSimilar("/template/thymeleaf/expected/nested_foo_42.html", content);
+		assertNotNull("content should not be null", content);
+		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
+		assertSimilar("/template/thymeleaf/expected/nested_foo_42.html", content);
 	}
 	
 	@Test
 	public void layout() throws ParseException, IOException {
 		Content content = parser.parse(new UnresolvedPath("classpath:layout.html"), new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
-		Assert.assertNotNull("content should not be null", content);
-		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertSimilar("/template/thymeleaf/expected/layout_foo_42.html", content);
+		assertNotNull("content should not be null", content);
+		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
+		assertSimilar("/template/thymeleaf/expected/layout_foo_42.html", content);
 	}
 	
 	@Test
 	public void french() throws ParseException, IOException {
 		Content content = parser.parse(new UnresolvedPath("classpath:locale.txt"), new LocaleContext(new SimpleBean("foo", 42, date), Locale.FRENCH));
-		Assert.assertNotNull("content should not be null", content);
-		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertSimilar("/template/thymeleaf/expected/locale_foo_42_fr.txt", content);
+		assertNotNull("content should not be null", content);
+		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
+		assertSimilar("/template/thymeleaf/expected/locale_foo_42_fr.txt", content);
 	}
 	
 	@Test
 	public void english() throws ParseException, IOException {
 		Content content = parser.parse(new UnresolvedPath("classpath:locale.txt"), new LocaleContext(new SimpleBean("foo", 42, date), Locale.ENGLISH));
-		Assert.assertNotNull("content should not be null", content);
-		Assert.assertTrue("content should be StringContent", content instanceof StringContent);
-		AssertTemplate.assertSimilar("/template/thymeleaf/expected/locale_foo_42_en.txt", content);
+		assertNotNull("content should not be null", content);
+		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
+		assertSimilar("/template/thymeleaf/expected/locale_foo_42_en.txt", content);
 	}
 	
 	@Test(expected=ParseException.class)

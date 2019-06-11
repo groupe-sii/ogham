@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.helper.html.AssertHtml;
 import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.html.inliner.ContentWithImages;
@@ -74,7 +75,7 @@ public class JsoupBase64ImageInlinerTest {
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
 		List<ImageResource> resources = new ArrayList<>(imageNames.length);
 		for(String imageName : imageNames) {
-			resources.add(new ImageResource(imageName, "images/"+imageName, resource(SOURCE_FOLDER+"images/"+imageName), "image/gif"));
+			resources.add(new ImageResource(imageName, "images/"+imageName, new UnresolvedPath("images/"+imageName), resource(SOURCE_FOLDER+"images/"+imageName), "image/gif"));
 		}
 		return resources;
 	}

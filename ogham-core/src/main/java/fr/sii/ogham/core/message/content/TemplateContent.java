@@ -14,7 +14,7 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  * @author Aurélien Baudet
  *
  */
-public class TemplateContent implements Content {
+public class TemplateContent implements Content, HasResourcePath {
 	/**
 	 * The path to the template
 	 */
@@ -78,6 +78,7 @@ public class TemplateContent implements Content {
 		this(path, new BeanContext(bean));
 	}
 
+	@Override
 	public ResourcePath getPath() {
 		return path;
 	}

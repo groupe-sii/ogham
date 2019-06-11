@@ -2,6 +2,7 @@ package fr.sii.ogham.html.inliner;
 
 import java.util.Arrays;
 
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
 
 /**
@@ -13,13 +14,15 @@ import fr.sii.ogham.html.translator.InlineImageTranslator;
  *
  */
 public class ImageResource {
-	private String name;
+	private final String name;
 
-	private String path;
+	private final String srcUrl;
 
-	private byte[] content;
+	private final ResourcePath path;
 
-	private String mimetype;
+	private final byte[] content;
+
+	private final String mimetype;
 
 	/**
 	 * Initialize the resource with the name of the image, the path of the image
@@ -29,6 +32,8 @@ public class ImageResource {
 	 * 
 	 * @param name
 	 *            the name of the image
+	 * @param srcUrl
+	 *            the URL of the image used in the html content
 	 * @param path
 	 *            the path to the image
 	 * @param content
@@ -36,15 +41,20 @@ public class ImageResource {
 	 * @param mimetype
 	 *            the mimetype of the image
 	 */
-	public ImageResource(String name, String path, byte[] content, String mimetype) {
+	public ImageResource(String name, String srcUrl, ResourcePath path, byte[] content, String mimetype) {
 		super();
 		this.name = name;
+		this.srcUrl = srcUrl;
 		this.path = path;
 		this.content = Arrays.copyOf(content, content.length);
 		this.mimetype = mimetype;
 	}
 
-	public String getPath() {
+	public String getSrcUrl() {
+		return srcUrl;
+	}
+
+	public ResourcePath getPath() {
 		return path;
 	}
 

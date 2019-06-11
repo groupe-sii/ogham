@@ -1,11 +1,14 @@
 package fr.sii.ogham.it.html.translator;
 
 import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
+import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -25,6 +28,8 @@ import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.TikaProvider;
 import fr.sii.ogham.core.resource.ByteResource;
+import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.attachment.ContentDisposition;
@@ -69,7 +74,11 @@ public class JsoupInlineImageTranslatorTest {
 						.buildResolver();
 		MimeTypeProvider mimetypeProvider = new TikaProvider();
 		ImageInliner inliner = new EveryImageInliner(new JsoupAttachImageInliner(generator), new JsoupBase64ImageInliner());
-		translator = new InlineImageTranslator(inliner, resourceResolver, mimetypeProvider);
+		Map<String, List<String>> lookups = new HashMap<>();
+		lookups.put("string", asList("string:", "s:"));
+		lookups.put("file", asList("file:"));
+		lookups.put("classpath", asList("classpath:", ""));
+		translator = new InlineImageTranslator(inliner, resourceResolver, mimetypeProvider, new LookupAwareRelativePathResolver(lookups));
 	}
 
 	@Test
@@ -149,8 +158,8 @@ public class JsoupInlineImageTranslatorTest {
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
 		List<ImageResource> resources = new ArrayList<>(imageNames.length);
 		for (String imageName : imageNames) {
-			resources.add(new ImageResource(imageName, "images/" + imageName, IOUtils.toByteArray(JsoupInlineImageTranslatorTest.class.getResourceAsStream(SOURCE_FOLDER + "images/" + imageName)),
-					"images/gif"));
+			resources.add(new ImageResource(imageName, "images/" + imageName, new UnresolvedPath("images/" + imageName),
+					IOUtils.toByteArray(JsoupInlineImageTranslatorTest.class.getResourceAsStream(SOURCE_FOLDER + "images/" + imageName)), "images/gif"));
 		}
 		return resources;
 	}

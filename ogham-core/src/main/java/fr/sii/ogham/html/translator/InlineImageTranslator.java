@@ -17,10 +17,14 @@ import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.HasResourcePath;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.message.content.UpdatableStringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.resource.path.RelativePath;
+import fr.sii.ogham.core.resource.path.RelativePathResolver;
+import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
@@ -53,23 +57,29 @@ public class InlineImageTranslator implements ContentTranslator {
 	/**
 	 * The image inliner
 	 */
-	private ImageInliner inliner;
+	private final ImageInliner inliner;
 
 	/**
 	 * The resource resolver used to find images
 	 */
-	private ResourceResolver resourceResolver;
+	private final ResourceResolver resourceResolver;
 
 	/**
 	 * The provider that detects the mimetype for each image
 	 */
-	private MimeTypeProvider mimetypeProvider;
+	private final MimeTypeProvider mimetypeProvider;
+	
+	/**
+	 * Provides an instance used to resolve relative path from source path and relative path
+	 */
+	private final RelativePathResolver relativePathProvider;
 
-	public InlineImageTranslator(ImageInliner inliner, ResourceResolver resourceResolver, MimeTypeProvider mimetypeProvider) {
+	public InlineImageTranslator(ImageInliner inliner, ResourceResolver resourceResolver, MimeTypeProvider mimetypeProvider, RelativePathResolver relativePathProvider) {
 		super();
 		this.inliner = inliner;
 		this.resourceResolver = resourceResolver;
 		this.mimetypeProvider = mimetypeProvider;
+		this.relativePathProvider = relativePathProvider;
 	}
 
 	@Override
@@ -79,7 +89,7 @@ public class InlineImageTranslator implements ContentTranslator {
 			List<String> images = filterExternalUrls(HtmlUtils.getDistinctImageUrls(stringContent));
 			if (!images.isEmpty()) {
 				// parepare list of images paths/urls with their content
-				List<ImageResource> imageResources = load(images);
+				List<ImageResource> imageResources = load(getSourcePath(content), images);
 				// generate new HTML with inlined images
 				ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);
 				// remove ogham attributes
@@ -110,21 +120,28 @@ public class InlineImageTranslator implements ContentTranslator {
 		}
 		return imageUrls;
 	}
+
+	private ResourcePath getSourcePath(Content content) {
+		if(content instanceof HasResourcePath) {
+			return ((HasResourcePath) content).getPath();
+		}
+		return new UnresolvedPath("");
+	}
 	
-	private List<ImageResource> load(List<String> images) throws ContentTranslatorException {
+	private List<ImageResource> load(ResourcePath sourcePath, List<String> images) throws ContentTranslatorException {
 		List<ImageResource> imageResources = new ArrayList<>(images.size());
 		for (String path : images) {
-			load(imageResources, path);
+			load(imageResources, relativePathProvider.resolve(sourcePath, path));
 		}
 		return imageResources;
 	}
 
-	private void load(List<ImageResource> imageResources, String path) throws ContentTranslatorException {
+	private void load(List<ImageResource> imageResources, RelativePath path) throws ContentTranslatorException {
 		try {
-			byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(new UnresolvedPath(path)).getInputStream());
+			byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
 			String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();
-			String imgName = new File(path).getName();
-			imageResources.add(new ImageResource(imgName, path, imgContent, mimetype));
+			String imgName = new File(path.getOriginalPath()).getName();
+			imageResources.add(new ImageResource(imgName, path.getRelativePath().getOriginalPath(), path, imgContent, mimetype));
 		} catch (IOException e) {
 			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
 		} catch (ResourceResolutionException e) {

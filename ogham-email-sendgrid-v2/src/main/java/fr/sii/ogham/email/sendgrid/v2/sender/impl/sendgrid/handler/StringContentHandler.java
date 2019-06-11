@@ -7,6 +7,7 @@ import com.sendgrid.SendGrid.Email;
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
@@ -63,8 +64,8 @@ public final class StringContentHandler implements SendGridContentHandler {
 			throw new IllegalArgumentException("[content] cannot be null");
 		}
 
-		if (content instanceof StringContent) {
-			final String contentStr = ((StringContent) content).getContent();
+		if (content instanceof MayHaveStringContent && ((MayHaveStringContent) content).canProvideString()) {
+			final String contentStr = ((MayHaveStringContent) content).asString();
 
 			try {
 				final String mime = mimeProvider.detect(contentStr).toString();
@@ -74,7 +75,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 				throw new ContentHandlerException("Unable to set the email content", e);
 			}
 		} else {
-			throw new IllegalArgumentException("This instance can only work with StringContent instances, but was passed " + content.getClass().getSimpleName());
+			throw new IllegalArgumentException("This instance can only work with MayHaveStringContent instances, but was passed " + content.getClass().getSimpleName());
 		}
 
 	}

@@ -54,7 +54,7 @@ public class JsoupBase64ImageInliner implements ImageInliner {
 	}
 
 	private Elements getImagesToInline(Document doc, ImageResource image) {
-		Elements imgs = doc.select(MessageFormat.format(IMG_SELECTOR, image.getPath()));
+		Elements imgs = doc.select(MessageFormat.format(IMG_SELECTOR, image.getSrcUrl()));
 		Elements found = new Elements();
 		for (Element img : imgs) {
 			// only apply inlining if mode matches

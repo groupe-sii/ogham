@@ -2,6 +2,7 @@ package fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +64,22 @@ public final class MapContentHandler implements SendGridContentHandler {
 
 		final Class<?> clazz = content.getClass();
 		LOG.debug("Getting content handler for type {}", clazz);
-		final SendGridContentHandler handler = handlers.get(clazz);
+		final SendGridContentHandler handler = findHandler(clazz);
 		if (handler == null) {
 			LOG.warn("No content handler found for requested type {}", clazz);
 			throw new ContentHandlerException("No content handler found for content type " + clazz.getSimpleName());
 		} else {
 			handler.setContent(email, content);
 		}
+	}
+
+	private SendGridContentHandler findHandler(final Class<?> clazz) {
+		for(Entry<Class<? extends Content>, SendGridContentHandler> entry : handlers.entrySet()) {
+			if(entry.getKey().isAssignableFrom(clazz)) {
+				return entry.getValue();
+			}
+		}
+		return null;
 	}
 
 }

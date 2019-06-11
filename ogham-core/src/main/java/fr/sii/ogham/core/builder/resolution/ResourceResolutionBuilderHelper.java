@@ -3,7 +3,9 @@ package fr.sii.ogham.core.builder.resolution;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -75,6 +77,19 @@ public class ResourceResolutionBuilderHelper<FLUENT extends ResourceResolutionBu
 	public FLUENT resolver(ResourceResolver resolver) {
 		customResolvers.add(resolver);
 		return fluent;
+	}
+
+	/**
+	 * For each kind of lookup, stores the list of registered lookups.
+	 * 
+	 * @return map of lookups indexed by lookup type.
+	 */
+	public Map<String, List<String>> getAllLookups() {
+		Map<String, List<String>> all = new HashMap<>();
+		all.put("string", string.getLookups());
+		all.put("file", file.getLookups());
+		all.put("classpath", classPath.getLookups());
+		return all;
 	}
 
 	/**

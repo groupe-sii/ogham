@@ -60,7 +60,7 @@ public class ResolvedResourcePath implements ResourcePath, ResolvedPath {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ResourcePath [original path=").append(originalPath).append(", resolved path=").append(resolvedPath).append("]");
+		builder.append("ResolvedResourcePath [original path=").append(originalPath).append(", resolved path=").append(resolvedPath).append("]");
 		return builder.toString();
 	}
 }

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.template.ContextException;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
-import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.ParsedContent;
 import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.context.LocaleContext;
@@ -49,7 +49,7 @@ public class FreeMarkerParser implements TemplateParser {
 			LOG.debug("Template {} successfully parsed with context {}. Result:", templatePath, ctx);
 			String templateString = out.toString();
 			LOG.debug("{}", templateString);
-			return new StringContent(templateString);
+			return new ParsedContent(templatePath, ctx, templateString);
 
 		} catch (IOException | TemplateException e) {
 			throw new ParseException("Failed to parse template with FreeMarker", templatePath, ctx, e);

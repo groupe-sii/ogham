@@ -35,8 +35,8 @@ import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
-import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
@@ -638,8 +638,8 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	private MapContentHandler buildContentHandler(MimeTypeProvider mimetypeProvider) {
 		MapContentHandler contentHandler = new MapContentHandler();
 		contentHandler.addContentHandler(MultiContent.class, new MultiContentHandler(contentHandler));
-		contentHandler.addContentHandler(StringContent.class, new StringContentHandler(mimetypeProvider, buildCharset()));
 		contentHandler.addContentHandler(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler));
+		contentHandler.addContentHandler(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider, buildCharset()));
 		return contentHandler;
 	}
 
