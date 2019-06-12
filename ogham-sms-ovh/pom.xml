@@ -17,7 +17,6 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -32,7 +31,6 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

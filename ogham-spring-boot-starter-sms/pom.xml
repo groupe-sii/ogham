@@ -15,32 +15,26 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring-boot-autoconfigure</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-sms-cloudhopper</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-sms-ovh</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-template-freemarker</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-template-thymeleaf</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

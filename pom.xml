@@ -21,6 +21,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<!-- Dependencies -->
+		<ogham.version>${project.version}</ogham.version>
 		<commons-io.version>2.6</commons-io.version>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
 		<thymeleaf-v2.version>2.1.6.RELEASE</thymeleaf-v2.version>
@@ -68,13 +69,18 @@
 		<bootstrap.version>4.3.1</bootstrap.version>
 		<bootswatch.version>4.2.1</bootswatch.version>
 
-		<!-- Code coverage -->
-		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
-		<jacoco.ut.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
+		<!-- Tests -->
 		<skip.integration.tests>false</skip.integration.tests>
 		<skip.unit.tests>false</skip.unit.tests>
 
+		<!-- Code coverage -->
+		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
+		<jacoco.ut.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
+		<jacoco.all.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-all.exec</jacoco.all.execution.data.file>
+		<jacoco.report.path>${project.basedir}/../target/site/jacoco-aggregate</jacoco.report.path>
+		
 		<!-- Sonar properties -->
+		<sonar.junit.reportPaths>${project.build.directory}/surefire-reports,${project.build.directory}/failsafe-reports</sonar.junit.reportPaths>
 		<sonar.jacoco.reportPaths>${jacoco.ut.execution.data.file},${jacoco.it.execution.data.file}</sonar.jacoco.reportPaths>
 		<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -153,10 +159,133 @@
 		<module>ogham-spring-boot-starter-sms</module>
 		<module>ogham-test-utils</module>
 		<module>ogham-test-classpath</module>
+		<module>reporting</module>
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- Ogham -->
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-core</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-all</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-email-javamail</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-email-sendgrid</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-email-sendgrid-common</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-email-sendgrid-v2</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-email-sendgrid-v4</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-sms-cloudhopper</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-sms-ovh</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-sms-smsglobal</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-spring-boot-autoconfigure</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-spring-boot-common-autoconfigure</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-spring-boot-starter-all</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-spring-boot-starter-email</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-spring-boot-starter-sms</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-spring-boot-v1-autoconfigure</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-spring-boot-v2-autoconfigure</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-template-freemarker</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-template-thymeleaf</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-template-thymeleaf-common</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-template-thymeleaf-v2</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-template-thymeleaf-v3</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-test-classpath</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham</groupId>
+				<artifactId>ogham-test-utils</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+
 			<!-- Mail -->
 			<dependency>
 				<groupId>com.sun.mail</groupId>
@@ -310,19 +439,11 @@
 				<version>${junit.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
 				<version>${junit-jupiter.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter</artifactId>
-				<version>${junit-jupiter.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.junit.vintage</groupId>
-				<artifactId>junit-vintage-engine</artifactId>
-				<version>${junit-jupiter.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
@@ -399,7 +520,9 @@
 				<executions>
 					<execution>
 						<goals>
+							<goal>addSources</goal>
 							<goal>compile</goal>
+							<goal>addTestSources</goal>
 							<goal>compileTests</goal>
 						</goals>
 					</execution>
@@ -451,67 +574,22 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco-maven-plugin.version}</version>
 				<executions>
-					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
-						is passed as VM argument when Maven the Surefire plugin is executed. -->
 					<execution>
 						<id>pre-unit-test</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<destFile>${jacoco.ut.execution.data.file}</destFile>
-							<!-- Sets the name of the property containing the settings for JaCoCo 
-								runtime agent. -->
 							<propertyName>surefireArgLine</propertyName>
-							<append>true</append>
 						</configuration>
 					</execution>
-					<!-- Ensures that the code coverage report for unit tests is created 
-						after unit tests have been run. -->
-					<execution>
-						<id>post-unit-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<dataFile>${jacoco.ut.execution.data.file}</dataFile>
-							<!-- Sets the output directory for the code coverage report. -->
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-							<append>true</append>
-						</configuration>
-					</execution>
-					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
-						is passed as VM argument when Maven the Failsafe plugin is executed. -->
 					<execution>
 						<id>pre-integration-test</id>
-						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>prepare-agent</goal>
+							<goal>prepare-agent-integration</goal>
 						</goals>
 						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<destFile>${jacoco.it.execution.data.file}</destFile>
-							<!-- Sets the name of the property containing the settings for JaCoCo 
-								runtime agent. -->
 							<propertyName>failsafeArgLine</propertyName>
-						</configuration>
-					</execution>
-					<!-- Ensures that the code coverage report for integration tests after 
-						integration tests have been run. -->
-					<execution>
-						<id>post-integration-test</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<dataFile>${jacoco.it.execution.data.file}</dataFile>
-							<!-- Sets the output directory for the code coverage report. -->
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -522,12 +600,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
-					<!-- Sets the VM argument line used when unit tests are run. -->
 					<argLine>${surefireArgLine}</argLine>
-					<!-- Skips unit tests if the value of skip.unit.tests property is true -->
 					<skipTests>${skip.unit.tests}</skipTests>
 					<includes>
 						<include>**/ut/**/*.java</include>
+						<include>**/ut/**/*.groovy</include>
 					</includes>
 				</configuration>
 			</plugin>
@@ -537,8 +614,6 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven-failsafe-plugin.version}</version>
 				<executions>
-					<!-- Ensures that both integration-test and verify goals of the Failsafe 
-						Maven plugin are executed. -->
 					<execution>
 						<id>integration-tests</id>
 						<goals>
@@ -546,17 +621,12 @@
 							<goal>verify</goal>
 						</goals>
 						<configuration>
-							<!-- Sets the VM argument line used when integration tests are run. -->
 							<argLine>${failsafeArgLine}</argLine>
-
-							<!-- Skips integration tests if the value of skip.integration.tests 
-								property is true -->
 							<skipTests>${skip.integration.tests}</skipTests>
 							<includes>
 								<include>**/it/**/*.java</include>
+								<include>**/it/**/*.groovy</include>
 							</includes>
-							<!-- Combine with unit test reports for Sonar -->
-							<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -940,6 +1010,36 @@
 								<artifactId>spring-boot-configuration-processor</artifactId>
 								<version>${spring-boot.version}</version>
 							</additionalDependency>
+							<additionalDependency>
+								<groupId>org.springframework.boot</groupId>
+								<artifactId>spring-boot</artifactId>
+								<version>${spring-boot-v1.version}</version>
+							</additionalDependency>
+							<additionalDependency>
+								<groupId>org.springframework.boot</groupId>
+								<artifactId>spring-boot-autoconfigure</artifactId>
+								<version>${spring-boot-v1.version}</version>
+							</additionalDependency>
+							<additionalDependency>
+								<groupId>org.springframework.boot</groupId>
+								<artifactId>spring-boot-configuration-processor</artifactId>
+								<version>${spring-boot-v1.version}</version>
+							</additionalDependency>
+							<additionalDependency>
+								<groupId>org.springframework.boot</groupId>
+								<artifactId>spring-boot-configuration-processor</artifactId>
+								<version>${spring-boot-v1.version}</version>
+							</additionalDependency>
+							<additionalDependency>
+								<groupId>com.sendgrid</groupId>
+								<artifactId>sendgrid-java</artifactId>
+								<version>${sendgrid-java-v2.version}</version>
+							</additionalDependency>
+							<additionalDependency>
+								<groupId>org.thymeleaf</groupId>
+								<artifactId>thymeleaf</artifactId>
+								<version>${thymeleaf-v2.version}</version>
+							</additionalDependency>
 						</additionalDependencies>
 					</configuration>
 				</plugin>
@@ -984,7 +1084,9 @@
 											[0.0,)
 										</versionRange>
 										<goals>
+											<goal>addSources</goal>
 											<goal>compile</goal>
+											<goal>addTestSources</goal>
 											<goal>compileTests</goal>
 										</goals>
 									</pluginExecutionFilter>
@@ -1008,6 +1110,37 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<!-- Tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<reportSets>
+						<reportSet>
+							<reports>
+								<report>report-only</report>
+								<report>failsafe-report-only</report>
+							</reports>
+						</reportSet>
+					</reportSets>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<!-- Coverage -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>report</report>
+							<report>report-integration</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 		</plugins>
 	</reporting>

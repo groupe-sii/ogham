@@ -21,9 +21,9 @@ addons:
       - master
       - refactoring/.*
       - features/.*
+      - test/.*
 branches:
   except:
-  - test/.*
   - gh-.*
     
 before_install:

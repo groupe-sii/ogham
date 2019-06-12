@@ -17,7 +17,6 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Mail -->
@@ -30,19 +29,16 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-template-freemarker</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-template-thymeleaf</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

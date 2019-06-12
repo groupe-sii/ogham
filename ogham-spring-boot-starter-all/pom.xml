@@ -15,12 +15,10 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring-boot-autoconfigure</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-all</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

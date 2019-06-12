@@ -21,26 +21,22 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-email-sendgrid-common</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Tests -->
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-template-freemarker</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-template-thymeleaf</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

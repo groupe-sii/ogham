@@ -192,6 +192,7 @@
 			<item name="Features" href="features.html" />
 			<item name="Roadmap" href="roadmap.html" />
 			<item name="Release notes" href="release-notes.html" />
+			<item name="Sonar Analysis" href="https://sonarcloud.io/organizations/aurelien-baudet-github/projects" />
 		</menu>
 		<menu name="Download" inherit="bottom">
 			<item name="Download" href="user-manual.html#install" />
@@ -202,6 +203,6 @@
 			<item name="Issues" href="${this.github.url}/issues" />
 			<item name="Fork on GitHub" href="${this.github.url}" />
 		</menu>
-		<menu name="Maven documentation" ref="reports" inherit="bottom" />
+		<menu name="Maven reports" ref="reports" inherit="bottom" />
 	</body>
 </project>
