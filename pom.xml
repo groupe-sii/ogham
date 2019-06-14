@@ -62,6 +62,8 @@
 		<wiremock.version>2.23.2</wiremock.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<spock.version>1.3-groovy-2.5</spock.version>
+		<groovy-eclipse-compiler.version>3.4.0-01</groovy-eclipse-compiler.version>
+		<groovy-eclipse-batch.version>2.5.7-01</groovy-eclipse-batch.version>
 		<!-- Dependencies - documentation -->
 		<asciidoctorj-diagram.version>1.5.16</asciidoctorj-diagram.version>
 		<asciidoctorj.version>1.5.6</asciidoctorj.version>
@@ -73,17 +75,20 @@
 		<skip.integration.tests>false</skip.integration.tests>
 		<skip.unit.tests>false</skip.unit.tests>
 
+		<!-- Mutation testing -->
+		<pit.report.path>${project.basedir}/../target/site/pit-reports</pit.report.path>
+
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
 		<jacoco.ut.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
 		<jacoco.all.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-all.exec</jacoco.all.execution.data.file>
 		<jacoco.report.path>${project.basedir}/../target/site/jacoco-aggregate</jacoco.report.path>
-		
+
 		<!-- Sonar properties -->
 		<sonar.junit.reportPaths>${project.build.directory}/surefire-reports,${project.build.directory}/failsafe-reports</sonar.junit.reportPaths>
-		<sonar.jacoco.reportPaths>${jacoco.ut.execution.data.file},${jacoco.it.execution.data.file}</sonar.jacoco.reportPaths>
 		<sonar.language>java</sonar.language>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.coverage.jacoco.xmlReportPaths>${jacoco.report.path}/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
 		<!-- URL -->
 		<github.url>https://github.com/groupe-sii/ogham</github.url>
@@ -100,15 +105,22 @@
 		<site.staging.dir>${project.build.outputDirectory}/staging</site.staging.dir>
 		<site.output.dir>${site.staging.dir}/v${docProjectVersion}</site.output.dir>
 		<doc-theme>cerulean</doc-theme>
+		<asciidoctor.skip>${maven.site.skip}</asciidoctor.skip>
+		<sass.skip>${maven.site.skip}</sass.skip>
 
 		<!-- Plugins -->
 		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-source-plugin.version>3.1.0</maven-source-plugin.version>
+		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+		<lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
 		<!-- Plugins - tests -->
 		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+		<!-- Plugins - mutation testing -->
+		<pitest-maven.version>1.4.9-SNAPSHOT</pitest-maven.version>
+		<pitmp-maven-plugin.version>1.3.7</pitmp-maven-plugin.version>
 		<!-- Plugins - documentation -->
 		<maven-site-plugin.version>3.7</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
@@ -584,6 +596,12 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>generate-xml-report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
 						<id>pre-integration-test</id>
 						<goals>
 							<goal>prepare-agent-integration</goal>
@@ -591,6 +609,12 @@
 						<configuration>
 							<propertyName>failsafeArgLine</propertyName>
 						</configuration>
+					</execution>
+					<execution>
+						<id>generate-xml-integration-report</id>
+						<goals>
+							<goal>report-integration</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -709,6 +733,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
+							<skip>${asciidoctor.skip}</skip>
 							<resources>
 								<resource>
 									<directory>src/docs/resources</directory>
@@ -724,6 +749,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
+							<skip>${asciidoctor.skip}</skip>
 							<resources>
 								<resource>
 									<directory>target/generated-docs</directory>
@@ -807,6 +833,7 @@
 							<goal>unpack</goal>
 						</goals>
 						<configuration>
+							<skip>${maven.site.skip}</skip>
 							<artifactItems>
 								<artifactItem>
 									<groupId>io.github.devacfr.maven.skins</groupId>
@@ -875,6 +902,7 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
+							<skip>${maven.site.skip}</skip>
 							<target>
 								<copy todir="target/generated-scss/asciidoctor">
 									<fileset dir="target/unpacked/gems">
@@ -915,6 +943,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<skip>${sass.skip}</skip>
 					<!-- Add resources in order to import files like it was in same source 
 						folder -->
 					<resources>
@@ -1058,47 +1087,41 @@
 						<value>&lt;ogham.version&gt;${project.version}&lt;/ogham.version&gt;</value>
 					</configuration>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<!-- FIXME: This is required since Eclipse 4.11 as GGTS is not supported. 
-					Groovy Eclipse plugin doesn't work with maven test dependencies: https://github.com/groovy/groovy-eclipse/issues/900. 
-					For now, Eclipse m2e Groovy plugin should not be installed. With this configuration, 
-					everything works fine even with JUnit in Eclipse except that Eclipse Groovy 
-					reports compilation errors. These errors can be ignored -->
+				<!-- Mutation testing -->
 				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.gmavenplus
-										</groupId>
-										<artifactId>
-											gmavenplus-plugin
-										</artifactId>
-										<versionRange>
-											[0.0,)
-										</versionRange>
-										<goals>
-											<goal>addSources</goal>
-											<goal>compile</goal>
-											<goal>addTestSources</goal>
-											<goal>compileTests</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute>
-											<runOnIncremental>true</runOnIncremental>
-										</execute>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
+					<groupId>eu.stamp-project</groupId>
+					<artifactId>pitmp-maven-plugin</artifactId>
+					<version>${pitmp-maven-plugin.version}</version>
+					<executions>
+						<execution>
+							<id>run-mutation-testing</id>
+							<phase>site</phase>
+							<goals>
+								<goal>run</goal>
+							</goals>
+							<configuration>
+								<mutationEngine>descartes</mutationEngine>
+								<skippedModules>
+									<param>ogham-spring-boot-autoconfigure</param>
+									<param>ogham-spring-boot-starter-all</param>
+									<param>ogham-spring-boot-starter-email</param>
+									<param>ogham-spring-boot-starter-sms</param>
+									<param>ogham-spring-boot-common-autoconfigure</param>
+								</skippedModules>
+								<outputFormats>
+									<outputFormat>HTML</outputFormat>
+									<outputFormat>XML</outputFormat>
+								</outputFormats>
+								<exportLineCoverage>true</exportLineCoverage>
+								<withHistory>true</withHistory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>${pitest-maven.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -1138,6 +1161,34 @@
 						<reports>
 							<report>report</report>
 							<report>report-integration</report>
+						</reports>
+					</reportSet>
+					<reportSet>
+						<reports>
+							<report>report-aggregate</report>
+						</reports>
+						<inherited>false</inherited>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<!-- Project info -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>summary</report>
+							<report>licenses</report>
+							<report>modules</report>
+							<report>team</report>
+							<report>scm</report>
+							<report>issue-management</report>
+							<report>dependencies</report>
+							<report>dependency-info</report>
+							<report>dependency-convergence</report>
+							<report>dependency-management</report>
+							<report>plugins</report>
 						</reports>
 					</reportSet>
 				</reportSets>
@@ -1219,6 +1270,170 @@
 			<properties>
 				<maven.compiler.release>8</maven.compiler.release>
 			</properties>
+		</profile>
+		<profile>
+			<id>mutation-testing</id>
+			<build>
+				<plugins>
+					<!-- Run mutation testing -->
+					<plugin>
+						<groupId>eu.stamp-project</groupId>
+						<artifactId>pitmp-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>mutation-testing-only</id>
+			<properties>
+				<skip.integration.tests>true</skip.integration.tests>
+				<skip.unit.tests>true</skip.unit.tests>
+				<sass.skip>true</sass.skip>
+				<asciidoctor.skip>true</asciidoctor.skip>
+				<generateProjectInfo>false</generateProjectInfo>
+				<generateReports>false</generateReports>
+				<generateSitemap>false</generateSitemap>
+				<maven.javadoc.skip>true</maven.javadoc.skip>
+				<mpir.skip>true</mpir.skip>
+			</properties>
+			<build>
+				<plugins>
+					<!-- Run mutation testing -->
+					<plugin>
+						<groupId>eu.stamp-project</groupId>
+						<artifactId>pitmp-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>mutation-testing-aggregate-report-only</id>
+			<properties>
+				<skip.integration.tests>true</skip.integration.tests>
+				<skip.unit.tests>true</skip.unit.tests>
+				<sass.skip>true</sass.skip>
+				<asciidoctor.skip>true</asciidoctor.skip>
+				<generateProjectInfo>false</generateProjectInfo>
+				<generateReports>false</generateReports>
+				<generateSitemap>false</generateSitemap>
+				<maven.javadoc.skip>true</maven.javadoc.skip>
+				<mpir.skip>true</mpir.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>eclipse</id>
+			<build>
+				<plugins>
+					<!--This plugin's configuration is used to store Eclipse m2e settings 
+						only. It has no influence on the Maven build itself. -->
+					<!-- FIXME: This is required since Eclipse 4.11 as GGTS is not supported. 
+						Groovy Eclipse plugin doesn't work with maven test dependencies: https://github.com/groovy/groovy-eclipse/issues/900. 
+						For now, Eclipse m2e Groovy plugin should not be installed. With this configuration, 
+						everything works fine even with JUnit in Eclipse except that Eclipse Groovy 
+						reports compilation errors. These errors can be ignored -->
+					<plugin>
+						<groupId>org.eclipse.m2e</groupId>
+						<artifactId>lifecycle-mapping</artifactId>
+						<version>${lifecycle-mapping.version}</version>
+						<configuration>
+							<lifecycleMappingMetadata>
+								<pluginExecutions>
+									<pluginExecution>
+										<pluginExecutionFilter>
+											<groupId>
+												org.codehaus.gmavenplus
+											</groupId>
+											<artifactId>
+												gmavenplus-plugin
+											</artifactId>
+											<versionRange>
+												[0.0,)
+											</versionRange>
+											<goals>
+												<goal>addSources</goal>
+												<goal>compile</goal>
+												<goal>addTestSources</goal>
+												<goal>compileTests</goal>
+											</goals>
+										</pluginExecutionFilter>
+										<action>
+											<execute>
+												<runOnIncremental>true</runOnIncremental>
+											</execute>
+										</action>
+									</pluginExecution>
+								</pluginExecutions>
+							</lifecycleMappingMetadata>
+						</configuration>
+					</plugin>
+					<!-- Needed by Eclipse -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>${build-helper-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>add-test-source</id>
+								<goals>
+									<goal>add-test-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>src/test/groovy</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Compiler -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>${maven-compiler-plugin.version}</version>
+						<configuration>
+							<source>${maven.compiler.source}</source>
+							<target>${maven.compiler.target}</target>
+							<encoding>${project.build.sourceEncoding}</encoding>
+						</configuration>
+						<executions>
+							<execution>
+								<id>default-compile</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<configuration>
+									<!-- main compile options -->
+								</configuration>
+							</execution>
+							<!-- Compilation for Groovy Eclipse -->
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+								<configuration>
+									<compilerId>groovy-eclipse-compiler</compilerId>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.codehaus.groovy</groupId>
+								<artifactId>groovy-eclipse-compiler</artifactId>
+								<version>${groovy-eclipse-compiler.version}</version>
+							</dependency>
+							<dependency>
+								<groupId>org.codehaus.groovy</groupId>
+								<artifactId>groovy-eclipse-batch</artifactId>
+								<version>${groovy-eclipse-batch.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 

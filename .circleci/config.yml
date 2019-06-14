@@ -1,0 +1,78 @@
+version: 2.1
+orbs:
+  slack: circleci/slack@3.2.0
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      #---------------------------------------
+      # restore cache from previous build
+      #---------------------------------------
+      - restore_cache:
+          keys:
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
+      - restore_cache:
+          keys:
+            - pit-history-{{ .Branch }}
+      - run: cp -f ~/.pitest/* /tmp/ || true
+      #---------------------------------------
+      # build test and generate reports
+      #---------------------------------------
+      - run: ci/./generate-documentation.sh
+      - persist_to_workspace:
+          root: .
+          paths:
+            - target
+      #---------------------------------------
+      # save/update cache
+      #---------------------------------------
+      - run: rm -rf ~/.m2/repository/fr/sii
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+      - run: mkdir ~/.pitest
+      - run: cp -f /tmp/*_pitest_history.bin ~/.pitest/ || true
+      - save_cache:
+          paths:
+            - ~/.pitest
+          key: pit-history-{{ .Branch }}
+  deploy:
+    docker:
+      - image: circleci/node:7.10
+    steps:
+      - attach_workspace:
+          at: .
+      - run: npm install surge
+      #---------------------------------------
+      # deploy to surge
+      #---------------------------------------
+      - run: ./node_modules/surge/lib/cli.js --project ./target/surge --domain ogham-documentation.surge.sh
+  notify:
+    docker:
+      - image: circleci/node:7.10
+    steps:
+      - slack/status:
+          success_message: "*[success]* ${CIRCLE_JOB} Documentation and reports:
+          
+          * <http://ogham-documentation.surge.sh/${CIRCLE_BRANCH}/index.html|Generated site>
+          
+          * <http://ogham-documentation.surge.sh/${CIRCLE_BRANCH}/jacoco-aggregate/index.html|JaCoCo>
+          
+          * <https://codecov.io/gh/groupe-sii/ogham/branch/${CIRCLE_BRANCH}|Codecov>
+          
+          * <http://ogham-documentation.surge.sh/${CIRCLE_BRANCH}/pit-reports/index.html|Mutation testing>"
+workflows:
+  generate-documentation:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+      - notify:
+          requires:
+            - deploy

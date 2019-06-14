@@ -1,15 +1,5 @@
 language: java
 dist: trusty
-jdk:
-  - oraclejdk9
-  - openjdk9
-  - oraclejdk8
-  - openjdk8
-  - openjdk10
-  - oraclejdk11
-  - openjdk11
-  #- oraclejdk12
-  - openjdk12
 sudo: required
 addons:
   apt:
@@ -17,83 +7,230 @@ addons:
       - graphviz
   sonarcloud:
     organization: aurelien-baudet-github
-    branches:
-      - master
-      - refactoring/.*
-      - features/.*
-      - test/.*
 branches:
   except:
   - gh-.*
-    
+
+
 before_install:
-  - echo "MAVEN_OPTS='-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m'" > ~/.mavenrc # see https://github.com/travis-ci/travis-ci/issues/4613
   - set -o pipefail
-  # detect current Java version in order to execute classpath tests only for this version
-  - |
-    java_version=$(java -version 2>&1 | grep -i version | cut -d'"' -f2)
-    major=$(echo $java_version | cut -d'.' -f1)
-    [ "1" = "$major" ] \
-      && echo "$java_version" | cut -d'.' -f2 > "$HOME/java-version.info" \
-      || echo "$java_version" | cut -d'.' -f1 > "$HOME/java-version.info"
-  - JAVA_RELEASE_VERSION=$(cat "$HOME/java-version.info")
-  # start spring initializr for Ogham in background
-  - |
-    touch "$HOME/spring-initializr.log"
-    spring-initializr/./mvnw clean spring-boot:run -f spring-initializr > "$HOME/spring-initializr.log" &
-    echo "$!" > "$HOME/spring-initializr.pid"
-    tail -f "$HOME/spring-initializr.log" &
-  - grep -q 'Started SpringInitializrApplication' <(tail -f "$HOME/spring-initializr.log")
-  - cat "$HOME/spring-initializr.log"
-  - |
-    [ "$JAVA_RELEASE_VERSION" != "8" ] && exit 0
-    touch "$HOME/spring-initializr-older-versions.log"
-    spring-initializr/./mvnw clean spring-boot:run -f spring-initializr -Dspring-boot.version=1.5.21.RELEASE -Dspring-initializr.version=0.4.0.RELEASE -Drun.jvmArguments="-Dspring.profiles.active=older-versions" > "$HOME/spring-initializr-older-versions.log" &
-    echo "$!" > "$HOME/spring-initializr-older-versions.pid"
-    tail -f "$HOME/spring-initializr-older-versions.log" &
-  - grep -q 'Started SpringInitializrApplication' <(tail -f "$HOME/spring-initializr-older-versions.log")
-  - cat "$HOME/spring-initializr-older-versions.log"
-  # generate projects used to test the classpath on the current Ogham version
-  - OGHAM_VERSION=$(./mvnw -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
-  # TODO: it seems that parallel execution sometimes fails on Travis (seems to be spring-initializr that fails, why ?)
-  - ./mvnw spring-boot:run -pl :ogham-test-classpath -Dspring-boot.run.arguments="$HOME/classpath-tests" -Dspring-boot.run.jvmArguments="-Drunner.parallel=false -Dogham-version=$OGHAM_VERSION -Dspring.initializer.url=http://localhost:8050/starter.zip"
-  - |
-    [ "$JAVA_RELEASE_VERSION" != "8" ] && exit 0
-    ./mvnw spring-boot:run -pl :ogham-test-classpath -Dspring-boot.run.arguments="$HOME/classpath-tests" -Dspring-boot.run.jvmArguments="-Drunner.parallel=false -Dogham-version=$OGHAM_VERSION -Dspring.profiles.active=older-versions -Dspring.initializer.url=http://localhost:8052/starter.zip"
-  - ls -l "$HOME"
-  - ls -l "$HOME/classpath-tests"
-  # stop spring initializr
-  - kill `cat "$HOME/spring-initializr.pid"` || echo ""
-  - kill `cat "$HOME/spring-initializr-older-versions.pid"` || echo ""
-  - TEST_FOLDER=$(echo "JAVA_$JAVA_RELEASE_VERSION")
-  - echo $TEST_FOLDER
-  - ls -l "$HOME/classpath-tests/$TEST_FOLDER"
-script:
-  - ./mvnw clean install -DskipTests=true -Dmaven.javadoc.skip=true -Dskip.integration.tests=true -Dskip.unit.tests=true -B -q
-  - ./mvnw test verify -Dmaven.test.redirectTestOutputToFile=true -fae -B -q
-  - ./mvnw javadoc:javadoc -fae -B | grep -Ei '(error|warn)'
-  # execute generated classpath tests for the right java version
-  - $HOME/classpath-tests/$TEST_FOLDER/./mvnw test -T 2.5C -f "$HOME/classpath-tests/$TEST_FOLDER/pom.xml" -Dmaven.test.redirectTestOutputToFile=true -fae -q -B #| grep -Ei '(error|exception|Tests run:)'
-after_success:
-  - ./mvnw sonar:sonar -B | grep -Ei '(warn|error|ANALYSIS SUCCESSFUL)'
-  - ./mvnw deploy --settings .travis-settings.xml -DskipTests=true -B | grep -Ei '(Uploading|Downloading|Uploaded|Downloaded)'
-# TODO: after error -> grab logs and send it
-after_failure:
-  - cat "$HOME/spring-initializr.log"
-  - cat "$HOME/spring-initializr-older-versions.log"
+
+jobs:
+  include:
+    - stage: "Build"
+      jdk: oraclejdk8
+      script:
+        - ci/./build.sh
+    - stage: "Build"
+      jdk: openjdk8
+      script:
+        - ci/./build.sh
+    - stage: "Build"
+      jdk: oraclejdk9
+      script:
+        - ci/./build.sh
+    - stage: "Build"
+      jdk: openjdk9
+      script:
+        - ci/./build.sh
+    - stage: "Build"
+      jdk: openjdk10
+      script:
+        - ci/./build.sh
+    - stage: "Build"
+      jdk: oraclejdk11
+      script:
+        - ci/./build.sh
+    - stage: "Build"
+      jdk: openjdk11
+      script:
+        - ci/./build.sh
+    - stage: "Build"
+      jdk: openjdk12
+      script:
+        - ci/./build.sh
+    
+    - stage: test
+      name: "Unit Tests (oraclejdk8)"
+      jdk: oraclejdk8
+      script: ci/./run-unit-tests.sh
+    - stage: test
+      name: "Unit Tests (openjdk8)"
+      jdk: openjdk8
+      script: ci/./run-unit-tests.sh
+    - stage: test
+      name: "Unit Tests (oraclejdk9)"
+      jdk: oraclejdk9
+      script: ci/./run-unit-tests.sh
+    - stage: test
+      name: "Unit Tests (openjdk9)"
+      jdk: openjdk9
+      script: ci/./run-unit-tests.sh
+    - stage: test
+      name: "Unit Tests (openjdk10)"
+      jdk: openjdk10
+      script: ci/./run-unit-tests.sh
+    - stage: test
+      name: "Unit Tests (oraclejdk11)"
+      jdk: oraclejdk11
+      script: ci/./run-unit-tests.sh
+    - stage: test
+      name: "Unit Tests (openjdk11)"
+      jdk: openjdk11
+      script: ci/./run-unit-tests.sh
+    - stage: test
+      name: "Unit Tests (openjdk12)"
+      jdk: openjdk12
+      script: ci/./run-unit-tests.sh
+
+    - stage: test
+      name: "Integration Tests (oraclejdk8)"
+      jdk: oraclejdk8
+      script: ci/./run-integration-tests.sh
+    - stage: test
+      name: "Integration Tests (openjdk8)"
+      jdk: openjdk8
+      script: ci/./run-integration-tests.sh
+    - stage: test
+      name: "Integration Tests (oraclejdk9)"
+      jdk: oraclejdk9
+      script: ci/./run-integration-tests.sh
+    - stage: test
+      name: "Integration Tests (openjdk9)"
+      jdk: openjdk9
+      script: ci/./run-integration-tests.sh
+    - stage: test
+      name: "Integration Tests (openjdk10)"
+      jdk: openjdk10
+      script: ci/./run-integration-tests.sh
+    - stage: test
+      name: "Integration Tests (oraclejdk11)"
+      jdk: oraclejdk11
+      script: ci/./run-integration-tests.sh
+    - stage: test
+      name: "Integration Tests (openjdk11)"
+      jdk: openjdk11
+      script: ci/./run-integration-tests.sh
+    - stage: test
+      name: "Integration Tests (openjdk12)"
+      jdk: openjdk12
+      script: ci/./run-integration-tests.sh
+
+    - stage: test
+      name: "Classpath Tests (oraclejdk8)"
+      jdk: oraclejdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8 INITIALIZER_NAME=spring-initializr-older-versions INITIALIZER_PORT=8052 INITIALIZER_ARGS='-Dspring-boot.version=1.5.21.RELEASE -Dspring-initializr.version=0.4.0.RELEASE -Drun.jvmArguments="-Dspring.profiles.active=older-versions"' GENERATION_ARGS="-Dspring.profiles.active=older-versions" ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8 ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk8)"
+      jdk: openjdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8 INITIALIZER_NAME=spring-initializr-older-versions INITIALIZER_PORT=8052 INITIALIZER_ARGS='-Dspring-boot.version=1.5.21.RELEASE -Dspring-initializr.version=0.4.0.RELEASE -Drun.jvmArguments="-Dspring.profiles.active=older-versions"' GENERATION_ARGS="-Dspring.profiles.active=older-versions" ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8 ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk9)"
+      jdk: oraclejdk9
+      script: 
+        - TEST_FOLDER=JAVA_9 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_9 ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk9)"
+      jdk: openjdk9
+      script: 
+        - TEST_FOLDER=JAVA_9 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_9 ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk10)"
+      jdk: openjdk10
+      script: 
+        - TEST_FOLDER=JAVA_10 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_10 ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk11)"
+      jdk: oraclejdk11
+      script:
+        - TEST_FOLDER=JAVA_11 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_11 ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk11)"
+      jdk: openjdk11
+      script:
+        - TEST_FOLDER=JAVA_11 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_11 ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk12)"
+      jdk: openjdk12
+      script: 
+        - TEST_FOLDER=JAVA_12 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_12 ci/./run-classpath-tests.sh
+
+    - stage: "Analyze"
+      jdk: oraclejdk8
+      script:
+        - ci/./analyze.sh
+    
+    - stage: "Javadoc"
+      jdk: oraclejdk8
+      script:
+        - ci/./generate-javadoc.sh
+    - stage: "Javadoc"
+      jdk: openjdk8
+      script:
+        - ci/./generate-javadoc.sh
+    - stage: "Javadoc"
+      jdk: oraclejdk9
+      script:
+        - ci/./generate-javadoc.sh
+    - stage: "Javadoc"
+      jdk: openjdk9
+      script:
+        - ci/./generate-javadoc.sh
+    - stage: "Javadoc"
+      jdk: openjdk10
+      script:
+        - ci/./generate-javadoc.sh
+    - stage: "Javadoc"
+      jdk: oraclejdk11
+      script:
+        - ci/./generate-javadoc.sh
+    - stage: "Javadoc"
+      jdk: openjdk11
+      script:
+        - ci/./generate-javadoc.sh
+    - stage: "Javadoc"
+      jdk: openjdk12
+      script:
+        - ci/./generate-javadoc.sh
+
+    - stage: "Deploy"
+      jdk: oraclejdk8
+      script: 
+        - ./mvnw clean install deploy --settings .travis-settings.xml -DskipTests=true -B | grep -Ei '(Uploading|Downloading|Uploaded|Downloaded)'
+      
+stages:
+  - name: "Build"
+  - name: test
+  - name: "Javadoc"
+  - name: "Analyze"
+  - name: "Deploy"
+    if:  branch = master or branch = develop
+
 notifications:
   slack:
     rooms:
       - secure: NdaSwFJ16HC93H1iimYB07/0rGwQfVCto2/XLrVJNeMcvdRsHbuhBnKwwUkNCTLeLLtB1DVmoNeCBdo2pmtAvoyTnl9OXhG3GWjoB++Al+/66x/TzC1g891y59JI/F7btVqZRKMi5URdcXt7VqSTUyu3Qjf6rxxeRMfiCgg4eLP2ABWQTvNpi7AgV9ArkVqat5Fo1p98iuxpUL0kByXmyuoN15f0azVm0Mhwv2LtMyHAf5Lq1gKOt7TfKccMEJaZXPZMfFWkXblZUWggx6EYXB2ylXJ7e45UeunsroqPYuXJtepwOjcT00NSm7tR+wDaVZl3hXDfexwb35wP+g/tcIiQYTWgQQvr5b6Z0tUX3WgZt7aBMH9gaJPRolC7FXwukXkdBwjvyDLsra147M2pm7fc5zj73TV0gaEdqDewd+UgFA12Vm1gwC0eWH/HVhOZ0HGOQdYmtYkZJ67KTwes9B+SKDkrSF4Nq7T3svOWvGxzDCaw4CCOBY5U1xRc3VVOo/xtFa8dAKfxpo0IFy/qaHS4vIb2BDHJ0LU7+WarcjcmADxJXvhvOvvByS5k0sqkUXF4uB+QpxQqQEGNMzLC2iMog0UnBIIEZEe6pvrzchoQIpKyom4GvnAi+Xco8aJaMgrLZY9JwmlLP8r1YFyMawH4kmJ8XpPZ5+fIN2HSkD4=
     template:
-      - "[%{result}] %{branch}"
+      - "*[%{result}]* %{branch}"
       - "Build: <%{build_url}|#%{build_number}> (%{duration})"
       - "Commit: <%{compare_url}|%{commit}> by %{author}"
       - "%{commit_message}"
 
 cache:
   directories:
-#    - $HOME/classpath-tests
     - $HOME/.m2
 before_cache:
   - rm -rf $HOME/.m2/repository/fr/sii
+  
