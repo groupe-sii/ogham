@@ -80,7 +80,9 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 	@Override
 	public void configure(EmailBuilder emailBuilder) {
 		AbstractThymeleafBuilder<?, ?, ?> builder = emailBuilder.template(emailBuilderClass);
-		builder.engine(springTemplateEngine);
+		if(springTemplateEngine != null) {
+			builder.engine(springTemplateEngine);
+		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
 		}
@@ -92,7 +94,9 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 	@Override
 	public void configure(SmsBuilder smsBuilder) {
 		AbstractThymeleafBuilder<?, ?, ?> builder = smsBuilder.template(smsBuilderClass);
-		builder.engine(springTemplateEngine);
+		if(springTemplateEngine != null) {
+			builder.engine(springTemplateEngine);
+		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
 		}

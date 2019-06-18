@@ -35,7 +35,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	/**
 	 * The list of possible implementations indexed by the associated condition
 	 */
-	private List<Implementation> implementations;
+	private final List<Implementation> implementations;
 
 	/**
 	 * The selected sender implementation
@@ -136,7 +136,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 		return sender;
 	}
 
-	protected static class Implementation {
+	public static class Implementation {
 		private final Condition<Message> condition;
 		private final MessageSender sender;
 

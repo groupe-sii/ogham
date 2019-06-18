@@ -51,7 +51,7 @@ import fr.sii.ogham.spring.v1.template.OghamThymeleafV2Configuration;
 						ThymeleafAutoConfiguration.class, 
 						FreeMarkerAutoConfiguration.class, 
 						MailSenderAutoConfiguration.class })
-@ConditionalOnClass({ WebMvcAutoConfiguration.class, MessagingService.class, MessagingBuilder.class })
+@ConditionalOnClass({ /* used to match Spring Boot 1 */ WebMvcAutoConfiguration.class, MessagingService.class, MessagingBuilder.class })
 @ConditionalOnMissingBean(MessagingService.class)
 @EnableConfigurationProperties({ OghamEmailProperties.class, 
 								 OghamSmsProperties.class, 

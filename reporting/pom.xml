@@ -115,6 +115,10 @@
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-test-utils-internal</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -15,6 +15,7 @@
 	
 	<properties>
 		<sendgrid-java.version>${sendgrid-java-v2.version}</sendgrid-java.version>
+		<httpclient.version>4.3.2</httpclient.version>
 	</properties>
 
 	<dependencies>

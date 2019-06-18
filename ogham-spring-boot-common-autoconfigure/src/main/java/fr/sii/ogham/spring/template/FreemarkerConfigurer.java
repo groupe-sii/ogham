@@ -45,8 +45,8 @@ import freemarker.template.Configuration;
  * @author Aurélien Baudet
  *
  */
-public class FreeMarkerConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
-	private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerConfigurer.class);
+public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
+	private static final Logger LOG = LoggerFactory.getLogger(FreemarkerConfigurer.class);
 	
 	private final Configuration emailConfiguration;
 	private final Configuration smsConfiguration;
@@ -55,7 +55,7 @@ public class FreeMarkerConfigurer extends MessagingConfigurerAdapter implements 
 	private final OghamSmsProperties smsProperties;
 	private final FreeMarkerProperties springProperties;
 
-	public FreeMarkerConfigurer(Configuration emailConfiguration, Configuration smsConfiguration, OghamCommonTemplateProperties templateProperties, OghamEmailProperties emailProperties,
+	public FreemarkerConfigurer(Configuration emailConfiguration, Configuration smsConfiguration, OghamCommonTemplateProperties templateProperties, OghamEmailProperties emailProperties,
 			OghamSmsProperties smsProperties, FreeMarkerProperties springProperties) {
 		super();
 		this.emailConfiguration = emailConfiguration;

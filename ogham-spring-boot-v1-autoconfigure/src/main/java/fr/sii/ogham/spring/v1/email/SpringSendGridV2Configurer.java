@@ -32,8 +32,8 @@ public class SpringSendGridV2Configurer extends AbstractSpringSendGridConfigurer
 	}
 
 	@Override
-	protected void useOghamSendGridClient(MessagingBuilder builder) {
-		super.useOghamSendGridClient(builder);
+	protected void useOghamSendGridClientWithSpringProperties(MessagingBuilder builder) {
+		super.useOghamSendGridClientWithSpringProperties(builder);
 		// @formatter:off
 		builder.email()
 			.sender(SendGridV2Builder.class)

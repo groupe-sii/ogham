@@ -1,11 +1,11 @@
 package fr.sii.ogham.spring.it.autoconfigure;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,11 +58,12 @@ public class SpringPropertiesTest {
 	}
 
 	@Test
-	public void sendGridPropertiesDefinedInAppPropertiesOrInSystemPropertiesShouldOverrideOghamDefaultProperties() {
+	public void sendGridPropertiesDefinedInAppPropertiesOrInSystemPropertiesShouldOverrideOghamDefaultProperties() throws IllegalAccessException {
 		SendGridV4Sender sender = builder.email().sender(SendGridV4Builder.class).build();
 		DelegateSendGridClient delegate = (DelegateSendGridClient) sender.getDelegate();
-		assertThat(delegate.getApiKey(), nullValue());		// null and not 'toto' because SendGrid Spring bean is used instead of Ogham default SendGrid instance
-		assertThat(delegate.getDelegate(), sameInstance(springSendGridClient));
+		SendGrid sendGrid = (SendGrid) FieldUtils.readField(delegate, "delegate", true);
+		assertThat(FieldUtils.readField(sendGrid, "apiKey", true), equalTo("toto"));
+		assertThat(sendGrid, sameInstance(springSendGridClient));
 	}
 
 }

@@ -86,13 +86,18 @@ public abstract class AbstractSpringSendGridConfigurer implements SpringMessagin
 		if (sendGrid != null) {
 			useSpringSendGridClient(builder);
 		} else {
-			useOghamSendGridClient(builder);
+			// This is a special case that is not really reachable with Spring Boot:
+			// - it means that SendGridProperties bean is available
+			// - but SendGrid bean is not
+			// As both beans are created by SendGridAutoConfiguration, either none is available or both are available.
+			// We keep it in the case where a developer would use a @Configuration class with only @EnableConfigurationProperties(SendGridProperties.class)
+			useOghamSendGridClientWithSpringProperties(builder);
 		}
 	}
 
 	protected abstract void useSpringSendGridClient(MessagingBuilder builder);
 
-	protected void useOghamSendGridClient(MessagingBuilder builder) {
+	protected void useOghamSendGridClientWithSpringProperties(MessagingBuilder builder) {
 		// @formatter:off
 		builder.email()
 			.sender(getSendGridBuilderClass())
