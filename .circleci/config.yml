@@ -18,7 +18,9 @@ jobs:
       - restore_cache:
           keys:
             - pit-history-{{ .Branch }}
-      - run: cp -f ~/.pitest/* /tmp/ || true
+      - run: cp -f ~/.pitest/* /tmp/ || echo 'no pitest history copied to /tmp'
+      - run: ls -l /tmp/
+      - run: ls -l ~/.pitest/ || echo ".pitest folder doesn't exist"
       #---------------------------------------
       # build test and generate reports
       #---------------------------------------
@@ -35,23 +37,35 @@ jobs:
           paths:
             - ~/.m2
           key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
-      - run: mkdir ~/.pitest
-      - run: cp -f /tmp/*_pitest_history.bin ~/.pitest/ || true
+      - run: mkdir ~/.pitest || echo 'skip creating .pitest'
+      - run: cp -f /tmp/*_pitest_history.bin ~/.pitest/ || echo 'no pitest history saved'
       - save_cache:
           paths:
             - ~/.pitest
           key: pit-history-{{ .Branch }}
+      - run: ls -l /tmp/
+      - run: ls -l ~/.pitest/ || echo ".pitest folder doesn't exist"
+      #---------------------------------------
+      # store build information
+      #---------------------------------------
+      - store_test_results:
+          path: .
   deploy:
     docker:
-      - image: circleci/node:7.10
+      - image: alpine/git
     steps:
       - attach_workspace:
           at: .
-      - run: npm install surge
+      - add_ssh_keys:
+          fingerprints:
+            - "9a:b0:42:93:73:3e:35:21:62:23:48:eb:79:88:17:d5"
       #---------------------------------------
-      # deploy to surge
+      # deploy to Github Pages
       #---------------------------------------
-      - run: ./node_modules/surge/lib/cli.js --project ./target/surge --domain ogham-documentation.surge.sh
+      - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - run: git clone git@github.com:aurelien-baudet/ogham-dev-reports.git /tmp/ogham-dev-reports
+      - run: mkdir -p /tmp/ogham-dev-reports/$CIRCLE_BRANCH && cp -r target/site/* /tmp/ogham-dev-reports/$CIRCLE_BRANCH
+      - run: cd /tmp/ogham-dev-reports && git config user.email $GH_EMAIL && git config user.name $GH_NAME && git add . && git commit -m "add/update $CIRCLE_BRANCH" && git push
   notify:
     docker:
       - image: circleci/node:7.10
@@ -59,13 +73,13 @@ jobs:
       - slack/status:
           success_message: "*[success]* ${CIRCLE_JOB} Documentation and reports:
           
-          * <http://ogham-documentation.surge.sh/${CIRCLE_BRANCH}/index.html|Generated site>
+          * <https://aurelien-baudet.github.io/ogham-dev-reports/${CIRCLE_BRANCH}/index.html|Generated site>
           
-          * <http://ogham-documentation.surge.sh/${CIRCLE_BRANCH}/jacoco-aggregate/index.html|JaCoCo>
+          * <https://aurelien-baudet.github.io/ogham-dev-reports/${CIRCLE_BRANCH}/jacoco-aggregate/index.html|JaCoCo>
           
           * <https://codecov.io/gh/groupe-sii/ogham/branch/${CIRCLE_BRANCH}|Codecov>
           
-          * <http://ogham-documentation.surge.sh/${CIRCLE_BRANCH}/pit-reports/index.html|Mutation testing>"
+          * <https://aurelien-baudet.github.io/ogham-dev-reports/${CIRCLE_BRANCH}/pit-reports/index.html|Mutation testing>"
 workflows:
   generate-documentation:
     jobs:
