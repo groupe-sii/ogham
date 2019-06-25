@@ -351,10 +351,17 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		if (this.client != null) {
 			return this.client;
 		}
-		if (apiKey != null) {
-			return new DelegateSendGridClient(apiKey, client);
+		if(apiKey != null) {
+			return new DelegateSendGridClient(buildSendGrid(apiKey, client));
 		}
 		return null;
+	}
+
+	private SendGrid buildSendGrid(String apiKey, Client client) {
+		if(client!=null) {
+			return new SendGrid(apiKey, client);
+		}
+		return new SendGrid(apiKey);
 	}
 
 	private MapContentHandler buildContentHandler() {

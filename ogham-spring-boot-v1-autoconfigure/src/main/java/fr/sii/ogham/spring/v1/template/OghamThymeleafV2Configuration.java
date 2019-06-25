@@ -20,7 +20,8 @@ public class OghamThymeleafV2Configuration {
 
 	@Bean
 	@ConditionalOnMissingBean(ThymeLeafConfigurer.class)
-	public ThymeLeafConfigurer thymeleafConfigurer(org.thymeleaf.spring4.SpringTemplateEngine springTemplateEngine,
+	public ThymeLeafConfigurer thymeleafConfigurer(
+			@Autowired(required=false) org.thymeleaf.spring4.SpringTemplateEngine springTemplateEngine,
 			@Autowired(required=false) OghamCommonTemplateProperties templateProperties,
 			@Autowired(required=false) OghamEmailProperties emailProperties,
 			@Autowired(required=false) OghamSmsProperties smsProperties,

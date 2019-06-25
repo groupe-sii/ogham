@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sendgrid.Client;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -30,16 +29,6 @@ public final class DelegateSendGridClient implements SendGridClient {
 	private SendGridAPI delegate;
 
 	/**
-	 * The client to use (may be null)
-	 */
-	private Client client;
-
-	/**
-	 * The API key
-	 */
-	private String apiKey;
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param delegate
@@ -55,12 +44,6 @@ public final class DelegateSendGridClient implements SendGridClient {
 		this.delegate = delegate;
 	}
 
-	public DelegateSendGridClient(String apiKey, Client client) {
-		super();
-		this.client = client;
-		this.apiKey = apiKey;
-	}
-
 	@Override
 	public void send(final Mail email) throws SendGridException {
 		if (email == null) {
@@ -72,8 +55,6 @@ public final class DelegateSendGridClient implements SendGridClient {
 			LOG.debug("Sending to SendGrid client: TO {}", debug(email));
 			LOG.debug("Sending to SendGrid client: SUBJECT {}", email.getSubject());
 		}
-
-		initSendGridClient();
 
 		try {
 			Request request = new Request();
@@ -96,18 +77,6 @@ public final class DelegateSendGridClient implements SendGridClient {
 		return statusCode >= 200 && statusCode < 300;
 	}
 
-	private void initSendGridClient() {
-		if (delegate == null) {
-			if (client != null) {
-				delegate = new SendGrid(apiKey, client);
-			} else if (apiKey != null) {
-				delegate = new SendGrid(apiKey);
-			} else {
-				throw new IllegalStateException("No SendGrid instance available. Either provide an instance manually or provide username/password or provide API key");
-			}
-		}
-	}
-
 	private String debug(Email address) {
 		if (address == null) {
 			return null;
@@ -123,29 +92,5 @@ public final class DelegateSendGridClient implements SendGridClient {
 			return null;	// NOSONAR
 		}
 		return email.getPersonalization().stream().flatMap(p -> p.getTos() == null ? Stream.empty() : p.getTos().stream()).map(this::debug).collect(toList());
-	}
-
-	public SendGridAPI getDelegate() {
-		return delegate;
-	}
-
-	public void setDelegate(SendGridAPI delegate) {
-		this.delegate = delegate;
-	}
-
-	public Client getClient() {
-		return client;
-	}
-
-	public void setClient(Client client) {
-		this.client = client;
-	}
-
-	public String getApiKey() {
-		return apiKey;
-	}
-
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
 	}
 }

@@ -266,10 +266,10 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 			return client;
 		}
 		if (apiKey != null) {
-			return new DelegateSendGridClient(apiKey);
+			return new DelegateSendGridClient(new SendGrid(apiKey));
 		}
 		if (username != null && password != null) {
-			return new DelegateSendGridClient(username, password);
+			return new DelegateSendGridClient(new SendGrid(username, password));
 		}
 		return null;
 	}

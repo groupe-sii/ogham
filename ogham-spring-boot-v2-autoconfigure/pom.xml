@@ -27,7 +27,6 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-spring-boot-common-autoconfigure</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -55,6 +54,17 @@
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-test-utils-internal</artifactId>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>

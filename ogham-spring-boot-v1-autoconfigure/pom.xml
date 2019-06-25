@@ -63,6 +63,17 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-test-utils-internal</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<scope>test</scope>

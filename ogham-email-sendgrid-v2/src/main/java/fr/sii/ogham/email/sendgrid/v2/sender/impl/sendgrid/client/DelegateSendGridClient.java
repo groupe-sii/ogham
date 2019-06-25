@@ -19,21 +19,6 @@ public final class DelegateSendGridClient implements SendGridClient {
 	private SendGrid delegate;
 
 	/**
-	 * The account username
-	 */
-	private String username;
-
-	/**
-	 * The account password
-	 */
-	private String password;
-
-	/**
-	 * The API key
-	 */
-	private String apiKey;
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param delegate
@@ -49,17 +34,6 @@ public final class DelegateSendGridClient implements SendGridClient {
 		this.delegate = delegate;
 	}
 
-	public DelegateSendGridClient(String username, String password) {
-		super();
-		this.username = username;
-		this.password = password;
-	}
-
-	public DelegateSendGridClient(String apiKey) {
-		super();
-		this.apiKey = apiKey;
-	}
-
 	@Override
 	public void send(final Email email) throws SendGridException {
 		if (email == null) {
@@ -72,7 +46,6 @@ public final class DelegateSendGridClient implements SendGridClient {
 		LOG.debug("Sending to SendGrid client: TEXT CONTENT {}", email.getText());
 		LOG.debug("Sending to SendGrid client: HTML CONTENT {}", email.getHtml());
 
-		initSendGridClient();
 		final SendGrid.Response response = delegate.send(email);
 
 		if (response.getStatus()) {
@@ -80,33 +53,5 @@ public final class DelegateSendGridClient implements SendGridClient {
 		} else {
 			throw new SendGridException(new IOException("Sending to SendGrid failed: (" + response.getCode() + ") " + response.getMessage()));
 		}
-	}
-
-	private void initSendGridClient() {
-		if (delegate == null) {
-			if(username!=null && password!=null) {
-				delegate = new SendGrid(username, password);
-			} else if(apiKey!=null) {
-				delegate = new SendGrid(apiKey);
-			} else {
-				throw new IllegalStateException("No SendGrid instance available. Either provide an instance manually or provide username/password or provide API key");
-			}
-		}
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getApiKey() {
-		return apiKey;
-	}
-
-	public SendGrid getClient() {
-		return delegate;
 	}
 }
