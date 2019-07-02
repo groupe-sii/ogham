@@ -54,6 +54,7 @@ jobs:
     docker:
       - image: alpine/git
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - add_ssh_keys:
@@ -62,10 +63,7 @@ jobs:
       #---------------------------------------
       # deploy to Github Pages
       #---------------------------------------
-      - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run: git clone git@github.com:aurelien-baudet/ogham-dev-reports.git /tmp/ogham-dev-reports
-      - run: mkdir -p /tmp/ogham-dev-reports/$CIRCLE_BRANCH && cp -r target/site/* /tmp/ogham-dev-reports/$CIRCLE_BRANCH
-      - run: cd /tmp/ogham-dev-reports && git config user.email $GH_EMAIL && git config user.name $GH_NAME && git add . && git commit -m "add/update $CIRCLE_BRANCH" && git push
+      - run: ci/./deploy-dev-reports.sh
   notify:
     docker:
       - image: circleci/node:7.10
