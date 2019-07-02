@@ -14,9 +14,9 @@ import org.junit.Test;
 
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.helper.html.AssertHtml;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.html.inliner.ExternalCss;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class JsoupCssInlinerTest {
 	private static String FOLDER = "/inliner/css/jsoup/";

@@ -3,7 +3,7 @@ package fr.sii.ogham.ut.core.mimetype.replace;
 import org.junit.Rule
 
 import fr.sii.ogham.core.mimetype.replace.ContainsMimetypeReplacer
-import fr.sii.ogham.helper.rule.LoggingTestRule
+import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
 import spock.lang.Unroll
 

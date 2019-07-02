@@ -21,7 +21,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.cloudhopper.commons.charset.CharsetUtil;
 
 import fr.sii.ogham.core.charset.CharsetDetector;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.sms.exception.message.EncodingException;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.MapCloudhopperCharsetHandler;
 

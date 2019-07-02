@@ -16,7 +16,7 @@ import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.subject.provider.MultiContentSubjectProvider;
 import fr.sii.ogham.core.subject.provider.SubjectProvider;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class MultiContentSubjectProviderTest {
 	@Rule

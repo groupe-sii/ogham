@@ -1,11 +1,5 @@
 package fr.sii.ogham.it.email.sendgrid;
 
-import static fr.sii.ogham.SendGridTestUtils.getFromAddress;
-import static fr.sii.ogham.SendGridTestUtils.getFromName;
-import static fr.sii.ogham.SendGridTestUtils.getHtml;
-import static fr.sii.ogham.SendGridTestUtils.getText;
-import static fr.sii.ogham.SendGridTestUtils.getToNames;
-import static fr.sii.ogham.SendGridTestUtils.getTos;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -15,7 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.SendGrid;
+import com.sendgrid.SendGridException;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -25,18 +20,17 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.template.context.SimpleContext;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
-import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.SendGridException;
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
+import fr.sii.ogham.email.sendgrid.v2.builder.sendgrid.SendGridV2Builder;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.SendGridV2Sender;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
 
 /**
  * Tests regarding the integration between {@code ogham} and the
- * {@link SendGridV4Sender} class. The emails are captured at the boundary between
+ * {@link SendGridV2Sender} class. The emails are captured at the boundary between
  * the {@code ogham}-aware code and the {@code SendGrid-java}
  * -aware code, i.e. the {@link SendGridClient} interface.
  */
-public final class EmailSendGridTest {
+public final class SendGridTranslationTest {
 
 	private static final String SUBJECT = "Example email";
 	private static final String CONTENT_TEXT = "This is a default content.";
@@ -61,7 +55,7 @@ public final class EmailSendGridTest {
 		sendGridClient = mock(SendGridClient.class);
 		messagingService = MessagingBuilder.standard()
 				.email()
-					.sender(SendGridV4Builder.class)
+					.sender(SendGridV2Builder.class)
 						.client(sendGridClient)
 						.and()
 					.and()
@@ -80,16 +74,16 @@ public final class EmailSendGridTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final SendGrid.Email val = argument.getValue();
 
 		assertEquals(SUBJECT, val.getSubject());
-		assertEquals(FROM, getFromName(val));
-		assertEquals(FROM_ADDRESS, getFromAddress(val));
-		assertEquals(TO, getToNames(val)[0]);
-		assertEquals(TO_ADDRESS_1, getTos(val)[0]);
-		assertEquals(CONTENT_TEXT, getText(val));
+		assertEquals(FROM, val.getFromName());
+		assertEquals(FROM_ADDRESS, val.getFrom());
+		assertEquals(TO, val.getToNames()[0]);
+		assertEquals(TO_ADDRESS_1, val.getTos()[0]);
+		assertEquals(CONTENT_TEXT, val.getText());
 	}
 
 	// JMimeMagicProvider is only able to detect text/plain when using ASCII
@@ -108,16 +102,16 @@ public final class EmailSendGridTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final SendGrid.Email val = argument.getValue();
 
 		assertEquals(SUBJECT, val.getSubject());
-		assertEquals(FROM, getFromName(val));
-		assertEquals(FROM_ADDRESS, getFromAddress(val));
-		assertEquals(TO, getToNames(val)[0]);
-		assertEquals(TO_ADDRESS_1, getTos(val)[0]);
-		assertEquals(CONTENT_TEXT_ACCENTED, getText(val));
+		assertEquals(FROM, val.getFromName());
+		assertEquals(FROM_ADDRESS, val.getFrom());
+		assertEquals(TO, val.getToNames()[0]);
+		assertEquals(TO_ADDRESS_1, val.getTos()[0]);
+		assertEquals(CONTENT_TEXT_ACCENTED, val.getText());
 	}
 
 	@Test
@@ -132,16 +126,16 @@ public final class EmailSendGridTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final SendGrid.Email val = argument.getValue();
 
 		assertEquals(SUBJECT, val.getSubject());
-		assertEquals(FROM, getFromName(val));
-		assertEquals(FROM_ADDRESS, getFromAddress(val));
-		assertEquals(TO, getToNames(val)[0]);
-		assertEquals(TO_ADDRESS_1, getTos(val)[0]);
-		assertEquals(CONTENT_HTML, getHtml(val));
+		assertEquals(FROM, val.getFromName());
+		assertEquals(FROM_ADDRESS, val.getFrom());
+		assertEquals(TO, val.getToNames()[0]);
+		assertEquals(TO_ADDRESS_1, val.getTos()[0]);
+		assertEquals(CONTENT_HTML, val.getHtml());
 	}
 
 	@Test
@@ -156,16 +150,16 @@ public final class EmailSendGridTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final SendGrid.Email val = argument.getValue();
 
 		assertEquals(SUBJECT, val.getSubject());
-		assertEquals(FROM, getFromName(val));
-		assertEquals(FROM_ADDRESS, getFromAddress(val));
-		assertArrayEquals(new String[] { TO, TO }, getToNames(val));
-		assertArrayEquals(new String[] { TO_ADDRESS_1, TO_ADDRESS_2 }, getTos(val));
-		assertEquals(CONTENT_TEXT_RESULT, getText(val));
+		assertEquals(FROM, val.getFromName());
+		assertEquals(FROM_ADDRESS, val.getFrom());
+		assertArrayEquals(new String[] { TO, TO }, val.getToNames());
+		assertArrayEquals(new String[] { TO_ADDRESS_1, TO_ADDRESS_2 }, val.getTos());
+		assertEquals(CONTENT_TEXT_RESULT, val.getText());
 	}
 
 	@Test
@@ -180,16 +174,16 @@ public final class EmailSendGridTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<SendGrid.Email> argument = ArgumentCaptor.forClass(SendGrid.Email.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final SendGrid.Email val = argument.getValue();
 
 		assertEquals(SUBJECT, val.getSubject());
-		assertEquals(FROM, getFromName(val));
-		assertEquals(FROM_ADDRESS, getFromAddress(val));
-		assertArrayEquals(new String[] { TO, TO }, getToNames(val));
-		assertArrayEquals(new String[] { TO_ADDRESS_1, TO_ADDRESS_2 }, getTos(val));
-		assertEquals(CONTENT_HTML_RESULT, getHtml(val));
+		assertEquals(FROM, val.getFromName());
+		assertEquals(FROM_ADDRESS, val.getFrom());
+		assertArrayEquals(new String[] { TO, TO }, val.getToNames());
+		assertArrayEquals(new String[] { TO_ADDRESS_1, TO_ADDRESS_2 }, val.getTos());
+		assertEquals(CONTENT_HTML_RESULT, val.getHtml());
 	}
 
 }

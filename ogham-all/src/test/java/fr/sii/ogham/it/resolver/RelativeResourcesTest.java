@@ -24,7 +24,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.mock.context.SimpleBean;
 
 public class RelativeResourcesTest {

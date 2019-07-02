@@ -16,7 +16,7 @@ import org.mockito.junit.MockitoRule;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.Message;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class FluentConditionsTest {
 	@Rule

@@ -25,7 +25,7 @@ import fr.sii.ogham.core.condition.provider.RequiredClassesAnnotationProvider;
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.core.util.classpath.ClasspathHelper;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import mock.condition.annotation.AllPossibilities;
 import mock.condition.annotation.NoAnnotation;
 import mock.condition.annotation.OneRequiredClass;

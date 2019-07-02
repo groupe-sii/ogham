@@ -1,5 +1,6 @@
 package fr.sii.ogham.email.sendgrid.v2.sender.impl;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,11 +12,13 @@ import com.sendgrid.SendGridException;
 
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
+import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.message.Recipient;
 import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
+import fr.sii.ogham.email.sendgrid.sender.exception.AttachmentReadException;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridInterceptor;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.SendGridContentHandler;
@@ -87,13 +90,15 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 			LOG.debug("Email has been successfully sent");
 		} catch (ContentHandlerException e) {
 			throw new MessageException("A content-related error occurred when trying to build an email", message, e);
+		} catch (AttachmentReadException e) {
+			throw new MessageException("Attaching file to email failed when trying to send an email", message, e);
 		} catch (SendGridException e) {
 			throw new MessageException("A SendGrid-related error occurred when trying to send an email", message, e);
 		}
 	}
 
 	private SendGrid.Email intercept(SendGrid.Email sendGridEmail, Email source) {
-		if(interceptor==null) {
+		if (interceptor == null) {
 			return sendGridEmail;
 		}
 		return interceptor.intercept(sendGridEmail, source);
@@ -111,8 +116,6 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 
 		if (message.getFrom() == null) {
 			violations.add("Missing sender email address");
-		} else if (message.getFrom().getPersonal() == null) {
-			violations.add("Missing sender name");
 		}
 
 		if (message.getRecipients().isEmpty()) {
@@ -120,20 +123,20 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 		}
 
 		for (Recipient recipient : message.getRecipients()) {
-			if (recipient.getAddress().getPersonal() == null) {
-				violations.add("Missing recipient name for address " + recipient.getAddress().getAddress());
+			if (recipient.getAddress().getAddress() == null) {
+				violations.add("Missing recipient address " + recipient);
 			}
 		}
 
 		return violations;
 	}
 
-	private SendGrid.Email toSendGridEmail(final Email message) throws ContentHandlerException {
+	private SendGrid.Email toSendGridEmail(final Email message) throws ContentHandlerException, AttachmentReadException {
 		final SendGrid.Email ret = new SendGrid.Email();
 		ret.setSubject(message.getSubject());
 
 		ret.setFrom(message.getFrom().getAddress());
-		ret.setFromName(message.getFrom().getPersonal());
+		ret.setFromName(message.getFrom().getPersonal() == null ? "" : message.getFrom().getPersonal());
 
 		final String[] tos = new String[message.getRecipients().size()];
 		final String[] toNames = new String[message.getRecipients().size()];
@@ -141,7 +144,7 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 		for (Recipient recipient : message.getRecipients()) {
 			final EmailAddress address = recipient.getAddress();
 			tos[i] = address.getAddress();
-			toNames[i] = address.getPersonal();
+			toNames[i] = address.getPersonal() == null ? "" : address.getPersonal();
 			i++;
 		}
 		ret.setTo(tos);
@@ -149,11 +152,26 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 
 		handler.setContent(ret, message.getContent());
 
+		for (Attachment attachment : message.getAttachments()) {
+			addAttachment(ret, attachment);
+		}
+
 		return ret;
+	}
+
+	private void addAttachment(final SendGrid.Email ret, final Attachment attachment) throws AttachmentReadException {
+		try {
+			ret.addAttachment(attachment.getResource().getName(), attachment.getResource().getInputStream());
+			if (attachment.getContentId() != null) {
+				ret.addContentId(attachment.getResource().getName(), attachment.getContentId());
+			}
+		} catch (IOException e) {
+			throw new AttachmentReadException("Failed to attach email attachment named " + attachment.getResource().getName(), attachment, e);
+		}
 	}
 
 	public SendGridClient getDelegate() {
 		return delegate;
 	}
-	
+
 }

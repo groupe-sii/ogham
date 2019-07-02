@@ -35,13 +35,13 @@ import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.attachment.ContentDisposition;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
 import fr.sii.ogham.helper.html.AssertHtml;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.html.inliner.EveryImageInliner;
 import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
 import fr.sii.ogham.html.translator.InlineImageTranslator;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
 
 @RunWith(MockitoJUnitRunner.class)

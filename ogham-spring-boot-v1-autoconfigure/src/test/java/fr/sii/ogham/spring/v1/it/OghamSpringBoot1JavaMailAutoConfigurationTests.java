@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 import fr.sii.ogham.assertion.OghamInternalAssertions;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
 
 public class OghamSpringBoot1JavaMailAutoConfigurationTests {

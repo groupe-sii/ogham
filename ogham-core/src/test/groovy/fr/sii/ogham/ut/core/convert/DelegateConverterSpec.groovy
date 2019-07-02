@@ -5,7 +5,7 @@ import org.junit.Rule
 import fr.sii.ogham.core.convert.DelegateConverter
 import fr.sii.ogham.core.convert.SupportingConverter
 import fr.sii.ogham.core.exception.convert.ConversionException
-import fr.sii.ogham.helper.rule.LoggingTestRule
+import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
 import spock.lang.Unroll
 

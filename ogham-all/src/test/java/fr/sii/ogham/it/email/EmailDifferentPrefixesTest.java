@@ -26,7 +26,7 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.mock.context.SimpleBean;
 
 public class EmailDifferentPrefixesTest {
