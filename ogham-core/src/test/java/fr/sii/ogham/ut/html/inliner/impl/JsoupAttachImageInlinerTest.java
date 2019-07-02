@@ -24,10 +24,10 @@ import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.attachment.ContentDisposition;
 import fr.sii.ogham.helper.html.AssertHtml;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JsoupAttachImageInlinerTest {

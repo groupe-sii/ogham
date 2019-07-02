@@ -14,10 +14,10 @@ import org.junit.Test;
 
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.helper.html.AssertHtml;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class JsoupBase64ImageInlinerTest {
 	private static String FOLDER = "/inliner/images/jsoup/";

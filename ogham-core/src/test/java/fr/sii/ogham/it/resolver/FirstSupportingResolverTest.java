@@ -23,7 +23,7 @@ import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
 import fr.sii.ogham.core.util.IOUtils;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class FirstSupportingResolverTest {
 	private FirstSupportingResourceResolver firstSupportingResolver;

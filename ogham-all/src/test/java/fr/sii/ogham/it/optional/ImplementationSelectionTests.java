@@ -17,7 +17,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.core.util.classpath.SimpleClasspathHelper;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.mock.classloader.FilterableClassLoader;
 
 @RunWith(MockitoJUnitRunner.class)

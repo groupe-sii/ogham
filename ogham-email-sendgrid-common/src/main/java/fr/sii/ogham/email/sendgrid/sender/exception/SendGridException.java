@@ -1,4 +1,4 @@
-package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid;
+package fr.sii.ogham.email.sendgrid.sender.exception;
 
 import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 

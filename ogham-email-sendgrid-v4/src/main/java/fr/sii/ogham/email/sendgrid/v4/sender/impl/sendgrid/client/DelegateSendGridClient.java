@@ -17,7 +17,7 @@ import com.sendgrid.SendGridAPI;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.SendGridException;
+import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
 
 /**
  * Facade wrapping the {@link SendGrid} object.
@@ -56,21 +56,34 @@ public final class DelegateSendGridClient implements SendGridClient {
 			LOG.debug("Sending to SendGrid client: SUBJECT {}", email.getSubject());
 		}
 
-		try {
-			Request request = new Request();
-			request.setMethod(Method.POST);
-			request.setEndpoint("mail/send");
-			request.setBody(email.build());
-			final Response response = delegate.api(request);
+		final Response response = callApi(email);
 
-			if (isSuccess(response.getStatusCode())) {
-				LOG.debug("Response from SendGrid client: ({}) {}", response.getStatusCode(), response.getBody());
-			} else {
-				throw new SendGridException(new IOException("Sending to SendGrid failed: (" + response.getStatusCode() + ") " + response.getBody()));
-			}
+		if (isSuccess(response.getStatusCode())) {
+			LOG.debug("Response from SendGrid client: ({}) {}", response.getStatusCode(), response.getBody());
+		} else {
+			throw new SendGridException(new IOException("Sending to SendGrid failed: (" + response.getStatusCode() + ") " + response.getBody()));
+		}
+	}
+
+	private Response callApi(final Mail email) throws SendGridException {
+		try {
+			Request request = prepareRequest(email);
+			return delegate.api(request);
+		} catch (IOException e) {
+			throw new SendGridException("Sending email to SendGrid failed", e);
+		}
+	}
+
+	private Request prepareRequest(final Mail email) throws SendGridException {
+		Request request = new Request();
+		request.setMethod(Method.POST);
+		request.setEndpoint("mail/send");
+		try {
+			request.setBody(email.build());
 		} catch (IOException e) {
 			throw new SendGridException("Preparing email for SendGrid failed", e);
 		}
+		return request;
 	}
 
 	private boolean isSuccess(int statusCode) {
@@ -89,7 +102,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 
 	private List<String> debug(final Mail email) {
 		if (email.getPersonalization() == null) {
-			return null;	// NOSONAR
+			return null; // NOSONAR
 		}
 		return email.getPersonalization().stream().flatMap(p -> p.getTos() == null ? Stream.empty() : p.getTos().stream()).map(this::debug).collect(toList());
 	}

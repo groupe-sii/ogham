@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.util.IOUtils;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.sms.builder.ovh.OvhSmsBuilder;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;

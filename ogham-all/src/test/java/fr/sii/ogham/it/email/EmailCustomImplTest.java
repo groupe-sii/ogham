@@ -16,7 +16,7 @@ import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmailCustomImplTest {

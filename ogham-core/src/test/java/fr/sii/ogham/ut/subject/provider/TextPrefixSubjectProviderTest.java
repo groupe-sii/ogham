@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import fr.sii.ogham.core.subject.provider.TextPrefixSubjectProvider;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class TextPrefixSubjectProviderTest {
 	@Rule

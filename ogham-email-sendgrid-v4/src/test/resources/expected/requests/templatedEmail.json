@@ -1,0 +1,33 @@
+{
+  "from": {
+    "name": "SENDER",
+    "email": "from@example.com"
+  },
+  "subject": "Example email",
+  "personalizations": [
+    {
+      "to": [
+        {
+          "email": "to.1@yopmail.com"
+        }
+      ]
+    },
+    {
+      "to": [
+        {
+          "email": "to.2@yopmail.com"
+        }
+      ]
+    }
+  ],
+  "content": [
+    {
+      "type": "text/plain",
+      "value": "Hello you"
+    },
+    {
+      "type": "text/html",
+      "value": "<html><body><p>Hello you</p></body></html>"
+    }
+  ]
+}

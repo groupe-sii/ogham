@@ -28,12 +28,12 @@ import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
 
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.helper.sms.AssertSms;
 import fr.sii.ogham.helper.sms.ExpectedAddressedPhoneNumber;
 import fr.sii.ogham.helper.sms.ExpectedSms;
 import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
 import fr.sii.ogham.sms.message.Sender;

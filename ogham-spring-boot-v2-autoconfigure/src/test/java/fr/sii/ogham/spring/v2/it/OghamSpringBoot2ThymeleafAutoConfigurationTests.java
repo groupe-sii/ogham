@@ -24,9 +24,9 @@ import fr.sii.ogham.assertion.OghamInternalAssertions;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration;
 
