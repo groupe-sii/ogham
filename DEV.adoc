@@ -5,6 +5,7 @@
 ```
 
 
+
 = Test
 
 == Execute Unit and Integration tests
@@ -43,6 +44,29 @@ cd <output directory>
 /mvnw test -T 2.5C -f "<java version>/pom.xml"
 ```
 
+
+
+= Change project version
+
+Changing version is done in three steps:
+
+1) Use standard maven plugin to update version numbers for all pom.xml files:
+
+```
+./mvnw versions:set -DnewVersion=<new version> -DprocessAllModules
+```
+
+2) Update all other pom.xml files that have dependencies to Ogham (samples for example):
+
+```
+./mvnw com.google.code.maven-replacer-plugin:replacer:replace -N
+```
+
+3) Test that everything works fine and finish version update:
+
+```
+./mvnw versions:commit
+```
 
 
 
