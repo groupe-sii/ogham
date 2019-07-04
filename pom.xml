@@ -101,10 +101,11 @@
 		<site.deploy.url>gitsite:git@github.com/groupe-sii/ogham.git</site.deploy.url>
 
 		<!-- Documentation -->
-		<docProjectVersion>${project.version}</docProjectVersion>
+		<docLatestReleaseVersion>${project.version}</docLatestReleaseVersion>
+		<docFutureDevVersion>${project.version}</docFutureDevVersion>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
 		<site.staging.dir>${project.build.outputDirectory}/staging</site.staging.dir>
-		<site.output.dir>${site.staging.dir}/v${docProjectVersion}</site.output.dir>
+		<site.output.dir>${site.staging.dir}/v${docLatestReleaseVersion}</site.output.dir>
 		<doc-theme>cerulean</doc-theme>
 		<asciidoctor.skip>${maven.site.skip}</asciidoctor.skip>
 		<sass.skip>${maven.site.skip}</sass.skip>
@@ -725,7 +726,8 @@
 								<experimental>true</experimental>
 								<tabsize>4</tabsize>
 								<imagesdir />
-								<ogham-version>${docProjectVersion}</ogham-version>
+								<ogham-version>${docLatestReleaseVersion}</ogham-version>
+								<ogham-dev-version>${docFutureDevVersion}</ogham-dev-version>
 								<docdir>${basedir}/src/docs/asciidoc</docdir>
 								<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 								<sourcedir-url>${github.code.url}</sourcedir-url>
@@ -826,7 +828,8 @@
 							<experimental>true</experimental>
 							<tabsize>4</tabsize>
 							<imagesdir />
-							<ogham-version>${docProjectVersion}</ogham-version>
+							<ogham-version>${docLatestReleaseVersion}</ogham-version>
+							<ogham-dev-version>${docFutureDevVersion}</ogham-dev-version>
 							<badges-branch>${git.branch}</badges-branch>
 							<docdir>${basedir}/src/docs/asciidoc</docdir>
 							<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>

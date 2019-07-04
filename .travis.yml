@@ -216,7 +216,7 @@ stages:
   - name: "Javadoc"
   - name: "Analyze"
   - name: "Deploy"
-    if:  branch = master or branch = develop
+    if:  branch = master
 
 notifications:
   slack:

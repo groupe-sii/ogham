@@ -22,8 +22,18 @@ image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aog
 
 
 
-= Ogham 
+= Ogham
 2.0.0
+
+latest release: **v2.0.0** http://groupe-sii.github.io/ogham/v2.0.0[site] https://github.com/groupe-sii/ogham/tree/v2.0.0[code]
+
+current development: **v3.0.0-SNAPSHOT** http://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT[site] https://github.com/groupe-sii/ogham/tree/master[code] 
+
+Previous versions:
+http://groupe-sii.github.io/ogham/v1.1.1[v1.1.1]
+http://groupe-sii.github.io/ogham/v1.1.0[v1.1.0]
+http://groupe-sii.github.io/ogham/v1.0.0[v1.0.0]
+http://groupe-sii.github.io/ogham/v0.0.1[v0.0.1]
 
 
 == Introduction
@@ -85,7 +95,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 </dependency>
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/pom.xml?ts=4[View code of an example pom.xml]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts=4[View code of an example pom.xml]
 
 
 [role=tab]
@@ -129,7 +139,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 </dependency>
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-spring-usage/pom.xml?ts=4[View code of an example pom.xml with Spring Boot starter]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/pom.xml?ts=4[View code of an example pom.xml with Spring Boot starter]
 
 
 [role=tab]
@@ -238,7 +248,7 @@ NOTE: All samples with templates are using ThymeLeaf as template engine. For Fre
 [[email-usage]]
 === Send Email
 
-The samples are available in the https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage[sample-standard-usage sub-project].
+The samples are available in the https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMTP for sending email. See <<sendgrid, Sending email through SendGrid>> to know how to send email using SendGrid HTTP API.
 
@@ -300,7 +310,7 @@ public class BasicSample
 <3> Create a MessagingService instance
 <4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from` property
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____
@@ -382,7 +392,7 @@ public class HtmlTemplateSample
 <5> Indicate the path to the HTML template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java?ts=4[Source code of the sample].
 
 [role=tab]
 image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
@@ -404,7 +414,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 <2> Use the `name` attribute value in the template
 <3> Use the `value` attribute value in the template
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
 
 [role=tab-container-end]
 _____
@@ -488,7 +498,7 @@ public class HtmlTemplateWithSubjectSample
 ----
 <1> Subject is no more in Java code
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateWithSubjectSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateWithSubjectSample.java?ts=4[Source code of the sample]
 
 [role=tab]
 image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
@@ -509,7 +519,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 ----
 <1> The subject is defined in the template and can use same evaluation context (`SimpleBean`)
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html?ts=4[Source code of the HTML template]
 
 [role=tab-container-end]
 _____
@@ -580,7 +590,7 @@ public class TextTemplateWithSubjectSample
 ----
 <1> Subject is no more in Java code
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/TextTemplateWithSubjectSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/TextTemplateWithSubjectSample.java?ts=4[Source code of the sample]
 
 [role=tab]
 
@@ -596,7 +606,7 @@ Foo bar $value
 
 NOTE: The subject of the email will be `Welcome foo !`
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts=4[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts=4[Source code of the text template]
 
 [role=tab-container-end]
 _____
@@ -686,7 +696,7 @@ public class HtmlWithImagesAndCssTemplateSample
 <1> The path to the templates
 <2> The template context
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts=4[Source code of the sample]
 
 
 
@@ -805,7 +815,7 @@ image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] Thy
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts=4[Source code of the HTML template]
 
 
 [role=tab]
@@ -970,7 +980,7 @@ public class HtmlAndTextSample
 ----
 <1> The content is using the type `MultiContent` with a text and HTML content
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts=4[Source code of the sample]
 
 [role=tab-container-end]
 _____
@@ -1044,7 +1054,7 @@ public class HtmlAndTextTemplateSample
 <1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts=4[Source code of the sample]
 
 [role=tab]
 image:src/docs/resources/images/icons/thymeleaf-text.jpg[width=30,height=30] Text template
@@ -1057,7 +1067,7 @@ image:src/docs/resources/images/icons/thymeleaf-text.jpg[width=30,height=30] Tex
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=4[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=4[Source code of the text template]
 
 
 [role=tab]
@@ -1078,7 +1088,7 @@ image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] HTM
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
 
 [role=tab-container-end]
 _____
@@ -1160,7 +1170,7 @@ public class HtmlAndTextMixedTemplateEnginesSample
 <1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=4[Source code of the sample]
 
 [role=tab]
 image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
@@ -1171,7 +1181,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 $name $value
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=4[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=4[Source code of the text template]
 
 
 [role=tab]
@@ -1192,7 +1202,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=4[Source code of the HTML template]
 
 [role=tab-container-end]
 _____
@@ -1254,7 +1264,7 @@ public class WithAttachmentSample
 <1> Attach a PDF file that exists in the classpath to the email
 <2> Use an `InputStream` and name the attachment
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts=4[Source code of the sample]
 
 [role=tab-container-end]
 _____
@@ -1333,7 +1343,7 @@ public class OverrideDefaultSenderSample
 <2> Do not provide `from` field so the sender address is `foo.bar@test.com`
 <3> Override the default sender address by providing a `from` field. The address is now `override@test.com`
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____
@@ -1443,7 +1453,7 @@ public class EmailPropertiesTest
 <2> Define 2 `cc` recipients
 <3> Define a single `bcc` recipient
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/ogham-all/src/test/java/fr/sii/ogham/it/email/EmailPropertiesTest.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/ogham-all/src/test/java/fr/sii/ogham/it/email/EmailPropertiesTest.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____
@@ -1553,7 +1563,7 @@ public class GmailSSLBasicSample
 <9> Provide your GMail email address
 <10> Send the email
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/gmail/GmailSSLBasicSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/gmail/GmailSSLBasicSample.java?ts=4[Source code of the sample]
 
 [role=tab-container-end]
 _____
@@ -1667,7 +1677,7 @@ public class SendGridFullSample
 <1> Load properties from a file that is in the classpath.
 <2> Use an `InputStream` and name the attachment
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/SendGridFullSample.java?ts=4[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/SendGridFullSample.java?ts=4[Source code of the sample]
 
 
 [role=tab]
@@ -1682,7 +1692,7 @@ ogham.email.template.path-prefix=/template/thymeleaf/email/            # <2>
 <1> The sender email address
 <2> A prefix for all template paths. In this example, the template paths are `/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt`.
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/sendgrid-template.properties?ts=4[Source code of the configuration file]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/sendgrid-template.properties?ts=4[Source code of the configuration file]
 
 [role=tab-container-end]
 _____
@@ -1697,7 +1707,7 @@ TODO: address format "address <personal>"
 [[sms-usage]]
 === Send SMS
 
-The samples are available in the https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage[sample-standard-usage sub-project].
+The samples are available in the https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS. Only a subset of SMPP properties are used in following samples. The whole list of SMPP properties is available in <<user-manual.adoc#advanced-smpp-configuration, advanced configuration>>.
 
@@ -1760,7 +1770,7 @@ public class BasicSample
 <8> Create a MessagingService instance
 <9> Send a SMS with a simple message. The sender phone number is automatically set using `ogham.sms.from` property
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____
@@ -1841,7 +1851,7 @@ public class TemplateSample
 <5> Indicate the path to the template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java?ts=4[Source code of the sample].
 
 [role=tab]
 image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
@@ -1853,7 +1863,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=4[Source code of the template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=4[Source code of the template]
 
 [role=tab-container-end]
 _____
@@ -1922,7 +1932,7 @@ public class LongMessageSample
 }
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
@@ -1997,7 +2007,7 @@ public class BasicSmsglobalSmppSample
 <8> Instantiate the service as usual
 <9> Send the SMS as usual
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/smsglobal/BasicSmsglobalSmppSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/smsglobal/BasicSmsglobalSmppSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
@@ -2076,7 +2086,7 @@ public class OverrideDefaultSenderSample
 <2> Do not provide `from` field so the sender phone number is `+33699999999`
 <3> Override the default sender phone number by providing a `from` field. The phone number is now `+33700000000`
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____
@@ -2279,7 +2289,7 @@ public class PropertiesSample
 <4> Directly set a property with its value in a fluent way
 <5> Use standard `System.getProperties()`
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____
@@ -2352,7 +2362,7 @@ public class PropertiesSample
 <5> Use standard `System.getProperties()`
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
 
 
 
@@ -2405,7 +2415,7 @@ Gives the following property values:
 [role=tab-container-end]
 _____
 
-NOTE: See the https://github.com/groupe-sii/ogham/blob/v2.0.0/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts=4[test that ensures this order].
+NOTE: See the https://github.com/groupe-sii/ogham/tree/v2.0.0/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts=4[test that ensures this order].
 
 ===== What happens if there are several values for the same property and for the same source ?
 
@@ -2680,7 +2690,7 @@ public class ThymeleafHtmlAndFreemarkerTextSample
 <4> Use any Java object for evaluating template variables
 <5> The sender email address that comes from request parameter
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/ThymeleafHtmlAndFreemarkerTextSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/ThymeleafHtmlAndFreemarkerTextSample.java?ts=4[Source code of the sample].
 
 [role=tab]
 image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
@@ -2704,7 +2714,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 <3> Evaluate the `name` attribute value of `SimpleBean` in the template
 <4> Evaluate the `value` attribute value of `SimpleBean` in the template
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-spring-usage/src/main/resources/email/mixed.html?ts=4[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/resources/email/mixed.html?ts=4[Source code of the HTML template]
 
 [role=tab]
 image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
@@ -2714,7 +2724,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 $name $value
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-spring-usage/src/main/resources/email/mixed.txt.ftl?ts=4[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/resources/email/mixed.txt.ftl?ts=4[Source code of the text template]
 
 
 [role=tab]
@@ -2736,7 +2746,7 @@ spring.freemarker.prefix=/email/        # <5>
 <4> The path prefix for ThymeLeaf templates
 <5> The path prefix for FreeMarker templates
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-spring-usage/src/main/resources/application-email-template.properties?ts=4[Source code of the properties]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/resources/application-email-template.properties?ts=4[Source code of the properties]
 
 [role=tab-container-end]
 _____
@@ -2830,7 +2840,7 @@ public class TemplateSample
 <4> Use any Java object for evaluating template variables
 <5> The sender phone number that comes from request parameter
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/TemplateSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/TemplateSample.java?ts=4[Source code of the sample].
 
 [role=tab]
 image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Template
@@ -2840,7 +2850,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 Hello $name, the confirmation code is $value
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-spring-usage/src/main/resources/sms/register.txt.ftl?ts=4[Source code of the template]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/resources/sms/register.txt.ftl?ts=4[Source code of the template]
 
 
 [role=tab]
@@ -2865,7 +2875,7 @@ ogham.sms.template.path-suffix=.txt.ftl                        # <7>
 <6> The path prefix for SMS templates
 <7> The path suffix for SMS templates (FreeMarker extension in this case)
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-spring-usage/src/main/resources/application-sms-template.properties?ts=4[Source code of the properties]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/resources/application-sms-template.properties?ts=4[Source code of the properties]
 
 [role=tab-container-end]
 _____
@@ -2896,7 +2906,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 </dependency>
 ----
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/pom.xml?ts=4[View code of an example pom.xml]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts=4[View code of an example pom.xml]
 
 
 [role=tab]
@@ -3079,7 +3089,7 @@ public class EmailTestSample
 <15> Assert that recevied email has no attachment
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailTestSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____
@@ -3196,7 +3206,7 @@ public class EmailHtmlTestSample
 <3> Assert that HTML is similar as an expected HTML content
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab]
@@ -3220,7 +3230,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 ----
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/register.html?ts=4[Source code of the template].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/register.html?ts=4[Source code of the template].
 
 
 [role=tab]
@@ -3242,7 +3252,7 @@ image:src/docs/resources/images/icons/html.png[width=37,height=30] Expected HTML
 ----
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/resources/expected/register.html?ts=4[Source code of the expected HTML].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/resources/expected/register.html?ts=4[Source code of the expected HTML].
 
 
 [role=tab-container-end]
@@ -3354,7 +3364,7 @@ public class EmailHtmlTestSample
 <3> Assert that HTML is similar as an expected HTML content
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab]
@@ -3378,7 +3388,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 ----
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/register.html?ts=4[Source code of the template].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/register.html?ts=4[Source code of the template].
 
 
 [role=tab]
@@ -3537,7 +3547,7 @@ public class EmailHtmlAndTextTestSample
 <6> Assert that alternative body message mimetype is `text/plain`
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab]
@@ -3558,7 +3568,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 ----
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=4[Source code of the template].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=4[Source code of the template].
 
 
 [role=tab]
@@ -3570,7 +3580,7 @@ $name $value
 ----
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=4[Source code of the template].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=4[Source code of the template].
 
 
 [role=tab]
@@ -3592,7 +3602,7 @@ image:src/docs/resources/images/icons/html.png[width=37,height=30] Expected HTML
 ----
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/resources/expected/simple_bar_42.html?ts=4[Source code of the expected HTML].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/resources/expected/simple_bar_42.html?ts=4[Source code of the expected HTML].
 
 
 [role=tab]
@@ -3604,7 +3614,7 @@ bar 42
 ----
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/resources/expected/simple_bar_42.txt?ts=4[Source code of the expected text].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/resources/expected/simple_bar_42.txt?ts=4[Source code of the expected text].
 
 
 [role=tab-container-end]
@@ -3706,7 +3716,7 @@ public class EmailAttachmentTestSample
 <6> Assert that the attachment disposition is correct
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
@@ -3813,7 +3823,7 @@ The `bcc` recipient is not testable. Indeed, `bcc` recipients are hidden recipie
 ====
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
@@ -3932,7 +3942,7 @@ public class SeveralEmailsTestSample
 <4> Specific assertions for third sent message (recipient and message content)
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
@@ -4033,7 +4043,7 @@ public class EmailSMTPAuthenticationTest
 <4> Configure Ogham to provide the authentication password
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/ogham-all/src/test/java/fr/sii/ogham/it/email/EmailSMTPAuthenticationTest.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/ogham-all/src/test/java/fr/sii/ogham/it/email/EmailSMTPAuthenticationTest.java?ts=4[Source code of the sample].
 
 NOTE: Only the setup differs, the test is the same.
 
@@ -4128,7 +4138,7 @@ public class SmsTestSample
 <9> Assert that the recipient phone number is `0601020304`
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SmsTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SmsTestSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____
@@ -4222,7 +4232,7 @@ public class LongSmsTestSample
 <8> Assert that the recipient phone number is `0601020304` for every message
 
 
-https://github.com/groupe-sii/ogham/blob/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/LongSmsTestSample.java?ts=4[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/LongSmsTestSample.java?ts=4[Source code of the sample].
 
 [role=tab-container-end]
 _____

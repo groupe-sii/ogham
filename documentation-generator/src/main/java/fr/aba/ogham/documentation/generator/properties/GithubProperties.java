@@ -14,8 +14,10 @@ import lombok.Data;
 @ConfigurationProperties("generator.github")
 public class GithubProperties {
 	@NotNull
-	private String branch;
+	private String latestReleaseBranch;
+	@NotNull
+	private String futureDevBranch = "master";
 	private String badgesBranch = "master";
-	private String codeBaseUrl = "https://github.com/groupe-sii/ogham/blob/";
+	private String codeBaseUrl = "https://github.com/groupe-sii/ogham/tree/";
 	private String siteUrl = "http://groupe-sii.github.io/ogham";
 }

@@ -11,7 +11,11 @@ ifndef::general-dir[]
 :general-dir: {docdir}/general/
 endif::[]
 
+:github-url: https://github.com/groupe-sii/ogham
+:github-branch-url: {github-url}/tree
+
 :site-version-url: {site-url}/v{ogham-version}
+:site-dev-version-url: {site-url}/v{ogham-dev-version}
 
 :ogham-all-testsourcedir-url: {sourcedir-url}/ogham-all/src/test/java
 
