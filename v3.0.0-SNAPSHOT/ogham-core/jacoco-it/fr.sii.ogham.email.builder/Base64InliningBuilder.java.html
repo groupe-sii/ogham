@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Base64InliningBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">Base64InliningBuilder.java</span></div><h1>Base64InliningBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
+
+/**
+ * Configures how images defined in the HTML template are inlined (converted to
+ * base64).
+ * 
+ * For example, if your template contains the following HTML code:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *    &lt;img src=&quot;classpath:/foo.png&quot; ogham-inline-mode=&quot;base64&quot; /&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image will be loaded from the classpath and encoded into a base64
+ * string. This base64 string is used in the src attribute of the {@code &lt;img&gt;}.
+ * 
+ * This builder only provides one implementation that uses
+ * &lt;a href=&quot;https://jsoup.org/&quot;&gt;jsoup&lt;/a&gt; to parse HTML content and then
+ * converts image content to base64.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class Base64InliningBuilder extends AbstractParent&lt;ImageInliningBuilder&gt; implements Builder&lt;ImageInliner&gt; {
+	/**
+	 * Initializes with the parent (used when calling {@link #and()} method for
+	 * fluent chaining).
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 */
+	public Base64InliningBuilder(ImageInliningBuilder parent) {
+<span class="nc" id="L39">		super(parent);</span>
+<span class="nc" id="L40">	}</span>
+
+	@Override
+	public ImageInliner build() {
+<span class="nc" id="L44">		return new JsoupBase64ImageInliner();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AttachImageBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">AttachImageBuilder.java</span></div><h1>AttachImageBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.id.generator.IdGenerator;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+
+/**
+ * Configures how attachment of images is handled.
+ * 
+ * Image defined in a html must be referenced by a
+ * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID (or
+ * CID)&lt;/a&gt; if the image is attached to the email.
+ * 
+ * For example, if your template contains the following HTML code:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *    &lt;img src=&quot;classpath:/foo.png&quot; ogham-inline-mode=&quot;attach&quot; /&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image will be loaded from the classpath and attached to the email.
+ * The src attribute will be replaced by the Content-ID.
+ * 
+ * The Content-ID is generated using a {@link IdGenerator} that is configured
+ * through the {@link #cid()} method.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class AttachImageBuilder extends AbstractParent&lt;ImageInliningBuilder&gt; implements Builder&lt;ImageInliner&gt; {
+	private CidBuilder cidBuilder;
+
+	/**
+	 * Initializes with the parent (used when calling {@link #and()} method for
+	 * fluent chaining).
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 */
+	public AttachImageBuilder(ImageInliningBuilder parent) {
+<span class="fc" id="L46">		super(parent);</span>
+<span class="fc" id="L47">	}</span>
+
+	/**
+	 * Configures how images are attached to {@link Email}s.
+	 * 
+	 * Image defined in a html must be referenced by a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt; if the image is attached to the email. You can define how
+	 * CIDs are generated.
+	 * 
+	 * @return the builder to configure CID generation
+	 */
+	public CidBuilder cid() {
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">		if (cidBuilder == null) {</span>
+<span class="fc" id="L61">			cidBuilder = new CidBuilder(this);</span>
+		}
+<span class="fc" id="L63">		return cidBuilder;</span>
+	}
+
+	@Override
+	public ImageInliner build() {
+<span class="fc" id="L68">		IdGenerator idGenerator = cidBuilder.build();</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">		if (idGenerator == null) {</span>
+<span class="nc" id="L70">			throw new BuildException(&quot;Can't build inliner that attaches images because no identifier generator configured&quot;);</span>
+		}
+<span class="fc" id="L72">		return new JsoupAttachImageInliner(idGenerator);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

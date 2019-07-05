@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TemplateBuilderHelper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.template</a> &gt; <span class="el_source">TemplateBuilderHelper.java</span></div><h1>TemplateBuilderHelper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.template;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.template.detector.FixedEngineDetector;
+import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
+import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
+import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser.TemplateImplementation;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.common.adapter.FailIfNotFoundVariantResolver;
+import fr.sii.ogham.template.common.adapter.FirstExistingResourceVariantResolver;
+import fr.sii.ogham.template.common.adapter.NullVariantResolver;
+import fr.sii.ogham.template.common.adapter.VariantResolver;
+
+/**
+ * Helps to configure a {@link TemplateParser} builder.
+ * 
+ * &lt;p&gt;
+ * It registers and uses {@link Builder}s to instantiate and configure
+ * {@link TemplateParser} specialized implementations.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * It also configures how to handle missing variant (either fail or do nothing).
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder used by custom
+ *            {@link TemplateParser} {@link Builder}
+ */
+public class TemplateBuilderHelper&lt;P&gt; {
+<span class="fc" id="L45">	private static final Logger LOG = LoggerFactory.getLogger(TemplateBuilderHelper.class);</span>
+
+	private final P parent;
+	private final List&lt;Builder&lt;? extends TemplateParser&gt;&gt; templateBuilders;
+	private final EnvironmentBuilder&lt;?&gt; environmentBuilder;
+	private boolean missingVariantFail;
+	private VariantResolver missingResolver;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling and() method of any registered {@link TemplateParser}
+	 * {@link Builder}. The {@link EnvironmentBuilder} is used to evaluate
+	 * properties at build time (used by {@link TemplateParser}
+	 * {@link Builder}s).
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
+	public TemplateBuilderHelper(P parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="fc" id="L66">		super();</span>
+<span class="fc" id="L67">		this.parent = parent;</span>
+<span class="fc" id="L68">		this.environmentBuilder = environmentBuilder;</span>
+<span class="fc" id="L69">		templateBuilders = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L70">	}</span>
+
+	/**
+	 * Indicates if some {@link TemplateParser} {@link Builder}s have been
+	 * registered
+	 * 
+	 * @return true if at least one builder has been registered
+	 */
+	public boolean hasRegisteredTemplates() {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">		return !templateBuilders.isEmpty();</span>
+	}
+
+	/**
+	 * If a variant is missing, then force to fail.
+	 * 
+	 * &lt;p&gt;
+	 * This may be useful if you want for example to always provide a text
+	 * fallback when using an html template. So if a client can't read the html
+	 * version, the fallback version will still always be readable. So to avoid
+	 * forgetting to write text template, set this to true.
+	 * &lt;/p&gt;
+	 * 
+	 * @param fail
+	 *            if true, it fails if a variant is missing
+	 */
+	public void missingVariant(boolean fail) {
+<span class="nc" id="L96">		this.missingVariantFail = fail;</span>
+<span class="nc" id="L97">	}</span>
+
+	/**
+	 * Provide custom resolver that will handle a missing variant.
+	 * 
+	 * @param resolver
+	 *            the custom resolver
+	 */
+	public void missingVariant(VariantResolver resolver) {
+<span class="nc" id="L106">		this.missingResolver = resolver;</span>
+<span class="nc" id="L107">	}</span>
+
+	/**
+	 * Registers and configures a {@link TemplateParser} through a dedicated
+	 * builder.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .register(ThymeleafEmailBuilder.class)
+	 *     .detector(new ThymeleafEngineDetector());
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your {@link Builder} may implement {@link VariantBuilder} to handle
+	 * template {@link Variant}s (used for {@link MultiTemplateContent} that
+	 * provide a single path to templates with different extensions for
+	 * example).
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your {@link Builder} may also implement {@link DetectorBuilder} in order
+	 * to indicate which kind of templates your {@link TemplateParser} is able
+	 * to parse. If your template parse is able to parse any template file you
+	 * are using, you may not need to implement {@link DetectorBuilder}.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with two arguments:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The type of the parent builder ({@code &amp;lt;P&amp;gt;})&lt;/li&gt;
+	 * &lt;li&gt;The {@link EnvironmentBuilder} instance&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * If you don't care about chaining, just provide a default constructor.
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param &lt;T&gt;
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public &lt;T extends Builder&lt;? extends TemplateParser&gt;&gt; T register(Class&lt;T&gt; builderClass) {
+		// if already registered =&gt; provide same instance
+<span class="fc bfc" id="L152" title="All 2 branches covered.">		for (Builder&lt;? extends TemplateParser&gt; builder : templateBuilders) {</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">			if (builderClass.isAssignableFrom(builder.getClass())) {</span>
+<span class="fc" id="L154">				return (T) builder;</span>
+			}
+<span class="fc" id="L156">		}</span>
+		// create the builder instance
+		try {
+			T builder;
+<span class="fc" id="L160">			Constructor&lt;T&gt; constructor = builderClass.getConstructor(parent.getClass(), EnvironmentBuilder.class);</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">			if (constructor != null) {</span>
+<span class="fc" id="L162">				builder = constructor.newInstance(parent, environmentBuilder);</span>
+			} else {
+<span class="nc" id="L164">				builder = builderClass.newInstance();</span>
+			}
+<span class="fc" id="L166">			templateBuilders.add(builder);</span>
+<span class="fc" id="L167">			return builder;</span>
+<span class="nc" id="L168">		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {</span>
+<span class="nc" id="L169">			throw new BuildException(&quot;Can't instantiate builder from class &quot; + builderClass.getSimpleName(), e);</span>
+		}
+	}
+
+	/**
+	 * Build the template parser according to options previously enabled. If
+	 * only one template engine has been activated then the parser will be this
+	 * template engine parser. If there are several activated engines, then the
+	 * builder will generate an {@link AutoDetectTemplateParser}. This kind of
+	 * parser is able to detect which parser to use according to the provided
+	 * template at runtime. The auto-detection is delegated to each defined
+	 * {@link TemplateEngineDetector} associated with each engine.
+	 * 
+	 * @return the template parser instance
+	 * @throws BuildException
+	 *             when template parser couldn't be initialized
+	 */
+	public TemplateParser buildTemplateParser() {
+		// TODO: handle enable?
+<span class="fc" id="L188">		List&lt;TemplateImplementation&gt; impls = buildTemplateParserImpls();</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">		if (impls.isEmpty()) {</span>
+			// if no template parser available =&gt; exception
+<span class="nc" id="L191">			throw new BuildException(&quot;No parser available. Either disable template features or register a template engine&quot;);</span>
+		}
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">		if (impls.size() == 1) {</span>
+			// if no detector defined or only one available parser =&gt; do not use
+			// auto detection
+<span class="nc" id="L196">			TemplateParser parser = impls.get(0).getParser();</span>
+<span class="nc" id="L197">			LOG.info(&quot;Using single template engine: {}&quot;, parser);</span>
+<span class="nc" id="L198">			return parser;</span>
+		}
+<span class="fc" id="L200">		LOG.info(&quot;Using auto detection mechanism&quot;);</span>
+<span class="fc" id="L201">		LOG.debug(&quot;Auto detection mechanisms: {}&quot;, impls);</span>
+<span class="fc" id="L202">		return new AutoDetectTemplateParser(impls);</span>
+	}
+
+	/**
+	 * Instantiates and configures the variant resolution. Variant resolution is
+	 * a chain of resolvers. The first resolver that is able to resolve a
+	 * variant is used. If no resolver is able to resolve a variant, it uses the
+	 * default variant resolver (see {@link #missingVariant(boolean)} and
+	 * {@link #missingVariant(VariantResolver)}).
+	 * 
+	 * @return the variant resolver
+	 */
+	public VariantResolver buildVariant() {
+<span class="fc" id="L215">		FirstExistingResourceVariantResolver variantResolver = new FirstExistingResourceVariantResolver(buildDefaultVariantResolver());</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">		for (Builder&lt;? extends TemplateParser&gt; builder : templateBuilders) {</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">			if (builder instanceof VariantBuilder) {</span>
+<span class="fc" id="L218">				variantResolver.addVariantResolver(((VariantBuilder&lt;?&gt;) builder).buildVariant());</span>
+			}
+<span class="fc" id="L220">		}</span>
+<span class="fc" id="L221">		return variantResolver;</span>
+	}
+
+	private VariantResolver buildDefaultVariantResolver() {
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">		if (missingVariantFail) {</span>
+<span class="nc" id="L226">			return new FailIfNotFoundVariantResolver();</span>
+		}
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">		return missingResolver == null ? new NullVariantResolver() : missingResolver;</span>
+	}
+
+	private List&lt;TemplateImplementation&gt; buildTemplateParserImpls() {
+<span class="fc" id="L232">		List&lt;TemplateImplementation&gt; impls = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">		for (Builder&lt;? extends TemplateParser&gt; builder : templateBuilders) {</span>
+			TemplateEngineDetector detector;
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">			if (builder instanceof DetectorBuilder) {</span>
+<span class="fc" id="L236">				detector = ((DetectorBuilder&lt;?&gt;) builder).buildDetector();</span>
+			} else {
+<span class="nc" id="L238">				detector = new FixedEngineDetector(true);</span>
+			}
+<span class="fc" id="L240">			impls.add(new TemplateImplementation(detector, builder.build()));</span>
+<span class="fc" id="L241">		}</span>
+<span class="fc" id="L242">		return impls;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

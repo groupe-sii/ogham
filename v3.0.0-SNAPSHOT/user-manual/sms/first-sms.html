@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This sample defines two properties mandatory (system ID and password) by this protocol in order to use it.</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Simple sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.sms</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">BasicSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+        <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+        <span class="comment">// in System properties)</span>
+        <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);                        <i class="conum" data-value="1"></i><b>(1)</b>
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);                        <i class="conum" data-value="2"></i><b>(2)</b>
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.system-id</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server system ID&gt;</span><span class="delimiter">&quot;</span></span>);              <i class="conum" data-value="3"></i><b>(3)</b>
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.password</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server password&gt;</span><span class="delimiter">&quot;</span></span>);                <i class="conum" data-value="4"></i><b>(4)</b>
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;phone number to display for the sender&gt;</span><span class="delimiter">&quot;</span></span>);       <i class="conum" data-value="5"></i><b>(5)</b>
+        <span class="comment">// Instantiate the messaging service using default behavior and</span>
+        <span class="comment">// provided properties</span>
+        MessagingService service = MessagingBuilder.standard()                                      <i class="conum" data-value="6"></i><b>(6)</b>
+                .environment()
+                    .properties(properties)                                                         <i class="conum" data-value="7"></i><b>(7)</b>
+                    .and()
+                .build();                                                                           <i class="conum" data-value="8"></i><b>(8)</b>
+        <span class="comment">// send the sms using fluent API</span>
+        service.send(<span class="keyword">new</span> Sms()                                                                      <i class="conum" data-value="9"></i><b>(9)</b>
+                        .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">sms content</span><span class="delimiter">&quot;</span></span>)
+                        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">+33752962193</span><span class="delimiter">&quot;</span></span>));
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure the SMPP server host</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the SMPP server port</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The SMPP system ID</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The SMPP password</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The phone number of the sender</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Use the standard builder (predefined behavior)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Register the custom properties</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Create a MessagingService instance</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Send a SMS with a simple message. The sender phone number is automatically set using <code>ogham.sms.from</code> property</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts=4">Source code of the sample</a>.</p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="paragraph">
+<p>The construction of the SMS is done using a fluent API in order to chain calls and to have a more readable code.</p>
+</div>
+<div class="paragraph">
+<p>Properties are directly provided in the code. You can instead <a href="#properties-handling">use a configuration file</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Property configuration is a good way to separate code from configuration. Ogham allows you to configure values using builders. For example, you can configure the SMTP host and port like this:</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">MessagingBuilder.standard()
+    .email()
+        .sender(JavaMailBuilder.class)
+            .host(<span class="string"><span class="delimiter">&quot;</span><span class="content">localhost</span><span class="delimiter">&quot;</span></span>)
+            .port(<span class="integer">25</span>);</code></pre>
+</div>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="paragraph">
+<p>However, when using a library, it is simpler that this library provides a way to configure some values without the need of writing code to configure it. The integration is easier. The configuration should also be done in several ways to let the developer choose what fits his needs.</p>
+</div>
+<div class="paragraph">
+<p>You can use configuration properties that are defined several ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>in a properties file that is present in the classpath (inside the application)</p>
+</li>
+<li>
+<p>in a properties file that is present on the file system (outside the application)</p>
+</li>
+<li>
+<p>using standard <code>java.util.Properties</code></p>
+</li>
+<li>
+<p>using standard <code>System.getProperties()</code></p>
+</li>
+<li>
+<p>define properties directly in code in a fluent way</p>
+</li>
+</ul>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">PropertiesSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+        <span class="predefined-type">Properties</span> props = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        props.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">hello@world.com</span><span class="delimiter">&quot;</span></span>);
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(props)                                      <i class="conum" data-value="1"></i><b>(1)</b>
+                    .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:email.properties</span><span class="delimiter">&quot;</span></span>)               <i class="conum" data-value="2"></i><b>(2)</b>
+                    .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">file:/etc/app/email.properties</span><span class="delimiter">&quot;</span></span>)           <i class="conum" data-value="3"></i><b>(3)</b>
+                    .properties()
+                        .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">10</span><span class="delimiter">&quot;</span></span>)                        <i class="conum" data-value="4"></i><b>(4)</b>
+                        .and()
+                    .systemProperties()                                     <i class="conum" data-value="5"></i><b>(5)</b>
+                    .and()
+                .build();
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use standard <code>java.util.Properties</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Load the file from the classpath (relative to root of the classpath)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Load the file from the file system</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Directly set a property with its value in a fluent way</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Use standard <code>System.getProperties()</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4">Source code of the sample</a>.</p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="paragraph">
+<p>This sample shows that configuration may come from several sources (code, shared properties, file inside the application, file outside the application and from system properties).</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

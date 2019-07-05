@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Existing libraries</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="..//javascripts/steps.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_existing_libraries">Existing libraries</a></li>
+<li><a href="#_the_ogham_module">The Ogham module</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_existing_libraries"><a class="anchor" href="#_existing_libraries"></a>Existing libraries</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Several libraries for sending email already exist:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://commons.apache.org/proper/commons-email/">Apache Commons Email</a></p>
+</li>
+<li>
+<p><a href="https://github.com/bbottema/simple-java-mail">Simple Java Mail/Vesijama</a></p>
+</li>
+<li>
+<p><a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html">Spring Email Integration</a></p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These libraries help you send an email but if you want to use a templated content, you will have to manually integrate a template engine.</p>
+</div>
+<div class="paragraph">
+<p>These libraries also provide only implementations based on Java Mail API. But in some environments, you might NOT want to send the email through SMTP but to use an external service (like <a href="https://sendgrid.com/">SendGrid</a> for example). Furthermore, those libraries are bound by design to frameworks or libraries that you might not want to use in your own context.</p>
+</div>
+<div class="paragraph">
+<p>So, now you would want to find a sending library with a high level of abstraction to avoid binding issues with any template engine, design framework or sender service&#8230;&#8203; Is email the only possible message type ? No, so why not sending SMS, Tweet or anything the same way ?</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_ogham_module"><a class="anchor" href="#_the_ogham_module"></a>The Ogham module</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This module is designed for handling any kind of message the same way. It also provides several implementations for the same message type. It selects the best implementation based on the classpath or properties for example. You can easily add your own implementation.</p>
+</div>
+<div class="paragraph">
+<p>It also provides <strong>templating support</strong> and integrates natively several template engines. You can also add your own.</p>
+</div>
+<div class="paragraph">
+<p>It is <strong>framework and library agnostic</strong> and provides bridges for <strong>common frameworks integration</strong> (Spring, JSF, &#8230;&#8203;).</p>
+</div>
+<div class="paragraph">
+<p>When using the module to send email based on an HTML template, the templating system let you <strong>design your HTML like a standard HTML page</strong>. It automatically transforms the associated resources (images, css files&#8230;&#8203;) to be usable in an email context (automatic inline css, embed images&#8230;&#8203;). You don&#8217;t need to write your HTML specifically for email.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2019-07-04 14:53:13 RET
+</div>
+</div>
+</body>
+</html>

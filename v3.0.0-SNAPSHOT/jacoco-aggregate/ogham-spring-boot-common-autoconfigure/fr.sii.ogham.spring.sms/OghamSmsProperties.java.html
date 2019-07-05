@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamSmsProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">OghamSmsProperties.java</span></div><h1>OghamSmsProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import fr.sii.ogham.spring.common.OghamResolutionProperties;
+import fr.sii.ogham.spring.common.OghamTemplateProperties;
+
+@ConfigurationProperties(&quot;ogham.sms&quot;)
+<span class="fc" id="L10">public class OghamSmsProperties implements OghamTemplateProperties {</span>
+	/**
+	 * If no sender phone number is explicitly defined on the message, Ogham
+	 * will use this phone number as default sender number.
+	 */
+	private String from;
+	/**
+	 * If no recipient phone number is explicitly defined on the message, Ogham
+	 * will use this phone number as default recipient number.
+	 */
+	private String to;
+	/**
+	 * Enable/disable alphanumeric code format conversion for sender phone
+	 * number: if the sender address is alphanumeric (contains both letters and
+	 * numbers) or non-numeric, TON is set to 5 and NPI to 0.
+	 */
+<span class="fc" id="L26">	private boolean fromFormatEnableAlphanumeric = true;</span>
+	/**
+	 * Enable/disable short code format conversion for sender phone number: if
+	 * the sender address is a short code, TON is set to 3, and NPI is set to 0.
+	 * A number is considered to be a short code if the length of the number is
+	 * 5 digits or less.
+	 */
+<span class="fc" id="L33">	private boolean fromFormatEnableShortcode = true;</span>
+	/**
+	 * Enable/disable international number format conversion for sender phone
+	 * number: if the sender starts with a &quot;+&quot;, TON is set to 1, and NPI is set
+	 * to 1.
+	 * 
+	 */
+<span class="fc" id="L40">	private boolean fromFormatEnableInternational = true;</span>
+	/**
+	 * Enable/disable international number format conversion for recipient phone
+	 * number: if the sender starts with a &quot;+&quot;, TON is set to 1, and NPI is set
+	 * to 1.
+	 * 
+	 */
+<span class="fc" id="L47">	private boolean toFormatEnableInternational = true;</span>
+<span class="fc" id="L48">	@NestedConfigurationProperty</span>
+	private OghamResolutionProperties freemarker = new OghamResolutionProperties();
+<span class="fc" id="L50">	@NestedConfigurationProperty</span>
+	private OghamResolutionProperties thymeleaf = new OghamResolutionProperties();
+<span class="fc" id="L52">	@NestedConfigurationProperty</span>
+	private OghamResolutionProperties template = new OghamResolutionProperties();
+
+	public String getFrom() {
+<span class="nc" id="L56">		return from;</span>
+	}
+
+	public void setFrom(String from) {
+<span class="nc" id="L60">		this.from = from;</span>
+<span class="nc" id="L61">	}</span>
+
+	public String getTo() {
+<span class="nc" id="L64">		return to;</span>
+	}
+
+	public void setTo(String to) {
+<span class="nc" id="L68">		this.to = to;</span>
+<span class="nc" id="L69">	}</span>
+
+	public boolean isFromFormatEnableAlphanumeric() {
+<span class="nc" id="L72">		return fromFormatEnableAlphanumeric;</span>
+	}
+
+	public void setFromFormatEnableAlphanumeric(boolean fromFormatEnableAlphanumeric) {
+<span class="nc" id="L76">		this.fromFormatEnableAlphanumeric = fromFormatEnableAlphanumeric;</span>
+<span class="nc" id="L77">	}</span>
+
+	public boolean isFromFormatEnableShortcode() {
+<span class="nc" id="L80">		return fromFormatEnableShortcode;</span>
+	}
+
+	public void setFromFormatEnableShortcode(boolean fromFormatEnableShortcode) {
+<span class="nc" id="L84">		this.fromFormatEnableShortcode = fromFormatEnableShortcode;</span>
+<span class="nc" id="L85">	}</span>
+
+	public boolean isFromFormatEnableInternational() {
+<span class="nc" id="L88">		return fromFormatEnableInternational;</span>
+	}
+
+	public void setFromFormatEnableInternational(boolean fromFormatEnableInternational) {
+<span class="nc" id="L92">		this.fromFormatEnableInternational = fromFormatEnableInternational;</span>
+<span class="nc" id="L93">	}</span>
+
+	public boolean isToFormatEnableInternational() {
+<span class="nc" id="L96">		return toFormatEnableInternational;</span>
+	}
+
+	public void setToFormatEnableInternational(boolean toFormatEnableInternational) {
+<span class="nc" id="L100">		this.toFormatEnableInternational = toFormatEnableInternational;</span>
+<span class="nc" id="L101">	}</span>
+
+	public OghamResolutionProperties getFreemarker() {
+<span class="fc" id="L104">		return freemarker;</span>
+	}
+
+	public void setFreemarker(OghamResolutionProperties freemarker) {
+<span class="nc" id="L108">		this.freemarker = freemarker;</span>
+<span class="nc" id="L109">	}</span>
+
+	public OghamResolutionProperties getThymeleaf() {
+<span class="fc" id="L112">		return thymeleaf;</span>
+	}
+
+	public void setThymeleaf(OghamResolutionProperties thymeleaf) {
+<span class="nc" id="L116">		this.thymeleaf = thymeleaf;</span>
+<span class="nc" id="L117">	}</span>
+
+	public OghamResolutionProperties getTemplate() {
+<span class="fc" id="L120">		return template;</span>
+	}
+
+	public void setTemplate(OghamResolutionProperties template) {
+<span class="nc" id="L124">		this.template = template;</span>
+<span class="nc" id="L125">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

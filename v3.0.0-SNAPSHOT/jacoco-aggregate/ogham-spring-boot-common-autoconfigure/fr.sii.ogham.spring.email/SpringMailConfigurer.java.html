@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringMailConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.email</a> &gt; <span class="el_source">SpringMailConfigurer.java</span></div><h1>SpringMailConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.email;
+
+import java.util.Map;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.email.JavaMailConstants;
+import fr.sii.ogham.email.builder.javamail.JavaMailBuilder;
+import fr.sii.ogham.email.sender.impl.JavaMailSender;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
+
+/**
+ * Integrates with Spring Mail by using Spring properties defined with prefix
+ * {@code spring.mail} (see {@link MailProperties}).
+ * 
+ * If both Spring property and Ogham property is defined, Spring property is
+ * used.
+ * 
+ * For example, if the file application.properties contains the following
+ * configuration:
+ * 
+ * &lt;pre&gt;
+ * spring.mail.host=localhost
+ * ogham.email.javamail.port=3025
+ * &lt;/pre&gt;
+ * 
+ * The {@link JavaMailSender} will use the address &quot;localhost:3025&quot; to connect
+ * to the SMTP server.
+ * 
+ * &lt;p&gt;
+ * This configurer is also useful to support property naming variants (see
+ * &lt;a href=&quot;https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0&quot;&gt;Relaxed Binding&lt;/a&gt;).
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SpringMailConfigurer implements SpringMessagingConfigurer {
+<span class="fc" id="L42">	private static final Logger LOG = LoggerFactory.getLogger(SpringMailConfigurer.class);</span>
+	
+	private final OghamJavaMailProperties properties;
+	private final MailProperties springMailProperties;
+
+	public SpringMailConfigurer(OghamJavaMailProperties properties, MailProperties springMailProperties) {
+<span class="fc" id="L48">		super();</span>
+<span class="fc" id="L49">		this.properties = properties;</span>
+<span class="fc" id="L50">		this.springMailProperties = springMailProperties;</span>
+<span class="fc" id="L51">	}</span>
+
+	@Override
+	public void configure(MessagingBuilder builder) {
+<span class="fc" id="L55">		LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+		// use same environment as parent builder
+<span class="fc" id="L57">		builder.email().sender(JavaMailBuilder.class).environment(builder.environment());</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		if (springMailProperties != null) {</span>
+<span class="fc" id="L59">			applySpringMailConfiguration(builder);</span>
+		}
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">		if (properties != null) {</span>
+<span class="fc" id="L62">			applyOghamConfiguration(builder);</span>
+		}
+<span class="fc" id="L64">	}</span>
+
+	private void applyOghamConfiguration(MessagingBuilder builder) {
+<span class="fc" id="L67">		LOG.debug(&quot;[{}] apply ogham configuration properties to {}&quot;, this, builder);</span>
+		// @formatter:off
+<span class="fc" id="L69">		builder.email()</span>
+<span class="fc" id="L70">			.sender(JavaMailBuilder.class)</span>
+<span class="fc" id="L71">				.authenticator()</span>
+<span class="fc" id="L72">					.username(properties.getAuthenticator().getUsername())</span>
+<span class="fc" id="L73">					.password(properties.getAuthenticator().getPassword())</span>
+<span class="fc" id="L74">					.and()</span>
+<span class="fc" id="L75">				.charset(properties.getBody().getCharset())</span>
+<span class="fc" id="L76">				.host(properties.getHost())</span>
+<span class="fc" id="L77">				.port(properties.getPort());</span>
+		// @formatter:on
+<span class="fc" id="L79">	}</span>
+
+	private void applySpringMailConfiguration(MessagingBuilder builder) {
+<span class="fc" id="L82">		LOG.debug(&quot;[{}] apply spring mail configuration properties to {}&quot;, this, builder);</span>
+		// @formatter:off
+<span class="fc" id="L84">		builder.email()</span>
+<span class="fc" id="L85">			.sender(JavaMailBuilder.class)</span>
+<span class="fc" id="L86">				.authenticator()</span>
+<span class="fc" id="L87">					.username(springMailProperties.getUsername())</span>
+<span class="fc" id="L88">					.password(springMailProperties.getPassword())</span>
+<span class="fc" id="L89">					.and()</span>
+<span class="fc" id="L90">				.charset(springMailProperties.getDefaultEncoding())</span>
+<span class="fc" id="L91">				.host(springMailProperties.getHost())</span>
+<span class="fc" id="L92">				.port(springMailProperties.getPort())</span>
+<span class="fc" id="L93">				.environment()</span>
+<span class="fc" id="L94">					.properties(asProperties(springMailProperties.getProperties()));</span>
+		// @formatter:on
+<span class="fc" id="L96">	}</span>
+
+	private Properties asProperties(Map&lt;String, String&gt; source) {
+<span class="fc" id="L99">		Properties props = new Properties();</span>
+<span class="fc" id="L100">		props.putAll(source);</span>
+<span class="fc" id="L101">		return props;</span>
+	}
+
+	@Override
+	public int getOrder() {
+<span class="fc" id="L106">		return JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY + 1000;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

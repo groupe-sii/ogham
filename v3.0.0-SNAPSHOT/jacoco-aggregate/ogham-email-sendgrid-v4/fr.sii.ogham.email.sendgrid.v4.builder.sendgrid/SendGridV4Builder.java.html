@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SendGridV4Builder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v4</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v4.builder.sendgrid</a> &gt; <span class="el_source">SendGridV4Builder.java</span></div><h1>SendGridV4Builder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v4.builder.sendgrid;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.client.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sendgrid.Client;
+import com.sendgrid.SendGrid;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
+import fr.sii.ogham.core.message.content.MultiContent;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.sendgrid.builder.AbstractSendGridBuilder;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridInterceptor;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MapContentHandler;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MultiContentHandler;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
+
+/**
+ * Configures how SendGrid implementation will send {@link Email}s.
+ * 
+ * This implementation uses SendGrid HTTP API.
+ * 
+ * &lt;p&gt;
+ * To send {@link Email} using SendGrid, you need to register this builder into
+ * a {@link MessagingBuilder} like this:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * MessagingBuilder msgBuilder = ...
+ * msgBuilder.email()
+ *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Once the builder is registered, sending email through SendGrid requires
+ * either an API key or a username/password pair. You can define it using:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder.email()
+ *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .apiKey(&quot;foo&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or you can also use property keys (using interpolation):
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder
+ * .environment()
+ *    .properties()
+ *       .set(&quot;custom.property.for.api-key&quot;, &quot;foo&quot;)
+ *       .and()
+ *    .and()
+ * .email()
+ *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .host(&quot;${custom.property.for.api-key}&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * Finally, Ogham will transform general {@link Email} object into
+ * {@link SendGrid}.Email object. This transformation will fit almost all use
+ * cases but you may need to customize a part of the SendGrid message. Instead
+ * of doing again the same work Ogham does, this builder allows you to intercept
+ * the message to modify it just before sending it:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .sender(SendGridBuilder.class)
+ *    .intercept(new MyCustomInterceptor())
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * See {@link SendGridInterceptor} for more information.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SendGridV4Builder extends AbstractSendGridBuilder&lt;SendGridV4Builder, EmailBuilder&gt; {
+<span class="fc" id="L95">	private static final Logger LOG = LoggerFactory.getLogger(SendGridV4Builder.class);</span>
+
+	private SendGridClient client;
+	private SendGridInterceptor interceptor;
+	private Client clientHelper;
+	private boolean unitTesting;
+	private List&lt;String&gt; unitTestingKeys;
+	
+	/**
+	 * Default constructor when using SendGrid sender without all Ogham work.
+	 * 
+	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
+	 */
+	public SendGridV4Builder() {
+<span class="fc" id="L109">		this(null);</span>
+<span class="fc" id="L110">	}</span>
+	
+	/**
+	 * Constructor that is called when using Ogham builder:
+	 * 
+	 * &lt;pre&gt;
+	 * MessagingBuilder msgBuilder = ...
+	 * msgBuilder
+	 * .email()
+	 *    .sender(SendGridBuilder.class)
+	 * &lt;/pre&gt;
+	 * 
+	 * @param parent
+	 *            the parent builder instance for fluent chaining
+	 */
+	public SendGridV4Builder(EmailBuilder parent) {
+<span class="fc" id="L126">		super(SendGridV4Builder.class, parent);</span>
+<span class="fc" id="L127">		unitTestingKeys = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L128">	}</span>
+
+	/**
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must use an {@link #apiKey(String...)}.
+	 * 
+	 * Set username for SendGrid HTTP API.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .username(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .username(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param username
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	@Override
+	@Deprecated
+	public SendGridV4Builder username(String... username) {
+<span class="fc" id="L163">		LOG.warn(&quot;username and password are no more available with SendGrid v4&quot;);</span>
+<span class="fc" id="L164">		return this;</span>
+	}
+
+	/**
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must use an {@link #apiKey(String...)}.
+	 * 
+	 * Set password for SendGrid HTTP API.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param password
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	@Override
+	@Deprecated
+	public SendGridV4Builder password(String... password) {
+<span class="fc" id="L200">		LOG.warn(&quot;username and password are no more available with SendGrid v4&quot;);</span>
+<span class="fc" id="L201">		return this;</span>
+	}
+
+	/**
+	 * SendGrid allows to call API for unit tests. Set this to true if you are
+	 * unit testing.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .unitTesting(&quot;true&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .unitTesting(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param key
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridV4Builder unitTesting(String... key) {
+<span class="fc bfc" id="L234" title="All 2 branches covered.">		for (String k : key) {</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">			if (k != null) {</span>
+<span class="fc" id="L236">				unitTestingKeys.add(k);</span>
+			}
+		}
+<span class="fc" id="L239">		return this;</span>
+	}
+
+	/**
+	 * SendGrid allows to call API for unit tests. Set this to true if you are
+	 * unit testing.
+	 * 
+	 * &lt;pre&gt;
+	 * .unitTesting(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * @param test
+	 *            true if you are unit testing
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridV4Builder unitTesting(boolean test) {
+<span class="fc" id="L255">		this.unitTesting = test;</span>
+<span class="fc" id="L256">		return this;</span>
+	}
+
+	/**
+	 * By default, SendGrid uses a {@link Client} instance as an helper to
+	 * perform HTTP requests. You may want to use custom client configuration
+	 * such as providing custom {@link HttpClient}:
+	 * 
+	 * &lt;pre&gt;
+	 * .client(new Client(new MyCustomHttpClient()))
+	 * &lt;/pre&gt;
+	 * 
+	 * NOTE: if you provide a custom {@link Client}, the test 
+	 * 
+	 * @param clientHelper
+	 *            the custom client used to call SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridV4Builder clientHelper(Client clientHelper) {
+<span class="nc" id="L275">		this.clientHelper = clientHelper;</span>
+<span class="nc" id="L276">		return this;</span>
+	}
+
+	/**
+	 * By default, calling SendGrid HTTP API is done through the default
+	 * {@link SendGrid} implementation. If you want to use another client
+	 * implementation (creating your custom HTTP API caller for example), you
+	 * can implement the {@link SendGridClient} interface and provide it:
+	 * 
+	 * &lt;pre&gt;
+	 * .client(new MyCustomHttpApiCaller())
+	 * &lt;/pre&gt;
+	 * 
+	 * NOTE: if you provide your custom implementation, any defined properties
+	 * and values using {@link #apiKey(String...)}, {@link #username(String...)}
+	 * or {@link #password(String...)} won't be used at all. You then have to
+	 * handle it by yourself.
+	 * 
+	 * @param client
+	 *            the custom client used to call SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridV4Builder client(SendGridClient client) {
+<span class="fc" id="L299">		this.client = client;</span>
+<span class="fc" id="L300">		return this;</span>
+	}
+
+	/**
+	 * Ogham will transform general {@link Email} object into
+	 * {@link SendGrid}.Email objects. This transformation will fit almost all
+	 * use cases but you may need to customize a part of the SendGrid message.
+	 * Instead of doing again the same work Ogham does, this builder allows you
+	 * to intercept the message to modify it just before sending it:
+	 * 
+	 * &lt;pre&gt;
+	 * .sender(SendGridBuilder.class)
+	 *    .intercept(new MyCustomInterceptor())
+	 * &lt;/pre&gt;
+	 * 
+	 * See {@link SendGridInterceptor} for more information.
+	 * 
+	 * @param interceptor
+	 *            the custom interceptor used to modify {@link SendGrid}.Email
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridV4Builder intercept(SendGridInterceptor interceptor) {
+<span class="nc" id="L322">		this.interceptor = interceptor;</span>
+<span class="nc" id="L323">		return this;</span>
+	}
+
+	@Override
+	public SendGridV4Sender build() {
+<span class="fc" id="L328">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
+<span class="fc" id="L329">		String apiKey = BuilderUtils.evaluate(this.apiKeys, propertyResolver, String.class);</span>
+<span class="fc" id="L330">		Boolean test = BuilderUtils.evaluate(this.unitTestingKeys, propertyResolver, Boolean.class);</span>
+<span class="pc bpc" id="L331" title="4 of 6 branches missed.">		SendGridClient builtClient = buildClient(apiKey, buildClientHelper(clientHelper, unitTesting || test!=null &amp;&amp; test));</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">		if (builtClient == null) {</span>
+<span class="fc" id="L333">			return null;</span>
+		}
+<span class="fc" id="L335">		LOG.info(&quot;Sending email using SendGrid API is registered&quot;);</span>
+<span class="fc" id="L336">		LOG.debug(&quot;SendGrid account: apiKey={}, test={}&quot;, apiKey, test);</span>
+<span class="fc" id="L337">		return new SendGridV4Sender(builtClient, buildContentHandler(), interceptor);</span>
+	}
+
+	private Client buildClientHelper(Client clientHelper, Boolean test) {
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">		if(clientHelper != null) {</span>
+<span class="nc" id="L342">			return clientHelper;</span>
+		}
+<span class="pc bpc" id="L344" title="2 of 4 branches missed.">		if(test != null &amp;&amp; test) {</span>
+<span class="nc" id="L345">			return new Client(test);</span>
+		}
+<span class="fc" id="L347">		return null;</span>
+	}
+
+	private SendGridClient buildClient(String apiKey, Client client) {
+<span class="fc bfc" id="L351" title="All 2 branches covered.">		if (this.client != null) {</span>
+<span class="fc" id="L352">			return this.client;</span>
+		}
+<span class="fc bfc" id="L354" title="All 2 branches covered.">		if(apiKey != null) {</span>
+<span class="fc" id="L355">			return new DelegateSendGridClient(buildSendGrid(apiKey, client));</span>
+		}
+<span class="fc" id="L357">		return null;</span>
+	}
+
+	private SendGrid buildSendGrid(String apiKey, Client client) {
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">		if(client!=null) {</span>
+<span class="nc" id="L362">			return new SendGrid(apiKey, client);</span>
+		}
+<span class="fc" id="L364">		return new SendGrid(apiKey);</span>
+	}
+
+	private MapContentHandler buildContentHandler() {
+<span class="fc" id="L368">		MimeTypeProvider mimetypeProvider = mimetypeBuilder.build();</span>
+<span class="fc" id="L369">		MapContentHandler contentHandler = new MapContentHandler();</span>
+<span class="fc" id="L370">		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));</span>
+<span class="fc" id="L371">		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider));</span>
+<span class="fc" id="L372">		return contentHandler;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

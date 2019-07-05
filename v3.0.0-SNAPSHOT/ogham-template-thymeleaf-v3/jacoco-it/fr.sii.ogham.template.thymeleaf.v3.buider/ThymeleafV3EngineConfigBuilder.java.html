@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThymeleafV3EngineConfigBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham ThymeLeaf v3 integration</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v3.buider</a> &gt; <span class="el_source">ThymeleafV3EngineConfigBuilder.java</span></div><h1>ThymeleafV3EngineConfigBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v3.buider;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.cache.ICacheManager;
+import org.thymeleaf.dialect.IDialect;
+import org.thymeleaf.messageresolver.IMessageResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.template.thymeleaf.common.buider.ThymeleafEngineConfigBuilder;
+
+/**
+ * Fluent builder to configure Thymeleaf engine.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class ThymeleafV3EngineConfigBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements ThymeleafEngineConfigBuilder&lt;P&gt; {
+	private Set&lt;IDialect&gt; dialects;
+	private Map&lt;String, IDialect&gt; dialectsByPrefix;
+	private Set&lt;ITemplateResolver&gt; templateResolvers;
+	private ICacheManager cacheManager;
+	private Set&lt;IMessageResolver&gt; messageResolvers;
+	private Set&lt;IMessageResolver&gt; defaultMessageResolvers;
+//	private Set&lt;ITemplateModeHandler&gt; templateModeHandlers;
+//	private Set&lt;ITemplateModeHandler&gt; defaultTemplateModeHandlers;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 */
+	public ThymeleafV3EngineConfigBuilder(P parent) {
+<span class="nc" id="L44">		super(parent);</span>
+<span class="nc" id="L45">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Sets a new unique dialect for this template engine.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation is equivalent to removing all the currently configured
+	 * dialects and then adding this one.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param dialect
+	 *            the new unique {@link IDialect} to be used.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setDialect(final IDialect dialect) {
+<span class="nc" id="L67">		dialects().clear();</span>
+<span class="nc" id="L68">		dialects().add(dialect);</span>
+<span class="nc" id="L69">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Adds a new dialect for this template engine, using the specified prefix.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This dialect will be added to the set of currently configured ones.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param prefix
+	 *            the prefix that will be used for this dialect
+	 * @param dialect
+	 *            the new {@link IDialect} to be added to the existing ones.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; addDialect(final String prefix, final IDialect dialect) {
+<span class="nc" id="L93">		this.dialectsByPrefix().put(prefix, dialect);</span>
+<span class="nc" id="L94">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Adds a new dialect for this template engine, using the dialect's
+	 * specified default dialect.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This dialect will be added to the set of currently configured ones.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param dialect
+	 *            the new {@link IDialect} to be added to the existing ones.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; addDialect(final IDialect dialect) {
+<span class="nc" id="L117">		dialects().add(dialect);</span>
+<span class="nc" id="L118">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets a new set of dialects for this template engine, referenced by the
+	 * prefixes they will be using.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param dialects
+	 *            the new map of {@link IDialect} objects to be used, referenced
+	 *            by their prefixes.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setDialectsByPrefix(final Map&lt;String, IDialect&gt; dialects) {
+<span class="nc" id="L139">		dialectsByPrefix().clear();</span>
+<span class="nc" id="L140">		dialectsByPrefix().putAll(dialects);</span>
+<span class="nc" id="L141">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets a new set of dialects for this template engine, all of them using
+	 * their default prefixes.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param dialects
+	 *            the new set of {@link IDialect} objects to be used.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setDialects(final Set&lt;IDialect&gt; dialects) {
+<span class="nc" id="L161">		this.dialects().clear();</span>
+<span class="nc" id="L162">		this.dialects().addAll(dialects);</span>
+<span class="nc" id="L163">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets an additional set of dialects for this template engine, all of them
+	 * using their default prefixes.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param additionalDialects
+	 *            the new set of {@link IDialect} objects to be used.
+	 * 
+	 * @since 2.0.9
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setAdditionalDialects(final Set&lt;IDialect&gt; additionalDialects) {
+<span class="nc" id="L185">		dialects().addAll(additionalDialects);</span>
+<span class="nc" id="L186">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Removes all the currently configured dialects.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; clearDialects() {
+<span class="nc" id="L203">		dialects().clear();</span>
+<span class="nc" id="L204">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets the entire set of template resolvers.
+	 * &lt;/p&gt;
+	 * 
+	 * @param templateResolvers
+	 *            the new template resolvers.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setTemplateResolvers(final Set&lt;? extends ITemplateResolver&gt; templateResolvers) {
+<span class="nc" id="L217">		this.templateResolvers().clear();</span>
+<span class="nc" id="L218">		this.templateResolvers().addAll(templateResolvers);</span>
+<span class="nc" id="L219">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Adds a new template resolver to the current set.
+	 * &lt;/p&gt;
+	 * 
+	 * @param templateResolver
+	 *            the new template resolver.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; addTemplateResolver(final ITemplateResolver templateResolver) {
+<span class="nc" id="L232">		templateResolvers().add(templateResolver);</span>
+<span class="nc" id="L233">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets a single template resolver for this template engine.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * Calling this method is equivalent to calling
+	 * {@link #setTemplateResolvers(Set)} passing a Set with only one template
+	 * resolver.
+	 * &lt;/p&gt;
+	 * 
+	 * @param templateResolver
+	 *            the template resolver to be set.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setTemplateResolver(final ITemplateResolver templateResolver) {
+<span class="nc" id="L251">		templateResolvers().clear();</span>
+<span class="nc" id="L252">		templateResolvers().add(templateResolver);</span>
+<span class="nc" id="L253">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets the Cache Manager to be used. If set to null, no caches will be used
+	 * throughout the engine.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * By default, an instance of
+	 * {@link org.thymeleaf.cache.StandardCacheManager} is set.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param cacheManager
+	 *            the cache manager to be set.
+	 * @return this for fluent use
+	 * 
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setCacheManager(final ICacheManager cacheManager) {
+<span class="nc" id="L278">		this.cacheManager = cacheManager;</span>
+<span class="nc" id="L279">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets the message resolvers to be used by this template engine.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param messageResolvers
+	 *            the Set of template resolvers.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setMessageResolvers(final Set&lt;? extends IMessageResolver&gt; messageResolvers) {
+<span class="nc" id="L298">		this.messageResolvers().clear();</span>
+<span class="nc" id="L299">		this.messageResolvers().addAll(messageResolvers);</span>
+<span class="nc" id="L300">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Adds a message resolver to the set of message resolvers to be used by the
+	 * template engine.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param messageResolver
+	 *            the new message resolver to be added.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; addMessageResolver(final IMessageResolver messageResolver) {
+<span class="nc" id="L320">		messageResolvers().add(messageResolver);</span>
+<span class="nc" id="L321">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets a single message resolver for this template engine.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * Calling this method is equivalent to calling
+	 * {@link #setMessageResolvers(Set)} passing a Set with only one message
+	 * resolver.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param messageResolver
+	 *            the message resolver to be set.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setMessageResolver(final IMessageResolver messageResolver) {
+<span class="nc" id="L345">		messageResolvers().clear();</span>
+<span class="nc" id="L346">		messageResolvers().add(messageResolver);</span>
+<span class="nc" id="L347">		return this;</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Sets the default message resolvers. These are used when no message
+	 * resolvers are set via the {@link #setMessageResolver(IMessageResolver)},
+	 * {@link #setMessageResolvers(Set)} or
+	 * {@link #addMessageResolver(IMessageResolver)} methods.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This method is useful for creating subclasses of {@link TemplateEngine}
+	 * that establish default configurations for message resolvers.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This operation can only be executed before processing templates for the
+	 * first time. Once a template is processed, the template engine is
+	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+	 * change its configuration will result in an exception.
+	 * &lt;/p&gt;
+	 * 
+	 * @param defaultMessageResolvers
+	 *            the default message resolvers.
+	 * @return this for fluent use
+	 */
+	public ThymeleafV3EngineConfigBuilder&lt;P&gt; setDefaultMessageResolvers(final Set&lt;? extends IMessageResolver&gt; defaultMessageResolvers) {
+<span class="nc" id="L373">		this.defaultMessageResolvers().clear();</span>
+<span class="nc" id="L374">		this.defaultMessageResolvers().addAll(defaultMessageResolvers);</span>
+<span class="nc" id="L375">		return this;</span>
+	}
+
+//	/**
+//	 * &lt;p&gt;
+//	 * Sets the Template Mode Handlers to be used by this template engine. Every
+//	 * available template mode must have its corresponding handler.
+//	 * &lt;/p&gt;
+//	 * &lt;p&gt;
+//	 * By default, template mode handlers set are
+//	 * {@link StandardTemplateModeHandlers#ALL_TEMPLATE_MODE_HANDLERS}
+//	 * &lt;/p&gt;
+//	 * &lt;p&gt;
+//	 * This operation can only be executed before processing templates for the
+//	 * first time. Once a template is processed, the template engine is
+//	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+//	 * change its configuration will result in an exception.
+//	 * &lt;/p&gt;
+//	 * 
+//	 * @param templateModeHandlers
+//	 *            the Set of Template Mode Handlers.
+//	 * @return this for fluent use
+//	 */
+//	public ThymeleafEngineConfigBuilder&lt;P&gt; setTemplateModeHandlers(final Set&lt;? extends ITemplateModeHandler&gt; templateModeHandlers) {
+//		this.templateModeHandlers().clear();
+//		this.templateModeHandlers().addAll(templateModeHandlers);
+//		return this;
+//	}
+//
+//	/**
+//	 * &lt;p&gt;
+//	 * Adds a Template Mode Handler to the set of Template Mode Handlers to be
+//	 * used by the template engine. Every available template mode must have its
+//	 * corresponding handler.
+//	 * &lt;/p&gt;
+//	 * &lt;p&gt;
+//	 * By default, template mode handlers set are
+//	 * {@link StandardTemplateModeHandlers#ALL_TEMPLATE_MODE_HANDLERS}
+//	 * &lt;/p&gt;
+//	 * &lt;p&gt;
+//	 * This operation can only be executed before processing templates for the
+//	 * first time. Once a template is processed, the template engine is
+//	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+//	 * change its configuration will result in an exception.
+//	 * &lt;/p&gt;
+//	 * 
+//	 * @param templateModeHandler
+//	 *            the new Template Mode Handler to be added.
+//	 * @return this for fluent use
+//	 */
+//	public ThymeleafEngineConfigBuilder&lt;P&gt; addTemplateModeHandler(final ITemplateModeHandler templateModeHandler) {
+//		templateModeHandlers().add(templateModeHandler);
+//		return this;
+//	}
+//
+//	/**
+//	 * &lt;p&gt;
+//	 * Sets the default Template Mode Handlers. These are used when no Template
+//	 * Mode Handlers are set via the {@link #setTemplateModeHandlers(Set)} or
+//	 * {@link #addTemplateModeHandler(ITemplateModeHandler)} methods.
+//	 * &lt;/p&gt;
+//	 * &lt;p&gt;
+//	 * This method is useful for creating subclasses of {@link TemplateEngine}
+//	 * that establish default configurations for Template Mode Handlers.
+//	 * &lt;/p&gt;
+//	 * &lt;p&gt;
+//	 * By default, template mode handlers set are
+//	 * {@link StandardTemplateModeHandlers#ALL_TEMPLATE_MODE_HANDLERS}
+//	 * &lt;/p&gt;
+//	 * &lt;p&gt;
+//	 * This operation can only be executed before processing templates for the
+//	 * first time. Once a template is processed, the template engine is
+//	 * considered to be &lt;i&gt;initialized&lt;/i&gt;, and from then on any attempt to
+//	 * change its configuration will result in an exception.
+//	 * &lt;/p&gt;
+//	 * 
+//	 * @param defaultTemplateModeHandlers
+//	 *            the default Template Mode Handlers.
+//	 * @return this for fluent use
+//	 */
+//	public ThymeleafEngineConfigBuilder&lt;P&gt; setDefaultTemplateModeHandlers(final Set&lt;? extends ITemplateModeHandler&gt; defaultTemplateModeHandlers) {
+//		defaultTemplateModeHandlers().clear();
+//		defaultTemplateModeHandlers().addAll(defaultTemplateModeHandlers);
+//		return this;
+//	}
+
+	@Override
+	public TemplateEngine build() {
+<span class="nc" id="L463">		TemplateEngine engine = new TemplateEngine();</span>
+<span class="nc" id="L464">		configureDialects(engine);</span>
+<span class="nc" id="L465">		configureMessageResolvers(engine);</span>
+<span class="nc" id="L466">		configureTemplateResolvers(engine);</span>
+<span class="nc" id="L467">		configureTemplateModeHandlers(engine);</span>
+<span class="nc" id="L468">		configureCacheManager(engine);</span>
+<span class="nc" id="L469">		return engine;</span>
+	}
+
+	private void configureCacheManager(TemplateEngine engine) {
+<span class="nc bnc" id="L473" title="All 2 branches missed.">		if (cacheManager != null) {</span>
+<span class="nc" id="L474">			engine.setCacheManager(cacheManager);</span>
+		}
+<span class="nc" id="L476">	}</span>
+
+	private void configureTemplateModeHandlers(TemplateEngine engine) {
+//		if (defaultTemplateModeHandlers != null) {
+//			engine.setDefaultTemplateModeHandlers(defaultTemplateModeHandlers);
+//		}
+//		if (templateModeHandlers != null) {
+//			engine.setTemplateModeHandlers(templateModeHandlers);
+//		}
+<span class="nc" id="L485">	}</span>
+
+	private void configureTemplateResolvers(TemplateEngine engine) {
+<span class="nc bnc" id="L488" title="All 2 branches missed.">		if (templateResolvers != null) {</span>
+<span class="nc" id="L489">			engine.setTemplateResolvers(templateResolvers);</span>
+		}
+<span class="nc" id="L491">	}</span>
+
+	private void configureMessageResolvers(TemplateEngine engine) {
+//		if (defaultMessageResolvers != null) {
+//			engine.setDefaultMessageResolvers(defaultMessageResolvers);
+//		}
+<span class="nc bnc" id="L497" title="All 2 branches missed.">		if (messageResolvers != null) {</span>
+<span class="nc" id="L498">			engine.setMessageResolvers(messageResolvers);</span>
+		}
+<span class="nc" id="L500">	}</span>
+
+	private void configureDialects(TemplateEngine engine) {
+<span class="nc bnc" id="L503" title="All 2 branches missed.">		if (dialects != null) {</span>
+<span class="nc" id="L504">			engine.setDialects(dialects);</span>
+		}
+<span class="nc bnc" id="L506" title="All 2 branches missed.">		if (dialectsByPrefix != null) {</span>
+<span class="nc" id="L507">			engine.setDialectsByPrefix(dialectsByPrefix);</span>
+		}
+<span class="nc" id="L509">	}</span>
+
+	private Set&lt;IDialect&gt; dialects() {
+<span class="nc bnc" id="L512" title="All 2 branches missed.">		if (dialects == null) {</span>
+<span class="nc" id="L513">			dialects = new HashSet&lt;&gt;();</span>
+		}
+<span class="nc" id="L515">		return dialects;</span>
+	}
+
+	private Map&lt;String, IDialect&gt; dialectsByPrefix() {
+<span class="nc bnc" id="L519" title="All 2 branches missed.">		if (dialectsByPrefix == null) {</span>
+<span class="nc" id="L520">			dialectsByPrefix = new HashMap&lt;&gt;();</span>
+		}
+<span class="nc" id="L522">		return dialectsByPrefix;</span>
+	}
+
+	private Set&lt;IMessageResolver&gt; messageResolvers() {
+<span class="nc bnc" id="L526" title="All 2 branches missed.">		if (messageResolvers == null) {</span>
+<span class="nc" id="L527">			messageResolvers = new HashSet&lt;&gt;();</span>
+		}
+<span class="nc" id="L529">		return messageResolvers;</span>
+	}
+
+	private Set&lt;ITemplateResolver&gt; templateResolvers() {
+<span class="nc bnc" id="L533" title="All 2 branches missed.">		if (templateResolvers == null) {</span>
+<span class="nc" id="L534">			templateResolvers = new HashSet&lt;&gt;();</span>
+		}
+<span class="nc" id="L536">		return templateResolvers;</span>
+	}
+
+	private Set&lt;IMessageResolver&gt; defaultMessageResolvers() {
+<span class="nc bnc" id="L540" title="All 2 branches missed.">		if (defaultMessageResolvers == null) {</span>
+<span class="nc" id="L541">			defaultMessageResolvers = new HashSet&lt;&gt;();</span>
+		}
+<span class="nc" id="L543">		return defaultMessageResolvers;</span>
+	}
+//
+//	private Set&lt;ITemplateModeHandler&gt; templateModeHandlers() {
+//		if (templateModeHandlers == null) {
+//			templateModeHandlers = new HashSet&lt;&gt;();
+//		}
+//		return templateModeHandlers;
+//	}
+//
+//	private Set&lt;ITemplateModeHandler&gt; defaultTemplateModeHandlers() {
+//		if (defaultTemplateModeHandlers == null) {
+//			defaultTemplateModeHandlers = new HashSet&lt;&gt;();
+//		}
+//		return defaultTemplateModeHandlers;
+//	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

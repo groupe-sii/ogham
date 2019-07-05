@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AssertSms.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.helper.sms</a> &gt; <span class="el_source">AssertSms.java</span></div><h1>AssertSms.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.helper.sms;
+
+import static fr.sii.ogham.helper.sms.SmsUtils.getSmsContent;
+
+import java.util.List;
+
+import org.jsmpp.bean.SubmitSm;
+import org.junit.Assert;
+
+/**
+ * Utility class for checking if the received SMS content is as expected.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class AssertSms {
+
+	/**
+	 * Assert that the fields of the received SMS using SMPP protocol are equal
+	 * to the expected values. It will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received sender address corresponds to the expected phone number
+	 * of the sender&lt;/li&gt;
+	 * &lt;li&gt;The received receiver address corresponds to the expected phone
+	 * number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The received message corresponds to the expected message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param expected
+	 *            all the fields with their expected values
+	 * @param actual
+	 *            the received SMS
+	 */
+	public static void assertEquals(ExpectedSms expected, SubmitSm actual) {
+<span class="fc" id="L35">		Assert.assertEquals(&quot;Sender number should be &quot; + expected.getSenderNumber().getNumber(), expected.getSenderNumber().getNumber(), actual.getSourceAddr());</span>
+<span class="fc" id="L36">		Assert.assertEquals(&quot;Sender ton should be &quot; + expected.getSenderNumber().getTon(), expected.getSenderNumber().getTon(), actual.getSourceAddrTon());</span>
+<span class="fc" id="L37">		Assert.assertEquals(&quot;Sender npi should be &quot; + expected.getSenderNumber().getNpi(), expected.getSenderNumber().getNpi(), actual.getSourceAddrNpi());</span>
+
+<span class="fc" id="L39">		Assert.assertEquals(&quot;Receiver number should be &quot; + expected.getReceiverNumber().getNumber(), expected.getReceiverNumber().getNumber(), actual.getDestAddress());</span>
+<span class="fc" id="L40">		Assert.assertEquals(&quot;Receiver ton should be &quot; + expected.getReceiverNumber().getTon(), expected.getReceiverNumber().getTon(), actual.getDestAddrTon());</span>
+<span class="fc" id="L41">		Assert.assertEquals(&quot;Receiver npi should be &quot; + expected.getReceiverNumber().getNpi(), expected.getReceiverNumber().getNpi(), actual.getDestAddrNpi());</span>
+
+<span class="fc" id="L43">		Assert.assertEquals(&quot;Message not consistent with expected&quot;, expected.getMessage(), getSmsContent(actual));</span>
+<span class="fc" id="L44">	}</span>
+
+	/**
+	 * Assert that the fields of the received SMS using SMPP protocol are equal
+	 * to the expected values. It will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received sender address corresponds to the expected phone number
+	 * of the sender&lt;/li&gt;
+	 * &lt;li&gt;The received receiver address corresponds to the expected phone
+	 * number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The received message corresponds to the expected message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * It also checks that there is exactly one received message.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This is a shortcut useful in unit testing.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expected
+	 *            all the fields with their expected values
+	 * @param receivedMessages
+	 *            the list of received SMS
+	 */
+	public static void assertEquals(ExpectedSms expected, List&lt;SubmitSm&gt; receivedMessages) {
+<span class="fc" id="L69">		Assert.assertEquals(&quot;should have received exactly one message&quot;, 1, receivedMessages.size());</span>
+<span class="fc" id="L70">		assertEquals(expected, receivedMessages.get(0));</span>
+<span class="fc" id="L71">	}</span>
+
+	/**
+	 * Assert that the fields of each received SMS using SMPP protocol are equal
+	 * to values of each expected message. For each message, it will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received sender address corresponds to the expected phone number
+	 * of the sender&lt;/li&gt;
+	 * &lt;li&gt;The received receiver address corresponds to the expected phone
+	 * number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The received message corresponds to the expected message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * It also checks that there are exactly the same number of received message
+	 * as the expected number.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expected
+	 *            all the fields with their expected values
+	 * @param receivedMessages
+	 *            the received SMS
+	 */
+	public static void assertEquals(List&lt;ExpectedSms&gt; expected, List&lt;SubmitSm&gt; receivedMessages) {
+<span class="fc" id="L94">		Assert.assertEquals(&quot;should have received exactly &quot; + expected.size() + &quot; messages&quot;, expected.size(), receivedMessages.size());</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		for (int i = 0; i &lt; expected.size(); i++) {</span>
+<span class="fc" id="L96">			assertEquals(expected.get(i), receivedMessages.get(i));</span>
+		}
+<span class="fc" id="L98">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * When message is too long, the SMS is split into several parts. This
+	 * method helps to check this case.
+	 * &lt;/p&gt;
+	 * Assert that the fields of each received SMS using SMPP protocol are equal
+	 * to values of each expected message part. For each message part, it will
+	 * check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received sender address corresponds to the expected phone number
+	 * of the sender&lt;/li&gt;
+	 * &lt;li&gt;The received receiver address corresponds to the expected phone
+	 * number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The received message corresponds to the expected message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * It also checks that there are exactly the same number of received message
+	 * as the expected number of parts.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expected
+	 *            all the fields with their expected values
+	 * @param receivedMessages
+	 *            the received SMS
+	 */
+	public static void assertEquals(SplitSms expected, List&lt;SubmitSm&gt; receivedMessages) {
+<span class="fc" id="L126">		assertEquals(expected.getParts(), receivedMessages);</span>
+<span class="fc" id="L127">	}</span>
+
+	private AssertSms() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

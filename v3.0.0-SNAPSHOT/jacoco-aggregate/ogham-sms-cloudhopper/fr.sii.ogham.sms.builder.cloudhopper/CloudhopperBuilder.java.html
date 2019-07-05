@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CloudhopperBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">CloudhopperBuilder.java</span></div><h1>CloudhopperBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cloudhopper.commons.charset.CharsetUtil;
+import com.cloudhopper.smpp.SmppBindType;
+import com.cloudhopper.smpp.SmppClient;
+import com.cloudhopper.smpp.SmppConstants;
+import com.cloudhopper.smpp.SmppSessionConfiguration;
+import com.cloudhopper.smpp.SmppSessionHandler;
+import com.cloudhopper.smpp.impl.DefaultSmppClient;
+import com.cloudhopper.smpp.impl.DefaultSmppSessionHandler;
+import com.cloudhopper.smpp.pdu.Pdu;
+import com.cloudhopper.smpp.ssl.SslConfiguration;
+import com.cloudhopper.smpp.type.Address;
+import com.cloudhopper.smpp.type.LoggingOptions;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
+import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
+import fr.sii.ogham.sms.message.addressing.translator.DefaultHandler;
+import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
+import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperCharsetHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperOptions;
+
+/**
+ * Configures Cloudhopper:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;SMPP protocol parameters (host, port, systemId, password,
+ * version...)&lt;/li&gt;
+ * &lt;li&gt;Session management (name, bind, timeouts, retry...)&lt;/li&gt;
+ * &lt;li&gt;SSL configuration&lt;/li&gt;
+ * &lt;li&gt;Logging options&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * To send {@link Sms} using Cloudhopper, you need to register this builder into
+ * a {@link MessagingBuilder} like this:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * MessagingBuilder msgBuilder = ...
+ * msgBuilder.sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Once the builder is registered, sending sms through Cloudhopper requires at
+ * least host of the SMPP server. You can define it using:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder.sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .host(&quot;localhost&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or you can also use property keys (using interpolation):
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder
+ * .environment()
+ *    .properties()
+ *       .set(&quot;custom.property.for.host&quot;, &quot;localhost&quot;)
+ *       .and()
+ *    .and()
+ * .sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .host(&quot;${custom.property.for.host}&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * You can do the same with port of the SMPP server.
+ * 
+ * 
+ * &lt;p&gt;
+ * SMPP server may require authentication. In most cases, authentication is done
+ * using system_id/password. You can use this builder to quickly provide your
+ * system_id and password:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .sender(CloudhopperBuilder.class)
+ *        .systemId(&quot;foo&quot;)
+ *        .password(&quot;bar&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ */
+// TODO: be able to configure PhoneNumberTranslator
+public class CloudhopperBuilder extends AbstractParent&lt;SmsBuilder&gt; implements Builder&lt;CloudhopperSMPPSender&gt; {
+<span class="fc" id="L114">	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperBuilder.class);</span>
+
+	private EnvironmentBuilder&lt;CloudhopperBuilder&gt; environmentBuilder;
+	private List&lt;String&gt; systemIds;
+	private List&lt;String&gt; passwords;
+	private List&lt;String&gt; hosts;
+	private List&lt;String&gt; ports;
+	private Integer port;
+	private List&lt;String&gt; systemTypes;
+	private Byte interfaceVersion;
+	private List&lt;String&gt; interfaceVersions;
+	private List&lt;String&gt; bindTypes;
+	private SmppBindType bindType;
+	private SessionBuilder sessionBuilder;
+	private SmppSessionConfiguration sessionConfiguration;
+	private CharsetBuilder charsetBuilder;
+	private Address addressRange;
+	private SslBuilder sslBuilder;
+	private LoggingBuilder loggingBuilder;
+	private SmppClientSupplier clientSupplier;
+	private SmppSessionHandlerSupplier smppSessionHandler;
+
+	/**
+	 * Default constructor when using without all Ogham work.
+	 * 
+	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
+	 */
+	public CloudhopperBuilder() {
+<span class="fc" id="L142">		this(null);</span>
+<span class="fc" id="L143">		environmentBuilder = new SimpleEnvironmentBuilder&lt;&gt;(this);</span>
+<span class="fc" id="L144">	}</span>
+
+	/**
+	 * Constructor that is called when using Ogham builder:
+	 * 
+	 * &lt;pre&gt;
+	 * MessagingBuilder msgBuilder = ...
+	 * msgBuilder
+	 * .sms()
+	 *    .sender(CloudhopperBuilder.class)
+	 * &lt;/pre&gt;
+	 * 
+	 * @param parent
+	 *            the parent builder instance for fluent chaining
+	 */
+	public CloudhopperBuilder(SmsBuilder parent) {
+<span class="fc" id="L160">		super(parent);</span>
+<span class="fc" id="L161">		systemIds = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L162">		passwords = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L163">		hosts = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L164">		ports = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L165">		interfaceVersions = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L166">		systemTypes = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L167">		bindTypes = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L168">	}</span>
+
+	/**
+	 * Configures environment for the builder (and sub-builders). Environment
+	 * consists of configuration properties/values that are used to configure
+	 * the system (see {@link EnvironmentBuilder} for more information).
+	 * 
+	 * You can use system properties:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .systemProperties();
+	 * &lt;/pre&gt;
+	 * 
+	 * Or, you can load properties from a file:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .properties(&quot;/path/to/file.properties&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * Or using directly a {@link Properties} object:
+	 * 
+	 * &lt;pre&gt;
+	 * Properties myprops = new Properties();
+	 * myprops.setProperty(&quot;foo&quot;, &quot;bar&quot;);
+	 * .environment()
+	 *    .properties(myprops)
+	 * &lt;/pre&gt;
+	 * 
+	 * Or defining directly properties:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .properties()
+	 *       .set(&quot;foo&quot;, &quot;bar&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * If no environment was previously used, it creates a new one. Then each
+	 * time you call {@link #environment()}, the same instance is used.
+	 * &lt;/p&gt;
+	 * 
+	 * @return the builder to configure properties handling
+	 */
+	public EnvironmentBuilder&lt;CloudhopperBuilder&gt; environment() {
+<span class="nc bnc" id="L215" title="All 2 branches missed.">		if (environmentBuilder == null) {</span>
+<span class="nc" id="L216">			environmentBuilder = new SimpleEnvironmentBuilder&lt;&gt;(this);</span>
+		}
+<span class="nc" id="L218">		return environmentBuilder;</span>
+	}
+
+	/**
+	 * NOTE: this is mostly for advance usage (when creating a custom module).
+	 * 
+	 * Inherits environment configuration from another builder. This is useful
+	 * for configuring independently different parts of Ogham but keeping a
+	 * whole coherence (see {@link DefaultCloudhopperConfigurer} for an example
+	 * of use).
+	 * 
+	 * The same instance is shared meaning that all changes done here will also
+	 * impact the other builder.
+	 * 
+	 * &lt;p&gt;
+	 * If a previous builder was defined (by calling {@link #environment()} for
+	 * example), the new builder will override it.
+	 * 
+	 * @param builder
+	 *            the builder to inherit
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder environment(EnvironmentBuilder&lt;?&gt; builder) {
+<span class="fc" id="L241">		environmentBuilder = new EnvironmentBuilderDelegate&lt;&gt;(this, builder);</span>
+<span class="fc" id="L242">		return this;</span>
+	}
+
+	/**
+	 * The system_id parameter is used to identify an ESME ( External Short
+	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
+	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
+	 * system_id provides an identification of the SMSC to the ESME.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .systemId(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .systemId(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * 
+	 * @param systemId
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder systemId(String... systemId) {
+<span class="fc bfc" id="L278" title="All 2 branches covered.">		for (String s : systemId) {</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">			if (s != null) {</span>
+<span class="fc" id="L280">				systemIds.add(s);</span>
+			}
+		}
+<span class="fc" id="L283">		return this;</span>
+	}
+
+	/**
+	 * The system_type parameter is used to categorize the type of ESME that is
+	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
+	 * (over-the-air activation system). Specification of the system_type is
+	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
+	 * this case, the ESME can set the system_type to NULL. The system_type
+	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
+	 * etc.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .systemType(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .systemType(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * 
+	 * @param systemType
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder systemType(String... systemType) {
+<span class="nc bnc" id="L322" title="All 2 branches missed.">		for (String s : systemType) {</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">			if (s != null) {</span>
+<span class="nc" id="L324">				systemTypes.add(s);</span>
+			}
+		}
+<span class="nc" id="L327">		return this;</span>
+	}
+
+	/**
+	 * The password parameter is used by the SMSC to authenticate the identity
+	 * of the binding ESME. The Service Provider may require ESME’s to provide a
+	 * password when binding to the SMSC. This password is normally issued by
+	 * the SMSC system administrator. The password parameter may also be used by
+	 * the ESME to authenticate the identity of the binding SMSC (e.g. in the
+	 * case of the outbind operation).
+	 * 
+	 * The ESME may set the password to NULL to gain insecure access (if allowed
+	 * by SMSC administration).
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param password
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder password(String... password) {
+<span class="fc bfc" id="L367" title="All 2 branches covered.">		for (String p : password) {</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">			if (p != null) {</span>
+<span class="fc" id="L369">				passwords.add(p);</span>
+			}
+		}
+<span class="fc" id="L372">		return this;</span>
+	}
+
+	/**
+	 * The SMPP server host (IP or address).
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .host(&quot;localhost&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .host(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param host
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder host(String... host) {
+<span class="fc bfc" id="L404" title="All 2 branches covered.">		for (String h : host) {</span>
+<span class="fc bfc" id="L405" title="All 2 branches covered.">			if (h != null) {</span>
+<span class="fc" id="L406">				hosts.add(h);</span>
+			}
+		}
+<span class="fc" id="L409">		return this;</span>
+	}
+
+	/**
+	 * Set the SMPP server port.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .port(&quot;2775&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .port(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param port
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder port(String... port) {
+<span class="fc bfc" id="L441" title="All 2 branches covered.">		for (String p : port) {</span>
+<span class="pc bpc" id="L442" title="1 of 2 branches missed.">			if (port != null) {</span>
+<span class="fc" id="L443">				ports.add(p);</span>
+			}
+		}
+<span class="fc" id="L446">		return this;</span>
+	}
+
+	/**
+	 * Set the SMPP server port.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #port(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param port
+	 *            the port to use
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder port(int port) {
+<span class="nc" id="L462">		this.port = port;</span>
+<span class="nc" id="L463">		return this;</span>
+	}
+
+	/**
+	 * Set the SMPP server port. This version allows {@code null} value. In this
+	 * case, the {@code null} value is skipped.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #port(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param port
+	 *            the port to use (may be null)
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder port(Integer port) {
+<span class="fc bfc" id="L480" title="All 2 branches covered.">		if (port != null) {</span>
+<span class="fc" id="L481">			this.port = port;</span>
+		}
+<span class="fc" id="L483">		return this;</span>
+	}
+
+	/**
+	 * The SMPP protocol version (one of {@link SmppConstants#VERSION_3_3},
+	 * {@link SmppConstants#VERSION_3_4}, {@link SmppConstants#VERSION_5_0}).
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #interfaceVersion(String...)} method.
+	 * 
+	 * @param version
+	 *            the version as byte value
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder interfaceVersion(byte version) {
+<span class="nc" id="L498">		interfaceVersion = version;</span>
+<span class="nc" id="L499">		return this;</span>
+	}
+
+	/**
+	 * Set the SMPP protocol version.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .interfaceVersion(&quot;3.4&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .interfaceVersion(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param version
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder interfaceVersion(String... version) {
+<span class="fc bfc" id="L531" title="All 2 branches covered.">		for (String v : version) {</span>
+<span class="pc bpc" id="L532" title="1 of 2 branches missed.">			if (v != null) {</span>
+<span class="fc" id="L533">				interfaceVersions.add(v);</span>
+			}
+		}
+<span class="fc" id="L536">		return this;</span>
+	}
+
+	/**
+	 * Configures how Cloudhopper will handle charset encoding for SMS messages.
+	 * Charsets defined by the SMPP protocol may be different from NIO charsets.
+	 * 
+	 * This builder configures detection of the NIO charset defined by the SMS
+	 * content handle by the Java application.
+	 * 
+	 * This builder also configures how conversion from NIO charset to SMPP
+	 * charset is handled.
+	 * 
+	 * @return the builder to configure the charset handling
+	 */
+	public CharsetBuilder charset() {
+<span class="fc bfc" id="L552" title="All 2 branches covered.">		if (charsetBuilder == null) {</span>
+<span class="fc" id="L553">			charsetBuilder = new CharsetBuilder(this, environmentBuilder);</span>
+		}
+<span class="fc" id="L555">		return charsetBuilder;</span>
+	}
+
+	/**
+	 * The bind command type (see {@link SmppBindType}).
+	 * 
+	 * Default value is {@link SmppBindType#TRANSMITTER}.
+	 * 
+	 * You can specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .bindType(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * 
+	 * @param bindType
+	 *            one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder bindType(String... bindType) {
+<span class="nc bnc" id="L583" title="All 2 branches missed.">		for (String b : bindType) {</span>
+<span class="nc bnc" id="L584" title="All 2 branches missed.">			if (b != null) {</span>
+<span class="nc" id="L585">				bindTypes.add(b);</span>
+			}
+		}
+<span class="nc" id="L588">		return this;</span>
+	}
+
+	/**
+	 * Set the bind command type.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #bindType(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * Default value is {@link SmppBindType#TRANSMITTER}.
+	 * 
+	 * @param bindType
+	 *            the type of the bind command
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder bindType(SmppBindType bindType) {
+<span class="nc" id="L606">		this.bindType = bindType;</span>
+<span class="nc" id="L607">		return this;</span>
+	}
+
+	/**
+	 * Configures Cloudhopper session management (timeouts, retry, session
+	 * name...).
+	 * 
+	 * @return the builder to configure the session management
+	 */
+	public SessionBuilder session() {
+<span class="fc bfc" id="L617" title="All 2 branches covered.">		if (sessionBuilder == null) {</span>
+<span class="fc" id="L618">			sessionBuilder = new SessionBuilder(this, environmentBuilder);</span>
+		}
+<span class="fc" id="L620">		return sessionBuilder;</span>
+	}
+
+	/**
+	 * Overrides any previously defined Cloudhopper parameters to use the
+	 * provided session.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last session is used.
+	 * 
+	 * @param session
+	 *            the Cloudhopper session to use
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder session(SmppSessionConfiguration session) {
+<span class="fc" id="L635">		this.sessionConfiguration = session;</span>
+<span class="fc" id="L636">		return this;</span>
+	}
+
+	/**
+	 * The address_range parameter is used in the bind_receiver and
+	 * bind_transceiver command to specify a set of SME addresses serviced by
+	 * the ESME client. A single SME address may also be specified in the
+	 * address_range parameter. UNIX Regular Expression notation should be used
+	 * to specify a range of addresses. Messages addressed to any destination in
+	 * this range shall be routed to the ESME.
+	 * 
+	 * Default to {@code null}.
+	 * 
+	 * Note: For IP addresses, it is only possible to specify a single IP
+	 * address. A range of IP addresses are not allowed. IP version 6.0 is not
+	 * currently supported in this version of the protocol.
+	 * 
+	 * Note: It is likely that the addr_range field is not supported or
+	 * deliberately ignored on most Message Centres. The reason for this is that
+	 * most carriers will not allow an ESME control the message routing as this
+	 * can carry the risk of mis-routing mesages. In such circumstances, the
+	 * ESME will be requested to set the field to NULL.
+	 * 
+	 * @param range
+	 *            the address range
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder addressRange(Address range) {
+<span class="nc" id="L664">		this.addressRange = range;</span>
+<span class="nc" id="L665">		return this;</span>
+	}
+
+	/**
+	 * Enable or disable SSL configuration and configure how SSL is handled.
+	 * 
+	 * See &lt;a href=
+	 * &quot;https://github.com/fizzed/cloudhopper-smpp/blob/master/SSL.md&quot;&gt;How to
+	 * use SSL with cloudhopper-smpp&lt;/a&gt;
+	 * 
+	 * @return the builder to configure SSL
+	 */
+	public SslBuilder ssl() {
+<span class="nc bnc" id="L678" title="All 2 branches missed.">		if (sslBuilder == null) {</span>
+<span class="nc" id="L679">			sslBuilder = new SslBuilder(this);</span>
+		}
+<span class="nc" id="L681">		return sslBuilder;</span>
+	}
+
+	/**
+	 * Configure logs:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable/disable log of {@link Pdu}s&lt;/li&gt;
+	 * &lt;li&gt;Enable/disable log of bytes&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the builder to enable/disable some logs
+	 */
+	public LoggingBuilder logging() {
+<span class="nc bnc" id="L694" title="All 2 branches missed.">		if (loggingBuilder == null) {</span>
+<span class="nc" id="L695">			loggingBuilder = new LoggingBuilder(this);</span>
+		}
+<span class="nc" id="L697">		return loggingBuilder;</span>
+	}
+
+	/**
+	 * By default, {@link CloudhopperSMPPSender} uses {@link DefaultSmppClient}
+	 * client. This option provides a way to use another {@link SmppClient}.
+	 * 
+	 * @param supplier
+	 *            an implementation that provides an instance of a
+	 *            {@link SmppClient}
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder clientSupplier(SmppClientSupplier supplier) {
+<span class="fc" id="L710">		this.clientSupplier = supplier;</span>
+<span class="fc" id="L711">		return this;</span>
+	}
+
+	/**
+	 * By default, {@link CloudhopperSMPPSender} uses {@link DefaultSmppSessionHandler}. 
+	 * This option provides a way to use another {@link SmppSessionHandler}.
+	 * 
+	 * @param supplier
+	 *            an implementation that provides an instance of a
+	 *            {@link SmppSessionHandler}
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder smppSessionHandlerSupplier(SmppSessionHandlerSupplier supplier) {
+<span class="fc" id="L724">		this.smppSessionHandler = supplier;</span>
+<span class="fc" id="L725">		return this;</span>
+	}
+
+	public CloudhopperSMPPSender build() {
+<span class="fc" id="L729">		PropertyResolver propertyResolver = buildPropertyResolver();</span>
+<span class="fc" id="L730">		CloudhopperSessionOptions sessionOpts = sessionBuilder.build();</span>
+<span class="fc" id="L731">		SmppSessionConfiguration session = buildSession(sessionOpts, propertyResolver);</span>
+<span class="pc bpc" id="L732" title="1 of 4 branches missed.">		if (session.getHost() == null || session.getPort() == 0) {</span>
+<span class="fc" id="L733">			return null;</span>
+		}
+<span class="fc" id="L735">		CloudhopperOptions options = buildOptions(sessionOpts);</span>
+<span class="fc" id="L736">		CloudhopperCharsetHandler charsetHandler = buildCharsetHandler();</span>
+<span class="fc" id="L737">		PhoneNumberTranslator phoneNumberTranslator = buildPhoneNumberTranslator();</span>
+<span class="fc" id="L738">		LOG.info(&quot;Sending SMS using Cloudhopper is registered&quot;);</span>
+<span class="fc" id="L739">		LOG.debug(&quot;SMPP server address: {}:{}&quot;, session.getHost(), session.getPort());</span>
+<span class="fc" id="L740">		return new CloudhopperSMPPSender(session, options, charsetHandler, buildClientSupplier(), buildSmppSessionHandler(), phoneNumberTranslator);</span>
+	}
+
+	private SmppClientSupplier buildClientSupplier() {
+<span class="fc bfc" id="L744" title="All 2 branches covered.">		if(clientSupplier == null) {</span>
+<span class="fc" id="L745">			return () -&gt; new DefaultSmppClient();</span>
+		}
+<span class="fc" id="L747">		return clientSupplier;</span>
+	}
+
+	private SmppSessionHandlerSupplier buildSmppSessionHandler() {
+<span class="fc bfc" id="L751" title="All 2 branches covered.">		if(smppSessionHandler == null) {</span>
+<span class="fc" id="L752">			return () -&gt; null;</span>
+		}
+<span class="fc" id="L754">		return smppSessionHandler;</span>
+	}
+
+	private PropertyResolver buildPropertyResolver() {
+<span class="fc" id="L758">		return environmentBuilder.build();</span>
+	}
+
+	private PhoneNumberTranslator buildPhoneNumberTranslator() {
+<span class="fc" id="L762">		return new CompositePhoneNumberTranslator(new DefaultHandler());</span>
+	}
+
+	private CloudhopperCharsetHandler buildCharsetHandler() {
+<span class="fc bfc" id="L766" title="All 2 branches covered.">		if (charsetBuilder == null) {</span>
+			// @formatter:off
+<span class="fc" id="L768">			return new CharsetBuilder(this, environmentBuilder)</span>
+<span class="fc" id="L769">					.convert(&quot;UTF-8&quot;, CharsetUtil.NAME_GSM)</span>
+<span class="fc" id="L770">					.detector()</span>
+<span class="fc" id="L771">						.defaultCharset(&quot;UTF-8&quot;)</span>
+<span class="fc" id="L772">						.and()</span>
+<span class="fc" id="L773">					.build();</span>
+			// @formatter:on
+		}
+<span class="fc" id="L776">		return charsetBuilder.build();</span>
+	}
+
+	private SmppSessionConfiguration buildSession(CloudhopperSessionOptions sessionOpts, PropertyResolver propertyResolver) {
+<span class="fc bfc" id="L780" title="All 2 branches covered.">		if (sessionConfiguration != null) {</span>
+<span class="fc" id="L781">			return sessionConfiguration;</span>
+		}
+<span class="fc" id="L783">		SmppSessionConfiguration session = new SmppSessionConfiguration(buildBindType(propertyResolver), getStringValue(propertyResolver, systemIds), getStringValue(propertyResolver, passwords));</span>
+<span class="fc" id="L784">		session.setHost(getHost(propertyResolver));</span>
+<span class="fc" id="L785">		session.setPort(getPort(propertyResolver));</span>
+<span class="fc" id="L786">		session.setSystemType(getStringValue(propertyResolver, systemTypes));</span>
+<span class="fc" id="L787">		session.setBindTimeout(sessionOpts.getBindTimeout());</span>
+<span class="fc" id="L788">		session.setConnectTimeout(sessionOpts.getConnectTimeout());</span>
+<span class="pc bpc" id="L789" title="1 of 2 branches missed.">		session.setInterfaceVersion(interfaceVersion == null ? getInterfaceVersion(propertyResolver, interfaceVersions) : interfaceVersion);</span>
+<span class="fc" id="L790">		session.setName(sessionOpts.getSessionName());</span>
+<span class="fc" id="L791">		session.setRequestExpiryTimeout(sessionOpts.getRequestExpiryTimeout());</span>
+<span class="fc" id="L792">		session.setWindowMonitorInterval(sessionOpts.getWindowMonitorInterval());</span>
+<span class="fc" id="L793">		session.setWindowSize(sessionOpts.getWindowSize());</span>
+<span class="fc" id="L794">		session.setWindowWaitTimeout(sessionOpts.getWindowWaitTimeout());</span>
+<span class="fc" id="L795">		session.setWriteTimeout(sessionOpts.getWriteTimeout());</span>
+<span class="fc" id="L796">		session.setAddressRange(addressRange);</span>
+<span class="fc" id="L797">		configureSsl(session);</span>
+<span class="fc" id="L798">		configureLogs(session);</span>
+<span class="fc" id="L799">		return session;</span>
+	}
+
+	private void configureLogs(SmppSessionConfiguration session) {
+<span class="pc bpc" id="L803" title="1 of 2 branches missed.">		if (loggingBuilder == null) {</span>
+<span class="fc" id="L804">			return;</span>
+		}
+<span class="nc" id="L806">		LoggingOptions options = loggingBuilder.build();</span>
+<span class="nc bnc" id="L807" title="All 2 branches missed.">		if (options != null) {</span>
+<span class="nc" id="L808">			session.setLoggingOptions(options);</span>
+		}
+<span class="nc" id="L810">	}</span>
+
+	private void configureSsl(SmppSessionConfiguration session) {
+<span class="pc bpc" id="L813" title="1 of 2 branches missed.">		if (sslBuilder == null) {</span>
+<span class="fc" id="L814">			return;</span>
+		}
+<span class="nc" id="L816">		SslConfiguration sslConfiguration = sslBuilder.build();</span>
+<span class="nc bnc" id="L817" title="All 2 branches missed.">		session.setUseSsl(sslConfiguration != null);</span>
+<span class="nc bnc" id="L818" title="All 2 branches missed.">		if (sslConfiguration != null) {</span>
+<span class="nc" id="L819">			session.setSslConfiguration(sslConfiguration);</span>
+		}
+<span class="nc" id="L821">	}</span>
+
+	private SmppBindType buildBindType(PropertyResolver propertyResolver) {
+<span class="pc bpc" id="L824" title="1 of 2 branches missed.">		if (bindType != null) {</span>
+<span class="nc" id="L825">			return bindType;</span>
+		}
+<span class="fc" id="L827">		String type = getStringValue(propertyResolver, bindTypes);</span>
+<span class="pc bpc" id="L828" title="1 of 2 branches missed.">		if (type != null) {</span>
+<span class="nc" id="L829">			return SmppBindType.valueOf(type);</span>
+		}
+<span class="fc" id="L831">		return SmppBindType.TRANSMITTER;</span>
+	}
+
+	private Byte getInterfaceVersion(PropertyResolver propertyResolver, List&lt;String&gt; interfaceVersions) {
+<span class="fc" id="L835">		String version = getStringValue(propertyResolver, interfaceVersions);</span>
+<span class="pc bpc" id="L836" title="1 of 2 branches missed.">		if (version == null) {</span>
+<span class="nc" id="L837">			return SmppConstants.VERSION_3_4;</span>
+		}
+		try {
+<span class="fc" id="L840">			String fieldName = &quot;VERSION_&quot; + version.replaceAll(&quot;[.]&quot;, &quot;_&quot;);</span>
+<span class="fc" id="L841">			Field field = SmppConstants.class.getField(fieldName);</span>
+<span class="fc" id="L842">			return field.getByte(SmppConstants.class);</span>
+<span class="nc" id="L843">		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {</span>
+<span class="nc" id="L844">			LOG.trace(&quot;Failed to get interface version using reflection&quot;, e);</span>
+		}
+<span class="nc bnc" id="L846" title="All 2 branches missed.">		if (&quot;3.3&quot;.equals(version)) {</span>
+<span class="nc" id="L847">			return SmppConstants.VERSION_3_3;</span>
+		}
+<span class="nc bnc" id="L849" title="All 2 branches missed.">		if (&quot;3.4&quot;.equals(version)) {</span>
+<span class="nc" id="L850">			return SmppConstants.VERSION_3_4;</span>
+		}
+<span class="nc bnc" id="L852" title="All 2 branches missed.">		if (&quot;5.0&quot;.equals(version)) {</span>
+<span class="nc" id="L853">			return SmppConstants.VERSION_5_0;</span>
+		}
+<span class="nc" id="L855">		throw new BuildException(&quot;Unknown interface version (&quot; + version + &quot;) for Cloudhopper session configuration&quot;);</span>
+	}
+
+	private int getPort(PropertyResolver propertyResolver) {
+<span class="fc bfc" id="L859" title="All 2 branches covered.">		if (this.port != null) {</span>
+<span class="fc" id="L860">			return this.port;</span>
+		}
+<span class="fc" id="L862">		Integer evaluatedPort = getIntValue(propertyResolver, ports);</span>
+<span class="pc bpc" id="L863" title="1 of 2 branches missed.">		if (evaluatedPort != null) {</span>
+<span class="fc" id="L864">			return evaluatedPort;</span>
+		}
+<span class="nc" id="L866">		return 0;</span>
+	}
+
+	private String getHost(PropertyResolver propertyResolver) {
+<span class="fc" id="L870">		return getStringValue(propertyResolver, hosts);</span>
+	}
+
+	private String getStringValue(PropertyResolver propertyResolver, List&lt;String&gt; props) {
+<span class="fc" id="L874">		return getValue(propertyResolver, props, String.class);</span>
+	}
+
+	private Integer getIntValue(PropertyResolver propertyResolver, List&lt;String&gt; props) {
+<span class="fc" id="L878">		return getValue(propertyResolver, props, Integer.class);</span>
+	}
+
+	private &lt;T&gt; T getValue(PropertyResolver propertyResolver, List&lt;String&gt; props, Class&lt;T&gt; targetType) {
+<span class="fc" id="L882">		return BuilderUtils.evaluate(props, propertyResolver, targetType);</span>
+	}
+
+	private CloudhopperOptions buildOptions(CloudhopperSessionOptions sessionOpts) {
+<span class="fc bfc" id="L886" title="All 2 branches covered.">		Long responseTimeout = sessionOpts.getResponseTimeout() == null ? 5000L : sessionOpts.getResponseTimeout();</span>
+<span class="fc bfc" id="L887" title="All 2 branches covered.">		Long unbindTimeout = sessionOpts.getUnbindTimeout() == null ? 5000L : sessionOpts.getUnbindTimeout();</span>
+<span class="fc" id="L888">		RetryExecutor connectRetry = sessionOpts.getConnectRetry();</span>
+<span class="fc" id="L889">		return new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry, sessionOpts.isKeepSession());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

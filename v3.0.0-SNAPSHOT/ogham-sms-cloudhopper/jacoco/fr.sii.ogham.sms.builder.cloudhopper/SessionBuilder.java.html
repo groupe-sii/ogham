@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SessionBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Cloudhopper SMS implementation</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">SessionBuilder.java</span></div><h1>SessionBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.retry.RetryBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.util.BuilderUtils;
+
+/**
+ * Configures Cloudhopper session management (timeouts, retry, session name...).
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SessionBuilder extends AbstractParent&lt;CloudhopperBuilder&gt; implements Builder&lt;CloudhopperSessionOptions&gt; {
+	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
+	private ValueOrProperties&lt;Long&gt; bind;
+	private ValueOrProperties&lt;Long&gt; connect;
+	private ValueOrProperties&lt;Long&gt; requestExpiry;
+	private ValueOrProperties&lt;Long&gt; windowMonitorInverval;
+	private ValueOrProperties&lt;Long&gt; windowWait;
+	private ValueOrProperties&lt;Integer&gt; windowSize;
+	private ValueOrProperties&lt;Long&gt; write;
+	private ValueOrProperties&lt;Long&gt; response;
+	private ValueOrProperties&lt;Long&gt; unbind;
+	private RetryBuilder&lt;SessionBuilder&gt; connectRetryBuilder;
+	private List&lt;String&gt; sessionNames;
+	private boolean keepSession;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
+	public SessionBuilder(CloudhopperBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="fc" id="L47">		super(parent);</span>
+<span class="fc" id="L48">		this.environmentBuilder = environmentBuilder;</span>
+<span class="fc" id="L49">		bind = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L50">		connect = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L51">		requestExpiry = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L52">		windowMonitorInverval = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L53">		windowWait = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L54">		windowSize = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L55">		write = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L56">		response = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L57">		unbind = new ValueOrProperties&lt;&gt;();</span>
+<span class="fc" id="L58">		sessionNames = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L59">		keepSession = false;</span>
+<span class="fc" id="L60">	}</span>
+
+	/**
+	 * A name for the session (used to name threads).
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .sessionName(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .sessionName(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param sessionName
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder sessionName(String... sessionName) {
+<span class="nc" id="L91">		sessionNames.addAll(Arrays.asList(sessionName));</span>
+<span class="nc" id="L92">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for the success
+	 * of a bind attempt to the SMSC. Defaults to 5000.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #bindTimeout(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param timeout
+	 *            The maximum amount of time to wait (in ms)
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder bindTimeout(Long timeout) {
+<span class="nc bnc" id="L109" title="All 2 branches missed.">		if (timeout != null) {</span>
+<span class="nc" id="L110">			bind.setValue(timeout);</span>
+		}
+<span class="nc" id="L112">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for the success
+	 * of a bind attempt to the SMSC. Defaults to 5000.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .bindTimeout(&quot;5000&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .bindTimeout(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param timeout
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder bindTimeout(String... timeout) {
+<span class="nc" id="L145">		bind.setProperties(timeout);</span>
+<span class="nc" id="L146">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for a
+	 * establishing the connection. Defaults to 10000.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #connectTimeout(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param timeout
+	 *            The maximum amount of time to wait (in ms)
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder connectTimeout(Long timeout) {
+<span class="nc bnc" id="L163" title="All 2 branches missed.">		if (timeout != null) {</span>
+<span class="nc" id="L164">			connect.setValue(timeout);</span>
+		}
+<span class="nc" id="L166">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for a
+	 * establishing the connection. Defaults to 10000.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .connectTimeout(&quot;10000&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .connectTimeout(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param timeout
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder connectTimeout(String... timeout) {
+<span class="nc" id="L199">		connect.setProperties(timeout);</span>
+<span class="nc" id="L200">		return this;</span>
+	}
+
+	/**
+	 * Configures how to handle a connection that fails. You can configure if
+	 * retry should be done when a connection to the server couldn't be
+	 * established. The builder lets you define the retry behavior.
+	 * 
+	 * For now, only a {@link FixedDelayRetry} is handled. The
+	 * {@link FixedDelayRetry} needs a delay between two tries and a maximum
+	 * attempts. In the future, we could handle different strategies if needed
+	 * like retrying with an exponential delay for example.
+	 * 
+	 * If you don't configure it, no retry is applied at all.
+	 * 
+	 * @return the builder to configure the retry handling
+	 */
+	public RetryBuilder&lt;SessionBuilder&gt; connectRetry() {
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">		if (connectRetryBuilder == null) {</span>
+<span class="fc" id="L219">			connectRetryBuilder = new RetryBuilder&lt;&gt;(this, environmentBuilder);</span>
+		}
+<span class="fc" id="L221">		return connectRetryBuilder;</span>
+	}
+
+	/**
+	 * Set the amount of time (milliseconds) to wait for an endpoint to respond
+	 * to a request before it expires. Defaults to disabled (-1).
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #requestExpiryTimeout(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param timeout
+	 *            The maximum amount of time to wait (in ms) before an
+	 *            unacknowledged request expires. -1 disables.
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder requestExpiryTimeout(Long timeout) {
+<span class="nc bnc" id="L239" title="All 2 branches missed.">		if (timeout != null) {</span>
+<span class="nc" id="L240">			requestExpiry.setValue(timeout);</span>
+		}
+<span class="nc" id="L242">		return this;</span>
+	}
+
+	/**
+	 * Set the amount of time (milliseconds) to wait for an endpoint to respond
+	 * to a request before it expires. Defaults to disabled (-1).
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .requestExpiryTimeout(&quot;-1&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .requestExpiryTimeout(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param timeout
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder requestExpiryTimeout(String... timeout) {
+<span class="nc" id="L275">		requestExpiry.setProperties(timeout);</span>
+<span class="nc" id="L276">		return this;</span>
+	}
+
+	/**
+	 * Sets the amount of time (milliseconds) between executions of monitoring
+	 * the window for requests that expire. It's recommended that this generally
+	 * either matches or is half the value of requestExpiryTimeout. Therefore,
+	 * at worst a request would could take up 1.5X the requestExpiryTimeout to
+	 * clear out. Defaults to -1 (disabled).
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #windowMonitorInterval(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param interval
+	 *            The maximum amount of time to wait (in ms) between executions
+	 *            of monitoring the window.
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowMonitorInterval(Long interval) {
+<span class="nc bnc" id="L297" title="All 2 branches missed.">		if (interval != null) {</span>
+<span class="nc" id="L298">			windowMonitorInverval.setValue(interval);</span>
+		}
+<span class="nc" id="L300">		return this;</span>
+	}
+
+	/**
+	 * Sets the amount of time (milliseconds) between executions of monitoring
+	 * the window for requests that expire. It's recommended that this generally
+	 * either matches or is half the value of requestExpiryTimeout. Therefore,
+	 * at worst a request would could take up 1.5X the requestExpiryTimeout to
+	 * clear out. Defaults to -1 (disabled).
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .windowMonitorInterval(&quot;-1&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .windowMonitorInterval(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param interval
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowMonitorInterval(String... interval) {
+<span class="nc" id="L336">		windowMonitorInverval.setProperties(interval);</span>
+<span class="nc" id="L337">		return this;</span>
+	}
+
+	/**
+	 * Sets the maximum number of requests permitted to be outstanding
+	 * (unacknowledged) at a given time. Must be &amp;gt; 0. Defaults to 1.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #windowSize(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param size
+	 *            The maximum number of requests
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowSize(Integer size) {
+<span class="nc bnc" id="L354" title="All 2 branches missed.">		if (windowSize != null) {</span>
+<span class="nc" id="L355">			windowSize.setValue(size);</span>
+		}
+<span class="nc" id="L357">		return this;</span>
+	}
+
+	/**
+	 * Sets the maximum number of requests permitted to be outstanding
+	 * (unacknowledged) at a given time. Must be &amp;gt; 0. Defaults to 1.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .windowSize(&quot;1&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .windowSize(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param size
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowSize(String... size) {
+<span class="nc" id="L390">		windowSize.setProperties(size);</span>
+<span class="nc" id="L391">		return this;</span>
+	}
+
+	/**
+	 * Set the amount of time (milliseconds) to wait until a slot opens up in
+	 * the sendWindow. Defaults to 60000.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #windowWait(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param timeout
+	 *            The maximum amount of time to wait (in ms) until a slot in the
+	 *            sendWindow becomes available.
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowWait(Long timeout) {
+<span class="nc bnc" id="L409" title="All 2 branches missed.">		if (timeout != null) {</span>
+<span class="nc" id="L410">			windowWait.setValue(timeout);</span>
+		}
+<span class="nc" id="L412">		return this;</span>
+	}
+
+	/**
+	 * Set the amount of time (milliseconds) to wait until a slot opens up in
+	 * the sendWindow. Defaults to 60000.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .windowWait(&quot;60000&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .windowWait(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param windowWait
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder windowWait(String... windowWait) {
+<span class="nc" id="L445">		this.windowWait.setProperties(windowWait);</span>
+<span class="nc" id="L446">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for bytes to be
+	 * written when creating a new SMPP session. Defaults to 0 (no timeout, for
+	 * backwards compatibility).
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #writeTimeout(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param timeout
+	 *            The maximum amount of time to wait (in ms)
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder writeTimeout(Long timeout) {
+<span class="nc bnc" id="L464" title="All 2 branches missed.">		write.setValue(timeout == null ? 0 : timeout);</span>
+<span class="nc" id="L465">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait for bytes to be
+	 * written when creating a new SMPP session. Defaults to 0 (no timeout, for
+	 * backwards compatibility).
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .writeTimeout(&quot;0&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .writeTimeout(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param timeout
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder writeTimeout(String... timeout) {
+<span class="nc" id="L499">		write.setProperties(timeout);</span>
+<span class="nc" id="L500">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait until a valid
+	 * response is received when a &quot;submit&quot; request is synchronously sends to
+	 * the remote endpoint. The timeout value includes both waiting for a
+	 * &quot;window&quot; slot, the time it takes to transmit the actual bytes on the
+	 * socket, and for the remote endpoint to send a response back. Defaults to
+	 * 5000.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #requestExpiryTimeout(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param timeout
+	 *            The maximum amount of time to wait (in ms)
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder responseTimeout(Long timeout) {
+<span class="nc bnc" id="L521" title="All 2 branches missed.">		if (timeout != null) {</span>
+<span class="nc" id="L522">			response.setValue(timeout);</span>
+		}
+<span class="nc" id="L524">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait until a valid
+	 * response is received when a &quot;submit&quot; request is synchronously sends to
+	 * the remote endpoint. The timeout value includes both waiting for a
+	 * &quot;window&quot; slot, the time it takes to transmit the actual bytes on the
+	 * socket, and for the remote endpoint to send a response back. Defaults to
+	 * 5000.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(&quot;5000&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param timeout
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder responseTimeout(String... timeout) {
+<span class="nc" id="L561">		response.setProperties(timeout);</span>
+<span class="nc" id="L562">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait until the
+	 * session is unbounded, waiting up to a specified period of milliseconds
+	 * for an unbind response from the remote endpoint. Regardless of whether a
+	 * proper unbind response was received, the socket/channel is closed.
+	 * Defaults to 5000.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #unbindTimeout(String...)} method.
+	 * 
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param timeout
+	 *            The maximum amount of time to wait (in ms)
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder unbindTimeout(Long timeout) {
+<span class="nc bnc" id="L582" title="All 2 branches missed.">		if (timeout != null) {</span>
+<span class="nc" id="L583">			unbind.setValue(timeout);</span>
+		}
+<span class="nc" id="L585">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum amount of time (in milliseconds) to wait until the
+	 * session is unbounded, waiting up to a specified period of milliseconds
+	 * for an unbind response from the remote endpoint. Regardless of whether a
+	 * proper unbind response was received, the socket/channel is closed.
+	 * Defaults to 5000.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .unbindTimeout(&quot;5000&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .unbindTimeout(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param timeout
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder unbindTimeout(String... timeout) {
+<span class="nc" id="L621">		unbind.setProperties(timeout);</span>
+<span class="nc" id="L622">		return this;</span>
+	}
+
+	/**
+	 * Keep the previous session open instead of closing and reopening one.
+	 * 
+	 * @param keepSessionOpen
+	 *            true to reuse the same session for every sent SMS, false to
+	 *            close the previous session after the SMS has been sent
+	 * @return this instance for fluent chaining
+	 */
+	public SessionBuilder keepSession(boolean keepSessionOpen) {
+<span class="fc" id="L634">		this.keepSession = keepSessionOpen;</span>
+<span class="fc" id="L635">		return this;</span>
+	}
+
+	@Override
+	public CloudhopperSessionOptions build() {
+<span class="fc" id="L640">		CloudhopperSessionOptions sessionOpts = new CloudhopperSessionOptions();</span>
+<span class="fc" id="L641">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
+<span class="fc" id="L642">		sessionOpts.setBindTimeout(getValue(propertyResolver, bind));</span>
+<span class="fc" id="L643">		sessionOpts.setConnectTimeout(getValue(propertyResolver, connect));</span>
+<span class="fc" id="L644">		sessionOpts.setRequestExpiryTimeout(getValue(propertyResolver, requestExpiry));</span>
+<span class="fc" id="L645">		sessionOpts.setWindowMonitorInterval(getValue(propertyResolver, windowMonitorInverval));</span>
+<span class="fc" id="L646">		sessionOpts.setWindowSize(getValue(propertyResolver, windowSize, Integer.class));</span>
+<span class="fc" id="L647">		sessionOpts.setWindowWaitTimeout(getValue(propertyResolver, windowWait));</span>
+<span class="fc" id="L648">		sessionOpts.setWriteTimeout(getValue(propertyResolver, write));</span>
+<span class="fc" id="L649">		sessionOpts.setResponseTimeout(getValue(propertyResolver, response));</span>
+<span class="fc" id="L650">		sessionOpts.setUnbindTimeout(getValue(propertyResolver, unbind));</span>
+<span class="fc" id="L651">		sessionOpts.setKeepSession(keepSession);</span>
+<span class="pc bpc" id="L652" title="1 of 2 branches missed.">		if (connectRetryBuilder != null) {</span>
+<span class="fc" id="L653">			sessionOpts.setConnectRetry(connectRetryBuilder.build());</span>
+		}
+<span class="fc" id="L655">		return sessionOpts;</span>
+	}
+
+	private Long getValue(PropertyResolver propertyResolver, ValueOrProperties&lt;Long&gt; val) {
+<span class="fc" id="L659">		return getValue(propertyResolver, val, Long.class);</span>
+	}
+
+	private &lt;T&gt; T getValue(PropertyResolver propertyResolver, ValueOrProperties&lt;T&gt; val, Class&lt;T&gt; targetType) {
+<span class="pc bpc" id="L663" title="1 of 2 branches missed.">		if (val.getValue() != null) {</span>
+<span class="nc" id="L664">			return val.getValue();</span>
+		}
+<span class="pc bpc" id="L666" title="1 of 2 branches missed.">		if (val.getProperties() == null) {</span>
+<span class="fc" id="L667">			return null;</span>
+		}
+<span class="nc" id="L669">		return BuilderUtils.evaluate(val.getProperties(), propertyResolver, targetType);</span>
+	}
+
+	private static class ValueOrProperties&lt;V&gt; {
+		private V value;
+		private List&lt;String&gt; properties;
+
+		public V getValue() {
+<span class="fc" id="L677">			return value;</span>
+		}
+
+		public void setValue(V value) {
+<span class="nc" id="L681">			this.value = value;</span>
+<span class="nc" id="L682">		}</span>
+
+		public List&lt;String&gt; getProperties() {
+<span class="fc" id="L685">			return properties;</span>
+		}
+
+		public void setProperties(List&lt;String&gt; properties) {
+<span class="nc" id="L689">			this.properties = properties;</span>
+<span class="nc" id="L690">		}</span>
+
+		public void setProperties(String... properties) {
+<span class="nc" id="L693">			setProperties(Arrays.asList(properties));</span>
+<span class="nc" id="L694">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

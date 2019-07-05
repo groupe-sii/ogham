@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamSmppProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">OghamSmppProperties.java</span></div><h1>OghamSmppProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(&quot;ogham.sms.smpp&quot;)
+<span class="fc" id="L6">public class OghamSmppProperties {</span>
+	/**
+	 * The system_id parameter is used to identify an ESME ( External Short
+	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
+	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
+	 * system_id provides an identification of the SMSC to the ESME. This is an
+	 * alias of ogham.sms.cloudhopper.system-id. If both properties are defined,
+	 * the value of the property ogham.sms.cloudhopper.system-id is used.
+	 */
+	private String systemId;
+	/**
+	 * The password parameter is used by the SMSC (Short Message Service Centre)
+	 * to authenticate the identity of the binding ESME (External Short Message
+	 * Entity). The Service Provider may require ESME’s to provide a password
+	 * when binding to the SMSC. This password is normally issued by the SMSC
+	 * system administrator. The password parameter may also be used by the ESME
+	 * to authenticate the identity of the binding SMSC (e.g. in the case of the
+	 * outbind operation). This is an alias of ogham.sms.cloudhopper.password.
+	 * If both properties are defined, the value of the property
+	 * ogham.sms.cloudhopper.password is used.
+	 */
+	private String password;
+	/**
+	 * The SMPP server host (IP or address). This is an alias of
+	 * ogham.sms.cloudhopper.host. If both properties are defined, the value of
+	 * the property ogham.sms.cloudhopper.host is used.
+	 */
+	private String host;
+	/**
+	 * The SMPP server port. This is an alias of ogham.sms.cloudhopper.port. If
+	 * both properties are defined, the value of the property
+	 * ogham.sms.cloudhopper.port is used.
+	 */
+	private Integer port;
+
+	public String getSystemId() {
+<span class="fc" id="L42">		return systemId;</span>
+	}
+
+	public void setSystemId(String systemId) {
+<span class="nc" id="L46">		this.systemId = systemId;</span>
+<span class="nc" id="L47">	}</span>
+
+	public String getPassword() {
+<span class="fc" id="L50">		return password;</span>
+	}
+
+	public void setPassword(String password) {
+<span class="nc" id="L54">		this.password = password;</span>
+<span class="nc" id="L55">	}</span>
+
+	public String getHost() {
+<span class="fc" id="L58">		return host;</span>
+	}
+
+	public void setHost(String host) {
+<span class="fc" id="L62">		this.host = host;</span>
+<span class="fc" id="L63">	}</span>
+
+	public Integer getPort() {
+<span class="fc" id="L66">		return port;</span>
+	}
+
+	public void setPort(Integer port) {
+<span class="fc" id="L70">		this.port = port;</span>
+<span class="fc" id="L71">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

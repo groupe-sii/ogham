@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JsoupCssInliner.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.inliner.impl.jsoup</a> &gt; <span class="el_source">JsoupCssInliner.java</span></div><h1>JsoupCssInliner.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.inliner.impl.jsoup;
+
+import java.util.List;
+import java.util.StringTokenizer;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.DataNode;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
+import org.jsoup.select.Elements;
+
+import fr.sii.ogham.html.inliner.CssInliner;
+import fr.sii.ogham.html.inliner.ExternalCss;
+
+<span class="fc" id="L16">public class JsoupCssInliner implements CssInliner {</span>
+	private static final String HREF_ATTR = &quot;href&quot;;
+	private static final String TRUE_VALUE = &quot;true&quot;;
+	private static final String SKIP_INLINE = &quot;data-skip-inline&quot;;
+	private static final String TEMP_STYLE_ATTR = &quot;data-cssstyle&quot;;
+	private static final String STYLE_ATTR = &quot;style&quot;;
+	private static final String STYLE_TAG = &quot;style&quot;;
+	private static final String CSS_LINKS_SELECTOR = &quot;link[rel*=\&quot;stylesheet\&quot;], link[type=\&quot;text/css\&quot;], link[href$=\&quot;.css\&quot;]&quot;;
+
+	@Override
+	public String inline(String htmlContent, List&lt;ExternalCss&gt; cssContents) {
+<span class="fc" id="L27">		Document doc = Jsoup.parse(htmlContent);</span>
+
+<span class="fc" id="L29">		internStyles(doc, cssContents);</span>
+<span class="fc" id="L30">		String stylesheet = fetchStyles(doc);</span>
+<span class="fc" id="L31">		extractStyles(doc, stylesheet);</span>
+<span class="fc" id="L32">		applyStyles(doc);</span>
+
+<span class="fc" id="L34">		return doc.outerHtml();</span>
+	}
+
+	/**
+	 * Applies the styles to a &lt;code&gt;data-cssstyle&lt;/code&gt; attribute. This is
+	 * because the styles need to be applied sequentially, but before the
+	 * &lt;code&gt;style&lt;/code&gt; defined for the element inline.
+	 *
+	 * @param doc
+	 *            the html document
+	 */
+	private void extractStyles(Document doc, String stylesheet) {
+<span class="fc" id="L46">		String trimmedStylesheet = stylesheet.replaceAll(&quot;\n&quot;, &quot;&quot;).replaceAll(&quot;/\\*.*?\\*/&quot;, &quot;&quot;).replaceAll(&quot; +&quot;, &quot; &quot;);</span>
+<span class="fc" id="L47">		String styleRules = trimmedStylesheet.trim();</span>
+<span class="fc" id="L48">		String delims = &quot;{}&quot;;</span>
+<span class="fc" id="L49">		StringTokenizer st = new StringTokenizer(styleRules, delims);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">		while (st.countTokens() &gt; 1) {</span>
+<span class="fc" id="L51">			String selector = st.nextToken();</span>
+<span class="fc" id="L52">			String properties = st.nextToken();</span>
+<span class="fc" id="L53">			Elements selectedElements = doc.select(selector.trim());</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">			for (Element selElem : selectedElements) {</span>
+<span class="fc" id="L55">				String oldProperties = selElem.attr(TEMP_STYLE_ATTR);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">				selElem.attr(TEMP_STYLE_ATTR, oldProperties.length() &gt; 0 ? concatenateProperties(oldProperties, properties) : properties);</span>
+<span class="fc" id="L57">			}</span>
+<span class="fc" id="L58">		}</span>
+<span class="fc" id="L59">	}</span>
+
+	/**
+	 * Replace link tags with style tags in order to keep the same inclusion
+	 * order
+	 *
+	 * @param doc
+	 *            the html document
+	 * @param cssContents
+	 *            the list of external css files with their content
+	 */
+	private void internStyles(Document doc, List&lt;ExternalCss&gt; cssContents) {
+<span class="fc" id="L71">		Elements els = doc.select(CSS_LINKS_SELECTOR);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		for (Element e : els) {</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">			if (!TRUE_VALUE.equals(e.attr(SKIP_INLINE))) {</span>
+<span class="fc" id="L74">				String path = e.attr(HREF_ATTR);</span>
+<span class="fc" id="L75">				Element style = new Element(Tag.valueOf(STYLE_TAG), &quot;&quot;);</span>
+<span class="fc" id="L76">				style.appendChild(new DataNode(getCss(cssContents, path)));</span>
+<span class="fc" id="L77">				e.replaceWith(style);</span>
+			}
+<span class="fc" id="L79">		}</span>
+<span class="fc" id="L80">	}</span>
+
+	private String getCss(List&lt;ExternalCss&gt; cssContents, String path) {
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">		for (ExternalCss css : cssContents) {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">			if (css.getPath().getOriginalPath().contains(path)) {</span>
+<span class="fc" id="L85">				return css.getContent();</span>
+			}
+<span class="fc" id="L87">		}</span>
+<span class="nc" id="L88">		throw new IllegalStateException(&quot;The css with path &quot; + path + &quot; doesn't exist in the list of css contents&quot;);</span>
+	}
+
+	/**
+	 * Generates a stylesheet from an html document
+	 *
+	 * @param doc
+	 *            the html document
+	 * @return a string representing the stylesheet.
+	 */
+	private String fetchStyles(Document doc) {
+<span class="fc" id="L99">		Elements els = doc.select(STYLE_TAG);</span>
+<span class="fc" id="L100">		StringBuilder styles = new StringBuilder();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		for (Element e : els) {</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">			if (!TRUE_VALUE.equals(e.attr(SKIP_INLINE))) {</span>
+<span class="fc" id="L103">				styles.append(e.data());</span>
+<span class="fc" id="L104">				e.remove();</span>
+			}
+<span class="fc" id="L106">		}</span>
+<span class="fc" id="L107">		return styles.toString();</span>
+	}
+
+	/**
+	 * Transfers styles from the &lt;code&gt;data-cssstyle&lt;/code&gt; attribute to the
+	 * &lt;code&gt;style&lt;/code&gt; attribute.
+	 *
+	 * @param doc
+	 *            the html document
+	 */
+	private void applyStyles(Document doc) {
+<span class="fc" id="L118">		Elements allStyledElements = doc.getElementsByAttribute(TEMP_STYLE_ATTR);</span>
+
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		for (Element e : allStyledElements) {</span>
+<span class="fc" id="L121">			String newStyle = e.attr(TEMP_STYLE_ATTR);</span>
+<span class="fc" id="L122">			String oldStyle = e.attr(STYLE_ATTR);</span>
+<span class="fc" id="L123">			e.attr(STYLE_ATTR, (newStyle + &quot;; &quot; + oldStyle).replaceAll(&quot;;+&quot;, &quot;;&quot;).trim());</span>
+<span class="fc" id="L124">			e.removeAttr(TEMP_STYLE_ATTR);</span>
+<span class="fc" id="L125">		}</span>
+<span class="fc" id="L126">	}</span>
+
+	private static String concatenateProperties(String oldProp, String newProp) {
+<span class="fc" id="L129">		String prop = oldProp;</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">		if (!prop.endsWith(&quot;;&quot;)) {</span>
+<span class="nc" id="L131">			prop += &quot;;&quot;;</span>
+		}
+<span class="fc" id="L133">		return prop.trim() + &quot; &quot; + newProp.trim() + &quot;;&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

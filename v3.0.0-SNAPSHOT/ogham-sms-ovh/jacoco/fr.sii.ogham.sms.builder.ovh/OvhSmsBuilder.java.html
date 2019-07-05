@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OvhSmsBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham OVH SMS implementation</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.ovh</a> &gt; <span class="el_source">OvhSmsBuilder.java</span></div><h1>OvhSmsBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.ovh;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
+import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
+import fr.sii.ogham.sms.sender.impl.ovh.OvhAuthParams;
+import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
+import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
+
+/**
+ * Configures how to send {@link Sms} using OVH HTTP API.
+ * 
+ * &lt;p&gt;
+ * To send {@link Sms} using OVH, you need to register this builder into a
+ * {@link MessagingBuilder} like this:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * MessagingBuilder msgBuilder = ...
+ * msgBuilder.sms()
+ *    .sender(OvhSmsBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Once the builder is registered, sending sms through OVH requires URL,
+ * account, login and password values. You can define it using:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder.email()
+ *    .sender(OvhSmsBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .url(&quot;https://www.ovh.com/cgi-bin/sms/http2sms.cgi&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or you can also use property keys (using interpolation):
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder
+ * .environment()
+ *    .properties()
+ *       .set(&quot;custom.property.for.url&quot;, &quot;https://www.ovh.com/cgi-bin/sms/http2sms.cgi&quot;)
+ *       .and()
+ *    .and()
+ * .email()
+ *    .sender(OvhSmsBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .host(&quot;${custom.property.for.url}&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class OvhSmsBuilder extends AbstractParent&lt;SmsBuilder&gt; implements Builder&lt;OvhSmsSender&gt; {
+<span class="fc" id="L75">	private static final Logger LOG = LoggerFactory.getLogger(OvhSmsBuilder.class);</span>
+
+	private EnvironmentBuilder&lt;OvhSmsBuilder&gt; environmentBuilder;
+	private List&lt;String&gt; urls;
+	private List&lt;String&gt; accounts;
+	private List&lt;String&gt; logins;
+	private List&lt;String&gt; passwords;
+	private OvhOptionsBuilder ovhOptionsBuilder;
+
+	/**
+	 * Default constructor when using OVH SMS sender without all Ogham work.
+	 * 
+	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
+	 */
+	public OvhSmsBuilder() {
+<span class="fc" id="L90">		this(null);</span>
+<span class="fc" id="L91">		environmentBuilder = new SimpleEnvironmentBuilder&lt;&gt;(this);</span>
+<span class="fc" id="L92">	}</span>
+
+	/**
+	 * Constructor that is called when using Ogham builder:
+	 * 
+	 * &lt;pre&gt;
+	 * MessagingBuilder msgBuilder = ...
+	 * msgBuilder
+	 * .email()
+	 *    .sender(OvhSmsBuilder.class)
+	 * &lt;/pre&gt;
+	 * 
+	 * @param parent
+	 *            the parent builder instance for fluent chaining
+	 */
+	public OvhSmsBuilder(SmsBuilder parent) {
+<span class="fc" id="L108">		super(parent);</span>
+<span class="fc" id="L109">		urls = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L110">		accounts = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L111">		logins = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L112">		passwords = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L113">	}</span>
+
+	/**
+	 * Configures environment for the builder (and sub-builders). Environment
+	 * consists of configuration properties/values that are used to configure
+	 * the system (see {@link EnvironmentBuilder} for more information).
+	 * 
+	 * You can use system properties:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .systemProperties();
+	 * &lt;/pre&gt;
+	 * 
+	 * Or, you can load properties from a file:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .properties(&quot;/path/to/file.properties&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * Or using directly a {@link Properties} object:
+	 * 
+	 * &lt;pre&gt;
+	 * Properties myprops = new Properties();
+	 * myprops.setProperty(&quot;foo&quot;, &quot;bar&quot;);
+	 * .environment()
+	 *    .properties(myprops)
+	 * &lt;/pre&gt;
+	 * 
+	 * Or defining directly properties:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .properties()
+	 *       .set(&quot;foo&quot;, &quot;bar&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * If no environment was previously used, it creates a new one. Then each
+	 * time you call {@link #environment()}, the same instance is used.
+	 * &lt;/p&gt;
+	 * 
+	 * @return the builder to configure properties handling
+	 */
+	public EnvironmentBuilder&lt;OvhSmsBuilder&gt; environment() {
+<span class="nc bnc" id="L160" title="All 2 branches missed.">		if (environmentBuilder == null) {</span>
+<span class="nc" id="L161">			environmentBuilder = new SimpleEnvironmentBuilder&lt;&gt;(this);</span>
+		}
+<span class="nc" id="L163">		return environmentBuilder;</span>
+	}
+
+	/**
+	 * NOTE: this is mostly for advance usage (when creating a custom module).
+	 * 
+	 * Inherits environment configuration from another builder. This is useful
+	 * for configuring independently different parts of Ogham but keeping a
+	 * whole coherence (see {@link DefaultOvhSmsConfigurer} for an example of
+	 * use).
+	 * 
+	 * The same instance is shared meaning that all changes done here will also
+	 * impact the other builder.
+	 * 
+	 * &lt;p&gt;
+	 * If a previous builder was defined (by calling {@link #environment()} for
+	 * example), the new builder will override it.
+	 * 
+	 * @param builder
+	 *            the builder to inherit
+	 * @return this instance for fluent chaining
+	 */
+	public OvhSmsBuilder environment(EnvironmentBuilder&lt;?&gt; builder) {
+<span class="nc" id="L186">		environmentBuilder = new EnvironmentBuilderDelegate&lt;&gt;(this, builder);</span>
+<span class="nc" id="L187">		return this;</span>
+	}
+
+	/**
+	 * Set the URL of the OVH SMS HTTP API.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .url(&quot;https://www.ovh.com/cgi-bin/sms/http2sms.cgi&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .host(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param url
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public OvhSmsBuilder url(String... url) {
+<span class="fc bfc" id="L219" title="All 2 branches covered.">		for (String u : url) {</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">			if (u != null) {</span>
+<span class="fc" id="L221">				urls.add(u);</span>
+			}
+		}
+<span class="fc" id="L224">		return this;</span>
+	}
+
+	/**
+	 * Set the OVH account identifier.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .account(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .account(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param account
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public OvhSmsBuilder account(String... account) {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">		for (String a : account) {</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">			if (a != null) {</span>
+<span class="fc" id="L258">				accounts.add(a);</span>
+			}
+		}
+<span class="fc" id="L261">		return this;</span>
+	}
+
+	/**
+	 * Set the OVH username.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .login(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .login(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param login
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public OvhSmsBuilder login(String... login) {
+<span class="fc bfc" id="L293" title="All 2 branches covered.">		for (String l : login) {</span>
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">			if (l != null) {</span>
+<span class="fc" id="L295">				logins.add(l);</span>
+			}
+		}
+<span class="fc" id="L298">		return this;</span>
+	}
+
+	/**
+	 * Set the OVH password.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;bar&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param password
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public OvhSmsBuilder password(String... password) {
+<span class="fc bfc" id="L330" title="All 2 branches covered.">		for (String p : password) {</span>
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">			if (p != null) {</span>
+<span class="fc" id="L332">				passwords.add(p);</span>
+			}
+		}
+<span class="fc" id="L335">		return this;</span>
+	}
+
+	/**
+	 * Configures OVH SMS options:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable/disable the &quot;STOP&quot; indication at the end of the message
+	 * (useful to disable for non-commercial SMS)&lt;/li&gt;
+	 * &lt;li&gt;Define the SMS encoding (see {@link SmsCoding}): 1 for 7bit encoding,
+	 * 2 for 8bit encoding (UTF-8). If you use UTF-8, your SMS will have a
+	 * maximum size of 70 characters instead of 160&lt;/li&gt;
+	 * &lt;li&gt;Define a tag to mark sent messages (a 20 maximum character
+	 * string)&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the builder to configure OVH SMS options
+	 */
+	public OvhOptionsBuilder options() {
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">		if (ovhOptionsBuilder == null) {</span>
+<span class="fc" id="L354">			ovhOptionsBuilder = new OvhOptionsBuilder(this, environmentBuilder);</span>
+		}
+<span class="fc" id="L356">		return ovhOptionsBuilder;</span>
+	}
+
+	@Override
+	public OvhSmsSender build() {
+<span class="fc" id="L361">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
+<span class="fc" id="L362">		URL url = buildUrl(propertyResolver);</span>
+<span class="fc" id="L363">		OvhAuthParams authParams = buildAuth(propertyResolver);</span>
+<span class="fc" id="L364">		OvhOptions options = buildOptions();</span>
+<span class="pc bpc" id="L365" title="4 of 8 branches missed.">		if (url == null || authParams.getAccount() == null || authParams.getLogin() == null || authParams.getPassword() == null) {</span>
+<span class="nc" id="L366">			return null;</span>
+		}
+<span class="fc" id="L368">		LOG.info(&quot;Sending SMS using OVH API is registered&quot;);</span>
+<span class="fc" id="L369">		LOG.debug(&quot;OVH account: account={}, login={}&quot;, authParams.getAccount(), authParams.getLogin());</span>
+<span class="fc" id="L370">		return new OvhSmsSender(url, authParams, options);</span>
+	}
+
+	private URL buildUrl(PropertyResolver propertyResolver) {
+		try {
+<span class="fc" id="L375">			String url = BuilderUtils.evaluate(urls, propertyResolver, String.class);</span>
+<span class="pc bpc" id="L376" title="1 of 2 branches missed.">			if (url != null) {</span>
+<span class="fc" id="L377">				return new URL(url);</span>
+			}
+<span class="nc" id="L379">			return null;</span>
+<span class="nc" id="L380">		} catch (MalformedURLException e) {</span>
+<span class="nc" id="L381">			throw new BuildException(&quot;Failed to create OVH SMS sender due to invalid URL&quot;, e);</span>
+		}
+	}
+
+	private OvhAuthParams buildAuth(PropertyResolver propertyResolver) {
+<span class="fc" id="L386">		String account = BuilderUtils.evaluate(accounts, propertyResolver, String.class);</span>
+<span class="fc" id="L387">		String login = BuilderUtils.evaluate(logins, propertyResolver, String.class);</span>
+<span class="fc" id="L388">		String password = BuilderUtils.evaluate(passwords, propertyResolver, String.class);</span>
+<span class="fc" id="L389">		return new OvhAuthParams(account, login, password);</span>
+	}
+
+	private OvhOptions buildOptions() {
+<span class="fc" id="L393">		return ovhOptionsBuilder.build();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

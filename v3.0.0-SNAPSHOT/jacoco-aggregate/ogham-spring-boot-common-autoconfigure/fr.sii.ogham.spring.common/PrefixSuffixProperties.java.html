@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PrefixSuffixProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.common</a> &gt; <span class="el_source">PrefixSuffixProperties.java</span></div><h1>PrefixSuffixProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.common;
+
+<span class="fc" id="L3">public class PrefixSuffixProperties {</span>
+	/**
+	 * You can set the path prefix for resource resolution. The aim is to define
+	 * only the name of the resource (or a subset) and the system will find it
+	 * for you. It avoids to explicitly write the whole path and let you change
+	 * the resource resolution easily.
+	 * 
+	 * For example, you have one template located into
+	 * &quot;/foo/template/createAccount.html&quot; and you have one template located into
+	 * &quot;/foo/template/resetPassword.html&quot;.
+	 * 
+	 * So you can set the prefix path to &quot;/foo/template/&quot;. You can now reference
+	 * the templates using only the file name: &quot;createAccount.html&quot; and
+	 * &quot;resetPassword.html&quot;.
+	 * 
+	 * Path prefix can be set globally, by template engine, by sending system
+	 * and by resolver. For example, the priority order for classpath is (from
+	 * highest priority to lowest): (1)
+	 * ogham.email.freemarker.classpath.path-prefix, (2)
+	 * ogham.email.template.classpath.path-prefix, (3)
+	 * ogham.email.freemarker.path-prefix, (4) ogham.email.template.path-prefix,
+	 * (5) ogham.template.path-prefix
+	 */
+	private String pathPrefix;
+
+	/**
+	 * You can set the path suffix for resource resolution. The aim is to define
+	 * only the name of the resource (or a subset) and the system will find it
+	 * for you. It avoids to explicitly write the whole path and let you change
+	 * the resource resolution easily.
+	 * 
+	 * For example, you have one template located into &quot;createAccount.html&quot; and
+	 * you have one template located into &quot;resetPassword.html&quot;.
+	 * 
+	 * So you can set the suffix path to &quot;.html&quot;. You can now reference the
+	 * templates using the file name: &quot;createAccount&quot; and &quot;resetPassword&quot;.
+	 * 
+	 * Path suffix can be set globally, by template engine, by sending system
+	 * and by resolver. For example, the priority order for classpath is (from
+	 * highest priority to lowest): (1)
+	 * ogham.email.freemarker.classpath.path-suffix, (2)
+	 * ogham.email.template.classpath.path-suffix, (3)
+	 * ogham.email.freemarker.path-suffix, (4) ogham.email.template.path-suffix,
+	 * (5) ogham.template.path-suffix
+	 */
+	private String pathSuffix;
+	
+	public String getPathPrefix() {
+<span class="fc" id="L51">		return pathPrefix;</span>
+	}
+
+	public void setPathPrefix(String pathPrefix) {
+<span class="fc" id="L55">		this.pathPrefix = pathPrefix;</span>
+<span class="fc" id="L56">	}</span>
+
+	public String getPathSuffix() {
+<span class="fc" id="L59">		return pathSuffix;</span>
+	}
+
+	public void setPathSuffix(String pathSuffix) {
+<span class="nc" id="L63">		this.pathSuffix = pathSuffix;</span>
+<span class="nc" id="L64">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

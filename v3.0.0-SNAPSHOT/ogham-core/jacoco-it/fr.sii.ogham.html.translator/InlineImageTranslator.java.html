@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InlineImageTranslator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.translator</a> &gt; <span class="el_source">InlineImageTranslator.java</span></div><h1>InlineImageTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.translator;
+
+import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.HasResourcePath;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
+import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.UpdatableStringContent;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.resource.path.RelativePath;
+import fr.sii.ogham.core.resource.path.RelativePathResolver;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+import fr.sii.ogham.core.util.HtmlUtils;
+import fr.sii.ogham.core.util.IOUtils;
+import fr.sii.ogham.email.message.content.ContentWithAttachments;
+import fr.sii.ogham.html.inliner.ContentWithImages;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.inliner.ImageResource;
+
+/**
+ * Translator that transforms HTML content. If not HTML, the translator has no
+ * effect. The HTML is analyzed in order to find images. For each found image,
+ * it uses the resource resolver in order to find the image file. Once all
+ * images are found, the HTML is transformed in order to inline the images. The
+ * images can be inlined using several methods:
+ * &lt;ul&gt;
+ * &lt;li&gt;Base64 inliner to convert images to base64 equivalent&lt;/li&gt;
+ * &lt;li&gt;Extract images and generate attachments to join to the email&lt;/li&gt;
+ * &lt;li&gt;Maybe anything else&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ * 
+ */
+public class InlineImageTranslator implements ContentTranslator {
+<span class="nc" id="L54">	private static final Logger LOG = LoggerFactory.getLogger(InlineImageTranslator.class);</span>
+<span class="nc" id="L55">	private static final Pattern URL_PATTERN = Pattern.compile(&quot;^https?://.+$&quot;, Pattern.CASE_INSENSITIVE);</span>
+	
+	/**
+	 * The image inliner
+	 */
+	private final ImageInliner inliner;
+
+	/**
+	 * The resource resolver used to find images
+	 */
+	private final ResourceResolver resourceResolver;
+
+	/**
+	 * The provider that detects the mimetype for each image
+	 */
+	private final MimeTypeProvider mimetypeProvider;
+	
+	/**
+	 * Provides an instance used to resolve relative path from source path and relative path
+	 */
+	private final RelativePathResolver relativePathProvider;
+
+	public InlineImageTranslator(ImageInliner inliner, ResourceResolver resourceResolver, MimeTypeProvider mimetypeProvider, RelativePathResolver relativePathProvider) {
+<span class="nc" id="L78">		super();</span>
+<span class="nc" id="L79">		this.inliner = inliner;</span>
+<span class="nc" id="L80">		this.resourceResolver = resourceResolver;</span>
+<span class="nc" id="L81">		this.mimetypeProvider = mimetypeProvider;</span>
+<span class="nc" id="L82">		this.relativePathProvider = relativePathProvider;</span>
+<span class="nc" id="L83">	}</span>
+
+	@Override
+	public Content translate(Content content) throws ContentTranslatorException {
+<span class="nc bnc" id="L87" title="All 4 branches missed.">		if (content instanceof MayHaveStringContent &amp;&amp; ((MayHaveStringContent) content).canProvideString()) {</span>
+<span class="nc" id="L88">			String stringContent = ((MayHaveStringContent) content).asString();</span>
+<span class="nc" id="L89">			List&lt;String&gt; images = filterExternalUrls(HtmlUtils.getDistinctImageUrls(stringContent));</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">			if (!images.isEmpty()) {</span>
+				// parepare list of images paths/urls with their content
+<span class="nc" id="L92">				List&lt;ImageResource&gt; imageResources = load(getSourcePath(content), images);</span>
+				// generate new HTML with inlined images
+<span class="nc" id="L94">				ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);</span>
+				// remove ogham attributes
+<span class="nc" id="L96">				ContentWithImages cleaned = clean(contentWithImages);</span>
+				// update the HTML content
+<span class="nc" id="L98">				Content inlinedContent = updateHtmlContent(content, cleaned);</span>
+				// if it was already a content with attachments then update it otherwise create a new one
+<span class="nc" id="L100">				return generateFinalContent(content, cleaned, inlinedContent);</span>
+			}
+<span class="nc" id="L102">		} else {</span>
+<span class="nc" id="L103">			LOG.debug(&quot;Neither content usable as string nor HTML. Skip image inlining for {}&quot;, content);</span>
+		}
+<span class="nc" id="L105">		return content;</span>
+	}
+
+	private ContentWithImages clean(ContentWithImages contentWithImages) {
+<span class="nc" id="L109">		String html = removeOghamAttributes(contentWithImages.getContent());</span>
+<span class="nc" id="L110">		contentWithImages.setContent(html);</span>
+<span class="nc" id="L111">		return contentWithImages;</span>
+	}
+
+	private List&lt;String&gt; filterExternalUrls(List&lt;String&gt; imageUrls) {
+<span class="nc bnc" id="L115" title="All 2 branches missed.">		for(Iterator&lt;String&gt; it = imageUrls.iterator() ; it.hasNext() ; ) {</span>
+<span class="nc" id="L116">			String url = it.next();</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">			if(URL_PATTERN.matcher(url).matches()) {</span>
+<span class="nc" id="L118">				it.remove();</span>
+			}
+<span class="nc" id="L120">		}</span>
+<span class="nc" id="L121">		return imageUrls;</span>
+	}
+
+	private ResourcePath getSourcePath(Content content) {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">		if(content instanceof HasResourcePath) {</span>
+<span class="nc" id="L126">			return ((HasResourcePath) content).getPath();</span>
+		}
+<span class="nc" id="L128">		return new UnresolvedPath(&quot;&quot;);</span>
+	}
+	
+	private List&lt;ImageResource&gt; load(ResourcePath sourcePath, List&lt;String&gt; images) throws ContentTranslatorException {
+<span class="nc" id="L132">		List&lt;ImageResource&gt; imageResources = new ArrayList&lt;&gt;(images.size());</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">		for (String path : images) {</span>
+<span class="nc" id="L134">			load(imageResources, relativePathProvider.resolve(sourcePath, path));</span>
+<span class="nc" id="L135">		}</span>
+<span class="nc" id="L136">		return imageResources;</span>
+	}
+
+	private void load(List&lt;ImageResource&gt; imageResources, RelativePath path) throws ContentTranslatorException {
+		try {
+<span class="nc" id="L141">			byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());</span>
+<span class="nc" id="L142">			String mimetype = mimetypeProvider.detect(new ByteArrayInputStream(imgContent)).toString();</span>
+<span class="nc" id="L143">			String imgName = new File(path.getOriginalPath()).getName();</span>
+<span class="nc" id="L144">			imageResources.add(new ImageResource(imgName, path.getRelativePath().getOriginalPath(), path, imgContent, mimetype));</span>
+<span class="nc" id="L145">		} catch (IOException e) {</span>
+<span class="nc" id="L146">			throw new ContentTranslatorException(&quot;Failed to inline CSS file &quot; + path + &quot; because it can't be read&quot;, e);</span>
+<span class="nc" id="L147">		} catch (ResourceResolutionException e) {</span>
+<span class="nc" id="L148">			throw new ContentTranslatorException(&quot;Failed to inline CSS file &quot; + path + &quot; because it can't be resolved&quot;, e);</span>
+<span class="nc" id="L149">		} catch (MimeTypeDetectionException e) {</span>
+<span class="nc" id="L150">			throw new ContentTranslatorException(&quot;Failed to inline CSS file &quot; + path + &quot; because mimetype can't be detected&quot;, e);</span>
+<span class="nc" id="L151">		}</span>
+<span class="nc" id="L152">	}</span>
+
+	private Content updateHtmlContent(Content content, ContentWithImages contentWithImages) {
+<span class="nc bnc" id="L155" title="All 2 branches missed.">		if(content instanceof UpdatableStringContent) {</span>
+<span class="nc" id="L156">			LOG.debug(&quot;Content is updatable =&gt; update it with inlined images&quot;);</span>
+<span class="nc" id="L157">			((UpdatableStringContent) content).setStringContent(contentWithImages.getContent());</span>
+<span class="nc" id="L158">			return content;</span>
+		}
+<span class="nc" id="L160">		LOG.info(&quot;Content is not updatable =&gt; create a new StringContent for image inlining result&quot;);</span>
+<span class="nc" id="L161">		return new StringContent(contentWithImages.getContent());</span>
+	}
+
+	private Content generateFinalContent(Content content, ContentWithImages contentWithImages, Content inlinedContent) {
+<span class="nc bnc" id="L165" title="All 2 branches missed.">		if(content instanceof ContentWithAttachments) {</span>
+<span class="nc" id="L166">			ContentWithAttachments finalContent = (ContentWithAttachments) content;</span>
+<span class="nc" id="L167">			finalContent.addAttachments(contentWithImages.getAttachments());</span>
+<span class="nc" id="L168">			finalContent.setContent(inlinedContent);</span>
+<span class="nc" id="L169">			return finalContent;</span>
+		}
+<span class="nc" id="L171">		return new ContentWithAttachments(inlinedContent, contentWithImages.getAttachments());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

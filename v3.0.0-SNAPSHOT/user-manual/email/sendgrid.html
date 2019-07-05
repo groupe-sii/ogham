@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sending an email using SendGrid HTTP API is exactly the same in term of code. The only difference is the configuration of Ogham.</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Sample using SendGrid</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-42,63-75 irrelevant-lines:1-42 highlight-lines:51">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email.sendgrid</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.message.content.MultiTemplateContent</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.attachment.Attachment</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="comment">/**
+ * This sample shows how to send email with following characteristics:
+ * &lt;ul&gt;
+ * &lt;li&gt;Use templates&lt;/li&gt;
+ * &lt;li&gt;Use template prefix&lt;/li&gt;
+ * &lt;li&gt;The HTML template uses external CSS and images&lt;/li&gt;
+ * &lt;li&gt;The HTML template loads page fragments&lt;/li&gt;
+ * &lt;li&gt;The subject is extracted from templates&lt;/li&gt;
+ * &lt;li&gt;Send HTML email with text fallback&lt;/li&gt;
+ * &lt;li&gt;Add attachments to the email&lt;/li&gt;
+ * &lt;li&gt;Properties are loaded from external file and API key is set in code&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;
+ * The templates are available in src/main/resources/template/thymeleaf/email:
+ * &lt;ul&gt;
+ * &lt;li&gt;full.html&lt;/li&gt;
+ * &lt;li&gt;full.txt&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;
+ * The HTML template uses a page fragment that is available in
+ * src/main/resources/template/thymeleaf/email/fragments/header.html.
+ *
+ * &lt;p&gt;
+ * The HTML template also references external CSS and images that are available
+ * in src/main/resources/resources.
+ *
+ * @author Aurélien Baudet
+ *
+ */</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">SendGridFullSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+        <span class="comment">// Instantiate the messaging service using default behavior and</span>
+        <span class="comment">// provided properties</span>
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/sendgrid-template.properties</span><span class="delimiter">&quot;</span></span>)                                    <i class="conum" data-value="1"></i><b>(1)</b>
+                    .properties()
+                        .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.sengrid.api-key</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your sendgrid API key&gt;</span><span class="delimiter">&quot;</span></span>)              <i class="conum" data-value="2"></i><b>(2)</b>
+                        .and()
+                    .and()
+                .build();
+        <span class="comment">// send the email using fluent API</span>
+        service.send(<span class="keyword">new</span> Email()
+                        .content(<span class="keyword">new</span> MultiTemplateContent(<span class="string"><span class="delimiter">&quot;</span><span class="content">full</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> SimpleBean(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo</span><span class="delimiter">&quot;</span></span>, <span class="integer">42</span>)))       <i class="conum" data-value="3"></i><b>(3)</b>
+                        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>)
+                        .attach(<span class="keyword">new</span> Attachment(<span class="string"><span class="delimiter">&quot;</span><span class="content">/attachment/test.pdf</span><span class="delimiter">&quot;</span></span>)));
+    }
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">SimpleBean</span> {
+        <span class="directive">private</span> <span class="predefined-type">String</span> name;
+        <span class="directive">private</span> <span class="type">int</span> value;
+        <span class="directive">public</span> SimpleBean(<span class="predefined-type">String</span> name, <span class="type">int</span> value) {
+            <span class="local-variable">super</span>();
+            <span class="local-variable">this</span>.name = name;
+            <span class="local-variable">this</span>.value = value;
+        }
+        <span class="directive">public</span> <span class="predefined-type">String</span> getName() {
+            <span class="keyword">return</span> name;
+        }
+        <span class="directive">public</span> <span class="type">int</span> getValue() {
+            <span class="keyword">return</span> value;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Load properties from a file that is in the classpath.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use an <code>InputStream</code> and name the attachment</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/SendGridFullSample.java?ts=4">Source code of the sample</a></p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> Properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python"><span class="comment"># ogham additional properties</span>
+ogham.email.from=&lt;sender email address&gt;                             <i class="conum" data-value="1"></i><b>(1)</b>
+ogham.email.template.path-prefix=/template/thymeleaf/email/         <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The sender email address</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>A prefix for all template paths. In this example, the template paths are <code>/template/thymeleaf/email/full.html</code> and <code>/template/thymeleaf/email/full.txt</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/resources/sendgrid-template.properties?ts=4">Source code of the configuration file</a></p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:05 RET
+</div>
+</div>
+</body>
+</html>

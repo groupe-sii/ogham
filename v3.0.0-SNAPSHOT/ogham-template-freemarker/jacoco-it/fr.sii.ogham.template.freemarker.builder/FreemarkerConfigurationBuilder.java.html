@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FreemarkerConfigurationBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham FreeMarker integration</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.builder</a> &gt; <span class="el_source">FreemarkerConfigurationBuilder.java</span></div><h1>FreemarkerConfigurationBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.builder;
+
+import static freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
+
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.util.BuilderUtils;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.Version;
+
+/**
+ * Fluent builder to configure Freemarker configuration object.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class FreemarkerConfigurationBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements Builder&lt;Configuration&gt; {
+	private Version version;
+	private List&lt;String&gt; defaultEncodings;
+	private TemplateExceptionHandler templateExceptionHandler;
+	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
+	// TODO: handle all other options
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
+	public FreemarkerConfigurationBuilder(P parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="nc" id="L48">		super(parent);</span>
+<span class="nc" id="L49">		defaultEncodings = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L50">		this.environmentBuilder = environmentBuilder;</span>
+<span class="nc" id="L51">	}</span>
+
+	public FreemarkerConfigurationBuilder&lt;P&gt; version(Version version) {
+<span class="nc" id="L54">		this.version = version;</span>
+<span class="nc" id="L55">		return this;</span>
+	}
+
+	/**
+	 * Sets the charset used for decoding byte sequences to character sequences
+	 * when reading template files in a locale for which no explicit encoding
+	 * was specified via {@link Configuration#setEncoding(Locale, String)}. Note
+	 * that by default there is no locale specified for any locale, so the
+	 * default encoding is always in effect.
+	 * 
+	 * &lt;p&gt;
+	 * Defaults to the default system encoding, which can change from one server
+	 * to another, so &lt;b&gt;you should always set this setting&lt;/b&gt;. If you don't
+	 * know what charset your should chose, {@code &quot;UTF-8&quot;} is usually a good
+	 * choice.
+	 * 
+	 * &lt;p&gt;
+	 * Note that individual templates may specify their own charset by starting
+	 * with {@code &lt;#ftl encoding=&quot;...&quot;&gt;}
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .defaultEncoding(&quot;UTF-8&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .defaultEncoding(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param encodings
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public FreemarkerConfigurationBuilder&lt;P&gt; defaultEncoding(String... encodings) {
+<span class="nc" id="L101">		this.defaultEncodings.addAll(Arrays.asList(encodings));</span>
+<span class="nc" id="L102">		return this;</span>
+	}
+
+	/**
+	 * Sets the exception handler used to handle exceptions occurring inside
+	 * templates. The default is {@link TemplateExceptionHandler#DEBUG_HANDLER}.
+	 * The recommended values are:
+	 * 
+	 * &lt;ul&gt;
+	 * &lt;li&gt;In production systems:
+	 * {@link TemplateExceptionHandler#RETHROW_HANDLER}
+	 * &lt;li&gt;During development of HTML templates:
+	 * {@link TemplateExceptionHandler#HTML_DEBUG_HANDLER}
+	 * &lt;li&gt;During development of non-HTML templates:
+	 * {@link TemplateExceptionHandler#DEBUG_HANDLER}
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * All of these will let the exception propagate further, so that you can
+	 * catch it around {@link Template#process(Object, Writer)} for example. The
+	 * difference is in what they print on the output before they do that.
+	 * 
+	 * &lt;p&gt;
+	 * Note that the {@link TemplateExceptionHandler} is not meant to be used
+	 * for generating HTTP error pages. Neither is it meant to be used to roll
+	 * back the printed output. These should be solved outside template
+	 * processing when the exception raises from
+	 * {@link Template#process(Object, Writer) Template.process}.
+	 * {@link TemplateExceptionHandler} meant to be used if you want to include
+	 * special content &lt;em&gt;in&lt;/em&gt; the template output, or if you want to
+	 * suppress certain exceptions.
+	 * 
+	 * @param exceptionHandler
+	 *            the exception handler
+	 * @return this instance for fluent chaining
+	 */
+	public FreemarkerConfigurationBuilder&lt;P&gt; templateExceptionHandler(TemplateExceptionHandler exceptionHandler) {
+<span class="nc" id="L139">		this.templateExceptionHandler = exceptionHandler;</span>
+<span class="nc" id="L140">		return this;</span>
+	}
+
+	@Override
+	public Configuration build() {
+<span class="nc bnc" id="L145" title="All 2 branches missed.">		Configuration configuration = version == null ? new Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS) : new Configuration(version);</span>
+<span class="nc" id="L146">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
+<span class="nc" id="L147">		String defaultEncoding = BuilderUtils.evaluate(defaultEncodings, propertyResolver, String.class);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">		if (defaultEncoding != null) {</span>
+<span class="nc" id="L149">			configuration.setDefaultEncoding(defaultEncoding);</span>
+		}
+<span class="nc" id="L151">		configuration.setTemplateExceptionHandler(templateExceptionHandler);</span>
+<span class="nc" id="L152">		return configuration;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

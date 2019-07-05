@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Why this order ?</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_why_this_order">Why this order ?</a></li>
+<li><a href="#_what_happens_if_there_are_several_values_for_the_same_property_and_for_the_same_source">What happens if there are several values for the same property and for the same source ?</a></li>
+<li><a href="#_how_to_use_custom_priorities">How to use custom priorities ?</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you define properties using several different ways, you may have the same key several times. In that case, which value will be used by Ogham ?</p>
+</div>
+<div class="paragraph">
+<p>By default (using <code>MessagingBuilder.standard()</code> or <code>MessagingBuilder.minimal()</code>), Ogham defines the following order (first is used if defined):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>.systemProperties()</code></p>
+</li>
+<li>
+<p><code>.properties("file:..")</code></p>
+</li>
+<li>
+<p><code>.properties(new Properties())</code> or <code>.properties().set(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p><code>.properties("classpath:&#8230;&#8203;")</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_this_order"><a class="anchor" href="#_why_this_order"></a>Why this order ?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Configuration outside the application should override configuration that is inside the application. This is necessary if you want to be able to deploy the same application in different environments without changing code or needing to rebuild with a different profile.</p>
+</div>
+<div class="paragraph">
+<p>For configuration outside the application, system properties (defined either in system environment or using java command line arguments) has higher priority than a configuration file outside the application. This is useful to have a configuration file that is shared between several applications or instances and override only some values explicitly.</p>
+</div>
+<div class="paragraph">
+<p>For configuration inside the application, code has higher priority than configuration defined in a classpath file. This is useful to define global configuration for the application using a configuration file and let the possibility to override explicitly some values in code. This is useful in tests for example.</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">PropertiesSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException, <span class="exception">IOException</span> {
+        <span class="predefined-type">Properties</span> props = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        props.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">hello@world.com</span><span class="delimiter">&quot;</span></span>);
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(props)                                      <i class="conum" data-value="1"></i><b>(1)</b>
+                    .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:email.properties</span><span class="delimiter">&quot;</span></span>)               <i class="conum" data-value="2"></i><b>(2)</b>
+                    .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">file:/etc/app/email.properties</span><span class="delimiter">&quot;</span></span>)           <i class="conum" data-value="3"></i><b>(3)</b>
+                    .properties()
+                        .set(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">10</span><span class="delimiter">&quot;</span></span>)                        <i class="conum" data-value="4"></i><b>(4)</b>
+                        .and()
+                    .systemProperties()                                     <i class="conum" data-value="5"></i><b>(5)</b>
+                    .and()
+                .build();
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use standard <code>java.util.Properties</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Load the file from the classpath (relative to root of the classpath)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Load the file from the file system</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Directly set a property with its value in a fluent way</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Use standard <code>System.getProperties()</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4">Source code of the sample</a>.</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> classpath:email.properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=localhost
+mail.smtp.port=<span class="integer">25</span>
+ogham.email.from=foo<span class="decorator">@test.com</span></code></pre>
+</div>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> file:/etc/app/email.properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=smtp.domain.com</code></pre>
+</div>
+</div>
+<div class="paragraph tab">
+<p>Result</p>
+</div>
+<div class="paragraph">
+<p>Running this sample with the following command line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>$ java -Dogham.email.from="bar@domain.com" fr.sii.ogham.sample.standard.PropertiesSample</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Gives the following property values:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Result value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mail.smtp.host</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>smtp.domain.com</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mail.smtp.port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>10</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ogham.email.from</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>bar@domain.com</strong></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+See the <a href="https://github.com/groupe-sii/ogham/blob/master/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts=4">test that ensures this order</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_happens_if_there_are_several_values_for_the_same_property_and_for_the_same_source"><a class="anchor" href="#_what_happens_if_there_are_several_values_for_the_same_property_and_for_the_same_source"></a>What happens if there are several values for the same property and for the same source ?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example, if you use two configuration files defined in the classpath:</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">    MessagingService service = MessagingBuilder.standard()
+            .environment()
+                .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:common.properties</span><span class="delimiter">&quot;</span></span>)
+                .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:email.properties</span><span class="delimiter">&quot;</span></span>)
+                .and()
+            .build();</code></pre>
+</div>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> common.properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=localhost
+mail.smtp.port=<span class="integer">25</span></code></pre>
+</div>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> email.properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=smtp.domain.com</code></pre>
+</div>
+</div>
+<div class="paragraph tab">
+<p>Result</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Result value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mail.smtp.host</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>smtp.domain.com</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mail.smtp.port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">25</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="paragraph">
+<p>For the same level of priority, this is the declaration order that prevails.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_to_use_custom_priorities"><a class="anchor" href="#_how_to_use_custom_priorities"></a>How to use custom priorities ?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want to use a different priority order, you can explicitly register properties with a custom priority:</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">    MessagingService service = MessagingBuilder.standard()
+            .environment()
+                .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:common.properties</span><span class="delimiter">&quot;</span></span>, <span class="integer">2</span>)
+                .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:email.properties</span><span class="delimiter">&quot;</span></span>, <span class="integer">1</span>)
+                .and()
+            .build();</code></pre>
+</div>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> common.properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=localhost
+mail.smtp.port=<span class="integer">25</span></code></pre>
+</div>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/properties.png" alt="properties" width="37" height="30"></span> email.properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python">mail.smtp.host=smtp.domain.com</code></pre>
+</div>
+</div>
+<div class="paragraph tab">
+<p>Result</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Result value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mail.smtp.host</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>localhost</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mail.smtp.port</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">25</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="paragraph">
+<p>You can notice that the result is now different than using default priorities.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Default priority values are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Using <code>.systemProperties()</code>: 100000</p>
+</li>
+<li>
+<p>Load property file from the filesystem (<code>properties("file:&#8230;&#8203;")</code>: 90000</p>
+</li>
+<li>
+<p>Using custom <code>java.util.Properties</code> object (<code>properties(new Properties())</code>): 80000</p>
+</li>
+<li>
+<p>Using custom properties through <code>.properties()</code> fluent API: 80000</p>
+</li>
+<li>
+<p>Load property file from the classpath (<code>properties("classpath:&#8230;&#8203;")</code>): 70000</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

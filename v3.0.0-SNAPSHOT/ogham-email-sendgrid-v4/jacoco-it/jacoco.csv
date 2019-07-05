@@ -1,0 +1,9 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Ogham SendGrid v4 implementation,fr.sii.ogham.email.sendgrid.v4.sender.impl,SendGridV4Sender,114,171,14,16,21,46,16,10,2,8
+Ogham SendGrid v4 implementation,fr.sii.ogham.email.sendgrid.v4.builder.sendgrid,SendGridV4Builder,68,139,14,10,21,28,18,9,7,8
+Ogham SendGrid v4 implementation,fr.sii.ogham.email.sendgrid.v4.builder.sendgrid,DefaultSendGridV4Configurer,6,57,3,3,2,12,3,4,0,4
+Ogham SendGrid v4 implementation,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler,MapContentHandler,39,73,6,8,7,20,6,6,0,5
+Ogham SendGrid v4 implementation,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler,StringContentHandler,36,52,4,4,6,18,4,4,0,4
+Ogham SendGrid v4 implementation,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler,MultiContentHandler,56,8,9,1,11,4,6,1,1,1
+Ogham SendGrid v4 implementation,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client,DelegateSendGridClient,169,0,20,0,33,0,17,0,7,0
+Ogham SendGrid v4 implementation,fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid,SendGridException,13,0,0,0,6,0,3,0,3,0

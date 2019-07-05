@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClassPathResolutionBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.resolution</a> &gt; <span class="el_source">ClassPathResolutionBuilder.java</span></div><h1>ClassPathResolutionBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.resolution;
+
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+
+/**
+ * Configure resource resolver that loads files from classpath.
+ * 
+ * &lt;p&gt;
+ * You can define the lookup (the prefix that indicates that classpath
+ * resolution must be used). For example:
+ * 
+ * &lt;pre&gt;
+ * .classpath().lookup(&quot;classpath:&quot;);
+ * 
+ * // path prefixed by classpath: matches 
+ * // then classpath resolver is used
+ * resourceResolver.getResource(&quot;classpath:foo/bar.html&quot;);
+ * // path is not prefixed (or using another prefix) doesn't match 
+ * // then classpath resolver is not used
+ * resourceResolver.getResource(&quot;foo/bar.html&quot;);
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * You can define a path prefix and suffix for finding resources:
+ * 
+ * &lt;pre&gt;
+ * .classpath().lookup(&quot;classpath:&quot;).pathPrefix(&quot;foo/&quot;).pathSuffix(&quot;.html&quot;);
+ * 
+ * resourceResolver.getResource(&quot;bar&quot;);
+ * &lt;/pre&gt;
+ * 
+ * This will use the classpath resolver and the real path is
+ * {@code foo/bar.html}.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class ClassPathResolutionBuilder&lt;P&gt; extends AbstractSingleResolutionBuilder&lt;ClassPathResolutionBuilder&lt;P&gt;, P&gt; implements PrefixSuffixBuilder&lt;ClassPathResolutionBuilder&lt;P&gt;&gt; {
+
+	/**
+	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
+	 * The parent builder is used when calling the {@link #and()} method. The
+	 * {@link EnvironmentBuilder} is used when calling {@link #build()} method
+	 * in order to evaluate property values (defined by
+	 * {@link #pathPrefix(String...)} or {@link #pathSuffix(String...)}).
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            configuration about property resolution
+	 */
+	public ClassPathResolutionBuilder(P parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="nc" id="L59">		super(ClassPathResolutionBuilder.class, parent, environmentBuilder);</span>
+<span class="nc" id="L60">	}</span>
+
+	@Override
+	protected ResourceResolver createResolver() {
+<span class="nc" id="L64">		return new ClassPathResolver(lookups);</span>
+	}
+
+	@Override
+	public ClassPathResolutionBuilder&lt;P&gt; pathPrefix(String... pathPrefix) {
+<span class="nc bnc" id="L69" title="All 2 branches missed.">		for (String p : pathPrefix) {</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">			if (p != null) {</span>
+<span class="nc" id="L71">				pathPrefixes.add(p);</span>
+			}
+		}
+<span class="nc" id="L74">		return myself;</span>
+	}
+
+	@Override
+	public ClassPathResolutionBuilder&lt;P&gt; pathSuffix(String... pathSuffix) {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">		for (String p : pathSuffix) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">			if (p != null) {</span>
+<span class="nc" id="L81">				pathSuffixes.add(p);</span>
+			}
+		}
+<span class="nc" id="L84">		return myself;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

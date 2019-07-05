@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultCloudhopperConfigurer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Cloudhopper SMS implementation</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">DefaultCloudhopperConfigurer.java</span></div><h1>DefaultCloudhopperConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.util.ClasspathUtils;
+
+/**
+ * Default configurer for Cloudhoppder that is automatically applied every time
+ * a {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 40000 in order to be applied after
+ * templating configurers.
+ * &lt;/p&gt;
+ * 
+ * This configurer is applied only if {@code com.cloudhopper.smpp.SmppClient} is
+ * present in the classpath. If not present, Cloudhopper implementation is not
+ * registered at all.
+ * 
+ * &lt;p&gt;
+ * This configurer inherits environment configuration (see
+ * {@link EnvironmentBuilder} and
+ * {@link CloudhopperBuilder#environment(EnvironmentBuilder)}).
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This configurer applies the following configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configures SMPP portocol:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.sms.cloudhopper.host&quot; or &quot;ogham.sms.smpp.host&quot;
+ * property if defined for SMPP server host address (IP or hostname)&lt;/li&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.sms.cloudhopper.port&quot; or &quot;ogham.sms.smpp.port&quot;
+ * property if defined for SMPP server port. Default port is 25&lt;/li&gt;
+ * &lt;li&gt;It uses &quot;ogham.sms.cloudhopper.interface-version&quot; property if defined for
+ * the version of the protocol. Default is &quot;3.4&quot;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures authentication:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.sms.cloudhopper.system-id&quot; or
+ * &quot;ogham.sms.smpp.system-id&quot; property if defined for to identify an ESME (
+ * External Short Message Entity) or an SMSC (Short Message Service Centre) at
+ * bind time&lt;/li&gt;
+ * &lt;li&gt;It uses one of &quot;ogham.sms.cloudhopper.password&quot; or
+ * &quot;ogham.sms.smpp.password&quot; property if defined for an optional password&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures encoding:
+ * &lt;ul&gt;
+ * &lt;li&gt;It uses &quot;ogham.sms.cloudhopper.default-app-charset&quot; property value as
+ * default charset if defined. Default charset is UTF-8&lt;/li&gt;
+ * &lt;li&gt;A conversion from &quot;ogham.sms.cloudhopper.default-app-charset&quot; to
+ * &quot;ogham.sms.cloudhopper.smpp-charset&quot; properties if both are defined&lt;/li&gt;
+ * &lt;li&gt;A conversion from &quot;UTF-8&quot; to &quot;GSM&quot; charset by default&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures session management:
+ * &lt;ul&gt;
+ * &lt;li&gt;Timeouts through properties&lt;/li&gt;
+ * &lt;li&gt;The window management through properties&lt;/li&gt;
+ * &lt;li&gt;The connection retry handling through properties&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@ConfigurerFor(targetedBuilder = &quot;standard&quot;, priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY)
+<span class="nc" id="L80">public class DefaultCloudhopperConfigurer implements MessagingConfigurer {</span>
+<span class="nc" id="L81">	private static final Logger LOG = LoggerFactory.getLogger(DefaultCloudhopperConfigurer.class);</span>
+
+	@Override
+	public void configure(MessagingBuilder msgBuilder) {
+<span class="nc bnc" id="L85" title="All 2 branches missed.">		if (!canUseCloudhopper()) {</span>
+<span class="nc" id="L86">			LOG.debug(&quot;[{}] skip configuration&quot;, this);</span>
+<span class="nc" id="L87">			return;</span>
+		}
+<span class="nc" id="L89">		LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+<span class="nc" id="L90">		CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);</span>
+		// use same environment as parent builder
+<span class="nc" id="L92">		builder.environment(msgBuilder.environment());</span>
+		// @formatter:off
+<span class="nc" id="L94">		builder</span>
+<span class="nc" id="L95">			.charset()</span>
+<span class="nc" id="L96">				.convert(&quot;${ogham.sms.cloudhopper.default-app-charset}&quot;, &quot;${ogham.sms.cloudhopper.smpp-charset}&quot;)</span>
+<span class="nc" id="L97">				.convert(&quot;UTF-8&quot;, NAME_GSM)</span>
+<span class="nc" id="L98">				.detector()</span>
+<span class="nc" id="L99">					.defaultCharset(&quot;${ogham.sms.cloudhopper.default-app-charset}&quot;, &quot;UTF-8&quot;)</span>
+<span class="nc" id="L100">					.and()</span>
+<span class="nc" id="L101">				.and()</span>
+<span class="nc" id="L102">			.systemId(&quot;${ogham.sms.cloudhopper.system-id}&quot;, &quot;${ogham.sms.smpp.system-id}&quot;)</span>
+<span class="nc" id="L103">			.password(&quot;${ogham.sms.cloudhopper.password}&quot;, &quot;${ogham.sms.smpp.password}&quot;)</span>
+<span class="nc" id="L104">			.host(&quot;${ogham.sms.cloudhopper.host}&quot;, &quot;${ogham.sms.smpp.host}&quot;)</span>
+<span class="nc" id="L105">			.port(&quot;${ogham.sms.cloudhopper.port}&quot;, &quot;${ogham.sms.smpp.port}&quot;, &quot;2775&quot;)</span>
+<span class="nc" id="L106">			.interfaceVersion(&quot;${ogham.sms.cloudhopper.interface-version}&quot;, &quot;3.4&quot;)</span>
+<span class="nc" id="L107">			.session()</span>
+<span class="nc" id="L108">				.sessionName(&quot;${ogham.sms.cloudhopper.session-name}&quot;)</span>
+<span class="nc" id="L109">				.bindTimeout(&quot;${ogham.sms.cloudhopper.bind-timeout}&quot;, &quot;5000&quot;)</span>
+<span class="nc" id="L110">				.connectTimeout(&quot;${ogham.sms.cloudhopper.connect-timeout}&quot;, &quot;10000&quot;)</span>
+<span class="nc" id="L111">				.requestExpiryTimeout(&quot;${ogham.sms.cloudhopper.request-expiry-timeout}&quot;, &quot;-1&quot;)</span>
+<span class="nc" id="L112">				.windowMonitorInterval(&quot;${ogham.sms.cloudhopper.window-monitor-interval}&quot;, &quot;-1&quot;)</span>
+<span class="nc" id="L113">				.windowSize(&quot;${ogham.sms.cloudhopper.window-size}&quot;, &quot;1&quot;)</span>
+<span class="nc" id="L114">				.windowWait(&quot;${ogham.sms.cloudhopper.window-wait-timeout}&quot;, &quot;60000&quot;)</span>
+<span class="nc" id="L115">				.writeTimeout(&quot;${ogham.sms.cloudhopper.write-timeout}&quot;, &quot;0&quot;)</span>
+<span class="nc" id="L116">				.responseTimeout(&quot;${ogham.sms.cloudhopper.response-timeout}&quot;, &quot;5000&quot;)</span>
+<span class="nc" id="L117">				.unbindTimeout(&quot;${ogham.sms.cloudhopper.unbind-timeout}&quot;, &quot;5000&quot;)</span>
+<span class="nc" id="L118">				.connectRetry()</span>
+<span class="nc" id="L119">					.fixedDelay()</span>
+<span class="nc" id="L120">						.maxRetries(&quot;${ogham.sms.cloudhopper.connect-max-retry}&quot;, &quot;5&quot;)</span>
+<span class="nc" id="L121">						.delay(&quot;${ogham.sms.cloudhopper.connect-retry-delay}&quot;, &quot;500&quot;);</span>
+		// @formatter:on
+<span class="nc" id="L123">	}</span>
+
+	private boolean canUseCloudhopper() {
+<span class="nc" id="L126">		return ClasspathUtils.exists(&quot;com.cloudhopper.smpp.SmppClient&quot;);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

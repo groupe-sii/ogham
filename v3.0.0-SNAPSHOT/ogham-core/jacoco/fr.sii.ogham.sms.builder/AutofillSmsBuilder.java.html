@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AutofillSmsBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">AutofillSmsBuilder.java</span></div><h1>AutofillSmsBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.filler.EveryFillerDecorator;
+import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.sms.filler.SmsFiller;
+import fr.sii.ogham.sms.message.Sms;
+
+/**
+ * Configures how Ogham will add default values to the {@link Sms} if some
+ * information is missing.
+ * 
+ * If sender phone number is missing, a default one can be defined in
+ * configuration properties.
+ * 
+ * If recipient phone number is missing, a default one can be defined in
+ * configuration properties.
+ * 
+ * @author Aurélien Baudet
+ * @see SmsFiller
+ *
+ */
+public class AutofillSmsBuilder extends AbstractParent&lt;SmsBuilder&gt; implements Builder&lt;MessageFiller&gt; {
+	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
+	private AutofillDefaultPhoneNumberBuilder senderNumberBuilder;
+	private AutofillDefaultPhoneNumberBuilder recipientNumberBuilder;
+
+	/**
+	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
+	 * The parent builder is used when calling the {@link #and()} method. The
+	 * {@link EnvironmentBuilder} is used by {@link #build()} method to evaluate
+	 * property values.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            configuration about property resolution
+	 */
+	public AutofillSmsBuilder(SmsBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="nc" id="L47">		super(parent);</span>
+<span class="nc" id="L48">		this.environmentBuilder = environmentBuilder;</span>
+<span class="nc" id="L49">	}</span>
+
+	/**
+	 * Configures how to handle missing sender phone number: if no sender phone
+	 * number is explicitly defined on the message, Ogham will use this phone
+	 * number as default sender number.
+	 * 
+	 * @return the builder to configure default sender number
+	 */
+	public AutofillDefaultPhoneNumberBuilder from() {
+<span class="nc bnc" id="L59" title="All 2 branches missed.">		if (senderNumberBuilder == null) {</span>
+<span class="nc" id="L60">			senderNumberBuilder = new AutofillDefaultPhoneNumberBuilder(this);</span>
+		}
+<span class="nc" id="L62">		return senderNumberBuilder;</span>
+	}
+
+	/**
+	 * Configures how to handle missing recipient phone number: if no recipient
+	 * phone number is explicitly defined on the message, Ogham will use this
+	 * phone number as default recipient number.
+	 * 
+	 * @return the builder to configure default recipient number
+	 */
+	public AutofillDefaultPhoneNumberBuilder to() {
+<span class="nc bnc" id="L73" title="All 2 branches missed.">		if (recipientNumberBuilder == null) {</span>
+<span class="nc" id="L74">			recipientNumberBuilder = new AutofillDefaultPhoneNumberBuilder(this);</span>
+		}
+<span class="nc" id="L76">		return recipientNumberBuilder;</span>
+	}
+
+	@Override
+	public MessageFiller build() {
+<span class="nc" id="L81">		EveryFillerDecorator filler = new EveryFillerDecorator();</span>
+<span class="nc" id="L82">		Map&lt;String, List&lt;String&gt;&gt; props = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L83">		props.put(&quot;from&quot;, senderNumberBuilder.getDefaultValueProperties());</span>
+<span class="nc" id="L84">		props.put(&quot;to&quot;, recipientNumberBuilder.getDefaultValueProperties());</span>
+<span class="nc" id="L85">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
+<span class="nc" id="L86">		filler.addFiller(new SmsFiller(propertyResolver, props));</span>
+<span class="nc" id="L87">		return filler;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

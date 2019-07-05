@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="..//javascripts/steps.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>You write your business code once. Ogham handles environment switching just by providing different configuration:</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Switch sender according to environment (tests/dev/prod)</p>
+</div>
+<div class="paragraph tab">
+<p>Development</p>
+</div>
+<div class="paragraph">
+<p>In development phase, you may want to send email through any SMTP server (GMail for example) and SMS through any SMPP server (SmsGlobal for example).
+Your templates can be embedded in classpath.</p>
+</div>
+<div class="imageblock code-once-diagram text-center">
+<div class="content">
+<img src="diag-4d054048ef810aadd6180fe4ba2ef667.png" alt="diag 4d054048ef810aadd6180fe4ba2ef667" width="840" height="364">
+</div>
+</div>
+<div class="paragraph tab">
+<p>Tests</p>
+</div>
+<div class="paragraph">
+<p>You can test your emails content through an embedded local SMTP.
+You can do the same with SMS through an embedded local SMPP server.</p>
+</div>
+<div class="paragraph">
+<p>Ogham directly provides embedded servers for testing. Your templates can be embedded in test sources.</p>
+</div>
+<div class="imageblock code-once-diagram text-center">
+<div class="content">
+<img src="diag-8385a83b1fbd518b9455ee2564ba8a34.png" alt="diag 8385a83b1fbd518b9455ee2564ba8a34" width="890" height="364">
+</div>
+</div>
+<div class="paragraph tab">
+<p>Production</p>
+</div>
+<div class="paragraph">
+<p>In production, your enterprise may use external services for sending emails or SMS (like SendGrid HTTP API for emails and OVH HTTP API for SMS).</p>
+</div>
+<div class="paragraph">
+<p>Externalizing templates let the possibility to update them without needing to deploy the application again.</p>
+</div>
+<div class="imageblock code-once-diagram text-center">
+<div class="content">
+<img src="diag-e1248c0af6c5ff8753a903b803e002e2.png" alt="diag e1248c0af6c5ff8753a903b803e002e2" width="810" height="364">
+</div>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="paragraph">
+<p>In all cases, the code never changes. Only Ogham configuration differs.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

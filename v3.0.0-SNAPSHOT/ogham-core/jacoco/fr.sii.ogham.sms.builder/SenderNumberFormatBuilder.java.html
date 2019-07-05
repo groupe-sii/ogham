@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SenderNumberFormatBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">SenderNumberFormatBuilder.java</span></div><h1>SenderNumberFormatBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
+import fr.sii.ogham.sms.message.addressing.translator.AlphanumericCodeNumberFormatHandler;
+import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
+import fr.sii.ogham.sms.message.addressing.translator.DefaultHandler;
+import fr.sii.ogham.sms.message.addressing.translator.InternationalNumberFormatHandler;
+import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
+import fr.sii.ogham.sms.message.addressing.translator.ShortCodeNumberFormatHandler;
+
+/**
+ * Defines which standard conversions may be applied on the phone number to
+ * convert it from a {@link PhoneNumber} to an {@link AddressedPhoneNumber}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SenderNumberFormatBuilder extends AbstractParent&lt;SenderNumberBuilder&gt; implements Builder&lt;PhoneNumberTranslator&gt; {
+	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
+	private Boolean enableAplhanumeric;
+	private Boolean enableShortCode;
+	private Boolean enableInternational;
+	private List&lt;String&gt; enableAlphanumericProps;
+	private List&lt;String&gt; enableShortCodeProps;
+	private List&lt;String&gt; enableInternationalProps;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
+	public SenderNumberFormatBuilder(SenderNumberBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="nc" id="L48">		super(parent);</span>
+<span class="nc" id="L49">		this.environmentBuilder = environmentBuilder;</span>
+<span class="nc" id="L50">		enableAlphanumericProps = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L51">		enableShortCodeProps = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L52">		enableInternationalProps = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L53">	}</span>
+
+	/**
+	 * Enable/disable alphanumeric code conversion: if the sender address is
+	 * alphanumeric (contains both letters and numbers) or non-numeric, TON is
+	 * set to 5 and NPI to 0.
+	 * 
+	 * You can specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .charset(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param properties
+	 *            one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SenderNumberFormatBuilder alphanumericCode(String... properties) {
+<span class="nc" id="L79">		enableAlphanumericProps.addAll(Arrays.asList(properties));</span>
+<span class="nc" id="L80">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable alphanumeric code conversion: if the sender address is
+	 * alphanumeric (contains both letters and numbers) or non-numeric, TON is
+	 * set to 5 and NPI to 0.
+	 * 
+	 * @param enable
+	 *            true to enable the conversion, false to disable
+	 * @return this instance for fluent chaining
+	 */
+	public SenderNumberFormatBuilder alphanumericCode(boolean enable) {
+<span class="nc" id="L93">		enableAplhanumeric = enable;</span>
+<span class="nc" id="L94">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable short code conversion: if the sender address is a short
+	 * code, TON is set to 3, and NPI is set to 0. A number is considered to be
+	 * a short code if the length of the number is 5 digits or less.
+	 * 
+	 * You can specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .charset(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param properties
+	 *            one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SenderNumberFormatBuilder shortCode(String... properties) {
+<span class="nc" id="L121">		enableShortCodeProps.addAll(Arrays.asList(properties));</span>
+<span class="nc" id="L122">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable short code conversion: if the sender address is a short
+	 * code, TON is set to 3, and NPI is set to 0. A number is considered to be
+	 * a short code if the length of the number is 5 digits or less.
+	 * 
+	 * @param enable
+	 *            true to enable the conversion, false to disable
+	 * @return this instance for fluent chaining
+	 */
+	public SenderNumberFormatBuilder shortCode(boolean enable) {
+<span class="nc" id="L135">		enableShortCode = enable;</span>
+<span class="nc" id="L136">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable international number conversion: if the sender starts with
+	 * a &quot;+&quot;, TON is set to 1, and NPI is set to 1.
+	 * 
+	 * You can specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .charset(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param properties
+	 *            one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public SenderNumberFormatBuilder internationalNumber(String... properties) {
+<span class="nc" id="L162">		enableInternationalProps.addAll(Arrays.asList(properties));</span>
+<span class="nc" id="L163">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable international number conversion: if the sender starts with
+	 * a &quot;+&quot;, TON is set to 1, and NPI is set to 1.
+	 * 
+	 * @param enable
+	 *            true to enable the conversion, false to disable
+	 * @return this instance for fluent chaining
+	 */
+	public SenderNumberFormatBuilder internationalNumber(boolean enable) {
+<span class="nc" id="L175">		enableInternational = enable;</span>
+<span class="nc" id="L176">		return this;</span>
+	}
+
+	@Override
+	public PhoneNumberTranslator build() {
+<span class="nc" id="L181">		CompositePhoneNumberTranslator translator = new CompositePhoneNumberTranslator();</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">		if (enabled(enableAplhanumeric, enableAlphanumericProps)) {</span>
+<span class="nc" id="L183">			translator.add(new AlphanumericCodeNumberFormatHandler());</span>
+		}
+<span class="nc bnc" id="L185" title="All 2 branches missed.">		if (enabled(enableShortCode, enableShortCodeProps)) {</span>
+<span class="nc" id="L186">			translator.add(new ShortCodeNumberFormatHandler());</span>
+		}
+<span class="nc bnc" id="L188" title="All 2 branches missed.">		if (enabled(enableInternational, enableInternationalProps)) {</span>
+<span class="nc" id="L189">			translator.add(new InternationalNumberFormatHandler());</span>
+		}
+<span class="nc" id="L191">		translator.add(new DefaultHandler());</span>
+<span class="nc" id="L192">		return translator;</span>
+	}
+
+	private boolean enabled(Boolean enable, List&lt;String&gt; enableProps) {
+<span class="nc bnc" id="L196" title="All 4 branches missed.">		if (enable != null &amp;&amp; enable) {</span>
+<span class="nc" id="L197">			return true;</span>
+		}
+<span class="nc" id="L199">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
+<span class="nc" id="L200">		Boolean value = BuilderUtils.evaluate(enableProps, propertyResolver, Boolean.class);</span>
+<span class="nc bnc" id="L201" title="All 4 branches missed.">		return value != null &amp;&amp; value;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

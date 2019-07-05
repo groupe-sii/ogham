@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>For text templates, the subject is automatically used (like for HTML title) if the first line starts with <code>Subject:</code> (spaces can be added after colon). Other lines are used as content of the email.</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Sample with template</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-20">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.message.content.TemplateContent</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">TextTemplateWithSubjectSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+        <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+        <span class="comment">// in System properties)</span>
+        <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;email address to display for the sender user&gt;</span><span class="delimiter">&quot;</span></span>);
+        <span class="comment">// Instantiate the messaging service using default behavior and</span>
+        <span class="comment">// provided properties</span>
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        <span class="comment">// send the email using fluent API (do not specify subject)</span>
+        <span class="comment">// subject is set to null to let automatic mechanism to read the title</span>
+        <span class="comment">// of the first line if prefixed by &quot;Subject:&quot; and use it as subject of your email</span>
+        service.send(<span class="keyword">new</span> Email()                                                                                <i class="conum" data-value="1"></i><b>(1)</b>
+                        .content(<span class="keyword">new</span> TemplateContent(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/freemarker/simpleWithSubject.txt.ftl</span><span class="delimiter">&quot;</span></span>,
+                                                    <span class="keyword">new</span> SimpleBean(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo</span><span class="delimiter">&quot;</span></span>, <span class="integer">42</span>)))
+                        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+    }
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">SimpleBean</span> {
+        <span class="directive">private</span> <span class="predefined-type">String</span> name;
+        <span class="directive">private</span> <span class="type">int</span> value;
+        <span class="directive">public</span> SimpleBean(<span class="predefined-type">String</span> name, <span class="type">int</span> value) {
+            <span class="local-variable">super</span>();
+            <span class="local-variable">this</span>.name = name;
+            <span class="local-variable">this</span>.value = value;
+        }
+        <span class="directive">public</span> <span class="predefined-type">String</span> getName() {
+            <span class="keyword">return</span> name;
+        }
+        <span class="directive">public</span> <span class="type">int</span> getValue() {
+            <span class="keyword">return</span> value;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Subject is no more in Java code</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/TextTemplateWithSubjectSample.java?ts=4">Source code of the sample</a></p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/freemarker-logo.png" alt="freemarker logo" width="60" height="24"></span> Text template</p>
+</div>
+<div class="listingblock highlight-lines:1">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="text">Subject: Welcome ${name} !
+Hello ${name},
+
+Foo bar ${value}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The subject of the email will be <code>Welcome foo !</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts=4">Source code of the text template</a></p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

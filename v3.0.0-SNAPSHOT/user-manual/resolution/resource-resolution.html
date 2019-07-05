@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Resource resolution is used to locate files using a simple path. For example, the path of a file you want to use (template, image, CSS, attachment&#8230;&#8203;) could be <code>foo/bar/aaa.b</code>. But the file could be located:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>either in the classpath</p>
+</li>
+<li>
+<p>or on the file system</p>
+</li>
+<li>
+<p>or anywhere else (could be in a database, on a HTTP endpoint&#8230;&#8203;)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Ogham provides resource resolution abstraction. Any path can contain an information used to indicate which resolver to use to find and read the file content. For example, if the previous path stands for a file that is in the classpath, the Ogham path is <code>classpath:foo/bar/aaa.b</code>. On the contrary, if the path represents a file that is on file system, the Ogham path is <code>file:foo/bar/aaa.b</code>. In both cases, the path is prefixed by a string named lookup prefix (respectively <code>classpath:</code> and <code>file:</code>).</p>
+</div>
+<div class="paragraph">
+<p>Ogham configures by default (through <code>MessagingBuilder.standard()</code> or <code>MessagingBuilder.minimal()</code>) several resource resolvers:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A resolver that is able to locate and read files from the file system with lookup prefix <code>file:</code>.</p>
+</li>
+<li>
+<p>A resolver that is able to locate and read files from the classpath with lookup prefix <code>classpath:</code>.</p>
+</li>
+<li>
+<p>A resolver that doesn&#8217;t load file from path but directly uses the string as content with lookups <code>string:</code> or <code>s:</code>.</p>
+</li>
+<li>
+<p>A default resolver with no lookup that is able to locate and read files from the classpath.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each resolver that is able to handle a path may also handle a path prefix and a path suffix. This is useful in order to provide only a subset of the path (only the file name for example) to Ogham and let Ogham find the real path of the file. For example if you configure Ogham with the prefix <code>foo/bar</code> and <code>.b</code> suffix for both classpath and file resolvers, you can ask Ogham to find the file <code>foo/bar/aaa.b</code> using the path <code>classpath:aaa</code> or <code>file:aaa</code>. Prefix and suffix can be changed using configuration properties (when using <code>MessagingBuilder.standard()</code> or <code>MessagingBuilder.minimal()</code>). There exists one property by message type (email or SMS), by resolver type (classpath or file), by template engine (ThymeLeaf or FreeMarker). Ogham also provides shared configuration properties (configure once for all):</p>
+</div>
+<table class="tableblock frame-all grid-all spread resource-resolution-properties">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 57.1429%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Template engine</th>
+<th class="tableblock halign-left valign-top">Message type</th>
+<th class="tableblock halign-left valign-top">Resolver type</th>
+<th class="tableblock halign-left valign-top">Properties (ordered by higher priority)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ThymeLeaf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Email</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Classpath</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.thymeleaf.classpath.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.template.classpath.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.thymeleaf.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.template.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.template.path-prefix</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ThymeLeaf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Email</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.thymeleaf.file.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.template.file.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.thymeleaf.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.template.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.template.path-prefix</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ThymeLeaf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SMS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Classpath</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.thymeleaf.classpath.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.template.classpath.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.thymeleaf.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.template.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.template.path-prefix</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ThymeLeaf</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SMS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.thymeleaf.file.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.template.file.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.thymeleaf.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.template.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.template.path-prefix</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FreeMarker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Email</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Classpath</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.freemarker.classpath.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.template.classpath.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.freemarker.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.template.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.template.path-prefix</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FreeMarker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Email</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.freemarker.file.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.template.file.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.freemarker.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.email.template.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.template.path-prefix</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FreeMarker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SMS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Classpath</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.freemarker.classpath.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.template.classpath.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.freemarker.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.template.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.template.path-prefix</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FreeMarker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SMS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">File</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p><code>ogham.sms.freemarker.file.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.template.file.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.freemarker.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.sms.template.path-prefix</code></p>
+</li>
+<li>
+<p><code>ogham.template.path-prefix</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>You can also <a href="#custom-resource-resolver">define your own resource resolver</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

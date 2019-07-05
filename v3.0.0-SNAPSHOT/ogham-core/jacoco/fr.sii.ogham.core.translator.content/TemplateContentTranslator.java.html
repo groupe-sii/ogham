@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TemplateContentTranslator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.translator.content</a> &gt; <span class="el_source">TemplateContentTranslator.java</span></div><h1>TemplateContentTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.translator.content;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.template.ParseException;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.message.content.TemplateVariantContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.common.adapter.VariantResolver;
+import fr.sii.ogham.template.exception.VariantResolutionException;
+
+/**
+ * &lt;p&gt;
+ * Translator that handles {@link TemplateContent}. It parses the template and
+ * provide an evaluated content. It also handles {@link TemplateVariantContent}
+ * through {@link VariantResolver}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The template parsing is delegated to a {@link TemplateParser}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the content is not a {@link TemplateContent}, then the content is returned
+ * as-is
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class TemplateContentTranslator implements ContentTranslator {
+<span class="nc" id="L35">	private static final Logger LOG = LoggerFactory.getLogger(TemplateContentTranslator.class);</span>
+
+	/**
+	 * The parser to use for finding, loading and evaluating the template
+	 */
+	private final TemplateParser parser;
+
+	/**
+	 * The resolver that converts partial path with variant into real path
+	 */
+	private final VariantResolver variantResolver;
+
+	public TemplateContentTranslator(TemplateParser parser) {
+<span class="nc" id="L48">		this(parser, null);</span>
+<span class="nc" id="L49">	}</span>
+	
+	public TemplateContentTranslator(TemplateParser parser, VariantResolver variantResolver) {
+<span class="nc" id="L52">		super();</span>
+<span class="nc" id="L53">		this.parser = parser;</span>
+<span class="nc" id="L54">		this.variantResolver = variantResolver;</span>
+<span class="nc" id="L55">	}</span>
+	
+
+	@Override
+	public Content translate(Content content) throws ContentTranslatorException {
+<span class="nc bnc" id="L60" title="All 2 branches missed.">		if (content instanceof TemplateContent) {</span>
+			try {
+<span class="nc" id="L62">				TemplateContent template = (TemplateContent) content;</span>
+<span class="nc" id="L63">				ResourcePath realPath = getRealPath(template);</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">				if(realPath==null) {</span>
+<span class="nc" id="L65">					LOG.debug(&quot;No template found for {}&quot;, template.getPath());</span>
+<span class="nc" id="L66">					return null;</span>
+				}
+<span class="nc" id="L68">				Context ctx = template.getContext();</span>
+<span class="nc" id="L69">				LOG.info(&quot;Parse template {} using context {}&quot;, realPath, ctx);</span>
+<span class="nc" id="L70">				LOG.debug(&quot;Parse template content {} using {}&quot;, template, parser);</span>
+<span class="nc" id="L71">				return parser.parse(realPath, ctx);</span>
+<span class="nc" id="L72">			} catch (ParseException e) {</span>
+<span class="nc" id="L73">				throw new ContentTranslatorException(&quot;failed to translate templated content&quot;, e);</span>
+			}
+		} else {
+<span class="nc" id="L76">			LOG.trace(&quot;Not a TemplateContent =&gt; skip it&quot;);</span>
+<span class="nc" id="L77">			return content;</span>
+		}
+	}
+
+
+	private ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
+<span class="nc bnc" id="L83" title="All 2 branches missed.">		if(variantResolver==null) {</span>
+<span class="nc" id="L84">			return template.getPath();</span>
+		}
+<span class="nc" id="L86">		return variantResolver.getRealPath(template);</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L91">		return &quot;TemplateContentTranslator&quot;;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

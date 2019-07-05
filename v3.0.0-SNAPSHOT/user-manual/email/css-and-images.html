@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you develop a Web application, you can use HTML for the content and CSS for layout and theming. HTML and CSS can use images to make a beautiful Web page. Each concern is separated in a different file. This is a good practice.</p>
+</div>
+<div class="paragraph">
+<p>However, writing an HTML email is totally different. Indeed, email clients are not as evolved as Web browsers. Even worse, some clients disable some features on purpose (like Inbox that prevents using <code>style</code> tag). To make an email work on several clients, you should follow these rules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>&lt;img&gt;</code> tags that use local images must be embedded</p>
+</li>
+<li>
+<p>Use XHTML instead of HTML</p>
+</li>
+<li>
+<p>Remove HTML comments (except conditional comments used to target Outlook)</p>
+</li>
+<li>
+<p>Add border=0 on all images to avoid an ugly border</p>
+</li>
+<li>
+<p>Do not write shortcut CSS values (<code>padding: 4px 4px 4px 4px;</code> instead of <code>padding: 4px</code>)</p>
+</li>
+<li>
+<p>Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)</p>
+</li>
+<li>
+<p>Background images on body should be moved on another node</p>
+</li>
+<li>
+<p>CSS3 properties are not supported</p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>There are many other rules but the developer should not be constrained and should be able to write its HTML and CSS like as usual in Web browsers. Ogham simplifies image and CSS integration and is able to partially rewrite the HTML.</p>
+</div>
+<div class="paragraph tab-container">
+<p>Sample with template</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-10,37-49 irrelevant-lines:1-10,13-20 highlight-lines:31,32">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.message.content.MultiTemplateContent</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">HtmlWithImagesAndCssTemplateSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+        <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+        <span class="comment">// in System properties)</span>
+        <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;email address to display for the sender user&gt;</span><span class="delimiter">&quot;</span></span>);
+        <span class="comment">// Instantiate the messaging service using default behavior and</span>
+        <span class="comment">// provided properties</span>
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        <span class="comment">// send the email using fluent API</span>
+        <span class="comment">// Note that the extension of the template is not given. This version</span>
+        <span class="comment">// automatically takes the provided path and adds the '.html' extension</span>
+        <span class="comment">// for the HTML template and '.txt.ftl' for text template</span>
+        service.send(<span class="keyword">new</span> Email()
+                        .content(<span class="keyword">new</span> MultiTemplateContent(<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/resources</span><span class="delimiter">&quot;</span></span>,     <i class="conum" data-value="1"></i><b>(1)</b>
+                                                            <span class="keyword">new</span> SimpleBean(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo</span><span class="delimiter">&quot;</span></span>, <span class="integer">42</span>)))                         <i class="conum" data-value="2"></i><b>(2)</b>
+                        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+    }
+
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">SimpleBean</span> {
+        <span class="directive">private</span> <span class="predefined-type">String</span> name;
+        <span class="directive">private</span> <span class="type">int</span> value;
+        <span class="directive">public</span> SimpleBean(<span class="predefined-type">String</span> name, <span class="type">int</span> value) {
+            <span class="local-variable">super</span>();
+            <span class="local-variable">this</span>.name = name;
+            <span class="local-variable">this</span>.value = value;
+        }
+        <span class="directive">public</span> <span class="predefined-type">String</span> getName() {
+            <span class="keyword">return</span> name;
+        }
+        <span class="directive">public</span> <span class="type">int</span> getValue() {
+            <span class="keyword">return</span> value;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The path to the templates</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The template context</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts=4">Source code of the sample</a></p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/thymeleaf-html.jpg" alt="thymeleaf html" width="30" height="30"></span> ThymeLeaf template</p>
+</div>
+<div class="listingblock highlight-lines:4">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="html"><span class="doctype">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;</span>
+<span class="tag">&lt;html</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/1999/xhtml</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">xmlns:th</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.thymeleaf.org</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attribute-name">http-equiv</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Content-Type</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">content</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text/html; charset=UTF-8</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;title&gt;</span>Demystifying Email Design<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">viewport</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">content</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">width=device-width, initial-scale=1.0</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+<span class="tag">&lt;link</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/css/external1.css</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">rel</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">stylesheet</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;link</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/css/external2.css</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">rel</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">stylesheet</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">body_2a02_0</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;table</span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellpadding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellspacing</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">100%</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;tr&gt;</span>
+            <span class="tag">&lt;td</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_0</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                <span class="tag">&lt;table</span> <span class="attribute-name">align</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">center</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellpadding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellspacing</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">600</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">table_2a02_0</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                    <span class="tag">&lt;tr&gt;</span>
+                        <span class="tag">&lt;td</span> <span class="attribute-name">align</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">center</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">bgcolor</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#70bbd9</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_1</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                            <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/images/h1.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">alt</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Creating Email Magic</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">300</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">height</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">230</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+                        <span class="tag">&lt;/td&gt;</span>
+                    <span class="tag">&lt;/tr&gt;</span>
+                    <span class="tag">&lt;tr&gt;</span>
+                        <span class="tag">&lt;td</span> <span class="attribute-name">bgcolor</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#ffffff</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_2</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                            <span class="tag">&lt;table</span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellpadding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellspacing</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">100%</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                <span class="tag">&lt;tr&gt;</span>
+                                    <span class="tag">&lt;td</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_3</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                        <span class="tag">&lt;b</span> <span class="attribute-name">th:text</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">${name}</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>${name}<span class="tag">&lt;/b&gt;</span>
+                                    <span class="tag">&lt;/td&gt;</span>
+                                <span class="tag">&lt;/tr&gt;</span>
+                                <span class="tag">&lt;tr&gt;</span>
+                                    <span class="tag">&lt;td</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_4</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">paragraph</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">th:text</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">${value}</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                    <span class="tag">&lt;/td&gt;</span>
+                                <span class="tag">&lt;/tr&gt;</span>
+                                <span class="tag">&lt;tr&gt;</span>
+                                    <span class="tag">&lt;td&gt;</span>
+                                        <span class="tag">&lt;table</span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellpadding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellspacing</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">100%</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                            <span class="tag">&lt;tr&gt;</span>
+                                                <span class="tag">&lt;td</span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">260</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">valign</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">top</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                    <span class="tag">&lt;table</span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellpadding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellspacing</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">100%</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                        <span class="tag">&lt;tr&gt;</span>
+                                                            <span class="tag">&lt;td&gt;</span>
+                                                                <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/images/left.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">alt</span>=<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">100%</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">height</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">140</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+                                                            <span class="tag">&lt;/td&gt;</span>
+                                                        <span class="tag">&lt;/tr&gt;</span>
+                                                        <span class="tag">&lt;tr&gt;</span>
+                                                            <span class="tag">&lt;td</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">paragraph</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
+                                                            <span class="tag">&lt;/td&gt;</span>
+                                                        <span class="tag">&lt;/tr&gt;</span>
+                                                    <span class="tag">&lt;/table&gt;</span>
+                                                <span class="tag">&lt;/td&gt;</span>
+                                                <span class="tag">&lt;td</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_6</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">20</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                    <span class="entity">&amp;nbsp;</span>
+                                                <span class="tag">&lt;/td&gt;</span>
+                                                <span class="tag">&lt;td</span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">260</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">valign</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">top</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                    <span class="tag">&lt;table</span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellpadding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellspacing</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">100%</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                        <span class="tag">&lt;tr&gt;</span>
+                                                            <span class="tag">&lt;td&gt;</span>
+                                                                <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/images/right.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">alt</span>=<span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">100%</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">height</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">140</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+                                                            <span class="tag">&lt;/td&gt;</span>
+                                                        <span class="tag">&lt;/tr&gt;</span>
+                                                        <span class="tag">&lt;tr&gt;</span>
+                                                            <span class="tag">&lt;td</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">paragraph</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
+                                                            <span class="tag">&lt;/td&gt;</span>
+                                                        <span class="tag">&lt;/tr&gt;</span>
+                                                    <span class="tag">&lt;/table&gt;</span>
+                                                <span class="tag">&lt;/td&gt;</span>
+                                            <span class="tag">&lt;/tr&gt;</span>
+                                        <span class="tag">&lt;/table&gt;</span>
+                                    <span class="tag">&lt;/td&gt;</span>
+                                <span class="tag">&lt;/tr&gt;</span>
+                            <span class="tag">&lt;/table&gt;</span>
+                        <span class="tag">&lt;/td&gt;</span>
+                    <span class="tag">&lt;/tr&gt;</span>
+                    <span class="tag">&lt;tr&gt;</span>
+                        <span class="tag">&lt;td</span> <span class="attribute-name">bgcolor</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#ee4c50</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_8</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                            <span class="tag">&lt;table</span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellpadding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellspacing</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">100%</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                <span class="tag">&lt;tr&gt;</span>
+                                    <span class="tag">&lt;td</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_9</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">white</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">75%</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                        <span class="entity">&amp;reg;</span> Someone, somewhere 2013<span class="tag">&lt;br</span><span class="tag">/&gt;</span>
+                                        <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">a_2a02_0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">white</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="tag">&lt;font</span> <span class="attribute-name">color</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#ffffff</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Unsubscribe<span class="tag">&lt;/font&gt;</span><span class="tag">&lt;/a&gt;</span> to this newsletter instantly
+                                    <span class="tag">&lt;/td&gt;</span>
+                                    <span class="tag">&lt;td</span> <span class="attribute-name">align</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">right</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">25%</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                        <span class="tag">&lt;table</span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellpadding</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">cellspacing</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                            <span class="tag">&lt;tr&gt;</span>
+                                                <span class="tag">&lt;td</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">link</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                    <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.twitter.com/</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">white</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                        <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/images/tw.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">alt</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Twitter</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">38</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">height</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">38</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+                                                    <span class="tag">&lt;/a&gt;</span>
+                                                <span class="tag">&lt;/td&gt;</span>
+                                                <span class="tag">&lt;td</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">td_2a02_11</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">20</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="entity">&amp;nbsp;</span><span class="tag">&lt;/td&gt;</span>
+                                                <span class="tag">&lt;td</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">link</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                    <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.twitter.com/</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">white</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+                                                        <span class="tag">&lt;img</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">classpath:/template/withImagesAndCss/images/fb.gif</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">alt</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Facebook</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">width</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">38</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">height</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">38</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">border</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+                                                    <span class="tag">&lt;/a&gt;</span>
+                                                <span class="tag">&lt;/td&gt;</span>
+                                            <span class="tag">&lt;/tr&gt;</span>
+                                        <span class="tag">&lt;/table&gt;</span>
+                                    <span class="tag">&lt;/td&gt;</span>
+                                <span class="tag">&lt;/tr&gt;</span>
+                            <span class="tag">&lt;/table&gt;</span>
+                        <span class="tag">&lt;/td&gt;</span>
+                    <span class="tag">&lt;/tr&gt;</span>
+                <span class="tag">&lt;/table&gt;</span>
+            <span class="tag">&lt;/td&gt;</span>
+        <span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;/table&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts=4">Source code of the HTML template</a></p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/css.png" alt="css" width="37" height="30"></span> CSS and images</p>
+</div>
+<div class="listingblock highlight-lines:4">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="html">TODO: add CSS file</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Images</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/html.png" alt="html" width="37" height="30"></span> Sent HTML</p>
+</div>
+<div class="listingblock highlight-lines:4">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="html">TODO: sent HTML</code></pre>
+</div>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><i class="fa fa-check-square-o"></i> <code>&lt;img&gt;</code> tags that use local images are embedded (using <code>cid</code> reference)</p>
+</li>
+<li>
+<p><i class="fa fa-check-square-o"></i> <code>&lt;img&gt;</code> tags that use local images are embedded (using base64 data URI)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Use XHTML instead of HTML</p>
+</li>
+<li>
+<p><i class="fa fa-check-square-o"></i> Tables used for layout explicitly set default values</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Remove HTML comments (except conditional comments used to target Outlook)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Add border=0 on all images to avoid an ugly border</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Do not write shortcut CSS values (<code>padding: 4px 4px 4px 4px;</code> instead of <code>padding: 4px</code>)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Background images on body should be moved on another node</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

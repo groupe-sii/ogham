@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InlineCssTranslator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.translator</a> &gt; <span class="el_source">InlineCssTranslator.java</span></div><h1>InlineCssTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.translator;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.HasResourcePath;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
+import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.UpdatableStringContent;
+import fr.sii.ogham.core.resource.path.RelativePathResolver;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+import fr.sii.ogham.core.util.HtmlUtils;
+import fr.sii.ogham.core.util.IOUtils;
+import fr.sii.ogham.html.inliner.CssInliner;
+import fr.sii.ogham.html.inliner.ExternalCss;
+
+/**
+ * Translator that transforms HTML content. If not HTML, the translator has no
+ * effect. The HTML is analyzed in order to find external css files. For each
+ * found image, it uses the resource resolver in order to find the css file.
+ * Once all css files are found, the HTML is transformed in order to inline the
+ * styles.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class InlineCssTranslator implements ContentTranslator {
+<span class="nc" id="L38">	private static final Logger LOG = LoggerFactory.getLogger(InlineCssTranslator.class);</span>
+	
+	/**
+	 * The CSS inliner
+	 */
+	private final CssInliner cssInliner;
+
+	/**
+	 * The resource resolver to find the CSS files
+	 */
+	private final ResourceResolver resourceResolver;
+	
+	/**
+	 * Provides an instance used to resolve relative path from source path and relative path
+	 */
+	private final RelativePathResolver relativePathProvider;
+
+	public InlineCssTranslator(CssInliner cssInliner, ResourceResolver resourceResolver, RelativePathResolver relativePathProvider) {
+<span class="nc" id="L56">		super();</span>
+<span class="nc" id="L57">		this.cssInliner = cssInliner;</span>
+<span class="nc" id="L58">		this.resourceResolver = resourceResolver;</span>
+<span class="nc" id="L59">		this.relativePathProvider = relativePathProvider;</span>
+<span class="nc" id="L60">	}</span>
+
+	@Override
+	public Content translate(Content content) throws ContentTranslatorException {
+<span class="nc bnc" id="L64" title="All 4 branches missed.">		if (content instanceof MayHaveStringContent &amp;&amp; ((MayHaveStringContent) content).canProvideString()) {</span>
+<span class="nc" id="L65">			String stringContent = ((MayHaveStringContent) content).asString();</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">			if (HtmlUtils.isHtml(stringContent)) {</span>
+<span class="nc" id="L67">				List&lt;String&gt; cssFiles = HtmlUtils.getDistinctCssUrls(stringContent);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">				if (!cssFiles.isEmpty()) {</span>
+					// prepare list of css files/urls with their content
+<span class="nc" id="L70">					List&lt;ExternalCss&gt; cssResources = load(getSourcePath(content), cssFiles);</span>
+					// generate the content with inlined css
+<span class="nc" id="L72">					String inlinedContentStr = cssInliner.inline(stringContent, cssResources);</span>
+					// update the HTML content
+<span class="nc" id="L74">					return updateHtmlContent(content, inlinedContentStr);</span>
+				}
+			}
+<span class="nc" id="L77">		} else {</span>
+<span class="nc" id="L78">			LOG.debug(&quot;Neither content as string nor HTML. Skip CSS inlining for {}&quot;, content);</span>
+		}
+<span class="nc" id="L80">		return content;</span>
+	}
+
+	private ResourcePath getSourcePath(Content content) {
+<span class="nc bnc" id="L84" title="All 2 branches missed.">		if(content instanceof HasResourcePath) {</span>
+<span class="nc" id="L85">			return ((HasResourcePath) content).getPath();</span>
+		}
+<span class="nc" id="L87">		return new UnresolvedPath(&quot;&quot;);</span>
+	}
+
+	private List&lt;ExternalCss&gt; load(ResourcePath sourcePath, List&lt;String&gt; cssFiles) throws ContentTranslatorException {
+<span class="nc" id="L91">		List&lt;ExternalCss&gt; cssResources = new ArrayList&lt;&gt;(cssFiles.size());</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">		for (String path : cssFiles) {</span>
+<span class="nc" id="L93">			load(cssResources, relativePathProvider.resolve(sourcePath, path));</span>
+<span class="nc" id="L94">		}</span>
+<span class="nc" id="L95">		return cssResources;</span>
+	}
+
+	private void load(List&lt;ExternalCss&gt; cssResources, ResourcePath path) throws ContentTranslatorException {
+		try {
+<span class="nc" id="L100">			cssResources.add(new ExternalCss(path, IOUtils.toString(resourceResolver.getResource(path).getInputStream())));</span>
+<span class="nc" id="L101">		} catch (IOException e) {</span>
+<span class="nc" id="L102">			throw new ContentTranslatorException(&quot;Failed to inline CSS file &quot; + path + &quot; because it can't be read&quot;, e);</span>
+<span class="nc" id="L103">		} catch (ResourceResolutionException e) {</span>
+<span class="nc" id="L104">			throw new ContentTranslatorException(&quot;Failed to inline CSS file &quot; + path + &quot; because it can't be resolved&quot;, e);</span>
+<span class="nc" id="L105">		}</span>
+<span class="nc" id="L106">	}</span>
+
+	private Content updateHtmlContent(Content content, String inlinedContentStr) {
+<span class="nc" id="L109">		Content inlinedContent = content;</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">		if(content instanceof UpdatableStringContent) {</span>
+<span class="nc" id="L111">			LOG.debug(&quot;Content is updatable =&gt; update it with inlined CSS&quot;);</span>
+<span class="nc" id="L112">			((UpdatableStringContent) inlinedContent).setStringContent(inlinedContentStr);</span>
+		} else {
+<span class="nc" id="L114">			LOG.info(&quot;Content is not updatable =&gt; create a new StringContent for CSS inlining result&quot;);</span>
+<span class="nc" id="L115">			inlinedContent = new StringContent(inlinedContentStr);</span>
+		}
+<span class="nc" id="L117">		return inlinedContent;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

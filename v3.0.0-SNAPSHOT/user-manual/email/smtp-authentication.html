@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Configure username and password</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_configure_username_and_password">Configure username and password</a></li>
+<li><a href="#_custom_authenticator">Custom Authenticator</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_configure_username_and_password"><a class="anchor" href="#_configure_username_and_password"></a>Configure username and password</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some SMTP servers need credentials. When using Java Mail API, you need to provide an <code>Authenticator</code>.</p>
+</div>
+<div class="paragraph">
+<p>Ogham has a shortcut to declare default authentication mechanism using a username and a password. Just set the two following properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.javamail.authenticator.username</code></p>
+</li>
+<li>
+<p><code>ogham.email.javamail.authenticator.password</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It will automatically create an <code>Authenticator</code> with the provided values.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../../user-manual.html#gmail">Send email through GMail sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_custom_authenticator"><a class="anchor" href="#_custom_authenticator"></a>Custom Authenticator</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

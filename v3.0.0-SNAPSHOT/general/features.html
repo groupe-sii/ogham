@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="..//javascripts/steps.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="exampleblock feature feature-email">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="../images//icons/email.png" alt="Email" width="100" height="100"></span> Send Email</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No need to know RFCs</p>
+</li>
+<li>
+<p><a href="../user-manual.html#email-template">Use templates for email body</a></p>
+</li>
+<li>
+<p><a href="../user-manual.html#text-alternative">HTML body and text alternative</a></p>
+</li>
+<li>
+<p><a href="../user-manual.html#css-images-inlining">Automatic inlining of CSS and image</a></p>
+</li>
+<li>
+<p><a href="../user-manual.html#html-title-subject">Subject extracted from template</a></p>
+</li>
+<li>
+<p>Make HTML compatible with email clients</p>
+</li>
+<li>
+<p>Send email through SMTP (using <a href="https://javaee.github.io/javamail/">JavaMail</a>) or HTTP (through <a href="https://sendgrid.com/">SendGrid</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="exampleblock feature feature-sms">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="../images//icons/sms.png" alt="Email" width="100" height="100"></span> Send SMS</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No need to know SMPP protocol</p>
+</li>
+<li>
+<p><a href="../user-manual.html#sms-template">Use templates for SMS message</a></p>
+</li>
+<li>
+<p><a href="../user-manual.html#auto-split-sms">Automatic split of long SMS</a></p>
+</li>
+<li>
+<p>Send SMS through SMPP (using <a href="https://github.com/fizzed/cloudhopper-smpp">Cloudhopper</a>, through <a href="https://www.smsglobal.com/smpp-api/">SmsGlobal</a> for example) or HTTP (through <a href="https://www.ovh.com/fr/g2153.envoyer_des_sms_depuis_une_url_-_http2sms">OVH</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="exampleblock feature feature-templating">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="../images//icons/templating.png" alt="Email" width="100" height="100"></span> Designed for templating</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Easy <a href="../user-manual.html#resource-resolution">file loading</a></p>
+</li>
+<li>
+<p><a href="../user-manual.html#thymeleaf">ThymeLeaf</a> integration</p>
+</li>
+<li>
+<p><a href="../user-manual.html#freemarker">FreeMarker</a> integration</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="exampleblock feature feature-spring">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="../images//icons/spring-boot.png" alt="Email" width="100" height="100"></span> Framework support</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://projects.spring.io/spring-boot/">Spring Boot</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../user-manual.html#spring-boot-usage">Autoconfiguration</a></p>
+</li>
+<li>
+<p>Spring Boot starter</p>
+</li>
+<li>
+<p>Compatible with other Spring Boot modules</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong class="coming-soon">Java EE</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="exampleblock feature testing">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="../images//icons/test.png" alt="Email" width="100" height="100"></span> Testing tools</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../user-manual.html#testing-tools">Fluent testing API</a></p>
+</li>
+<li>
+<p>Mock <a href="../user-manual.html#testing-email">SMTP</a>/<a href="../user-manual.html#testing-sms">SMPP</a> servers</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="exampleblock feature implementation-selection">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="../images//icons/configuration.png" alt="Email" width="100" height="100"></span> Automatic configuration</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Protocol selection based on classpath and configuration</p>
+</li>
+<li>
+<p>Template engine selection based on classpath and template content</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapContentHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham JavaMail implementation</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sender.impl.javamail</a> &gt; <span class="el_source">MapContentHandler.java</span></div><h1>MapContentHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sender.impl.javamail;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.mail.Multipart;
+import javax.mail.internet.MimePart;
+
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.email.exception.javamail.ContentHandlerException;
+import fr.sii.ogham.email.exception.javamail.NoContentHandlerException;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * Provides a content handler based on the class of the content.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MapContentHandler implements JavaMailContentHandler {
+	/**
+	 * The map of content handlers indexed by the content class
+	 */
+	private Map&lt;Class&lt;? extends Content&gt;, JavaMailContentHandler&gt; map;
+
+	/**
+	 * Initialize with the map of content handlers indexed by the content class.
+	 * 
+	 * @param map
+	 *            the map of content handlers indexed by the content class
+	 */
+	public MapContentHandler(Map&lt;Class&lt;? extends Content&gt;, JavaMailContentHandler&gt; map) {
+<span class="fc" id="L34">		super();</span>
+<span class="fc" id="L35">		this.map = map;</span>
+<span class="fc" id="L36">	}</span>
+
+	/**
+	 * Initialize an empty map
+	 */
+	public MapContentHandler() {
+<span class="fc" id="L42">		this(new HashMap&lt;Class&lt;? extends Content&gt;, JavaMailContentHandler&gt;());</span>
+<span class="fc" id="L43">	}</span>
+
+	@Override
+	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
+<span class="fc" id="L47">		JavaMailContentHandler contentHandler = getContentHandler(content);</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">		if (contentHandler == null) {</span>
+<span class="nc" id="L49">			throw new NoContentHandlerException(&quot;there is no content handler defined for managing &quot; + content.getClass().getSimpleName() + &quot; content class&quot;, content);</span>
+		}
+<span class="fc" id="L51">		contentHandler.setContent(message, multipart, email, content);</span>
+<span class="fc" id="L52">	}</span>
+
+	/**
+	 * Register a new content handler.
+	 * 
+	 * @param clazz
+	 *            the class of the content
+	 * @param handler
+	 *            the content handler
+	 */
+	public void addContentHandler(Class&lt;? extends Content&gt; clazz, JavaMailContentHandler handler) {
+<span class="fc" id="L63">		map.put(clazz, handler);</span>
+<span class="fc" id="L64">	}</span>
+
+	private JavaMailContentHandler getContentHandler(Content content) {
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">		for(Entry&lt;Class&lt;? extends Content&gt;, JavaMailContentHandler&gt; entry : map.entrySet()) {</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">			if(entry.getKey().isAssignableFrom(content.getClass())) {</span>
+<span class="fc" id="L69">				return entry.getValue();</span>
+			}
+<span class="fc" id="L71">		}</span>
+<span class="nc" id="L72">		return null;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

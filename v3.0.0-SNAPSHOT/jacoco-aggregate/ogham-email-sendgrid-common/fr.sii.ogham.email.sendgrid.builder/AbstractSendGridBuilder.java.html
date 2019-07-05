@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractSendGridBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.builder</a> &gt; <span class="el_source">AbstractSendGridBuilder.java</span></div><h1>AbstractSendGridBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.builder;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import javax.activation.MimetypesFileTypeMap;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
+import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
+import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
+import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
+
+public abstract class AbstractSendGridBuilder&lt;MYSELF extends AbstractSendGridBuilder&lt;MYSELF, EmailBuilder&gt;, EmailBuilder&gt; extends AbstractParent&lt;EmailBuilder&gt; implements Builder&lt;SendGridSender&gt; {
+	protected MYSELF myself;
+	protected EnvironmentBuilder&lt;MYSELF&gt; environmentBuilder;
+	protected MimetypeDetectionBuilder&lt;MYSELF&gt; mimetypeBuilder;
+	protected List&lt;String&gt; apiKeys;
+	
+	public AbstractSendGridBuilder(Class&lt;?&gt; selfType) {
+<span class="nc" id="L28">		this(selfType, null, null, null);</span>
+<span class="nc" id="L29">	}</span>
+	
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected AbstractSendGridBuilder(Class&lt;?&gt; selfType, EmailBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder, MimetypeDetectionBuilder&lt;?&gt; mimetypeBuilder) {
+<span class="fc" id="L33">		super(parent);</span>
+<span class="fc" id="L34">		myself = (MYSELF) selfType.cast(this);</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">		if (environmentBuilder != null) {</span>
+<span class="nc" id="L36">			environment(environmentBuilder);</span>
+		}
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">		if(mimetypeBuilder != null) {</span>
+<span class="nc" id="L39">			mimetype(mimetypeBuilder);</span>
+		}
+<span class="fc" id="L41">	}</span>
+
+	public AbstractSendGridBuilder(Class&lt;?&gt; selfType, EmailBuilder parent) {
+<span class="fc" id="L44">		this(selfType, parent, null, null);</span>
+<span class="fc" id="L45">		apiKeys = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L46">		environment();</span>
+<span class="fc" id="L47">		mimetype();</span>
+<span class="fc" id="L48">	}</span>
+
+	/**
+	 * Set SendGrid &lt;a href=
+	 * &quot;https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html&quot;&gt;API
+	 * key&lt;/a&gt;.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .apiKey(&quot;localhost&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .apiKey(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link Builder#build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param key
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF apiKey(String... key) {
+<span class="fc bfc" id="L81" title="All 2 branches covered.">		for (String k : key) {</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">			if (k != null) {</span>
+<span class="fc" id="L83">				apiKeys.add(k);</span>
+			}
+		}
+<span class="fc" id="L86">		return myself;</span>
+	}
+
+	/**
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must use an {@link #apiKey(String...)}.
+	 * 
+	 * Set username for SendGrid HTTP API.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .username(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .username(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link Builder#build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param username
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	@Deprecated
+	public abstract MYSELF username(String... username);
+
+	/**
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must use an {@link #apiKey(String...)}.
+	 * 
+	 * Set password for SendGrid HTTP API.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;foo&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link Builder#build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param password
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	@Deprecated
+	public abstract MYSELF password(String... password);
+
+	/**
+	 * Builder that configures mimetype detection.
+	 * 
+	 * There exists several implementations to provide the mimetype:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Using Java {@link MimetypesFileTypeMap}&lt;/li&gt;
+	 * &lt;li&gt;Using Java 7 {@link Files#probeContentType(java.nio.file.Path)}&lt;/li&gt;
+	 * &lt;li&gt;Using &lt;a href=&quot;http://tika.apache.org/&quot;&gt;Apache Tika&lt;/a&gt;&lt;/li&gt;
+	 * &lt;li&gt;Using
+	 * &lt;a href=&quot;https://github.com/arimus/jmimemagic&quot;&gt;JMimeMagic&lt;/a&gt;&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Both implementations provided by Java are based on file extensions. This
+	 * can't be used in most cases as we often handle {@link InputStream}s.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In previous version of Ogham, JMimeMagic was used and was working quite
+	 * well. Unfortunately, the library is no more maintained.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can configure how Tika will detect mimetype:
+	 * 
+	 * &lt;pre&gt;
+	 * .mimetype()
+	 *    .tika()
+	 *       ...
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * This builder allows to use several providers. It will chain them until
+	 * one can find a valid mimetype. If none is found, you can explicitly
+	 * provide the default one:
+	 * 
+	 * &lt;pre&gt;
+	 * .mimetype()
+	 *    .defaultMimetype(&quot;text/html&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If no mimetype detector was previously defined, it creates a new one.
+	 * Then each time you call {@link #mimetype()}, the same instance is used.
+	 * &lt;/p&gt;
+	 * 
+	 * @return the builder to configure mimetype detection
+	 */
+	public MimetypeDetectionBuilder&lt;MYSELF&gt; mimetype() {
+<span class="fc bfc" id="L204" title="All 2 branches covered.">		if (mimetypeBuilder == null) {</span>
+<span class="fc" id="L205">			mimetypeBuilder = new SimpleMimetypeDetectionBuilder&lt;&gt;(myself, environmentBuilder);</span>
+		}
+<span class="fc" id="L207">		return mimetypeBuilder;</span>
+	}
+
+	/**
+	 * NOTE: this is mostly for advance usage (when creating a custom module).
+	 * 
+	 * Inherits mimetype configuration from another builder. This is useful for
+	 * configuring independently different parts of Ogham but keeping a whole
+	 * coherence.
+	 * 
+	 * The same instance is shared meaning that all changes done here will also
+	 * impact the other builder.
+	 * 
+	 * &lt;p&gt;
+	 * If a previous builder was defined (by calling {@link #mimetype()} for
+	 * example), the new builder will override it.
+	 * 
+	 * @param builder
+	 *            the builder to inherit
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF mimetype(MimetypeDetectionBuilder&lt;?&gt; builder) {
+<span class="fc" id="L229">		mimetypeBuilder = new MimetypeDetectionBuilderDelegate&lt;&gt;(myself, builder);</span>
+<span class="fc" id="L230">		return myself;</span>
+	}
+
+	/**
+	 * Configures environment for the builder (and sub-builders). Environment
+	 * consists of configuration properties/values that are used to configure
+	 * the system (see {@link EnvironmentBuilder} for more information).
+	 * 
+	 * You can use system properties:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .systemProperties();
+	 * &lt;/pre&gt;
+	 * 
+	 * Or, you can load properties from a file:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .properties(&quot;/path/to/file.properties&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * Or using directly a {@link Properties} object:
+	 * 
+	 * &lt;pre&gt;
+	 * Properties myprops = new Properties();
+	 * myprops.setProperty(&quot;foo&quot;, &quot;bar&quot;);
+	 * .environment()
+	 *    .properties(myprops)
+	 * &lt;/pre&gt;
+	 * 
+	 * Or defining directly properties:
+	 * 
+	 * &lt;pre&gt;
+	 * .environment()
+	 *    .properties()
+	 *       .set(&quot;foo&quot;, &quot;bar&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * If no environment was previously used, it creates a new one. Then each
+	 * time you call {@link #environment()}, the same instance is used.
+	 * &lt;/p&gt;
+	 * 
+	 * @return the builder to configure properties handling
+	 */
+	public EnvironmentBuilder&lt;MYSELF&gt; environment() {
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">		if (environmentBuilder == null) {</span>
+<span class="fc" id="L279">			environmentBuilder = new SimpleEnvironmentBuilder&lt;&gt;(myself);</span>
+		}
+<span class="fc" id="L281">		return environmentBuilder;</span>
+	}
+
+	/**
+	 * NOTE: this is mostly for advance usage (when creating a custom module).
+	 * 
+	 * Inherits environment configuration from another builder. This is useful
+	 * for configuring independently different parts of Ogham but keeping a
+	 * whole coherence.
+	 * 
+	 * The same instance is shared meaning that all changes done here will also
+	 * impact the other builder.
+	 * 
+	 * &lt;p&gt;
+	 * If a previous builder was defined (by calling {@link #environment()} for
+	 * example), the new builder will override it.
+	 * 
+	 * @param builder
+	 *            the builder to inherit
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF environment(EnvironmentBuilder&lt;?&gt; builder) {
+<span class="fc" id="L303">		environmentBuilder = new EnvironmentBuilderDelegate&lt;&gt;(myself, builder);</span>
+<span class="fc" id="L304">		return myself;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

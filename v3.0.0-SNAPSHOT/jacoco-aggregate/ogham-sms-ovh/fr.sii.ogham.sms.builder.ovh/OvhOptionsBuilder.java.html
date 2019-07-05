@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OvhOptionsBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-ovh</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.ovh</a> &gt; <span class="el_source">OvhOptionsBuilder.java</span></div><h1>OvhOptionsBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.ovh;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
+import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
+
+/**
+ * Configures OVH SMS options:
+ * &lt;ul&gt;
+ * &lt;li&gt;Enable/disable the &quot;STOP&quot; indication at the end of the message (useful to
+ * disable for non-commercial SMS)&lt;/li&gt;
+ * &lt;li&gt;Define the SMS encoding (see {@link SmsCoding}): 1 for 7bit encoding, 2
+ * for 8bit encoding (UTF-8). If you use UTF-8, your SMS will have a maximum
+ * size of 70 characters instead of 160&lt;/li&gt;
+ * &lt;li&gt;Define a tag to mark sent messages (a 20 maximum character string)&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class OvhOptionsBuilder extends AbstractParent&lt;OvhSmsBuilder&gt; implements Builder&lt;OvhOptions&gt; {
+	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
+	private List&lt;String&gt; noStops;
+	private Boolean noStop;
+	private List&lt;String&gt; tags;
+	private List&lt;String&gt; smsCodings;
+	private SmsCoding smsCoding;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
+	public OvhOptionsBuilder(OvhSmsBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="fc" id="L47">		super(parent);</span>
+<span class="fc" id="L48">		this.environmentBuilder = environmentBuilder;</span>
+<span class="fc" id="L49">		noStops = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L50">		tags = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L51">		smsCodings = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L52">	}</span>
+
+	/**
+	 * Enable/disable &quot;STOP&quot; indication at the end of the message (useful to
+	 * disable for non-commercial SMS).
+	 * 
+	 * &lt;p&gt;
+	 * You can specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .soStop(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param noStop
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public OvhOptionsBuilder noStop(String... noStop) {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		for (String n : noStop) {</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">			if (n != null) {</span>
+<span class="fc" id="L80">				noStops.add(n);</span>
+			}
+		}
+<span class="fc" id="L83">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable &quot;STOP&quot; indication at the end of the message (useful to
+	 * disable for non-commercial SMS).
+	 * 
+	 * @param noStop
+	 *            enable or disable (no effect if {@code null})
+	 * @return this instance for fluent chaining
+	 */
+	public OvhOptionsBuilder noStop(Boolean noStop) {
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">		if (noStop != null) {</span>
+<span class="fc" id="L96">			this.noStop = noStop;</span>
+		}
+<span class="fc" id="L98">		return this;</span>
+	}
+
+	/**
+	 * Set a tag to mark sent messages (20 maximum character string).
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .tag(&quot;my tag&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .tag(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param tag
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public OvhOptionsBuilder tag(String... tag) {
+<span class="fc bfc" id="L130" title="All 2 branches covered.">		for (String t : tag) {</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">			if (t != null) {</span>
+<span class="fc" id="L132">				tags.add(t);</span>
+			}
+		}
+<span class="fc" id="L135">		return this;</span>
+	}
+
+	/**
+	 * Set the message encoding:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;1 for 7bit encoding&lt;/li&gt;
+	 * &lt;li&gt;2 for 8bit encoding (UTF-8)&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * If you use UTF-8, your SMS will have a maximum size of 70 characters
+	 * instead of 160
+	 * 
+	 * You can specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .smsCoding(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param smsCoding
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public OvhOptionsBuilder smsCoding(String... smsCoding) {
+<span class="fc bfc" id="L166" title="All 2 branches covered.">		for (String s : smsCoding) {</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">			if (s != null) {</span>
+<span class="fc" id="L168">				smsCodings.add(s);</span>
+			}
+		}
+<span class="fc" id="L171">		return this;</span>
+	}
+
+	/**
+	 * Set the message encoding:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link SmsCoding#NORMAL}: 7bit encoding&lt;/li&gt;
+	 * &lt;li&gt;{@link SmsCoding#UTF_8}: 8bit encoding (UTF-8)&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * If you use UTF-8, your SMS will have a maximum size of 70 characters
+	 * instead of 160
+	 * 
+	 * @param smsCoding
+	 *            the SMS encoding
+	 * @return this instance for fluent chaining
+	 */
+	public OvhOptionsBuilder smsCoding(SmsCoding smsCoding) {
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">		if (smsCoding != null) {</span>
+<span class="nc" id="L189">			this.smsCoding = smsCoding;</span>
+		}
+<span class="fc" id="L191">		return this;</span>
+	}
+
+	@Override
+	public OvhOptions build() {
+<span class="fc" id="L196">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
+<span class="fc" id="L197">		boolean builtNoStop = buildNoStop(propertyResolver);</span>
+<span class="fc" id="L198">		String builtTag = buildTag(propertyResolver);</span>
+<span class="fc" id="L199">		SmsCoding builtSmsCoding = buildSmsCoding(propertyResolver);</span>
+<span class="fc" id="L200">		return new OvhOptions(builtNoStop, builtTag, builtSmsCoding);</span>
+	}
+
+	private boolean buildNoStop(PropertyResolver propertyResolver) {
+<span class="fc bfc" id="L204" title="All 2 branches covered.">		if (noStop != null) {</span>
+<span class="fc" id="L205">			return noStop;</span>
+		}
+<span class="fc" id="L207">		return BuilderUtils.evaluate(noStops, propertyResolver, Boolean.class);</span>
+	}
+
+	private String buildTag(PropertyResolver propertyResolver) {
+<span class="fc" id="L211">		return BuilderUtils.evaluate(tags, propertyResolver, String.class);</span>
+	}
+
+	private SmsCoding buildSmsCoding(PropertyResolver propertyResolver) {
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">		if (smsCoding != null) {</span>
+<span class="nc" id="L216">			return smsCoding;</span>
+		}
+<span class="fc" id="L218">		String name = BuilderUtils.evaluate(smsCodings, propertyResolver, String.class);</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">		return name == null ? null : SmsCoding.valueOf(name);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

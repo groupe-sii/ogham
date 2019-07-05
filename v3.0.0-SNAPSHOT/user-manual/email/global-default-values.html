@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Globally configure default sender</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_globally_configure_default_sender">Globally configure default sender</a></li>
+<li><a href="#_globally_configure_default_subject">Globally configure default subject</a></li>
+<li><a href="#_globally_configure_default_recipients">Globally configure default recipients</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_globally_configure_default_sender"><a class="anchor" href="#_globally_configure_default_sender"></a>Globally configure default sender</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can configure sender address for all sent email by setting the property <code>ogham.email.from</code>. The value can either be an email address (<code>user@domain.host</code>) or an address with personal information (<code>User Name &lt;<a href="mailto:user@domain.host">user@domain.host</a>&gt;</code>). This property is used for every implementation (through SMTP, through SendGrid, &#8230;&#8203;).</p>
+</div>
+<div class="paragraph">
+<p>This global address is used only if nothing is specified in the email. If you explicitly set the sender address in the email constructor or using the setter, this value is used instead of the global one.</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Basic sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:17,35">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.standard.email</span>;
+
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">OverrideDefaultSenderSample</span> {
+    <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args) <span class="directive">throws</span> MessagingException {
+        <span class="comment">// configure properties (could be stored in a properties file or defined</span>
+        <span class="comment">// in System properties)</span>
+        <span class="predefined-type">Properties</span> properties = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server host&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">&lt;your server port&gt;</span><span class="delimiter">&quot;</span></span>);
+        properties.put(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">foo.bar@test.com</span><span class="delimiter">&quot;</span></span>);             <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="comment">// Instantiate the messaging service using default behavior and</span>
+        <span class="comment">// provided properties</span>
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        <span class="comment">// send the email using fluent API</span>
+        service.send(<span class="keyword">new</span> Email()                                            <i class="conum" data-value="2"></i><b>(2)</b>
+                        .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">subject</span><span class="delimiter">&quot;</span></span>)
+                        .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+                        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+        <span class="comment">// =&gt; the sender address is foo.bar@test.com</span>
+
+        service.send(<span class="keyword">new</span> Email()
+                .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">subject</span><span class="delimiter">&quot;</span></span>)
+                .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">email content</span><span class="delimiter">&quot;</span></span>)
+                .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">override@test.com</span><span class="delimiter">&quot;</span></span>)                                  <i class="conum" data-value="3"></i><b>(3)</b>
+                .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham-test@yopmail.com</span><span class="delimiter">&quot;</span></span>));
+        <span class="comment">// =&gt; the sender address is now override@test.com</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the default sender address globally using properties</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Do not provide <code>from</code> field so the sender address is <code>foo.bar@test.com</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Override the default sender address by providing a <code>from</code> field. The address is now <code>override@test.com</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/OverrideDefaultSenderSample.java?ts=4">Source code of the sample</a>.</p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>mail.from</code> and <code>mail.smtp.from</code> also work
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_globally_configure_default_subject"><a class="anchor" href="#_globally_configure_default_subject"></a>Globally configure default subject</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As for sender address, you can define globally a default subject for emails if none is explicitly provided (neither using <code>.subject(String)</code> method nor defining a subject directly in the template). The property is <code>ogham.email.subject</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_globally_configure_default_recipients"><a class="anchor" href="#_globally_configure_default_recipients"></a>Globally configure default recipients</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can also use properties to define default recipients if none are provided:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ogham.email.to</code>: set one or several recipient addresses (<code>to</code> field)</p>
+</li>
+<li>
+<p><code>ogham.email.cc</code>: set one or several recipient addresses (<code>cc</code> field)</p>
+</li>
+<li>
+<p><code>ogham.email.bcc</code>: set one or several recipient addresses (<code>bcc</code> field)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This can be convenient to set a <code>bcc</code> address for all sent messages for example (the <code>bcc</code> address will never be seen in received emails).</p>
+</div>
+<div class="paragraph">
+<p>To define several recipient addresses, you can provide a string separated by <code>,</code>.</p>
+</div>
+<div class="paragraph tab-container no-max-height">
+<p>Basic sample</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Java</p>
+</div>
+<div class="listingblock collapse-lines:1-24,26-34,51-70 irrelevant-lines:1-24 highlight-lines:41-43">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.it.email</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.assertion.OghamAssertions.assertThat</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.contains</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.containsInAnyOrder</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.is</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.startsWith</span>;
+
+<span class="keyword">import</span> <span class="include">java.io.IOException</span>;
+<span class="keyword">import</span> <span class="include">java.util.Properties</span>;
+
+<span class="keyword">import</span> <span class="include">org.junit.Before</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Rule</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
+
+<span class="keyword">import</span> <span class="include">com.icegreen.greenmail.junit.GreenMailRule</span>;
+<span class="keyword">import</span> <span class="include">com.icegreen.greenmail.util.ServerSetupTest</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.builder.MessagingBuilder</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.exception.MessagingException</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.helper.rule.LoggingTestRule</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">EmailPropertiesTest</span> {
+
+    <span class="directive">private</span> MessagingService oghamService;
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> <span class="directive">final</span> LoggingTestRule loggingRule = <span class="keyword">new</span> LoggingTestRule();
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> <span class="directive">final</span> GreenMailRule greenMail = <span class="keyword">new</span> GreenMailRule(ServerSetupTest.SMTP);
+
+    <span class="annotation">@Before</span>
+    <span class="directive">public</span> <span class="type">void</span> setUp() <span class="directive">throws</span> <span class="exception">IOException</span> {
+        <span class="predefined-type">Properties</span> additional = <span class="keyword">new</span> <span class="predefined-type">Properties</span>();
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host</span><span class="delimiter">&quot;</span></span>, ServerSetupTest.SMTP.getBindAddress());
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.valueOf(ServerSetupTest.SMTP.getPort()));
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.from</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">test.sender@sii.fr</span><span class="delimiter">&quot;</span></span>);
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.to</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.to1@sii.fr,recipient.to2@sii.fr,recipient.to3@sii.fr</span><span class="delimiter">&quot;</span></span>);     <i class="conum" data-value="1"></i><b>(1)</b>
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.cc</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.cc1@sii.fr,recipient.cc2@sii.fr</span><span class="delimiter">&quot;</span></span>);                          <i class="conum" data-value="2"></i><b>(2)</b>
+        additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.bcc</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.bcc@sii.fr</span><span class="delimiter">&quot;</span></span>);                                              <i class="conum" data-value="3"></i><b>(3)</b>
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties(<span class="string"><span class="delimiter">&quot;</span><span class="content">/application.properties</span><span class="delimiter">&quot;</span></span>)
+                    .properties(additional)
+                    .and()
+                .build();
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="directive">public</span> <span class="type">void</span> simple() <span class="directive">throws</span> MessagingException, javax.mail.MessagingException {
+        oghamService.send(<span class="keyword">new</span> Email()
+                            .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>)
+                            .content(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>));
+        assertThat(greenMail).receivedMessages()
+                .count(is(<span class="integer">6</span>))
+                .forEach()
+                    .subject(is(<span class="string"><span class="delimiter">&quot;</span><span class="content">Simple</span><span class="delimiter">&quot;</span></span>))
+                    .body()
+                        .contentAsString(is(<span class="string"><span class="delimiter">&quot;</span><span class="content">string body</span><span class="delimiter">&quot;</span></span>))
+                        .contentType(startsWith(<span class="string"><span class="delimiter">&quot;</span><span class="content">text/plain</span><span class="delimiter">&quot;</span></span>)).and()
+                    .from()
+                        .address(contains(<span class="string"><span class="delimiter">&quot;</span><span class="content">test.sender@sii.fr</span><span class="delimiter">&quot;</span></span>)).and()
+                    .to()
+                        .address(containsInAnyOrder(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.to1@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.to2@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.to3@sii.fr</span><span class="delimiter">&quot;</span></span>)).and()
+                    .cc()
+                        .address(containsInAnyOrder(<span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.cc1@sii.fr</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">recipient.cc2@sii.fr</span><span class="delimiter">&quot;</span></span>));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define 3 <code>to</code> recipients</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Define 2 <code>cc</code> recipients</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Define a single <code>bcc</code> recipient</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/ogham-all/src/test/java/fr/sii/ogham/it/email/EmailPropertiesTest.java?ts=4">Source code of the sample</a>.</p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The email addresses are trimmed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">additional.setProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.email.to</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">  foo@example.com  ,    John Doe &lt;bar@example.com&gt;,   abc@example.com</span><span class="delimiter">&quot;</span></span>);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The email addresses will be:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>foo@example.com</code></p>
+</li>
+<li>
+<p><code>John Doe &lt;<a href="mailto:bar@example.com">bar@example.com</a>&gt;</code></p>
+</li>
+<li>
+<p><code>abc@example.com</code></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

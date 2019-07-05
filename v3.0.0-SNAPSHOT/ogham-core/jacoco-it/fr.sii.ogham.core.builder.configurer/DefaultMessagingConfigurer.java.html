@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultMessagingConfigurer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.configurer</a> &gt; <span class="el_source">DefaultMessagingConfigurer.java</span></div><h1>DefaultMessagingConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.configurer;
+
+import static fr.sii.ogham.core.CoreConstants.CLASSPATH_LOOKUPS;
+import static fr.sii.ogham.core.CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIORITY;
+import static fr.sii.ogham.core.CoreConstants.FILE_LOOKUPS;
+import static fr.sii.ogham.core.CoreConstants.STRING_LOOKUPS;
+
+import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.mimetype.TikaBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.convert.DefaultConverter;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.builder.AutofillDefaultEmailAddressBuilder;
+import fr.sii.ogham.email.builder.AutofillSubjectBuilder;
+import fr.sii.ogham.email.builder.CssInliningBuilder;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.email.builder.ImageInliningBuilder;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.sms.builder.AutofillSmsBuilder;
+import fr.sii.ogham.sms.builder.RecipientNumberFormatBuilder;
+import fr.sii.ogham.sms.builder.SenderNumberFormatBuilder;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.sms.message.Sms;
+
+/**
+ * Default configurer that is automatically applied every time a
+ * {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()} or {@link MessagingBuilder#minimal()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 100000 in order to be applied before all
+ * other configurers.
+ * &lt;/p&gt;
+ * 
+ * This configurer applies general configuration (see
+ * {@link EnvironmentBuilder}):
+ * &lt;ul&gt;
+ * &lt;li&gt;The {@link MessagingService} will catch all uncaught exception (even
+ * runtime) in order to wrap them in a {@link MessagingException}.&lt;/li&gt;
+ * &lt;li&gt;General environment configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;System properties with&lt;/li&gt;
+ * &lt;li&gt;Uses the {@link DefaultConverter}&lt;/li&gt;
+ * &lt;li&gt;&lt;strong&gt;Environment will be inherited by sub-builders by
+ * default.&lt;/strong&gt;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Resource resolution configuration (see
+ * {@link ResourceResolutionBuilder}):
+ * &lt;ul&gt;
+ * &lt;li&gt;Lookup prefixes for classpath: &quot;classpath:&quot; and no lookup prefix (if no
+ * prefix is defined, then classpath is used).
+ * &lt;li&gt;Lookup prefix for file: &quot;file:&quot;.
+ * &lt;li&gt;Lookup prefixes for string: &quot;string:&quot;, &quot;s:.
+ * &lt;li&gt;&lt;strong&gt;Resource resolution will be by default inherited by
+ * sub-builders&lt;/strong&gt;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configure common email behaviors:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configure resource resolution for attachments, css inlining and image
+ * inlining using same resource resolution configuration as the general one (see
+ * {@link ResourceResolutionBuilder})&lt;/li&gt;
+ * &lt;li&gt;Configure mimetype detection for attachments and image inlining (see
+ * {@link MimetypeDetectionBuilder})&lt;/li&gt;
+ * &lt;li&gt;Automatically fill {@link Email} messages with subject either from title
+ * tag of html template, from first line starting with &quot;Subject:&quot; of text
+ * template or using {@code ogham.email.subject} property if defined (see
+ * {@link AutofillSubjectBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Email} messages with sender address if one of the
+ * property {@code ogham.email.from} or {@code mail.smtp.from} is defined (see
+ * {@link AutofillDefaultEmailAddressBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Email} messages with recipient address (to) if the
+ * property {@code ogham.email.to} is defined (see
+ * {@link AutofillDefaultEmailAddressBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Email} messages with recipient address (cc) if the
+ * property {@code ogham.email.cc} is defined (see
+ * {@link AutofillDefaultEmailAddressBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Email} messages with recipient address (bcc) if the
+ * property {@code ogham.email.bcc} is defined (see
+ * {@link AutofillDefaultEmailAddressBuilder})&lt;/li&gt;
+ * &lt;li&gt;Automatically inline CSS styles in the HTML templates (see
+ * {@link CssInliningBuilder})&lt;/li&gt;
+ * &lt;li&gt;Automatically inline images in the email either by attaching them or by
+ * converting them into base64 (see {@link ImageInliningBuilder})&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configure common SMS behaviors:
+ * &lt;ul&gt;
+ * &lt;li&gt;Autofill {@link Sms} messages with sender phone number if the property
+ * {@code ogham.sms.from} is defined (see {@link AutofillSmsBuilder})&lt;/li&gt;
+ * &lt;li&gt;Autofill {@link Sms} messages with recipient phone number if the property
+ * {@code ogham.sms.to} is defined (see {@link AutofillSmsBuilder})&lt;/li&gt;
+ * &lt;li&gt;Configure phone number formats (see {@link SenderNumberFormatBuilder} and
+ * {@link RecipientNumberFormatBuilder})&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Mimetype detection configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses {@link Tika} to detect mimetype (see {@link TikaBuilder})&lt;/li&gt;
+ * &lt;li&gt;Uses property {@code ogham.mimetype.default-mimetype} if Tika has not
+ * detected the mimetype (see {@link MimetypeDetectionBuilder})&lt;/li&gt;
+ * &lt;li&gt;Uses {@code application/octet-stream} if neither Tika has detected
+ * mimetype nor default property value has been set&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@ConfigurerFor(targetedBuilder = { &quot;minimal&quot;, &quot;standard&quot; }, priority = DEFAULT_MESSAGING_CONFIGURER_PRIORITY)
+<span class="nc" id="L120">public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {</span>
+<span class="nc" id="L121">	private static final Logger LOG = LoggerFactory.getLogger(DefaultMessagingConfigurer.class);</span>
+
+	@Override
+	public void configure(MessagingBuilder builder) {
+<span class="nc" id="L125">		LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+<span class="nc" id="L126">		super.configure(builder);</span>
+<span class="nc" id="L127">		builder.wrapUncaught(true);</span>
+<span class="nc" id="L128">	}</span>
+
+	@Override
+	public void configure(EnvironmentBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="nc" id="L133">		builder</span>
+<span class="nc" id="L134">			.systemProperties()</span>
+<span class="nc" id="L135">			.converter()</span>
+<span class="nc" id="L136">				.override(new DefaultConverter());</span>
+		// @formatter:on
+<span class="nc" id="L138">	}</span>
+
+	@Override
+	public void configure(ResourceResolutionBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="nc" id="L143">		builder</span>
+<span class="nc" id="L144">			.string()</span>
+<span class="nc" id="L145">				.lookup(STRING_LOOKUPS)</span>
+<span class="nc" id="L146">				.and()</span>
+<span class="nc" id="L147">			.file()</span>
+<span class="nc" id="L148">				.lookup(FILE_LOOKUPS)</span>
+<span class="nc" id="L149">				.and()</span>
+<span class="nc" id="L150">			.classpath()</span>
+<span class="nc" id="L151">				.lookup(CLASSPATH_LOOKUPS);</span>
+		// @formatter:on
+<span class="nc" id="L153">	}</span>
+
+	@Override
+	public void configure(EmailBuilder builder) {
+		// configure resource resolution for attachments, css and images
+<span class="nc" id="L158">		configure(builder.attachments());</span>
+<span class="nc" id="L159">		configure(builder.css().inline());</span>
+<span class="nc" id="L160">		configure(builder.images().inline());</span>
+		// configure mimetype detection for images
+<span class="nc" id="L162">		configure(builder.images().inline().mimetype());</span>
+
+		// @formatter:off
+<span class="nc" id="L165">		builder</span>
+<span class="nc" id="L166">			.autofill()</span>
+<span class="nc" id="L167">				.subject()</span>
+<span class="nc" id="L168">					.defaultValueProperty(&quot;${ogham.email.subject}&quot;)</span>
+<span class="nc" id="L169">					.htmlTitle(true)</span>
+<span class="nc" id="L170">					.text(&quot;${ogham.email.subject-first-line-prefix}&quot;, &quot;Subject:&quot;)</span>
+<span class="nc" id="L171">					.and()</span>
+<span class="nc" id="L172">				.from()</span>
+<span class="nc" id="L173">					.defaultValueProperty(&quot;${ogham.email.from}&quot;, &quot;${mail.smtp.from}&quot;, &quot;${mail.from}&quot;)</span>
+<span class="nc" id="L174">					.and()</span>
+<span class="nc" id="L175">				.to()</span>
+<span class="nc" id="L176">					.defaultValueProperty(&quot;${ogham.email.to}&quot;)</span>
+<span class="nc" id="L177">					.and()</span>
+<span class="nc" id="L178">				.cc()</span>
+<span class="nc" id="L179">					.defaultValueProperty(&quot;${ogham.email.cc}&quot;)</span>
+<span class="nc" id="L180">					.and()</span>
+<span class="nc" id="L181">				.bcc()</span>
+<span class="nc" id="L182">					.defaultValueProperty(&quot;${ogham.email.bcc}&quot;)</span>
+<span class="nc" id="L183">					.and()</span>
+<span class="nc" id="L184">				.and()</span>
+<span class="nc" id="L185">			.css()</span>
+<span class="nc" id="L186">				.inline()</span>
+<span class="nc" id="L187">					.jsoup()</span>
+<span class="nc" id="L188">					.and()</span>
+<span class="nc" id="L189">				.and()</span>
+<span class="nc" id="L190">			.images()</span>
+<span class="nc" id="L191">				.inline()</span>
+<span class="nc" id="L192">					.attach()</span>
+<span class="nc" id="L193">						.cid()</span>
+<span class="nc" id="L194">							.generator(new SequentialIdGenerator())</span>
+<span class="nc" id="L195">							.and()</span>
+<span class="nc" id="L196">						.and()</span>
+<span class="nc" id="L197">					.base64();</span>
+		// @formatter:on
+<span class="nc" id="L199">	}</span>
+
+	@Override
+	public void configure(SmsBuilder builder) {
+		// @formatter:off
+<span class="nc" id="L204">		builder</span>
+<span class="nc" id="L205">			.autofill()</span>
+<span class="nc" id="L206">				.from()</span>
+<span class="nc" id="L207">					.defaultValueProperty(&quot;${ogham.sms.from}&quot;)</span>
+<span class="nc" id="L208">					.and()</span>
+<span class="nc" id="L209">				.to()</span>
+<span class="nc" id="L210">					.defaultValueProperty(&quot;${ogham.sms.to}&quot;)</span>
+<span class="nc" id="L211">					.and()</span>
+<span class="nc" id="L212">				.and()</span>
+<span class="nc" id="L213">			.numbers()</span>
+<span class="nc" id="L214">				.from()</span>
+<span class="nc" id="L215">					.format()</span>
+<span class="nc" id="L216">						.alphanumericCode(&quot;${ogham.sms.from-format-enable-alphanumeric}&quot;, &quot;true&quot;)</span>
+<span class="nc" id="L217">						.shortCode(&quot;${ogham.sms.from-format-enable-shortcode}&quot;, &quot;true&quot;)</span>
+<span class="nc" id="L218">						.internationalNumber(&quot;${ogham.sms.from-format-enable-international}&quot;, &quot;true&quot;)</span>
+<span class="nc" id="L219">						.and()</span>
+<span class="nc" id="L220">					.and()</span>
+<span class="nc" id="L221">				.to()</span>
+<span class="nc" id="L222">					.format()</span>
+<span class="nc" id="L223">						.internationalNumber(&quot;${ogham.sms.to-format-enable-international}&quot;, &quot;true&quot;);</span>
+		// @formatter:on
+<span class="nc" id="L225">	}</span>
+
+	@Override
+	public void configure(MimetypeDetectionBuilder&lt;?&gt; builder) {
+		// @formatter:off
+<span class="nc" id="L230">		builder</span>
+<span class="nc" id="L231">			.tika()</span>
+<span class="nc" id="L232">				.instance(new Tika())</span>
+<span class="nc" id="L233">				.failIfOctetStream(true)</span>
+<span class="nc" id="L234">				.and()</span>
+<span class="nc" id="L235">			.defaultMimetype(&quot;${ogham.mimetype.default-mimetype}&quot;, &quot;application/octet-stream&quot;);</span>
+		// @formatter:on
+<span class="nc" id="L237">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

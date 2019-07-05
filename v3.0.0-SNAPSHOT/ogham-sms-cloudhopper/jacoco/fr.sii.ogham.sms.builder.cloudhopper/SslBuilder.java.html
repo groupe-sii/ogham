@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SslBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Cloudhopper SMS implementation</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">SslBuilder.java</span></div><h1>SslBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import com.cloudhopper.smpp.ssl.SslConfiguration;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+
+/**
+ * Enable or disable SSL configuration and configure how SSL is handled.
+ * 
+ * See
+ * &lt;a href=&quot;https://github.com/fizzed/cloudhopper-smpp/blob/master/SSL.md&quot;&gt;How
+ * to use SSL with cloudhopper-smpp&lt;/a&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SslBuilder extends AbstractParent&lt;CloudhopperBuilder&gt; implements Builder&lt;SslConfiguration&gt; {
+	private SslConfiguration sslConfiguration;
+	private boolean enableSsl;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 */
+	public SslBuilder(CloudhopperBuilder parent) {
+<span class="nc" id="L30">		super(parent);</span>
+<span class="nc" id="L31">	}</span>
+
+	/**
+	 * Enable or disable SSL.
+	 * 
+	 * @param enableSsl
+	 *            true to enable SSL, false to disable
+	 * @return this instance for fluent chaining
+	 */
+	public SslBuilder enable(boolean enableSsl) {
+<span class="nc" id="L41">		this.enableSsl = enableSsl;</span>
+<span class="nc" id="L42">		return this;</span>
+	}
+
+	/**
+	 * Configure SSL handling.
+	 * 
+	 * See &lt;a href=
+	 * &quot;https://github.com/fizzed/cloudhopper-smpp/blob/master/SSL.md&quot;&gt;How to
+	 * use SSL with cloudhopper-smpp&lt;/a&gt;
+	 * 
+	 * If this method is called several times, only the last configuration is
+	 * used.
+	 * 
+	 * @param sslConfiguration
+	 *            the new SSL configuration
+	 * @return this instance for fluent chaining
+	 */
+	public SslBuilder sslConfiguration(SslConfiguration sslConfiguration) {
+<span class="nc" id="L60">		this.sslConfiguration = sslConfiguration;</span>
+<span class="nc" id="L61">		return this;</span>
+	}
+
+	@Override
+	public SslConfiguration build() {
+<span class="nc bnc" id="L66" title="All 2 branches missed.">		return enableSsl ? null : sslConfiguration;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

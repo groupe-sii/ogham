@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AutofillSubjectBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">AutofillSubjectBuilder.java</span></div><h1>AutofillSubjectBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.builder.AbstractAutofillDefaultValueBuilder;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.filler.SubjectFiller;
+import fr.sii.ogham.core.subject.provider.FirstSupportingSubjectProvider;
+import fr.sii.ogham.core.subject.provider.HtmlTitleSubjectProvider;
+import fr.sii.ogham.core.subject.provider.MultiContentSubjectProvider;
+import fr.sii.ogham.core.subject.provider.SubjectProvider;
+import fr.sii.ogham.core.subject.provider.TextPrefixSubjectProvider;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * Configures how to handle missing {@link Email} subject: if no subject is
+ * explicitly defined on the {@link Email}, Ogham will use the result of this
+ * builder configuration to provide a default subject.
+ * 
+ * Default subject can be provided by:
+ * &lt;ul&gt;
+ * &lt;li&gt;Using HTML {@code &lt;title&gt;} header tag as subject&lt;/li&gt;
+ * &lt;li&gt;Using first line text if prefixed&lt;/li&gt;
+ * &lt;li&gt;Using a property value&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder&lt;AutofillSubjectBuilder, AutofillEmailBuilder&gt; implements Builder&lt;MessageFiller&gt; {
+	private boolean enableHtmlTitle;
+	private List&lt;String&gt; firstLinePrefixes;
+	private SubjectProvider customProvider;
+	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
+
+	/**
+	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
+	 * The parent builder is used when calling the {@link #and()} method. The
+	 * {@link EnvironmentBuilder} is used by {@link #build()} method to evaluate
+	 * property values.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            configuration about property resolution
+	 */
+	public AutofillSubjectBuilder(AutofillEmailBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="nc" id="L55">		super(AutofillSubjectBuilder.class, parent);</span>
+<span class="nc" id="L56">		this.environmentBuilder = environmentBuilder;</span>
+<span class="nc" id="L57">		firstLinePrefixes = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L58">	}</span>
+
+	/**
+	 * Enable/disable using HTML {@code &lt;title&gt;} tag to provide a subject on the
+	 * {@link Email} if none was explicitly defined.
+	 * 
+	 * @param enable
+	 *            true to enable, false to disable
+	 * @return this instance for fluent chaining
+	 */
+	public AutofillSubjectBuilder htmlTitle(boolean enable) {
+<span class="nc" id="L69">		enableHtmlTitle = enable;</span>
+<span class="nc" id="L70">		return myself;</span>
+	}
+
+	/**
+	 * Uses first line of text template to define the email subject (only if a
+	 * prefix is defined).
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .text(&quot;Subject:&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .text(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link #build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param firstLinePrefixes
+	 *            one value, or one or serveral property keys
+	 * @return this instance for fluent chaining
+	 */
+	public AutofillSubjectBuilder text(String... firstLinePrefixes) {
+<span class="nc" id="L103">		this.firstLinePrefixes.addAll(Arrays.asList(firstLinePrefixes));</span>
+<span class="nc" id="L104">		return myself;</span>
+	}
+
+	/**
+	 * Extension point to provide any additional subject provider. See
+	 * {@link SubjectProvider} for more information.
+	 * 
+	 * If defined, any previously defined configuration is not used.
+	 * 
+	 * Only one provider can be defined. So you may need to register a
+	 * {@link FirstSupportingSubjectProvider} with the list of your custom
+	 * providers.
+	 * 
+	 * @param provider
+	 *            the provider to use
+	 * @return this instance for fluent chaining
+	 */
+	public AutofillSubjectBuilder provider(SubjectProvider provider) {
+<span class="nc" id="L122">		customProvider = provider;</span>
+<span class="nc" id="L123">		return myself;</span>
+	}
+
+	@Override
+	public MessageFiller build() {
+<span class="nc" id="L128">		return new SubjectFiller(buildProvider());</span>
+	}
+
+	private SubjectProvider buildProvider() {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">		if (customProvider != null) {</span>
+<span class="nc" id="L133">			return customProvider;</span>
+		}
+<span class="nc" id="L135">		FirstSupportingSubjectProvider provider = new FirstSupportingSubjectProvider();</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">		if (!firstLinePrefixes.isEmpty()) {</span>
+<span class="nc" id="L137">			PropertyResolver propertyResolver = environmentBuilder.build();</span>
+<span class="nc" id="L138">			String prefix = evaluate(firstLinePrefixes, propertyResolver, String.class);</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">			if (prefix != null) {</span>
+<span class="nc" id="L140">				provider.addProvider(new TextPrefixSubjectProvider(prefix));</span>
+			}
+		}
+<span class="nc bnc" id="L143" title="All 2 branches missed.">		if (enableHtmlTitle) {</span>
+<span class="nc" id="L144">			provider.addProvider(new HtmlTitleSubjectProvider());</span>
+		}
+<span class="nc" id="L146">		SubjectProvider multiContentProvider = new MultiContentSubjectProvider(provider);</span>
+<span class="nc" id="L147">		provider.addProvider(multiContentProvider);</span>
+<span class="nc" id="L148">		return provider;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

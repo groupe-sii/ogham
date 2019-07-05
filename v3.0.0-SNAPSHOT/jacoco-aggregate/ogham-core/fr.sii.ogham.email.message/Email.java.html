@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Email.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.message</a> &gt; <span class="el_source">Email.java</span></div><h1>Email.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.message;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.capability.HasContentFluent;
+import fr.sii.ogham.core.message.capability.HasRecipients;
+import fr.sii.ogham.core.message.capability.HasRecipientsFluent;
+import fr.sii.ogham.core.message.capability.HasSubject;
+import fr.sii.ogham.core.message.capability.HasSubjectFluent;
+import fr.sii.ogham.core.message.capability.HasToFluent;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+import fr.sii.ogham.core.util.StringUtils;
+import fr.sii.ogham.email.attachment.Attachment;
+
+/**
+ * Email message that contains the following information:
+ * &lt;ul&gt;
+ * &lt;li&gt;The subject of the mail&lt;/li&gt;
+ * &lt;li&gt;The body of the mail (see {@link Content} and sub classes for more
+ * information)&lt;/li&gt;
+ * &lt;li&gt;The sender address&lt;/li&gt;
+ * &lt;li&gt;The list of recipient addresses with the type (to, cc, bcc)&lt;/li&gt;
+ * &lt;li&gt;The list of attachments to join to the mail&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class Email implements Message, HasContentFluent&lt;Email&gt;, HasSubject, HasSubjectFluent&lt;Email&gt;, HasRecipients&lt;Recipient&gt;, HasRecipientsFluent&lt;Email, Recipient&gt;, HasToFluent&lt;Email&gt; {
+	/**
+	 * The subject
+	 */
+	private String subject;
+
+	/**
+	 * The email body content
+	 */
+	private Content content;
+
+	/**
+	 * The sender address
+	 */
+	private EmailAddress from;
+
+	/**
+	 * The list of recipient addresses with the associated type (to, cc, bcc)
+	 */
+	private List&lt;Recipient&gt; recipients;
+
+	/**
+	 * The list of attachments to send with the email
+	 */
+	private List&lt;Attachment&gt; attachments;
+
+	/**
+	 * Instantiates an empty email
+	 */
+	public Email() {
+<span class="fc" id="L65">		super();</span>
+<span class="fc" id="L66">		recipients = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L67">		attachments = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L68">	}</span>
+
+	// ----------------------- Getter/Setters -----------------------//
+
+	@Override
+	public Content getContent() {
+<span class="fc" id="L74">		return content;</span>
+	}
+
+	@Override
+	public void setContent(Content content) {
+<span class="fc" id="L79">		this.content = content;</span>
+<span class="fc" id="L80">	}</span>
+
+	/**
+	 * Get the sender address
+	 * 
+	 * @return the sender address
+	 */
+	public EmailAddress getFrom() {
+<span class="fc" id="L88">		return from;</span>
+	}
+
+	/**
+	 * Set the sender address.
+	 * 
+	 * @param from
+	 *            the sender address
+	 */
+	public void setFrom(EmailAddress from) {
+<span class="fc" id="L98">		this.from = from;</span>
+<span class="fc" id="L99">	}</span>
+
+	/**
+	 * Set the sender address as string (typical address syntax is of the form
+	 * &quot;user@host.domain&quot; or &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot;).
+	 * 
+	 * @param from
+	 *            the sender address string (typical address syntax is of the
+	 *            form &quot;user@host.domain&quot; or &quot;Personal Name
+	 *            &amp;lt;user@host.domain&amp;gt;&quot;).
+	 */
+	public void setFrom(String from) {
+<span class="fc" id="L111">		setFrom(new EmailAddress(from));</span>
+<span class="fc" id="L112">	}</span>
+
+	/**
+	 * Get the list of recipients of the mail.
+	 * 
+	 * @return the list of recipients
+	 */
+	@Override
+	public List&lt;Recipient&gt; getRecipients() {
+<span class="fc" id="L121">		return recipients;</span>
+	}
+
+	/**
+	 * Set the whole list of recipients.
+	 * 
+	 * @param recipients
+	 *            the list of recipients
+	 */
+	@Override
+	public void setRecipients(List&lt;Recipient&gt; recipients) {
+<span class="nc" id="L132">		this.recipients = recipients;</span>
+<span class="nc" id="L133">	}</span>
+
+	/**
+	 * Get the subject of the mail.
+	 * 
+	 * @return the subject of the mail
+	 */
+	public String getSubject() {
+<span class="fc" id="L141">		return subject;</span>
+	}
+
+	/**
+	 * Set the subject of the mail.
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 */
+	public void setSubject(String subject) {
+<span class="fc" id="L151">		this.subject = subject;</span>
+<span class="fc" id="L152">	}</span>
+
+	/**
+	 * Get the list of attachments.
+	 * 
+	 * @return the list of attachments
+	 */
+	public List&lt;Attachment&gt; getAttachments() {
+<span class="fc" id="L160">		return attachments;</span>
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 */
+	public void setAttachments(List&lt;Attachment&gt; attachments) {
+<span class="nc" id="L170">		this.attachments = attachments;</span>
+<span class="nc" id="L171">	}</span>
+
+	// ----------------------- Fluent API -----------------------//
+
+	/**
+	 * Set the subject of the mail.
+	 * 
+	 * @param subject
+	 *            the subject of the mail
+	 * @return this instance for fluent chaining
+	 */
+	public Email subject(String subject) {
+<span class="fc" id="L183">		setSubject(subject);</span>
+<span class="fc" id="L184">		return this;</span>
+	}
+
+	/**
+	 * Set the content (body) of the message.
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent chaining
+	 */
+	public Email content(Content content) {
+<span class="fc" id="L195">		setContent(content);</span>
+<span class="fc" id="L196">		return this;</span>
+	}
+
+	/**
+	 * Set the content (body) of the message.
+	 * 
+	 * @param content
+	 *            the content of the message
+	 * @return this instance for fluent chaining
+	 */
+	public Email content(String content) {
+<span class="fc" id="L207">		return content(new StringContent(content));</span>
+	}
+
+	/**
+	 * Set the sender address. It supports both &quot;user@domain.host&quot; and &quot;Personal
+	 * Name &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * @param from
+	 *            the sender address
+	 * @return this instance for fluent chaining
+	 */
+	public Email from(EmailAddress from) {
+<span class="fc" id="L219">		setFrom(from);</span>
+<span class="fc" id="L220">		return this;</span>
+	}
+
+	/**
+	 * Set the sender address as string (typical address syntax is of the form
+	 * &quot;user@host.domain&quot; or &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot;).
+	 * 
+	 * @param from
+	 *            the sender address string (typical address syntax is of the
+	 *            form &quot;user@host.domain&quot; or &quot;Personal Name
+	 *            &amp;lt;user@host.domain&amp;gt;&quot;).
+	 * @return this instance for fluent chaining
+	 */
+	public Email from(String from) {
+<span class="fc" id="L234">		setFrom(from);</span>
+<span class="fc" id="L235">		return this;</span>
+	}
+
+	/**
+	 * Set the whole list of recipients.
+	 * 
+	 * @param recipients
+	 *            the list of recipients
+	 * @return this instance for fluent chaining
+	 */
+	@Override
+	public Email recipients(List&lt;Recipient&gt; recipients) {
+<span class="nc" id="L247">		setRecipients(recipients);</span>
+<span class="nc" id="L248">		return this;</span>
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 * @return this instance for fluent chaining
+	 */
+	public Email attach(List&lt;Attachment&gt; attachments) {
+<span class="nc" id="L259">		setAttachments(attachments);</span>
+<span class="nc" id="L260">		return this;</span>
+	}
+
+	/**
+	 * Set the whole list of attachments.
+	 * 
+	 * @param attachments
+	 *            the list of attachments
+	 * @return this instance for fluent chaining
+	 */
+	public Email attach(Attachment... attachments) {
+<span class="nc bnc" id="L271" title="All 2 branches missed.">		for (Attachment attachment : attachments) {</span>
+<span class="nc" id="L272">			attach(attachment);</span>
+		}
+<span class="nc" id="L274">		return this;</span>
+	}
+
+	/**
+	 * Add an attachment to join to the mail.
+	 * 
+	 * @param attachment
+	 *            the attachment to add
+	 * @return this instance for fluent chaining
+	 */
+	public Email attach(Attachment attachment) {
+<span class="fc" id="L285">		attachments.add(attachment);</span>
+<span class="fc" id="L286">		return this;</span>
+	}
+
+	/**
+	 * Add a recipient of the mail.
+	 * 
+	 * @param recipients
+	 *            one or several recipient to add
+	 * @return this instance for fluent chaining
+	 */
+	@Override
+	public Email recipient(Recipient... recipients) {
+<span class="fc" id="L298">		this.recipients.addAll(Arrays.asList(recipients));</span>
+<span class="fc" id="L299">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;to&quot; recipient address. It supports both &quot;user@domain.host&quot; and
+	 * &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * @param to
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email to(String... to) {
+<span class="fc bfc" id="L311" title="All 2 branches covered.">		for (String t : to) {</span>
+<span class="fc" id="L312">			to(new EmailAddress(t));</span>
+		}
+<span class="fc" id="L314">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;to&quot; recipient address.
+	 * 
+	 * @param to
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email to(EmailAddress... to) {
+<span class="fc bfc" id="L325" title="All 2 branches covered.">		for (EmailAddress t : to) {</span>
+<span class="fc" id="L326">			recipient(t, RecipientType.TO);</span>
+		}
+<span class="fc" id="L328">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;cc&quot; recipient address. It supports both &quot;user@domain.host&quot; and
+	 * &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * @param cc
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email cc(String... cc) {
+<span class="fc bfc" id="L340" title="All 2 branches covered.">		for (String c : cc) {</span>
+<span class="fc" id="L341">			cc(new EmailAddress(c));</span>
+		}
+<span class="fc" id="L343">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;cc&quot; recipient address.
+	 * 
+	 * @param cc
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email cc(EmailAddress... cc) {
+<span class="fc bfc" id="L354" title="All 2 branches covered.">		for (EmailAddress c : cc) {</span>
+<span class="fc" id="L355">			recipient(c, RecipientType.CC);</span>
+		}
+<span class="fc" id="L357">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;bcc&quot; recipient address. It supports both &quot;user@domain.host&quot; and
+	 * &quot;Personal Name &amp;lt;user@host.domain&amp;gt;&quot; formats.
+	 * 
+	 * @param bcc
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email bcc(String... bcc) {
+<span class="fc bfc" id="L369" title="All 2 branches covered.">		for (String b : bcc) {</span>
+<span class="fc" id="L370">			bcc(new EmailAddress(b));</span>
+		}
+<span class="fc" id="L372">		return this;</span>
+	}
+
+	/**
+	 * Add a &quot;bcc&quot; recipient address.
+	 * 
+	 * @param bcc
+	 *            one or several recipient addresses
+	 * @return this instance for fluent chaining
+	 */
+	public Email bcc(EmailAddress... bcc) {
+<span class="fc bfc" id="L383" title="All 2 branches covered.">		for (EmailAddress b : bcc) {</span>
+<span class="fc" id="L384">			recipient(b, RecipientType.BCC);</span>
+		}
+<span class="fc" id="L386">		return this;</span>
+	}
+
+	/**
+	 * Add a recipient specifying its address and the type (to, cc, bcc).
+	 * 
+	 * @param recipient
+	 *            the recipient address
+	 * @param type
+	 *            the type (to, cc, bcc)
+	 * @return this instance for fluent chaining
+	 */
+	public Email recipient(EmailAddress recipient, RecipientType type) {
+<span class="fc" id="L399">		recipient(new Recipient(recipient, type));</span>
+<span class="fc" id="L400">		return this;</span>
+	}
+
+	// ----------------------- Utilities -----------------------//
+
+	/**
+	 * Converts a list of string to a list of recipients. Each recipient will
+	 * have the type {@link RecipientType#TO}.
+	 * 
+	 * @param to
+	 *            the list of addresses to convert (typical address syntax is of
+	 *            the form &quot;user@host.domain&quot; or &quot;Personal Name
+	 *            &amp;lt;user@host.domain&amp;gt;&quot;)
+	 * @return the list of recipients
+	 */
+	public static Recipient[] toRecipient(List&lt;String&gt; to) {
+<span class="nc" id="L416">		Recipient[] addresses = new Recipient[to.size()];</span>
+<span class="nc" id="L417">		int i = 0;</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">		for (String t : to) {</span>
+<span class="nc" id="L419">			addresses[i++] = new Recipient(t);</span>
+<span class="nc" id="L420">		}</span>
+<span class="nc" id="L421">		return addresses;</span>
+	}
+
+	/**
+	 * Converts a list of {@link EmailAddress} to a list of recipients. Each
+	 * recipient will have the type {@link RecipientType#TO}.
+	 * 
+	 * @param to
+	 *            the list of addresses to convert
+	 * @return the list of recipients
+	 */
+	public static Recipient[] toRecipient(EmailAddress[] to) {
+<span class="nc" id="L433">		Recipient[] addresses = new Recipient[to.length];</span>
+<span class="nc" id="L434">		int i = 0;</span>
+<span class="nc bnc" id="L435" title="All 2 branches missed.">		for (EmailAddress t : to) {</span>
+<span class="nc" id="L436">			addresses[i++] = new Recipient(t);</span>
+		}
+<span class="nc" id="L438">		return addresses;</span>
+	}
+
+	/**
+	 * Converts a list of string to a list of recipients. Each recipient will
+	 * have the type {@link RecipientType#TO}.
+	 * 
+	 * @param to
+	 *            the list of addresses to convert (typical address syntax is of
+	 *            the form &quot;user@host.domain&quot; or &quot;Personal Name
+	 *            &amp;lt;user@host.domain&amp;gt;&quot;)
+	 * @return the list of recipients
+	 */
+	public static Recipient[] toRecipient(String[] to) {
+<span class="nc" id="L452">		Recipient[] addresses = new Recipient[to.length];</span>
+<span class="nc" id="L453">		int i = 0;</span>
+<span class="nc bnc" id="L454" title="All 2 branches missed.">		for (String t : to) {</span>
+<span class="nc" id="L455">			addresses[i++] = new Recipient(t);</span>
+		}
+<span class="nc" id="L457">		return addresses;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L462">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L463">		builder.append(&quot;Email message\r\nFrom: &quot;).append(from);</span>
+<span class="fc bfc" id="L464" title="All 2 branches covered.">		for (RecipientType type : RecipientType.values()) {</span>
+<span class="fc" id="L465">			List&lt;EmailAddress&gt; addresses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">			for (Recipient recipient : recipients) {</span>
+<span class="fc bfc" id="L467" title="All 2 branches covered.">				if (type.equals(recipient.getType())) {</span>
+<span class="fc" id="L468">					addresses.add(recipient.getAddress());</span>
+				}
+<span class="fc" id="L470">			}</span>
+<span class="fc bfc" id="L471" title="All 2 branches covered.">			if (!addresses.isEmpty()) {</span>
+<span class="fc" id="L472">				builder.append(&quot;\r\n&quot;);</span>
+<span class="fc" id="L473">				builder.append(type).append(&quot;: &quot;);</span>
+<span class="fc" id="L474">				builder.append(StringUtils.join(addresses, &quot;, &quot;));</span>
+			}
+		}
+<span class="fc" id="L477">		builder.append(&quot;\r\nSubject: &quot;).append(subject).append(&quot;\r\n----------------------------------\r\n&quot;).append(content);</span>
+<span class="pc bpc" id="L478" title="1 of 4 branches missed.">		if (attachments != null &amp;&amp; !attachments.isEmpty()) {</span>
+<span class="fc" id="L479">			builder.append(&quot;\r\n----------------------------------&quot;).append(&quot;\r\nAttachments: &quot;).append(attachments);</span>
+		}
+<span class="fc" id="L481">		builder.append(&quot;\r\n==================================\r\n&quot;);</span>
+<span class="fc" id="L482">		return builder.toString();</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L487">		return new HashCodeBuilder().append(subject, content, from, recipients, attachments).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L492">		return new EqualsBuilder(this, obj).appendFields(&quot;subject&quot;, &quot;content&quot;, &quot;from&quot;, &quot;recipients&quot;, &quot;attachments&quot;).isEqual();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

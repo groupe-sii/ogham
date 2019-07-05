@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Configure static method imports for Eclipse</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_configure_static_method_imports_for_eclipse">Configure static method imports for Eclipse</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph tab-container">
+<p>Include Ogham test dependency</p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/maven-logo.png" alt="Maven" width="118" height="30"></span></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>fr.sii.ogham<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>ogham-test-utils<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.0.0<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/pom.xml?ts=4">View code of an example pom.xml</a></p>
+</div>
+<div class="paragraph tab">
+<p><span class="image"><img src="../../images//icons/gradlephant-logo.png" alt="Gradle" width="114" height="30"></span></p>
+</div>
+<div class="paragraph tab-container-end">
+<p>-</p>
+</div>
+<div class="paragraph">
+<p>This will include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://junit.org/junit4/">JUnit to run tests</a></p>
+</li>
+<li>
+<p><a href="http://site.mockito.org/">Mockito for mocking Java code</a></p>
+</li>
+<li>
+<p><a href="http://hamcrest.org/JavaHamcrest/">Hamcrest for assertions</a></p>
+</li>
+<li>
+<p><a href="http://www.icegreen.com/greenmail/">GreenMail for mocking a SMTP server</a></p>
+</li>
+<li>
+<p><a href="https://jsmpp.org/">jSMPP for mocking a SMPP server</a></p>
+</li>
+<li>
+<p><a href="http://wiremock.org/">WireMock for mocking HTTP server</a></p>
+</li>
+<li>
+<p><a href="http://spockframework.org/">Spockframework for writing very very readable unit tests</a></p>
+</li>
+<li>
+<p>and some utilities that may be useful</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configure_static_method_imports_for_eclipse"><a class="anchor" href="#_configure_static_method_imports_for_eclipse"></a>Configure static method imports for Eclipse</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ogham uses Hamcrest, Mockito and also provides test utilities. Those utilities provide many static methods. Static methods are convenient for code readability. However, Eclipse needs some configuration to help you to import static methods with autocompletion.</p>
+</div>
+<div class="paragraph">
+<p>In Eclipse, select <span class="menuseq"><b class="menu">Window</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Preferences</b></span>. In the preferences window, select <span class="menuseq"><b class="menu">Java</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Editor</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Content Assist</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Favorites</b></span>.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../images//eclipse/static-import-empty.png" alt="static import empty">
+</div>
+<div class="title">Figure 1. Preferences window</div>
+</div>
+<div class="paragraph">
+<p>To add all static methods of a class, click on <b class="button">New Type&#8230;&#8203;</b>.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../images//eclipse/static-import-newtype.png" alt="static import newtype">
+</div>
+<div class="title">Figure 2. Add all static methods and attributes of a class</div>
+</div>
+<div class="paragraph">
+<p>Type the class that contains the static methods (you can also click the browse button to search classes from classpath).</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../images//eclipse/static-import-newtype-search.png" alt="static import newtype search">
+</div>
+<div class="title">Figure 3. Example for Ogham assersions</div>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../images//eclipse/static-import-search.png" alt="static import search">
+</div>
+<div class="title">Figure 4. Search for a class</div>
+</div>
+<div class="paragraph">
+<p>Click on <b class="button">OK</b></p>
+</div>
+<div class="paragraph">
+<p>Recommended imports to add:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>fr.sii.ogham.assertion.OghamAssertions.*</code></p>
+</li>
+<li>
+<p><code>org.hamcrest.Matchers.*</code></p>
+</li>
+<li>
+<p><code>org.hamcrest.CoreMatchers.*</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Optional assertions that may be useful:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>org.mockito.ArgumentMatchers.*</code></p>
+</li>
+<li>
+<p><code>org.mockito.Mockito.*</code></p>
+</li>
+<li>
+<p><code>org.junit.*</code></p>
+</li>
+<li>
+<p><code>org.junit.Assert.*</code></p>
+</li>
+<li>
+<p><code>org.junit.matchers.JUnitMatchers.*</code></p>
+</li>
+<li>
+<p><code>org.junit.Assume.*</code></p>
+</li>
+<li>
+<p><code>org.assertj.core.api.Assertions.*</code></p>
+</li>
+</ul>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../images//eclipse/static-import-all.png" alt="static import all">
+</div>
+<div class="title">Figure 5. Result with all static imports described above</div>
+</div>
+<div class="paragraph">
+<p>Once you have added all static imports you need, click on <b class="button">OK</b>.</p>
+</div>
+<div class="paragraph">
+<p>Now you can use autocompletion and Eclipse will automatically add the static import.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="../../images//eclipse/static-import-autocomplete.png" alt="static import autocomplete">
+</div>
+<div class="title">Figure 6. Autocompletion now suggests static methods</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Eclipse can rewrite a call to a static method prefixed by class. For example in your code you have <code>OghamAssertions.assertThat</code>, pressing <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>M</kbd></span> shortcut (cursor must be placed in the method name), Eclipse will add the static import and the code is just <code>assertThat</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2019-07-04 14:53:13 RET
+</div>
+</div>
+</body>
+</html>

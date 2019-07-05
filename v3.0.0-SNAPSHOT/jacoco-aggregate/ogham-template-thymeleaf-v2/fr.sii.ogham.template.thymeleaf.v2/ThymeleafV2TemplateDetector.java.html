@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeleafV2TemplateDetector.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v2</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v2</a> &gt; <span class="el_source">ThymeleafV2TemplateDetector.java</span></div><h1>ThymeleafV2TemplateDetector.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v2;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.exception.template.EngineDetectionException;
+import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
+
+/**
+ * Detector that reads the content of the template. If the template contains the
+ * Thymeleaf namespace (http://www.thymeleaf.org) then the detector returns
+ * true. Otherwise it returns false.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ThymeleafV2TemplateDetector implements TemplateEngineDetector {
+<span class="fc" id="L28">	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafV2TemplateDetector.class);</span>
+
+	/**
+	 * The pattern to search into the template
+	 */
+<span class="fc" id="L33">	private static final Pattern NAMESPACE_PATTERN = Pattern.compile(&quot;xmlns[^=]+=\\s*\&quot;http://www.thymeleaf.org\&quot;&quot;);</span>
+
+	/**
+	 * The template resolver used to find the template
+	 */
+	private final ResourceResolver resolver;
+
+	public ThymeleafV2TemplateDetector(ResourceResolver resolver) {
+<span class="fc" id="L41">		super();</span>
+<span class="fc" id="L42">		this.resolver = resolver;</span>
+<span class="fc" id="L43">	}</span>
+
+	@Override
+	public boolean canParse(ResourcePath template, Context ctx) throws EngineDetectionException {
+<span class="nc" id="L47">		LOG.debug(&quot;Checking if Thymeleaf can handle the template {}&quot;, template);</span>
+<span class="nc" id="L48">		Resource resolvedTemplate = getTemplate(template);</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">		if (resolvedTemplate == null) {</span>
+<span class="nc" id="L50">			return false;</span>
+		}
+<span class="nc" id="L52">		try (BufferedReader br = new BufferedReader(new InputStreamReader(resolvedTemplate.getInputStream()))) {</span>
+<span class="nc" id="L53">			boolean containsThymeleafNamespace = containsThymeleafNamespace(br);</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">			if (containsThymeleafNamespace) {</span>
+<span class="nc" id="L55">				LOG.debug(&quot;The template {} contains the namespace http://www.thymeleaf.org. Thymeleaf can be used&quot;, template);</span>
+			} else {
+<span class="nc" id="L57">				LOG.debug(&quot;The template {} doesn't contain the namespace http://www.thymeleaf.org. Thymeleaf can't be used&quot;, template);</span>
+			}
+<span class="nc" id="L59">			return containsThymeleafNamespace;</span>
+<span class="nc" id="L60">		} catch (IOException e) {</span>
+<span class="nc" id="L61">			throw new EngineDetectionException(&quot;Failed to detect if template can be read by thymeleaf&quot;, e);</span>
+		}
+	}
+
+	private boolean containsThymeleafNamespace(BufferedReader br) throws IOException {
+		String line;
+		do {
+<span class="nc" id="L68">			line = br.readLine();</span>
+<span class="nc bnc" id="L69" title="All 4 branches missed.">			if (line != null &amp;&amp; NAMESPACE_PATTERN.matcher(line).find()) {</span>
+<span class="nc" id="L70">				return true;</span>
+			}
+<span class="nc bnc" id="L72" title="All 2 branches missed.">		} while (line != null);</span>
+<span class="nc" id="L73">		return false;</span>
+	}
+
+	private Resource getTemplate(ResourcePath templateName) {
+		try {
+<span class="nc" id="L78">			return resolver.getResource(templateName);</span>
+<span class="nc" id="L79">		} catch (ResourceResolutionException e) {</span>
+<span class="nc" id="L80">			LOG.trace(&quot;Thymeleaf detector can't be applied because &quot; + templateName + &quot; couldn't be resolved&quot;, e);</span>
+<span class="nc" id="L81">			return null;</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

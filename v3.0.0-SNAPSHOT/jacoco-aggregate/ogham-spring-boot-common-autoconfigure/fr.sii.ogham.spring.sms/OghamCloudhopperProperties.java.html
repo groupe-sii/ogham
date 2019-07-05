@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamCloudhopperProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">OghamCloudhopperProperties.java</span></div><h1>OghamCloudhopperProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+@ConfigurationProperties(&quot;ogham.sms.cloudhopper&quot;)
+<span class="fc" id="L7">public class OghamCloudhopperProperties {</span>
+	/**
+	 * The system_id parameter is used to identify an ESME ( External Short
+	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
+	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
+	 * system_id provides an identification of the SMSC to the ESME. This is an
+	 * alias of ogham.sms.smpp.system-id. If both properties are defined, this
+	 * value is used.
+	 * 
+	 */
+	private String systemId;
+	/**
+	 * The password parameter is used by the SMSC (Short Message Service Centre)
+	 * to authenticate the identity of the binding ESME (External Short Message
+	 * Entity). The Service Provider may require ESME’s to provide a password
+	 * when binding to the SMSC. This password is normally issued by the SMSC
+	 * system administrator. The password parameter may also be used by the ESME
+	 * to authenticate the identity of the binding SMSC (e.g. in the case of the
+	 * outbind operation). This is an alias of ogham.sms.smpp.password. If both
+	 * properties are defined, this value is used.
+	 */
+	private String password;
+	/**
+	 * The SMPP server host (IP or address). This is an alias of
+	 * ogham.sms.smpp.host. If both properties are defined, this value is used.
+	 */
+	private String host;
+	/**
+	 * The SMPP server port. This is an alias of ogham.sms.smpp.port. If both
+	 * properties are defined, this value is used.
+	 */
+	private Integer port;
+	/**
+	 * The version of the SMPP protocol
+	 */
+<span class="fc" id="L42">	private String interfaceVersion = &quot;3.4&quot;;</span>
+	/**
+	 * The default charset used by the Java application. This charset is used
+	 * when charset detection could not accurately detect the charset used by
+	 * the message to send through Ogham
+	 */
+<span class="fc" id="L48">	private String defaultAppCharset = &quot;UTF-8&quot;;</span>
+	/**
+	 * The charset used by the SMPP protocol. A conversion will be done from the
+	 * charset used by the Java application (see
+	 * ogham.sms.cloudhopper.app-charset for more information) to the
+	 * Cloudhopper charset.
+	 */
+<span class="fc" id="L55">	private String smppCharset = &quot;GSM&quot;;</span>
+<span class="fc" id="L56">	@NestedConfigurationProperty</span>
+	private SessionProperties session = new SessionProperties();
+
+<span class="fc" id="L59">	public static class SessionProperties {</span>
+		/**
+		 * A name for the session (used to name threads used by Cloudhopper).
+		 */
+		private String sessionName;
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait for the
+		 * success of a bind attempt to the SMSC. Defaults to 5000.
+		 */
+<span class="fc" id="L68">		private Long bindTimeout = 5000L;</span>
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait for a
+		 * establishing the connection. Defaults to 10000.
+		 * 
+		 */
+<span class="fc" id="L74">		private Long connectTimeout = 10000L;</span>
+		/**
+		 * Set the amount of time (milliseconds) to wait for an endpoint to
+		 * respond to a request before it expires. Defaults to disabled (-1).
+		 * 
+		 */
+<span class="fc" id="L80">		private Long requestExpiryTimeout = -1L;</span>
+		/**
+		 * Sets the amount of time (milliseconds) between executions of
+		 * monitoring the window for requests that expire. It's recommended that
+		 * this generally either matches or is half the value of
+		 * requestExpiryTimeout. Therefore, at worst a request would could take
+		 * up 1.5X the requestExpiryTimeout to clear out. Defaults to -1
+		 * (disabled).
+		 * 
+		 */
+<span class="fc" id="L90">		private Long windowMonitorInterval = -1L;</span>
+		/**
+		 * Sets the maximum number of requests permitted to be outstanding
+		 * (unacknowledged) at a given time. Must be &gt; 0. Defaults to 1.
+		 * 
+		 */
+<span class="fc" id="L96">		private Integer windowSize = 1;</span>
+		/**
+		 * Set the amount of time (milliseconds) to wait until a slot opens up
+		 * in the sendWindow. Defaults to 60000.
+		 * 
+		 */
+<span class="fc" id="L102">		private Long windowWaitTimeout = 0L;</span>
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait for bytes to
+		 * be written when creating a new SMPP session. Defaults to 0 (no
+		 * timeout, for backwards compatibility).
+		 * 
+		 */
+<span class="fc" id="L109">		private Long writeTimeout = 0L;</span>
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait until a
+		 * valid response is received when a &quot;submit&quot; request is synchronously
+		 * sends to the remote endpoint. The timeout value includes both waiting
+		 * for a &quot;window&quot; slot, the time it takes to transmit the actual bytes
+		 * on the socket, and for the remote endpoint to send a response back.
+		 * Defaults to 5000.
+		 * 
+		 */
+<span class="fc" id="L119">		private Long responseTimeout = 5000L;</span>
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait until the
+		 * session is unbounded, waiting up to a specified period of
+		 * milliseconds for an unbind response from the remote endpoint.
+		 * Regardless of whether a proper unbind response was received, the
+		 * socket/channel is closed. Defaults to 5000.
+		 * 
+		 */
+<span class="fc" id="L128">		private Long unbindTimeout = 5000L;</span>
+<span class="fc" id="L129">		@NestedConfigurationProperty</span>
+		private ConnectRetryProperties connectRetry = new ConnectRetryProperties();
+
+		public String getSessionName() {
+<span class="fc" id="L133">			return sessionName;</span>
+		}
+
+		public void setSessionName(String sessionName) {
+<span class="nc" id="L137">			this.sessionName = sessionName;</span>
+<span class="nc" id="L138">		}</span>
+
+		public Long getBindTimeout() {
+<span class="fc" id="L141">			return bindTimeout;</span>
+		}
+
+		public void setBindTimeout(Long bindTimeout) {
+<span class="nc" id="L145">			this.bindTimeout = bindTimeout;</span>
+<span class="nc" id="L146">		}</span>
+
+		public Long getConnectTimeout() {
+<span class="fc" id="L149">			return connectTimeout;</span>
+		}
+
+		public void setConnectTimeout(Long connectTime) {
+<span class="nc" id="L153">			this.connectTimeout = connectTime;</span>
+<span class="nc" id="L154">		}</span>
+
+		public Long getRequestExpiryTimeout() {
+<span class="fc" id="L157">			return requestExpiryTimeout;</span>
+		}
+
+		public void setRequestExpiryTimeout(Long requestExpiryTimeout) {
+<span class="nc" id="L161">			this.requestExpiryTimeout = requestExpiryTimeout;</span>
+<span class="nc" id="L162">		}</span>
+
+		public Long getWindowMonitorInterval() {
+<span class="fc" id="L165">			return windowMonitorInterval;</span>
+		}
+
+		public void setWindowMonitorInterval(Long windowMonitorInterval) {
+<span class="nc" id="L169">			this.windowMonitorInterval = windowMonitorInterval;</span>
+<span class="nc" id="L170">		}</span>
+
+		public Integer getWindowSize() {
+<span class="fc" id="L173">			return windowSize;</span>
+		}
+
+		public void setWindowSize(Integer windowSize) {
+<span class="nc" id="L177">			this.windowSize = windowSize;</span>
+<span class="nc" id="L178">		}</span>
+
+		public Long getWindowWaitTimeout() {
+<span class="fc" id="L181">			return windowWaitTimeout;</span>
+		}
+
+		public void setWindowWaitTimeout(Long windowWaitTimeout) {
+<span class="nc" id="L185">			this.windowWaitTimeout = windowWaitTimeout;</span>
+<span class="nc" id="L186">		}</span>
+
+		public Long getWriteTimeout() {
+<span class="fc" id="L189">			return writeTimeout;</span>
+		}
+
+		public void setWriteTimeout(Long writeTimeout) {
+<span class="nc" id="L193">			this.writeTimeout = writeTimeout;</span>
+<span class="nc" id="L194">		}</span>
+
+		public Long getResponseTimeout() {
+<span class="fc" id="L197">			return responseTimeout;</span>
+		}
+
+		public void setResponseTimeout(Long responseTimeout) {
+<span class="nc" id="L201">			this.responseTimeout = responseTimeout;</span>
+<span class="nc" id="L202">		}</span>
+
+		public Long getUnbindTimeout() {
+<span class="fc" id="L205">			return unbindTimeout;</span>
+		}
+
+		public void setUnbindTimeout(Long unbindTimeout) {
+<span class="nc" id="L209">			this.unbindTimeout = unbindTimeout;</span>
+<span class="nc" id="L210">		}</span>
+
+		public ConnectRetryProperties getConnectRetry() {
+<span class="fc" id="L213">			return connectRetry;</span>
+		}
+
+		public void setConnectRetry(ConnectRetryProperties connectRetry) {
+<span class="nc" id="L217">			this.connectRetry = connectRetry;</span>
+<span class="nc" id="L218">		}</span>
+
+	}
+
+<span class="fc" id="L222">	public static class ConnectRetryProperties {</span>
+		/**
+		 * Set the maximum number of attempts for establishing a connection.
+		 */
+<span class="fc" id="L226">		private Integer connectMaxRetry = 10;</span>
+		/**
+		 * Set the delay between two attemps for establishing a connection (in
+		 * milliseconds).
+		 */
+<span class="fc" id="L231">		private Long connectRetryDelay = 500L;</span>
+
+		public Integer getConnectMaxRetry() {
+<span class="fc" id="L234">			return connectMaxRetry;</span>
+		}
+
+		public void setConnectMaxRetry(Integer connectMaxRetry) {
+<span class="nc" id="L238">			this.connectMaxRetry = connectMaxRetry;</span>
+<span class="nc" id="L239">		}</span>
+
+		public Long getConnectRetryDelay() {
+<span class="fc" id="L242">			return connectRetryDelay;</span>
+		}
+
+		public void setConnectRetryDelay(Long connectRetryDelay) {
+<span class="nc" id="L246">			this.connectRetryDelay = connectRetryDelay;</span>
+<span class="nc" id="L247">		}</span>
+
+	}
+
+	public String getSystemId() {
+<span class="fc" id="L252">		return systemId;</span>
+	}
+
+	public void setSystemId(String systemId) {
+<span class="nc" id="L256">		this.systemId = systemId;</span>
+<span class="nc" id="L257">	}</span>
+
+	public String getPassword() {
+<span class="fc" id="L260">		return password;</span>
+	}
+
+	public void setPassword(String password) {
+<span class="nc" id="L264">		this.password = password;</span>
+<span class="nc" id="L265">	}</span>
+
+	public String getHost() {
+<span class="fc" id="L268">		return host;</span>
+	}
+
+	public void setHost(String host) {
+<span class="fc" id="L272">		this.host = host;</span>
+<span class="fc" id="L273">	}</span>
+
+	public Integer getPort() {
+<span class="fc" id="L276">		return port;</span>
+	}
+
+	public void setPort(Integer port) {
+<span class="nc" id="L280">		this.port = port;</span>
+<span class="nc" id="L281">	}</span>
+
+	public String getInterfaceVersion() {
+<span class="fc" id="L284">		return interfaceVersion;</span>
+	}
+
+	public void setInterfaceVersion(String interfaceVersion) {
+<span class="fc" id="L288">		this.interfaceVersion = interfaceVersion;</span>
+<span class="fc" id="L289">	}</span>
+
+	public SessionProperties getSession() {
+<span class="fc" id="L292">		return session;</span>
+	}
+
+	public void setSession(SessionProperties session) {
+<span class="nc" id="L296">		this.session = session;</span>
+<span class="nc" id="L297">	}</span>
+
+	public String getDefaultAppCharset() {
+<span class="fc" id="L300">		return defaultAppCharset;</span>
+	}
+
+	public void setDefaultAppCharset(String appEncoding) {
+<span class="nc" id="L304">		this.defaultAppCharset = appEncoding;</span>
+<span class="nc" id="L305">	}</span>
+
+	public String getSmppCharset() {
+<span class="fc" id="L308">		return smppCharset;</span>
+	}
+
+	public void setSmppCharset(String smppEncoding) {
+<span class="nc" id="L312">		this.smppCharset = smppEncoding;</span>
+<span class="nc" id="L313">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

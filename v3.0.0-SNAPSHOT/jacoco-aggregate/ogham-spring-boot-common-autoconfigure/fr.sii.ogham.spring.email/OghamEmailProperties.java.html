@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamEmailProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.email</a> &gt; <span class="el_source">OghamEmailProperties.java</span></div><h1>OghamEmailProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.email;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import fr.sii.ogham.spring.common.OghamResolutionProperties;
+import fr.sii.ogham.spring.common.OghamTemplateProperties;
+
+@ConfigurationProperties(&quot;ogham.email&quot;)
+<span class="fc" id="L10">public class OghamEmailProperties implements OghamTemplateProperties {</span>
+	/**
+	 * Configures how to handle missing email sender address: if no sender
+	 * address is explicitly defined on the email, Ogham will use this value.
+	 */
+	private String from;
+	/**
+	 * Configures how to handle missing email subject: if no subject is
+	 * explicitly defined on the email, Ogham will use this value.
+	 */
+	private String subject;
+	/**
+	 * Subject can be determined using the first line of text template if
+	 * prefixed by this value
+	 */
+<span class="fc" id="L25">	private String subjectFirstLinePrefix = &quot;Subject:&quot;;</span>
+	/**
+	 * Configures how to handle missing email recipient address: if no &quot;to&quot;
+	 * address is explicitly defined on the email, Ogham will use this value.
+	 */
+	private String to;
+	/**
+	 * Configures how to handle missing email recipient address: if no &quot;cc&quot;
+	 * address is explicitly defined on the email, Ogham will use this value.
+	 */
+	private String cc;
+	/**
+	 * Configures how to handle missing email recipient address: if no &quot;bcc&quot;
+	 * address is explicitly defined on the email, Ogham will use this value.
+	 */
+	private String bcc;
+<span class="fc" id="L41">	@NestedConfigurationProperty</span>
+	private OghamResolutionProperties freemarker = new OghamResolutionProperties();
+<span class="fc" id="L43">	@NestedConfigurationProperty</span>
+	private OghamResolutionProperties thymeleaf = new OghamResolutionProperties();
+<span class="fc" id="L45">	@NestedConfigurationProperty</span>
+	private OghamResolutionProperties template = new OghamResolutionProperties();
+
+	public String getFrom() {
+<span class="nc" id="L49">		return from;</span>
+	}
+
+	public void setFrom(String from) {
+<span class="nc" id="L53">		this.from = from;</span>
+<span class="nc" id="L54">	}</span>
+
+	public String getSubject() {
+<span class="nc" id="L57">		return subject;</span>
+	}
+
+	public void setSubject(String subject) {
+<span class="nc" id="L61">		this.subject = subject;</span>
+<span class="nc" id="L62">	}</span>
+
+	public String getSubjectFirstLinePrefix() {
+<span class="nc" id="L65">		return subjectFirstLinePrefix;</span>
+	}
+
+	public void setSubjectFirstLinePrefix(String subjectFirstLinePrefix) {
+<span class="nc" id="L69">		this.subjectFirstLinePrefix = subjectFirstLinePrefix;</span>
+<span class="nc" id="L70">	}</span>
+
+	public String getTo() {
+<span class="nc" id="L73">		return to;</span>
+	}
+
+	public void setTo(String to) {
+<span class="nc" id="L77">		this.to = to;</span>
+<span class="nc" id="L78">	}</span>
+
+	public String getCc() {
+<span class="nc" id="L81">		return cc;</span>
+	}
+
+	public void setCc(String cc) {
+<span class="nc" id="L85">		this.cc = cc;</span>
+<span class="nc" id="L86">	}</span>
+
+	public String getBcc() {
+<span class="nc" id="L89">		return bcc;</span>
+	}
+
+	public void setBcc(String bcc) {
+<span class="nc" id="L93">		this.bcc = bcc;</span>
+<span class="nc" id="L94">	}</span>
+
+	public OghamResolutionProperties getFreemarker() {
+<span class="fc" id="L97">		return freemarker;</span>
+	}
+
+	public void setFreemarker(OghamResolutionProperties freemarker) {
+<span class="nc" id="L101">		this.freemarker = freemarker;</span>
+<span class="nc" id="L102">	}</span>
+
+	public OghamResolutionProperties getThymeleaf() {
+<span class="fc" id="L105">		return thymeleaf;</span>
+	}
+
+	public void setThymeleaf(OghamResolutionProperties thymeleaf) {
+<span class="fc" id="L109">		this.thymeleaf = thymeleaf;</span>
+<span class="fc" id="L110">	}</span>
+
+	public OghamResolutionProperties getTemplate() {
+<span class="fc" id="L113">		return template;</span>
+	}
+
+	public void setTemplate(OghamResolutionProperties template) {
+<span class="fc" id="L117">		this.template = template;</span>
+<span class="fc" id="L118">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<title>Hidden complexity</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="..//javascripts/steps.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="..//javascripts/tabcontainer.js"></script>
+<link rel="stylesheet" type="text/css" href="..//styles/custom-styles.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/tabcontainer.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/steps.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/sourcecode/collapse-lines.css" />
+<link rel="stylesheet" type="text/css" href="..//styles/sourcecode/highlight-lines.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_hidden_complexity">Hidden complexity</a>
+<ul class="sectlevel2">
+<li><a href="#_mime_type_detection">Mime Type detection</a></li>
+<li><a href="#_sms">SMS</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_hidden_complexity"><a class="anchor" href="#_hidden_complexity"></a>Hidden complexity</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>One of the main aim of the library is to hide the implementation complexity. It provides automatic behaviors to simplify the development and focus on useful code.</p>
+</div>
+<div class="sect2">
+<h3 id="_mime_type_detection"><a class="anchor" href="#_mime_type_detection"></a>Mime Type detection</h3>
+<div class="paragraph">
+<p>When you send an email, it is really important to indicate what is the type of the message (html, text or maybe anything else). The library automatically detects for you the <a href="https://en.wikipedia.org/wiki/Internet_media_type">Mime Type</a> of the email content and add this information into the real sent mail for you.</p>
+</div>
+<div class="paragraph">
+<p>Moreover, every attached file must also provide the Mime Type in order to be correctly handled by the email client. Besides, some email clients can provide a preview of attached file. This can be possible only by providing the right Mime Type. The library will detect the Mime Type for every attached file for you.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sms"><a class="anchor" href="#_sms"></a>SMS</h3>
+<div class="paragraph">
+<p>There are some implementation constraints for sending a SMS following SMPP protocol. The library will help you handle these constraints.</p>
+</div>
+<div class="sect3">
+<h4 id="_phone_number_ton_and_npi_policy"><a class="anchor" href="#_phone_number_ton_and_npi_policy"></a>Phone number TON and NPI policy</h4>
+<div class="paragraph">
+<p>SMPP defines two main properties related to the sender and recipient phone number formats: <a href="https://docs.aerialink.net/api/smpp/ton-npi-settings/">TON and NPI</a>.</p>
+</div>
+<div class="paragraph">
+<p>The library provides a default policy : Just pass the phone numbers and the library will guess the TON and NPI. You can also directly provide the TON and NPI in order to prevent this automatic behavior.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_character_encoding"><a class="anchor" href="#_character_encoding"></a>Character encoding</h4>
+<div class="paragraph">
+<p>Sending SMS with the wrong charset might cause your message to be unreadable. But SMPP Charset are quite different from the common charset definition. The charset resolution is done using a simple mapping between Java charsets and SMPP charsets. By default, Java uses UTF-8 charset and the librairy will map to the SMPP charset <a href="https://en.wikipedia.org/wiki/GSM_03.38">GSM</a>. The library offers you the ability to provide your own charset when sending SMS if need.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-11-22 22:41:06 RET
+</div>
+</div>
+</body>
+</html>

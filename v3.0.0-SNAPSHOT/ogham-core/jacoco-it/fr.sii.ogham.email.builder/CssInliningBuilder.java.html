@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CssInliningBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ogham Core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">CssInliningBuilder.java</span></div><h1>CssInliningBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
+import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
+import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
+import fr.sii.ogham.core.resource.path.RelativePathResolver;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+import fr.sii.ogham.html.inliner.CssInliner;
+import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
+import fr.sii.ogham.html.translator.InlineCssTranslator;
+
+/**
+ * Configures how CSS are applied on HTML emails.
+ * 
+ * Inlining CSS means that CSS styles are loaded and applied on the matching
+ * HTML nodes using the {@code style} HTML attribute.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class CssInliningBuilder extends AbstractParent&lt;CssHandlingBuilder&gt; implements ResourceResolutionBuilder&lt;CssInliningBuilder&gt;, Builder&lt;ContentTranslator&gt; {
+<span class="nc" id="L35">	private static final Logger LOG = LoggerFactory.getLogger(CssInliningBuilder.class);</span>
+
+	private ResourceResolutionBuilderHelper&lt;CssInliningBuilder&gt; resourceResolutionBuilderHelper;
+	private boolean useJsoup;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param environmentBuilder
+	 *            the configuration for property resolution and evaluation
+	 */
+	public CssInliningBuilder(CssHandlingBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
+<span class="nc" id="L51">		super(parent);</span>
+<span class="nc" id="L52">		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper&lt;&gt;(this, environmentBuilder);</span>
+<span class="nc" id="L53">	}</span>
+
+	/**
+	 * Enable CSS inlining: CSS styles are loaded and applied on the matching
+	 * HTML nodes using the {@code style} HTML attribute.
+	 * 
+	 * The implementation uses &lt;a href=&quot;https://jsoup.org/&quot;&gt;jsoup&lt;/a&gt; to parse
+	 * HTML content.
+	 * 
+	 * @return this instance for fluent chaining
+	 */
+	public CssInliningBuilder jsoup() {
+<span class="nc" id="L65">		useJsoup = true;</span>
+<span class="nc" id="L66">		return this;</span>
+	}
+
+	@Override
+	public ClassPathResolutionBuilder&lt;CssInliningBuilder&gt; classpath() {
+<span class="nc" id="L71">		return resourceResolutionBuilderHelper.classpath();</span>
+	}
+
+	@Override
+	public FileResolutionBuilder&lt;CssInliningBuilder&gt; file() {
+<span class="nc" id="L76">		return resourceResolutionBuilderHelper.file();</span>
+	}
+
+	@Override
+	public StringResolutionBuilder&lt;CssInliningBuilder&gt; string() {
+<span class="nc" id="L81">		return resourceResolutionBuilderHelper.string();</span>
+	}
+
+	@Override
+	public CssInliningBuilder resolver(ResourceResolver resolver) {
+<span class="nc" id="L86">		return resourceResolutionBuilderHelper.resolver(resolver);</span>
+	}
+
+	@Override
+	public ContentTranslator build() {
+<span class="nc" id="L91">		ResourceResolver resourceResolver = buildResolver();</span>
+<span class="nc" id="L92">		CssInliner cssInliner = buildInliner();</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">		if (cssInliner == null) {</span>
+<span class="nc" id="L94">			LOG.info(&quot;CSS won't be applied on HTML content of your emails because no inliner is configured&quot;);</span>
+<span class="nc" id="L95">			return null;</span>
+		}
+<span class="nc" id="L97">		return new InlineCssTranslator(cssInliner, resourceResolver, buildRelativePathProvider());</span>
+	}
+
+	private CssInliner buildInliner() {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">		if (useJsoup) {</span>
+<span class="nc" id="L102">			return new JsoupCssInliner();</span>
+		}
+<span class="nc" id="L104">		return null;</span>
+	}
+
+	private ResourceResolver buildResolver() {
+<span class="nc" id="L108">		List&lt;ResourceResolver&gt; resolvers = resourceResolutionBuilderHelper.buildResolvers();</span>
+<span class="nc" id="L109">		return new FirstSupportingResourceResolver(resolvers);</span>
+	}
+
+	private RelativePathResolver buildRelativePathProvider() {
+<span class="nc" id="L113">		return new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

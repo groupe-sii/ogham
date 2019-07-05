@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MultiContentTranslator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.translator.content</a> &gt; <span class="el_source">MultiContentTranslator.java</span></div><h1>MultiContentTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.translator.content;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MultiContent;
+
+/**
+ * &lt;p&gt;
+ * Decorator that is able to handle {@link MultiContent}. A {@link MultiContent}
+ * can provide several contents to put into the final message. For example,
+ * emails can send both HTML and text content.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * This implementation calls the delegate content translator to apply
+ * translation on each sub content of the {@link MultiContent}. It can be useful
+ * to apply content translations on every sub content like it should be applied
+ * for normal content.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The same translator is applied for all sub contents.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the content is not a {@link MultiContent}, then the content is returned
+ * as-is.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MultiContentTranslator implements ContentTranslator {
+<span class="fc" id="L34">	private static final Logger LOG = LoggerFactory.getLogger(MultiContentTranslator.class);</span>
+
+	/**
+	 * The content translator to apply on each sub content
+	 */
+	private ContentTranslator delegate;
+
+	public MultiContentTranslator(ContentTranslator delegate) {
+<span class="fc" id="L42">		super();</span>
+<span class="fc" id="L43">		this.delegate = delegate;</span>
+<span class="fc" id="L44">	}</span>
+
+	@Override
+	public Content translate(Content content) throws ContentTranslatorException {
+<span class="fc bfc" id="L48" title="All 2 branches covered.">		if (content instanceof MultiContent) {</span>
+<span class="fc" id="L49">			MultiContent result = new MultiContent();</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">			for (Content c : ((MultiContent) content).getContents()) {</span>
+<span class="fc" id="L51">				LOG.debug(&quot;Translate the sub content {} using {}&quot;, c, delegate);</span>
+<span class="fc" id="L52">				Content translated = delegate.translate(c);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">				if(translated!=null) {</span>
+<span class="fc" id="L54">					LOG.debug(&quot;Sub content {} skipped&quot;, c);</span>
+<span class="fc" id="L55">					result.addContent(translated);</span>
+				}
+<span class="fc" id="L57">			}</span>
+<span class="fc" id="L58">			return result;</span>
+		} else {
+<span class="fc" id="L60">			LOG.trace(&quot;Not a MultiContent =&gt; skip it&quot;);</span>
+<span class="fc" id="L61">			return content;</span>
+		}
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L67">		return &quot;MultiContentTranslator&quot;;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
