@@ -5,6 +5,7 @@ import org.apache.tika.config.TikaConfig;
 
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.Parent;
+import fr.sii.ogham.core.builder.charset.CharsetDetectorBuilder;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**
@@ -64,4 +65,42 @@ public interface TikaBuilder<P> extends Parent<P>, Builder<MimeTypeProvider> {
 	 * @return this instance for fluent chaining
 	 */
 	TikaBuilder<P> failIfOctetStream(boolean fail);
+
+	/**
+	 * Tika detection based on string may lead to inaccurate results
+	 * because the encoding used to read the content differs from
+	 * the encoding used to convert string to byte array.
+	 * 
+	 * Example of usage to define a default charset based on priority
+	 * on a property and UTF-8 by default:
+	 * <pre>
+	 * <code>
+	 * charset()
+	 *   .defaultCharset("${ogham.mimetype.tika.default-charset}", "UTF-8")
+	 * </code>
+	 * </pre>
+	 * 
+	 * @return builder to configure charset automatic detection
+	 */
+	CharsetDetectorBuilder<TikaBuilder<P>> charset();
+	
+	/**
+	 * NOTE: this is mostly for advance usage (when creating a custom module).
+	 * 
+	 * Inherits environment configuration from another builder. This is useful
+	 * for configuring independently different parts of Ogham but keeping a
+	 * whole coherence.
+	 * 
+	 * The same instance is shared meaning that all changes done here will also
+	 * impact the other builder.
+	 * 
+	 * <p>
+	 * If a previous builder was defined (by calling {@link #charset()} for
+	 * example), the new builder will override it.
+	 * 
+	 * @param builder
+	 *            the builder to inherit
+	 * @return this instance for fluent chaining
+	 */
+	TikaBuilder<P> charset(CharsetDetectorBuilder<?> builder);
 }

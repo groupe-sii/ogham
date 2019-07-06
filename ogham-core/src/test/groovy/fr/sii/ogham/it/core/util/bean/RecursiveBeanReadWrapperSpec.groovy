@@ -2,13 +2,10 @@ package fr.sii.ogham.it.core.util.bean
 
 import static fr.sii.ogham.mock.bean.AssetInventoryGraphBuilder.shipRegistry
 
-import fr.sii.ogham.core.util.bean.MapBeanReadWrapper
 import fr.sii.ogham.core.util.bean.MapRecursiveBeanReadWrapperFactory
 import fr.sii.ogham.core.util.bean.RecursiveBeanReadWrapper
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class RecursiveBeanReadMethodBeanWrapperSpec extends Specification {
 	def "wrap objects (#shipIndex #crewIndex #cargoIndex) recursively"() {
 		given:

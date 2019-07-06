@@ -2,6 +2,7 @@ package fr.sii.ogham.core.mimetype;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -60,6 +61,12 @@ public class OverrideMimetypeProvider implements MimeTypeProvider {
 	@Override
 	public MimeType detect(String content) throws MimeTypeDetectionException {
 		MimeType mimeType = detector.detect(content);
+		return override(mimeType);
+	}
+
+	@Override
+	public MimeType detect(String content, Charset charset) throws MimeTypeDetectionException {
+		MimeType mimeType = detector.detect(content, charset);
 		return override(mimeType);
 	}
 

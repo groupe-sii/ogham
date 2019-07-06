@@ -3,6 +3,7 @@ package fr.sii.ogham.core.mimetype;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -12,6 +13,8 @@ import org.apache.tika.mime.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.charset.CharsetDetector;
+import fr.sii.ogham.core.charset.FixedCharsetDetector;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 
 /**
@@ -38,11 +41,30 @@ public class TikaProvider implements MimeTypeProvider {
 	private final boolean failIfOctetStream;
 
 	/**
+	 * Used to automatically detect charset
+	 */
+	private final CharsetDetector charsetDetector;
+
+	/**
 	 * Initialize the provider with default Tika instance and configuration. It
 	 * fails if application/octet-stream mimetype is returned
 	 */
 	public TikaProvider() {
 		this(new Tika(), true);
+	}
+
+	/**
+	 * Initialize the provider with the specified Tika instance. No charset
+	 * detection is used, always returning UTF-8.
+	 * 
+	 * @param tika
+	 *            the Tika instance to use
+	 * @param failIfOctetStream
+	 *            Whether to fail if the default mimetype is return (this may
+	 *            indicate that detection hasn't work).
+	 */
+	public TikaProvider(Tika tika, boolean failIfOctetStream) {
+		this(tika, failIfOctetStream, new FixedCharsetDetector());
 	}
 
 	/**
@@ -53,11 +75,14 @@ public class TikaProvider implements MimeTypeProvider {
 	 * @param failIfOctetStream
 	 *            Whether to fail if the default mimetype is return (this may
 	 *            indicate that detection hasn't work).
+	 * @param charsetDetector
+	 *            used to detect content encoding
 	 */
-	public TikaProvider(Tika tika, boolean failIfOctetStream) {
+	public TikaProvider(Tika tika, boolean failIfOctetStream, CharsetDetector charsetDetector) {
 		super();
 		this.tika = tika;
 		this.failIfOctetStream = failIfOctetStream;
+		this.charsetDetector = charsetDetector;
 	}
 
 	@Override
@@ -99,7 +124,20 @@ public class TikaProvider implements MimeTypeProvider {
 	public MimeType detect(String content) throws MimeTypeDetectionException {
 		try {
 			LOG.debug("Detect mime type from stream");
-			String mimetype = tika.detect(content.getBytes());
+			String mimetype = tika.detect(content.getBytes(charsetDetector.detect(content)));
+			LOG.debug("Detect mime type from stream: {}", mimetype);
+			checkMimeType(mimetype);
+			return new MimeType(mimetype);
+		} catch (MimeTypeParseException e) {
+			throw new MimeTypeDetectionException("Invalid mimetype", e);
+		}
+	}
+
+	@Override
+	public MimeType detect(String content, Charset charset) throws MimeTypeDetectionException {
+		try {
+			LOG.debug("Detect mime type from stream");
+			String mimetype = tika.detect(content.getBytes(charset));
 			LOG.debug("Detect mime type from stream: {}", mimetype);
 			checkMimeType(mimetype);
 			return new MimeType(mimetype);

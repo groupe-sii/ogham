@@ -4,6 +4,10 @@ import org.apache.tika.Tika;
 import org.apache.tika.config.TikaConfig;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.charset.CharsetDetectorBuilder;
+import fr.sii.ogham.core.builder.charset.CharsetDetectorBuilderDelegate;
+import fr.sii.ogham.core.builder.charset.SimpleCharsetDetectorBuilder;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.TikaProvider;
 
@@ -32,15 +36,21 @@ import fr.sii.ogham.core.mimetype.TikaProvider;
 public class SimpleTikaBuilder<P> extends AbstractParent<P> implements TikaBuilder<P> {
 	private Tika tika;
 	private boolean failIfOctetStream = true;
+	private EnvironmentBuilder<?> environmentBuilder;
+	private CharsetDetectorBuilder<TikaBuilder<P>> charsetDetectorBuilder;
 
 	/**
 	 * The parent builder (it is used when calling {@link #and()} method).
 	 * 
 	 * @param parent
 	 *            the parent builder
+	 * @param environmentBuilder
+	 *            used to evaluate property values
 	 */
-	public SimpleTikaBuilder(P parent) {
+	public SimpleTikaBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
+		this.environmentBuilder = environmentBuilder;
+		charset();
 	}
 
 	@Override
@@ -56,8 +66,22 @@ public class SimpleTikaBuilder<P> extends AbstractParent<P> implements TikaBuild
 	}
 
 	@Override
+	public CharsetDetectorBuilder<TikaBuilder<P>> charset() {
+		if (charsetDetectorBuilder == null) {
+			charsetDetectorBuilder = new SimpleCharsetDetectorBuilder<>(this, environmentBuilder);
+		}
+		return charsetDetectorBuilder;
+	}
+
+	@Override
+	public TikaBuilder<P> charset(CharsetDetectorBuilder<?> builder) {
+		charsetDetectorBuilder = new CharsetDetectorBuilderDelegate<>(this, builder);
+		return this;
+	}
+
+	@Override
 	public MimeTypeProvider build() {
 		Tika tikaInstance = this.tika == null ? new Tika() : this.tika;
-		return new TikaProvider(tikaInstance, failIfOctetStream);
+		return new TikaProvider(tikaInstance, failIfOctetStream, charsetDetectorBuilder.build());
 	}
 }

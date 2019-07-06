@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -110,6 +111,22 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 			try {
 				LOG.debug("Trying to get mime type using {} from content {}", provider, content);
 				MimeType mimetype = provider.detect(content);
+				LOG.debug("{} has detected mime type {} from content {}", provider, mimetype, content);
+				return mimetype;
+			} catch (MimeTypeDetectionException e) {
+				// nothing to do => try next one
+				LOG.debug("{} could not detect mime type from content {}. Cause: {}", provider, content, e);
+			}
+		}
+		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");
+	}
+
+	@Override
+	public MimeType detect(String content, Charset charset) throws MimeTypeDetectionException {
+		for (MimeTypeProvider provider : providers) {
+			try {
+				LOG.debug("Trying to get mime type using {} from content {}", provider, content);
+				MimeType mimetype = provider.detect(content, charset);
 				LOG.debug("{} has detected mime type {} from content {}", provider, mimetype, content);
 				return mimetype;
 			} catch (MimeTypeDetectionException e) {

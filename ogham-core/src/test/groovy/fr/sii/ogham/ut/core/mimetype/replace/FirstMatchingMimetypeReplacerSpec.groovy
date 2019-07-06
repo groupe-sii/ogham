@@ -3,9 +3,7 @@ package fr.sii.ogham.ut.core.mimetype.replace;
 import fr.sii.ogham.core.mimetype.replace.FirstMatchingMimetypeReplacer
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class FirstMatchningMimetypeReplacerSpec extends Specification {
 
 	def "#name applied on #mimetype should be #expected"() {

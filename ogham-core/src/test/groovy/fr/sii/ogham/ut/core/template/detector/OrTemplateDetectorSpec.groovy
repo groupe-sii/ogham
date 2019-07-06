@@ -4,9 +4,7 @@ import fr.sii.ogham.core.resource.path.UnresolvedPath
 import fr.sii.ogham.core.template.detector.OrTemplateDetector
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class OrTemplateDetectorSpec extends Specification {
 	def "#given1 or #given2 should return #expected"() {
 		given:

@@ -31,6 +31,8 @@ public class JavaMailCustomConfigurationTest {
 		MessagingService service = MessagingBuilder.empty()
 				.email()
 					.sender(JavaMailBuilder.class)
+					.environment()
+						.and()
 					.mimetype()
 						.tika()
 							.failIfOctetStream(false)

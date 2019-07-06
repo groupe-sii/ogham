@@ -3,6 +3,8 @@ package fr.sii.ogham.core.builder.mimetype;
 import org.apache.tika.Tika;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.charset.CharsetDetectorBuilder;
+import fr.sii.ogham.core.builder.charset.CharsetDetectorBuilderDelegate;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**
@@ -48,6 +50,17 @@ public class TikaBuilderDelegate<P> extends AbstractParent<P> implements TikaBui
 	@Override
 	public TikaBuilderDelegate<P> failIfOctetStream(boolean fail) {
 		delegate.failIfOctetStream(fail);
+		return this;
+	}
+
+	@Override
+	public CharsetDetectorBuilder<TikaBuilder<P>> charset() {
+		return new CharsetDetectorBuilderDelegate<>(this, delegate.charset());
+	}
+
+	@Override
+	public TikaBuilder<P> charset(CharsetDetectorBuilder<?> builder) {
+		delegate.charset(builder);
 		return this;
 	}
 

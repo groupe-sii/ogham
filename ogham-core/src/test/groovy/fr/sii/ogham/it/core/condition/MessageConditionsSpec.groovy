@@ -7,9 +7,7 @@ import fr.sii.ogham.core.condition.fluent.MessageConditions
 import fr.sii.ogham.core.env.PropertyResolver
 import fr.sii.ogham.core.message.Message
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class MessageConditionsSpec extends Specification {
 	def "MessageConditions.and(#accepted1 #accepted2) == #expected"() {
 		given:

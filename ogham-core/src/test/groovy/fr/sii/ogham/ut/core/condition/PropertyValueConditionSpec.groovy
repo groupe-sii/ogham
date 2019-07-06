@@ -6,9 +6,7 @@ import fr.sii.ogham.core.condition.PropertyValueCondition
 import fr.sii.ogham.core.env.PropertyResolver
 import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class PropertyValueConditionSpec extends Specification {
 	@Rule
 	LoggingTestRule logging;

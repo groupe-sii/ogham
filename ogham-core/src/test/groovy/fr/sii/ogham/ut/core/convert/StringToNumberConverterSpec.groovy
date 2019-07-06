@@ -1,15 +1,11 @@
 package fr.sii.ogham.ut.core.convert
 
-import static spock.lang.Specification.thrown;
-
 import java.util.concurrent.atomic.AtomicInteger
 
 import fr.sii.ogham.core.convert.StringToNumberConverter
 import fr.sii.ogham.core.exception.convert.ConversionException
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class StringToNumberConverterSpec extends Specification {
 	def "#sourceType.getSimpleName() -> #targetType.getSimpleName() conversion not supported"() {
 		given:

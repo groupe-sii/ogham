@@ -5,6 +5,8 @@ import static fr.sii.ogham.core.CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIOR
 import static fr.sii.ogham.core.CoreConstants.FILE_LOOKUPS;
 import static fr.sii.ogham.core.CoreConstants.STRING_LOOKUPS;
 
+import java.nio.charset.Charset;
+
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,6 +112,12 @@ import fr.sii.ogham.sms.message.Sms;
  * detected the mimetype (see {@link MimetypeDetectionBuilder})</li>
  * <li>Uses {@code application/octet-stream} if neither Tika has detected
  * mimetype nor default property value has been set</li>
+ * <li>Uses properties {@code ogham.mimetype.tika.default-charset},
+ * {@code ogham.mimetype.default-charset} and {@code ogham.default-charset} in
+ * order (first provided value is used) in order to indicate to Tika which
+ * encoding to use when trying to detect mimetype based on string.</li>
+ * <li>Uses {@code Charset.defaultCharset()} if none of the properties have been
+ * provided</li>
  * </ul>
  * </ul>
  * 
@@ -231,6 +239,9 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 			.tika()
 				.instance(new Tika())
 				.failIfOctetStream(true)
+				.charset()
+					.defaultCharset("${ogham.mimetype.tika.default-charset}", "${ogham.mimetype.default-charset}", "${ogham.default-charset}", Charset.defaultCharset().name())
+					.and()
 				.and()
 			.defaultMimetype("${ogham.mimetype.default-mimetype}", "application/octet-stream");
 		// @formatter:on

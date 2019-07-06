@@ -8,9 +8,7 @@ import fr.sii.ogham.core.condition.PropertyPatternCondition
 import fr.sii.ogham.core.env.PropertyResolver
 import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class PropertyPatternConditionSpec extends Specification {
 	@Rule
 	LoggingTestRule logging;

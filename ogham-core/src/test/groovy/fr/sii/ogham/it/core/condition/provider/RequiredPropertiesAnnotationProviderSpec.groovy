@@ -8,9 +8,7 @@ import fr.sii.ogham.core.condition.provider.RequiredPropertiesAnnotationProvider
 import fr.sii.ogham.core.env.PropertyResolver
 import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class RequiredPropertiesAnnotationProviderSpec extends Specification {
 	@Rule
 	LoggingTestRule logging;

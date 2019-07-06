@@ -5,9 +5,7 @@ import org.junit.Rule
 import fr.sii.ogham.core.mimetype.replace.ContainsMimetypeReplacer
 import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class ContainsMimetypeReplacerSpec extends Specification {
 	@Rule
 	LoggingTestRule logging;

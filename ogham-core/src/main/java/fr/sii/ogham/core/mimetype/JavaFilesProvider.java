@@ -3,6 +3,7 @@ package fr.sii.ogham.core.mimetype;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.spi.FileTypeDetector;
 
@@ -54,6 +55,12 @@ public class JavaFilesProvider implements MimeTypeProvider {
 
 	@Override
 	public MimeType detect(String content) throws MimeTypeDetectionException {
+		// TODO delegate to another mimetype engine capable of detecting
+		return null;
+	}
+
+	@Override
+	public MimeType detect(String content, Charset charset) throws MimeTypeDetectionException {
 		// TODO delegate to another mimetype engine capable of detecting
 		return null;
 	}

@@ -8,9 +8,7 @@ import fr.sii.ogham.core.exception.util.InvalidPropertyException
 import fr.sii.ogham.core.util.bean.MapBeanReadWrapper
 import mock.util.bean.assetinventory.AssetInventory
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class MapBeanReadWrapperSpec extends Specification {
 	def "wrap objects (#shipIndex #crewIndex #cargoIndex) into maps"() {
 		given:

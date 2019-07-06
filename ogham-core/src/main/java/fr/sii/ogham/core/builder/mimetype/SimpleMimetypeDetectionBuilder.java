@@ -65,7 +65,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	@Override
 	public TikaBuilder<MimetypeDetectionBuilder<P>> tika() {
 		if (tikaBuilder == null) {
-			tikaBuilder = new SimpleTikaBuilder<>(this);
+			tikaBuilder = new SimpleTikaBuilder<>(this, environmentBuilder);
 		}
 		return tikaBuilder;
 	}

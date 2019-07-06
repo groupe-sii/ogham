@@ -2,6 +2,7 @@ package fr.sii.ogham.core.mimetype;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import javax.activation.MimeType;
 
@@ -94,4 +95,19 @@ public interface MimeTypeProvider {
 	 *             unreadable file or because no Mime Type could be determined
 	 */
 	public MimeType detect(String content) throws MimeTypeDetectionException;
+
+	/**
+	 * Get the Mime Type based on the content. The detection is done using magic
+	 * numbers algorithm.
+	 * 
+	 * @param content
+	 *            the content to analyze
+	 * @param charset
+	 *            the charset of the content
+	 * @return the Mime Type of the file
+	 * @throws MimeTypeDetectionException
+	 *             when the Mime Type detection has either failed due to
+	 *             unreadable file or because no Mime Type could be determined
+	 */
+	public MimeType detect(String content, Charset charset) throws MimeTypeDetectionException;
 }

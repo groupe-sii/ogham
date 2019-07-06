@@ -1,14 +1,9 @@
 package fr.sii.ogham.ut.core.convert
 
-import java.util.concurrent.atomic.AtomicInteger
-
-import fr.sii.ogham.core.convert.StringToNumberConverter
 import fr.sii.ogham.core.convert.StringToURLConverter
 import fr.sii.ogham.core.exception.convert.ConversionException
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class StringToURLConverterSpec extends Specification {
 	def "#sourceType.getSimpleName() -> URL conversion not supported"() {
 		given:

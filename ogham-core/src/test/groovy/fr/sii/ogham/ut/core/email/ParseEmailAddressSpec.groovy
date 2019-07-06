@@ -4,9 +4,7 @@ import javax.mail.internet.InternetAddress
 
 import fr.sii.ogham.email.message.EmailAddress
 import spock.lang.Specification
-import spock.lang.Unroll
 
-@Unroll
 class ParseEmailAddressSpec extends Specification {
 	def "#rawAddress should be parsed to address=#expected.address | personal=#expected.personal"() {
 		when:
