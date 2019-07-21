@@ -85,7 +85,7 @@ public class OghamFreemarkerConfiguration {
 	
 	
 	@Configuration
-	@ConditionalOnMissingBean({FreeMarkerConfigurer.class, FreeMarkerConfigurationFactoryBean.class})
+	@ConditionalOnMissingBean(type= {"org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer", "org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"})
 	public static class FreeMarkerDefaultOghamConfiguration {
 		
 		@Bean
