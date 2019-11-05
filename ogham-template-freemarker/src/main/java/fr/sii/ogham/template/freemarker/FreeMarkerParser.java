@@ -11,6 +11,7 @@ import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.ParsedContent;
 import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.context.Context;
 import fr.sii.ogham.core.template.context.LocaleContext;
 import fr.sii.ogham.core.template.parser.TemplateParser;
@@ -27,11 +28,13 @@ import freemarker.template.TemplateException;
 public class FreeMarkerParser implements TemplateParser {
 	private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerParser.class);
 
-	private Configuration configuration;
+	private final Configuration configuration;
+	private final ResourceResolver resolver;
 
-	public FreeMarkerParser(Configuration configuration) {
+	public FreeMarkerParser(Configuration configuration, ResourceResolver resolver) {
 		super();
 		this.configuration = configuration;
+		this.resolver = resolver;
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class FreeMarkerParser implements TemplateParser {
 			LOG.debug("Template {} successfully parsed with context {}. Result:", templatePath, ctx);
 			String templateString = out.toString();
 			LOG.debug("{}", templateString);
-			return new ParsedContent(templatePath, ctx, templateString);
+			return new ParsedContent(resolver.resolve(templatePath), ctx, templateString);
 
 		} catch (IOException | TemplateException e) {
 			throw new ParseException("Failed to parse template with FreeMarker", templatePath, ctx, e);
