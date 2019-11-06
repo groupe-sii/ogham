@@ -17,7 +17,7 @@ import org.mockito.junit.MockitoRule;
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.mimetype.TikaProvider;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class TikaProviderTest {
 	@Rule

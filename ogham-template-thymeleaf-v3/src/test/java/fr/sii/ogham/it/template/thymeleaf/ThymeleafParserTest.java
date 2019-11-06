@@ -20,7 +20,7 @@ import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.template.context.BeanContext;
 import fr.sii.ogham.core.template.context.LocaleContext;
 import fr.sii.ogham.core.template.parser.TemplateParser;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.mock.context.NestedBean;
 import fr.sii.ogham.mock.context.SimpleBean;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3SmsBuilder;

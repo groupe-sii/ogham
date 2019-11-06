@@ -136,7 +136,7 @@ public class LookupAwareRelativePathResolver implements RelativePathResolver {
 		// => append the relative path
 		// if path points to a file
 		// => replace file by the relative path
-		Path merged = Paths.get(withoutLookup(source.getOriginalPath()));
+		Path merged = Paths.get(withoutLookup(source instanceof ResolvedPath ? ((ResolvedPath) source).getResolvedPath() : source.getOriginalPath()));
 		if (isDirectory(source.getOriginalPath())) {
 			merged = merged.resolve(withoutLookup(relativePath.getOriginalPath()));
 		} else {

@@ -27,7 +27,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import fr.sii.ogham.helper.email.AssertEmail;
 import fr.sii.ogham.helper.email.ExpectedContent;
 import fr.sii.ogham.helper.email.ExpectedEmail;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.mock.context.NestedBean;
 import fr.sii.ogham.mock.context.SimpleBean;
 import fr.sii.ogham.spring.mock.MockApplication;

@@ -248,7 +248,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	@Override
 	public TemplateParser build() {
 		LOG.info("Freemarker parser is registered");
-		return new FreeMarkerParser(buildConfiguration());
+		return new FreeMarkerParser(buildConfiguration(), buildResolver());
 	}
 
 	@Override

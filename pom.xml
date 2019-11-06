@@ -105,7 +105,8 @@
 		<docFutureDevVersion>${project.version}</docFutureDevVersion>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
 		<site.staging.dir>${project.build.outputDirectory}/staging</site.staging.dir>
-		<site.output.dir>${site.staging.dir}/v${docLatestReleaseVersion}</site.output.dir>
+		<site.output.version-dir>v${docLatestReleaseVersion}</site.output.version-dir>
+		<site.output.dir>${site.staging.dir}/${site.output.version-dir}</site.output.dir>
 		<doc-theme>cerulean</doc-theme>
 		<asciidoctor.skip>${maven.site.skip}</asciidoctor.skip>
 		<sass.skip>${maven.site.skip}</sass.skip>
@@ -517,7 +518,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.github.tomakehurst</groupId>
-				<artifactId>wiremock</artifactId>
+				<artifactId>wiremock-jre8</artifactId>
 				<version>${wiremock.version}</version>
 			</dependency>
 			<dependency>

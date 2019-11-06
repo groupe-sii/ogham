@@ -1,5 +1,8 @@
 package fr.sii.ogham.email.sendgrid.v2.builder.sendgrid;
 
+import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +17,6 @@ import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.sendgrid.builder.AbstractSendGridBuilder;
@@ -39,7 +41,7 @@ import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContent
  * <code>
  * MessagingBuilder msgBuilder = ...
  * msgBuilder.email()
- *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *    .sender(SendGridV2Builder.class)    // registers the builder and accesses to that builder for configuring it
  * </code>
  * </pre>
  * 
@@ -49,7 +51,7 @@ import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContent
  * <pre>
  * <code>
  * msgBuilder.email()
- *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *    .sender(SendGridV2Builder.class)    // registers the builder and accesses to that builder for configuring it
  *       .apiKey("foo")
  * </code>
  * </pre>
@@ -65,8 +67,8 @@ import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContent
  *       .and()
  *    .and()
  * .email()
- *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
- *       .host("${custom.property.for.api-key}")
+ *    .sender(SendGridV2Builder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .apiKey("${custom.property.for.api-key}")
  * </code>
  * </pre>
  * 
@@ -79,7 +81,7 @@ import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContent
  * 
  * <pre>
  * <code>
- * .sender(SendGridBuilder.class)
+ * .sender(SendGridV2Builder.class)
  *    .intercept(new MyCustomInterceptor())
  * </code>
  * </pre>
@@ -113,7 +115,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 * MessagingBuilder msgBuilder = ...
 	 * msgBuilder
 	 * .email()
-	 *    .sender(SendGridBuilder.class)
+	 *    .sender(SendGridV2Builder.class)
 	 * </pre>
 	 * 
 	 * @param parent
@@ -223,6 +225,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 		return this;
 	}
 
+
 	/**
 	 * Ogham will transform general {@link Email} object into
 	 * {@link SendGrid}.Email objects. This transformation will fit almost all
@@ -231,7 +234,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 * to intercept the message to modify it just before sending it:
 	 * 
 	 * <pre>
-	 * .sender(SendGridBuilder.class)
+	 * .sender(SendGridV2Builder.class)
 	 *    .intercept(new MyCustomInterceptor())
 	 * </pre>
 	 * 
@@ -249,10 +252,11 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	@Override
 	public SendGridV2Sender build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		String apiKey = BuilderUtils.evaluate(this.apiKeys, propertyResolver, String.class);
-		String username = BuilderUtils.evaluate(this.usernames, propertyResolver, String.class);
-		String password = BuilderUtils.evaluate(this.passwords, propertyResolver, String.class);
-		SendGridClient builtClient = buildClient(apiKey, username, password);
+		String apiKey = evaluate(this.apiKeys, propertyResolver, String.class);
+		String username = evaluate(this.usernames, propertyResolver, String.class);
+		String password = evaluate(this.passwords, propertyResolver, String.class);
+		URL url = evaluate(this.urls, propertyResolver, URL.class);
+		SendGridClient builtClient = buildClient(apiKey, username, password, url);
 		if (builtClient == null) {
 			return null;
 		}
@@ -261,17 +265,32 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 		return new SendGridV2Sender(builtClient, buildContentHandler(), interceptor);
 	}
 
-	private SendGridClient buildClient(String apiKey, String username, String password) {
+	private SendGridClient buildClient(String apiKey, String username, String password, URL url) {
 		if (client != null) {
 			return client;
 		}
-		if (apiKey != null) {
-			return new DelegateSendGridClient(new SendGrid(apiKey));
-		}
-		if (username != null && password != null) {
-			return new DelegateSendGridClient(new SendGrid(username, password));
+		if (apiKey != null || (username != null && password != null)) {
+			return new DelegateSendGridClient(buildSendGrid(apiKey, username, password, url));
 		}
 		return null;
+	}
+
+	private SendGrid buildSendGrid(String apiKey, String username, String password, URL url) {
+		SendGrid sendGrid = newSendGrid(apiKey, username, password);
+		if (url != null) {
+			sendGrid.setUrl(url.toString());
+		}
+		if(httpClient != null) {
+			sendGrid.setClient(httpClient);
+		}
+		return sendGrid;
+	}
+
+	private SendGrid newSendGrid(String apiKey, String username, String password) {
+		if (apiKey != null) {
+			return new SendGrid(apiKey);
+		}
+		return new SendGrid(username, password);
 	}
 
 	private MapContentHandler buildContentHandler() {

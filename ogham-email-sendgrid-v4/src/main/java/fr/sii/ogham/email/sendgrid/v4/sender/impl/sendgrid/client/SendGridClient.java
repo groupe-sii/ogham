@@ -2,7 +2,7 @@ package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client;
 
 import com.sendgrid.helpers.mail.Mail;
 
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.SendGridException;
+import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
 
 /**
  * Description of the operations a service backed with SendGrid should expose.

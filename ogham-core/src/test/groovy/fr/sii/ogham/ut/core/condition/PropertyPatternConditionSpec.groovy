@@ -6,7 +6,7 @@ import org.junit.Rule
 
 import fr.sii.ogham.core.condition.PropertyPatternCondition
 import fr.sii.ogham.core.env.PropertyResolver
-import fr.sii.ogham.helper.rule.LoggingTestRule
+import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
 import spock.lang.Unroll
 

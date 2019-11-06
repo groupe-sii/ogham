@@ -14,7 +14,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.MessagingRuntimeException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.service.WrapExceptionMessagingService;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class WrapExceptionMessagingServiceTest {
 	@Rule

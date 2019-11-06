@@ -1,9 +1,13 @@
 package fr.sii.ogham.email.sendgrid.v4.builder.sendgrid;
 
+import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +20,11 @@ import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.sendgrid.builder.AbstractSendGridBuilder;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.CustomizableUrlClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridInterceptor;
@@ -41,7 +45,7 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContent
  * <code>
  * MessagingBuilder msgBuilder = ...
  * msgBuilder.email()
- *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *    .sender(SendGridV4Builder.class)    // registers the builder and accesses to that builder for configuring it
  * </code>
  * </pre>
  * 
@@ -51,7 +55,7 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContent
  * <pre>
  * <code>
  * msgBuilder.email()
- *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *    .sender(SendGridV4Builder.class)    // registers the builder and accesses to that builder for configuring it
  *       .apiKey("foo")
  * </code>
  * </pre>
@@ -67,8 +71,8 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContent
  *       .and()
  *    .and()
  * .email()
- *    .sender(SendGridBuilder.class)    // registers the builder and accesses to that builder for configuring it
- *       .host("${custom.property.for.api-key}")
+ *    .sender(SendGridV4Builder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .apiKey("${custom.property.for.api-key}")
  * </code>
  * </pre>
  * 
@@ -81,7 +85,7 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContent
  * 
  * <pre>
  * <code>
- * .sender(SendGridBuilder.class)
+ * .sender(SendGridV4Builder.class)
  *    .intercept(new MyCustomInterceptor())
  * </code>
  * </pre>
@@ -99,7 +103,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	private Client clientHelper;
 	private boolean unitTesting;
 	private List<String> unitTestingKeys;
-	
+
 	/**
 	 * Default constructor when using SendGrid sender without all Ogham work.
 	 * 
@@ -108,7 +112,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	public SendGridV4Builder() {
 		this(null);
 	}
-	
+
 	/**
 	 * Constructor that is called when using Ogham builder:
 	 * 
@@ -116,7 +120,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * MessagingBuilder msgBuilder = ...
 	 * msgBuilder
 	 * .email()
-	 *    .sender(SendGridBuilder.class)
+	 *    .sender(SendGridV4Builder.class)
 	 * </pre>
 	 * 
 	 * @param parent
@@ -128,30 +132,33 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	}
 
 	/**
-	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must use an {@link #apiKey(String...)}.
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
+	 *             use an {@link #apiKey(String...)}.
 	 * 
-	 * Set username for SendGrid HTTP API.
+	 *             Set username for SendGrid HTTP API.
 	 * 
-	 * You can specify a direct value. For example:
+	 *             You can specify a direct value. For example:
 	 * 
-	 * <pre>
+	 *             <pre>
 	 * .username("foo");
-	 * </pre>
+	 *             </pre>
 	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 *             <p>
+	 *             You can also specify one or several property keys. For
+	 *             example:
 	 * 
-	 * <pre>
+	 *             <pre>
 	 * .username("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
+	 *             </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 *             The properties are not immediately evaluated. The evaluation
+	 *             will be done when the {@link #build()} method is called.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 *             If you provide several property keys, evaluation will be done
+	 *             on the first key and if the property exists (see
+	 *             {@link EnvironmentBuilder}), its value is used. If the first
+	 *             property doesn't exist in properties, then it tries with the
+	 *             second one and so on.
 	 * 
 	 * @param username
 	 *            one value, or one or several property keys
@@ -165,30 +172,33 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	}
 
 	/**
-	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must use an {@link #apiKey(String...)}.
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
+	 *             use an {@link #apiKey(String...)}.
 	 * 
-	 * Set password for SendGrid HTTP API.
+	 *             Set password for SendGrid HTTP API.
 	 * 
-	 * You can specify a direct value. For example:
+	 *             You can specify a direct value. For example:
 	 * 
-	 * <pre>
+	 *             <pre>
 	 * .password("foo");
-	 * </pre>
+	 *             </pre>
 	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 *             <p>
+	 *             You can also specify one or several property keys. For
+	 *             example:
 	 * 
-	 * <pre>
+	 *             <pre>
 	 * .password("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
+	 *             </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 *             The properties are not immediately evaluated. The evaluation
+	 *             will be done when the {@link #build()} method is called.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 *             If you provide several property keys, evaluation will be done
+	 *             on the first key and if the property exists (see
+	 *             {@link EnvironmentBuilder}), its value is used. If the first
+	 *             property doesn't exist in properties, then it tries with the
+	 *             second one and so on.
 	 * 
 	 * @param password
 	 *            one value, or one or several property keys
@@ -259,13 +269,16 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	/**
 	 * By default, SendGrid uses a {@link Client} instance as an helper to
 	 * perform HTTP requests. You may want to use custom client configuration
-	 * such as providing custom {@link HttpClient}:
+	 * such as providing custom protocol and port:
 	 * 
 	 * <pre>
-	 * .client(new Client(new MyCustomHttpClient()))
+	 * .client(new CustomizableUrlClient(false, "http", 8080))
 	 * </pre>
 	 * 
-	 * NOTE: if you provide a custom {@link Client}, the test 
+	 * NOTE: if you provide a custom {@link Client}, the
+	 * {@link #unitTesting(boolean)}, {@link #unitTesting(String...)} and
+	 * {@link #httpClient(org.apache.http.impl.client.CloseableHttpClient)}
+	 * configurations are not used. You have to handle it manually.
 	 * 
 	 * @param clientHelper
 	 *            the custom client used to call SendGrid HTTP API
@@ -301,6 +314,32 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	}
 
 	/**
+	 * By default, calling SendGrid HTTP API is done through the default
+	 * {@link SendGrid} implementation that uses default {@link HttpClient}
+	 * (calling {@code HttpClientBuilder.create().build()}). If you want to use
+	 * another HTTP client implementation, you can extend the
+	 * {@link CloseableHttpClient} class and provide it:
+	 * 
+	 * <pre>
+	 * .client(new MyCustomHttpClient())
+	 * </pre>
+	 * 
+	 * NOTE: if you provide your custom implementation, any defined properties
+	 * and values using {@link #unitTesting(boolean)} or
+	 * {@link #unitTesting(String...)} won't be used at all. You then have to
+	 * handle it by yourself.
+	 * 
+	 * @param httpClient
+	 *            the custom implementation of {@link HttpClient} used to call
+	 *            SendGrid HTTP API. SendGrid requires a
+	 *            {@link CloseableHttpClient}.
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridV4Builder httpClient(CloseableHttpClient httpClient) {
+		return super.httpClient(httpClient);
+	}
+
+	/**
 	 * Ogham will transform general {@link Email} object into
 	 * {@link SendGrid}.Email objects. This transformation will fit almost all
 	 * use cases but you may need to customize a part of the SendGrid message.
@@ -308,7 +347,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * to intercept the message to modify it just before sending it:
 	 * 
 	 * <pre>
-	 * .sender(SendGridBuilder.class)
+	 * .sender(SendGridV4Builder.class)
 	 *    .intercept(new MyCustomInterceptor())
 	 * </pre>
 	 * 
@@ -326,49 +365,81 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	@Override
 	public SendGridV4Sender build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		String apiKey = BuilderUtils.evaluate(this.apiKeys, propertyResolver, String.class);
-		Boolean test = BuilderUtils.evaluate(this.unitTestingKeys, propertyResolver, Boolean.class);
-		SendGridClient builtClient = buildClient(apiKey, buildClientHelper(clientHelper, unitTesting || test!=null && test));
+		String apiKey = evaluate(this.apiKeys, propertyResolver, String.class);
+		Boolean test = evaluate(this.unitTestingKeys, propertyResolver, Boolean.class);
+		URL url = evaluate(this.urls, propertyResolver, URL.class);
+		SendGridClient builtClient = buildClient(apiKey, buildClientHelper(clientHelper, httpClient, unitTesting || test != null && test, url), url);
 		if (builtClient == null) {
 			return null;
 		}
 		LOG.info("Sending email using SendGrid API is registered");
 		LOG.debug("SendGrid account: apiKey={}, test={}", apiKey, test);
-		return new SendGridV4Sender(builtClient, buildContentHandler(), interceptor);
+		return new SendGridV4Sender(builtClient, buildContentHandler(), buildMimetypeProvider(), interceptor);
 	}
 
-	private Client buildClientHelper(Client clientHelper, Boolean test) {
-		if(clientHelper != null) {
+	private Client buildClientHelper(Client clientHelper, CloseableHttpClient httpClient, boolean test, URL url) {
+		// custom implementation
+		if (clientHelper != null) {
 			return clientHelper;
 		}
-		if(test != null && test) {
-			return new Client(test);
+		// case where custom URL is set.
+		// SendGrid Client doesn't support neither custom port nor custom
+		// protocol
+		if (url != null && httpClient != null) {
+			return new CustomizableUrlClient(httpClient, url.getProtocol(), url.getPort());
 		}
+		if (url != null) {
+			return new CustomizableUrlClient(test, url.getProtocol(), url.getPort());
+		}
+		// custom http client
+		if (httpClient != null) {
+			return new Client(httpClient);
+		}
+		// test client (just to allow http instead of https)
+		if (test) {
+			return new Client(true);
+		}
+		// use default Client implementation created directly by SendGrid
 		return null;
 	}
 
-	private SendGridClient buildClient(String apiKey, Client client) {
+	private SendGridClient buildClient(String apiKey, Client client, URL url) {
 		if (this.client != null) {
 			return this.client;
 		}
-		if(apiKey != null) {
-			return new DelegateSendGridClient(buildSendGrid(apiKey, client));
+		if (apiKey != null) {
+			return new DelegateSendGridClient(buildSendGrid(apiKey, client, url));
 		}
 		return null;
 	}
 
-	private SendGrid buildSendGrid(String apiKey, Client client) {
-		if(client!=null) {
+	private SendGrid buildSendGrid(String apiKey, Client client, URL url) {
+		SendGrid sendGrid = newSendGrid(apiKey, client);
+		if (url != null) {
+			sendGrid.setHost(url.getHost());
+		}
+		return sendGrid;
+	}
+
+	private SendGrid newSendGrid(String apiKey, Client client) {
+		if (client != null) {
 			return new SendGrid(apiKey, client);
 		}
 		return new SendGrid(apiKey);
 	}
 
 	private MapContentHandler buildContentHandler() {
-		MimeTypeProvider mimetypeProvider = mimetypeBuilder.build();
+		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();
 		MapContentHandler contentHandler = new MapContentHandler();
 		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
 		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider));
 		return contentHandler;
+	}
+
+	private MimeTypeProvider buildMimetypeProvider() {
+		if (mimetypeBuilder == null) {
+			return null;
+		}
+		return mimetypeBuilder.build();
 	}
 }

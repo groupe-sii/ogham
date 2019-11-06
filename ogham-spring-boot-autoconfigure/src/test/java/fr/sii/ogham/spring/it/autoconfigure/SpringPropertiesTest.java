@@ -20,7 +20,7 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.builder.ovh.OvhSmsBuilder;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;

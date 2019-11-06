@@ -20,9 +20,9 @@ import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.helper.html.AssertHtml;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.ogham.html.translator.InlineCssTranslator;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
 
 public class JsoupInlineCssTranslatorTest {

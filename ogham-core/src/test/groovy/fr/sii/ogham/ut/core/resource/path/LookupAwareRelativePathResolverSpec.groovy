@@ -5,7 +5,7 @@ import org.junit.Rule
 import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver
 import fr.sii.ogham.core.resource.path.RelativePath
 import fr.sii.ogham.core.resource.path.UnresolvedPath
-import fr.sii.ogham.helper.rule.LoggingTestRule
+import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
 import spock.lang.Unroll
 

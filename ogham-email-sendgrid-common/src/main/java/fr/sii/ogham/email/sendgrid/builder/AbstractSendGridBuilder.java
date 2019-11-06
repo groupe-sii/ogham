@@ -8,6 +8,11 @@ import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+
+import com.sendgrid.SendGrid;
+
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -23,11 +28,13 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	protected EnvironmentBuilder<MYSELF> environmentBuilder;
 	protected MimetypeDetectionBuilder<MYSELF> mimetypeBuilder;
 	protected List<String> apiKeys;
-	
+	protected List<String> urls;
+	protected CloseableHttpClient httpClient;
+
 	public AbstractSendGridBuilder(Class<?> selfType) {
 		this(selfType, null, null, null);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected AbstractSendGridBuilder(Class<?> selfType, EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder, MimetypeDetectionBuilder<?> mimetypeBuilder) {
 		super(parent);
@@ -35,7 +42,7 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 		if (environmentBuilder != null) {
 			environment(environmentBuilder);
 		}
-		if(mimetypeBuilder != null) {
+		if (mimetypeBuilder != null) {
 			mimetype(mimetypeBuilder);
 		}
 	}
@@ -43,6 +50,7 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	public AbstractSendGridBuilder(Class<?> selfType, EmailBuilder parent) {
 		this(selfType, parent, null, null);
 		apiKeys = new ArrayList<>();
+		urls = new ArrayList<>();
 		environment();
 		mimetype();
 	}
@@ -87,8 +95,6 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	}
 
 	/**
-	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must use an {@link #apiKey(String...)}.
-	 * 
 	 * Set username for SendGrid HTTP API.
 	 * 
 	 * You can specify a direct value. For example:
@@ -115,13 +121,15 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	 * @param username
 	 *            one value, or one or several property keys
 	 * @return this instance for fluent chaining
+	 * 
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
+	 *             use an {@link #apiKey(String...)}.
+	 * 
 	 */
 	@Deprecated
 	public abstract MYSELF username(String... username);
 
 	/**
-	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must use an {@link #apiKey(String...)}.
-	 * 
 	 * Set password for SendGrid HTTP API.
 	 * 
 	 * You can specify a direct value. For example:
@@ -148,9 +156,71 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	 * @param password
 	 *            one value, or one or several property keys
 	 * @return this instance for fluent chaining
+	 * 
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
+	 *             use an {@link #apiKey(String...)}.
 	 */
 	@Deprecated
 	public abstract MYSELF password(String... password);
+
+	/**
+	 * Set SendGrid API base URL.
+	 * 
+	 * You can specify a direct value. For example:
+	 * 
+	 * <pre>
+	 * .url("https://api.sendgrid.com");
+	 * </pre>
+	 * 
+	 * <p>
+	 * You can also specify one or several property keys. For example:
+	 * 
+	 * <pre>
+	 * .url("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * </pre>
+	 * 
+	 * The properties are not immediately evaluated. The evaluation will be done
+	 * when the {@link Builder#build()} method is called.
+	 * 
+	 * If you provide several property keys, evaluation will be done on the
+	 * first key and if the property exists (see {@link EnvironmentBuilder}),
+	 * its value is used. If the first property doesn't exist in properties,
+	 * then it tries with the second one and so on.
+	 * 
+	 * @param url
+	 *            one value, or one or several property keys
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF url(String... url) {
+		for (String u : url) {
+			if (u != null) {
+				urls.add(u);
+			}
+		}
+		return myself;
+	}
+
+	/**
+	 * By default, calling SendGrid HTTP API is done through the default
+	 * {@link SendGrid} implementation that uses default {@link HttpClient}
+	 * (calling {@code HttpClientBuilder.create().build()}). If you want to use
+	 * another HTTP client implementation, you can extend the
+	 * {@link CloseableHttpClient} class and provide it:
+	 * 
+	 * <pre>
+	 * .client(new MyCustomHttpClient())
+	 * </pre>
+	 * 
+	 * @param httpClient
+	 *            the custom implementation of {@link HttpClient} used to call
+	 *            SendGrid HTTP API. SendGrid requires a
+	 *            {@link CloseableHttpClient}.
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF httpClient(CloseableHttpClient httpClient) {
+		this.httpClient = httpClient;
+		return myself;
+	}
 
 	/**
 	 * Builder that configures mimetype detection.

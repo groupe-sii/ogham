@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.sms.builder.RecipientNumberBuilder;
 import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
 import fr.sii.ogham.sms.message.PhoneNumber;

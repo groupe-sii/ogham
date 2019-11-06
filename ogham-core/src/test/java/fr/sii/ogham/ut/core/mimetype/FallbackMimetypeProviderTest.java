@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoRule;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 
 public class FallbackMimetypeProviderTest {
 	@Rule

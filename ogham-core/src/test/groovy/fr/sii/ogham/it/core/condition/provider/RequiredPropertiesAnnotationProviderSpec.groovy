@@ -6,7 +6,7 @@ import fr.sii.ogham.core.builder.annotation.RequiredProperties
 import fr.sii.ogham.core.builder.annotation.RequiredProperty
 import fr.sii.ogham.core.condition.provider.RequiredPropertiesAnnotationProvider
 import fr.sii.ogham.core.env.PropertyResolver
-import fr.sii.ogham.helper.rule.LoggingTestRule
+import fr.sii.ogham.junit.LoggingTestRule
 import spock.lang.Specification
 import spock.lang.Unroll
 

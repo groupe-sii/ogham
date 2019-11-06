@@ -15,9 +15,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.sender.MessageSender;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
 import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.Recipient;
 import fr.sii.ogham.sms.message.Sender;

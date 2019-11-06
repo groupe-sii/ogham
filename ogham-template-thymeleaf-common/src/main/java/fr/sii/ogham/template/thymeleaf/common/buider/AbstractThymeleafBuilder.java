@@ -245,7 +245,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	@Override
 	public TemplateParser build() {
 		LOG.info("Thymeleaf parser is registered");
-		return new ThymeleafParser(buildEngine(), buildContext());
+		return new ThymeleafParser(buildEngine(), buildResolver(), buildContext());
 	}
 
 	@Override

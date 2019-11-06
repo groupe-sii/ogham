@@ -18,7 +18,7 @@ import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
-import fr.sii.ogham.helper.rule.LoggingTestRule;
+import fr.sii.ogham.junit.LoggingTestRule;
 import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
 
 public class FreeMarkerTemplateDetectorTest {
