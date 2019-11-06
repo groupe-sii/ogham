@@ -243,8 +243,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder port(int port) {
-		this.port = port;
-		return this;
+		return port(port, true);
 	}
 
 	/**
@@ -261,6 +260,48 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder port(Integer port) {
+		return port(port, true);
+	}
+
+	/**
+	 * Set the mail server port.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #port(String...)} method.
+	 * 
+	 * @param port
+	 *            the port to use
+	 * @param override
+	 *            force to override any previously defined port value
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder port(int port, boolean override) {
+		// if port already defined and don't force override => skip
+		if(this.port != null && !override) {
+			return this;
+		}
+		this.port = port;
+		return this;
+	}
+
+	/**
+	 * Set the mail server port. This version allows {@code null} value. In this
+	 * case, the {@code null} value is skipped.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #port(String...)} method.
+	 * 
+	 * @param port
+	 *            the port to use (may be null)
+	 * @param override
+	 *            force to override any previously defined port value
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder port(Integer port, boolean override) {
+		// if port already defined and don't force override => skip
+		if(this.port != null && !override) {
+			return this;
+		}
 		if (port != null) {
 			this.port = port;
 		}

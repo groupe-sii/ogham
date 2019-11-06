@@ -1,9 +1,14 @@
 package fr.sii.ogham.core.translator.content;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.handler.NoContentException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 
@@ -45,21 +50,28 @@ public class MultiContentTranslator implements ContentTranslator {
 
 	@Override
 	public Content translate(Content content) throws ContentTranslatorException {
-		if (content instanceof MultiContent) {
-			MultiContent result = new MultiContent();
-			for (Content c : ((MultiContent) content).getContents()) {
-				LOG.debug("Translate the sub content {} using {}", c, delegate);
+		if (!(content instanceof MultiContent)) {
+			LOG.trace("Not a MultiContent => skip it");
+			return content;
+		}
+		MultiContent result = new MultiContent();
+		List<ContentTranslatorException> errors = new ArrayList<>();
+		for (Content c : ((MultiContent) content).getContents()) {
+			LOG.debug("Translate the sub content {} using {}", c, delegate);
+			try {
 				Content translated = delegate.translate(c);
 				if(translated!=null) {
 					LOG.debug("Sub content {} skipped", c);
 					result.addContent(translated);
 				}
+			} catch(ContentTranslatorException e) {
+				errors.add(e);
 			}
-			return result;
-		} else {
-			LOG.trace("Not a MultiContent => skip it");
-			return content;
 		}
+		if (!errors.isEmpty() && result.getContents().isEmpty()) {
+			throw new NoContentException("The message is empty maybe due to some errors:\n" + errors.stream().map(Exception::getMessage).collect(Collectors.joining("\n")), (MultiContent) content, errors);
+		}
+		return result;
 	}
 
 	@Override

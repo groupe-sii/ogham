@@ -14,7 +14,7 @@ public class FailIfNotFoundVariantResolver implements VariantResolver {
 			return template.getPath();
 		}
 		Variant variant = ((HasVariant) template).getVariant();
-		throw new VariantResolutionException("Failed to resolve variant (" + variant + ")", template.getPath(), template.getContext(), variant);
+		throw new VariantResolutionException("Failed to resolve variant (" + variant + ") for template "+template.getPath().getOriginalPath(), template.getPath(), template.getContext(), variant);
 	}
 
 	/**

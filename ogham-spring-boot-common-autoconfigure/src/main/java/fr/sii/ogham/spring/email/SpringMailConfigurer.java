@@ -55,11 +55,12 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 		LOG.debug("[{}] apply configuration", this);
 		// use same environment as parent builder
 		builder.email().sender(JavaMailBuilder.class).environment(builder.environment());
-		if (springMailProperties != null) {
-			applySpringMailConfiguration(builder);
-		}
+		// Ogham specific properties take precedence over Spring properties if specified
 		if (properties != null) {
 			applyOghamConfiguration(builder);
+		}
+		if (springMailProperties != null) {
+			applySpringMailConfiguration(builder);
 		}
 	}
 
@@ -74,7 +75,7 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 					.and()
 				.charset(properties.getBody().getCharset())
 				.host(properties.getHost())
-				.port(properties.getPort());
+				.port(properties.getPort(), false);
 		// @formatter:on
 	}
 
@@ -89,7 +90,7 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 					.and()
 				.charset(springMailProperties.getDefaultEncoding())
 				.host(springMailProperties.getHost())
-				.port(springMailProperties.getPort())
+				.port(springMailProperties.getPort(), false)
 				.environment()
 					.properties(asProperties(springMailProperties.getProperties()));
 		// @formatter:on

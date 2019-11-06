@@ -1,6 +1,7 @@
 package fr.sii.ogham.spring.it.autoconfigure;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.cloudhopper.smpp.SmppConstants;
@@ -31,14 +33,15 @@ import fr.sii.ogham.spring.mock.MockApplication;
 @SpringBootTest(classes = MockApplication.class, webEnvironment = NONE, 
 	properties = { "ogham.sms.cloudhopper.host=localhost", 
 				   "ogham.sms.ovh.password=bar"})
-public class SpringPropertiesTest {
+@ActiveProfiles("ogham-only")
+public class OghamPropertiesOnlyTest {
 	@Rule
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	@Autowired
 	MessagingBuilder builder;
 	
-	@Autowired
+	@Autowired(required=false)
 	SendGrid springSendGridClient;
 
 	@Test
@@ -62,8 +65,8 @@ public class SpringPropertiesTest {
 		SendGridV4Sender sender = builder.email().sender(SendGridV4Builder.class).build();
 		DelegateSendGridClient delegate = (DelegateSendGridClient) sender.getDelegate();
 		SendGrid sendGrid = (SendGrid) FieldUtils.readField(delegate, "delegate", true);
-		assertThat(FieldUtils.readField(sendGrid, "apiKey", true), equalTo("toto"));
-		assertThat(sendGrid, sameInstance(springSendGridClient));
+		assertThat(FieldUtils.readField(sendGrid, "apiKey", true), equalTo("ogham"));
+		assertThat(sendGrid, not(sameInstance(springSendGridClient)));
 	}
 
 }

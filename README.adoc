@@ -2593,9 +2593,69 @@ In addition to standalone behaviors, Ogham also supports Spring Boot modules and
 
 
 [NOTE]
+.Java Mail auto-configuration
+====
+The property `ogham.email.javamail.host` takes precedence over `spring.mail.host` property.
+The property `ogham.email.javamail.port` takes precedence over `spring.mail.port` property.
+====
+
+
+[NOTE]
+.Thymeleaf auto-configuration
+====
+If you provide any of:
+
+* `ogham.email.template.path`
+* `ogham.email.thymeleaf.classpath.path-prefix`
+* `ogham.email.template.classpath.path-prefix`
+* `ogham.email.thymeleaf.path-prefix`
+* `ogham.email.template.path-prefix`
+* `ogham.sms.template.path`
+* `ogham.sms.thymeleaf.classpath.path-prefix`
+* `ogham.sms.template.classpath.path-prefix`
+* `ogham.sms.thymeleaf.path-prefix`
+* `ogham.sms.template.path-prefix`
+* `ogham.template.path-prefix`
+
+Then `spring.thymeleaf.prefix` is not used in order to keep coherence between Spring application and non-Spring application. 
+Moreover, this lets you the opportunity to use a prefix for Spring web views and a different prefix for email and/or SMS.
+The last reason is that Ogham properties are more specific:
+
+* you can target the message type: use different prefixes for email and SMS
+* you can target the resource resolution: use different prefixes for classpath and file system for example
+====
+
+[NOTE]
+.FreeMarker auto-configuration
+====
+
+If you provide any of:
+
+* `ogham.email.template.path`
+* `ogham.email.freemarker.classpath.path-prefix`
+* `ogham.email.template.classpath.path-prefix`
+* `ogham.email.freemarker.path-prefix`
+* `ogham.email.template.path-prefix`
+* `ogham.sms.template.path`
+* `ogham.sms.freemarker.classpath.path-prefix`
+* `ogham.sms.template.classpath.path-prefix`
+* `ogham.sms.freemarker.path-prefix`
+* `ogham.sms.template.path-prefix`
+* `ogham.template.path-prefix`
+
+Then `spring.freemarker.prefix` is not used in order to keep coherence between Spring application and non-Spring application.
+Moreover, this lets you the opportunity to use a prefix for Spring web views and a different prefix for email and/or SMS.
+The other reason is that Ogham properties are more specific:
+
+* you can target the message type: use different prefixes for email and SMS
+* you can target the resource resolution: use different prefixes for classpath and file system for example
+====
+
+[NOTE]
 .SendGrid auto-configuration 
 ====
 Including all Ogham features adds `sendgrid-java` dependency. This means that Spring Boot auto-configuration for SendGrid automatically defines the `sendGrid` bean instance if `spring.sendgrid.api-key` property is defined. In this case, the `sendGrid` bean is always used by Ogham.
+This means that if you provide `spring.sendgrid.api-key`,  the properties `ogham.email.sendgrid.api-key` and  `ogham.email.sendgrid.unit-testing` won't be used.
 Before Spring Boot 2.0.0, `spring.sendgrid.username` and `spring.sendgrid.password` can be provided instead of `spring.sendgrid.api-key`.
 ====
 

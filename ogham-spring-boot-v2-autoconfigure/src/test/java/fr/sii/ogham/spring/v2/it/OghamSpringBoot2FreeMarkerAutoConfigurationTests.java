@@ -46,8 +46,8 @@ public class OghamSpringBoot2FreeMarkerAutoConfigurationTests {
 						"mail.smtp.port="+ServerSetupTest.SMTP.getPort(),
 						"ogham.sms.smpp.host=127.0.0.1",
 						"ogham.sms.smpp.port="+smppServer.getPort(),
-						"ogham.email.sendgrid.api-key=bar",
-						"spring.sendgrid.api-key=foo",
+						"ogham.email.sendgrid.api-key=ogham",
+						"spring.sendgrid.api-key=spring",
 						"ogham.freemarker.default-encoding="+StandardCharsets.US_ASCII.name(),
 						"spring.freemarker.charset="+StandardCharsets.UTF_16BE.name());
 	}

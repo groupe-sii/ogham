@@ -79,11 +79,12 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 	public void configure(EmailBuilder emailBuilder) {
 		AbstractFreemarkerBuilder<?, ?> builder = emailBuilder.template(FreemarkerEmailBuilder.class);
 		builder.configuration(emailConfiguration);
-		if (springProperties != null) {
-			applySpringConfiguration(builder);
-		}
+		// specific Ogham properties explicitly take precedence over Spring properties
 		if (emailProperties != null) {
 			applyOghamConfiguration(builder, emailProperties);
+		}
+		if (springProperties != null) {
+			applySpringConfiguration(builder);
 		}
 	}
 
@@ -91,11 +92,12 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 	public void configure(SmsBuilder smsBuilder) {
 		AbstractFreemarkerBuilder<?, ?> builder = smsBuilder.template(FreemarkerSmsBuilder.class);
 		builder.configuration(smsConfiguration);
-		if (springProperties != null) {
-			applySpringConfiguration(builder);
-		}
+		// specific Ogham properties explicitly take precedence over Spring properties
 		if (smsProperties != null) {
 			applyOghamConfiguration(builder, smsProperties);
+		}
+		if (springProperties != null) {
+			applySpringConfiguration(builder);
 		}
 	}
 

@@ -51,8 +51,8 @@ public class OghamSpringBoot2AutoConfigurationTests {
 						"mail.smtp.port="+ServerSetupTest.SMTP.getPort(),
 						"ogham.sms.smpp.host=127.0.0.1",
 						"ogham.sms.smpp.port="+smppServer.getPort(),
-						"ogham.email.sendgrid.api-key=bar",
-						"spring.sendgrid.api-key=foo",
+						"ogham.email.sendgrid.api-key=ogham",
+						"spring.sendgrid.api-key=spring",
 						"ogham.freemarker.default-encoding="+StandardCharsets.US_ASCII.name(),
 						"spring.freemarker.charset="+StandardCharsets.UTF_16BE.name());
 	}
@@ -66,7 +66,7 @@ public class OghamSpringBoot2AutoConfigurationTests {
 			checkSms(messagingService);
 			OghamInternalAssertions.assertThat(messagingService)
 				.sendGrid()
-					.apiKey(equalTo("bar"))
+					.apiKey(equalTo("ogham"))
 					.client(allOf(isA(SendGrid.class), not(isSpringBeanInstance(context, SendGrid.class))))
 					.and()
 				.thymeleaf()
@@ -90,7 +90,7 @@ public class OghamSpringBoot2AutoConfigurationTests {
 			checkSms(messagingService);
 			OghamInternalAssertions.assertThat(messagingService)
 				.sendGrid()
-					.apiKey(equalTo("bar"))
+					.apiKey(equalTo("ogham"))
 					.client(allOf(isA(SendGrid.class), not(isSpringBeanInstance(context, SendGrid.class))))
 					.and()
 				.thymeleaf()

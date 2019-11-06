@@ -43,9 +43,6 @@ public class AutoDetectTemplateParser implements TemplateParser {
 		try {
 			LOG.info("Start template engine automatic detection for {}", templatePath);
 			TemplateParser parser = findParser(templatePath, ctx);
-			if (parser == null) {
-				throw new NoEngineDetectionException("Auto detection couldn't find any parser able to handle the template " + templatePath);
-			}
 			LOG.info("Parse the template {} using template engine {}", templatePath, parser);
 			return parser.parse(templatePath, ctx);
 		} catch (EngineDetectionException e) {
@@ -63,7 +60,7 @@ public class AutoDetectTemplateParser implements TemplateParser {
 				LOG.debug("Template engine {} can't be used for {}", impl.getParser(), templatePath);
 			}
 		}
-		return null;
+		throw new NoEngineDetectionException("Auto detection couldn't find any parser able to handle the template " + templatePath.getOriginalPath());
 	}
 
 	public static class TemplateImplementation {

@@ -25,13 +25,14 @@ public class OghamSpringBoot2JavaMailAutoConfigurationTests {
 
 	@Before
 	public void setUp() {
-		contextRunner = new ApplicationContextRunner()
-				.withPropertyValues("mail.smtp.host=ogham", "spring.mail.host=spring");
+		contextRunner = new ApplicationContextRunner();
 	}
 
 	@Test
 	public void oghamAloneShouldUseOghamProperties() throws Exception {
-		contextRunner = contextRunner.withConfiguration(of(OghamSpringBoot2AutoConfiguration.class));
+		contextRunner = contextRunner
+				.withPropertyValues("ogham.email.javamail.host=ogham", "spring.mail.host=spring")
+				.withConfiguration(of(OghamSpringBoot2AutoConfiguration.class));
 		contextRunner.run((context) -> {
 			MessagingService messagingService = context.getBean(MessagingService.class);
 			OghamInternalAssertions.assertThat(messagingService)
@@ -42,7 +43,9 @@ public class OghamSpringBoot2JavaMailAutoConfigurationTests {
 
 	@Test
 	public void oghamWithJavaMailAutoConfigShouldUseSpringProperties() throws Exception {
-		contextRunner = contextRunner.withConfiguration(of(MailSenderAutoConfiguration.class, OghamSpringBoot2AutoConfiguration.class));
+		contextRunner = contextRunner
+				.withPropertyValues("spring.mail.host=spring")
+				.withConfiguration(of(MailSenderAutoConfiguration.class, OghamSpringBoot2AutoConfiguration.class));
 		contextRunner.run((context) -> {
 			MessagingService messagingService = context.getBean(MessagingService.class);
 			OghamInternalAssertions.assertThat(messagingService)
@@ -53,12 +56,40 @@ public class OghamSpringBoot2JavaMailAutoConfigurationTests {
 
 	@Test
 	public void oghamWithSpringPropsShouldUseSpringProperties() throws Exception {
-		contextRunner = contextRunner.withConfiguration(of(ManuallyEnableSpringPropertiesConfig.class, OghamSpringBoot2AutoConfiguration.class));
+		contextRunner = contextRunner
+				.withPropertyValues("spring.mail.host=spring")
+				.withConfiguration(of(ManuallyEnableSpringPropertiesConfig.class, OghamSpringBoot2AutoConfiguration.class));
 		contextRunner.run((context) -> {
 			MessagingService messagingService = context.getBean(MessagingService.class);
 			OghamInternalAssertions.assertThat(messagingService)
 				.javaMail()
 					.host(equalTo("spring"));
+		});
+	}
+
+	@Test
+	public void oghamWithJavaMailAutoConfigShouldUseOghamPropertiesPrecedence() throws Exception {
+		contextRunner = contextRunner
+				.withPropertyValues("ogham.email.javamail.host=ogham", "spring.mail.host=spring")
+				.withConfiguration(of(MailSenderAutoConfiguration.class, OghamSpringBoot2AutoConfiguration.class));
+		contextRunner.run((context) -> {
+			MessagingService messagingService = context.getBean(MessagingService.class);
+			OghamInternalAssertions.assertThat(messagingService)
+				.javaMail()
+					.host(equalTo("ogham"));
+		});
+	}
+
+	@Test
+	public void oghamPropertiesWithSpringPropsShouldUseOghamPropertiesPrecedence() throws Exception {
+		contextRunner = contextRunner
+				.withPropertyValues("ogham.email.javamail.host=ogham", "spring.mail.host=spring")
+				.withConfiguration(of(ManuallyEnableSpringPropertiesConfig.class, OghamSpringBoot2AutoConfiguration.class));
+		contextRunner.run((context) -> {
+			MessagingService messagingService = context.getBean(MessagingService.class);
+			OghamInternalAssertions.assertThat(messagingService)
+				.javaMail()
+					.host(equalTo("ogham"));
 		});
 	}
 

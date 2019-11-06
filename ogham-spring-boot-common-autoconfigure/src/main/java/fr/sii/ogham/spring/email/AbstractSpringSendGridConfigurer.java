@@ -59,11 +59,12 @@ public abstract class AbstractSpringSendGridConfigurer implements SpringMessagin
 		// use same environment as parent builder
 		AbstractSendGridBuilder<?, ?> sendgridBuilder = builder.email().sender(getSendGridBuilderClass());
 		sendgridBuilder.environment(builder.environment());
-		if (springProperties != null) {
-			applySpringConfiguration(builder);
-		}
+		// Ogham specific properties take precedence over Spring properties if specified
 		if (properties != null) {
 			applyOghamConfiguration(builder);
+		}
+		if (springProperties != null) {
+			applySpringConfiguration(builder);
 		}
 	}
 

@@ -19,8 +19,8 @@ import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser.TemplateImplementation;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.common.adapter.FailIfNotFoundVariantResolver;
+import fr.sii.ogham.template.common.adapter.FailIfNotFoundWithTestedPathsVariantResolver;
 import fr.sii.ogham.template.common.adapter.FirstExistingResourceVariantResolver;
-import fr.sii.ogham.template.common.adapter.NullVariantResolver;
 import fr.sii.ogham.template.common.adapter.VariantResolver;
 
 /**
@@ -222,10 +222,19 @@ public class TemplateBuilderHelper<P> {
 	}
 
 	private VariantResolver buildDefaultVariantResolver() {
+		if (missingResolver != null) {
+			return missingResolver;
+		}
 		if (missingVariantFail) {
 			return new FailIfNotFoundVariantResolver();
 		}
-		return missingResolver == null ? new NullVariantResolver() : missingResolver;
+		FailIfNotFoundWithTestedPathsVariantResolver fail = new FailIfNotFoundWithTestedPathsVariantResolver();
+		for (Builder<? extends TemplateParser> builder : templateBuilders) {
+			if (builder instanceof VariantBuilder) {
+				fail.addVariantResolver(((VariantBuilder<?>) builder).buildVariant());
+			}
+		}
+		return fail;
 	}
 
 	private List<TemplateImplementation> buildTemplateParserImpls() {

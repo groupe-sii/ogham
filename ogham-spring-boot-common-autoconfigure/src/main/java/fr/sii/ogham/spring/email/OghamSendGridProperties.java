@@ -4,9 +4,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("ogham.email.sendgrid")
 public class OghamSendGridProperties {
+	// @formatter:off
 	/**
-	 * Set SendGrid API key
+	 * Set SendGrid API key.
+	 * 
+	 * /!\ In Spring Boot application: if you provide a value for
+	 * spring.sendgrid.api-key, this property is not used. This is because
+	 * Spring Boot provides its own SendGrid client.
 	 */
+	// @formatter:on
 	private String apiKey;
 	/**
 	 * Set username for SendGrid HTTP API.

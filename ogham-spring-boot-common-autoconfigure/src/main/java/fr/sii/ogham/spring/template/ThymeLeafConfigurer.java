@@ -83,11 +83,12 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 		if(springTemplateEngine != null) {
 			builder.engine(springTemplateEngine);
 		}
-		if (springProperties != null) {
-			applySpringConfiguration(builder);
-		}
+		// specific Ogham properties explicitly take precedence over Spring properties
 		if (emailProperties != null) {
 			applyOghamConfiguration(builder, emailProperties);
+		}
+		if (springProperties != null) {
+			applySpringConfiguration(builder);
 		}
 	}
 
@@ -97,11 +98,12 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 		if(springTemplateEngine != null) {
 			builder.engine(springTemplateEngine);
 		}
-		if (springProperties != null) {
-			applySpringConfiguration(builder);
-		}
+		// specific Ogham properties explicitly take precedence over Spring properties
 		if (smsProperties != null) {
 			applyOghamConfiguration(builder, smsProperties);
+		}
+		if (springProperties != null) {
+			applySpringConfiguration(builder);
 		}
 	}
 

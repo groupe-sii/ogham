@@ -373,7 +373,11 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 			return null;
 		}
 		LOG.info("Sending email using SendGrid API is registered");
-		LOG.debug("SendGrid account: apiKey={}, test={}", apiKey, test);
+		if (client == null) {
+			LOG.debug("SendGrid account: apiKey={}, test={}", apiKey, test);
+		} else {
+			LOG.debug("SendGrid instance provided so apiKey and unitTesting properties are not used");
+		}
 		return new SendGridV4Sender(builtClient, buildContentHandler(), buildMimetypeProvider(), interceptor);
 	}
 
