@@ -459,6 +459,24 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 
 	@Override
 	public String toString() {
+		return toString(true);
+	}
+
+	public String toSummaryString() {
+		return toString(false);
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(subject, content, from, recipients, attachments).hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return new EqualsBuilder(this, obj).appendFields("subject", "content", "from", "recipients", "attachments").isEqual();
+	}
+
+	private String toString(boolean includeContent) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Email message\r\nFrom: ").append(from);
 		for (RecipientType type : RecipientType.values()) {
@@ -474,22 +492,15 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 				builder.append(StringUtils.join(addresses, ", "));
 			}
 		}
-		builder.append("\r\nSubject: ").append(subject).append("\r\n----------------------------------\r\n").append(content);
+		builder.append("\r\nSubject: ").append(subject);
+		if (includeContent) {
+			builder.append("\r\n----------------------------------\r\n").append(content);
+		}
 		if (attachments != null && !attachments.isEmpty()) {
 			builder.append("\r\n----------------------------------").append("\r\nAttachments: ").append(attachments);
 		}
 		builder.append("\r\n==================================\r\n");
 		return builder.toString();
 	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(subject, content, from, recipients, attachments).hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendFields("subject", "content", "from", "recipients", "attachments").isEqual();
-	}
-
+	
 }

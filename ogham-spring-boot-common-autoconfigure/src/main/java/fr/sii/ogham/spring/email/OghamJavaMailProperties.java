@@ -8,13 +8,13 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @ConfigurationProperties("ogham.email.javamail")
 public class OghamJavaMailProperties {
 	/**
-	 * The mail server address host (IP or hostname).
+	 * The mail server address host (IP or hostname).<br /><br />
 	 * 
 	 * This value takes precedence over `spring.mail.host` and `mail.smtp.host`
 	 */
 	private String host;
 	/**
-	 * The mail server port.
+	 * The mail server port.<br /><br />
 	 * 
 	 * This value takes precedence over `spring.mail.port` and `mail.smtp.port`
 	 */

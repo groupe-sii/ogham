@@ -63,6 +63,20 @@ public class JsoupBase64ImageInlinerTest {
 	}
 	
 	
+	@Test
+	public void differentImageFormats() throws IOException {
+		// prepare html and associated images
+		String source = resourceAsString(SOURCE_FOLDER+"differentImageFormats.html");
+		List<ImageResource> images = loadImages("81w+rF3K1bL.png", "Blazar_12July2018_2.gif", "NINTCHDBPICT000454098440.jpg", "place-address.png");
+		// do the job
+		ContentWithImages inlined = inliner.inline(source, images);
+		// remove ogham attributes (internal use only)
+		String inlinedHtml = removeOghamAttributes(inlined.getContent());
+		// prepare expected result for the html
+		String expected = getExpectedHtml("differentImageFormatsBase64.html");
+		AssertHtml.assertSimilar(expected, inlinedHtml);
+	}
+
 	
 	//---------------------------------------------------------------//
 	//                           Utilities                           //
@@ -75,8 +89,12 @@ public class JsoupBase64ImageInlinerTest {
 	private static List<ImageResource> loadImages(String... imageNames) throws IOException {
 		List<ImageResource> resources = new ArrayList<>(imageNames.length);
 		for(String imageName : imageNames) {
-			resources.add(new ImageResource(imageName, "images/"+imageName, new UnresolvedPath("images/"+imageName), resource(SOURCE_FOLDER+"images/"+imageName), "image/gif"));
+			resources.add(new ImageResource(imageName, "images/"+imageName, new UnresolvedPath("images/"+imageName), resource(SOURCE_FOLDER+"images/"+imageName), getMimetype(imageName)));
 		}
 		return resources;
+	}
+
+	private static String getMimetype(String imageName) {
+		return "image/" + imageName.substring(imageName.lastIndexOf('.') + 1);
 	}
 }

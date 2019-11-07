@@ -100,7 +100,8 @@ public class InlineImageTranslator implements ContentTranslator {
 				return generateFinalContent(content, cleaned, inlinedContent);
 			}
 		} else {
-			LOG.debug("Neither content usable as string nor HTML. Skip image inlining for {}", content);
+			LOG.debug("Neither content usable as string nor HTML. Skip image inlining");
+			LOG.trace("content: {}", content);
 		}
 		return content;
 	}

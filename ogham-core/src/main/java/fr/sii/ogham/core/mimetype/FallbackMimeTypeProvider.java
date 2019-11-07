@@ -108,13 +108,16 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 	public MimeType detect(String content) throws MimeTypeDetectionException {
 		for (MimeTypeProvider provider : providers) {
 			try {
-				LOG.debug("Trying to get mime type using {} from content {}", provider, content);
+				LOG.debug("Trying to get mime type using {} from content", provider);
+				LOG.trace("content: {}", content);
 				MimeType mimetype = provider.detect(content);
-				LOG.debug("{} has detected mime type {} from content {}", provider, mimetype, content);
+				LOG.debug("{} has detected mime type {} from content", provider, mimetype);
+				LOG.trace("content: {}", content);
 				return mimetype;
 			} catch (MimeTypeDetectionException e) {
 				// nothing to do => try next one
-				LOG.debug("{} could not detect mime type from content {}. Cause: {}", provider, content, e);
+				LOG.debug("{} could not detect mime type from content. Cause: {}", provider, e);
+				LOG.trace("content: {}", content);
 			}
 		}
 		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");

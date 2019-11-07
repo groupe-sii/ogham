@@ -240,7 +240,7 @@ public final class BeanUtils {
 
 	private static void handleUnknown(Object bean, Options options, Entry<String, Object> entry, Exception e) throws BeanException {
 		if (options.isSkipUnknown()) {
-			LOG.debug("skipping property " + entry.getKey() + ": it doesn't exist or is not accessible", e);
+			LOG.debug("skipping property {}: it doesn't exist or is not accessible", entry.getKey(), e);
 		} else {
 			throw new BeanException("Failed to populate bean due to unknown property", bean, e);
 		}
@@ -248,7 +248,7 @@ public final class BeanUtils {
 
 	private static void handleConversion(Object bean, Options options, Entry<String, Object> entry, ConversionException e) throws BeanException {
 		if (options.isSkipUnknown()) {
-			LOG.debug("skipping property " + entry.getKey() + ": can't convert value", e);
+			LOG.debug("skipping property {}: can't convert value", entry.getKey(), e);
 		} else {
 			throw new BeanException("Failed to populate bean due to conversion error", bean, e);
 		}

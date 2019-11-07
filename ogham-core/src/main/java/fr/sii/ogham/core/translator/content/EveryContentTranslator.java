@@ -54,7 +54,8 @@ public class EveryContentTranslator implements ContentTranslator {
 	public Content translate(Content content) throws ContentTranslatorException {
 		Content result = content;
 		for (ContentTranslator translator : translators) {
-			LOG.debug("Applying translator {} on content {}", translator, content);
+			LOG.debug("Applying translator {} on content", translator);
+			LOG.trace("content: {}", content);
 			result = translator.translate(result);
 		}
 		return result;

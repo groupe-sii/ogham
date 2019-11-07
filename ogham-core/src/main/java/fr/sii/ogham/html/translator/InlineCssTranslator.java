@@ -75,7 +75,8 @@ public class InlineCssTranslator implements ContentTranslator {
 				}
 			}
 		} else {
-			LOG.debug("Neither content as string nor HTML. Skip CSS inlining for {}", content);
+			LOG.debug("Neither content as string nor HTML. Skip CSS inlining");
+			LOG.trace("content: {}", content);
 		}
 		return content;
 	}

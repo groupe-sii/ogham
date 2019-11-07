@@ -21,6 +21,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
@@ -56,6 +57,13 @@ public class ThymeleafRelativeResourcesTest {
 			}
 		}
 		oghamService = MessagingBuilder.standard()
+				.email()
+				.images()
+					.inline()
+						.attach()
+							.cid()
+								.generator(new SequentialIdGenerator(true))
+								.and().and().and().and().and()
 				.environment()
 					.properties("/application.properties")
 					.properties(additionalProps)

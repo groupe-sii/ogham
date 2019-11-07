@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.service;
 
+import static fr.sii.ogham.core.util.LogUtils.summarize;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.sender.ConditionalSender;
+import fr.sii.ogham.core.util.LogUtils;
 
 /**
  * Implementation that will ask each sender if it is able to handle the message.
@@ -71,22 +74,22 @@ public class EverySupportingMessagingService implements MessagingService {
 	@Override
 	public void send(Message message) throws MessagingException {
 		LOG.info("Sending message...");
-		LOG.debug("{}", message);
-		LOG.debug("Find senders that is able to send the message {}", message);
+		LOG.trace("{}", message);
+		LOG.debug("Find senders that is able to send the message {}", summarize(message));
 		boolean sent = false;
 		for (ConditionalSender sender : senders) {
 			if (sender.supports(message)) {
-				LOG.debug("Sending message {} using sender {}...", message, sender);
+				LOG.debug("Sending message {} using sender {}...", summarize(message), sender);
 				sender.send(message);
-				LOG.debug("Message {} sent using sender {}", message, sender);
+				LOG.debug("Message {} sent using sender {}", summarize(message), sender);
 				sent = true;
 			} else {
-				LOG.debug("Sender {} can't handle the message {}", sender, message);
+				LOG.debug("Sender {} can't handle the message {}", sender, summarize(message));
 			}
 		}
 		if(sent) {
 			LOG.info("Message sent");
-			LOG.debug("{}", message);
+			LOG.trace("{}", message);
 		} else {
 			throw new MessageNotSentException("No sender available to send the message", message);
 		}

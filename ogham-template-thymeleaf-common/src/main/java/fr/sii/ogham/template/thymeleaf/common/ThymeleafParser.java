@@ -56,7 +56,7 @@ public class ThymeleafParser implements TemplateParser {
 			LOG.debug("Parsing Thymeleaf template {} with context {}...", templatePath, ctx);
 			String result = engine.process(templatePath.getOriginalPath(), contextConverter.convert(ctx));
 			LOG.debug("Template {} successfully parsed with context {}. Result:", templatePath, ctx);
-			LOG.debug(result);
+			LOG.trace(result);
 			return new ParsedContent(resolver.resolve(templatePath), ctx, result);
 		} catch (TemplateEngineException | TemplateRuntimeException e) {
 			throw new ParseException("Failed to parse template with thymeleaf", templatePath, ctx, e);

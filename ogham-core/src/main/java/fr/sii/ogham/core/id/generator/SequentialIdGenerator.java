@@ -3,21 +3,27 @@ package fr.sii.ogham.core.id.generator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SequentialIdGenerator implements IdGenerator {
-	private AtomicInteger idx;
-	
-	public SequentialIdGenerator(int initial) {
-		super();
-		this.idx = new AtomicInteger(initial);
-	}
+	private final AtomicInteger idx;
+	private final boolean useNamePrefix;
 
 	public SequentialIdGenerator() {
-		this(0);
+		this(false);
+	}
+
+	public SequentialIdGenerator(boolean useNamePrefix) {
+		this(useNamePrefix, 0);
+	}
+	
+	public SequentialIdGenerator(boolean useNamePrefix, int initial) {
+		super();
+		this.idx = new AtomicInteger(initial);
+		this.useNamePrefix = useNamePrefix;
 	}
 	
 
 	@Override
 	public String generate(String name) {
-		return name+idx.getAndIncrement();
+		return (useNamePrefix ? name : "")+idx.getAndIncrement();
 	}
 
 }

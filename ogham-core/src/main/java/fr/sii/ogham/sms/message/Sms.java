@@ -310,12 +310,11 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Sms message\r\nFrom: ").append(from);
-		builder.append("\r\nTo: ").append(StringUtils.join(recipients, ", "));
-		builder.append("\r\n----------------------------------\r\n").append(content);
-		builder.append("\r\n==================================\r\n");
-		return builder.toString();
+		return toString(true);
+	}
+
+	public String toSummaryString() {
+		return toString(false);
 	}
 
 	@Override
@@ -326,5 +325,16 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	@Override
 	public boolean equals(Object obj) {
 		return new EqualsBuilder(this, obj).appendFields("from", "recipients", "content").isEqual();
+	}
+
+	private String toString(boolean includeContent) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Sms message\r\nFrom: ").append(from);
+		builder.append("\r\nTo: ").append(StringUtils.join(recipients, ", "));
+		if (includeContent) {
+			builder.append("\r\n----------------------------------\r\n").append(content);
+		}
+		builder.append("\r\n==================================\r\n");
+		return builder.toString();
 	}
 }

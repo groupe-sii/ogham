@@ -26,15 +26,19 @@ public class OghamSmppProperties {
 	 */
 	private String password;
 	/**
-	 * The SMPP server host (IP or address). This is an alias of
-	 * ogham.sms.cloudhopper.host. If both properties are defined, the value of
-	 * the property ogham.sms.cloudhopper.host is used.
+	 * The SMPP server host (IP or address).<br />
+	 * <br />
+	 * 
+	 * This is an alias of ogham.sms.cloudhopper.host. If both properties are
+	 * defined, the value of the property ogham.sms.cloudhopper.host is used.
 	 */
 	private String host;
 	/**
-	 * The SMPP server port. This is an alias of ogham.sms.cloudhopper.port. If
-	 * both properties are defined, the value of the property
-	 * ogham.sms.cloudhopper.port is used.
+	 * The SMPP server port.<br />
+	 * <br />
+	 * 
+	 * This is an alias of ogham.sms.cloudhopper.port. If both properties are
+	 * defined, the value of the property ogham.sms.cloudhopper.port is used.
 	 */
 	private Integer port;
 

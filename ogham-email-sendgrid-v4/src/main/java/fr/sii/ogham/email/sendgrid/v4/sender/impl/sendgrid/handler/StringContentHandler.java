@@ -69,7 +69,8 @@ public final class StringContentHandler implements SendGridContentHandler {
 
 			try {
 				final String mime = mimeProvider.detect(contentStr).toString();
-				LOG.debug("Email content {} has detected type {}", content, mime);
+				LOG.debug("Email content has detected type {}", mime);
+				LOG.trace("content: {}", content);
 				setMimeContent(email, contentStr, mime);
 			} catch (MimeTypeDetectionException e) {
 				throw new ContentHandlerException("Unable to set the email content", e);

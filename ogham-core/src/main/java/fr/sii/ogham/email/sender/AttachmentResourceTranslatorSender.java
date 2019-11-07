@@ -1,5 +1,7 @@
 package fr.sii.ogham.email.sender;
 
+import static fr.sii.ogham.core.util.LogUtils.summarize;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,10 +69,10 @@ public class AttachmentResourceTranslatorSender implements ConditionalSender {
 	public void send(Message message) throws MessageException {
 		try {
 			for (Attachment attachment : ((Email) message).getAttachments()) {
-				LOG.debug("Translate attachment {} for the message {} using {}", attachment, message, translator);
+				LOG.debug("Translate attachment {} for the message {} using {}", attachment, summarize(message), translator);
 				attachment.setResource((NamedResource) translator.translate(attachment.getResource()));
 			}
-			LOG.debug("Sending message {} using {}", message, delegate);
+			LOG.debug("Sending message {} using {}", summarize(message), delegate);
 			delegate.send(message);
 		} catch (ResourceTranslatorException e) {
 			throw new MessageNotSentException("Failed to send message due to attachment translation", message, e);

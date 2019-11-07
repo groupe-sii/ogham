@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.sender;
 
+import static fr.sii.ogham.core.util.LogUtils.summarize;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -105,7 +107,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 				}
 			}
 			if (sender != null) {
-				LOG.debug("The implementation {} can handle the message {}", sender, message);
+				LOG.debug("The implementation {} can handle the message {}", sender, summarize(message));
 			}
 		} else {
 			LOG.debug("Can't handle the message type {}", message.getClass());
@@ -124,7 +126,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 
 	@Override
 	public void send(Message message) throws MessageException {
-		LOG.debug("Sending message {} using {} implementation", message, sender);
+		LOG.debug("Sending message {} using {} implementation", summarize(message), sender);
 		sender.send(message);
 	}
 

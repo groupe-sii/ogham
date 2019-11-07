@@ -1,5 +1,7 @@
 package fr.sii.ogham.email.sendgrid.v2.sender.impl;
 
+import static fr.sii.ogham.core.util.LogUtils.summarize;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -82,10 +84,11 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 		}
 
 		try {
-			LOG.debug("Preparing to send email using SendGrid: {}", message);
+			LOG.debug("Preparing to send email using SendGrid: {}", summarize(message));
 			final SendGrid.Email sgEmail = intercept(toSendGridEmail(message), message);
 
-			LOG.debug("Sending email {}", sgEmail);
+			LOG.debug("Sending email...", summarize(message));
+			LOG.trace("SendGrid email: {}", sgEmail);
 			delegate.send(sgEmail);
 			LOG.debug("Email has been successfully sent");
 		} catch (ContentHandlerException e) {

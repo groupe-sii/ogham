@@ -57,11 +57,13 @@ public class MultiContentTranslator implements ContentTranslator {
 		MultiContent result = new MultiContent();
 		List<ContentTranslatorException> errors = new ArrayList<>();
 		for (Content c : ((MultiContent) content).getContents()) {
-			LOG.debug("Translate the sub content {} using {}", c, delegate);
+			LOG.debug("Translate the sub content using {}", delegate);
+			LOG.trace("sub content: {}", c);
 			try {
 				Content translated = delegate.translate(c);
 				if(translated!=null) {
-					LOG.debug("Sub content {} skipped", c);
+					LOG.debug("Sub content skipped");
+					LOG.trace("sub-content: {}", c);
 					result.addContent(translated);
 				}
 			} catch(ContentTranslatorException e) {

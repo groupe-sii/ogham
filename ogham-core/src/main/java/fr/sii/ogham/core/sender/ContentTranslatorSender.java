@@ -59,10 +59,13 @@ public class ContentTranslatorSender implements ConditionalSender {
 	@Override
 	public void send(Message message) throws MessageException {
 		try {
-			LOG.debug("Translate the message content {} using {}", message.getContent(), translator);
+			LOG.debug("Translate the message content using {}", translator);
+			LOG.trace("content: {}", message.getContent());
 			message.setContent(translator.translate(message.getContent()));
-			LOG.debug("Message content {} translated using {}", message.getContent(), translator);
-			LOG.debug("Sending translated message {} using {}", message, delegate);
+			LOG.debug("Message content translated using {}", translator);
+			LOG.trace("content: {}", message.getContent());
+			LOG.debug("Sending translated message using {}", delegate);
+			LOG.trace("message: {}", message);
 			delegate.send(message);
 		} catch (ContentTranslatorException e) {
 			throw new MessageNotSentException("Failed to send message due to content handler", message, e);
