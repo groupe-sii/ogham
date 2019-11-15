@@ -58,9 +58,9 @@ public class FreeMarkerFirstSupportingTemplateLoader implements TemplateLoader {
 		} catch (NoResolverAdapterException e) {
 			throw new ResolverAdapterNotFoundException("Unable to find template source cause no adapter supporting template name '" + unresolvedTemplateName + "' was found. ", e);
 		} catch (ResolverAdapterConfigurationException e) {
-			throw new ResolverAdapterNotFoundException("Unable to find template source because of invalid adapter configuration for template anme ''" + unresolvedTemplateName + "'. ", e);
+			throw new ResolverAdapterNotFoundException("Unable to find template source because of invalid adapter configuration for template name ''" + unresolvedTemplateName + "'. ", e);
 		} catch (ResolverAdapterException e) {
-			throw new IOException("Unable to find template source because of adapter failure for template anme ''" + unresolvedTemplateName + "'. ", e);
+			throw new IOException("Unable to find template source because of adapter failure for template name ''" + unresolvedTemplateName + "'. ", e);
 		}
 	}
 

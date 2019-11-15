@@ -117,4 +117,10 @@ public class InlineCssTranslator implements ContentTranslator {
 		}
 		return inlinedContent;
 	}
+
+	@Override
+	public String toString() {
+		return "InlineCssTranslator";
+	}
+	
 }

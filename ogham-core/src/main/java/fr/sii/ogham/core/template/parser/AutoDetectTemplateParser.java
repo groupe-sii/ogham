@@ -62,6 +62,14 @@ public class AutoDetectTemplateParser implements TemplateParser {
 		}
 		throw new NoEngineDetectionException("Auto detection couldn't find any parser able to handle the template " + templatePath.getOriginalPath());
 	}
+	
+
+	@Override
+	public String toString() {
+		return "AutoDetectTemplateParser (" + implementations + ")";
+	}
+
+
 
 	public static class TemplateImplementation {
 		private final TemplateEngineDetector detector;
@@ -76,6 +84,10 @@ public class AutoDetectTemplateParser implements TemplateParser {
 		}
 		public TemplateParser getParser() {
 			return parser;
+		}
+		@Override
+		public String toString() {
+			return "TemplateImplementation {detector:" + detector + ", parser:" + parser + "}";
 		}
 	}
 }

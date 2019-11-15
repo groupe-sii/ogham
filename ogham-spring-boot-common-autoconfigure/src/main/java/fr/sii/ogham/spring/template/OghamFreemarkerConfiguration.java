@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebAppli
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
@@ -38,8 +39,10 @@ public class OghamFreemarkerConfiguration {
 													 @Autowired(required=false) OghamCommonTemplateProperties templateProperties,
 													 @Autowired(required=false) OghamEmailProperties emailProperties,
 													 @Autowired(required=false) OghamSmsProperties smsProperties,
-													 @Autowired(required=false) FreeMarkerProperties freemarkerProperties) {
-		return new FreemarkerConfigurer(emailFreemarkerConfiguration, smsFreemarkerConfiguration, templateProperties, emailProperties, smsProperties, freemarkerProperties);
+													 @Autowired(required=false) FreeMarkerProperties freemarkerProperties,
+													 @Autowired(required=false) OghamFreemarkerProperties oghamFreemarkerProperties,
+													 @Autowired ApplicationContext applicationContext) {
+		return new FreemarkerConfigurer(emailFreemarkerConfiguration, smsFreemarkerConfiguration, templateProperties, emailProperties, smsProperties, freemarkerProperties, oghamFreemarkerProperties, applicationContext);
 	}
 
 	

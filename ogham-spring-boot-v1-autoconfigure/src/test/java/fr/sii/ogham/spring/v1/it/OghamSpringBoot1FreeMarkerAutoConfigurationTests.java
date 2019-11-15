@@ -50,7 +50,6 @@ public class OghamSpringBoot1FreeMarkerAutoConfigurationTests {
 				"ogham.sms.smpp.port="+smppServer.getPort(),
 				"ogham.email.sendgrid.api-key=ogham",
 				"spring.sendgrid.api-key=spring",
-				"ogham.freemarker.default-encoding="+StandardCharsets.US_ASCII.name(),
 				"spring.freemarker.charset="+StandardCharsets.UTF_16BE.name());
 	}
 
@@ -87,6 +86,37 @@ public class OghamSpringBoot1FreeMarkerAutoConfigurationTests {
 				.all()
 					.configuration()
 						.defaultEncoding(equalTo(StandardCharsets.UTF_16BE.name()));
+	}
+	
+
+	@Test
+	public void oghamWithFreemarkerAutoConfigWithoutWebContextAndOghamPropertiesShouldUseSpringFreemarkerConfigurationAndOghamProperties() throws Exception {
+		EnvironmentTestUtils.addEnvironment(context, "ogham.freemarker.default-encoding="+StandardCharsets.US_ASCII.name());
+		context.register(FreeMarkerAutoConfiguration.class, OghamSpringBoot1AutoConfiguration.class);
+		context.refresh();
+		MessagingService messagingService = context.getBean(MessagingService.class);
+		checkEmail(messagingService);
+		checkSms(messagingService);
+		OghamInternalAssertions.assertThat(messagingService)
+			.freemarker()
+				.all()
+					.configuration()
+						.defaultEncoding(equalTo(StandardCharsets.US_ASCII.name()));
+	}
+
+	@Test
+	public void oghamWithFreemarkerAutoConfigInWebContextAndOghamPropertiesShouldUseSpringFreemarkerConfigurationAndOghamProperties() throws Exception {
+		EnvironmentTestUtils.addEnvironment(context, "ogham.freemarker.default-encoding="+StandardCharsets.US_ASCII.name());
+		context.register(WebMvcAutoConfiguration.class, FreeMarkerAutoConfiguration.class, OghamSpringBoot1AutoConfiguration.class);
+		context.refresh();
+		MessagingService messagingService = context.getBean(MessagingService.class);
+		checkEmail(messagingService);
+		checkSms(messagingService);
+		OghamInternalAssertions.assertThat(messagingService)
+			.freemarker()
+				.all()
+					.configuration()
+						.defaultEncoding(equalTo(StandardCharsets.US_ASCII.name()));
 	}
 
 

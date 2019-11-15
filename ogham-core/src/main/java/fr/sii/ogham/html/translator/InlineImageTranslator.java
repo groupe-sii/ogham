@@ -171,4 +171,10 @@ public class InlineImageTranslator implements ContentTranslator {
 		}
 		return new ContentWithAttachments(inlinedContent, contentWithImages.getAttachments());
 	}
+
+	@Override
+	public String toString() {
+		return "InlineImageTranslator";
+	}
+	
 }

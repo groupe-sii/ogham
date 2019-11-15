@@ -48,7 +48,6 @@ public class OghamSpringBoot2FreeMarkerAutoConfigurationTests {
 						"ogham.sms.smpp.port="+smppServer.getPort(),
 						"ogham.email.sendgrid.api-key=ogham",
 						"spring.sendgrid.api-key=spring",
-						"ogham.freemarker.default-encoding="+StandardCharsets.US_ASCII.name(),
 						"spring.freemarker.charset="+StandardCharsets.UTF_16BE.name());
 	}
 	
@@ -79,6 +78,39 @@ public class OghamSpringBoot2FreeMarkerAutoConfigurationTests {
 					.all()
 						.configuration()
 							.defaultEncoding(equalTo(StandardCharsets.UTF_16BE.name()));
+		});
+	}
+
+	
+	@Test
+	public void oghamWithFreemarkerAutoConfigWithoutWebContextAndOghamPropertiesShouldUseSpringFreemarkerConfigurationAndOghamProperties() throws Exception {
+		contextRunner = contextRunner.withConfiguration(of(FreeMarkerAutoConfiguration.class, OghamSpringBoot2AutoConfiguration.class))
+				.withPropertyValues("ogham.freemarker.default-encoding="+StandardCharsets.US_ASCII.name());
+		contextRunner.run((context) -> {
+			MessagingService messagingService = context.getBean(MessagingService.class);
+			checkEmail(messagingService);
+			checkSms(messagingService);
+			OghamInternalAssertions.assertThat(messagingService)
+				.freemarker()
+					.all()
+						.configuration()
+							.defaultEncoding(equalTo(StandardCharsets.US_ASCII.name()));
+		});
+	}
+
+	@Test
+	public void oghamWithFreemarkerAutoConfigInWebContextAndOghamPropertiesShouldUseSpringFreemarkerConfigurationAndOghamProperties() throws Exception {
+		contextRunner = contextRunner.withConfiguration(of(WebMvcAutoConfiguration.class, FreeMarkerAutoConfiguration.class, OghamSpringBoot2AutoConfiguration.class))
+				.withPropertyValues("ogham.freemarker.default-encoding="+StandardCharsets.US_ASCII.name());
+		contextRunner.run((context) -> {
+			MessagingService messagingService = context.getBean(MessagingService.class);
+			checkEmail(messagingService);
+			checkSms(messagingService);
+			OghamInternalAssertions.assertThat(messagingService)
+				.freemarker()
+					.all()
+						.configuration()
+							.defaultEncoding(equalTo(StandardCharsets.US_ASCII.name()));
 		});
 	}
 

@@ -3,6 +3,7 @@ package fr.sii.ogham.spring.template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
+import org.springframework.context.ApplicationContext;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
@@ -12,12 +13,16 @@ import fr.sii.ogham.spring.common.OghamTemplateProperties;
 import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 import fr.sii.ogham.spring.email.OghamEmailProperties;
 import fr.sii.ogham.spring.sms.OghamSmsProperties;
+import fr.sii.ogham.spring.template.freemarker.SpringBeansTemplateHashModelEx;
 import fr.sii.ogham.template.freemarker.FreeMarkerParser;
 import fr.sii.ogham.template.freemarker.FreemarkerConstants;
 import fr.sii.ogham.template.freemarker.builder.AbstractFreemarkerBuilder;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
 
 /**
  * Integrates with Spring templating system by using Freemarker
@@ -25,7 +30,7 @@ import freemarker.template.Configuration;
  * properties defined with prefix {@code spring.freemarker} (see
  * {@link FreeMarkerProperties}).
  * 
- * If both Spring property and Ogham property is defined, Spring property is
+ * If both Spring property and Ogham property is defined, Ogham property is
  * used.
  * 
  * For example, if the file application.properties contains the following
@@ -36,27 +41,31 @@ import freemarker.template.Configuration;
  * ogham.email.freemarker.path-prefix=/foo/
  * </pre>
  * 
- * The {@link FreeMarkerParser} will use the templates in "/email/".
+ * The {@link FreeMarkerParser} will use the templates in "/foo/".
  * 
  * <p>
  * This configurer is also useful to support property naming variants (see
- * <a href="https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed Binding</a>).
+ * <a href=
+ * "https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed
+ * Binding</a>).
  * 
  * @author Aurélien Baudet
  *
  */
 public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(FreemarkerConfigurer.class);
-	
+
 	private final Configuration emailConfiguration;
 	private final Configuration smsConfiguration;
 	private final OghamCommonTemplateProperties templateProperties;
 	private final OghamEmailProperties emailProperties;
 	private final OghamSmsProperties smsProperties;
 	private final FreeMarkerProperties springProperties;
+	private final OghamFreemarkerProperties oghamFreemarkerProperties;
+	private final ApplicationContext applicationContext;
 
 	public FreemarkerConfigurer(Configuration emailConfiguration, Configuration smsConfiguration, OghamCommonTemplateProperties templateProperties, OghamEmailProperties emailProperties,
-			OghamSmsProperties smsProperties, FreeMarkerProperties springProperties) {
+			OghamSmsProperties smsProperties, FreeMarkerProperties springProperties, OghamFreemarkerProperties oghamFreemarkerProperties, ApplicationContext applicationContext) {
 		super();
 		this.emailConfiguration = emailConfiguration;
 		this.smsConfiguration = smsConfiguration;
@@ -64,6 +73,8 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		this.emailProperties = emailProperties;
 		this.smsProperties = smsProperties;
 		this.springProperties = springProperties;
+		this.oghamFreemarkerProperties = oghamFreemarkerProperties;
+		this.applicationContext = applicationContext;
 	}
 
 	@Override
@@ -78,26 +89,34 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 	@Override
 	public void configure(EmailBuilder emailBuilder) {
 		AbstractFreemarkerBuilder<?, ?> builder = emailBuilder.template(FreemarkerEmailBuilder.class);
-		builder.configuration(emailConfiguration);
-		// specific Ogham properties explicitly take precedence over Spring properties
+		builder.configuration(emailConfiguration, true);
+		// specific Ogham properties explicitly take precedence over Spring
+		// properties
 		if (emailProperties != null) {
 			applyOghamConfiguration(builder, emailProperties);
 		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
 		}
+		if (oghamFreemarkerProperties.isEnableSpringBeans()) {
+			registerSpringBeans(builder, emailConfiguration);
+		}
 	}
 
 	@Override
 	public void configure(SmsBuilder smsBuilder) {
 		AbstractFreemarkerBuilder<?, ?> builder = smsBuilder.template(FreemarkerSmsBuilder.class);
-		builder.configuration(smsConfiguration);
-		// specific Ogham properties explicitly take precedence over Spring properties
+		builder.configuration(smsConfiguration, true);
+		// specific Ogham properties explicitly take precedence over Spring
+		// properties
 		if (smsProperties != null) {
 			applyOghamConfiguration(builder, smsProperties);
 		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
+		}
+		if (oghamFreemarkerProperties.isEnableSpringBeans()) {
+			registerSpringBeans(builder, smsConfiguration);
 		}
 	}
 
@@ -133,6 +152,9 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 							props.getFreemarker().getPathSuffix(),
 							props.getTemplate().getPathSuffix(),
 							templateProperties.getPathSuffix());
+		builder
+			.configuration()
+				.defaultEncoding(oghamFreemarkerProperties.getDefaultEncoding());
 		// @formatter:on
 	}
 
@@ -147,7 +169,22 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 			.file()
 				.pathPrefix(springProperties.getPrefix())
 				.pathSuffix(springProperties.getSuffix());
+		builder
+			.configuration()
+				.defaultEncoding(springProperties.getCharsetName());
 		// @formatter:on
+	}
+
+	private void registerSpringBeans(AbstractFreemarkerBuilder<?, ?> builder, Configuration configuration) {
+		builder.configuration().addSharedVariables(new SpringBeansTemplateHashModelEx(applicationContext, getBeansWrapper(configuration)));
+	}
+
+	private BeansWrapper getBeansWrapper(Configuration configuration) {
+		ObjectWrapper objectWrapper = configuration.getObjectWrapper();
+		if (objectWrapper instanceof BeansWrapper) {
+			return (BeansWrapper) objectWrapper;
+		}
+		return new BeansWrapperBuilder(configuration.getIncompatibleImprovements()).build();
 	}
 
 }

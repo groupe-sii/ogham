@@ -3,7 +3,6 @@ package fr.sii.ogham.spring.template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
-import org.thymeleaf.TemplateEngine;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
@@ -13,7 +12,9 @@ import fr.sii.ogham.spring.common.OghamTemplateProperties;
 import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 import fr.sii.ogham.spring.email.OghamEmailProperties;
 import fr.sii.ogham.spring.sms.OghamSmsProperties;
+import fr.sii.ogham.spring.template.thymeleaf.TemplateEngineSupplier;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafConstants;
+import fr.sii.ogham.template.thymeleaf.common.ThymeleafContextConverter;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafParser;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
 
@@ -22,7 +23,7 @@ import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
  * provided by Spring and by using Spring properties defined with prefix
  * {@code spring.thymeleaf} (see {@link ThymeleafProperties}).
  * 
- * If both Spring property and Ogham property is defined, Spring property is
+ * If both Spring property and Ogham property is defined, Ogham property is
  * used.
  * 
  * For example, if the file application.properties contains the following
@@ -33,7 +34,7 @@ import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
  * ogham.email.thymeleaf.path-prefix=/foo/
  * </pre>
  * 
- * The {@link ThymeleafParser} will use the templates in "/email/".
+ * The {@link ThymeleafParser} will use the templates in "/foo/".
  * 
  * <p>
  * This configurer is also useful to support property naming variants (see
@@ -47,8 +48,9 @@ import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
  */
 public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(ThymeLeafConfigurer.class);
-	
-	private final TemplateEngine springTemplateEngine;
+
+	private final TemplateEngineSupplier springTemplateEngineSupplier;
+	private final ThymeleafContextConverter contextConverter;
 	private final OghamCommonTemplateProperties templateProperties;
 	private final OghamEmailProperties emailProperties;
 	private final OghamSmsProperties smsProperties;
@@ -56,10 +58,12 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 	private final Class<? extends AbstractThymeleafBuilder<?, ?, ?>> emailBuilderClass;
 	private final Class<? extends AbstractThymeleafBuilder<?, ?, ?>> smsBuilderClass;
 
-	public ThymeLeafConfigurer(TemplateEngine springTemplateEngine, OghamCommonTemplateProperties templateProperties, OghamEmailProperties emailProperties, OghamSmsProperties smsProperties,
-			ThymeleafProperties springProperties, Class<? extends AbstractThymeleafBuilder<?, ?, ?>> emailBuilderClass, Class<? extends AbstractThymeleafBuilder<?, ?, ?>> smsBuilderClass) {
+	public ThymeLeafConfigurer(TemplateEngineSupplier springTemplateEngineSupplier, ThymeleafContextConverter contextConverter, OghamCommonTemplateProperties templateProperties,
+			OghamEmailProperties emailProperties, OghamSmsProperties smsProperties, ThymeleafProperties springProperties, Class<? extends AbstractThymeleafBuilder<?, ?, ?>> emailBuilderClass,
+			Class<? extends AbstractThymeleafBuilder<?, ?, ?>> smsBuilderClass) {
 		super();
-		this.springTemplateEngine = springTemplateEngine;
+		this.springTemplateEngineSupplier = springTemplateEngineSupplier;
+		this.contextConverter = contextConverter;
 		this.templateProperties = templateProperties;
 		this.emailProperties = emailProperties;
 		this.smsProperties = smsProperties;
@@ -80,10 +84,9 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 	@Override
 	public void configure(EmailBuilder emailBuilder) {
 		AbstractThymeleafBuilder<?, ?, ?> builder = emailBuilder.template(emailBuilderClass);
-		if(springTemplateEngine != null) {
-			builder.engine(springTemplateEngine);
-		}
-		// specific Ogham properties explicitly take precedence over Spring properties
+		configureSpringEngine(builder);
+		// specific Ogham properties explicitly take precedence over Spring
+		// properties
 		if (emailProperties != null) {
 			applyOghamConfiguration(builder, emailProperties);
 		}
@@ -95,10 +98,9 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 	@Override
 	public void configure(SmsBuilder smsBuilder) {
 		AbstractThymeleafBuilder<?, ?, ?> builder = smsBuilder.template(smsBuilderClass);
-		if(springTemplateEngine != null) {
-			builder.engine(springTemplateEngine);
-		}
-		// specific Ogham properties explicitly take precedence over Spring properties
+		configureSpringEngine(builder);
+		// specific Ogham properties explicitly take precedence over Spring
+		// properties
 		if (smsProperties != null) {
 			applyOghamConfiguration(builder, smsProperties);
 		}
@@ -110,6 +112,15 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 	@Override
 	public int getOrder() {
 		return ThymeleafConstants.DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY + 1000;
+	}
+
+	private void configureSpringEngine(AbstractThymeleafBuilder<?, ?, ?> builder) {
+		if (springTemplateEngineSupplier != null) {
+			builder.engine(springTemplateEngineSupplier.get());
+		}
+		if (contextConverter != null) {
+			builder.contextConverter(contextConverter);
+		}
 	}
 
 	private void applyOghamConfiguration(AbstractThymeleafBuilder<?, ?, ?> builder, OghamTemplateProperties props) {

@@ -1,11 +1,13 @@
 package fr.sii.ogham.template.thymeleaf.common;
 
+import org.thymeleaf.context.IContext;
+
 import fr.sii.ogham.core.exception.template.ContextException;
 import fr.sii.ogham.core.template.context.Context;
 
 /**
  * Convert a {@link Context} abstraction used for all template engines into a
- * {@link org.thymeleaf.context.Context} specific to Thymeleaf.
+ * {@link IContext} specific to Thymeleaf.
  * 
  * @author Aurélien Baudet
  *
@@ -22,6 +24,6 @@ public interface ThymeleafContextConverter {
 	 * @throws ContextException
 	 *             when conversion couldn't be applied
 	 */
-	public abstract org.thymeleaf.context.Context convert(Context context) throws ContextException;
+	public abstract IContext convert(Context context) throws ContextException;
 
 }

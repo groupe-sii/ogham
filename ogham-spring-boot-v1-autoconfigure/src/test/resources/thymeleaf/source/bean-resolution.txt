@@ -1,0 +1,1 @@
+<html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">[[${@fakeService.hello(name)}]]</html>

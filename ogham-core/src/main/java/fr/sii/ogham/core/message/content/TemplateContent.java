@@ -4,6 +4,7 @@ import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.template.context.BeanContext;
 import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.context.NullContext;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 
@@ -37,7 +38,7 @@ public class TemplateContent implements Content, HasResourcePath {
 	public TemplateContent(ResourcePath path, Context context) {
 		super();
 		this.path = path;
-		this.context = context;
+		this.context = context != null ? context : new NullContext();
 	}
 
 	/**
@@ -62,7 +63,7 @@ public class TemplateContent implements Content, HasResourcePath {
 	 *            the object that contains the variable values
 	 */
 	public TemplateContent(ResourcePath path, Object bean) {
-		this(path, new BeanContext(bean));
+		this(path, bean != null ? new BeanContext(bean) : new NullContext());
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class TemplateContent implements Content, HasResourcePath {
 	 *            the object that contains the variable values
 	 */
 	public TemplateContent(String path, Object bean) {
-		this(path, new BeanContext(bean));
+		this(path, bean != null ? new BeanContext(bean) : new NullContext());
 	}
 
 	@Override

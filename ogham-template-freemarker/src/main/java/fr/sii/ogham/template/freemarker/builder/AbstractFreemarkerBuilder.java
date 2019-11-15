@@ -211,16 +211,50 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	 * Sets a Freemarker configuration.
 	 * 
 	 * This value preempts any other value defined by calling
-	 * {@link #configuration()} method.
+	 * {@link #configuration()} method. It means that the provided configuration
+	 * is used as-is and any call to {@link #configuration()} builder methods
+	 * has no effect on the provided configuration. You have to manually
+	 * configure it.
 	 * 
-	 * If this method is called several times, only the last provider is used.
+	 * If this method is called several times, only the last provided
+	 * configuration is used.
 	 * 
 	 * @param configuration
 	 *            the Freemarker configuration
 	 * @return this instance for fluent chaining
 	 */
 	public MYSELF configuration(Configuration configuration) {
-		this.configuration = configuration;
+		return configuration(configuration, false);
+	}
+
+	/**
+	 * Sets a Freemarker configuration.
+	 * 
+	 * If merge parameter is true, then the provided configuration is used and
+	 * any call to {@link #configuration()} builder methods are applied to the
+	 * provided configuration.
+	 * 
+	 * If merge parameter is false, then the provided configuration is used
+	 * as-is and any call to {@link #configuration()} builder methods has no
+	 * effect on the provided configuration.
+	 * 
+	 * If this method is called several times, only the last provided
+	 * configuration is used.
+	 * 
+	 * @param configuration
+	 *            The Freemarker configuration to apply
+	 * @param merge
+	 *            If true, the provided configuration with any configuration set
+	 *            using {@link #configuration()} builder. If false, replace any
+	 *            previously provided configuration.
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF configuration(Configuration configuration, boolean merge) {
+		if (merge) {
+			configuration().base(configuration);
+		} else {
+			this.configuration = configuration;
+		}
 		return myself;
 	}
 

@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.template.detector;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
 import fr.sii.ogham.core.resource.path.ResourcePath;
@@ -48,5 +49,14 @@ public class OrTemplateDetector extends CompositeTemplateDetector {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		StringJoiner joiner = new StringJoiner(" or ", "(", ")");
+		for (TemplateEngineDetector detector : getDetectors()) {
+			joiner.add(detector.toString());
+		}
+		return joiner.toString();
 	}
 }

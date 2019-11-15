@@ -13,12 +13,14 @@ import fr.sii.ogham.core.template.context.LocaleContext;
  */
 public class SimpleThymeleafContextConverter implements ThymeleafContextConverter {
 	@Override
-	public org.thymeleaf.context.Context convert(Context context) throws ContextException {
+	public org.thymeleaf.context.IContext convert(Context context) throws ContextException {
 		org.thymeleaf.context.Context thymeleafContext = new org.thymeleaf.context.Context();
+		
 		thymeleafContext.setVariables(context.getVariables());
 		if (context instanceof LocaleContext) {
 			thymeleafContext.setLocale(((LocaleContext) context).getLocale());
 		}
+		
 		return thymeleafContext;
 	}
 }

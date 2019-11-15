@@ -4,6 +4,7 @@ import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.template.context.BeanContext;
 import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.context.NullContext;
 
 /**
  * <p>
@@ -130,7 +131,7 @@ public class MultiTemplateContent extends MultiContent {
 	 *            the extensions to specify
 	 */
 	public MultiTemplateContent(ResourcePath templatePath, Object bean, Variant... extensions) {
-		this(templatePath, new BeanContext(bean), extensions);
+		this(templatePath, bean != null ? new BeanContext(bean) : new NullContext(), extensions);
 	}
 
 	/**
@@ -144,7 +145,7 @@ public class MultiTemplateContent extends MultiContent {
 	 *            the context to share as a simple POJO object
 	 */
 	public MultiTemplateContent(ResourcePath templatePath, Object bean) {
-		this(templatePath, new BeanContext(bean));
+		this(templatePath, bean != null ? new BeanContext(bean) : new NullContext());
 	}
 
 	private static TemplateContent[] createTemplates(ResourcePath templatePath, Context context, Variant[] variants) {
