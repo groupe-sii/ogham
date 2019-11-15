@@ -185,9 +185,10 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 * contain a variable with the same name.
 	 *
 	 * <p>
-	 * Never use <tt>TemplateModel</tt> implementation that is not thread-safe
-	 * for shared sharedVariables, if the configuration is used by multiple
-	 * threads! It is the typical situation for Servlet based Web sites.
+	 * Never use <code>TemplateModel</code> implementation that is not
+	 * thread-safe for shared sharedVariables, if the configuration is used by
+	 * multiple threads! It is the typical situation for Servlet based Web
+	 * sites.
 	 * 
 	 * <p>
 	 * This method is <b>not</b> thread safe; use it with the same restrictions
@@ -249,10 +250,10 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 * before doing this.
 	 *
 	 * <p>
-	 * Never use <tt>TemplateModel</tt> implementation that is not thread-safe
-	 * for shared shared variable values, if the configuration is used by
-	 * multiple threads! It is the typical situation for Servlet based Web
-	 * sites.
+	 * Never use <code>TemplateModel</code> implementation that is not
+	 * thread-safe for shared shared variable values, if the configuration is
+	 * used by multiple threads! It is the typical situation for Servlet based
+	 * Web sites.
 	 *
 	 * <p>
 	 * This method is <b>not</b> thread safe; use it with the same restrictions
