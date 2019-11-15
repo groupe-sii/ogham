@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>fr.sii.ogham</groupId>
@@ -15,6 +17,7 @@
 		<spring-boot.version>${spring-boot-v1.version}</spring-boot.version>
 		<sendgrid-java.version>${sendgrid-java-v2.version}</sendgrid-java.version>
 		<thymeleaf.version>${thymeleaf-v2.version}</thymeleaf.version>
+		<mockito.version>1.10.19</mockito.version>
 		<maven.site.skip>true</maven.site.skip>
 	</properties>
 
@@ -42,6 +45,16 @@
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf-spring4</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -99,11 +112,11 @@
 		<dependencies>
 			<!-- Fix dependency management conflict with Spring Boot -->
 			<dependency>
-			    <groupId>org.junit</groupId>
-			    <artifactId>junit-bom</artifactId>
-			    <version>${junit-jupiter.version}</version>
-			    <type>pom</type>
-			    <scope>import</scope>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>${junit-jupiter.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<!-- Import dependency management from Spring Boot -->
 			<dependency>

@@ -18,7 +18,19 @@ public interface ContextMerger {
 	 *            context data. It may be updated in place.
 	 * @param variables
 	 *            the additional variables to apply to the original context
-	 * @return the resulting context (can be the same instance as base)
+	 * @return the resulting context (may be the same instance as base)
 	 */
 	IContext mergeVariables(IContext base, Map<String, Object> variables);
+
+	/**
+	 * Merge two contexts into one context.
+	 * 
+	 * @param a
+	 *            first context
+	 * @param b
+	 *            second context
+	 * @return the resulting context (may be the same instance as any of
+	 *         provided context)
+	 */
+	IContext merge(IContext a, IContext b);
 }

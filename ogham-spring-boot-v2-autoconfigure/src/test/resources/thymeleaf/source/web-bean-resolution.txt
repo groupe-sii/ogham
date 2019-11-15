@@ -1,0 +1,4 @@
+[[${@fakeService.hello(name)}]]
+
+[[@{/fake/resources/foo.js}]]
+[[${(#mvc.url('FC#hello').arg(0, 'world')).build()}]]

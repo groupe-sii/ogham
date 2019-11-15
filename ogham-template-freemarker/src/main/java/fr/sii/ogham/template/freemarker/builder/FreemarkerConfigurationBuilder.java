@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
@@ -300,6 +301,9 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 		try {
 			if (variablesHash != null) {
 				configuration.setAllSharedVariables(variablesHash);
+			}
+			for (Entry<String, Object> entry : sharedVariables.entrySet()) {
+				configuration.setSharedVariable(entry.getKey(), entry.getValue());
 			}
 		} catch (TemplateModelException e) {
 			throw new BuildException("Failed to configure FreeMarker shared variables", e);

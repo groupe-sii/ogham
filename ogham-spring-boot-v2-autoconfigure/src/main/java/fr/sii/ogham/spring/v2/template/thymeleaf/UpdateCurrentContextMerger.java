@@ -1,4 +1,4 @@
-package fr.sii.ogham.spring.template.thymeleaf;
+package fr.sii.ogham.spring.v2.template.thymeleaf;
 
 import java.util.Map;
 
@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.context.AbstractContext;
 import org.thymeleaf.context.IContext;
+
+import fr.sii.ogham.spring.template.thymeleaf.ContextMerger;
 
 /**
  * Add additional variables to an existing Thymeleaf context. It only works if
@@ -28,6 +30,18 @@ public class UpdateCurrentContextMerger implements ContextMerger {
 			((AbstractContext) base).setVariables(additionalVariables);
 		} else {
 			LOG.debug("Not an AbstractContext => skip additional variables");
+		}
+		return base;
+	}
+
+	@Override
+	public IContext merge(IContext base, IContext other) {
+		for (String variableName : other.getVariableNames()) {
+			if (base instanceof AbstractContext) {
+				((AbstractContext) base).setVariable(variableName, other.getVariable(variableName));
+			} else {
+				LOG.debug("Not an AbstractContext => skip additional variables");
+			}
 		}
 		return base;
 	}
