@@ -24,7 +24,9 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.exception.handler.ImageInliningException;
 import fr.sii.ogham.core.exception.handler.NoContentException;
+import fr.sii.ogham.core.exception.handler.TemplateParsingFailedException;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -116,6 +118,28 @@ public class EmailMultiTemplateTest {
 	}
 	
 	@Test
+	public void withThymeleafOneVariantWithParsingError() throws MessagingException, javax.mail.MessagingException, IOException {
+		thrown.expect(instanceOf(MessageNotSentException.class));
+		thrown.expectCause(instanceOf(TemplateParsingFailedException.class));
+		// @formatter:off
+		oghamService.send(new Email()
+							.content(new MultiTemplateContent("thymeleaf/source/parsing-error", new SimpleBean("foo", 42)))
+							.to("recipient@sii.fr"));
+		// @formatter:on					
+	}
+	
+	@Test
+	public void withThymeleafOneVariantWithInvalidResourcePath() throws MessagingException, javax.mail.MessagingException, IOException {
+		thrown.expect(instanceOf(MessageNotSentException.class));
+		thrown.expectCause(instanceOf(ImageInliningException.class));
+		// @formatter:off
+		oghamService.send(new Email()
+							.content(new MultiTemplateContent("thymeleaf/source/invalid-resources", new SimpleBean("foo", 42)))
+							.to("recipient@sii.fr"));
+		// @formatter:on					
+	}
+	
+	@Test
 	public void withFreemarkerMulti() throws MessagingException, javax.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
@@ -167,6 +191,28 @@ public class EmailMultiTemplateTest {
 		oghamService.send(new Email()
 							.subject("Template")
 							.content(new MultiTemplateContent("freemarker/source/unexisting", new SimpleBean("foo", 42)))
+							.to("recipient@sii.fr"));
+		// @formatter:on					
+	}
+	
+	@Test
+	public void withFreemarkerOneVariantWithParsingError() throws MessagingException, javax.mail.MessagingException, IOException {
+		thrown.expect(instanceOf(MessageNotSentException.class));
+		thrown.expectCause(instanceOf(TemplateParsingFailedException.class));
+		// @formatter:off
+		oghamService.send(new Email()
+							.content(new MultiTemplateContent("freemarker/source/parsing-error", new SimpleBean("foo", 42)))
+							.to("recipient@sii.fr"));
+		// @formatter:on					
+	}
+
+	@Test
+	public void withFreemarkerOneVariantWithInvalidResourcePath() throws MessagingException, javax.mail.MessagingException, IOException {
+		thrown.expect(instanceOf(MessageNotSentException.class));
+		thrown.expectCause(instanceOf(ImageInliningException.class));
+		// @formatter:off
+		oghamService.send(new Email()
+							.content(new MultiTemplateContent("freemarker/source/invalid-resources", new SimpleBean("foo", 42)))
 							.to("recipient@sii.fr"));
 		// @formatter:on					
 	}

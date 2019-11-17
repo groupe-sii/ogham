@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.handler.NoContentException;
+import fr.sii.ogham.core.exception.handler.TemplateNotFoundException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 
@@ -55,23 +56,30 @@ public class MultiContentTranslator implements ContentTranslator {
 			return content;
 		}
 		MultiContent result = new MultiContent();
-		List<ContentTranslatorException> errors = new ArrayList<>();
+		List<ContentTranslatorException> missing = new ArrayList<>();
 		for (Content c : ((MultiContent) content).getContents()) {
 			LOG.debug("Translate the sub content using {}", delegate);
 			LOG.trace("sub content: {}", c);
 			try {
 				Content translated = delegate.translate(c);
-				if(translated!=null) {
+				if(translated == null) {
 					LOG.debug("Sub content skipped");
+					LOG.trace("sub-content: {}", c);
+				} else {
+					LOG.debug("Sub content added");
 					LOG.trace("sub-content: {}", c);
 					result.addContent(translated);
 				}
-			} catch(ContentTranslatorException e) {
-				errors.add(e);
+			} catch(TemplateNotFoundException e) {
+				LOG.debug("Sub content not found => skipped", e);
+				missing.add(e);
 			}
 		}
-		if (!errors.isEmpty() && result.getContents().isEmpty()) {
-			throw new NoContentException("The message is empty maybe due to some errors:\n" + errors.stream().map(Exception::getMessage).collect(Collectors.joining("\n")), (MultiContent) content, errors);
+		if (!missing.isEmpty() && result.getContents().isEmpty()) {
+			throw new NoContentException("The message is empty maybe due to some errors:\n" + missing.stream().map(Exception::getMessage).collect(Collectors.joining("\n")), (MultiContent) content, missing);
+		}
+		if (result.getContents().isEmpty()) {
+			throw new NoContentException("The message is empty", (MultiContent) content, missing);
 		}
 		return result;
 	}

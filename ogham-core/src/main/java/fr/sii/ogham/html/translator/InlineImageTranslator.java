@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.handler.ImageInliningException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.content.Content;
@@ -144,11 +145,11 @@ public class InlineImageTranslator implements ContentTranslator {
 			String imgName = new File(path.getOriginalPath()).getName();
 			imageResources.add(new ImageResource(imgName, path.getRelativePath().getOriginalPath(), path, imgContent, mimetype));
 		} catch (IOException e) {
-			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
+			throw new ImageInliningException("Failed to inline image file " + path + " because it can't be read", e);
 		} catch (ResourceResolutionException e) {
-			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
+			throw new ImageInliningException("Failed to inline image file " + path + " because it can't be resolved", e);
 		} catch (MimeTypeDetectionException e) {
-			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because mimetype can't be detected", e);
+			throw new ImageInliningException("Failed to inline image file " + path + " because mimetype can't be detected", e);
 		}
 	}
 

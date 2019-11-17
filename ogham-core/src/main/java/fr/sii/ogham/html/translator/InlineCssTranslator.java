@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.handler.CssInliningException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.HasResourcePath;
@@ -100,9 +101,9 @@ public class InlineCssTranslator implements ContentTranslator {
 		try {
 			cssResources.add(new ExternalCss(path, IOUtils.toString(resourceResolver.getResource(path).getInputStream())));
 		} catch (IOException e) {
-			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be read", e);
+			throw new CssInliningException("Failed to inline CSS file " + path + " because it can't be read", e);
 		} catch (ResourceResolutionException e) {
-			throw new ContentTranslatorException("Failed to inline CSS file " + path + " because it can't be resolved", e);
+			throw new CssInliningException("Failed to inline CSS file " + path + " because it can't be resolved", e);
 		}
 	}
 

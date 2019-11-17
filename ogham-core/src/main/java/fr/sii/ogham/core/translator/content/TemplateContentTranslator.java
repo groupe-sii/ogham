@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.handler.TemplateNotFoundException;
+import fr.sii.ogham.core.exception.handler.TemplateParsingFailedException;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -75,9 +76,9 @@ public class TemplateContentTranslator implements ContentTranslator {
 			return parser.parse(realPath, ctx);
 		} catch (TemplateVariantNotFoundException e) {
 			LOG.debug("No template found for {} after trying to load from {}", e.getTemplatePath(), e.getResolvedPaths());
-			throw new ContentTranslatorException("Template not found for " + e.getTemplatePath().getOriginalPath() + " after trying to load from " + e.getResolvedPaths(), e);
+			throw new TemplateNotFoundException("Template not found for " + e.getTemplatePath().getOriginalPath() + " after trying to load from " + e.getResolvedPaths(), e);
 		} catch (ParseException e) {
-			throw new ContentTranslatorException("failed to translate templated content", e);
+			throw new TemplateParsingFailedException("failed to translate templated content", e);
 		}
 	}
 

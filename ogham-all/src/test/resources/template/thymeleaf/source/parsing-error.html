@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Thymeleaf parsing error</title>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <p th:utext="${#strings.replace( #strings.escapeXml( ${name} ),T(java.lang.System).getProperty('line.separator'),'&lt;br /&gt;')}">
+    </body>
+</html>
