@@ -331,9 +331,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 		StringBuilder builder = new StringBuilder();
 		builder.append("Sms message\r\nFrom: ").append(from);
 		builder.append("\r\nTo: ").append(StringUtils.join(recipients, ", "));
-		if (includeContent) {
-			builder.append("\r\n----------------------------------\r\n").append(content);
-		}
+		builder.append("\r\n----------------------------------\r\n").append(includeContent ? content : "<Content skipped>");
 		builder.append("\r\n==================================\r\n");
 		return builder.toString();
 	}

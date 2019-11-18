@@ -493,9 +493,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 			}
 		}
 		builder.append("\r\nSubject: ").append(subject);
-		if (includeContent) {
-			builder.append("\r\n----------------------------------\r\n").append(content);
-		}
+		builder.append("\r\n----------------------------------\r\n").append(includeContent ? content : "<Content skipped>");
 		if (attachments != null && !attachments.isEmpty()) {
 			builder.append("\r\n----------------------------------").append("\r\nAttachments: ").append(attachments);
 		}

@@ -1,27 +1,31 @@
 package fr.sii.ogham.core.util;
 
-import java.util.function.Supplier;
-
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 
 public class LogUtils {
-	public static Supplier<String> summarize(Message message) {
-		if (message instanceof Email) {
-			return summarize((Email) message);
-		}
-		if (message instanceof Sms) {
-			return summarize((Sms) message);
-		}
-		return () -> "unknown message";
+	public static Summarizer summarize(Message message) {
+		return new Summarizer(message);
 	}
 	
-	public static Supplier<String> summarize(Email message) {
-		return () -> message.toSummaryString();
-	}
-	
-	public static Supplier<String> summarize(Sms message) {
-		return () -> message.toSummaryString();
+	private static class Summarizer {
+		private final Message message;
+		
+		public Summarizer(Message message) {
+			super();
+			this.message = message;
+		}
+
+		@Override
+		public String toString() {
+			if (message instanceof Email) {
+				return ((Email) message).toSummaryString();
+			}
+			if (message instanceof Sms) {
+				return ((Sms) message).toSummaryString();
+			}
+			return "unknown";
+		}
 	}
 }

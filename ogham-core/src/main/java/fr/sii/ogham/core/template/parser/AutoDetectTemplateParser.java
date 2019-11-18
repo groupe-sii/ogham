@@ -41,7 +41,7 @@ public class AutoDetectTemplateParser implements TemplateParser {
 	@Override
 	public Content parse(ResourcePath templatePath, Context ctx) throws ParseException {
 		try {
-			LOG.info("Start template engine automatic detection for {}", templatePath);
+			LOG.debug("Start template engine automatic detection for {}", templatePath);
 			TemplateParser parser = findParser(templatePath, ctx);
 			LOG.info("Parse the template {} using template engine {}", templatePath, parser);
 			return parser.parse(templatePath, ctx);
