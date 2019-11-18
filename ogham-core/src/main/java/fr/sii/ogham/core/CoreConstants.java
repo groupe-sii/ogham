@@ -1,5 +1,10 @@
 package fr.sii.ogham.core;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
+import java.util.List;
+
 public final class CoreConstants {
 	public static final long SERIAL_VERSION_UID = 1;
 
@@ -48,15 +53,15 @@ public final class CoreConstants {
 	 * Default lookups that are used when the path is not really a path but it
 	 * references directly the content as a string
 	 */
-	public static final String[] STRING_LOOKUPS = new String[] { "string:", "s:" };
+	public static final List<String> STRING_LOOKUPS = unmodifiableList(asList("string:", "s:"));
 	/**
 	 * Default lookups when a path to an external file is used
 	 */
-	public static final String[] FILE_LOOKUPS = new String[] { "file:" };
+	public static final List<String> FILE_LOOKUPS = unmodifiableList(asList("file:"));
 	/**
 	 * Default lookups when a path to a resource in the classpath is used
 	 */
-	public static final String[] CLASSPATH_LOOKUPS = new String[] { "classpath:", "" };
+	public static final List<String> CLASSPATH_LOOKUPS = unmodifiableList(asList("classpath:", ""));
 
 	private CoreConstants() {
 		super();

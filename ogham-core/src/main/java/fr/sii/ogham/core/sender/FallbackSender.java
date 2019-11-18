@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.message.Message;
-import fr.sii.ogham.core.util.LogUtils;
 
 /**
  * Decorator implementation that will try to send the message until one

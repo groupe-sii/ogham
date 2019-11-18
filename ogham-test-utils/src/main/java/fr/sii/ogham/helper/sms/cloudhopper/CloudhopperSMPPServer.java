@@ -12,6 +12,7 @@ import com.cloudhopper.smpp.type.SmppChannelException;
 import fr.sii.ogham.helper.sms.rule.SmppServerException;
 import fr.sii.ogham.helper.sms.rule.SmppServerSimulator;
 
+@SuppressWarnings("rawtypes")
 public class CloudhopperSMPPServer implements SmppServerSimulator<PduRequest> {
 	private DefaultSmppServer server;
 	private TestSmppServerHandler serverHandler;

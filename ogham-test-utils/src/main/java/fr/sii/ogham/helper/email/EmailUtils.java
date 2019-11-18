@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EmailUtils {
+	private static final Logger LOG = LoggerFactory.getLogger(EmailUtils.class);
 	private static final Pattern TEXT_OR_HTML_MIMETYPES = Pattern.compile("^((text/)|(application/x?html)).*", Pattern.CASE_INSENSITIVE);
 	public static final String ATTACHMENT_DISPOSITION = "attachment";
 	public static final String INLINE_DISPOSITION = "inline";
@@ -195,9 +196,7 @@ public class EmailUtils {
 	 */
 	public static <T extends Part> List<T> getAttachments(Part message, Predicate<Part> filter) throws MessagingException {
 		List<T> attachments = new ArrayList<>();
-//		if (isMixed(message)) {
-			findBodyParts(message, filter, attachments);
-//		}
+		findBodyParts(message, filter, attachments);
 		return attachments;
 	}
 
@@ -224,10 +223,9 @@ public class EmailUtils {
 		return founds;
 	}
 	
-	private static final Logger LOG = LoggerFactory.getLogger(EmailUtils.class);
-	
+		
 	private static <T extends Part> void findBodyParts(Part actualEmail, Predicate<Part> filter, List<T> founds) throws MessagingException {
-		LOG.debug("---------------------------");
+		LOG.trace("---------------------------");
 		findBodyParts(actualEmail, filter, founds, "");
 	}
 	
@@ -237,13 +235,13 @@ public class EmailUtils {
 			Object content = actualEmail.getContent();
 			if (content instanceof Multipart) {
 				Multipart mp = (Multipart) content;
-				LOG.debug("{}find {}", indent, mp.getContentType());
+				LOG.trace("{}find {}", indent, mp.getContentType());
 				for (int i = 0; i < mp.getCount(); i++) {
 					BodyPart part = mp.getBodyPart(i);
 					if (isMultipart(part)) {
 						findBodyParts(part, filter, founds, indent+"   ");
 					} else if (filter.test(part)) {
-						LOG.debug("{}add {}", indent+"   ", part.getContentType());
+						LOG.trace("{}add {}", indent+"   ", part.getContentType());
 						founds.add((T) part);
 					}
 				}
@@ -253,27 +251,11 @@ public class EmailUtils {
 		}
 	}
 
-	private static boolean isMixed(Part message) {
-		try {
-			return message.isMimeType("multipart/mixed");
-		} catch (MessagingException e) {
-			throw new RuntimeException("Failed to retrieve Content-Type of part", e);
-		}
-	}
-
-	private static boolean isRelatedMultipart(Multipart multipart) {
-		return multipart.getContentType().startsWith("multipart/related");
-	}
-
-	private static boolean isAlternativeMultipart(Multipart multipart) {
-		return multipart.getContentType().startsWith("multipart/alternative");
-	}
-
 	private static boolean isMultipart(Part part) {
 		try {
 			return part.isMimeType("multipart/*");
 		} catch (MessagingException e) {
-			throw new RuntimeException("Failed to retrieve Content-Type of part", e);
+			throw new MessagingRuntimeException("Failed to retrieve Content-Type of part", e);
 		}
 	}
 
@@ -281,7 +263,7 @@ public class EmailUtils {
 		try {
 			return TEXT_OR_HTML_MIMETYPES.matcher(part.getContentType()).matches();
 		} catch (MessagingException e) {
-			throw new RuntimeException("Failed to retrieve Content-Type of part", e);
+			throw new MessagingRuntimeException("Failed to retrieve Content-Type of part", e);
 		}
 	}
 
@@ -289,4 +271,11 @@ public class EmailUtils {
 		super();
 	}
 
+	private static class MessagingRuntimeException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+
+		public MessagingRuntimeException(String message, Throwable cause) {
+			super(message, cause);
+		}
+	}
 }

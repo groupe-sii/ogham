@@ -7,7 +7,7 @@ public class ResolvedString implements ResourcePath, ResolvedPath {
 	private final String lookup;
 
 	public ResolvedString(String content) {
-		this(content, CoreConstants.STRING_LOOKUPS[0]);
+		this(content, CoreConstants.STRING_LOOKUPS.get(0));
 	}
 
 	public ResolvedString(String content, String lookup) {

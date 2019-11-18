@@ -97,6 +97,52 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 		return myself;
 	}
 
+	/**
+	 * Configure lookup prefix. For example:
+	 * 
+	 * <pre>
+	 * .classpath().lookup("classpath:");
+	 * 
+	 * // path prefixed by classpath: matches 
+	 * // then classpath resolver is used
+	 * resourceResolver.getResource("classpath:foo/bar.html");
+	 * // path is not prefixed (or using another prefix) doesn't match 
+	 * // then classpath resolver is not used
+	 * resourceResolver.getResource("foo/bar.html");
+	 * </pre>
+	 * 
+	 * <p>
+	 * Several lookups can be provided:
+	 * 
+	 * <pre>
+	 * .classpath().lookup("classpath:", "cp:");
+	 * </pre>
+	 * 
+	 * If a path starts with one of the prefix ("classpath:" or "cp:"), the
+	 * corresponding resolver (classpath resolver in this example) is used to
+	 * resolve the file.
+	 * 
+	 * <p>
+	 * Lookup may be empty meaning that if the path has no prefix, the
+	 * corresponding resolver is use as default. For example:
+	 * 
+	 * <pre>
+	 * .classpath().lookup("");
+	 * </pre>
+	 * 
+	 * If the path is "foo/bar.html" is provided then the classpath resolver is
+	 * used.
+	 * 
+	 * @param prefix
+	 *            one or several prefixes that indicates which resolver to use
+	 *            according to path
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF lookup(List<String> prefix) {
+		this.lookups.addAll(prefix);
+		return myself;
+	}
+	
 	@Override
 	public ResourceResolver build() {
 		ResourceResolver resolver = createResolver();

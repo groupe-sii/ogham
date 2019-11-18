@@ -12,7 +12,6 @@ import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.sender.ConditionalSender;
-import fr.sii.ogham.core.util.LogUtils;
 
 /**
  * Implementation that will ask each sender if it is able to handle the message.

@@ -47,7 +47,6 @@ public class FallbackMimetypeProviderTest {
 	}
 	
 	@Test
-	@SuppressWarnings("unchecked")
 	public void providerFailsShouldUseNextProviderForInputStream() throws MimeTypeDetectionException, MimeTypeParseException {
 		when(provider1.detect(any(InputStream.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.detect(any(InputStream.class))).thenReturn(new MimeType("foo/bar"));
@@ -55,7 +54,6 @@ public class FallbackMimetypeProviderTest {
 	}
 	
 	@Test(expected=MimeTypeDetectionException.class)
-	@SuppressWarnings("unchecked")
 	public void noProviderCouldDetectShouldFailForInputStream() throws MimeTypeDetectionException {
 		when(provider1.detect(any(InputStream.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.detect(any(InputStream.class))).thenThrow(MimeTypeDetectionException.class);
@@ -63,7 +61,6 @@ public class FallbackMimetypeProviderTest {
 	}
 	
 	@Test
-	@SuppressWarnings("unchecked")
 	public void providerFailsShouldUseNextProviderForFile() throws MimeTypeDetectionException, MimeTypeParseException {
 		when(provider1.getMimeType(any(File.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.getMimeType(any(File.class))).thenReturn(new MimeType("foo/bar"));
@@ -71,7 +68,6 @@ public class FallbackMimetypeProviderTest {
 	}
 	
 	@Test(expected=MimeTypeDetectionException.class)
-	@SuppressWarnings("unchecked")
 	public void noProviderCouldDetectShouldFailForFile() throws MimeTypeDetectionException {
 		when(provider1.getMimeType(any(File.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.getMimeType(any(File.class))).thenThrow(MimeTypeDetectionException.class);
@@ -79,7 +75,6 @@ public class FallbackMimetypeProviderTest {
 	}
 	
 	@Test
-	@SuppressWarnings("unchecked")
 	public void providerFailsShouldUseNextProviderForContent() throws MimeTypeDetectionException, MimeTypeParseException {
 		when(provider1.getMimeType(any(String.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.getMimeType(any(String.class))).thenReturn(new MimeType("foo/bar"));
@@ -87,7 +82,6 @@ public class FallbackMimetypeProviderTest {
 	}
 	
 	@Test(expected=MimeTypeDetectionException.class)
-	@SuppressWarnings("unchecked")
 	public void noProviderCouldDetectShouldFailForContent() throws MimeTypeDetectionException {
 		when(provider1.getMimeType(any(String.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.getMimeType(any(String.class))).thenThrow(MimeTypeDetectionException.class);

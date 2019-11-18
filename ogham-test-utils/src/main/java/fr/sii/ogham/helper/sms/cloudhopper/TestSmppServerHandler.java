@@ -26,6 +26,7 @@ public class TestSmppServerHandler implements SmppServerHandler {
 	}
 
 	@Override
+	@SuppressWarnings("rawtypes")
 	public void sessionBindRequested(Long sessionId, SmppSessionConfiguration sessionConfiguration, final BaseBind bindRequest) throws SmppProcessingException {
 		// test name change of sessions
 		sessionConfiguration.setName("Test1");

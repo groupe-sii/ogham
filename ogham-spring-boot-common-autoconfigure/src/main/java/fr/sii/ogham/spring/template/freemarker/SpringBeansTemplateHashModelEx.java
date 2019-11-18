@@ -1,6 +1,7 @@
 package fr.sii.ogham.spring.template.freemarker;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.springframework.context.ApplicationContext;
 
@@ -47,6 +48,9 @@ public class SpringBeansTemplateHashModelEx implements TemplateHashModelEx2 {
 
 			@Override
 			public String next() {
+				if (!hasNext()) {
+					throw new NoSuchElementException();
+				}
 				return "@" + applicationContext.getBeanDefinitionNames()[currentIdx++];
 			}
 
@@ -65,6 +69,9 @@ public class SpringBeansTemplateHashModelEx implements TemplateHashModelEx2 {
 
 			@Override
 			public Object next() {
+				if (!hasNext()) {
+					throw new NoSuchElementException();
+				}
 				String name = applicationContext.getBeanDefinitionNames()[currentIdx++];
 				return new LazySpringBeanAccessModel(applicationContext, beansWrapper, name);
 			}
@@ -89,6 +96,9 @@ public class SpringBeansTemplateHashModelEx implements TemplateHashModelEx2 {
 
 			@Override
 			public KeyValuePair next() throws TemplateModelException {
+				if (!hasNext()) {
+					throw new NoSuchElementException();
+				}
 				KeyValuePair pair = new KeyValuePair() {
 
 					@Override
