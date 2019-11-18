@@ -89,6 +89,7 @@ public class InlineImageTranslator implements ContentTranslator {
 			String stringContent = ((MayHaveStringContent) content).asString();
 			List<String> images = filterExternalUrls(HtmlUtils.getDistinctImageUrls(stringContent));
 			if (!images.isEmpty()) {
+				LOG.debug("inlining {} images", images.size());
 				// parepare list of images paths/urls with their content
 				List<ImageResource> imageResources = load(getSourcePath(content), images);
 				// generate new HTML with inlined images
@@ -97,6 +98,7 @@ public class InlineImageTranslator implements ContentTranslator {
 				ContentWithImages cleaned = clean(contentWithImages);
 				// update the HTML content
 				Content inlinedContent = updateHtmlContent(content, cleaned);
+				LOG.debug("{} images inlined", contentWithImages.getAttachments().size());
 				// if it was already a content with attachments then update it otherwise create a new one
 				return generateFinalContent(content, cleaned, inlinedContent);
 			}

@@ -48,15 +48,9 @@ public class EmailAddress {
 	 * <strong>IMPORTANT: The parsing of address and personal only supports
 	 * simple cases. The cases defined in RFC822 and RFC2822 with comments,
 	 * mailbox and group are not supported.</strong> If you need this feature,
-	 * you need to used an external parser in order to extract information. If
+	 * you need to use an external parser in order to extract information. If
 	 * an address containing mailbox or group is provided, then no personal name
 	 * is extracted but address is the full string.
-	 * 
-	 * Examples:
-	 * <pre>
-	 * <code>
-	 * </code>
-	 * </pre>
 	 * 
 	 * @param rawAddress
 	 *            the email address part

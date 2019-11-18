@@ -14,6 +14,8 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmailUtils {
 	private static final Pattern TEXT_OR_HTML_MIMETYPES = Pattern.compile("^((text/)|(application/x?html)).*", Pattern.CASE_INSENSITIVE);
@@ -193,9 +195,9 @@ public class EmailUtils {
 	 */
 	public static <T extends Part> List<T> getAttachments(Part message, Predicate<Part> filter) throws MessagingException {
 		List<T> attachments = new ArrayList<>();
-		if (isMixed(message)) {
+//		if (isMixed(message)) {
 			findBodyParts(message, filter, attachments);
-		}
+//		}
 		return attachments;
 	}
 
@@ -211,7 +213,7 @@ public class EmailUtils {
 
 		@Override
 		public boolean test(Part p) {
-			return !isTextualContent(p);
+			return !isTextualContent(p) && !isMultipart(p);
 		}
 
 	}
@@ -221,18 +223,27 @@ public class EmailUtils {
 		findBodyParts(actualEmail, filter, founds);
 		return founds;
 	}
-
-	@SuppressWarnings("unchecked")
+	
+	private static final Logger LOG = LoggerFactory.getLogger(EmailUtils.class);
+	
 	private static <T extends Part> void findBodyParts(Part actualEmail, Predicate<Part> filter, List<T> founds) throws MessagingException {
+		LOG.debug("---------------------------");
+		findBodyParts(actualEmail, filter, founds, "");
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <T extends Part> void findBodyParts(Part actualEmail, Predicate<Part> filter, List<T> founds, String indent) throws MessagingException {
 		try {
 			Object content = actualEmail.getContent();
 			if (content instanceof Multipart) {
 				Multipart mp = (Multipart) content;
+				LOG.debug("{}find {}", indent, mp.getContentType());
 				for (int i = 0; i < mp.getCount(); i++) {
 					BodyPart part = mp.getBodyPart(i);
 					if (isMultipart(part)) {
-						findBodyParts(part, filter, founds);
+						findBodyParts(part, filter, founds, indent+"   ");
 					} else if (filter.test(part)) {
+						LOG.debug("{}add {}", indent+"   ", part.getContentType());
 						founds.add((T) part);
 					}
 				}
@@ -258,8 +269,12 @@ public class EmailUtils {
 		return multipart.getContentType().startsWith("multipart/alternative");
 	}
 
-	private static boolean isMultipart(Part part) throws MessagingException {
-		return part.isMimeType("multipart/*");
+	private static boolean isMultipart(Part part) {
+		try {
+			return part.isMimeType("multipart/*");
+		} catch (MessagingException e) {
+			throw new RuntimeException("Failed to retrieve Content-Type of part", e);
+		}
 	}
 
 	private static boolean isTextualContent(Part part) {

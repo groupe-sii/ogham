@@ -8,27 +8,28 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.SendGrid;
 
+import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MapContentHandler;
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridContentHandler;
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.PriorizedContentHandler;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.SendGridContentHandler;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContentHandler;
 
 /**
- * Test campaign for the {@link MapContentHandler} class.
+ * Test campaign for the {@link PriorizedContentHandler} class.
  */
-public final class MapContentHandlerTest {
+public final class PriorizedContentHandlerTest {
 
 	private SendGridContentHandler handler;
-	private MapContentHandler instance;
+	private PriorizedContentHandler instance;
 
 
 	@Before
 	public void setUp() {
 		handler = mock(SendGridContentHandler.class, RETURNS_SMART_NULLS);
-		instance = new MapContentHandler();
+		instance = new PriorizedContentHandler();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -38,7 +39,7 @@ public final class MapContentHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void contentParamCannotBeNull() throws ContentHandlerException {
-		instance.setContent(new Mail(), null);
+		instance.setContent(new SendGrid.Email(), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -54,12 +55,12 @@ public final class MapContentHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void register_clazzParamCannotBeNull() {
-		instance.register(null, handler);
+		instance.register((Class<? extends Content>) null, handler);
 	}
 
 	@Test(expected = ContentHandlerException.class)
 	public void setContent_noMatchingHandler() throws ContentHandlerException {
-		final Mail email = new Mail();
+		final SendGrid.Email email = new SendGrid.Email();
 		final StringContent content = new StringContent("Insignificant");
 
 		instance.setContent(email, content);
@@ -69,7 +70,7 @@ public final class MapContentHandlerTest {
 	public void setContent() throws ContentHandlerException {
 		instance.register(StringContent.class, handler);
 
-		final Mail email = new Mail();
+		final SendGrid.Email email = new SendGrid.Email();
 		final StringContent content = new StringContent("Insignificant");
 
 		instance.setContent(email, content);
@@ -81,7 +82,7 @@ public final class MapContentHandlerTest {
 	public void setContent_handlerFailure() throws ContentHandlerException {
 		instance.register(StringContent.class, handler);
 
-		final Mail email = new Mail();
+		final SendGrid.Email email = new SendGrid.Email();
 		final StringContent content = new StringContent("Insignificant");
 
 		final ContentHandlerException e = new ContentHandlerException("Thrown by mock");

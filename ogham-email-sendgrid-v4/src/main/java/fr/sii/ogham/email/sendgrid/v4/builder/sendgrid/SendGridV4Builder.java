@@ -28,7 +28,7 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.CustomizableUr
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridInterceptor;
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MapContentHandler;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.PriorizedContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MultiContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
 
@@ -432,9 +432,9 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		return new SendGrid(apiKey);
 	}
 
-	private MapContentHandler buildContentHandler() {
+	private PriorizedContentHandler buildContentHandler() {
 		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();
-		MapContentHandler contentHandler = new MapContentHandler();
+		PriorizedContentHandler contentHandler = new PriorizedContentHandler();
 		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
 		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider));
 		return contentHandler;

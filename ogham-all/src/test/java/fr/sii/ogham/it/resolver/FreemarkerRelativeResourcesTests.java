@@ -2,9 +2,11 @@ package fr.sii.ogham.it.resolver;
 
 import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
 import static fr.sii.ogham.assertion.OghamAssertions.isSimilarHtml;
+import static fr.sii.ogham.assertion.OghamAssertions.resource;
 import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
-import static org.hamcrest.Matchers.emptyIterable;
+import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
@@ -89,7 +91,27 @@ public class FreemarkerRelativeResourcesTests {
 					.contentAsString(isSimilarHtml(resourceAsString("/template/freemarker/expected/resources_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
-				.attachments(emptyIterable());
+				.attachments(hasSize(5))
+				.attachment("h1.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/h1.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("fb.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/fb.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("left.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/left.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("right1.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/right1.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("tw.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/tw.gif")))
+					.disposition(is(INLINE));
 		// @formatter:on
 	}
 
@@ -111,7 +133,27 @@ public class FreemarkerRelativeResourcesTests {
 					.contentAsString(isSimilarHtml(resourceAsString("/template/freemarker/expected/resources_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
-				.attachments(emptyIterable());
+				.attachments(hasSize(5))
+				.attachment("h1.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/h1.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("fb.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/fb.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("left.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/left.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("right1.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/right1.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("tw.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/tw.gif")))
+					.disposition(is(INLINE));
 		// @formatter:on
 	}
 
@@ -133,7 +175,27 @@ public class FreemarkerRelativeResourcesTests {
 					.contentAsString(isSimilarHtml(resourceAsString("/template/freemarker/expected/resources_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
-				.attachments(emptyIterable());
+				.attachments(hasSize(5))
+				.attachment("h1.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/h1.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("fb.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/fb.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("left.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/left.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("right1.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/right1.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("tw.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/tw.gif")))
+					.disposition(is(INLINE));
 		// @formatter:on
 	}
 
@@ -158,7 +220,27 @@ public class FreemarkerRelativeResourcesTests {
 				.alternative()
 					.contentAsString(isSimilarHtml(resourceAsString("/template/freemarker/expected/resources_foo_42.txt")))
 					.contentType(startsWith("text/plain")).and()
-				.attachments(emptyIterable());
+				.attachments(hasSize(5))
+				.attachment("h1.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/h1.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("fb.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/fb.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("left.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/left.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("right1.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/right1.gif")))
+					.disposition(is(INLINE)).and()
+				.attachment("tw.gif")
+					.contentType(startsWith("image/gif"))
+					.content(is(resource("/template/freemarker/source/images/tw.gif")))
+					.disposition(is(INLINE));
 		// @formatter:on
 	}
 

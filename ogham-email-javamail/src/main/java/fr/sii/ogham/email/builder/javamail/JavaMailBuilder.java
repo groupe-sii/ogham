@@ -51,7 +51,7 @@ import fr.sii.ogham.email.sender.impl.javamail.ContentWithAttachmentsHandler;
 import fr.sii.ogham.email.sender.impl.javamail.FileResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.JavaMailInterceptor;
 import fr.sii.ogham.email.sender.impl.javamail.MapAttachmentResourceHandler;
-import fr.sii.ogham.email.sender.impl.javamail.MapContentHandler;
+import fr.sii.ogham.email.sender.impl.javamail.PriorizedContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.MultiContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StreamResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
@@ -676,11 +676,11 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		return null;
 	}
 
-	private MapContentHandler buildContentHandler(MimeTypeProvider mimetypeProvider) {
-		MapContentHandler contentHandler = new MapContentHandler();
-		contentHandler.addContentHandler(MultiContent.class, new MultiContentHandler(contentHandler));
-		contentHandler.addContentHandler(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler));
-		contentHandler.addContentHandler(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider, buildCharset()));
+	private PriorizedContentHandler buildContentHandler(MimeTypeProvider mimetypeProvider) {
+		PriorizedContentHandler contentHandler = new PriorizedContentHandler();
+		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
+		contentHandler.register(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler));
+		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider, buildCharset()));
 		return contentHandler;
 	}
 
