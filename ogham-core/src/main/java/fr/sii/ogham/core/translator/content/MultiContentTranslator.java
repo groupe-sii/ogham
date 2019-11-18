@@ -62,7 +62,7 @@ public class MultiContentTranslator implements ContentTranslator {
 			LOG.trace("sub content: {}", c);
 			try {
 				Content translated = delegate.translate(c);
-				if(translated == null) {
+				if (translated == null) {
 					LOG.debug("Sub content skipped");
 					LOG.trace("sub-content: {}", c);
 				} else {
@@ -70,16 +70,13 @@ public class MultiContentTranslator implements ContentTranslator {
 					LOG.trace("sub-content: {}", c);
 					result.addContent(translated);
 				}
-			} catch(TemplateNotFoundException e) {
+			} catch (TemplateNotFoundException e) {
 				LOG.debug("Sub content not found => skipped", e);
 				missing.add(e);
 			}
 		}
-		if (!missing.isEmpty() && result.getContents().isEmpty()) {
-			throw new NoContentException("The message is empty maybe due to some errors:\n" + missing.stream().map(Exception::getMessage).collect(Collectors.joining("\n")), (MultiContent) content, missing);
-		}
 		if (result.getContents().isEmpty()) {
-			throw new NoContentException("The message is empty", (MultiContent) content, missing);
+			handleEmptyContent(content, result, missing);
 		}
 		return result;
 	}
@@ -89,4 +86,11 @@ public class MultiContentTranslator implements ContentTranslator {
 		return "MultiContentTranslator";
 	}
 
+	private void handleEmptyContent(Content content, MultiContent result, List<ContentTranslatorException> missing) throws NoContentException {
+		if (!missing.isEmpty()) {
+			String notFoundTemplates = missing.stream().map(Exception::getMessage).collect(Collectors.joining("\n"));
+			throw new NoContentException("The message is empty maybe due to some errors:\n" + notFoundTemplates, (MultiContent) content, missing);
+		}
+		throw new NoContentException("The message is empty", (MultiContent) content, missing);
+	}
 }

@@ -27,7 +27,7 @@ import org.junit.Assert;
 
 import fr.sii.ogham.assertion.HasParent;
 import fr.sii.ogham.assertion.context.SingleMessageContext;
-import fr.sii.ogham.helper.email.AnyPredicate;
+import fr.sii.ogham.helper.email.EmailUtils;
 import fr.sii.ogham.helper.email.FileNamePredicate;
 
 public class EmailAssert<P> extends HasParent<P> {
@@ -432,7 +432,7 @@ public class EmailAssert<P> extends HasParent<P> {
 			for (Message message : actual) {
 				Object content = message.getContent();
 				Assert.assertTrue("should be multipart message", content instanceof Multipart);
-				assertThat(getAttachments((Multipart) content), usingContext(desc, new SingleMessageContext(index++), matcher));
+				assertThat(getAttachments(message), usingContext(desc, new SingleMessageContext(index++), matcher));
 			}
 			return this;
 		} catch (MessagingException | IOException e) {
@@ -502,7 +502,7 @@ public class EmailAssert<P> extends HasParent<P> {
 			for (Message message : actual) {
 				Object content = message.getContent();
 				Assert.assertTrue("should be multipart message", content instanceof Multipart);
-				List<BodyPart> found = getAttachments((Multipart) content, new AnyPredicate<BodyPart>());
+				List<BodyPart> found = getAttachments(message);
 				BodyPart attachment = index >= found.size() ? null : found.get(index);
 				attachments.add(new PartWithContext(attachment, "attachment with index " + index, new SingleMessageContext(msgIndex++)));
 			}
@@ -537,7 +537,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the filter used to find attachments
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<EmailAssert<P>> attachments(Predicate<BodyPart> filter) {
+	public PartAssert<EmailAssert<P>> attachments(Predicate<Part> filter) {
 		try {
 			int index = 0;
 			List<PartWithContext> attachments = new ArrayList<>();
@@ -545,7 +545,7 @@ public class EmailAssert<P> extends HasParent<P> {
 				Object content = message.getContent();
 				Assert.assertTrue("should be multipart message", content instanceof Multipart);
 				int attachmentIdx = 0;
-				for (BodyPart attachment : getAttachments((Multipart) content, filter)) {
+				for (BodyPart attachment : EmailUtils.<BodyPart>getAttachments(message, filter)) {
 					attachments.add(new PartWithContext(attachment, "attachment " + filter + "(" + attachmentIdx + ")", new SingleMessageContext(index)));
 					attachmentIdx++;
 				}

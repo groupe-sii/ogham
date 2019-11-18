@@ -15,7 +15,6 @@ import javax.mail.Part;
 
 import org.apache.commons.io.IOUtils;
 
-
 public class EmailUtils {
 	private static final Pattern TEXT_OR_HTML_MIMETYPES = Pattern.compile("^((text/)|(application/x?html)).*", Pattern.CASE_INSENSITIVE);
 	public static final String ATTACHMENT_DISPOSITION = "attachment";
@@ -39,10 +38,12 @@ public class EmailUtils {
 	 */
 	public static Part getBodyPart(Part actualEmail) throws MessagingException {
 		List<Part> bodyParts = getTextualParts(actualEmail);
+		// if no textual part, it may mean that the body is not textual
 		if (bodyParts.isEmpty()) {
-			return null;
+			List<Part> all = getBodyParts(actualEmail, (bp) -> true);
+			return all.size() == 1 ? all.get(0) : all.get(1);
 		}
-		// if only one part matching => not Mltipart with alternative => take
+		// if only one part matching => not Multipart with alternative => take
 		// the first one
 		// if several matching parts => alternative + main content => the second
 		// is the main
@@ -90,9 +91,7 @@ public class EmailUtils {
 	 *             when message can't be read
 	 */
 	public static List<Part> getTextualParts(Part actualEmail) throws MessagingException {
-		List<Part> founds = new ArrayList<>();
-		getBodyParts(actualEmail, founds);
-		return founds;
+		return getBodyParts(actualEmail, EmailUtils::isTextualContent);
 	}
 
 	/**
@@ -140,13 +139,13 @@ public class EmailUtils {
 	 * @throws MessagingException
 	 *             when message can't be read
 	 */
-	public static BodyPart getAttachment(Multipart multipart, Predicate<BodyPart> filter) throws MessagingException {
+	public static BodyPart getAttachment(Multipart multipart, Predicate<Part> filter) throws MessagingException {
 		List<BodyPart> attachments = getAttachments(multipart, filter);
 		return attachments.isEmpty() ? null : attachments.get(0);
 	}
 
 	/**
-	 * Get a list of attachments that match the provided predicate.
+	 * Get a list of direct attachments that match the provided predicate.
 	 * 
 	 * @param multipart
 	 *            the email that contains several parts
@@ -156,7 +155,7 @@ public class EmailUtils {
 	 * @throws MessagingException
 	 *             when message can't be read
 	 */
-	public static List<BodyPart> getAttachments(Multipart multipart, Predicate<BodyPart> filter) throws MessagingException {
+	public static List<BodyPart> getAttachments(Multipart multipart, Predicate<Part> filter) throws MessagingException {
 		List<BodyPart> found = new ArrayList<>();
 		for (int i = 0; i < multipart.getCount(); i++) {
 			BodyPart bodyPart = multipart.getBodyPart(i);
@@ -168,26 +167,63 @@ public class EmailUtils {
 	}
 
 	/**
-	 * Get the whole list of attachments.
+	 * Get the whole list of attachments (recursively).
 	 * 
-	 * @param multipart
+	 * @param message
 	 *            the email that contains several parts
 	 * @return the found attachments or empty list
 	 * @throws MessagingException
 	 *             when message can't be read
 	 */
-	public static List<BodyPart> getAttachments(Multipart multipart) throws MessagingException {
-		List<BodyPart> attachments = new ArrayList<>();
-		for (int i = 0; i < multipart.getCount(); i++) {
-			BodyPart bodyPart = multipart.getBodyPart(i);
-			if (!isContent(bodyPart) && !isMultipart(bodyPart)) {
-				attachments.add(bodyPart);
-			}
+	public static List<BodyPart> getAttachments(Part message) throws MessagingException {
+		return getAttachments(message, new DefaultAttachmentPredicate());
+	}
+
+	/**
+	 * Get the whole list of attachments.
+	 * 
+	 * @param message
+	 *            the email that contains several parts
+	 * @param filter
+	 *            filter the parts to keep only some attachments. If filter
+	 *            returns true then the attachment is added to the list.
+	 * @return the found attachments or empty list
+	 * @throws MessagingException
+	 *             when message can't be read
+	 */
+	public static <T extends Part> List<T> getAttachments(Part message, Predicate<Part> filter) throws MessagingException {
+		List<T> attachments = new ArrayList<>();
+		if (isMixed(message)) {
+			findBodyParts(message, filter, attachments);
 		}
 		return attachments;
 	}
 
-	private static void getBodyParts(Part actualEmail, List<Part> founds) throws MessagingException {
+	/**
+	 * Attachments may be everywhere in the message hierarchy. The default
+	 * filter skips any body part that is either text/plain or text/html. All
+	 * other parts are considered attachments (even if related to HTML message
+	 * like images).
+	 * 
+	 * @author Aurélien Baudet
+	 */
+	public static class DefaultAttachmentPredicate implements Predicate<Part> {
+
+		@Override
+		public boolean test(Part p) {
+			return !isTextualContent(p);
+		}
+
+	}
+
+	private static <T extends Part> List<T> getBodyParts(Part actualEmail, Predicate<Part> filter) throws MessagingException {
+		List<T> founds = new ArrayList<>();
+		findBodyParts(actualEmail, filter, founds);
+		return founds;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T extends Part> void findBodyParts(Part actualEmail, Predicate<Part> filter, List<T> founds) throws MessagingException {
 		try {
 			Object content = actualEmail.getContent();
 			if (content instanceof Multipart) {
@@ -195,9 +231,9 @@ public class EmailUtils {
 				for (int i = 0; i < mp.getCount(); i++) {
 					BodyPart part = mp.getBodyPart(i);
 					if (isMultipart(part)) {
-						getBodyParts(part, founds);
-					} else if (isContent(part)) {
-						founds.add(part);
+						findBodyParts(part, filter, founds);
+					} else if (filter.test(part)) {
+						founds.add((T) part);
 					}
 				}
 			}
@@ -206,12 +242,32 @@ public class EmailUtils {
 		}
 	}
 
-	private static boolean isMultipart(BodyPart part) throws MessagingException {
-		return part.getContentType().startsWith("multipart/");
+	private static boolean isMixed(Part message) {
+		try {
+			return message.isMimeType("multipart/mixed");
+		} catch (MessagingException e) {
+			throw new RuntimeException("Failed to retrieve Content-Type of part", e);
+		}
 	}
 
-	private static boolean isContent(BodyPart part) throws MessagingException {
-		return TEXT_OR_HTML_MIMETYPES.matcher(part.getContentType()).matches();
+	private static boolean isRelatedMultipart(Multipart multipart) {
+		return multipart.getContentType().startsWith("multipart/related");
+	}
+
+	private static boolean isAlternativeMultipart(Multipart multipart) {
+		return multipart.getContentType().startsWith("multipart/alternative");
+	}
+
+	private static boolean isMultipart(Part part) throws MessagingException {
+		return part.isMimeType("multipart/*");
+	}
+
+	private static boolean isTextualContent(Part part) {
+		try {
+			return TEXT_OR_HTML_MIMETYPES.matcher(part.getContentType()).matches();
+		} catch (MessagingException e) {
+			throw new RuntimeException("Failed to retrieve Content-Type of part", e);
+		}
 	}
 
 	private EmailUtils() {

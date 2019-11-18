@@ -2,6 +2,7 @@ package fr.sii.ogham.template.thymeleaf.v3;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
@@ -61,7 +62,7 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 			} else {
 				LOG.debug("The template {} doesn't contain the namespace http://www.thymeleaf.org. Thymeleaf can't be used", template);
 			}
-			return isThymeleafTemplate;
+			return isThymeleafTemplate || isEmptyTemplate(resolvedTemplate);
 		} catch (IOException e) {
 			throw new EngineDetectionException("Failed to detect if template can be read by thymeleaf", e);
 		}
@@ -76,6 +77,12 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 			}
 		} while (line != null);
 		return false;
+	}
+	
+	private boolean isEmptyTemplate(Resource template) throws IOException {
+		try (InputStream stream = template.getInputStream()) {
+			return stream.read() == -1;
+		}
 	}
 
 	private boolean containsThymeleafNamespace(String line) {

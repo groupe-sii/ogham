@@ -13,7 +13,7 @@ import fr.sii.ogham.core.template.context.Context;
 
 /**
  * A template engine detector that indicates it can parse the template if the
- * resource represented byt the template name corresponds to a
+ * resource represented by the template name corresponds to a
  * {@link SimpleResource}.
  * 
  * This is useful when the template name is not a path but directly the template

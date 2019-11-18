@@ -1,11 +1,11 @@
 package fr.sii.ogham.helper.email;
 
-import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.Part;
 
 import com.google.common.base.Predicate;
 
-public class FileNamePredicate implements Predicate<BodyPart> {
+public class FileNamePredicate implements Predicate<Part> {
 	private final String filename;
 	
 	public FileNamePredicate(String filename) {
@@ -14,7 +14,7 @@ public class FileNamePredicate implements Predicate<BodyPart> {
 	}
 
 	@Override
-	public boolean apply(BodyPart input) {
+	public boolean apply(Part input) {
 		try {
 			return filename.equals(input.getFileName());
 		} catch (MessagingException e) {
