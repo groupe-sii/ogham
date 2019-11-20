@@ -99,6 +99,16 @@ import freemarker.template.TemplateExceptionHandler;
  * parseable by Freemarker</li>
  * </ul>
  * </li>
+ * <li>Configures static method access from templates:
+ * <ul>
+ * <li>Uses property value of ${ogham.freemarker.enable-static-method-access} if
+ * provided to enable/disable static method access from templates (default is
+ * enabled is nothing is configured)</li>
+ * <li>Uses property value of
+ * ${ogham.freemarker.static-method-access-variable-name} if provided to set the
+ * name used to access static methods from templates (default is 'statics')</li>
+ * </ul>
+ * </li>
  * </ul>
  * 
  * @author Aurélien Baudet
@@ -107,7 +117,7 @@ import freemarker.template.TemplateExceptionHandler;
 @ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
 public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultFreemarkerSmsConfigurer.class);
-	
+
 	private final MessagingConfigurerAdapter delegate;
 
 	public DefaultFreemarkerSmsConfigurer() {
@@ -161,7 +171,9 @@ public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
 				.and()
 			.configuration()
 				.defaultEncoding("${ogham.freemarker.default-encoding}", "UTF-8")
-				.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+				.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)
+				.enableStaticMethodAccess("${ogham.freemarker.enable-static-method-access}", "true")
+				.staticMethodAccessVariableName("${ogham.freemarker.static-method-access-variable-name}", "statics");
 		// @formatter:on
 	}
 

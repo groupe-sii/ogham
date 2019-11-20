@@ -49,6 +49,30 @@ import freemarker.template.ObjectWrapper;
  * "https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed
  * Binding</a>).
  * 
+ * <p>
+ * If ogham.freemarker.enable-spring-beans is true (default value), then Spring
+ * Beans are available from the template using syntax
+ * {@code @beanName.method(args)}.
+ * 
+ * <p>
+ * If {@code ogham.freemarker.enable-static-method-access} is true (default
+ * value), then static methods can be called from templates using
+ * 
+ * <pre>
+ * {@code statics['full.package.name.ClassName'].method(args)}
+ * </pre>
+ * 
+ * If {@code ogham.freemarker.static-method-access-variable-name} value is
+ * changed (default value is 'statics'), then static methods can be called from
+ * templates using another variable name. For example, configuring
+ * {@code ogham.freemarker.static-method-access-variable-name=global} gives
+ * access to static methods using name global:
+ * 
+ * <pre>
+ * {@code global['full.package.name.ClassName'].method(args)}
+ * </pre>
+ * 
+ * 
  * @author Aurélien Baudet
  *
  */
@@ -101,6 +125,9 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		if (oghamFreemarkerProperties.isEnableSpringBeans()) {
 			registerSpringBeans(builder, emailConfiguration);
 		}
+		if (oghamFreemarkerProperties.isEnableStaticMethodAccess()) {
+			registerStatics(builder, emailConfiguration);
+		}
 	}
 
 	@Override
@@ -117,6 +144,9 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		}
 		if (oghamFreemarkerProperties.isEnableSpringBeans()) {
 			registerSpringBeans(builder, smsConfiguration);
+		}
+		if (oghamFreemarkerProperties.isEnableStaticMethodAccess()) {
+			registerStatics(builder, smsConfiguration);
 		}
 	}
 
@@ -187,4 +217,7 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		return new BeansWrapperBuilder(configuration.getIncompatibleImprovements()).build();
 	}
 
+	private void registerStatics(AbstractFreemarkerBuilder<?, ?> builder, Configuration configuration) {
+		builder.configuration().addSharedVariable(oghamFreemarkerProperties.getStaticMethodAccessVariableName(), getBeansWrapper(configuration).getStaticModels());
+	}
 }

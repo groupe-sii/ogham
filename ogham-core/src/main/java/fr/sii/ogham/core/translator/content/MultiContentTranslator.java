@@ -71,7 +71,7 @@ public class MultiContentTranslator implements ContentTranslator {
 					result.addContent(translated);
 				}
 			} catch (TemplateNotFoundException e) {
-				LOG.debug("Sub content not found => skipped", e);
+				LOG.info("{} => ignoring", e.getMessage(), e);
 				missing.add(e);
 			}
 		}

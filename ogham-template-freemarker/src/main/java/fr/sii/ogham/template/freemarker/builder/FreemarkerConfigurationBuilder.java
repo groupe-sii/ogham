@@ -18,7 +18,10 @@ import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.util.BuilderUtils;
 import freemarker.core.Configurable;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateHashModelEx;
@@ -43,6 +46,9 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	private EnvironmentBuilder<?> environmentBuilder;
 	private TemplateHashModelEx variablesHash;
 	private Map<String, Object> sharedVariables;
+	private List<String> enableStaticMethodAccesses;
+	private List<String> staticMethodAccessVariableNames;
+	private boolean enableStaticMethodAccess;
 	// TODO: handle all other options
 
 	/**
@@ -59,6 +65,8 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 		super(parent);
 		defaultEncodings = new ArrayList<>();
 		sharedVariables = new HashMap<>();
+		enableStaticMethodAccesses = new ArrayList<>();
+		staticMethodAccessVariableNames = new ArrayList<>();
 		this.environmentBuilder = environmentBuilder;
 	}
 
@@ -231,17 +239,37 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 *            replace that.
 	 * @param value
 	 *            the data object value
-	 * @throws TemplateModelException
-	 *             If some of the variables couldn't be wrapped via
-	 *             {@link Configuration#getObjectWrapper()}.
 	 *
 	 * @see #addSharedVariable(String,TemplateModel)
 	 * @see #addSharedVariables(TemplateHashModelEx)
 	 * @return this instance for fluent chaining
 	 */
-	public FreemarkerConfigurationBuilder<P> addSharedVariable(String name, Object value) throws TemplateModelException {
+	public FreemarkerConfigurationBuilder<P> addSharedVariable(String name, Object value) {
 		this.sharedVariables.put(name, value);
 		return this;
+	}
+	
+	public FreemarkerConfigurationBuilder<P> enableStaticMethodAccess(boolean enable) {
+		this.enableStaticMethodAccess = enable;
+		return this;
+	}
+	
+	public FreemarkerConfigurationBuilder<P> enableStaticMethodAccess(String... enable) {
+		for (String e : enable) {
+			if (e != null) {
+				enableStaticMethodAccesses.add(e);
+			}
+		}
+		return this;
+	}
+	
+	public FreemarkerConfigurationBuilder<P> staticMethodAccessVariableName(String... name) {
+		for (String n : name) {
+			if (n != null) {
+				staticMethodAccessVariableNames.add(n);
+			}
+		}
+		return this;	
 	}
 
 	/**
@@ -284,6 +312,7 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 			configuration.setTemplateExceptionHandler(templateExceptionHandler);
 		}
 		buildSharedVariables(configuration);
+		buildStaticMethodAccess(configuration, propertyResolver);
 		return configuration;
 	}
 
@@ -309,4 +338,21 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 			throw new BuildException("Failed to configure FreeMarker shared variables", e);
 		}
 	}
+	
+	private void buildStaticMethodAccess(Configuration configuration, PropertyResolver propertyResolver) {
+		Boolean enableStaticMethods = BuilderUtils.evaluate(enableStaticMethodAccesses, propertyResolver, Boolean.class);
+		if (enableStaticMethods != null && enableStaticMethods || enableStaticMethodAccess) {
+			String staticsVariableName = BuilderUtils.evaluate(staticMethodAccessVariableNames, propertyResolver, String.class);
+			configuration.setSharedVariable(staticsVariableName, getBeansWrapper(configuration).getStaticModels());
+		}
+	}
+
+	private BeansWrapper getBeansWrapper(Configuration configuration) {
+		ObjectWrapper objectWrapper = configuration.getObjectWrapper();
+		if (objectWrapper instanceof BeansWrapper) {
+			return (BeansWrapper) objectWrapper;
+		}
+		return new BeansWrapperBuilder(configuration.getIncompatibleImprovements()).build();
+	}
+
 }
