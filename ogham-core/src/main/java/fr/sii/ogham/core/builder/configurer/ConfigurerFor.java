@@ -95,4 +95,13 @@ public @interface ConfigurerFor {
 	 * @return the configurer priority
 	 */
 	int priority();
+
+	/**
+	 * The configuration phase for the configurer.
+	 * 
+	 * It indicates when the configurer should be executed.
+	 * 
+	 * @return the configurer phase
+	 */
+	ConfigurationPhase phase() default ConfigurationPhase.BEFORE_BUILD;
 }

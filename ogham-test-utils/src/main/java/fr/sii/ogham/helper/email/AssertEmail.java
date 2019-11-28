@@ -469,7 +469,7 @@ public class AssertEmail {
 	 * @throws MessagingException
 	 *             when accessing the received email fails
 	 */
-	private static void assertMimetype(ExpectedContent expectedContent, String contentType) throws MessagingException {
+	public static void assertMimetype(ExpectedContent expectedContent, String contentType) throws MessagingException {
 		Assert.assertTrue("mimetype should be " + expectedContent.getMimetype() + " instead of " + contentType, expectedContent.getMimetype().matcher(contentType).matches());
 	}
 
@@ -495,7 +495,7 @@ public class AssertEmail {
 	 *            true for strict checking (totally equals) or false to ignore
 	 *            new line characters
 	 */
-	private static void assertBody(String expectedBody, String actualBody, boolean strict) {
+	public static void assertBody(String expectedBody, String actualBody, boolean strict) {
 		if (isHtml(expectedBody)) {
 			if (strict) {
 				AssertHtml.assertIdentical(expectedBody, actualBody);
@@ -535,7 +535,7 @@ public class AssertEmail {
 	 * @throws MessagingException
 	 *             when accessing the received email fails
 	 */
-	private static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail) throws MessagingException {
+	public static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail) throws MessagingException {
 		Assert.assertEquals("subject should be '" + expectedEmail.getSubject() + "'", expectedEmail.getSubject(), actualEmail.getSubject());
 		Assert.assertEquals("should have only one from", 1, actualEmail.getFrom().length);
 		Assert.assertEquals("from should be '" + expectedEmail.getFrom() + "'", expectedEmail.getFrom(), actualEmail.getFrom()[0].toString());
@@ -565,7 +565,7 @@ public class AssertEmail {
 	 * @throws MessagingException
 	 *             when accessing the received email fails
 	 */
-	private static void assertRecipients(List<String> expectedRecipients, Message actualEmail, RecipientType recipientType) throws MessagingException {
+	public static void assertRecipients(List<String> expectedRecipients, Message actualEmail, RecipientType recipientType) throws MessagingException {
 		Address[] actualRecipients = actualEmail.getRecipients(recipientType);
 		if (expectedRecipients.isEmpty()) {
 			Assert.assertTrue("should have no recipients " + recipientType, actualRecipients == null || actualRecipients.length == 0);
@@ -588,7 +588,7 @@ public class AssertEmail {
 		return str.replaceAll("\r|\n", "");
 	}
 
-	public static Part getBodyPart(Part actualEmail) throws MessagingException {
+	private static Part getBodyPart(Part actualEmail) throws MessagingException {
 		List<Part> bodyParts = getBodyParts(actualEmail);
 		if(bodyParts.isEmpty()) {
 			throw new IllegalStateException("Expected at least one body part but none found");
@@ -596,13 +596,13 @@ public class AssertEmail {
 		return bodyParts.get(0);
 	}
 
-	public static List<Part> getBodyParts(Part actualEmail) throws MessagingException {
+	private static List<Part> getBodyParts(Part actualEmail) throws MessagingException {
 		List<Part> founds = new ArrayList<>();
 		getBodyParts(actualEmail, founds);
 		return founds;
 	}
 	
-	public static void getBodyParts(Part actualEmail, List<Part> founds) throws MessagingException {
+	private static void getBodyParts(Part actualEmail, List<Part> founds) throws MessagingException {
 		try {
 			Object content = actualEmail.getContent();
 			if (content instanceof Multipart) {
@@ -621,7 +621,7 @@ public class AssertEmail {
 		}
 	}
 
-	public static String getBody(Part actualEmail) throws MessagingException {
+	private static String getBody(Part actualEmail) throws MessagingException {
 		try {
 			Object content = getBodyPart(actualEmail).getContent();
 			if(content instanceof String) {
@@ -636,7 +636,7 @@ public class AssertEmail {
 		}
 	}
 
-	public static String getBodyMimetype(Part actualEmail) throws MessagingException {
+	private static String getBodyMimetype(Part actualEmail) throws MessagingException {
 		return getBodyPart(actualEmail).getContentType();
 	}
 	

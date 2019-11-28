@@ -5,9 +5,9 @@ import static java.util.Arrays.asList;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -18,6 +18,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -32,6 +33,7 @@ import fr.sii.ogham.core.sender.ConditionalSender;
 import fr.sii.ogham.core.service.EverySupportingMessagingService;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.service.WrapExceptionMessagingService;
+import fr.sii.ogham.core.util.PriorizedList;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.builder.SmsBuilder;
@@ -233,7 +235,9 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	private static final Logger LOG = LoggerFactory.getLogger(MessagingBuilder.class);
 	private static final String BASE_PACKAGE = "fr.sii.ogham";
 
-	private List<PrioritizedConfigurer> configurers;
+	private final boolean autoconfigure;
+	private final Map<ConfigurationPhase, Boolean> alreadyConfigured;
+	private final PriorizedList<ConfigurerWithPhase> configurers;
 	private EnvironmentBuilder<MessagingBuilder> environmentBuilder;
 	private MimetypeDetectionBuilder<MessagingBuilder> mimetypeBuilder;
 	private StandaloneResourceResolutionBuilder<MessagingBuilder> resourceBuilder;
@@ -249,10 +253,25 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * <li>an empty {@link ResourceResolutionBuilder}</li>
 	 * </ul>
 	 * 
+	 * 
+	 * <p>
+	 * If {@code autoconfigure} parameter is true, it applies all registered
+	 * configurers on this builder instance.
+	 * 
+	 * When using {@link #standard()} and {@link #minimal()} factory methods,
+	 * {@code autoconfigure} parameter is set to true.
+	 * 
+	 * 
+	 * @param autoconfigure
+	 *            Trigger configuration automatically if true (for all phases).
+	 *            If false, you have to call
+	 *            {@link #configure(ConfigurationPhase)} manually.
 	 */
-	public MessagingBuilder() {
+	public MessagingBuilder(boolean autoconfigure) {
 		super();
-		configurers = new ArrayList<>();
+		this.autoconfigure = autoconfigure;
+		alreadyConfigured = new EnumMap<>(ConfigurationPhase.class);
+		configurers = new PriorizedList<>();
 		environmentBuilder = new SimpleEnvironmentBuilder<>(this);
 		mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, environmentBuilder);
 		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this, environmentBuilder);
@@ -264,7 +283,36 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * configurer with highest priority (applied first) has the greatest value.
 	 * 
 	 * The configurer is applied on a this builder instance to configure it
-	 * (when {@link #configure()} is called).
+	 * (when {@link #configure(ConfigurationPhase)} is called).
+	 * 
+	 * <p>
+	 * When using {@link #standard()} and {@link #minimal()} factory methods,
+	 * the list of configurers are automatically loaded from the classpath and
+	 * registered. The priority is indicated through the {@link ConfigurerFor}
+	 * annotation.
+	 * 
+	 * <p>
+	 * The registered configurer will be executed at
+	 * {@link ConfigurationPhase#BEFORE_BUILD} phase.
+	 * 
+	 * 
+	 * @param configurer
+	 *            the configurer to register
+	 * @param priority
+	 *            the configurer priority
+	 * @return this instance for fluent chaining
+	 */
+	public MessagingBuilder register(MessagingConfigurer configurer, int priority) {
+		return register(configurer, priority, ConfigurationPhase.BEFORE_BUILD);
+	}
+
+	/**
+	 * Registers a configurer with a priority. Configuration order may be
+	 * important. The priority is used to apply configurers in order. The
+	 * configurer with highest priority (applied first) has the greatest value.
+	 * 
+	 * The configurer is applied on a this builder instance to configure it
+	 * (when {@link #configure(ConfigurationPhase)} is called).
 	 * 
 	 * <p>
 	 * When using {@link #standard()} and {@link #minimal()} factory methods,
@@ -277,27 +325,39 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *            the configurer to register
 	 * @param priority
 	 *            the configurer priority
+	 * @param phase
+	 *            register the configurer to be executed at the defined the
+	 *            configuration phase
 	 * @return this instance for fluent chaining
 	 */
-	public MessagingBuilder register(MessagingConfigurer configurer, int priority) {
-		LOG.debug("[{}] registered with priority={}", configurer, priority);
-		configurers.add(new PrioritizedConfigurer(priority, configurer));
+	public MessagingBuilder register(MessagingConfigurer configurer, int priority, ConfigurationPhase phase) {
+		LOG.debug("[{}] registered for phase {} with priority={}", configurer, phase, priority);
+		configurers.register(new ConfigurerWithPhase(configurer, phase), priority);
 		return this;
 	}
 
 	/**
-	 * Apply all registered configurers on this builder instance.
+	 * Apply all registered configurers on this builder instance for the
+	 * {@link ConfigurationPhase}.
 	 * 
 	 * <p>
 	 * When using {@link #standard()} and {@link #minimal()} factory methods,
 	 * this method is automatically called.
+	 * 
+	 * @param phase
+	 *            the configuration phase
 	 */
-	public void configure() {
-		Collections.sort(configurers, new PriorityComparator());
-		for (PrioritizedConfigurer configurer : configurers) {
-			LOG.debug("[{}] configuring...", configurer);
-			configurer.getConfigurer().configure(this);
+	public void configure(ConfigurationPhase phase) {
+		if (alreadyConfigured(phase)) {
+			return;
 		}
+		for (ConfigurerWithPhase configurerWithPhase : configurers.getOrdered()) {
+			if (phase.equals(configurerWithPhase.getPhase())) {
+				LOG.debug("[{}] configuring for phase {}...", configurerWithPhase.getConfigurer(), phase);
+				configurerWithPhase.getConfigurer().configure(this);
+			}
+		}
+		alreadyConfigured.put(phase, true);
 	}
 
 	/**
@@ -1070,6 +1130,9 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 */
 	@Override
 	public MessagingService build() {
+		if (autoconfigure) {
+			configure(ConfigurationPhase.BEFORE_BUILD);
+		}
 		LOG.info("Using service that calls all registered senders");
 		List<ConditionalSender> senders = buildSenders();
 		LOG.debug("Registered senders: {}", senders);
@@ -1088,7 +1151,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *         be configured
 	 */
 	public static MessagingBuilder empty() {
-		return new MessagingBuilder();
+		return new MessagingBuilder(false);
 	}
 
 	/**
@@ -1280,8 +1343,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
 	 * instance and registers auto-configures but doesn't apply them if
-	 * autoconfigure parameter is false. The {@link #configure()} method must be
-	 * called manually.
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
 	 * 
 	 * Usage example:
 	 * 
@@ -1366,7 +1429,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * 
 	 * @param autoconfigure
 	 *            true to automatically apply found configurers, false to
-	 *            configure manually later by calling {@link #configure()}
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder standard(boolean autoconfigure) {
@@ -1376,8 +1440,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
 	 * instance and registers auto-configures but doesn't apply them if
-	 * autoconfigure parameter is false. The {@link #configure()} method must be
-	 * called manually.
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
 	 * 
 	 * Usage example:
 	 * 
@@ -1461,17 +1525,18 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * 
 	 * @param autoconfigure
 	 *            true to automatically apply found configurers, false to
-	 *            configure manually later by calling {@link #configure()}
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
 	 * @param basePackages
 	 *            the base packages that are scanned to find
 	 *            {@link MessagingConfigurer} implementations
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder standard(boolean autoconfigure, String... basePackages) {
-		MessagingBuilder builder = new MessagingBuilder();
+		MessagingBuilder builder = new MessagingBuilder(autoconfigure);
 		findAndRegister(builder, "standard", basePackages);
 		if (autoconfigure) {
-			builder.configure();
+			builder.configure(ConfigurationPhase.AFTER_INIT);
 		}
 		return builder;
 	}
@@ -1657,8 +1722,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
 	 * instance and registers auto-configures but doesn't apply them if
-	 * autoconfigure parameter is false. The {@link #configure()} method must be
-	 * called manually.
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
 	 * 
 	 * Usage example:
 	 * 
@@ -1739,7 +1804,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * 
 	 * @param autoconfigure
 	 *            true to automatically apply found configurers, false to
-	 *            configure manually later by calling {@link #configure()}
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder minimal(boolean autoconfigure) {
@@ -1749,8 +1815,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
 	 * instance and registers auto-configures but doesn't apply them if
-	 * autoconfigure parameter is false. The {@link #configure()} method must be
-	 * called manually.
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
 	 * 
 	 * 
 	 * Usage example:
@@ -1831,17 +1897,18 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * 
 	 * @param autoconfigure
 	 *            true to automatically apply found configurers, false to
-	 *            configure manually later by calling {@link #configure()}
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
 	 * @param basePackages
 	 *            the base packages that are scanned to find
 	 *            {@link MessagingConfigurer} implementations
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder minimal(boolean autoconfigure, String... basePackages) {
-		MessagingBuilder builder = new MessagingBuilder();
+		MessagingBuilder builder = new MessagingBuilder(autoconfigure);
 		findAndRegister(builder, "minimal", basePackages);
 		if (autoconfigure) {
-			builder.configure();
+			builder.configure(ConfigurationPhase.AFTER_INIT);
 		}
 		return builder;
 	}
@@ -1878,12 +1945,16 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		for (Class<? extends MessagingConfigurer> configurerClass : configurerClasses) {
 			ConfigurerFor annotation = configurerClass.getAnnotation(ConfigurerFor.class);
 			if (annotation != null && asList(annotation.targetedBuilder()).contains(builderName)) {
-				try {
-					builder.register(configurerClass.newInstance(), annotation.priority());
-				} catch (InstantiationException | IllegalAccessException e) {
-					throw new BuildException("Failed to register custom auto-discovered configurer (" + configurerClass.getSimpleName() + ") for standard messaging builder", e);
-				}
+				register(builder, builderName, configurerClass, annotation);
 			}
+		}
+	}
+
+	private static void register(MessagingBuilder builder, String builderName, Class<? extends MessagingConfigurer> configurerClass, ConfigurerFor annotation) {
+		try {
+			builder.register(configurerClass.newInstance(), annotation.priority(), annotation.phase());
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new BuildException("Failed to register custom auto-discovered configurer (" + configurerClass.getSimpleName() + ") for " + builderName + " messaging builder", e);
 		}
 	}
 
@@ -1900,35 +1971,28 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		return senders;
 	}
 
-	private static class PriorityComparator implements Comparator<PrioritizedConfigurer> {
-		@Override
-		public int compare(PrioritizedConfigurer o1, PrioritizedConfigurer o2) {
-			return -Integer.compare(o1.getPriority(), o2.getPriority());
-		}
+	private boolean alreadyConfigured(ConfigurationPhase phase) {
+		Boolean configured = alreadyConfigured.get(phase);
+		return configured != null && configured;
 	}
 
-	private static class PrioritizedConfigurer {
-		private final int priority;
+	private static class ConfigurerWithPhase {
 		private final MessagingConfigurer configurer;
+		private final ConfigurationPhase phase;
 
-		public PrioritizedConfigurer(int priority, MessagingConfigurer configurer) {
+		public ConfigurerWithPhase(MessagingConfigurer configurer, ConfigurationPhase phase) {
 			super();
-			this.priority = priority;
 			this.configurer = configurer;
-		}
-
-		public int getPriority() {
-			return priority;
+			this.phase = phase;
 		}
 
 		public MessagingConfigurer getConfigurer() {
 			return configurer;
 		}
 
-		@Override
-		public String toString() {
-			return configurer.toString();
+		public ConfigurationPhase getPhase() {
+			return phase;
 		}
-	}
 
+	}
 }

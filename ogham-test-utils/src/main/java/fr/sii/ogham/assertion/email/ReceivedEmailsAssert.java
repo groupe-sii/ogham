@@ -56,7 +56,7 @@ public class ReceivedEmailsAssert {
 	 * can write:
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *                       .subject(is("foobar"))
 	 * </pre>
 	 * 
@@ -67,7 +67,7 @@ public class ReceivedEmailsAssert {
 	 * then make dedicated assertions on some messages:
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *                       .subject(is("foobar"))
 	 *                    .and()
 	 *                    .message(0)

@@ -56,7 +56,7 @@ public class EmailPropertiesTest {
 							.content("string body"));
 		assertThat(greenMail).receivedMessages()
 				.count(is(6))
-				.forEach()
+				.every()
 					.subject(is("Simple"))
 					.body()
 						.contentAsString(is("string body"))

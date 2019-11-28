@@ -52,7 +52,7 @@ public class SeveralRecipientsTestSample {
 								.bcc("recipient6@sii.fr"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(6))																// <1>
-			.forEach()																	// <2>
+			.every()																	// <2>
 				.subject(is("Simple"))
 				.from()
 					.address(hasItems("test.sender@sii.fr"))

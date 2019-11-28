@@ -190,6 +190,8 @@ public class EmailUtils {
 	 * @param filter
 	 *            filter the parts to keep only some attachments. If filter
 	 *            returns true then the attachment is added to the list.
+	 * @param <T>
+	 *            type of part
 	 * @return the found attachments or empty list
 	 * @throws MessagingException
 	 *             when message can't be read
@@ -222,13 +224,12 @@ public class EmailUtils {
 		findBodyParts(actualEmail, filter, founds);
 		return founds;
 	}
-	
-		
+
 	private static <T extends Part> void findBodyParts(Part actualEmail, Predicate<Part> filter, List<T> founds) throws MessagingException {
 		LOG.trace("---------------------------");
 		findBodyParts(actualEmail, filter, founds, "");
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private static <T extends Part> void findBodyParts(Part actualEmail, Predicate<Part> filter, List<T> founds, String indent) throws MessagingException {
 		try {
@@ -239,9 +240,9 @@ public class EmailUtils {
 				for (int i = 0; i < mp.getCount(); i++) {
 					BodyPart part = mp.getBodyPart(i);
 					if (isMultipart(part)) {
-						findBodyParts(part, filter, founds, indent+"   ");
+						findBodyParts(part, filter, founds, indent + "   ");
 					} else if (filter.test(part)) {
-						LOG.trace("{}add {}", indent+"   ", part.getContentType());
+						LOG.trace("{}add {}", indent + "   ", part.getContentType());
 						founds.add((T) part);
 					}
 				}

@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
@@ -37,7 +38,9 @@ public class JsoupInlineCssTranslatorTest {
 
 	@Before
 	public void setUp() {
-		ResourceResolver resourceResolver = MessagingBuilder.standard()
+		MessagingBuilder builder = MessagingBuilder.standard();
+		builder.configure(ConfigurationPhase.BEFORE_BUILD);
+		ResourceResolver resourceResolver = builder
 				.email()
 					.template(ThymeleafV3EmailBuilder.class)
 						.classpath()

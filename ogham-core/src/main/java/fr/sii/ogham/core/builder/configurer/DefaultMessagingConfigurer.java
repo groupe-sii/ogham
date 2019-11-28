@@ -16,7 +16,6 @@ import fr.sii.ogham.core.builder.mimetype.TikaBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.builder.AutofillDefaultEmailAddressBuilder;
 import fr.sii.ogham.email.builder.AutofillSubjectBuilder;
@@ -191,7 +190,7 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 				.inline()
 					.attach()
 						.cid()
-							.generator(new SequentialIdGenerator())
+							.sequential()
 							.and()
 						.and()
 					.base64();

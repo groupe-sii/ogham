@@ -69,7 +69,8 @@ public class SimpleRetryExecutor implements RetryExecutor {
 			} catch (Exception e) {
 				failures.add(e);
 				long delay = Math.max(0, retry.nextDate() - System.currentTimeMillis());
-				LOG.debug("{} failed. Retrying in {}ms...", getActionName(actionToRetry), delay);
+				LOG.debug("{} failed. Cause: {}. Retrying in {}ms...", e.getMessage(), getActionName(actionToRetry), delay);
+				LOG.trace("{}", e.getMessage(), e);
 				pause(delay);
 			}
 		} while (!retry.terminated());

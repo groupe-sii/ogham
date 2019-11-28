@@ -14,6 +14,13 @@ import java.util.function.Function;
 public class PriorityComparator<T> implements Comparator<T> {
 	private final Function<T, Integer> priorityAccessor;
 
+	/**
+	 * Initializes with the function used to access the priority attribute of
+	 * the compared objects.
+	 * 
+	 * @param priorityAccessor
+	 *            The function to get the priority value of compared objects
+	 */
 	public PriorityComparator(Function<T, Integer> priorityAccessor) {
 		super();
 		this.priorityAccessor = priorityAccessor;

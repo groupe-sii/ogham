@@ -1435,7 +1435,7 @@ public class EmailPropertiesTest
                             .content("string body"));
         assertThat(greenMail).receivedMessages()
                 .count(is(6))
-                .forEach()
+                .every()
                     .subject(is("Simple"))
                     .body()
                         .contentAsString(is("string body"))
@@ -1780,7 +1780,7 @@ The construction of the SMS is done using a fluent API in order to chain calls a
 Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.
 
 [[sms-template]]
-==== use a template for SMS content
+==== Use a template for SMS content
 
 
 This sample shows how to send a SMS with a content following a template engine language.
@@ -1978,40 +1978,44 @@ public class BasicSmsglobalSmppSample
         // in System properties)
         Properties properties = new Properties();
         properties.setProperty("ogham.sms.smpp.host", "smsglobal.com");                                            // <1>
-        properties.setProperty("ogham.sms.smpp.port", "1775");                                                    // <2>
-        properties.setProperty("ogham.sms.smpp.system-id", "<your smsglobal username available in API keys>");    // <3>
-        properties.setProperty("ogham.sms.smpp.password", "<your smsglobal password available in API keys>");    // <4>
-        properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");                    // <5>
+        properties.setProperty("ogham.sms.smpp.system-id", "<your smsglobal username available in API keys>");    // <2>
+        properties.setProperty("ogham.sms.smpp.password", "<your smsglobal password available in API keys>");    // <3>
+        properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");                    // <4>
         // Instantiate the messaging service using default behavior and
         // provided properties
-        MessagingService service = MessagingBuilder.standard()                                                    // <6>
+        MessagingService service = MessagingBuilder.standard()                                                    // <5>
                 .environment()
-                    .properties(properties)                                                                        // <7>
+                    .properties(properties)                                                                        // <6>
                     .and()
-                .build();                                                                                        // <8>
+                .build();                                                                                        // <7>
         // send the sms using fluent API
-        service.send(new Sms()                                                                                    // <9>
-                        .content("sms content")
-                        .to("+33752962193"));
+        service.send(new Sms()                                                                                    // <8>
+                .content("sms content")
+                .to("+33752962193"));
     
 
 }
 ----
 <1> The SmsGlobal server host
-<2> The SmsGlobal server port
-<3> Your SmsGlobal username
-<4> Your SmsGlobal password
-<5> The sender phone number
-<6> Use the standard builder to configure and instantiate the MessagingService as usual
-<7> Provide configuration properties to Ogham as usual
-<8> Instantiate the service as usual
-<9> Send the SMS as usual
+<2> Your SmsGlobal username
+<3> Your SmsGlobal password
+<4> The sender phone number
+<5> Use the standard builder to configure and instantiate the MessagingService as usual
+<6> Provide configuration properties to Ogham as usual
+<7> Instantiate the service as usual
+<8> Send the SMS as usual
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/smsglobal/BasicSmsglobalSmppSample.java?ts=4[Source code of the sample].
 
 
 [role=tab-container-end]
 _____
+
+
+[TIP]
+====
+You can notice that SMPP server port is not provided. This is because Ogham provides <<service-providers,predefined configuration for well-known service providers>> like https://www.smsglobal.com/[SmsGlobal].
+====
 
 ==== Sending SMS through OVH
 
@@ -3520,7 +3524,7 @@ import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
 import static fr.sii.ogham.assertion.OghamAssertions.isSimilarHtml;
 import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
@@ -3576,7 +3580,7 @@ public class EmailHtmlAndTextTestSample
                     .contentAsString(isSimilarHtml(resourceAsString("/expected/simple_bar_42.html")))                // <2>
                     .contentType(startsWith("text/html")).and()                                                        // <3>
                 .alternative()                                                                                        // <4>
-                    .contentAsString(equalToIgnoringWhiteSpace(resourceAsString("/expected/simple_bar_42.txt")))    // <5>
+                    .contentAsString(equalToCompressingWhiteSpace(resourceAsString("/expected/simple_bar_42.txt")))    // <5>
                     .contentType(startsWith("text/plain")).and()                                                    // <6>
                 .attachments(emptyIterable());
         // @formatter:on
@@ -3851,7 +3855,7 @@ public class SeveralRecipientsTestSample
                                 .bcc("recipient6@sii.fr"));
         assertThat(greenMail).receivedMessages()
             .count(is(6))                                                                // <1>
-            .forEach()                                                                    // <2>
+            .every()                                                                    // <2>
                 .subject(is("Simple"))
                 .from()
                     .address(hasItems("test.sender@sii.fr"))
@@ -3960,7 +3964,7 @@ public class SeveralEmailsTestSample
                                 .to("recipient3@sii.fr"));
         assertThat(greenMail).receivedMessages()
             .count(is(3))
-            .forEach()                                                    // <1>
+            .every()                                                    // <1>
                 .subject(is("Simple"))
                 .from()
                     .address(hasItems("test.sender@sii.fr"))
@@ -4256,23 +4260,23 @@ public class LongSmsTestSample
     
     
     @Test
-    public void longMessage() throws MessagingException, IOException 
+    public void longMessageUsingGsm8bit() throws MessagingException, IOException 
         // @formatter:off
         oghamService.send(new Sms()
                             .content("sms content with a very very very loooooooooo"
                                     + "oooooooooonnnnnnnnnnnnnnnnng message that is"
-                                    + " over 160 characters in order to test the be"
+                                    + " over 140 characters in order to test the be"
                                     + "havior of the sender when message has to be split")
                             .to("0601020304"));
         assertThat(smppServer).receivedMessages()
             .count(is(2))                                                                    // <1>
             .message(0)                                                                        // <2>
                 .content(is("sms content with a very very very looooooooooooooooooo"        // <3>
-                        + "onnnnnnnnnnnnnnnnng message that is over 160 characters "
+                        + "onnnnnnnnnnnnnnnnng message that is over 140 characters "
                         + "in order to test the beh")).and()
             .message(1)                                                                        // <4>
                 .content(is("avior of the sender when message has to be split")).and()        // <5>
-            .forEach()                                                                        // <6>
+            .every()                                                                        // <6>
                 .from()
                     .number(is("+33603040506"))                                                // <7>
                     .and()

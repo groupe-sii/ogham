@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.spring.common.OghamMimetypeProperties;
@@ -81,7 +82,7 @@ public class OghamSpringBoot1AutoConfiguration {
 	 */
 	@Bean
 	public MessagingService messagingService(MessagingBuilder builder) {
-		builder.configure();
+		builder.configure(ConfigurationPhase.BEFORE_BUILD);
 		return builder.build();
 	}
 
@@ -91,6 +92,7 @@ public class OghamSpringBoot1AutoConfiguration {
 		for (SpringMessagingConfigurer configurer : configurers) {
 			builder.register(configurer, configurer.getOrder());
 		}
+		builder.configure(ConfigurationPhase.AFTER_INIT);
 		return builder;
 	}
 

@@ -37,23 +37,23 @@ public class LongSmsTestSample {
 	}
 	
 	@Test
-	public void longMessage() throws MessagingException, IOException {
+	public void longMessageUsingGsm8bit() throws MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Sms()
 							.content("sms content with a very very very loooooooooo"
 									+ "oooooooooonnnnnnnnnnnnnnnnng message that is"
-									+ " over 160 characters in order to test the be"
+									+ " over 140 characters in order to test the be"
 									+ "havior of the sender when message has to be split")
 							.to("0601020304"));
 		assertThat(smppServer).receivedMessages()
 			.count(is(2))																	// <1>
 			.message(0)																		// <2>
 				.content(is("sms content with a very very very looooooooooooooooooo"		// <3>
-						+ "onnnnnnnnnnnnnnnnng message that is over 160 characters "
+						+ "onnnnnnnnnnnnnnnnng message that is over 140 characters "
 						+ "in order to test the beh")).and()
 			.message(1)																		// <4>
 				.content(is("avior of the sender when message has to be split")).and()		// <5>
-			.forEach()																		// <6>
+			.every()																		// <6>
 				.from()
 					.number(is("+33603040506"))												// <7>
 					.and()

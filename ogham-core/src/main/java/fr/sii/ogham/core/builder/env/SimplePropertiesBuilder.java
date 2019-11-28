@@ -38,6 +38,12 @@ public class SimplePropertiesBuilder<P> extends AbstractParent<P> implements Pro
 	}
 
 	@Override
+	public PropertiesBuilder<P> set(String key, Object value) {
+		properties.add(new Property(key, value == null ? null : value.toString()));
+		return this;
+	}
+
+	@Override
 	public Properties build() {
 		Properties props = new Properties();
 		for (Property prop : properties) {

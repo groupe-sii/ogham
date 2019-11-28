@@ -43,7 +43,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 * contains exactly "recipient@sii.fr".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().to()
+	 * .receivedMessages().every().to()
 	 *    .address(hasItems("recipient@sii.fr"))
 	 * </pre>
 	 * 
@@ -87,7 +87,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 * <recipient@sii.fr>"}.
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().to()
+	 * .receivedMessages().every().to()
 	 *    .textual(hasItems("Recipient Name &lt;recipient@sii.fr&gt;"))
 	 * </pre>
 	 * 
@@ -123,7 +123,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 * message contains exactly "rfc822".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().to()
+	 * .receivedMessages().every().to()
 	 *    .type(hasItems("rfc822"))
 	 * </pre>
 	 * 
@@ -166,7 +166,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 * information) of the first message contains exactly "Recipient Name".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().to()
+	 * .receivedMessages().every().to()
 	 *    .personal(hasItems("Recipient Name"))
 	 * </pre>
 	 * 

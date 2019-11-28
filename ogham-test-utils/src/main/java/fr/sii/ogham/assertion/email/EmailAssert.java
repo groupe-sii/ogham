@@ -56,7 +56,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * Will check if the subject of the first message is exactly "foobar".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *    .subject(is("foobar"))
 	 * </pre>
 	 * 
@@ -100,7 +100,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * content-type of the first message is "text/plain".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().body()
+	 * .receivedMessages().every().body()
 	 *    .contentAsString(is("email body"))
 	 *    .contentType(is("text/plain"))
 	 * </pre>
@@ -150,7 +150,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * alternative" and content-type of the first message is "text/plain".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().alternative()
+	 * .receivedMessages().every().alternative()
 	 *    .contentAsString(is("email alternative"))
 	 *    .contentType(is("text/plain"))
 	 * </pre>
@@ -193,7 +193,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * MimeBodyPart instance.
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *    .body(allOf(notNullValue(), instanceOf(MimeBodyPart.class))
 	 * </pre>
 	 * 
@@ -248,7 +248,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * MimeBodyPart instance.
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *    .alternative(allOf(notNullValue(), instanceOf(MimeBodyPart.class))
 	 * </pre>
 	 * 
@@ -292,7 +292,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * exactly "Groupe SII".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().from()
+	 * .receivedMessages().every().from()
 	 *    .address(hasItems("noreply@sii.fr"))
 	 *    .personal(hasItems("Groupe SII"))
 	 * </pre>
@@ -331,7 +331,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * message are exactly "Foo", "Bar".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().to()
+	 * .receivedMessages().every().to()
 	 *    .address(hasItems("recipient1@sii.fr", "recipient2@sii.fr"))
 	 *    .personal(hasItems("Foo", "Bar"))
 	 * </pre>
@@ -371,7 +371,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * message are exactly "Foo", "Bar".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().cc()
+	 * .receivedMessages().every().cc()
 	 *    .address(hasItems("recipient1@sii.fr", "recipient2@sii.fr"))
 	 *    .personal(hasItems("Foo", "Bar"))
 	 * </pre>
@@ -408,7 +408,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 1.
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *    .attachments(hasSize(1))
 	 * </pre>
 	 * 
@@ -453,7 +453,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * first message is exactly "application/pdf".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().attachment("foo.pdf")
+	 * .receivedMessages().every().attachment("foo.pdf")
 	 *    .contentType(is("application/pdf"))
 	 * </pre>
 	 * 
@@ -484,7 +484,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * message is exactly "application/pdf".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().attachment(0)
+	 * .receivedMessages().every().attachment(0)
 	 *    .contentType(is("application/pdf"))
 	 * </pre>
 	 * 
@@ -525,7 +525,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * named "foo.pdf".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *    .attachments(new PdfFilter()).filename(endsWith(".pdf"))
 	 * </pre>
 	 * 

@@ -1,11 +1,13 @@
 package fr.sii.ogham.helper.sms;
 
-import static fr.sii.ogham.helper.sms.SmsUtils.getSmsContent;
+import static fr.sii.ogham.helper.sms.util.SmsUtils.getSmsContent;
 
 import java.util.List;
 
 import org.jsmpp.bean.SubmitSm;
 import org.junit.Assert;
+
+import fr.sii.ogham.helper.sms.jsmpp.SubmitSmAdapter;
 
 /**
  * Utility class for checking if the received SMS content is as expected.
@@ -40,7 +42,7 @@ public class AssertSms {
 		Assert.assertEquals("Receiver ton should be " + expected.getReceiverNumber().getTon(), expected.getReceiverNumber().getTon(), actual.getDestAddrTon());
 		Assert.assertEquals("Receiver npi should be " + expected.getReceiverNumber().getNpi(), expected.getReceiverNumber().getNpi(), actual.getDestAddrNpi());
 
-		Assert.assertEquals("Message not consistent with expected", expected.getMessage(), getSmsContent(actual));
+		Assert.assertEquals("Message not consistent with expected", expected.getMessage(), getSmsContent(new SubmitSmAdapter(actual)));
 	}
 
 	/**

@@ -45,6 +45,12 @@ public class PropertiesBuilderDelegate<P> extends AbstractParent<P> implements P
 	}
 
 	@Override
+	public PropertiesBuilder<P> set(String key, Object value) {
+		delegate.set(key, value);
+		return this;
+	}
+
+	@Override
 	public Properties build() {
 		return delegate.build();
 	}

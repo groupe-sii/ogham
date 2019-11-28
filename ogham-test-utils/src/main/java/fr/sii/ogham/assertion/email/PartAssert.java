@@ -49,7 +49,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 * "foobar".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().body()
+	 * .receivedMessages().every().body()
 	 *    .contentAsString(is("foobar"))
 	 * </pre>
 	 * 
@@ -77,7 +77,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 * "foobar".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().body()
+	 * .receivedMessages().every().body()
 	 *    .contentAsString(is("foobar"), Charset.forName("UTF-8"))
 	 * </pre>
 	 * 
@@ -116,7 +116,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 * same as the file resource available in the classpath.
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().body()
+	 * .receivedMessages().every().body()
 	 *    .content(is(resource("path/to/expected/file"))
 	 * </pre>
 	 * 
@@ -153,7 +153,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 * exactly "text/html".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().body()
+	 * .receivedMessages().every().body()
 	 *    .contentType(is("text/html"))
 	 * </pre>
 	 * 
@@ -190,7 +190,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 * "foo bar".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().body()
+	 * .receivedMessages().every().body()
 	 *    .description(is("foo bar"))
 	 * </pre>
 	 * 
@@ -227,7 +227,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 * "inline".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().body()
+	 * .receivedMessages().every().body()
 	 *    .disposition(is(INLINE_DISPOSITION))
 	 * </pre>
 	 * 
@@ -264,7 +264,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 * is exactly "foo.pdf".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().attachment(0)
+	 * .receivedMessages().every().attachment(0)
 	 *    .filename(is("foo.pdf"))
 	 * </pre>
 	 * 

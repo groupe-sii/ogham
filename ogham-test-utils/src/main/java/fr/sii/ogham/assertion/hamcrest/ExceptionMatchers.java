@@ -9,7 +9,7 @@ public class ExceptionMatchers {
 
 	/**
 	 * Returns a matcher that verifies that any exception in the stack matches
-	 * the finder and also checks that the sppulied marcher evaluates to true.
+	 * the finder and also checks that the supplied matcher evaluates to true.
 	 *
 	 * @param finder
 	 *            to find the cause in exception stack
@@ -17,15 +17,15 @@ public class ExceptionMatchers {
 	 *            to apply to the cause of the outer exception
 	 * @param <T>
 	 *            type of the outer exception
+	 * @return the matcher
 	 */
-	@SuppressWarnings("javadoc")
 	public static <T extends Throwable> Matcher<T> hasAnyCause(final Matcher<? extends Throwable> finder, final Matcher<? extends Throwable> matcher) {
 		return new ThrowableAnyCauseMatcher<T>(finder, matcher);
 	}
 
 	/**
 	 * Returns a matcher that verifies that any exception in the stack matches
-	 * the expected class and also checks that the sppulied marcher evaluates to
+	 * the expected class and also checks that the supplied matcher evaluates to
 	 * true.
 	 *
 	 * @param expectedClass
@@ -34,8 +34,8 @@ public class ExceptionMatchers {
 	 *            to apply to the cause of the outer exception
 	 * @param <T>
 	 *            type of the outer exception
+	 * @return the matcher
 	 */
-	@SuppressWarnings("javadoc")
 	public static <T extends Throwable> Matcher<T> hasAnyCause(final Class<? extends Throwable> expectedClass, final Matcher<? extends Throwable> matcher) {
 		return new ThrowableAnyCauseMatcher<T>(instanceOf(expectedClass), matcher);
 	}
@@ -48,8 +48,8 @@ public class ExceptionMatchers {
 	 *            to apply to the cause of the exception
 	 * @param <T>
 	 *            type of the outer exception
+	 * @return the matcher
 	 */
-	@SuppressWarnings("javadoc")
 	public static <T extends Throwable> Matcher<T> hasMessage(final Matcher<? extends String> matcher) {
 		return new ThrowableMessageMatcher<T>(matcher);
 	}
@@ -67,8 +67,8 @@ public class ExceptionMatchers {
 	 *            the expected message of the exception
 	 * @param <T>
 	 *            type of the outer exception
+	 * @return the matcher
 	 */
-	@SuppressWarnings("javadoc")
 	public static <T extends Throwable> Matcher<T> hasMessage(String expectedMessage) {
 		return new ThrowableMessageMatcher<T>(is(expectedMessage));
 	}

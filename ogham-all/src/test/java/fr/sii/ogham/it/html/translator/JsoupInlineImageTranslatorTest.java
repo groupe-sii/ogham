@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.message.content.Content;
@@ -65,7 +66,9 @@ public class JsoupInlineImageTranslatorTest {
 		Mockito.when(generator.generate("left.gif")).thenReturn("left.gif");
 		Mockito.when(generator.generate("right.gif")).thenReturn("right.gif");
 		Mockito.when(generator.generate("tw.gif")).thenReturn("tw.gif");
-		ResourceResolver resourceResolver = MessagingBuilder.standard()
+		MessagingBuilder builder = MessagingBuilder.standard();
+		builder.configure(ConfigurationPhase.BEFORE_BUILD);
+		ResourceResolver resourceResolver = builder
 				.email()
 					.template(ThymeleafV3EmailBuilder.class)
 						.classpath()

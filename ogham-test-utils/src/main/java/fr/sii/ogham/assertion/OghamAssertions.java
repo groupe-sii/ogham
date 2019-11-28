@@ -1,5 +1,7 @@
 package fr.sii.ogham.assertion;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,7 @@ import fr.sii.ogham.assertion.hamcrest.IdenticalHtmlMatcher;
 import fr.sii.ogham.assertion.hamcrest.SimilarHtmlMatcher;
 import fr.sii.ogham.assertion.sms.ReceivedSmsAssert;
 import fr.sii.ogham.assertion.sms.SmsListAssert;
+import fr.sii.ogham.helper.sms.jsmpp.SubmitSmAdapter;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
 
 /**
@@ -173,8 +176,8 @@ public class OghamAssertions {
 	 *            SMS server that stores received messages
 	 * @return builder for fluent assertions on received messages
 	 */
-	public static ReceivedSmsAssert assertThat(SmppServerRule<SubmitSm> smsServer) {
-		return new ReceivedSmsAssert(smsServer.getReceivedMessages());
+	public static ReceivedSmsAssert<SubmitSmAdapter> assertThat(SmppServerRule<SubmitSm> smsServer) {
+		return new ReceivedSmsAssert<>(smsServer.getReceivedMessages().stream().map(SubmitSmAdapter::new).collect(toList()));
 	}
 
 	/**
@@ -201,8 +204,8 @@ public class OghamAssertions {
 	 *            The list of messages received by the SMS server
 	 * @return builder for fluent assertions on received messages
 	 */
-	public static SmsListAssert<Void> assertThat(List<SubmitSm> receivedSms) {
-		return new SmsListAssert<>(receivedSms, null);
+	public static SmsListAssert<Void, SubmitSmAdapter> assertThat(List<SubmitSm> receivedSms) {
+		return new SmsListAssert<>(receivedSms.stream().map(SubmitSmAdapter::new).collect(toList()), null);
 	}
 
 	/**

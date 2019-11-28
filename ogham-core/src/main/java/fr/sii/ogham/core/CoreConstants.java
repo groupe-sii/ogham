@@ -6,6 +6,9 @@ import static java.util.Collections.unmodifiableList;
 import java.util.List;
 
 public final class CoreConstants {
+	/**
+	 * Internal constant to be used for all exceptions
+	 */
 	public static final long SERIAL_VERSION_UID = 1;
 
 	/**

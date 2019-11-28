@@ -16,6 +16,15 @@ import fr.sii.ogham.core.retry.RetryStrategyProvider;
 public class BuilderToRetryStrategyProviderBridge implements RetryStrategyProvider {
 	private final Builder<RetryStrategy> delegate;
 
+	/**
+	 * Instantiate the wrapper with the delegate instance.
+	 * 
+	 * <p>
+	 * The delegate instance must not be bull
+	 * 
+	 * @param delegate
+	 *            the retry strategy instance
+	 */
 	public BuilderToRetryStrategyProviderBridge(Builder<RetryStrategy> delegate) {
 		super();
 		this.delegate = delegate;

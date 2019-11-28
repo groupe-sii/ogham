@@ -19,10 +19,22 @@ public class EveryFillerDecorator implements MessageFiller {
 	 */
 	private List<MessageFiller> fillers;
 
+	/**
+	 * Initializes with some fillers.
+	 * 
+	 * @param fillers
+	 *            the fillers to be called (may be empty)
+	 */
 	public EveryFillerDecorator(MessageFiller... fillers) {
 		this(new ArrayList<>(Arrays.asList(fillers)));
 	}
 
+	/**
+	 * Initializes with some fillers.
+	 * 
+	 * @param fillers
+	 *            the fillers to be called (may be empty)
+	 */
 	public EveryFillerDecorator(List<MessageFiller> fillers) {
 		super();
 		this.fillers = fillers;
@@ -35,6 +47,17 @@ public class EveryFillerDecorator implements MessageFiller {
 		}
 	}
 
+	/**
+	 * Register a new filler to be executed.
+	 * 
+	 * <p>
+	 * The filler is registered at the end of the list.
+	 * </p>
+	 * 
+	 * @param filler
+	 *            the filler to append to the list
+	 * @return this instance for fluent chaining
+	 */
 	public EveryFillerDecorator addFiller(MessageFiller filler) {
 		fillers.add(filler);
 		return this;

@@ -6,6 +6,7 @@ public final class CloudhopperConstants {
 	 * templating configurers.
 	 */
 	public static final int DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY = 40000;
+	
 
 	private CloudhopperConstants() {
 		super();

@@ -1,6 +1,15 @@
 :relative-path: ../
 include::{docdir}/variables.adoc[]
 
+
+[[service-providers]]
+== Automatic configuration for well-known service providers
+
+include::{user-manual-dir}/service-providers/predefined-service-providers.adoc[leveloffset=+1]
+
+
+
+
 ////
 TODO: codes d'erreur connus avec aide
 TODO: toutes les propriétés de conf + valeurs par défaut + effets + description...

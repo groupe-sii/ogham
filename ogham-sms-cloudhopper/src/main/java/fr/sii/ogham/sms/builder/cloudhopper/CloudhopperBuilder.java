@@ -1,14 +1,18 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cloudhopper.commons.charset.CharsetUtil;
+import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.smpp.SmppBindType;
 import com.cloudhopper.smpp.SmppClient;
 import com.cloudhopper.smpp.SmppConstants;
@@ -17,6 +21,7 @@ import com.cloudhopper.smpp.SmppSessionHandler;
 import com.cloudhopper.smpp.impl.DefaultSmppClient;
 import com.cloudhopper.smpp.impl.DefaultSmppSessionHandler;
 import com.cloudhopper.smpp.pdu.Pdu;
+import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.ssl.SslConfiguration;
 import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.LoggingOptions;
@@ -32,13 +37,25 @@ import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.sms.builder.cloudhopper.UserDataBuilder.UserDataPropValues;
+import fr.sii.ogham.sms.encoder.Encoder;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
 import fr.sii.ogham.sms.message.addressing.translator.DefaultHandler;
 import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
-import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperCharsetHandler;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperOptions;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.CloudhopperCharsetSupportingEncoder;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToCharacterEncodingGroupDataCodingProvider;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.DataCodingProvider;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.ShortMessagePreparator;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.TlvMessagePayloadMessagePreparator;
+import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
+import fr.sii.ogham.sms.splitter.MessageSplitter;
+import fr.sii.ogham.sms.splitter.NoSplitMessageSplitter;
+import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
 
 /**
  * Configures Cloudhopper:
@@ -109,10 +126,10 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperOptions;
  * 
  * @author Aurélien Baudet
  */
-// TODO: be able to configure PhoneNumberTranslator
 public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Builder<CloudhopperSMPPSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperBuilder.class);
 
+	private final ReadableEncoderBuilder sharedEncoderBuilder;
 	private EnvironmentBuilder<CloudhopperBuilder> environmentBuilder;
 	private List<String> systemIds;
 	private List<String> passwords;
@@ -132,6 +149,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	private LoggingBuilder loggingBuilder;
 	private SmppClientSupplier clientSupplier;
 	private SmppSessionHandlerSupplier smppSessionHandler;
+	private MessageSplitterBuilder messageSplitterBuilder;
+	private EncoderBuilder encoderBuilder;
+	private UserDataBuilder userDataBuilder;
+	private DataCodingSchemeBuilder dataCodingBuilder;
+	private MessagePreparator preparator;
 
 	/**
 	 * Default constructor when using without all Ogham work.
@@ -158,6 +180,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public CloudhopperBuilder(SmsBuilder parent) {
 		super(parent);
+		sharedEncoderBuilder = new ReadableEncoderBuilder();
 		systemIds = new ArrayList<>();
 		passwords = new ArrayList<>();
 		hosts = new ArrayList<>();
@@ -546,13 +569,139 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * This builder also configures how conversion from NIO charset to SMPP
 	 * charset is handled.
 	 * 
+	 * 
 	 * @return the builder to configure the charset handling
+	 * @deprecated Configuring charset handling has no effect anyore. Use
+	 *             {@link #encoder()} instead
 	 */
+	@Deprecated
 	public CharsetBuilder charset() {
 		if (charsetBuilder == null) {
 			charsetBuilder = new CharsetBuilder(this, environmentBuilder);
 		}
 		return charsetBuilder;
+	}
+
+	/**
+	 * Configures how Cloudhopper will encode SMS messages. Charsets defined by
+	 * the SMPP protocol may be different from NIO charsets.
+	 * 
+	 * <p>
+	 * The encoder will be used to transform Java {@link String} into a byte
+	 * array that is understandable by SMPP servers.
+	 * 
+	 * <p>
+	 * This builder configures encoders for both messages that are split and
+	 * message that are not split.
+	 * 
+	 * <p>
+	 * This builder allows to configure:
+	 * <ul>
+	 * <li>Enable/disable the standard GSM encoders (GSM 7-bit, GSM 8-bit and
+	 * UCS-2) as defined in
+	 * <a href="https://en.wikipedia.org/wiki/GSM_03.38">GSM 03.38
+	 * specification</a>. It also allows to define different priority order</li>
+	 * <li>Enable/disable automatic guessing of encoding (based on previously
+	 * registered priorities).</li>
+	 * <li>Define a fallback encoder based on {@link Charset}</li>
+	 * <li>Provide custom {@link Encoder}s</li>
+	 * </ul>
+	 * 
+	 * <pre>
+	 * {@code
+	 * .encoder()
+	 *    .gsm7("${ogham.sms.cloudhopper.encoder.gsm-7bit.priority}", "${ogham.sms.encoder.gsm-7bit.priority}", "100000")
+	 *    .gsm8("${ogham.sms.cloudhopper.encoder.gsm-8bit.priority}", "${ogham.sms.encoder.gsm-8bit.priority}", "99000")
+	 *    .ucs2("${ogham.sms.cloudhopper.encoder.ucs-2.priority}", "${ogham.sms.encoder.ucs-2.priority}", "98000")
+	 *    .autoGuess("${ogham.sms.cloudhopper.encoder.auto-guess}", "${ogham.sms.encoder.auto-guess}", "true")
+	 *    .fallback("${ogham.sms.cloudhopper.encoder.default-charset}", CharsetUtil.NAME_GSM)
+	 *    .customEncoder(new MyCustomEncoder(), 50000)
+	 * }
+	 * </pre>
+	 * 
+	 * @return the builder to configure the encoder
+	 */
+	public EncoderBuilder encoder() {
+		if (encoderBuilder == null) {
+			encoderBuilder = new EncoderBuilder(this, environmentBuilder);
+			sharedEncoderBuilder.update(encoderBuilder);
+		}
+		return encoderBuilder;
+	}
+
+	/**
+	 * Configures how Cloudhopper will split messages.
+	 * 
+	 * <p>
+	 * The splitter will check if the whole message can fit in a single segment.
+	 * If not the splitter will split the whole message in several segments with
+	 * a header to indicate splitting information such as number of segments,
+	 * reference number and current segment number.
+	 * 
+	 * <p>
+	 * {@link Encoder} configured using {@link #encoder()} is used to encode
+	 * each segment.
+	 * 
+	 * <p>
+	 * If automatic guessing of best standard encoder is enabled for
+	 * {@link Encoder} (using {@code encoder().autoGuess(true)}), and message
+	 * splitting is enabled, then standard message splitting is configured such
+	 * as:
+	 * <ul>
+	 * <li>If GSM 7-bit encoder is enabled, {@link GsmMessageSplitter} is used
+	 * to split messages that support this encoding. If whole message can fit in
+	 * a single segment of 160 characters. Longer message is split into segments
+	 * of either 153 characters or 152 characters (depending on reference number
+	 * generation, see {@link ReferenceNumberGenerator})</li>
+	 * <li>If GSM 8-bit encoder is enabled, {@link GsmMessageSplitter} is used
+	 * to split messages that support this encoding. If whole message can fit in
+	 * a single segment of 140 characters. Longer message is split into segments
+	 * of either 134 characters or 133 characters (depending on reference number
+	 * generation, see {@link ReferenceNumberGenerator})</li>
+	 * <li>If UCS-2 encoder is enabled, {@link GsmMessageSplitter} is used to
+	 * split messages that support this encoding. If whole message can fit in a
+	 * single segment of 70 characters. Longer message is split into segments of
+	 * either 67 characters or 66 characters (depending on reference number
+	 * generation, see {@link ReferenceNumberGenerator})</li>
+	 * </ul>
+	 * 
+	 * Each registered splitter uses the same priority as associated
+	 * {@link Encoder}.
+	 * 
+	 * If you don't want standard message splitting based on supported
+	 * {@link Encoder}s, you can either disable message splitting or provide a
+	 * custom splitter with higher priority.
+	 * 
+	 * <p>
+	 * This builder allows to configure:
+	 * <ul>
+	 * <li>Enable/disable message splitting</li>
+	 * <li>Provide a custom split strategy</li>
+	 * <li>Choose strategy for reference number generation</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * Examples of usage:
+	 * 
+	 * <pre>
+	 * {@code
+	 * .splitter()
+	 *   .enable("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.split.enable}", "true")
+	 *   .customSplitter(new MyCustomSplitter(), 100000)
+	 *   .referenceNumber()
+	 *     .random()
+	 *     .random(new Random())
+	 *     .generator(new MyCustomReferenceNumberGenerator())
+	 * }
+	 * </pre>
+	 * 
+	 * @return the builder to configure message splitting
+	 */
+	public MessageSplitterBuilder splitter() {
+		if (messageSplitterBuilder == null) {
+			messageSplitterBuilder = new MessageSplitterBuilder(this, environmentBuilder, sharedEncoderBuilder);
+		}
+		return messageSplitterBuilder;
 	}
 
 	/**
@@ -712,8 +861,9 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	}
 
 	/**
-	 * By default, {@link CloudhopperSMPPSender} uses {@link DefaultSmppSessionHandler}. 
-	 * This option provides a way to use another {@link SmppSessionHandler}.
+	 * By default, {@link CloudhopperSMPPSender} uses
+	 * {@link DefaultSmppSessionHandler}. This option provides a way to use
+	 * another {@link SmppSessionHandler}.
 	 * 
 	 * @param supplier
 	 *            an implementation that provides an instance of a
@@ -725,6 +875,165 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return this;
 	}
 
+	/**
+	 * {@link Sms} message is converted to {@link SubmitSm}(s) using a
+	 * {@link MessagePreparator}.
+	 * 
+	 * <p>
+	 * You can provide a custom {@link MessagePreparator} instance if the
+	 * default behavior doesn't fit your needs.
+	 * </p>
+	 * 
+	 * <p>
+	 * If a custom {@link MessagePreparator} is set, any other preparator (using
+	 * {@link #userData()}) is not used.
+	 * </p>
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * </p>
+	 * 
+	 * <p>
+	 * If {@code null} value is provided, then custom {@link MessagePreparator}
+	 * is disabled. Other configured preparators are used (using
+	 * {@link #userData()}).
+	 * </p>
+	 * 
+	 * @param preparator
+	 *            the custom preprator instance
+	 * @return this instance for fluent chaining
+	 * @see #userData()
+	 */
+	public CloudhopperBuilder messagePreparator(MessagePreparator preparator) {
+		this.preparator = preparator;
+		return this;
+	}
+
+	/**
+	 * SMS message (named "User Data" in SMPP specification) can be transmitted
+	 * using:
+	 * <ul>
+	 * <li>Either {@code short_message} field (standard field for "User
+	 * Data").</li>
+	 * <li>Or {@code message_payload} optional parameter.</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * This builder allow to configure which strategy to use for sending
+	 * message:
+	 * <ul>
+	 * <li>Either use {@code short_message} field</li>
+	 * <li>Or use {@code message_payload} field</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * The result of {@link #userData()} configuration affects the message
+	 * preparation strategy.
+	 * </p>
+	 * 
+	 * <p>
+	 * Examples of usage:
+	 * 
+	 * <pre>
+	 * {@code
+	 * .userData()
+	 *   .useShortMessage("${ogham.sms.cloudhopper.user-data.use-short-message}", "${ogham.sms.user-data.use-short-message}", "true")
+	 *   .useTlvMessagePayload("${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}", "${ogham.sms.user-data.use-tlv-message-payload}", "false")
+	 * }
+	 * </pre>
+	 * 
+	 * If any of {@code ogham.sms.cloudhopper.user-data.use-short-message}
+	 * property or {@code ogham.sms.user-data.use-short-message} property is set
+	 * to true, it uses {@code short_message} field.
+	 * 
+	 * If any of {@code ogham.sms.cloudhopper.user-data.use-tlv-message-payload}
+	 * property or {@code ogham.sms.user-data.use-tlv-message-payload} property
+	 * is set to true, it uses {@code message_payload} field.
+	 * 
+	 * If none of the above properties is set, it uses {@code short_message}
+	 * field is used (last value of {@code shortMessage} is set to
+	 * {@code "true"}).
+	 * 
+	 * <p>
+	 * If {@link #userData()} is not configured at all, then default behavior is
+	 * used ({@code short_message} field is used).
+	 * </p>
+	 * 
+	 * @return the builder to configure how the "User Data" is sent
+	 */
+	public UserDataBuilder userData() {
+		if (userDataBuilder == null) {
+			userDataBuilder = new UserDataBuilder(this, environmentBuilder);
+		}
+		return userDataBuilder;
+	}
+
+	/**
+	 * Data Coding Scheme is a one-octet field in Short Messages (SM) and Cell
+	 * Broadcast Messages (CB) which carries a basic information how the
+	 * recipient handset should process the received message. The information
+	 * includes:
+	 * <ul>
+	 * <li>the character set or message coding which determines the encoding of
+	 * the message user data</li>
+	 * <li>the message class which determines to which component of the Mobile
+	 * Station (MS) or User Equipment (UE) should be the message delivered</li>
+	 * <li>the request to automatically delete the message after reading</li>
+	 * <li>the state of flags indicating presence of unread voicemail, fax,
+	 * e-mail or other messages</li>
+	 * <li>the indication that the message content is compressed</li>
+	 * <li>the language of the cell broadcast message</li>
+	 * </ul>
+	 * The field is described in 3GPP 23.040 and 3GPP 23.038 under the name
+	 * TP-DCS (see <a href=
+	 * "https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme">SMS
+	 * Data Coding Scheme</a>).
+	 * 
+	 * SMPP 3.4 introduced a new list of {@code data_coding} values (see
+	 * <a href="https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer">Short
+	 * Message Peer to Peer</a>).
+	 * 
+	 * <p>
+	 * This builder allows to configure how Data Coding Scheme value is
+	 * determined:
+	 * <ul>
+	 * <li>Use automatic mode base on interface version (see
+	 * {@link #interfaceVersion(String...)} and {@link #interfaceVersion(byte)})
+	 * and charset encoding (see {@link #encoder()}) used to encode the message
+	 * ("User Data")</li>
+	 * <li>Use a fixed value used for every message</li>
+	 * <li>Use a custom implementation</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * Examples of usage:
+	 * 
+	 * <pre>
+	 * {@code
+	 * .dataCodingScheme()
+	 *   .auto("${ogham.sms.cloudhopper.data-coding-scheme.auto.enable}")
+	 *   .value("${ogham.sms.cloudhopper.data-coding-scheme.value}")
+	 *   .custom(new MyCustomDataCodingProvider())
+	 * }
+	 * </pre>
+	 * 
+	 * See {@link DataCodingSchemeBuilder#auto(String...)},
+	 * {@link DataCodingSchemeBuilder#value(String...)} and
+	 * {@link DataCodingSchemeBuilder#custom(DataCodingProvider)} for more
+	 * information.
+	 * 
+	 * 
+	 * @return the builder to configure how to determine Data Coding Scheme
+	 *         value
+	 */
+	public DataCodingSchemeBuilder dataCodingScheme() {
+		if (dataCodingBuilder == null) {
+			dataCodingBuilder = new DataCodingSchemeBuilder(this, environmentBuilder, this::getInterfaceVersion);
+		}
+		return dataCodingBuilder;
+	}
+
+	@Override
 	public CloudhopperSMPPSender build() {
 		PropertyResolver propertyResolver = buildPropertyResolver();
 		CloudhopperSessionOptions sessionOpts = sessionBuilder.build();
@@ -733,22 +1042,69 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 			return null;
 		}
 		CloudhopperOptions options = buildOptions(sessionOpts);
-		CloudhopperCharsetHandler charsetHandler = buildCharsetHandler();
-		PhoneNumberTranslator phoneNumberTranslator = buildPhoneNumberTranslator();
 		LOG.info("Sending SMS using Cloudhopper is registered");
 		LOG.debug("SMPP server address: {}:{}", session.getHost(), session.getPort());
-		return new CloudhopperSMPPSender(session, options, charsetHandler, buildClientSupplier(), buildSmppSessionHandler(), phoneNumberTranslator);
+		return new CloudhopperSMPPSender(session, options, buildPreparator(), buildClientSupplier(), buildSmppSessionHandler());
+	}
+
+	private MessagePreparator buildPreparator() {
+		if (preparator != null) {
+			return preparator;
+		}
+		if (userDataBuilder != null) {
+			UserDataPropValues values = userDataBuilder.build();
+			if (values.isUseShortMessage()) {
+				return buildShortMessagePreparator();
+			}
+			if (values.isUseTlvMessagePayload()) {
+				return buildTlvMessagePayloadMessagePreparator();
+			}
+		}
+		return buildShortMessagePreparator();
+	}
+
+	private MessagePreparator buildShortMessagePreparator() {
+		return new ShortMessagePreparator(buildSplitter(buildEncoder()), buildDataCodingProvider(), buildPhoneNumberTranslator());
+	}
+
+	private MessagePreparator buildTlvMessagePayloadMessagePreparator() {
+		return new TlvMessagePayloadMessagePreparator(buildSplitter(buildEncoder()), buildDataCodingProvider(), buildPhoneNumberTranslator());
+	}
+
+	private Encoder buildEncoder() {
+		if (encoderBuilder == null) {
+			return new CloudhopperCharsetSupportingEncoder(NamedCharset.from(NAME_GSM));
+		}
+		return encoderBuilder.build();
+	}
+
+	private DataCodingProvider buildDataCodingProvider() {
+		if (dataCodingBuilder == null) {
+			return new CharsetMapToCharacterEncodingGroupDataCodingProvider();
+		}
+		return dataCodingBuilder.build();
+	}
+
+	private MessageSplitter buildSplitter(Encoder encoder) {
+		if (messageSplitterBuilder == null) {
+			return new NoSplitMessageSplitter(encoder);
+		}
+		MessageSplitter splitter = messageSplitterBuilder.build();
+		if (splitter != null) {
+			return splitter;
+		}
+		return new NoSplitMessageSplitter(encoder);
 	}
 
 	private SmppClientSupplier buildClientSupplier() {
-		if(clientSupplier == null) {
-			return () -> new DefaultSmppClient();
+		if (clientSupplier == null) {
+			return DefaultSmppClient::new;
 		}
 		return clientSupplier;
 	}
 
 	private SmppSessionHandlerSupplier buildSmppSessionHandler() {
-		if(smppSessionHandler == null) {
+		if (smppSessionHandler == null) {
 			return () -> null;
 		}
 		return smppSessionHandler;
@@ -759,21 +1115,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	}
 
 	private PhoneNumberTranslator buildPhoneNumberTranslator() {
+		// TODO: allow configuration of fallback phone number translator
 		return new CompositePhoneNumberTranslator(new DefaultHandler());
-	}
-
-	private CloudhopperCharsetHandler buildCharsetHandler() {
-		if (charsetBuilder == null) {
-			// @formatter:off
-			return new CharsetBuilder(this, environmentBuilder)
-					.convert("UTF-8", CharsetUtil.NAME_GSM)
-					.detector()
-						.defaultCharset("UTF-8")
-						.and()
-					.build();
-			// @formatter:on
-		}
-		return charsetBuilder.build();
 	}
 
 	private SmppSessionConfiguration buildSession(CloudhopperSessionOptions sessionOpts, PropertyResolver propertyResolver) {
@@ -784,19 +1127,26 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		session.setHost(getHost(propertyResolver));
 		session.setPort(getPort(propertyResolver));
 		session.setSystemType(getStringValue(propertyResolver, systemTypes));
-		session.setBindTimeout(sessionOpts.getBindTimeout());
-		session.setConnectTimeout(sessionOpts.getConnectTimeout());
-		session.setInterfaceVersion(interfaceVersion == null ? getInterfaceVersion(propertyResolver, interfaceVersions) : interfaceVersion);
-		session.setName(sessionOpts.getSessionName());
-		session.setRequestExpiryTimeout(sessionOpts.getRequestExpiryTimeout());
-		session.setWindowMonitorInterval(sessionOpts.getWindowMonitorInterval());
-		session.setWindowSize(sessionOpts.getWindowSize());
-		session.setWindowWaitTimeout(sessionOpts.getWindowWaitTimeout());
-		session.setWriteTimeout(sessionOpts.getWriteTimeout());
+		set(session::setBindTimeout, sessionOpts::getBindTimeout);
+		set(session::setConnectTimeout, sessionOpts::getConnectTimeout);
+		session.setInterfaceVersion(getInterfaceVersion(propertyResolver));
+		set(session::setName, sessionOpts::getSessionName);
+		set(session::setRequestExpiryTimeout, sessionOpts::getRequestExpiryTimeout);
+		set(session::setWindowMonitorInterval, sessionOpts::getWindowMonitorInterval);
+		set(session::setWindowSize, sessionOpts::getWindowSize);
+		set(session::setWindowWaitTimeout, sessionOpts::getWindowWaitTimeout);
+		set(session::setWriteTimeout, sessionOpts::getWriteTimeout);
 		session.setAddressRange(addressRange);
 		configureSsl(session);
 		configureLogs(session);
 		return session;
+	}
+
+	private static <T> void set(Consumer<T> setter, Supplier<T> getter) {
+		T value = getter.get();
+		if (value != null) {
+			setter.accept(value);
+		}
 	}
 
 	private void configureLogs(SmppSessionConfiguration session) {
@@ -829,6 +1179,10 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 			return SmppBindType.valueOf(type);
 		}
 		return SmppBindType.TRANSMITTER;
+	}
+
+	private Byte getInterfaceVersion(PropertyResolver propertyResolver) {
+		return interfaceVersion == null ? getInterfaceVersion(propertyResolver, interfaceVersions) : interfaceVersion;
 	}
 
 	private Byte getInterfaceVersion(PropertyResolver propertyResolver, List<String> interfaceVersions) {
@@ -888,4 +1242,5 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		RetryExecutor connectRetry = sessionOpts.getConnectRetry();
 		return new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry, sessionOpts.isKeepSession());
 	}
+
 }

@@ -5,7 +5,7 @@ import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
 import static fr.sii.ogham.assertion.OghamAssertions.isSimilarHtml;
 import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
@@ -61,7 +61,7 @@ public class EmailHtmlAndTextTestSample {
 					.contentAsString(isSimilarHtml(resourceAsString("/expected/simple_bar_42.html")))				// <2>
 					.contentType(startsWith("text/html")).and()														// <3>
 				.alternative()																						// <4>
-					.contentAsString(equalToIgnoringWhiteSpace(resourceAsString("/expected/simple_bar_42.txt")))	// <5>
+					.contentAsString(equalToCompressingWhiteSpace(resourceAsString("/expected/simple_bar_42.txt")))	// <5>
 					.contentType(startsWith("text/plain")).and()													// <6>
 				.attachments(emptyIterable());
 		// @formatter:on

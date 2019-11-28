@@ -1,4 +1,4 @@
-package fr.sii.ogham.sms.sender.impl.cloudhopper;
+package fr.sii.ogham.sms.sender.impl.cloudhopper.charset;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,13 +11,14 @@ import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.commons.charset.CharsetUtil;
 
 import fr.sii.ogham.core.charset.CharsetDetector;
+import fr.sii.ogham.sms.encoder.Encoder;
 import fr.sii.ogham.sms.exception.message.EncodingException;
 
 /**
  * Default implementation of a configurable {@link CloudhopperCharsetHandler}.
  * 
  * @author cdejonghe
- * 
+ * @deprecated use {@link Encoder} instead
  */
 public class MapCloudhopperCharsetHandler implements CloudhopperCharsetHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(MapCloudhopperCharsetHandler.class);

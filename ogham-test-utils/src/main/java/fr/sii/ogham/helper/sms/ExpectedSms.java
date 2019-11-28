@@ -45,14 +45,23 @@ public class ExpectedSms {
 		this.receiverNumber = receiverNumber;
 	}
 
+	/**
+	 * @return the message
+	 */
 	public String getMessage() {
 		return message;
 	}
 
+	/**
+	 * @return the sender number
+	 */
 	public ExpectedAddressedPhoneNumber getSenderNumber() {
 		return senderNumber;
 	}
 
+	/**
+	 * @return the receiver number
+	 */
 	public ExpectedAddressedPhoneNumber getReceiverNumber() {
 		return receiverNumber;
 	}

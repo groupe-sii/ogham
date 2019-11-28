@@ -34,6 +34,7 @@
 		<logback.version>1.2.3</logback.version>
 		<commons-lang.version>3.9</commons-lang.version>
 		<cloudhopper.version>5.0.9</cloudhopper.version>
+		<cloudhopper-fizzed.version>5.0.9</cloudhopper-fizzed.version>
 		<cloudhopper-gsm.version>3.0.0</cloudhopper-gsm.version>
 		<jsoup.version>1.12.1</jsoup.version>
 		<commons-codec.version>1.10</commons-codec.version>
@@ -53,12 +54,13 @@
 		<spring-boot.version>${spring-boot-v2.version}</spring-boot.version>
 		<!-- Dependencies - tests -->
 		<junit.version>4.12</junit.version>
-		<junit-jupiter.version>5.4.2</junit-jupiter.version>
+		<junit-jupiter.version>5.5.2</junit-jupiter.version>
 		<xmlunit.version>1.6</xmlunit.version>
 		<mockito.version>2.28.2</mockito.version>
 		<cloning.version>1.9.12</cloning.version>
 		<greenmail.version>1.5.11</greenmail.version>
 		<jsmpp.version>2.3.7</jsmpp.version>
+		<opensmpp.version>3.0.2</opensmpp.version>
 		<equalsverifier.version>3.1.9</equalsverifier.version>
 		<wiremock.version>2.23.2</wiremock.version>
 		<hamcrest.version>2.1</hamcrest.version>
@@ -332,6 +334,11 @@
 
 			<!-- SMS -->
 			<dependency>
+				<groupId>com.fizzed</groupId>
+				<artifactId>ch-smpp</artifactId>
+				<version>${cloudhopper-fizzed.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.cloudhopper</groupId>
 				<artifactId>ch-smpp</artifactId>
 				<version>${cloudhopper.version}</version>
@@ -345,6 +352,11 @@
 				<groupId>org.jsmpp</groupId>
 				<artifactId>jsmpp</artifactId>
 				<version>${jsmpp.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opensmpp</groupId>
+				<artifactId>opensmpp-client</artifactId>
+				<version>${opensmpp.version}</version>
 			</dependency>
 
 
@@ -525,6 +537,11 @@
 				<groupId>org.spockframework</groupId>
 				<artifactId>spock-core</artifactId>
 				<version>${spock.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opensmpp</groupId>
+				<artifactId>opensmpp-sim</artifactId>
+				<version>${opensmpp.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -844,7 +861,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>${maven-dependency-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
+				<version>${maven-dependency-plugin.version}</version><!--$NO-MVN-MAN-VER$ -->
 				<executions>
 					<execution>
 						<id>unpack</id>
@@ -912,7 +929,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>${maven-antrun-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
+				<version>${maven-antrun-plugin.version}</version><!--$NO-MVN-MAN-VER$ -->
 				<inherited>false</inherited>
 				<executions>
 					<execution>
@@ -994,7 +1011,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>${maven-release-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
+				<version>${maven-release-plugin.version}</version><!--$NO-MVN-MAN-VER$ -->
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<useReleaseProfile>false</useReleaseProfile>

@@ -14,9 +14,10 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.sms.encoder.Encoder;
 import fr.sii.ogham.sms.exception.message.EncodingException;
-import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperCharsetHandler;
-import fr.sii.ogham.sms.sender.impl.cloudhopper.MapCloudhopperCharsetHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.charset.CloudhopperCharsetHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.charset.MapCloudhopperCharsetHandler;
 
 /**
  * Configures how Cloudhopper will handle charset encoding for SMS messages.
@@ -29,11 +30,11 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.MapCloudhopperCharsetHandler;
  * is handled.
  * 
  * @author Aurélien Baudet
- *
+ * @deprecated use {@link EncoderBuilder} instead
  */
 public class CharsetBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<CloudhopperCharsetHandler> {
-	private EnvironmentBuilder<?> environmentBuilder;
-	private List<CharsetMapping> mappings;
+	private final EnvironmentBuilder<?> environmentBuilder;
+	private final List<CharsetMapping> mappings;
 	private SimpleCharsetDetectorBuilder<CharsetBuilder> charsetDetectorBuilder;
 
 	/**
@@ -84,6 +85,9 @@ public class CharsetBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return this;
 	}
 
+	/**
+	 * @deprecated charset handling is now handled by {@link Encoder}
+	 */
 	@Override
 	public CloudhopperCharsetHandler build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();

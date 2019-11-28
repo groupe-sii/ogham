@@ -1,4 +1,4 @@
-package fr.sii.ogham.ut.sms.cloudhopper;
+package fr.sii.ogham.it.sms.cloudhopper;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;

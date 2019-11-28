@@ -123,7 +123,7 @@ public class PriorizedContentHandler implements JavaMailContentHandler {
 	}
 
 	private JavaMailContentHandler getContentHandler(Content content) {
-		matchingHandlers.sort(new PriorityComparator<PriorizedMatchingHandler<JavaMailContentHandler>>(mh -> mh.getPriority()));
+		matchingHandlers.sort(new PriorityComparator<>(PriorizedMatchingHandler::getPriority));
 		for (PriorizedMatchingHandler<JavaMailContentHandler> entry : matchingHandlers) {
 			if (entry.matches(content)) {
 				return entry.getHandler();

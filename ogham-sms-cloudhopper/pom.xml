@@ -13,6 +13,10 @@
 		SMS implementation for Ogham that uses Cloudhopper SMPP library
 	</description>
 
+	<properties>
+		<sonar.tests>src/test/groovy,src/test/java</sonar.tests>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
@@ -21,7 +25,7 @@
 
 		<!-- Sms -->
 		<dependency>
-			<groupId>com.cloudhopper</groupId>
+			<groupId>com.fizzed</groupId>
 			<artifactId>ch-smpp</artifactId>
 		</dependency>
 		<dependency>

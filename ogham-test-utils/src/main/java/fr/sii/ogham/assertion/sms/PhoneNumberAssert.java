@@ -6,17 +6,32 @@ import static fr.sii.ogham.assertion.OghamAssertions.usingContext;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.jsmpp.bean.NumberingPlanIndicator;
-import org.jsmpp.bean.TypeOfNumber;
 
 import fr.sii.ogham.assertion.HasParent;
+import fr.sii.ogham.helper.sms.bean.NumberingPlanIndicator;
+import fr.sii.ogham.helper.sms.bean.TypeOfNumber;
 
+/**
+ * Make assertions on phone number of received messages.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param <P>
+ *            the parent type
+ */
 public class PhoneNumberAssert<P> extends HasParent<P> {
 	/**
 	 * The list of phone numbers that will be used for assertions
 	 */
 	private final List<PhoneNumberWithContext> actual;
 
+	/**
+	 * 
+	 * @param actual
+	 *            the received messages
+	 * @param parent
+	 *            the parent
+	 */
 	public PhoneNumberAssert(List<PhoneNumberWithContext> actual, P parent) {
 		super(parent);
 		this.actual = actual;
@@ -34,7 +49,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 * "+33102030405".
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().to()
+	 * .receivedMessages().every().to()
 	 *    .number(is("+33102030405"))
 	 * </pre>
 	 * 
@@ -66,7 +81,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 * international number.
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().to()
+	 * .receivedMessages().every().to()
 	 *    .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
 	 * </pre>
 	 * 
@@ -98,7 +113,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 * of the first message is NumberingPlanIndicator.ISDN.
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().to()
+	 * .receivedMessages().every().to()
 	 *    .numberingPlanIndicator(is(NumberingPlanIndicator.ISDN))
 	 * </pre>
 	 * 

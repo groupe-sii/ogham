@@ -5,15 +5,30 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
-import org.jsmpp.bean.SubmitSm;
 
-public class ReceivedSmsAssert {
+import fr.sii.ogham.helper.sms.bean.SubmitSm;
+
+/**
+ * Make assertions on received messages
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param <S>
+ *            the type of the {@link SubmitSm} to make assertions on
+ */
+public class ReceivedSmsAssert<S extends SubmitSm> {
 	/**
 	 * List of received messages
 	 */
-	private final List<SubmitSm> actual;
+	private final List<S> actual;
 
-	public ReceivedSmsAssert(List<SubmitSm> actual) {
+	/**
+	 * Initializes with the list of received messages
+	 * 
+	 * @param actual
+	 *            received messages
+	 */
+	public ReceivedSmsAssert(List<S> actual) {
 		this.actual = actual;
 	}
 
@@ -34,7 +49,7 @@ public class ReceivedSmsAssert {
 	 *            the index of the received message
 	 * @return the fluent API for assertions on the particular message
 	 */
-	public SmsAssert<ReceivedSmsAssert> receivedMessage(int index) {
+	public SmsAssert<ReceivedSmsAssert<S>, S> receivedMessage(int index) {
 		return new SmsAssert<>(actual.get(index), this);
 	}
 
@@ -54,7 +69,7 @@ public class ReceivedSmsAssert {
 	 * can write:
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *                       .content(is("foobar"))
 	 * </pre>
 	 * 
@@ -65,7 +80,7 @@ public class ReceivedSmsAssert {
 	 * then make dedicated assertions on some messages:
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
+	 * .receivedMessages().every()
 	 *                       .content(is("foobar"))
 	 *                    .and()
 	 *                    .message(0)
@@ -77,7 +92,7 @@ public class ReceivedSmsAssert {
 	 * 
 	 * @return the fluent API for assertions on messages
 	 */
-	public SmsListAssert<ReceivedSmsAssert> receivedMessages() {
+	public SmsListAssert<ReceivedSmsAssert<S>, S> receivedMessages() {
 		return new SmsListAssert<>(actual, this);
 	}
 
@@ -96,7 +111,7 @@ public class ReceivedSmsAssert {
 	 *            the assertion to apply on message list
 	 * @return the fluent API for assertions on messages
 	 */
-	public SmsListAssert<ReceivedSmsAssert> receivedMessages(Matcher<Collection<? extends SubmitSm>> matcher) {
+	public SmsListAssert<ReceivedSmsAssert<S>, S> receivedMessages(Matcher<Collection<? extends S>> matcher) {
 		MatcherAssert.assertThat(actual, matcher);
 		return receivedMessages();
 	}

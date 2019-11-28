@@ -57,7 +57,7 @@ public class SeveralEmailsTestSample {
 								.to("recipient3@sii.fr"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(3))
-			.forEach()													// <1>
+			.every()													// <1>
 				.subject(is("Simple"))
 				.from()
 					.address(hasItems("test.sender@sii.fr"))
