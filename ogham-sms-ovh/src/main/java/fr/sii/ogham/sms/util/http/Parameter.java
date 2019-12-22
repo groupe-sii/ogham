@@ -23,6 +23,19 @@ public class Parameter {
 		this.value = value;
 	}
 
+	/**
+	 * If {@code value} is null, keep null value. Otherwise {@code value} is
+	 * converted to string using {@link String#valueOf(Object)}.
+	 * 
+	 * @param name
+	 *            the parameter name
+	 * @param value
+	 *            the parameter value
+	 */
+	public Parameter(String name, Object value) {
+		this(name, value == null ? null : String.valueOf(value));
+	}
+
 	public String getName() {
 		return name;
 	}

@@ -5,8 +5,8 @@ package fr.sii.ogham.sms.sender.impl.ovh;
  * <ul>
  * <li>noStop: do not display STOP footer. Disabled by default</li>
  * <li>tag: mark the sent SMS with a tag (20 characters max)</li>
- * <li>smsCoding: the SMS encoding. 7bits by default. If you change to UTF-8 (8bits),
- * the message limit will be 70 instead of 160</li>
+ * <li>smsCoding: the SMS encoding. 7bits by default. If you change to Unicode,
+ * the message limit will be 70 instead of 160.</li>
  * </ul>
  * 
  * @author Aurélien Baudet

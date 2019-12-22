@@ -23,14 +23,17 @@ import fr.sii.ogham.sms.message.Recipient;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhAuthParams;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
+import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
+import fr.sii.ogham.sms.sender.impl.ovh.SmsCodingDetector;
 import fr.sii.ogham.sms.util.HttpUtils;
 import fr.sii.ogham.sms.util.http.Parameter;
 import fr.sii.ogham.sms.util.http.Response;
 
 /**
- * Implementation that is able to send SMS through <a
- * href="http://guides.ovh.com/Http2Sms">OVH web service</a>. This sender
- * requires that phone numbers are provided using either:
+ * Implementation that is able to send SMS through <a href=
+ * "https://docs.ovh.com/fr/sms/envoyer_des_sms_depuis_une_url_-_http2sms/#objectif">OVH
+ * web service</a>. This sender requires that phone numbers are provided using
+ * either:
  * <ul>
  * <li><a href="https://en.wikipedia.org/wiki/E.164">E.164 international
  * format</a> (prefixed with '+' followed by country code)</li>
@@ -50,6 +53,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	private static final String CONTENT_TYPE = "application/json";
 	private static final String RESPONSE_TYPE = "contentType";
 	private static final String MESSAGE = "message";
+	private static final String SMS_CODING = "smsCoding";
 	private static final String TO = "to";
 	private static final String FROM = "from";
 	private static final String RECIPIENTS_SEPARATOR = ",";
@@ -76,25 +80,34 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 */
 	private final URL url;
 
-	public OvhSmsSender(URL url, OvhAuthParams authParams, OvhOptions options) {
+	/**
+	 * If {@link SmsCoding} not set, detects which {@link SmsCoding} can be used
+	 * to encode the message
+	 */
+	private final SmsCodingDetector smsCodingDetector;
+
+	public OvhSmsSender(URL url, OvhAuthParams authParams, OvhOptions options, SmsCodingDetector smsCodingDetector) {
 		super();
 		this.url = url;
 		this.authParams = authParams;
 		this.options = options;
+		this.smsCodingDetector = smsCodingDetector;
 		this.mapper = new ObjectMapper();
 	}
 
 	@Override
 	public void send(Sms message) throws MessageException {
 		try {
+			String text = getContent(message);
 			// @formatter:off
 			Response response = HttpUtils.get(url.toString(), authParams, options,
+									new Parameter(SMS_CODING, getSmsCodingValue(text)),
 									new Parameter(RESPONSE_TYPE, CONTENT_TYPE),
 									// convert phone number to international format
 									new Parameter(FROM, toInternational(message.getFrom().getPhoneNumber())),
 									new Parameter(TO, StringUtils.join(convert(message.getRecipients()), RECIPIENTS_SEPARATOR)),
 									// TODO: manage long messages: how to do ??
-									new Parameter(MESSAGE, getContent(message)));
+									new Parameter(MESSAGE, text));
 			// @formatter:on
 			handleResponse(message, response);
 		} catch (IOException e) {
@@ -104,6 +117,18 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 		} catch (PhoneNumberException e) {
 			throw new MessageException("Failed to send SMS through OVH (invalid phone number)", message, e);
 		}
+	}
+
+	private Integer getSmsCodingValue(String message) {
+		SmsCoding smsCoding = getSmsCoding(message);
+		return smsCoding == null ? null : smsCoding.getValue();
+	}
+
+	private SmsCoding getSmsCoding(String message) {
+		if (options.getSmsCoding() != null) {
+			return options.getSmsCoding();
+		}
+		return smsCodingDetector.detect(message);
 	}
 
 	/**

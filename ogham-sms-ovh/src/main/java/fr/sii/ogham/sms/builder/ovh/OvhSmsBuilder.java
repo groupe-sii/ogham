@@ -21,6 +21,7 @@ import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
+import fr.sii.ogham.sms.sender.impl.ovh.DefaultSmsCodingDetector;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhAuthParams;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
 import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
@@ -361,13 +362,12 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		URL url = buildUrl(propertyResolver);
 		OvhAuthParams authParams = buildAuth(propertyResolver);
-		OvhOptions options = buildOptions();
 		if (url == null || authParams.getAccount() == null || authParams.getLogin() == null || authParams.getPassword() == null) {
 			return null;
 		}
 		LOG.info("Sending SMS using OVH API is registered");
 		LOG.debug("OVH account: account={}, login={}", authParams.getAccount(), authParams.getLogin());
-		return new OvhSmsSender(url, authParams, options);
+		return new OvhSmsSender(url, authParams, buildOptions(), new DefaultSmsCodingDetector());
 	}
 
 	private URL buildUrl(PropertyResolver propertyResolver) {

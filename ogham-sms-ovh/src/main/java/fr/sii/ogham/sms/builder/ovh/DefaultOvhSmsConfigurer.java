@@ -52,9 +52,10 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  * indication at the end of the message (useful to disable for non-commercial
  * SMS). Default to true (disabled)</li>
  * <li>It uses "ogham.sms.ovh.sms-coding" property value to define message
- * encoding (see {@link SmsCoding}): 1 for 7bit encoding, 2 for 8bit encoding
- * (UTF-8). If you use UTF-8, your SMS will have a maximum size of 70 characters
- * instead of 160</li>
+ * encoding (see {@link SmsCoding}): 1 for 7bit encoding, 2 for 16bit encoding
+ * (Unicode). If you use Unicode, your SMS will have a maximum size of 70
+ * characters instead of 160. If nothing specified, auto-detection is used. Set
+ * this property if you want to force {@link SmsCoding} value.</li>
  * <li>It uses "ogham.sms.ovh.tag" to mark sent messages with a 20 maximum
  * character string</li>
  * </ul>
@@ -67,7 +68,6 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
 @ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_OVHSMS_CONFIGURER_PRIORITY)
 public class DefaultOvhSmsConfigurer implements MessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultOvhSmsConfigurer.class);
-	
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {

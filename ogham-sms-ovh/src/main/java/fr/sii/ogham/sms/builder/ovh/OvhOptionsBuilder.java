@@ -17,8 +17,9 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  * <li>Enable/disable the "STOP" indication at the end of the message (useful to
  * disable for non-commercial SMS)</li>
  * <li>Define the SMS encoding (see {@link SmsCoding}): 1 for 7bit encoding, 2
- * for 8bit encoding (UTF-8). If you use UTF-8, your SMS will have a maximum
- * size of 70 characters instead of 160</li>
+ * for 16bit encoding (UTF-16). If you use UTF-16, your SMS will have a maximum
+ * size of 70 characters instead of 160. If {@code null}, automatic detection is
+ * used. Set the value to force a particular coding</li>
  * <li>Define a tag to mark sent messages (a 20 maximum character string)</li>
  * </ul>
  * 
@@ -138,11 +139,11 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	/**
 	 * Set the message encoding:
 	 * <ul>
-	 * <li>1 for 7bit encoding</li>
-	 * <li>2 for 8bit encoding (UTF-8)</li>
+	 * <li>"1" or "GSM7" for 7bit encoding</li>
+	 * <li>"2" or "UNICODE" for 16bit encoding</li>
 	 * </ul>
-	 * If you use UTF-8, your SMS will have a maximum size of 70 characters
-	 * instead of 160
+	 * If you use Unicode, your SMS will have a maximum size of 70 characters
+	 * instead of 160.
 	 * 
 	 * You can specify one or several property keys. For example:
 	 * 
@@ -174,11 +175,11 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	/**
 	 * Set the message encoding:
 	 * <ul>
-	 * <li>{@link SmsCoding#NORMAL}: 7bit encoding</li>
-	 * <li>{@link SmsCoding#UTF_8}: 8bit encoding (UTF-8)</li>
+	 * <li>{@link SmsCoding#GSM7}: 7bit encoding</li>
+	 * <li>{@link SmsCoding#UNICODE}: 16bit encoding (Unicode)</li>
 	 * </ul>
-	 * If you use UTF-8, your SMS will have a maximum size of 70 characters
-	 * instead of 160
+	 * If you use Unicode, your SMS will have a maximum size of 70 characters
+	 * instead of 160.
 	 * 
 	 * @param smsCoding
 	 *            the SMS encoding
@@ -215,7 +216,7 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 		if (smsCoding != null) {
 			return smsCoding;
 		}
-		String name = BuilderUtils.evaluate(smsCodings, propertyResolver, String.class);
-		return name == null ? null : SmsCoding.valueOf(name);
+		String nameOrValue = BuilderUtils.evaluate(smsCodings, propertyResolver, String.class);
+		return nameOrValue == null ? null : SmsCoding.from(nameOrValue);
 	}
 }
