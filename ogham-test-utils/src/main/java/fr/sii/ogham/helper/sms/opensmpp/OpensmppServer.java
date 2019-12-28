@@ -37,13 +37,13 @@ public class OpensmppServer implements SmppServerSimulator<SubmitSM> {
 
 	private int port;
 
-	static final String DEBUG_DIR = "./";
-	static Debug debug = new FileDebug(DEBUG_DIR, "sim.dbg");
-	static Event event = new FileEvent(DEBUG_DIR, "sim.evt");
+	private static final String DEBUG_DIR = "./";
+	private static Debug debug = new FileDebug(DEBUG_DIR, "sim.dbg");
+	private static Event event = new FileEvent(DEBUG_DIR, "sim.evt");
 
-	public static final int DSIM = 16;
-	public static final int DSIMD = 17;
-	public static final int DSIMD2 = 18;
+//	private static final int DSIM = 16;
+//	private static final int DSIMD = 17;
+	private static final int DSIMD2 = 18;
 
 	private SMSCListener smscListener;
 	private PDUProcessorGroup processors;

@@ -12,5 +12,5 @@ public interface DecoratorContent extends Content {
 	 * 
 	 * @return the decorated content
 	 */
-	public Content getContent();
+	Content getContent();
 }

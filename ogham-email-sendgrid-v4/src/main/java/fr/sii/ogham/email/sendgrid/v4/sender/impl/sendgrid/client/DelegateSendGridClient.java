@@ -74,7 +74,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 		}
 	}
 
-	private Request prepareRequest(final Mail email) throws SendGridException {
+	private static Request prepareRequest(final Mail email) throws SendGridException {
 		Request request = new Request();
 		request.setMethod(Method.POST);
 		request.setEndpoint("mail/send");
@@ -86,11 +86,11 @@ public final class DelegateSendGridClient implements SendGridClient {
 		return request;
 	}
 
-	private boolean isSuccess(int statusCode) {
+	private static boolean isSuccess(int statusCode) {
 		return statusCode >= 200 && statusCode < 300;
 	}
 
-	private String debug(Email address) {
+	private static String debug(Email address) {
 		if (address == null) {
 			return null;
 		}
@@ -100,10 +100,16 @@ public final class DelegateSendGridClient implements SendGridClient {
 		return address.getEmail();
 	}
 
-	private List<String> debug(final Mail email) {
+	private static List<String> debug(final Mail email) {
 		if (email.getPersonalization() == null) {
 			return null; // NOSONAR
 		}
-		return email.getPersonalization().stream().flatMap(p -> p.getTos() == null ? Stream.empty() : p.getTos().stream()).map(this::debug).collect(toList());
+		// @formatter:off
+		return email.getPersonalization()
+				.stream()
+				.flatMap(p -> p.getTos() == null ? Stream.empty() : p.getTos().stream())
+				.map(DelegateSendGridClient::debug)
+				.collect(toList());
+		// @formatter:on
 	}
 }

@@ -17,6 +17,7 @@ import fr.sii.ogham.core.builder.configurer.Configurer;
  *            the type of the parent builder (when calling {@link #and()}
  *            method)
  */
+@SuppressWarnings("squid:S00119")
 public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends AbstractParent<P> {
 	protected final MYSELF myself;
 	protected final ConfigurationValueBuilderHelper<MYSELF, String> defaultValueBuilder;

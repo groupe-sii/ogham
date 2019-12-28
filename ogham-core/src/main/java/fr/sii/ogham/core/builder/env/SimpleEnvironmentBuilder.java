@@ -212,7 +212,7 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 			this.path = path;
 		}
 
-		private String getClasspathPath(String path) {
+		private static String getClasspathPath(String path) {
 			return path.startsWith("/") ? path.substring(1) : path;
 		}
 

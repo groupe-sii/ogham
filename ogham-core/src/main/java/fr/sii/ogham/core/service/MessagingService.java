@@ -26,5 +26,5 @@ public interface MessagingService {
 	 * @throws MessagingException
 	 *             when the message couldn't be sent
 	 */
-	public void send(Message message) throws MessagingException;
+	void send(Message message) throws MessagingException;
 }

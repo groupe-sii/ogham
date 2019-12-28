@@ -47,6 +47,7 @@ public final class MessageDecoder {
 		return charset.decode(shortMessage);
 	}
 
+	@SuppressWarnings("squid:S1168")
 	private static byte[] getMessageBytes(SubmitSm submitSm) {
 		byte[] shortMessage = submitSm.getShortMessage();
 		if (shortMessage != null && shortMessage.length > 0) {

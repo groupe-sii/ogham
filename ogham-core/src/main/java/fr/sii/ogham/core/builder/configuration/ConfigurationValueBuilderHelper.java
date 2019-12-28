@@ -113,6 +113,7 @@ public class ConfigurationValueBuilderHelper<P, V> extends AbstractParent<P> imp
 	}
 
 	@Override
+	@SuppressWarnings("squid:S3553")
 	public ConfigurationValueBuilderHelper<P, V> value(Optional<V> optionalValue) {
 		if (optionalValue.isPresent()) {
 			this.optionalValue = optionalValue;

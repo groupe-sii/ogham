@@ -25,5 +25,5 @@ public interface ImageInliner {
 	 * @return the new HTML content with possible associated images to attach to
 	 *         the mail
 	 */
-	public ContentWithImages inline(String htmlContent, List<ImageResource> images);
+	ContentWithImages inline(String htmlContent, List<ImageResource> images);
 }

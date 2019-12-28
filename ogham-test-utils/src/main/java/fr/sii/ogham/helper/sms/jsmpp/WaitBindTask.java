@@ -36,7 +36,7 @@ class WaitBindTask implements Runnable {
 		}
 	}
 
-	private void bind(BindRequest bindRequest) throws IOException {
+	private static void bind(BindRequest bindRequest) throws IOException {
 		try {
 			bindRequest.accept("sys", InterfaceVersion.IF_34);
 		} catch (PDUStringException e) {

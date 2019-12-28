@@ -71,9 +71,7 @@ public class SpringWebThymeleafContextConverter implements ThymeleafContextConve
 			// which is a String
 			final Field pathVariablesField = View.class.getDeclaredField("PATH_VARIABLES");
 			pathVariablesSelectorValue = (String) pathVariablesField.get(null);
-		} catch (final NoSuchFieldException ignored) {
-			pathVariablesSelectorValue = null;
-		} catch (final IllegalAccessException ignored) {
+		} catch (final NoSuchFieldException | IllegalAccessException ignored) {
 			pathVariablesSelectorValue = null;
 		}
 		pathVariablesSelector = pathVariablesSelectorValue;

@@ -81,7 +81,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 
 	}
 
-	private void setMimeContent(final Email email, final String contentStr, final String mime) throws ContentHandlerException {
+	private static void setMimeContent(final Email email, final String contentStr, final String mime) throws ContentHandlerException {
 		if ("text/plain".equals(mime)) {
 			email.setText(contentStr);
 		} else if ("text/html".equals(mime)) {

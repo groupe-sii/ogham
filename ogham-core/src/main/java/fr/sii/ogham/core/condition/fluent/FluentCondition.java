@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.condition.fluent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import fr.sii.ogham.core.condition.Condition;
@@ -74,9 +75,7 @@ public class FluentCondition<T> implements Condition<T> {
 	public final FluentCondition<T> and(Condition<T>... conditions) {
 		List<Condition<T>> merged = new ArrayList<>();
 		merged.add(delegate);
-		for (Condition<T> condition : conditions) {
-			merged.add(condition);
-		}
+		Collections.addAll(merged, conditions);
 		return Conditions.and(merged);
 	}
 
@@ -108,9 +107,7 @@ public class FluentCondition<T> implements Condition<T> {
 	public final FluentCondition<T> or(Condition<T>... conditions) {
 		List<Condition<T>> merged = new ArrayList<>();
 		merged.add(delegate);
-		for (Condition<T> condition : conditions) {
-			merged.add(condition);
-		}
+		Collections.addAll(merged, conditions);
 		return Conditions.or(merged);
 	}
 

@@ -105,6 +105,7 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S1192")
 	public MimeType detect(String content) throws MimeTypeDetectionException {
 		for (MimeTypeProvider provider : providers) {
 			try {

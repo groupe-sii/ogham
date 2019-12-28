@@ -41,7 +41,7 @@ public class JavaMailAssertions extends HasParent<MessagingServiceAssertions> {
 		return properties.getProperty("mail.smtp.host", properties.getProperty("mail.host"));
 	}
 
-	private Properties getProperties(JavaMailSender javaMailSender) {
+	private static Properties getProperties(JavaMailSender javaMailSender) {
 		try {
 			return (Properties) readField(javaMailSender, "properties", true);
 		} catch (IllegalAccessException e) {

@@ -1386,7 +1386,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return environmentBuilder.build();
 	}
 
-	private PhoneNumberTranslator buildPhoneNumberTranslator() {
+	private static PhoneNumberTranslator buildPhoneNumberTranslator() {
 		// TODO: allow configuration of fallback phone number translator
 		return new CompositePhoneNumberTranslator(new DefaultHandler());
 	}

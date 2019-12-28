@@ -6,8 +6,8 @@ import org.hamcrest.Matcher;
 
 public class CustomReason<T> extends BaseMatcher<T> implements DecoratorMatcher<T> {
 	private final String reason;
-    private final Matcher<T> matcher;
-    
+	private final Matcher<T> matcher;
+
 	public CustomReason(String reason, Matcher<T> matcher) {
 		super();
 		this.reason = reason;
@@ -23,13 +23,13 @@ public class CustomReason<T> extends BaseMatcher<T> implements DecoratorMatcher<
 	public void describeTo(Description description) {
 		matcher.describeTo(description);
 	}
-	
+
 	public String getReason() {
 		return reason;
 	}
-	
+
 	public Matcher<T> getDecoree() {
 		return matcher;
 	}
-	
+
 }

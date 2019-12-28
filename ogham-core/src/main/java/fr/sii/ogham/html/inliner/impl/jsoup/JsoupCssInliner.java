@@ -42,7 +42,7 @@ public class JsoupCssInliner implements CssInliner {
 	 * @param doc
 	 *            the html document
 	 */
-	private void extractStyles(Document doc, String stylesheet) {
+	private static void extractStyles(Document doc, String stylesheet) {
 		String trimmedStylesheet = stylesheet.replaceAll("\n", "").replaceAll("/\\*.*?\\*/", "").replaceAll(" +", " ");
 		String styleRules = trimmedStylesheet.trim();
 		String delims = "{}";
@@ -67,7 +67,7 @@ public class JsoupCssInliner implements CssInliner {
 	 * @param cssContents
 	 *            the list of external css files with their content
 	 */
-	private void internStyles(Document doc, List<ExternalCss> cssContents) {
+	private static void internStyles(Document doc, List<ExternalCss> cssContents) {
 		Elements els = doc.select(CSS_LINKS_SELECTOR);
 		for (Element e : els) {
 			if (!TRUE_VALUE.equals(e.attr(SKIP_INLINE))) {
@@ -79,7 +79,7 @@ public class JsoupCssInliner implements CssInliner {
 		}
 	}
 
-	private String getCss(List<ExternalCss> cssContents, String path) {
+	private static String getCss(List<ExternalCss> cssContents, String path) {
 		for (ExternalCss css : cssContents) {
 			if (css.getPath().getOriginalPath().contains(path)) {
 				return css.getContent();
@@ -95,7 +95,7 @@ public class JsoupCssInliner implements CssInliner {
 	 *            the html document
 	 * @return a string representing the stylesheet.
 	 */
-	private String fetchStyles(Document doc) {
+	private static String fetchStyles(Document doc) {
 		Elements els = doc.select(STYLE_TAG);
 		StringBuilder styles = new StringBuilder();
 		for (Element e : els) {
@@ -114,7 +114,7 @@ public class JsoupCssInliner implements CssInliner {
 	 * @param doc
 	 *            the html document
 	 */
-	private void applyStyles(Document doc) {
+	private static void applyStyles(Document doc) {
 		Elements allStyledElements = doc.getElementsByAttribute(TEMP_STYLE_ATTR);
 
 		for (Element e : allStyledElements) {

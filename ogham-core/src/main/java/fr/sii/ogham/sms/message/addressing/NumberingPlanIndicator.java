@@ -28,9 +28,9 @@ public enum NumberingPlanIndicator {
 	/** WAP Client Id (to be defined by WAP Forum) = 18. */
 	WAP((byte) 13);
 
-	private byte value;
+	private final byte value;
 
-	private NumberingPlanIndicator(byte value) {
+	NumberingPlanIndicator(byte value) {
 		this.value = value;
 	}
 

@@ -20,7 +20,7 @@ import org.junit.internal.ArrayComparisonFailure;
  * @author Aurélien Baudet
  *
  */
-public class AssertAttachment {
+public final class AssertAttachment {
 	/**
 	 * Shortcut for use with GreenMail. See
 	 * {@link #assertEquals(ExpectedAttachment, Message)}.

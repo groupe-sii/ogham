@@ -1,6 +1,6 @@
 package fr.sii.ogham.email.attachment;
 
-public class ContentDisposition {
+public final class ContentDisposition {
 	public static final String ATTACHMENT = "attachment";
 	
 	public static final String INLINE = "inline";

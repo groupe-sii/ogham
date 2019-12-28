@@ -77,6 +77,7 @@ public interface ConfigurationValueBuilder<P, V> extends Parent<P> {
 	 *            the optional value to set
 	 * @return this instance for fluent chaining
 	 */
+	@SuppressWarnings("squid:S3553")
 	ConfigurationValueBuilder<P, V> value(Optional<V> optionalValue);
 
 	/**

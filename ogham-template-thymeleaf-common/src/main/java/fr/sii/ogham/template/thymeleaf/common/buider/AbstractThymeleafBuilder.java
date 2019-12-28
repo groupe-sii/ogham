@@ -35,6 +35,7 @@ import fr.sii.ogham.template.thymeleaf.common.adapter.StringResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.configure.AbstractDefaultThymeleafEmailConfigurer;
 
+@SuppressWarnings("squid:S00119")
 public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafBuilder<MYSELF, P, E>, P, E extends ThymeleafEngineConfigBuilder<MYSELF>> extends AbstractParent<P>
 		implements DetectorBuilder<MYSELF>, ResourceResolutionBuilder<MYSELF>, Builder<TemplateParser> {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractThymeleafBuilder.class);

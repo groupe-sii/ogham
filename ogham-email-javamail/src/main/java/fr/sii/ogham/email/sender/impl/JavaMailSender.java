@@ -72,7 +72,8 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 		this(new PropertiesBridge(propertyResolver), contentHandler, attachmentResourceHandler, authenticator);
 	}
 
-	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator, JavaMailInterceptor interceptor) {
+	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator,
+			JavaMailInterceptor interceptor) {
 		this(new PropertiesBridge(propertyResolver), contentHandler, attachmentHandler, authenticator, interceptor);
 	}
 
@@ -80,7 +81,8 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 		this(properties, contentHandler, attachmentResourceHandler, authenticator, null);
 	}
 
-	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator, JavaMailInterceptor interceptor) {
+	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator,
+			JavaMailInterceptor interceptor) {
 		super();
 		this.properties = properties;
 		this.contentHandler = contentHandler;
@@ -109,8 +111,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 				interceptor.intercept(mimeMsg, email);
 			}
 			// message is ready => send it
-			LOG.info("Sending email using Java Mail API through server {}:{}...", 
-					properties.getProperty("mail.smtp.host", properties.getProperty("mail.host")),
+			LOG.info("Sending email using Java Mail API through server {}:{}...", properties.getProperty("mail.smtp.host", properties.getProperty("mail.host")),
 					properties.getProperty("mail.smtp.port", properties.getProperty("mail.port")));
 			Transport.send(mimeMsg);
 		} catch (UnsupportedEncodingException | MessagingException | ContentHandlerException | AttachmentResourceHandlerException e) {
@@ -143,7 +144,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	 * @throws UnsupportedEncodingException
 	 *             when the email address is not valid
 	 */
-	private void setFrom(Email email, MimeMessage mimeMsg) throws MessagingException, AddressException, UnsupportedEncodingException {
+	private static void setFrom(Email email, MimeMessage mimeMsg) throws MessagingException, UnsupportedEncodingException {
 		if (email.getFrom() == null) {
 			throw new IllegalArgumentException("The sender address has not been set");
 		}
@@ -164,7 +165,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	 * @throws UnsupportedEncodingException
 	 *             when the email address is not valid
 	 */
-	private void setRecipients(Email email, MimeMessage mimeMsg) throws MessagingException, AddressException, UnsupportedEncodingException {
+	private void setRecipients(Email email, MimeMessage mimeMsg) throws MessagingException, UnsupportedEncodingException {
 		for (Recipient recipient : email.getRecipients()) {
 			mimeMsg.addRecipient(convert(recipient.getType()), toInternetAddress(recipient.getAddress()));
 		}
@@ -291,16 +292,16 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 		}
 	}
 
-	private RecipientType convert(fr.sii.ogham.email.message.RecipientType type) {
+	private static RecipientType convert(fr.sii.ogham.email.message.RecipientType type) {
 		switch (type) {
-		case BCC:
-			return RecipientType.BCC;
-		case CC:
-			return RecipientType.CC;
-		case TO:
-			return RecipientType.TO;
-		default:
-			throw new IllegalArgumentException("Invalid recipient type " + type);
+			case BCC:
+				return RecipientType.BCC;
+			case CC:
+				return RecipientType.CC;
+			case TO:
+				return RecipientType.TO;
+			default:
+				throw new IllegalArgumentException("Invalid recipient type " + type);
 		}
 	}
 

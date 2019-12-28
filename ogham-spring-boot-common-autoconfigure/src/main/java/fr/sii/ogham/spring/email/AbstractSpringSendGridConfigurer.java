@@ -42,6 +42,8 @@ import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
  *
  */
 public abstract class AbstractSpringSendGridConfigurer implements SpringMessagingConfigurer {
+	private static final int SPRING_CONFIGURER_PRIORITY_OFFSET = 1000;
+
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractSpringSendGridConfigurer.class);
 	
 	protected final OghamSendGridProperties properties;
@@ -110,7 +112,7 @@ public abstract class AbstractSpringSendGridConfigurer implements SpringMessagin
 
 	@Override
 	public int getOrder() {
-		return SendGridConstants.DEFAULT_SENDGRID_CONFIGURER_PRIORITY + 1000;
+		return SendGridConstants.DEFAULT_SENDGRID_CONFIGURER_PRIORITY + SPRING_CONFIGURER_PRIORITY_OFFSET;
 	}
 
 }

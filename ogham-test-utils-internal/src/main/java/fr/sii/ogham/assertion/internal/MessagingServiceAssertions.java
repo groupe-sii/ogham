@@ -42,6 +42,7 @@ import fr.sii.ogham.template.thymeleaf.common.ThymeleafParser;
  *
  */
 public class MessagingServiceAssertions {
+	private static final String DELEGATE_FIELD = "delegate";
 	private final MessagingService messagingService;
 
 	public MessagingServiceAssertions(MessagingService messagingService) {
@@ -159,28 +160,28 @@ public class MessagingServiceAssertions {
 		return new JavaMailAssertions(this, findSender(messagingService, JavaMailSender.class));
 	}
 
-	private SendGridSender getSendGridSender(MessagingService messagingService) {
+	private static SendGridSender getSendGridSender(MessagingService messagingService) {
 		try {
 			return findSender(messagingService, SendGridV4Sender.class);
-		} catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {		// NOSONAR
 			// skip
 		}
 		try {
 			return findSender(messagingService, SendGridV2Sender.class);
-		} catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {		// NOSONAR
 			// skip
 		}
 		throw new IllegalStateException("No SendGridSender available");
 	}
 
-	private SendGridSender getSendGridSender(MessagingService messagingService, Class<? extends SendGridSender> senderClass) {
+	private static SendGridSender getSendGridSender(MessagingService messagingService, Class<? extends SendGridSender> senderClass) {
 		return findSender(messagingService, senderClass);
 	}
 
-	private MessagingService getRealService(MessagingService service) {
+	private static MessagingService getRealService(MessagingService service) {
 		try {
 			if (service instanceof WrapExceptionMessagingService) {
-				return getRealService((MessagingService) readField(service, "delegate", true));
+				return getRealService((MessagingService) readField(service, DELEGATE_FIELD, true));
 			}
 			if (service instanceof EverySupportingMessagingService) {
 				return service;
@@ -191,7 +192,7 @@ public class MessagingServiceAssertions {
 		}
 	}
 
-	private <T extends MessageSender> T findSender(MessagingService service, Class<T> clazz) {
+	private static <T extends MessageSender> T findSender(MessagingService service, Class<T> clazz) {
 		Set<T> found = findSenders(service, clazz);
 		if (found.isEmpty()) {
 			throw new IllegalStateException("Failed to find MessageSender of " + clazz.getTypeName());
@@ -203,7 +204,7 @@ public class MessagingServiceAssertions {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends MessageSender> Set<T> findSenders(MessagingService service, Class<T> clazz) {
+	private static <T extends MessageSender> Set<T> findSenders(MessagingService service, Class<T> clazz) {
 		try {
 			Set<T> found = new HashSet<>();
 			List<ConditionalSender> senders = (List<ConditionalSender>) readField(getRealService(service), "senders", true);
@@ -217,7 +218,7 @@ public class MessagingServiceAssertions {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends MessageSender> Set<T> findSenders(MessageSender sender, Class<T> clazz) {
+	private static <T extends MessageSender> Set<T> findSenders(MessageSender sender, Class<T> clazz) {
 		try {
 			Set<T> found = new HashSet<>();
 			if (clazz.isAssignableFrom(sender.getClass())) {
@@ -228,7 +229,7 @@ public class MessagingServiceAssertions {
 			// PhoneNumberTranslatorSender)
 			// TODO: FallbackSender
 			if (delegates(sender)) {
-				MessageSender delegate = (MessageSender) readField(sender, "delegate", true);
+				MessageSender delegate = (MessageSender) readField(sender, DELEGATE_FIELD, true);
 				found.addAll(findSenders(delegate, clazz));
 			}
 			if (sender instanceof MultiImplementationSender<?>) {
@@ -240,17 +241,17 @@ public class MessagingServiceAssertions {
 		}
 	}
 
-	private boolean delegates(MessageSender sender) {
+	private static boolean delegates(MessageSender sender) {
 		try {
-			Object value = readField(sender, "delegate", true);
+			Object value = readField(sender, DELEGATE_FIELD, true);
 			return value instanceof MessageSender;
-		} catch (IllegalAccessException | IllegalArgumentException e) {
+		} catch (IllegalAccessException | IllegalArgumentException e) {		// NOSONAR
 			return false;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends MessageSender> Set<T> findSenders(MultiImplementationSender<?> sender, Class<T> clazz) {
+	private static <T extends MessageSender> Set<T> findSenders(MultiImplementationSender<?> sender, Class<T> clazz) {
 		Set<T> found = new HashSet<>();
 		List<Implementation> implementations = sender.getImplementations();
 		for (Implementation impl : implementations) {
@@ -280,14 +281,14 @@ public class MessagingServiceAssertions {
 		}
 	}
 
-	private <T extends TemplateParser> Set<FoundParser<T>> findParsers(MessagingService service, Class<T> clazz) {
+	private static <T extends TemplateParser> Set<FoundParser<T>> findParsers(MessagingService service, Class<T> clazz) {
 		try {
 			Set<FoundParser<T>> found = new HashSet<>();
 			Set<ContentTranslatorSender> translatorSenders = findSenders(service, ContentTranslatorSender.class);
 			for (ContentTranslatorSender sender : translatorSenders) {
 				Set<TemplateContentTranslator> translators = findTranslators(sender, TemplateContentTranslator.class);
 				for (TemplateContentTranslator translator : translators) {
-					found.addAll(findParsers(clazz, translator, (MessageSender) readField(sender, "delegate", true)));
+					found.addAll(findParsers(clazz, translator, (MessageSender) readField(sender, DELEGATE_FIELD, true)));
 				}
 			}
 			return found;
@@ -297,7 +298,7 @@ public class MessagingServiceAssertions {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends TemplateParser> Set<FoundParser<T>> findParsers(Class<T> clazz, TemplateContentTranslator translator, MessageSender sender) throws IllegalAccessException {
+	private static <T extends TemplateParser> Set<FoundParser<T>> findParsers(Class<T> clazz, TemplateContentTranslator translator, MessageSender sender) throws IllegalAccessException {
 		Set<FoundParser<T>> found = new HashSet<>();
 		TemplateParser parser = (TemplateParser) readField(translator, "parser", true);
 		if (clazz.isAssignableFrom(parser.getClass())) {
@@ -310,7 +311,7 @@ public class MessagingServiceAssertions {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends TemplateParser> Set<FoundParser<T>> findParsers(Class<T> clazz, AutoDetectTemplateParser parser, MessageSender sender) throws IllegalAccessException {
+	private static <T extends TemplateParser> Set<FoundParser<T>> findParsers(Class<T> clazz, AutoDetectTemplateParser parser, MessageSender sender) throws IllegalAccessException {
 		Set<FoundParser<T>> found = new HashSet<>();
 		List<TemplateImplementation> implementations = (List<TemplateImplementation>) readField(parser, "implementations", true);
 		for (TemplateImplementation impl : implementations) {
@@ -321,7 +322,7 @@ public class MessagingServiceAssertions {
 		return found;
 	}
 
-	private Class<? extends Message> getMessageType(MessageSender sender) {
+	private static Class<? extends Message> getMessageType(MessageSender sender) {
 		Set<EmailSender> emailSenders = findSenders(sender, EmailSender.class);
 		if (!emailSenders.isEmpty()) {
 			return Email.class;
@@ -333,7 +334,7 @@ public class MessagingServiceAssertions {
 		throw new IllegalStateException("Failed to find message type");
 	}
 
-	private <T extends ContentTranslator> Set<T> findTranslators(ContentTranslatorSender translatorSender, Class<T> clazz) {
+	private static <T extends ContentTranslator> Set<T> findTranslators(ContentTranslatorSender translatorSender, Class<T> clazz) {
 		try {
 			ContentTranslator translator = (ContentTranslator) readField(translatorSender, "translator", true);
 			return findTranslators(translator, clazz);
@@ -342,14 +343,14 @@ public class MessagingServiceAssertions {
 		}
 	}
 
-	private <T extends ContentTranslator> Set<T> findTranslators(ContentTranslator translator, Class<T> clazz) {
+	private static <T extends ContentTranslator> Set<T> findTranslators(ContentTranslator translator, Class<T> clazz) {
 		try {
 			Set<T> found = new HashSet<>();
 			if (translator instanceof EveryContentTranslator) {
 				found.addAll(findTranslators((EveryContentTranslator) translator, clazz));
 			}
 			if (translator instanceof MultiContentTranslator) {
-				found.addAll(findTranslators((ContentTranslator) readField(translator, "delegate", true), clazz));
+				found.addAll(findTranslators((ContentTranslator) readField(translator, DELEGATE_FIELD, true), clazz));
 			}
 			return found;
 		} catch (IllegalAccessException e) {
@@ -358,7 +359,7 @@ public class MessagingServiceAssertions {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends ContentTranslator> Set<T> findTranslators(EveryContentTranslator translator, Class<T> clazz) {
+	private static <T extends ContentTranslator> Set<T> findTranslators(EveryContentTranslator translator, Class<T> clazz) {
 		Set<T> found = new HashSet<>();
 		for (ContentTranslator t : translator.getTranslators()) {
 			if (clazz.isAssignableFrom(t.getClass())) {

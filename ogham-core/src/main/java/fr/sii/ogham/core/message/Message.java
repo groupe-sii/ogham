@@ -16,7 +16,7 @@ public interface Message {
 	 * 
 	 * @return the content of the message
 	 */
-	public Content getContent();
+	Content getContent();
 
 	/**
 	 * Set the content of the message.
@@ -24,5 +24,5 @@ public interface Message {
 	 * @param content
 	 *            the new content for the message
 	 */
-	public void setContent(Content content);
+	void setContent(Content content);
 }

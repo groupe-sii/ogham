@@ -27,7 +27,8 @@ import fr.sii.ogham.helper.html.AssertHtml;
  * @author Aurélien Baudet
  *
  */
-public class AssertEmail {
+@SuppressWarnings("squid:S1192")
+public final class AssertEmail {
 	private static final Pattern HTML_PATTERN = Pattern.compile("<html", Pattern.CASE_INSENSITIVE);
 	private static final Pattern TEXT_OR_HTML_MIMETYPES = Pattern.compile("^((text/)|(application/x?html)).*", Pattern.CASE_INSENSITIVE);
 
@@ -608,16 +609,20 @@ public class AssertEmail {
 			if (content instanceof Multipart) {
 				Multipart mp = (Multipart) content;
 				for(int i=0 ; i<mp.getCount() ; i++) {
-					BodyPart part = mp.getBodyPart(i);
-					if(part.getContentType().startsWith("multipart/")) {
-						getBodyParts(part, founds);
-					} else if(TEXT_OR_HTML_MIMETYPES.matcher(part.getContentType()).matches()){
-						founds.add(part);
-					}
+					addPart(founds, mp, i);
 				}
 			}
 		} catch (IOException e) {
 			throw new MessagingException("Failed to access content of the mail", e);
+		}
+	}
+
+	private static void addPart(List<Part> founds, Multipart mp, int i) throws MessagingException {
+		BodyPart part = mp.getBodyPart(i);
+		if(part.getContentType().startsWith("multipart/")) {
+			getBodyParts(part, founds);
+		} else if(TEXT_OR_HTML_MIMETYPES.matcher(part.getContentType()).matches()){
+			founds.add(part);
 		}
 	}
 

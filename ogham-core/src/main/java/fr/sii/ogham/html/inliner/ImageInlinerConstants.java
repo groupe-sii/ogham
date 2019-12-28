@@ -83,7 +83,7 @@ public final class ImageInlinerConstants {
 
 		private final String mode;
 
-		private InlineModes(String mode) {
+		InlineModes(String mode) {
 			this.mode = mode;
 		}
 

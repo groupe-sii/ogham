@@ -76,7 +76,7 @@ public class StringToEnumConverter implements SupportingConverter {
 	}
 
 	@Override
-	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {
+	public <T> T convert(Object source, Class<T> targetType) {
 		String name = (String) source;
 		if (name == null || name.isEmpty()) {
 			return null;

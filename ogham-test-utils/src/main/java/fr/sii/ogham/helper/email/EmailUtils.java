@@ -17,7 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmailUtils {
+public final class EmailUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(EmailUtils.class);
 	private static final Pattern TEXT_OR_HTML_MIMETYPES = Pattern.compile("^((text/)|(application/x?html)).*", Pattern.CASE_INSENSITIVE);
 	public static final String ATTACHMENT_DISPOSITION = "attachment";
@@ -43,7 +43,7 @@ public class EmailUtils {
 		List<Part> bodyParts = getTextualParts(actualEmail);
 		// if no textual part, it may mean that the body is not textual
 		if (bodyParts.isEmpty()) {
-			List<Part> all = getBodyParts(actualEmail, (bp) -> true);
+			List<Part> all = getBodyParts(actualEmail, bp -> true);
 			return all.size() == 1 ? all.get(0) : all.get(1);
 		}
 		// if only one part matching => not Multipart with alternative => take
@@ -230,7 +230,6 @@ public class EmailUtils {
 		findBodyParts(actualEmail, filter, founds, "");
 	}
 
-	@SuppressWarnings("unchecked")
 	private static <T extends Part> void findBodyParts(Part actualEmail, Predicate<Part> filter, List<T> founds, String indent) throws MessagingException {
 		try {
 			Object content = actualEmail.getContent();
@@ -239,16 +238,21 @@ public class EmailUtils {
 				LOG.trace("{}find {}", indent, mp.getContentType());
 				for (int i = 0; i < mp.getCount(); i++) {
 					BodyPart part = mp.getBodyPart(i);
-					if (isMultipart(part)) {
-						findBodyParts(part, filter, founds, indent + "   ");
-					} else if (filter.test(part)) {
-						LOG.trace("{}add {}", indent + "   ", part.getContentType());
-						founds.add((T) part);
-					}
+					addPart(filter, founds, indent, part);
 				}
 			}
 		} catch (IOException e) {
 			throw new MessagingException("Failed to access content of the mail", e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T extends Part> void addPart(Predicate<Part> filter, List<T> founds, String indent, BodyPart part) throws MessagingException {
+		if (isMultipart(part)) {
+			findBodyParts(part, filter, founds, indent + "   ");
+		} else if (filter.test(part)) {
+			LOG.trace("{}add {}", indent + "   ", part.getContentType());
+			founds.add((T) part);
 		}
 	}
 

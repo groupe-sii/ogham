@@ -54,7 +54,7 @@ public class DelegateConverter implements Converter, ConverterRegistry {
 	}
 
 	@Override
-	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {
+	public <T> T convert(Object source, Class<T> targetType) {
 		if (source == null) {
 			return null;
 		}

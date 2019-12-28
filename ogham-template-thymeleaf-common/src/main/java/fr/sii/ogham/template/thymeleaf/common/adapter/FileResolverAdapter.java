@@ -14,7 +14,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
  * @author Aurélien Baudet
  *
  */
-public class FileResolverAdapter extends AbstractTemplateResolverOptionsAdapter implements TemplateResolverAdapter {
+public class FileResolverAdapter extends AbstractTemplateResolverOptionsAdapter {
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {

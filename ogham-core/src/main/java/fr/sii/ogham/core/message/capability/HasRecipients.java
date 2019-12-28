@@ -18,7 +18,7 @@ public interface HasRecipients<R extends Addressee> {
 	 * 
 	 * @return the list of recipients of the message
 	 */
-	public List<R> getRecipients();
+	List<R> getRecipients();
 
 	/**
 	 * Set the list of recipients of the message
@@ -26,5 +26,5 @@ public interface HasRecipients<R extends Addressee> {
 	 * @param recipients
 	 *            the list of recipients of the message
 	 */
-	public void setRecipients(List<R> recipients);
+	void setRecipients(List<R> recipients);
 }

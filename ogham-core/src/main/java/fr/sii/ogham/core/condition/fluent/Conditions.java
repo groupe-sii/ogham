@@ -34,7 +34,7 @@ import fr.sii.ogham.core.env.PropertyResolver;
  * @author Aurélien Baudet
  *
  */
-public class Conditions {
+public final class Conditions {
 	/**
 	 * Parenthesis operator to handle priorities:
 	 * 
@@ -65,6 +65,7 @@ public class Conditions {
 	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
+	@SuppressWarnings("squid:S00100")
 	public static <T> FluentCondition<T> $(Condition<T> condition) {
 		return new FluentCondition<>(condition);
 	}

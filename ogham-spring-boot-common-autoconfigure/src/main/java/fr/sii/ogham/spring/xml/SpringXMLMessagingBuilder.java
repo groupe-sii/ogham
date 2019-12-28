@@ -14,9 +14,8 @@ import fr.sii.ogham.spring.env.SpringEnvironmentPropertyResolver;
  *
  */
 public class SpringXMLMessagingBuilder implements Builder<MessagingService> {
-	Environment environment;
-
-	MessagingBuilder builder;
+	private Environment environment;
+	private MessagingBuilder builder;
 
 	/**
 	 * Default constructor to let the user use properties instead of constructor

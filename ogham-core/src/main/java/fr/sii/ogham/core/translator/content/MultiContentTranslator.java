@@ -76,7 +76,7 @@ public class MultiContentTranslator implements ContentTranslator {
 			}
 		}
 		if (result.getContents().isEmpty()) {
-			handleEmptyContent(content, result, missing);
+			handleEmptyContent(content, missing);
 		}
 		return result;
 	}
@@ -86,7 +86,7 @@ public class MultiContentTranslator implements ContentTranslator {
 		return "MultiContentTranslator";
 	}
 
-	private void handleEmptyContent(Content content, MultiContent result, List<ContentTranslatorException> missing) throws NoContentException {
+	private static void handleEmptyContent(Content content, List<ContentTranslatorException> missing) throws NoContentException {
 		if (!missing.isEmpty()) {
 			String notFoundTemplates = missing.stream().map(Exception::getMessage).collect(Collectors.joining("\n"));
 			throw new NoContentException("The message is empty maybe due to some errors:\n" + notFoundTemplates, (MultiContent) content, missing);

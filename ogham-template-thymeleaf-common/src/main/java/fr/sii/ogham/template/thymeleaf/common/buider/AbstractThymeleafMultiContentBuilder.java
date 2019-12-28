@@ -10,6 +10,7 @@ import fr.sii.ogham.core.message.content.Variant;
 import fr.sii.ogham.template.common.adapter.ExtensionMappingVariantResolver;
 import fr.sii.ogham.template.common.adapter.VariantResolver;
 
+@SuppressWarnings("squid:S00119")
 public abstract class AbstractThymeleafMultiContentBuilder<MYSELF extends AbstractThymeleafMultiContentBuilder<MYSELF, P, E>, P, E extends ThymeleafEngineConfigBuilder<MYSELF>> extends AbstractThymeleafBuilder<MYSELF, P, E> implements VariantBuilder<MYSELF> {
 	private List<VariantWithExt> variants;
 

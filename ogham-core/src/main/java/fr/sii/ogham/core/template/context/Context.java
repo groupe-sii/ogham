@@ -20,5 +20,5 @@ public interface Context {
 	 * @throws ContextException
 	 *             when the variable values couldn't be generated
 	 */
-	public Map<String, Object> getVariables() throws ContextException;
+	Map<String, Object> getVariables() throws ContextException;
 }

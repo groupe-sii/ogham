@@ -63,7 +63,7 @@ public class JavaPropertiesResolver implements PropertyResolver {
 	}
 
 	@Override
-	public String getRequiredProperty(String key) throws IllegalStateException {
+	public String getRequiredProperty(String key) {
 		String property = getProperty(key);
 		if (property == null) {
 			throw new IllegalStateException("no value for required property " + key);
@@ -72,7 +72,7 @@ public class JavaPropertiesResolver implements PropertyResolver {
 	}
 
 	@Override
-	public <T> T getRequiredProperty(String key, Class<T> targetType) throws IllegalStateException {
+	public <T> T getRequiredProperty(String key, Class<T> targetType) {
 		String property = getProperty(key);
 		if (property == null) {
 			throw new IllegalStateException("no value for required property " + key);

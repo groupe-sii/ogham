@@ -29,5 +29,5 @@ public interface TemplateEngineDetector {
 	 * @throws EngineDetectionException
 	 *             when something went wrong during detection
 	 */
-	public boolean canParse(ResourcePath template, Context ctx) throws EngineDetectionException;
+	boolean canParse(ResourcePath template, Context ctx) throws EngineDetectionException;
 }

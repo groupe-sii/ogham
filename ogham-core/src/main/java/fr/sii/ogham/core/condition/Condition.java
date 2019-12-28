@@ -17,5 +17,5 @@ public interface Condition<T> {
 	 *            the object to test
 	 * @return true if the object is accepted, false otherwise
 	 */
-	public boolean accept(T obj);
+	boolean accept(T obj);
 }

@@ -384,6 +384,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	}
 
 	@Override
+	@SuppressWarnings("squid:S5411")
 	public DataCodingProvider build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		Byte dataCodingValue = dcsValueBuilder.getValue(propertyResolver);

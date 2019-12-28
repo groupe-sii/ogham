@@ -13,7 +13,7 @@ import freemarker.cache.TemplateLoader;
  * @author Cyril Dejonghe
  *
  */
-public class StringResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
+public class StringResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter {
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {

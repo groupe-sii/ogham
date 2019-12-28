@@ -13,12 +13,12 @@ public interface MayHaveStringContent extends Content {
 	 * 
 	 * @return true if the content is available as string, false otherwise
 	 */
-	public boolean canProvideString();
+	boolean canProvideString();
 
 	/**
 	 * Provides the content as String. May return null.
 	 * 
 	 * @return the content as String
 	 */
-	public String asString();
+	String asString();
 }

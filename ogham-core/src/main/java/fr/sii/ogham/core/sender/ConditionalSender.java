@@ -18,5 +18,5 @@ public interface ConditionalSender extends MessageSender {
 	 *            the message to check if it can be sent using this sender
 	 * @return true if the message can be handled, false otherwise
 	 */
-	public boolean supports(Message message);
+	boolean supports(Message message);
 }

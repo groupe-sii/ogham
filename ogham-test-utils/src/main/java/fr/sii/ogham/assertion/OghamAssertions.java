@@ -86,7 +86,7 @@ import fr.sii.ogham.helper.sms.rule.SmppServerRule;
  * @author Aurélien Baudet
  *
  */
-public class OghamAssertions {
+public final class OghamAssertions {
 
 	/**
 	 * Helper method to write assertions on mails using fluent API. For example:

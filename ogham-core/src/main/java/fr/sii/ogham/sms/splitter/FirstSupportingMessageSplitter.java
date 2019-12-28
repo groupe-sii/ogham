@@ -48,7 +48,7 @@ public class FirstSupportingMessageSplitter implements MessageSplitter {
 		throw new NoSplitterAbleToSplitMessageException("Failed to split message because no splitter is able to split the message", message);
 	}
 
-	private boolean canSplit(MessageSplitter splitter, String message) {
+	private static boolean canSplit(MessageSplitter splitter, String message) {
 		if (splitter instanceof SupportingSplitter) {
 			return ((SupportingSplitter) splitter).canSplit(message);
 		}

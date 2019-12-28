@@ -164,7 +164,7 @@ public enum HttpStatus {
 
 	private String reason;
 
-	private HttpStatus(int code, String reason) {
+	HttpStatus(int code, String reason) {
 		this.code = code;
 		this.reason = reason;
 	}

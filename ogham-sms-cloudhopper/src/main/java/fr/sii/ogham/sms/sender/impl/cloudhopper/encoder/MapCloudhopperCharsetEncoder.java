@@ -70,7 +70,7 @@ public class MapCloudhopperCharsetEncoder implements Encoder {
 	 * @throws EncodingException
 	 *             If Cloudhopper charset name is invalid
 	 */
-	public void addCharset(String nioCharsetName, String cloudhopperCharsetName) throws EncodingException {
+	public final void addCharset(String nioCharsetName, String cloudhopperCharsetName) throws EncodingException {
 		Charset charset = CharsetUtil.map(cloudhopperCharsetName);
 		if (charset != null) {
 			addCharset(nioCharsetName, new NamedCharset(cloudhopperCharsetName, charset));

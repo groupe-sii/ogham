@@ -13,6 +13,6 @@ public interface UpdatableDecoratorContent extends Content {
 	 * @param content
 	 *            the new content to set
 	 */
-	public void setContent(Content content);
+	void setContent(Content content);
 
 }

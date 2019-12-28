@@ -62,7 +62,7 @@ public class SimpleBeanReadWrapper implements BeanReadWrapper {
 	}
 
 	@Override
-	public Object getPropertyValue(String name) throws InvalidPropertyException {
+	public Object getPropertyValue(String name) {
 		if (getWrappedBean() == null) {
 			return null;
 		}

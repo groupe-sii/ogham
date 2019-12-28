@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.mimetype.replace;
 
+import static java.util.Locale.ENGLISH;
+
 /**
  * Eventually replaces a mimetype if it contains the provided string.
  * 
@@ -55,7 +57,7 @@ public class ContainsMimetypeReplacer implements MimetypeReplacer {
 		if (!ignoreCase && mimetype.contains(contains)) {
 			return replacement;
 		}
-		if (ignoreCase && mimetype.toLowerCase().contains(contains)) {
+		if (ignoreCase && mimetype.toLowerCase(ENGLISH).contains(contains)) {
 			return replacement;
 		}
 		return mimetype;

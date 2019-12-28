@@ -6,7 +6,7 @@ package fr.sii.ogham.core.util;
  * @author Aurélien Baudet
  *
  */
-public class ConfigurationValueUtils {
+public final class ConfigurationValueUtils {
 	/**
 	 * Returns the first non-null value.
 	 * 
@@ -17,7 +17,7 @@ public class ConfigurationValueUtils {
 	 * @return the first non-null value
 	 */
 	@SafeVarargs
-	public static final <T> T firstValue(T... values) {
+	public static <T> T firstValue(T... values) {
 		for (T value : values) {
 			if (value != null) {
 				return value;

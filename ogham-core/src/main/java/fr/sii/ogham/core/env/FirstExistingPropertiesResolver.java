@@ -91,7 +91,7 @@ public class FirstExistingPropertiesResolver implements PropertyResolver {
 	}
 
 	@Override
-	public String getRequiredProperty(String key) throws IllegalStateException {
+	public String getRequiredProperty(String key) {
 		for (PropertyResolver resolver : delegates) {
 			if (resolver.containsProperty(key)) {
 				return resolver.getRequiredProperty(key);
@@ -101,7 +101,7 @@ public class FirstExistingPropertiesResolver implements PropertyResolver {
 	}
 
 	@Override
-	public <T> T getRequiredProperty(String key, Class<T> targetType) throws IllegalStateException {
+	public <T> T getRequiredProperty(String key, Class<T> targetType) {
 		for (PropertyResolver resolver : delegates) {
 			if (resolver.containsProperty(key)) {
 				return resolver.getRequiredProperty(key, targetType);

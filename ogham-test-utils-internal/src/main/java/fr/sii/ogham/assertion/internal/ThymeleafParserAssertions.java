@@ -42,7 +42,7 @@ public class ThymeleafParserAssertions extends HasParent<ThymeleafAssertions> {
 		return this;
 	}
 
-	private TemplateEngine getEngine(ThymeleafParser parser) {
+	private static TemplateEngine getEngine(ThymeleafParser parser) {
 		try {
 			return (TemplateEngine) FieldUtils.readField(parser, "engine", true);
 		} catch (IllegalAccessException e) {

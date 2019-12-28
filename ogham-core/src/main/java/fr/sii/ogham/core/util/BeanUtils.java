@@ -78,10 +78,8 @@ public final class BeanUtils {
 	 * @param bean
 	 *            the bean to convert into a map
 	 * @return the bean as map
-	 * @throws BeanException
-	 *             when the conversion has failed
 	 */
-	public static Map<String, Object> convert(Object bean) throws BeanException {
+	public static Map<String, Object> convert(Object bean) {
 		return new MapBeanReadWrapper(bean);
 	}
 
@@ -126,12 +124,8 @@ public final class BeanUtils {
 	 *             when the bean couldn't be populated
 	 */
 	public static void populate(Object bean, Map<String, Object> values, Options options) throws BeanException {
-		try {
-			for (Entry<String, Object> entry : values.entrySet()) {
-				populate(bean, entry, options);
-			}
-		} catch (InvocationTargetException | IllegalAccessException e) {
-			throw new BeanException("Failed to populate bean", bean, e);
+		for (Entry<String, Object> entry : values.entrySet()) {
+			populate(bean, entry, options);
 		}
 	}
 
@@ -174,12 +168,8 @@ public final class BeanUtils {
 	 *            options used to
 	 * @throws BeanException
 	 *             when the bean couldn't be populated
-	 * @throws InvocationTargetException
-	 *             when the setter method can't be called
-	 * @throws IllegalAccessException
-	 *             when the field can't be accessed due to security restrictions
 	 */
-	public static void populate(Object bean, Entry<String, Object> entry, Options options) throws BeanException, IllegalAccessException, InvocationTargetException {
+	public static void populate(Object bean, Entry<String, Object> entry, Options options) throws BeanException {
 		try {
 			String property = org.apache.commons.beanutils.BeanUtils.getProperty(bean, entry.getKey());
 			if (options.isOverride() || property == null) {
@@ -189,6 +179,10 @@ public final class BeanUtils {
 			handleUnknown(bean, options, entry, e);
 		} catch (ConversionException e) {
 			handleConversion(bean, options, entry, e);
+		} catch (IllegalAccessException e) {
+			throw new BeanException("Failed to populate bean due to security restrictions", bean, e);
+		} catch (InvocationTargetException e) {
+			throw new BeanException("Failed to populate bean due to invalid setter call", bean, e);
 		}
 	}
 

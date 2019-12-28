@@ -19,5 +19,5 @@ public interface MessageFiller {
 	 * @throws FillMessageException
 	 *             when the message couldn't be filled
 	 */
-	public void fill(Message message) throws FillMessageException;
+	void fill(Message message) throws FillMessageException;
 }

@@ -109,13 +109,13 @@ public class InlineImageTranslator implements ContentTranslator {
 		return content;
 	}
 
-	private ContentWithImages clean(ContentWithImages contentWithImages) {
+	private static ContentWithImages clean(ContentWithImages contentWithImages) {
 		String html = removeOghamAttributes(contentWithImages.getContent());
 		contentWithImages.setContent(html);
 		return contentWithImages;
 	}
 
-	private List<String> filterExternalUrls(List<String> imageUrls) {
+	private static List<String> filterExternalUrls(List<String> imageUrls) {
 		for(Iterator<String> it = imageUrls.iterator() ; it.hasNext() ; ) {
 			String url = it.next();
 			if(URL_PATTERN.matcher(url).matches()) {
@@ -125,7 +125,7 @@ public class InlineImageTranslator implements ContentTranslator {
 		return imageUrls;
 	}
 
-	private ResourcePath getSourcePath(Content content) {
+	private static ResourcePath getSourcePath(Content content) {
 		if(content instanceof HasResourcePath) {
 			return ((HasResourcePath) content).getPath();
 		}
@@ -140,6 +140,7 @@ public class InlineImageTranslator implements ContentTranslator {
 		return imageResources;
 	}
 
+	@SuppressWarnings("squid:S1192")
 	private void load(List<ImageResource> imageResources, RelativePath path) throws ContentTranslatorException {
 		try {
 			byte[] imgContent = IOUtils.toByteArray(resourceResolver.getResource(path).getInputStream());
@@ -155,7 +156,7 @@ public class InlineImageTranslator implements ContentTranslator {
 		}
 	}
 
-	private Content updateHtmlContent(Content content, ContentWithImages contentWithImages) {
+	private static Content updateHtmlContent(Content content, ContentWithImages contentWithImages) {
 		if(content instanceof UpdatableStringContent) {
 			LOG.debug("Content is updatable => update it with inlined images");
 			((UpdatableStringContent) content).setStringContent(contentWithImages.getContent());
@@ -165,7 +166,7 @@ public class InlineImageTranslator implements ContentTranslator {
 		return new StringContent(contentWithImages.getContent());
 	}
 
-	private Content generateFinalContent(Content content, ContentWithImages contentWithImages, Content inlinedContent) {
+	private static Content generateFinalContent(Content content, ContentWithImages contentWithImages, Content inlinedContent) {
 		if(content instanceof ContentWithAttachments) {
 			ContentWithAttachments finalContent = (ContentWithAttachments) content;
 			finalContent.addAttachments(contentWithImages.getAttachments());

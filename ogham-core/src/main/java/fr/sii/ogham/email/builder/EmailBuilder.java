@@ -738,7 +738,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 		translator.addTranslator(new TemplateContentTranslator(templateParser, templateBuilderHelper.buildVariant()));
 	}
 
-	private void addMultiContent(EveryContentTranslator translator) {
+	private static void addMultiContent(EveryContentTranslator translator) {
 		translator.addTranslator(new MultiContentTranslator(translator));
 	}
 

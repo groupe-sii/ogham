@@ -23,7 +23,7 @@ public class SmsFiller extends AbstractMessageAwareFiller<Sms> {
 		}
 	}
 	
-	private boolean hasRecipients(Sms sms) {
+	private static boolean hasRecipients(Sms sms) {
 		return sms.getRecipients()!=null && !sms.getRecipients().isEmpty();
 	}
 }

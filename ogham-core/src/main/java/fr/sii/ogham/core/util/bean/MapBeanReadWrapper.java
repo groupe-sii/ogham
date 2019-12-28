@@ -143,7 +143,7 @@ public class MapBeanReadWrapper implements BeanReadWrapper, Map<String, Object> 
 	}
 
 	@Override
-	public Object getPropertyValue(String name) throws InvalidPropertyException {
+	public Object getPropertyValue(String name) {
 		return delegate.getPropertyValue(name);
 	}
 
@@ -196,7 +196,7 @@ public class MapBeanReadWrapper implements BeanReadWrapper, Map<String, Object> 
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
+			int prime = 31;
 			int result = 1;
 			result = prime * result + ((key == null) ? 0 : key.hashCode());
 			return result;
@@ -210,7 +210,7 @@ public class MapBeanReadWrapper implements BeanReadWrapper, Map<String, Object> 
 			if (obj == null) {
 				return false;
 			}
-			if (!(obj instanceof MapBeanReadWrapperEntry)) {
+			if (obj.getClass() != getClass()) {
 				return false;
 			}
 			MapBeanReadWrapperEntry other = (MapBeanReadWrapperEntry) obj;

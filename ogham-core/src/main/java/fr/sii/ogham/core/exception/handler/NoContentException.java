@@ -12,7 +12,7 @@ public class NoContentException extends ContentTranslatorException {
 	 */
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
-	private final MultiContent content;
+	private final transient MultiContent content;
 	private final List<ContentTranslatorException> errors;
 
 	public NoContentException(String message, MultiContent content, List<ContentTranslatorException> errors) {

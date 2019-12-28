@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 
 import fr.sii.ogham.helper.exception.ComparisonException;
 
-public class HtmlUtils {
+public final class HtmlUtils {
 	/**
 	 * Compare two HTML documents. The HTML strings are parsed into
 	 * {@link Document}s. The HTML are compared by elements and attributes, not

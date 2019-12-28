@@ -87,7 +87,7 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 			LOG.debug("Preparing to send email using SendGrid: {}", summarize(message));
 			final SendGrid.Email sgEmail = intercept(toSendGridEmail(message), message);
 
-			LOG.debug("Sending email...", summarize(message));
+			LOG.debug("Sending email...\n{}", summarize(message));
 			LOG.trace("SendGrid email: {}", sgEmail);
 			delegate.send(sgEmail);
 			LOG.debug("Email has been successfully sent");
@@ -107,7 +107,7 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 		return interceptor.intercept(sendGridEmail, source);
 	}
 
-	private Set<String> validate(final Email message) {
+	private static Set<String> validate(final Email message) {
 		final Set<String> violations = new HashSet<>();
 
 		if (message.getContent() == null) {
@@ -162,7 +162,7 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 		return ret;
 	}
 
-	private void addAttachment(final SendGrid.Email ret, final Attachment attachment) throws AttachmentReadException {
+	private static void addAttachment(final SendGrid.Email ret, final Attachment attachment) throws AttachmentReadException {
 		try {
 			ret.addAttachment(attachment.getResource().getName(), attachment.getResource().getInputStream());
 			if (attachment.getContentId() != null) {

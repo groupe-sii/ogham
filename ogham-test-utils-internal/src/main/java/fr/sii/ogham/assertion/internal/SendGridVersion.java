@@ -10,7 +10,7 @@ public enum SendGridVersion {
 
 	private final Class<? extends SendGridSender> senderClass;
 
-	private SendGridVersion(Class<? extends SendGridSender> senderClass) {
+	SendGridVersion(Class<? extends SendGridSender> senderClass) {
 		this.senderClass = senderClass;
 	}
 

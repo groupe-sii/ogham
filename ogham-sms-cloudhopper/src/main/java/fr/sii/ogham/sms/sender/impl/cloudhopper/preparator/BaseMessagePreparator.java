@@ -100,10 +100,8 @@ public abstract class BaseMessagePreparator implements MessagePreparator {
 		try {
 			return createMessages(message);
 		} catch (PhoneNumberTranslatorException | SmppInvalidArgumentException | DataCodingException e) {
-			LOG.error("Failed to prepare messages", e);
 			throw new MessagePreparationException("Failed to prepare messages", message, e);
 		} catch (SplitMessageException e) {
-			LOG.error("Failed to split SMPP message before sending it", e);
 			throw new MessagePreparationException("Failed to split SMPP message before sending it", message, e);
 		}
 	}
@@ -160,8 +158,7 @@ public abstract class BaseMessagePreparator implements MessagePreparator {
 		messages.add(submit);
 	}
 
-	private SubmitSm createMessage(Sms message, Recipient recipient, Segment part)
-			throws SmppInvalidArgumentException, PhoneNumberTranslatorException, DataCodingException, MessagePreparationException {
+	private SubmitSm createMessage(Sms message, Recipient recipient, Segment part) throws PhoneNumberTranslatorException, DataCodingException, MessagePreparationException {
 		SubmitSm submit = new SubmitSm();
 		submit.setSourceAddress(toAddress(message.getFrom().getPhoneNumber()));
 		submit.setDestAddress(toAddress(recipient.getPhoneNumber()));

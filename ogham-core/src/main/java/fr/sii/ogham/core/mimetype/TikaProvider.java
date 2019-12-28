@@ -23,6 +23,7 @@ import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
  * @see <a href="http://tika.apache.org/">Apache Tika</a>
  *
  */
+@SuppressWarnings("squid:S1192")
 public class TikaProvider implements MimeTypeProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(TikaProvider.class);
 

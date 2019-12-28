@@ -18,7 +18,7 @@ public interface HasContentFluent<F> {
 	 *            the content of the message to set
 	 * @return this instance for fluent chaining
 	 */
-	public HasContentFluent<F> content(Content content);
+	HasContentFluent<F> content(Content content);
 	
 	/**
 	 * Set the content of the message
@@ -27,5 +27,5 @@ public interface HasContentFluent<F> {
 	 *            the content of the message to set
 	 * @return this instance for fluent chaining
 	 */
-	public HasContentFluent<F> content(String content);
+	HasContentFluent<F> content(String content);
 }

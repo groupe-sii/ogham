@@ -81,7 +81,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 
 	}
 
-	private void setMimeContent(final Mail email, final String contentStr, final String mime) {
+	private static void setMimeContent(final Mail email, final String contentStr, final String mime) {
 		com.sendgrid.helpers.mail.objects.Content content = new com.sendgrid.helpers.mail.objects.Content(mime, contentStr);
 		email.addContent(content);
 	}

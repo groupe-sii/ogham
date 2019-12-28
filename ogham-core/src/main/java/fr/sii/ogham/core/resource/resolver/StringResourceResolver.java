@@ -17,7 +17,7 @@ import fr.sii.ogham.core.resource.path.ResourcePath;
  * @author Aurélien Baudet
  *
  */
-public class StringResourceResolver extends AbstractPrefixedLookupPathResolver implements ResourceResolver {
+public class StringResourceResolver extends AbstractPrefixedLookupPathResolver {
 
 	public StringResourceResolver(List<String> lookups) {
 		super(lookups);

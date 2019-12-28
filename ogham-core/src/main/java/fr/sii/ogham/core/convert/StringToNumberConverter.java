@@ -15,7 +15,7 @@ import fr.sii.ogham.core.exception.convert.ConversionException;
 public class StringToNumberConverter implements SupportingConverter {
 
 	@Override
-	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {
+	public <T> T convert(Object source, Class<T> targetType) {
 		String text = (String) source;
 		String trimmed = trimAllWhitespace(text);
 		if(trimmed==null) {

@@ -75,7 +75,7 @@ public class ThymeLeafV3FirstSupportingTemplateResolver implements ITemplateReso
 		}
 	}
 
-	private boolean templateExists(TemplateResolution resolution) {
+	private static boolean templateExists(TemplateResolution resolution) {
 		// Thymeleaf can check existence of template but only if option is set.
 		// If set and the template doesn't exist, resolution will be null.
 		if(resolution == null) {

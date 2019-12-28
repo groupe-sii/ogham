@@ -14,6 +14,7 @@ import fr.sii.ogham.template.common.adapter.VariantResolver;
  *            The type of this instance. This is needed to have the right return
  *            type for fluent chaining with inheritance
  */
+@SuppressWarnings("squid:S00119")
 public interface VariantBuilder<MYSELF> {
 	/**
 	 * Registers a custom variant with its extension. The aim is to be able to

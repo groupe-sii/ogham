@@ -8,5 +8,5 @@ public interface ClasspathHelper {
 	 *            the class name
 	 * @return true if the class exists in the classpath, false otherwise
 	 */
-	public boolean exists(String className);
+	boolean exists(String className);
 }

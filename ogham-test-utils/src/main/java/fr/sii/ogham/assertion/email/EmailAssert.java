@@ -6,6 +6,8 @@ import static fr.sii.ogham.helper.email.EmailUtils.getAlternativePart;
 import static fr.sii.ogham.helper.email.EmailUtils.getAttachments;
 import static fr.sii.ogham.helper.email.EmailUtils.getBodyPart;
 import static java.util.Arrays.asList;
+import static javax.mail.Message.RecipientType.CC;
+import static javax.mail.Message.RecipientType.TO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +22,6 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.hamcrest.Matcher;
 import org.junit.Assert;
@@ -30,6 +31,7 @@ import fr.sii.ogham.assertion.context.SingleMessageContext;
 import fr.sii.ogham.helper.email.EmailUtils;
 import fr.sii.ogham.helper.email.FileNamePredicate;
 
+@SuppressWarnings("squid:S1192")
 public class EmailAssert<P> extends HasParent<P> {
 	/**
 	 * The list of messages that will be used for assertions
@@ -348,7 +350,7 @@ public class EmailAssert<P> extends HasParent<P> {
 			int index = 0;
 			List<AddressesWithContext> addresses = new ArrayList<>();
 			for (Message message : actual) {
-				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(RecipientType.TO)), "to", new SingleMessageContext(index++)));
+				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(TO)), "to", new SingleMessageContext(index++)));
 			}
 			return new AddressListAssert<>(addresses, this);
 		} catch (MessagingException e) {
@@ -388,7 +390,7 @@ public class EmailAssert<P> extends HasParent<P> {
 			int index = 0;
 			List<AddressesWithContext> addresses = new ArrayList<>();
 			for (Message message : actual) {
-				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(RecipientType.CC)), "cc", new SingleMessageContext(index++)));
+				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(CC)), "cc", new SingleMessageContext(index++)));
 			}
 			return new AddressListAssert<>(addresses, this);
 		} catch (MessagingException e) {

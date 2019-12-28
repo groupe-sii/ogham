@@ -9,7 +9,7 @@ import fr.sii.ogham.helper.sms.bean.SubmitSm;
  * @author Aurélien Baudet
  *
  */
-public class SmsUtils {
+public final class SmsUtils {
 
 	/**
 	 * Get the text content of the SMS.

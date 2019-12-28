@@ -123,7 +123,7 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 		return interceptor.intercept(sendGridEmail, source);
 	}
 
-	private Set<String> validate(final Email message) {
+	private static Set<String> validate(final Email message) {
 		final Set<String> violations = new HashSet<>();
 
 		if (message.getContent() == null) {
@@ -175,18 +175,18 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 		return personalization;
 	}
 
-	private void addRecipient(Personalization personalization, Recipient recipient) {
+	private static void addRecipient(Personalization personalization, Recipient recipient) {
 		final EmailAddress address = recipient.getAddress();
 		switch (recipient.getType()) {
-		case TO:
-			personalization.addTo(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
-			break;
-		case CC:
-			personalization.addCc(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
-			break;
-		case BCC:
-			personalization.addBcc(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
-			break;
+			case TO:
+				personalization.addTo(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
+				break;
+			case CC:
+				personalization.addCc(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
+				break;
+			case BCC:
+				personalization.addBcc(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
+				break;
 		}
 	}
 

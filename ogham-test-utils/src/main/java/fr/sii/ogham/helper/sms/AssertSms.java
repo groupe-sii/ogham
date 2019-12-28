@@ -15,7 +15,7 @@ import fr.sii.ogham.helper.sms.jsmpp.SubmitSmAdapter;
  * @author Aurélien Baudet
  *
  */
-public class AssertSms {
+public final class AssertSms {
 
 	/**
 	 * Assert that the fields of the received SMS using SMPP protocol are equal

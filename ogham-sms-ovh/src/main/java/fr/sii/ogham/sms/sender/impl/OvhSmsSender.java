@@ -147,7 +147,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 *             generated exception to indicate that the message couldn't be
 	 *             sent
 	 */
-	private void handleResponse(Sms message, Response response) throws IOException, JsonProcessingException, MessageNotSentException {
+	private void handleResponse(Sms message, Response response) throws IOException, MessageNotSentException {
 		if (response.getStatus().isSuccess()) {
 			JsonNode json = mapper.readTree(response.getBody());
 			int ovhStatus = json.get("status").asInt();
@@ -179,7 +179,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 *            the message that contains the content to extract
 	 * @return the content formatted for OVH
 	 */
-	private String getContent(Sms message) {
+	private static String getContent(Sms message) {
 		// if a string contains \r\n, only \r is kept
 		// if there are \n without \r, those \n are converted to \r
 		return message.getContent().toString().replaceAll("(\r)?\n", "\r");
@@ -210,9 +210,8 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 * @param phoneNumber
 	 *            the phone number to transform
 	 * @return the international phone number
-	 * @throws PhoneNumberException
 	 */
-	private static String toInternational(PhoneNumber phoneNumber) throws PhoneNumberException {
+	private static String toInternational(PhoneNumber phoneNumber) {
 		String number = phoneNumber.getNumber();
 		if (number.startsWith("+") || number.length() == INTERNATIONAL_FORMAT_LENGTH) {
 			return StringUtils.leftPad(number.replace("+", "").replaceAll("\\s+", ""), INTERNATIONAL_FORMAT_LENGTH, '0');

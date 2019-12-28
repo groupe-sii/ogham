@@ -81,7 +81,7 @@ public class OverrideJavaMailResolver implements PropertyResolver {
 	}
 
 	@Override
-	public String getRequiredProperty(String key) throws IllegalStateException {
+	public String getRequiredProperty(String key) {
 		String value = getValue(key);
 		if (value != null) {
 			return value;
@@ -90,7 +90,7 @@ public class OverrideJavaMailResolver implements PropertyResolver {
 	}
 
 	@Override
-	public <T> T getRequiredProperty(String key, Class<T> targetType) throws IllegalStateException {
+	public <T> T getRequiredProperty(String key, Class<T> targetType) {
 		String value = getValue(key);
 		if (value != null) {
 			return converter.convert(value, targetType);
@@ -116,11 +116,11 @@ public class OverrideJavaMailResolver implements PropertyResolver {
 		return String.valueOf(value);
 	}
 
-	private boolean isHostKey(Object key) {
+	private static boolean isHostKey(Object key) {
 		return "mail.smtp.host".equals(key) || "mail.host".equals(key);
 	}
 
-	private boolean isPortKey(Object key) {
+	private static boolean isPortKey(Object key) {
 		return "mail.smtp.port".equals(key) || "mail.port".equals(key);
 	}
 

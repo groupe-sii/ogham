@@ -10,6 +10,7 @@ import fr.sii.ogham.core.message.content.Variant;
 import fr.sii.ogham.template.common.adapter.ExtensionMappingVariantResolver;
 import fr.sii.ogham.template.common.adapter.VariantResolver;
 
+@SuppressWarnings("squid:S00119")
 public abstract class AbstractFreemarkerMultiContentBuilder<MYSELF extends AbstractFreemarkerMultiContentBuilder<MYSELF, P>, P> extends AbstractFreemarkerBuilder<MYSELF, P> implements VariantBuilder<MYSELF> {
 	private List<VariantWithExt> variants;
 	

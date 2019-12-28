@@ -20,5 +20,5 @@ public interface MessageSender {
 	 * @throws MessageException
 	 *             when the message couldn't be sent
 	 */
-	public void send(Message message) throws MessageException;
+	void send(Message message) throws MessageException;
 }

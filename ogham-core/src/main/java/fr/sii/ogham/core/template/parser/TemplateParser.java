@@ -32,5 +32,5 @@ public interface TemplateParser {
 	 *             when the template couldn't be parsed either if the template
 	 *             couldn't be read or if the template could't be processed
 	 */
-	public Content parse(ResourcePath templateName, Context ctx) throws ParseException;
+	Content parse(ResourcePath templateName, Context ctx) throws ParseException;
 }

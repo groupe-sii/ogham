@@ -28,7 +28,7 @@ import fr.sii.ogham.core.message.Message;
  * @author Aurélien Baudet
  *
  */
-public class MessageConditions {
+public final class MessageConditions {
 	/**
 	 * Parenthesis operator to handle priorities:
 	 * 
@@ -57,6 +57,7 @@ public class MessageConditions {
 	 *            the condition to surround
 	 * @return the fluent condition
 	 */
+	@SuppressWarnings("squid:S00100")
 	public static FluentCondition<Message> $(Condition<Message> condition) {
 		return Conditions.$(condition);
 	}

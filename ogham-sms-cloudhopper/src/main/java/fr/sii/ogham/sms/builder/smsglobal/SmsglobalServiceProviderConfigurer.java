@@ -97,6 +97,7 @@ import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
 @ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY + 1)
 public class SmsglobalServiceProviderConfigurer implements MessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsglobalServiceProviderConfigurer.class);
+	private static final int SMSGLOBAL_PORT = 1775;
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
@@ -124,7 +125,7 @@ public class SmsglobalServiceProviderConfigurer implements MessagingConfigurer {
 			.splitter()
 				.enable().defaultValue(false).and()		// do not split when using Tlv message_payload
 				.and()
-			.port().defaultValue(1775).and()
+			.port().defaultValue(SMSGLOBAL_PORT).and()
 			.interfaceVersion().defaultValue(VERSION_3_4);
 		// @formatter:on
 	}

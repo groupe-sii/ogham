@@ -14,7 +14,7 @@ import fr.sii.ogham.core.service.MessagingService;
  * @author Aurélien Baudet
  *
  */
-public class OghamInternalAssertions {
+public final class OghamInternalAssertions {
 	/**
 	 * Entry point to write assertions on {@link MessagingService} instance.
 	 * 
@@ -68,7 +68,7 @@ public class OghamInternalAssertions {
 	 * @return the matcher
 	 */
 	public static <T> Matcher<T> isSpringBeanInstance(ApplicationContext context, Class<?> beanClass) {
-		return new IsSpringBeanInstance<T>(context, beanClass);
+		return new IsSpringBeanInstance<>(context, beanClass);
 	}
 
 	private OghamInternalAssertions() {

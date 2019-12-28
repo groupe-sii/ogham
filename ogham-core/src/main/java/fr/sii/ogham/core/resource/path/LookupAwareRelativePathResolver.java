@@ -168,7 +168,7 @@ public class LookupAwareRelativePathResolver implements RelativePathResolver {
 		return null;
 	}
 
-	private boolean isDirectory(String path) {
+	private static boolean isDirectory(String path) {
 		return path.endsWith("/");
 	}
 

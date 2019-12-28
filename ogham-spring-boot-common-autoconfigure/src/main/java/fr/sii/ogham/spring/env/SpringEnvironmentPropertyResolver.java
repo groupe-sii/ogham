@@ -38,12 +38,12 @@ public class SpringEnvironmentPropertyResolver implements PropertyResolver {
 	}
 
 	@Override
-	public String getRequiredProperty(String key) throws IllegalStateException {
+	public String getRequiredProperty(String key) {
 		return environment.getRequiredProperty(key);
 	}
 
 	@Override
-	public <T> T getRequiredProperty(String key, Class<T> targetType) throws IllegalStateException {
+	public <T> T getRequiredProperty(String key, Class<T> targetType) {
 		return environment.getRequiredProperty(key, targetType);
 	}
 

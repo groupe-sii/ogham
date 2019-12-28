@@ -6,5 +6,5 @@ public interface NamedResource extends Resource {
 	 * 
 	 * @return the name of the resource
 	 */
-	public String getName();
+	String getName();
 }

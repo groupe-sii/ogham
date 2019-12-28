@@ -14,6 +14,11 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleClasspathHelper.class);
 	
 	private ClassLoader classLoader;
+	
+	public SimpleClasspathHelper() {
+		super();
+		classLoader = null;
+	}
 
 	/**
 	 * Test if the class name is defined in the classpath.
@@ -45,7 +50,7 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 		return false;
 	}
 
-	private boolean existsWithDefaultClassLoader(String className) {
+	private static boolean existsWithDefaultClassLoader(String className) {
 		try {
 			Class.forName(className);
 			return true;
@@ -56,7 +61,7 @@ public class SimpleClasspathHelper implements ClasspathHelper {
 		}
 	}
 
-	private boolean exists(String className, ClassLoader classLoader) {
+	private static boolean exists(String className, ClassLoader classLoader) {
 		try {
 			Class.forName(className, false, classLoader);
 			return true;

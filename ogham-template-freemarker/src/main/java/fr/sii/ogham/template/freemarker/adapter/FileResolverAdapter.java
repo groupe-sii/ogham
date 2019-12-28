@@ -17,7 +17,7 @@ import freemarker.cache.TemplateLoader;
  * @author Cyril Dejonghe
  *
  */
-public class FileResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
+public class FileResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter {
 	private final File baseDir;
 	
 	public FileResolverAdapter() {
@@ -32,7 +32,7 @@ public class FileResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptions
 	@Override
 	public boolean supports(ResourceResolver resolver) {
 		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;
-		return actualResolver instanceof fr.sii.ogham.core.resource.resolver.FileResolver;
+		return actualResolver instanceof FileResolver;
 	}
 
 	@Override

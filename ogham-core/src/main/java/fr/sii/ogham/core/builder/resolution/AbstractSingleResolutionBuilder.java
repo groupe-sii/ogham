@@ -32,6 +32,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
  *            the type of the parent builder (when calling {@link #and()}
  *            method)
  */
+@SuppressWarnings("squid:S00119")
 public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSingleResolutionBuilder<MYSELF, P>, P> extends AbstractParent<P> implements Builder<ResourceResolver> {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractSingleResolutionBuilder.class);
 

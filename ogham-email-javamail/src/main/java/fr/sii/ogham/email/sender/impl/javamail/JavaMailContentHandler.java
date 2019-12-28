@@ -33,5 +33,5 @@ public interface JavaMailContentHandler {
 	 * @throws ContentHandlerException
 	 *             when the handler couldn't add the content to the message
 	 */
-	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException;
+	void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException;
 }

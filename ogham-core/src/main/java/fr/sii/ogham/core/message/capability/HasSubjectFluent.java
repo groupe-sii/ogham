@@ -17,6 +17,6 @@ public interface HasSubjectFluent<F> {
 	 *            the subject of the message to set
 	 * @return this instance for fluent chaining
 	 */
-	public F subject(String subject);
+	F subject(String subject);
 
 }

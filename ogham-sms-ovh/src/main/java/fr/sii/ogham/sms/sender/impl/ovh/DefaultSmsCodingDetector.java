@@ -11,7 +11,7 @@ public class DefaultSmsCodingDetector implements SmsCodingDetector {
 	/**
 	 * Basic characters
 	 */
-	public static final char[] CHAR_TABLE = {
+	private static final char[] CHAR_TABLE = {
 		// @formatter:off
 		'@', '\u00a3', '$', '\u00a5', '\u00e8', '\u00e9', '\u00f9', '\u00ec',
 		'\u00f2', '\u00c7', '\n', '\u00d8', '\u00f8', '\r', '\u00c5', '\u00e5',
@@ -35,7 +35,7 @@ public class DefaultSmsCodingDetector implements SmsCodingDetector {
 	/**
 	 * Extended character table.
 	 */
-	public static final char[] EXT_CHAR_TABLE = {
+	private static final char[] EXT_CHAR_TABLE = {
 		// @formatter:off
 		'\u20ac' /* € */, '\f', '[', '\\', ']',
 		'^', '{', '|', '}', '~', 

@@ -10,8 +10,8 @@ import org.thymeleaf.templateresolver.TemplateResolver;
  *
  */
 public class StringTemplateResolver extends TemplateResolver {
-    public StringTemplateResolver() {
-        super();
-        super.setResourceResolver(new StringResourceResolver());
-    }
+	public StringTemplateResolver() {
+		super();
+		super.setResourceResolver(new StringResourceResolver());
+	}
 }

@@ -4,8 +4,6 @@ import static fr.sii.ogham.core.util.bean.BeanWrapperUtils.isInvalid;
 
 import java.util.List;
 
-import fr.sii.ogham.core.exception.util.InvalidPropertyException;
-
 /**
  * A wrapper that wraps original bean and all nested property values (only
  * objects, not primitives).
@@ -39,7 +37,7 @@ public class RecursiveBeanReadWrapper implements BeanReadWrapper {
 	}
 
 	@Override
-	public Object getPropertyValue(String name) throws InvalidPropertyException {
+	public Object getPropertyValue(String name) {
 		Object value = delegate.getPropertyValue(name);
 		if (value == null) {
 			return null;

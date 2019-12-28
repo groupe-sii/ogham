@@ -369,7 +369,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		return new SendGridV4Sender(builtClient, buildContentHandler(), buildMimetypeProvider(), interceptor);
 	}
 
-	private Client buildClientHelper(Client clientHelper, CloseableHttpClient httpClient, boolean test, URL url) {
+	private static Client buildClientHelper(Client clientHelper, CloseableHttpClient httpClient, boolean test, URL url) {
 		// custom implementation
 		if (clientHelper != null) {
 			return clientHelper;
@@ -413,7 +413,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		return sendGrid;
 	}
 
-	private SendGrid newSendGrid(String apiKey, Client client) {
+	private static SendGrid newSendGrid(String apiKey, Client client) {
 		if (client != null) {
 			return new SendGrid(apiKey, client);
 		}

@@ -125,7 +125,7 @@ public class OghamThymeleafV3Configuration {
 				ThymeleafV3SmsBuilder.class);
 	}
 
-	private SpringStandaloneThymeleafContextConverter springThymeleafContextConverter(StaticVariablesProvider staticVariablesProvider,
+	private static SpringStandaloneThymeleafContextConverter springThymeleafContextConverter(StaticVariablesProvider staticVariablesProvider,
 			ThymeleafEvaluationContextProvider thymeleafEvaluationContextProvider, ContextMerger contextMerger) {
 		return new SpringStandaloneThymeleafContextConverter(
 				new SimpleThymeleafContextConverter(), 

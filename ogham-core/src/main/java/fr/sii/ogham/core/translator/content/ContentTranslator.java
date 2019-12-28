@@ -20,5 +20,5 @@ public interface ContentTranslator {
 	 * @throws ContentTranslatorException
 	 *             when the transformation has failed
 	 */
-	public Content translate(Content content) throws ContentTranslatorException;
+	Content translate(Content content) throws ContentTranslatorException;
 }

@@ -15,7 +15,7 @@ import freemarker.cache.TemplateLoader;
  * @author Cyril Dejonghe
  *
  */
-public class ClassPathResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter implements TemplateLoaderAdapter {
+public class ClassPathResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter {
 	private final ClassLoader classLoader;
 	
 	public ClassPathResolverAdapter(ClassLoader classLoader) {

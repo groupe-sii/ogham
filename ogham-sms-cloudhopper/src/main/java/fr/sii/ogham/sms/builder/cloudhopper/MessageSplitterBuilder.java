@@ -338,7 +338,7 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 		registry.register(buildStandardSplitter(supportedCharsetName, maxSizes), priority);
 	}
 
-	private MessageSplitter buildStandardSplitter(String supportingCharset, SegmentSizes maxSizes) {
+	private static MessageSplitter buildStandardSplitter(String supportingCharset, SegmentSizes maxSizes) {
 		SupportingEncoder encoder = new CloudhopperCharsetSupportingEncoder(NamedCharset.from(supportingCharset));
 		return new SupportedEncoderConditionalSplitter(encoder, new GsmMessageSplitter(encoder, maxSizes, new RandomReferenceNumberGenerator()));
 	}

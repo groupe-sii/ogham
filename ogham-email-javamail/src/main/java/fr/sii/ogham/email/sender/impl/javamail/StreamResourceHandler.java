@@ -35,6 +35,7 @@ public class StreamResourceHandler implements JavaMailAttachmentResourceHandler 
 	}
 
 	@Override
+	@SuppressWarnings("squid:S1192")
 	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
 		ByteResource streamResource = (ByteResource) resource;
 		try (InputStream stream = streamResource.getInputStream()) {

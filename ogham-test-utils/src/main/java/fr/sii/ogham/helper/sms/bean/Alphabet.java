@@ -94,7 +94,7 @@ public enum Alphabet {
 
 	private final byte value;
 
-	private Alphabet(byte alphabetValue) {
+	Alphabet(byte alphabetValue) {
 		this.value = alphabetValue;
 	}
 

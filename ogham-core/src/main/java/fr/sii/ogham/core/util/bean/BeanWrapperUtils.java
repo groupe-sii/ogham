@@ -20,7 +20,7 @@ import fr.sii.ogham.core.exception.util.BeanWrapperException;
  * @author Aurélien Baudet
  *
  */
-public class BeanWrapperUtils {
+public final class BeanWrapperUtils {
 
 	private static final List<Class<?>> INVALID_TYPES = new ArrayList<>();
 	static {
@@ -35,6 +35,7 @@ public class BeanWrapperUtils {
 	 *            the bean instance
 	 * @return false if null or valid type, true if primitive type or string
 	 */
+	@SuppressWarnings("squid:S2250")
 	public static boolean isInvalid(Object bean) {
 		if (bean == null) {
 			return false;
@@ -69,16 +70,7 @@ public class BeanWrapperUtils {
 			final BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
 			final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 			if (propertyDescriptors != null) {
-				for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-					if (propertyDescriptor != null) {
-						final String name = propertyDescriptor.getName();
-						final Method readMethod = propertyDescriptor.getReadMethod();
-
-						if (readMethod != null) {
-							readMethods.put(name, readMethod);
-						}
-					}
-				}
+				putReadMethods(readMethods, propertyDescriptors);
 			}
 			return readMethods;
 		} catch (final IntrospectionException e) {
@@ -97,6 +89,19 @@ public class BeanWrapperUtils {
 	 */
 	public static Method getReadMethod(Object bean, String name) {
 		return getReadMethods(bean).get(name);
+	}
+
+	private static void putReadMethods(Map<String, Method> readMethods, final PropertyDescriptor[] propertyDescriptors) {
+		for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+			if (propertyDescriptor != null) {
+				final String name = propertyDescriptor.getName();
+				final Method readMethod = propertyDescriptor.getReadMethod();
+
+				if (readMethod != null) {
+					readMethods.put(name, readMethod);
+				}
+			}
+		}
 	}
 
 	private static boolean isInstanceOfInvalid(Class<?> clazz) {

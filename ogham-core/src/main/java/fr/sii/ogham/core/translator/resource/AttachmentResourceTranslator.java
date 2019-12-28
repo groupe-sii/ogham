@@ -20,5 +20,5 @@ public interface AttachmentResourceTranslator {
 	 * @throws ResourceTranslatorException
 	 *             when the transformation has failed
 	 */
-	public Resource translate(Resource resource) throws ResourceTranslatorException;
+	Resource translate(Resource resource) throws ResourceTranslatorException;
 }

@@ -232,7 +232,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 		return sendGrid;
 	}
 
-	private SendGrid newSendGrid(String apiKey, String username, String password) {
+	private static SendGrid newSendGrid(String apiKey, String username, String password) {
 		if (apiKey != null) {
 			return new SendGrid(apiKey);
 		}

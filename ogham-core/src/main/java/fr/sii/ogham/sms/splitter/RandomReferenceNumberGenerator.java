@@ -81,6 +81,7 @@ public class RandomReferenceNumberGenerator implements ReferenceNumberGenerator 
 	 * If you want a custom number generation, use
 	 * {@link #RandomReferenceNumberGenerator(Random)}.
 	 */
+	@SuppressWarnings("squid:S2245")
 	public RandomReferenceNumberGenerator() {
 		this(new Random());
 	}

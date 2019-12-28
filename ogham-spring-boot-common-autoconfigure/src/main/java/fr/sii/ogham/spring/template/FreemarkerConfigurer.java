@@ -80,6 +80,8 @@ import freemarker.template.ObjectWrapper;
  *
  */
 public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
+	private static final int SPRING_CONFIGURER_PRIORITY_OFFSET = 1000;
+
 	private static final Logger LOG = LoggerFactory.getLogger(FreemarkerConfigurer.class);
 
 	private final Configuration emailConfiguration;
@@ -116,7 +118,7 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 	@Override
 	public void configure(EmailBuilder emailBuilder) {
 		AbstractFreemarkerBuilder<?, ?> builder = emailBuilder.template(FreemarkerEmailBuilder.class);
-		builder.configuration(emailConfiguration, true);
+		builder.mergeConfiguration(emailConfiguration);
 		// specific Ogham properties explicitly take precedence over Spring
 		// properties
 		if (springProperties != null) {
@@ -136,7 +138,7 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 	@Override
 	public void configure(SmsBuilder smsBuilder) {
 		AbstractFreemarkerBuilder<?, ?> builder = smsBuilder.template(FreemarkerSmsBuilder.class);
-		builder.configuration(smsConfiguration, true);
+		builder.mergeConfiguration(smsConfiguration);
 		// specific Ogham properties explicitly take precedence over Spring
 		// properties
 		if (springProperties != null) {
@@ -155,7 +157,7 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 
 	@Override
 	public int getOrder() {
-		return FreemarkerConstants.DEFAULT_FREEMARKER_EMAIL_CONFIGURER_PRIORITY + 1000;
+		return FreemarkerConstants.DEFAULT_FREEMARKER_EMAIL_CONFIGURER_PRIORITY + SPRING_CONFIGURER_PRIORITY_OFFSET;
 	}
 
 	private void applyOghamConfiguration(AbstractFreemarkerBuilder<?, ?> builder, OghamTemplateProperties props) {

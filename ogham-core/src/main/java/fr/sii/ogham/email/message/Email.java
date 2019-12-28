@@ -482,7 +482,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		for (RecipientType type : RecipientType.values()) {
 			List<EmailAddress> addresses = new ArrayList<>();
 			for (Recipient recipient : recipients) {
-				if (type.equals(recipient.getType())) {
+				if (type == recipient.getType()) {
 					addresses.add(recipient.getAddress());
 				}
 			}

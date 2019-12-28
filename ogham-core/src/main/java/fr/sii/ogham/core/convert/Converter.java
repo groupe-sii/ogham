@@ -24,5 +24,6 @@ public interface Converter {
 	 * @throws IllegalArgumentException
 	 *             if targetType is {@code null}
 	 */
+	@SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
 	<T> T convert(Object source, Class<T> targetType) throws ConversionException;
 }

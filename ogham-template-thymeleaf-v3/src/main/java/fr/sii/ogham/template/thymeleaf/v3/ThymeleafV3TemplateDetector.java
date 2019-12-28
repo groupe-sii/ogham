@@ -68,7 +68,7 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 		}
 	}
 
-	private boolean isThymeleafTemplate(BufferedReader br) throws IOException {
+	private static boolean isThymeleafTemplate(BufferedReader br) throws IOException {
 		String line;
 		do {
 			line = br.readLine();
@@ -79,17 +79,17 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 		return false;
 	}
 	
-	private boolean isEmptyTemplate(Resource template) throws IOException {
+	private static boolean isEmptyTemplate(Resource template) throws IOException {
 		try (InputStream stream = template.getInputStream()) {
 			return stream.read() == -1;
 		}
 	}
 
-	private boolean containsThymeleafNamespace(String line) {
+	private static boolean containsThymeleafNamespace(String line) {
 		return NAMESPACE_PATTERN.matcher(line).find();
 	}
 
-	private boolean containsThymeleafVariables(String line) {
+	private static boolean containsThymeleafVariables(String line) {
 		return VARIABLE_PATTERN.matcher(line).find();
 	}
 

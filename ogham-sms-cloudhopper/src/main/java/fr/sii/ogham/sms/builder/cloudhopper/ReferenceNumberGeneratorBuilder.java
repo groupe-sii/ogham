@@ -97,6 +97,7 @@ public class ReferenceNumberGeneratorBuilder extends AbstractParent<MessageSplit
 	 * 
 	 * @return this instance for fluent chaining
 	 */
+	@SuppressWarnings("squid:S2245")
 	public ReferenceNumberGeneratorBuilder random() {
 		return random(new Random());
 	}

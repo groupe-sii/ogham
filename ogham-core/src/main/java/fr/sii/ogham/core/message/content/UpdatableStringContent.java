@@ -12,5 +12,5 @@ public interface UpdatableStringContent extends Content {
 	 * 
 	 * @param content the new content to set
 	 */
-	public void setStringContent(String content);
+	void setStringContent(String content);
 }

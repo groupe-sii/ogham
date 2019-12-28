@@ -8,7 +8,7 @@ import fr.sii.ogham.sms.encoder.Encoded;
 public class DataCodingException extends MessagingException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
-	private final Encoded encoded;
+	private final transient Encoded encoded;
 	
 	public DataCodingException(String message, Throwable cause, Encoded encoded) {
 		super(message, cause);

@@ -14,7 +14,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
  * @author Aurélien Baudet
  *
  */
-public class ClassPathResolverAdapter extends AbstractTemplateResolverOptionsAdapter implements TemplateResolverAdapter {
+public class ClassPathResolverAdapter extends AbstractTemplateResolverOptionsAdapter {
 	@Override
 	public boolean supports(ResourceResolver resolver) {
 		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;

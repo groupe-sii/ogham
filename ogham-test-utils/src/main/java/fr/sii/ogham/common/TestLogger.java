@@ -56,7 +56,12 @@ public class TestLogger {
 	 *            the name of the test
 	 */
 	public void writeStart(String testName) {
-		LOG.info("\n{}\n{}\n{}", borderTop(DOUBLE), format(testName, DOUBLE), borderBottom(DOUBLE));
+		// @formatter:off
+		LOG.info("\n{}\n{}\n{}", 
+				borderTop(DOUBLE), 
+				format(testName, DOUBLE), 
+				borderBottom(DOUBLE));
+		// @formatter:on
 	}
 
 	/**
@@ -67,7 +72,14 @@ public class TestLogger {
 	 *            the name of the test
 	 */
 	public void writeSuccess(String testName) {
-		LOG.info("\n{}\n{}\n{}\n{}\n{}\r\n\r\n", borderTop(SINGLE), format(testName, SINGLE), borderMiddle(SINGLE), format("SUCCESS", SINGLE), borderBottom(SINGLE));
+		// @formatter:off
+		LOG.info("\n{}\n{}\n{}\n{}\n{}\r\n\r\n", 
+				borderTop(SINGLE), 
+				format(testName, SINGLE), 
+				borderMiddle(SINGLE), 
+				format("SUCCESS", SINGLE), 
+				borderBottom(SINGLE));
+		// @formatter:on
 	}
 
 	/**
@@ -81,8 +93,16 @@ public class TestLogger {
 	 */
 	public void writeFailure(String testName, Throwable e) {
 		LOG.error("Test failure:\r\n", e);
-		LOG.error("\n{}\n{}\n{}\n{}\n{}\n{}\n{}\r\n\r\n", borderTop(SINGLE), format(testName, SINGLE), borderMiddle(SINGLE), format("FAILED", SINGLE), borderMiddle(SINGLE),
-				format(e.getMessage(), SINGLE), borderBottom(SINGLE));
+		// @formatter:off
+		LOG.error("\n{}\n{}\n{}\n{}\n{}\n{}\n{}\r\n\r\n", 
+				borderTop(SINGLE), 
+				format(testName, SINGLE), 
+				borderMiddle(SINGLE), 
+				format("FAILED", SINGLE), 
+				borderMiddle(SINGLE),
+				format(e.getMessage(), SINGLE), 
+				borderBottom(SINGLE));
+		// @formatter:on
 	}
 
 	private String borderTop(String[] characters) {

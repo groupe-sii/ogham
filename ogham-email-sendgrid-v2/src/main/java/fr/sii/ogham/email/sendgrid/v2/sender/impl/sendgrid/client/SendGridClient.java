@@ -8,14 +8,14 @@ import com.sendgrid.SendGridException;
  */
 public interface SendGridClient {
 
-    /**
-     * Sends the provided email to SendGrid.
-     * 
-     * @param email
-     *            the email to send, cannot be {@code null}
-     * @throws SendGridException
-     *             an unexpected error occurred when trying to send the email
-     */
-    void send(SendGrid.Email email) throws SendGridException;
+	/**
+	 * Sends the provided email to SendGrid.
+	 * 
+	 * @param email
+	 *            the email to send, cannot be {@code null}
+	 * @throws SendGridException
+	 *             an unexpected error occurred when trying to send the email
+	 */
+	void send(SendGrid.Email email) throws SendGridException;
 
 }

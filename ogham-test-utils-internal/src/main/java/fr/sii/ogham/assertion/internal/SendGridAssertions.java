@@ -20,6 +20,7 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
  *
  */
 public class SendGridAssertions extends HasParent<MessagingServiceAssertions> {
+	private static final String DELEGATE_FIELD = "delegate";
 	private final SendGridSender sendGridSender;
 
 	public SendGridAssertions(MessagingServiceAssertions parent, SendGridSender sendGridSender) {
@@ -55,7 +56,7 @@ public class SendGridAssertions extends HasParent<MessagingServiceAssertions> {
 		return this;
 	}
 
-	private String getApiKey(SendGridSender sendGridSender) {
+	private static String getApiKey(SendGridSender sendGridSender) {
 		SendGrid client = getClient(sendGridSender);
 		try {
 			if (sendGridSender instanceof SendGridV2Sender) {
@@ -67,15 +68,15 @@ public class SendGridAssertions extends HasParent<MessagingServiceAssertions> {
 		}
 	}
 
-	private SendGrid getClient(SendGridSender sendGridSender) {
+	private static SendGrid getClient(SendGridSender sendGridSender) {
 		try {
 			if (sendGridSender instanceof SendGridV2Sender) {
-				SendGridClient wrapper = (SendGridClient) readField(sendGridSender, "delegate", true);
-				return (SendGrid) readField(wrapper, "delegate", true);
+				SendGridClient wrapper = (SendGridClient) readField(sendGridSender, DELEGATE_FIELD, true);
+				return (SendGrid) readField(wrapper, DELEGATE_FIELD, true);
 			} else if (sendGridSender instanceof SendGridV4Sender) {
 				fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient wrapper = (fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient) readField(
-						sendGridSender, "delegate", true);
-				return (SendGrid) readField(wrapper, "delegate", true);
+						sendGridSender, DELEGATE_FIELD, true);
+				return (SendGrid) readField(wrapper, DELEGATE_FIELD, true);
 			}
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException("Failed to read 'delegate' of SendGridClient", e);

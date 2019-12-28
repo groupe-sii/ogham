@@ -21,6 +21,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
  *            The type of the helped instance. This is needed to have the right
  *            return type for fluent chaining
  */
+@SuppressWarnings("squid:S00119")
 public class ResourceResolutionBuilderHelper<FLUENT extends ResourceResolutionBuilder<FLUENT>> implements ResourceResolutionBuilder<FLUENT> {
 	private ClassPathResolutionBuilder<FLUENT> classPath;
 	private FileResolutionBuilder<FLUENT> file;

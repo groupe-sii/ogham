@@ -25,7 +25,7 @@ import fr.sii.ogham.helper.exception.ComparisonException;
  * @author Aurélien Baudet
  *
  */
-public class AssertHtml {
+public final class AssertHtml {
 	private static final Logger LOG = LoggerFactory.getLogger(AssertHtml.class);
 
 	/**

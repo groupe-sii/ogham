@@ -19,5 +19,5 @@ public interface IdGenerator {
 	 *            a name that may be used in the generated identifier
 	 * @return the generated identifier
 	 */
-	public String generate(String name);
+	String generate(String name);
 }

@@ -48,7 +48,7 @@ public class IsSpringBeanInstance<T> extends BaseMatcher<T> {
 			Object bean = context.getBean(beanClass);
 			beanExists = true;
 			return bean == item;
-		} catch (BeansException e) {
+		} catch (BeansException e) {	// NOSONAR
 			beanExists = false;
 			return false;
 		}

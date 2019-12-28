@@ -53,7 +53,7 @@ public interface MimeTypeProvider {
 	 *             when the Mime Type detection has either failed due to
 	 *             unreadable file or because no Mime Type could be determined
 	 */
-	public MimeType getMimeType(File file) throws MimeTypeDetectionException;
+	MimeType getMimeType(File file) throws MimeTypeDetectionException;
 
 	/**
 	 * Get the Mime Type based on the file. The detection can be done either
@@ -67,7 +67,7 @@ public interface MimeTypeProvider {
 	 *             when the Mime Type detection has either failed due to
 	 *             unreadable file or because no Mime Type could be determined
 	 */
-	public MimeType getMimeType(String filePath) throws MimeTypeDetectionException;
+	MimeType getMimeType(String filePath) throws MimeTypeDetectionException;
 
 	/**
 	 * Get the Mime Type based on the content. The detection is done using magic
@@ -80,7 +80,7 @@ public interface MimeTypeProvider {
 	 *             when the Mime Type detection has either failed due to
 	 *             unreadable file or because no Mime Type could be determined
 	 */
-	public MimeType detect(InputStream stream) throws MimeTypeDetectionException;
+	MimeType detect(InputStream stream) throws MimeTypeDetectionException;
 
 	/**
 	 * Get the Mime Type based on the content. The detection is done using magic
@@ -93,5 +93,5 @@ public interface MimeTypeProvider {
 	 *             when the Mime Type detection has either failed due to
 	 *             unreadable file or because no Mime Type could be determined
 	 */
-	public MimeType detect(String content) throws MimeTypeDetectionException;
+	MimeType detect(String content) throws MimeTypeDetectionException;
 }

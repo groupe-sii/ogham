@@ -4,7 +4,7 @@ import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 
-public class LogUtils {
+public final class LogUtils {
 	public static Summarizer summarize(Message message) {
 		return new Summarizer(message);
 	}
@@ -27,5 +27,9 @@ public class LogUtils {
 			}
 			return "unknown";
 		}
+	}
+	
+	private LogUtils() {
+		super();
 	}
 }

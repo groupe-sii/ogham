@@ -39,10 +39,10 @@ public class FreemarkerParserAssertions extends HasParent<FreemarkerAssersions> 
 	 * @return builder for fluent chaining
 	 */
 	public FreemarkerConfigurationAssersions configuration() {
-		return new FreemarkerConfigurationAssersions(this, parsers.stream().map(this::getConfiguration).collect(toSet()));
+		return new FreemarkerConfigurationAssersions(this, parsers.stream().map(FreemarkerParserAssertions::getConfiguration).collect(toSet()));
 	}
 
-	private Configuration getConfiguration(FreeMarkerParser freeMarkerParser) {
+	private static Configuration getConfiguration(FreeMarkerParser freeMarkerParser) {
 		try {
 			return (Configuration) readField(freeMarkerParser, "configuration", true);
 		} catch (IllegalAccessException e) {

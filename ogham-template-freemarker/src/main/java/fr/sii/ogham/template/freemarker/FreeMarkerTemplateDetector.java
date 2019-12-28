@@ -62,6 +62,7 @@ public class FreeMarkerTemplateDetector implements TemplateEngineDetector {
 
 	}
 
+	@SuppressWarnings("squid:S1166")
 	private boolean exists(ResolvedPath resolvedTemplatePath) {
 		try {
 			resolver.getResource(resolvedTemplatePath);

@@ -82,7 +82,7 @@ public class InlineCssTranslator implements ContentTranslator {
 		return content;
 	}
 
-	private ResourcePath getSourcePath(Content content) {
+	private static ResourcePath getSourcePath(Content content) {
 		if(content instanceof HasResourcePath) {
 			return ((HasResourcePath) content).getPath();
 		}
@@ -107,7 +107,7 @@ public class InlineCssTranslator implements ContentTranslator {
 		}
 	}
 
-	private Content updateHtmlContent(Content content, String inlinedContentStr) {
+	private static Content updateHtmlContent(Content content, String inlinedContentStr) {
 		Content inlinedContent = content;
 		if(content instanceof UpdatableStringContent) {
 			LOG.debug("Content is updatable => update it with inlined CSS");

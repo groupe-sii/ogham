@@ -24,6 +24,6 @@ public interface ThymeleafContextConverter {
 	 * @throws ContextException
 	 *             when conversion couldn't be applied
 	 */
-	public abstract IContext convert(Context context) throws ContextException;
+	IContext convert(Context context) throws ContextException;
 
 }

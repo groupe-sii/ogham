@@ -1,6 +1,7 @@
 package fr.sii.ogham.sms.message.addressing.translator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
@@ -26,9 +27,7 @@ public class CompositePhoneNumberTranslator implements PhoneNumberTranslator {
 	 *            number
 	 */
 	public CompositePhoneNumberTranslator(PhoneNumberHandler... handlers) {
-		for (int i = 0; i < handlers.length; i++) {
-			handlerList.add(handlers[i]);
-		}
+		Collections.addAll(handlerList, handlers);
 	}
 
 	/**

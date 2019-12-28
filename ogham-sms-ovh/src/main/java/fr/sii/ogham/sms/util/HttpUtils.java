@@ -19,7 +19,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.exception.template.BeanException;
 import fr.sii.ogham.core.exception.util.HttpException;
 import fr.sii.ogham.core.util.BeanUtils;
 import fr.sii.ogham.core.util.IOUtils;
@@ -125,22 +124,18 @@ public final class HttpUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Response get(String url, Object... params) throws HttpException {
-		try {
-			Map<String, Object> map = new HashMap<>();
-			for (Object bean : params) {
-				if (bean instanceof Parameter) {
-					Parameter p = (Parameter) bean;
-					map.put(p.getName(), p.getValue());
-				} else if (bean instanceof Map) {
-					map.putAll((Map<String, Object>) bean);
-				} else {
-					map.putAll(BeanUtils.convert(bean));
-				}
+		Map<String, Object> map = new HashMap<>();
+		for (Object bean : params) {
+			if (bean instanceof Parameter) {
+				Parameter p = (Parameter) bean;
+				map.put(p.getName(), p.getValue());
+			} else if (bean instanceof Map) {
+				map.putAll((Map<String, Object>) bean);
+			} else {
+				map.putAll(BeanUtils.convert(bean));
 			}
-			return get(url, map);
-		} catch (BeanException e) {
-			throw new HttpException("Failed to convert bean fields into request parameters", e);
 		}
+		return get(url, map);
 	}
 
 	/**

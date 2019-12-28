@@ -730,7 +730,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		return BuilderUtils.getDefaultPropertyResolver(BuilderUtils.getDefaultProperties());
 	}
 
-	private MapAttachmentResourceHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
+	private static MapAttachmentResourceHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
 		MapAttachmentResourceHandler attachmentHandler = new MapAttachmentResourceHandler();
 		attachmentHandler.addResourceHandler(ByteResource.class, new StreamResourceHandler(mimetypeProvider));
 		attachmentHandler.addResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));

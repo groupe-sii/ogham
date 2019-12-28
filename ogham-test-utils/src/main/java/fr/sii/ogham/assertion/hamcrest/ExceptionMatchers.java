@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.is;
 
 import org.hamcrest.Matcher;
 
-public class ExceptionMatchers {
+public final class ExceptionMatchers {
 
 	/**
 	 * Returns a matcher that verifies that any exception in the stack matches
@@ -20,7 +20,7 @@ public class ExceptionMatchers {
 	 * @return the matcher
 	 */
 	public static <T extends Throwable> Matcher<T> hasAnyCause(final Matcher<? extends Throwable> finder, final Matcher<? extends Throwable> matcher) {
-		return new ThrowableAnyCauseMatcher<T>(finder, matcher);
+		return new ThrowableAnyCauseMatcher<>(finder, matcher);
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class ExceptionMatchers {
 	 * @return the matcher
 	 */
 	public static <T extends Throwable> Matcher<T> hasAnyCause(final Class<? extends Throwable> expectedClass, final Matcher<? extends Throwable> matcher) {
-		return new ThrowableAnyCauseMatcher<T>(instanceOf(expectedClass), matcher);
+		return new ThrowableAnyCauseMatcher<>(instanceOf(expectedClass), matcher);
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class ExceptionMatchers {
 	 * @return the matcher
 	 */
 	public static <T extends Throwable> Matcher<T> hasMessage(final Matcher<? extends String> matcher) {
-		return new ThrowableMessageMatcher<T>(matcher);
+		return new ThrowableMessageMatcher<>(matcher);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class ExceptionMatchers {
 	 * @return the matcher
 	 */
 	public static <T extends Throwable> Matcher<T> hasMessage(String expectedMessage) {
-		return new ThrowableMessageMatcher<T>(is(expectedMessage));
+		return new ThrowableMessageMatcher<>(is(expectedMessage));
 	}
 
 	private ExceptionMatchers() {

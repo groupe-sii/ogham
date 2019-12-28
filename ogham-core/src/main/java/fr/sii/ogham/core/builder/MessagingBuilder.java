@@ -356,7 +356,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 			return;
 		}
 		for (ConfigurerWithPhase configurerWithPhase : configurers.getOrdered()) {
-			if (phase.equals(configurerWithPhase.getPhase())) {
+			if (phase == configurerWithPhase.getPhase()) {
 				LOG.debug("[{}] configuring for phase {}...", configurerWithPhase.getConfigurer(), phase);
 				configurerWithPhase.getConfigurer().configure(this);
 			}
@@ -1223,6 +1223,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *             when service couldn't be instantiated and configured
 	 */
 	@Override
+	@SuppressWarnings("squid:S5411")
 	public MessagingService build() {
 		if (autoconfigure) {
 			configure(ConfigurationPhase.BEFORE_BUILD);

@@ -105,7 +105,7 @@ public class OghamFreemarkerConfiguration {
 			return defaultConfiguration(props);
 		}
 		
-		private freemarker.template.Configuration defaultConfiguration(OghamFreemarkerProperties props) {
+		private static freemarker.template.Configuration defaultConfiguration(OghamFreemarkerProperties props) {
 			freemarker.template.Configuration configuration = new freemarker.template.Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 			configuration.setDefaultEncoding(props.getDefaultEncoding());
 			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);

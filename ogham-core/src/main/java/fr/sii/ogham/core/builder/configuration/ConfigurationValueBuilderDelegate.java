@@ -53,6 +53,7 @@ public class ConfigurationValueBuilderDelegate<P, V> extends AbstractParent<P> i
 	}
 
 	@Override
+	@SuppressWarnings("squid:S3553")
 	public ConfigurationValueBuilder<P, V> value(Optional<V> optionalValue) {
 		delegate.value(optionalValue);
 		return this;

@@ -88,13 +88,12 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 
 	@Override
 	public ContentTranslator build() {
-		ResourceResolver resourceResolver = buildResolver();
 		CssInliner cssInliner = buildInliner();
 		if (cssInliner == null) {
 			LOG.info("CSS won't be applied on HTML content of your emails because no inliner is configured");
 			return null;
 		}
-		return new InlineCssTranslator(cssInliner, resourceResolver, buildRelativePathProvider());
+		return new InlineCssTranslator(cssInliner, buildResolver(), buildRelativePathProvider());
 	}
 
 	private CssInliner buildInliner() {

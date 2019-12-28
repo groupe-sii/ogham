@@ -10,10 +10,11 @@ import fr.sii.ogham.core.resource.path.ResolvedPath;
 import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.template.context.Context;
 
+@SuppressWarnings("squid:MaximumInheritanceDepth")
 public class TemplateVariantNotFoundException extends VariantResolutionException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
-	private final List<ResourcePath> testedPaths;
+	private final transient List<ResourcePath> testedPaths;
 
 	public TemplateVariantNotFoundException(String message, ResourcePath template, Context context, Variant variant, List<ResourcePath> testedPaths) {
 		super(message, template, context, variant);

@@ -34,6 +34,7 @@ import fr.sii.ogham.core.builder.configurer.Configurer;
  *            The type of this instance. This is needed to have the right return
  *            type for fluent chaining with inheritance
  */
+@SuppressWarnings("squid:S00119")
 public interface PrefixSuffixBuilder<MYSELF> {
 	
 	/**

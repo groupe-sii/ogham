@@ -46,4 +46,10 @@ public class DefaultConverter extends DelegateConverter {
 		register(new StringToEnumConverter());
 		register(new NoConversionNeededConverter());
 	}
+
+	@Override
+	public final ConverterRegistry register(SupportingConverter converter) {
+		return super.register(converter);
+	}
+	
 }

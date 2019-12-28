@@ -73,7 +73,7 @@ public class OverrideMimetypeProvider implements MimeTypeProvider {
 		return mimeType;
 	}
 
-	private MimeType toMimetype(String original, String replaced) throws MimeTypeDetectionException {
+	private static MimeType toMimetype(String original, String replaced) throws MimeTypeDetectionException {
 		try {
 			return new MimeType(replaced);
 		} catch (MimeTypeParseException e) {

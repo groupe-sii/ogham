@@ -20,7 +20,7 @@ import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
  * @see MimetypesFileTypeMap
  */
 public class JavaActivationProvider implements MimeTypeProvider {
-	private static final Logger LOG = LoggerFactory.getLogger(JavaFilesProvider.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JavaActivationProvider.class);
 
 	private MimetypesFileTypeMap map;
 

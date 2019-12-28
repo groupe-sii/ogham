@@ -17,7 +17,7 @@ import fr.sii.ogham.assertion.hamcrest.ExpectedValueProvider;
  * @author Aurélien Baudet
  *
  */
-public class AssertionHelper {
+public final class AssertionHelper {
 
 	/**
 	 * Copy of {@link MatcherAssert#assertThat(Object, Matcher)} with the

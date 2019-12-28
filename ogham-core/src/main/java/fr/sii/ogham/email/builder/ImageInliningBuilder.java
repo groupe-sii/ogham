@@ -328,15 +328,13 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 
 	@Override
 	public ContentTranslator build() {
-		ResourceResolver resourceResolver = buildResolver();
-		ImageInliner imageInliner = buildInliner();
 		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();
 		if (mimetypeProvider == null) {
 			LOG.info("Images won't be inlined because no mimetype detector is configured");
 			return null;
 		}
 		LOG.info("Images will be inlined");
-		return new InlineImageTranslator(imageInliner, resourceResolver, mimetypeProvider, buildRelativePathProvider());
+		return new InlineImageTranslator(buildInliner(), buildResolver(), mimetypeProvider, buildRelativePathProvider());
 	}
 
 	private MimeTypeProvider buildMimetypeProvider() {

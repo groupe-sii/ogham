@@ -78,7 +78,7 @@ public class SimpleRetryExecutor implements RetryExecutor {
 		throw new MaximumAttemptsReachedException("Maximum attempts to execute action "+getActionName(actionToRetry)+" is reached", failures);
 	}
 
-	private void pause(long delay) throws RetryExecutionInterruptedException {
+	private static void pause(long delay) throws RetryExecutionInterruptedException {
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e) {
@@ -87,7 +87,7 @@ public class SimpleRetryExecutor implements RetryExecutor {
 		}
 	}
 
-	private <V> String getActionName(Callable<V> actionToRetry) {
+	private static <V> String getActionName(Callable<V> actionToRetry) {
 		if(actionToRetry instanceof NamedCallable) {
 			return ((NamedCallable<?>) actionToRetry).getName();
 		}

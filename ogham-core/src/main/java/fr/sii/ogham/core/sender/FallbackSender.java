@@ -52,6 +52,7 @@ public class FallbackSender implements MessageSender {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2221")
 	public void send(Message message) throws MessageException {
 		for (MessageSender sender : senders) {
 			try {

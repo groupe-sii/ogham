@@ -38,9 +38,9 @@ public class EmailFiller extends AbstractMessageAwareFiller<Email> {
 		}
 	}
 	
-	private boolean hasRecipient(Email email, RecipientType type) {
+	private static boolean hasRecipient(Email email, RecipientType type) {
 		for(Recipient recipient : email.getRecipients()) {
-			if(type.equals(recipient.getType())) {
+			if(type == recipient.getType()) {
 				return true;
 			}
 		}

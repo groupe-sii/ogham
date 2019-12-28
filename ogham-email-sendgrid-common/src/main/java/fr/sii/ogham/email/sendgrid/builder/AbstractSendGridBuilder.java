@@ -26,6 +26,7 @@ import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
 import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
 
+@SuppressWarnings("squid:S00119")
 public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBuilder<MYSELF, EmailBuilder>, EmailBuilder> extends AbstractParent<EmailBuilder> implements Builder<SendGridSender> {
 	protected final MYSELF myself;
 	protected EnvironmentBuilder<MYSELF> environmentBuilder;

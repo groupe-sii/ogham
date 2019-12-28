@@ -12,7 +12,7 @@ import org.junit.Assert;
  * @author Aurélien Baudet
  *
  */
-public class AssertTemplate {
+public final class AssertTemplate {
 	/**
 	 * Assert that the received content is same as the expected content. The
 	 * check can be either strict (totally identical even new line characters)

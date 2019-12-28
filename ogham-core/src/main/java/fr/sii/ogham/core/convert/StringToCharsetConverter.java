@@ -17,7 +17,7 @@ public class StringToCharsetConverter implements SupportingConverter {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {
+	public <T> T convert(Object source, Class<T> targetType) {
 		String charsetName = (String) source;
 		if (charsetName == null || charsetName.isEmpty()) {
 			return null;

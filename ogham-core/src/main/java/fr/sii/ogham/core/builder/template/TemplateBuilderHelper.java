@@ -301,6 +301,7 @@ public class TemplateBuilderHelper<P> {
 		return variantResolver;
 	}
 
+	@SuppressWarnings("squid:S5411")
 	private VariantResolver buildDefaultVariantResolver() {
 		if (missingResolver != null) {
 			return missingResolver;

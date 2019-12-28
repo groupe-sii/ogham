@@ -34,6 +34,7 @@ public class WrapExceptionMessagingService implements MessagingService {
 	 *             when the message couldn't be sent
 	 */
 	@Override
+	@SuppressWarnings("squid:S2221")
 	public void send(Message message) throws MessagingException {
 		try {
 			delegate.send(message);

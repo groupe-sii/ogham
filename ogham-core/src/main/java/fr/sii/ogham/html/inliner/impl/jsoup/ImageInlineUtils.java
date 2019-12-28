@@ -6,6 +6,7 @@ import static fr.sii.ogham.html.inliner.ImageInlinerConstants.INLINE_MODE_ATTR;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import fr.sii.ogham.html.inliner.ImageInlinerConstants;
@@ -28,7 +29,8 @@ public final class ImageInlineUtils {
 	 *            the actual mode
 	 * @return true if this mode is allowed, false otherwise
 	 */
-	public static boolean isInlineModeAllowed(Element img, InlineMode mode) {
+	@SuppressWarnings("squid:S1126")
+	public static boolean isInlineModeAllowed(Node img, InlineMode mode) {
 		// if already inlined => reject (do not inline twice)
 		if (!img.attr(INLINED_ATTR).isEmpty()) {
 			return false;

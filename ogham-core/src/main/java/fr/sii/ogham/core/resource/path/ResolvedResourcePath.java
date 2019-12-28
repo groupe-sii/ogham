@@ -10,7 +10,7 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  * @author Cyril Dejonghe
  *
  */
-public class ResolvedResourcePath implements ResourcePath, ResolvedPath {
+public class ResolvedResourcePath implements ResolvedPath {
 	/**
 	 * The entire path of the resource, OGHAM style, lookup included.
 	 */

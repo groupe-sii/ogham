@@ -53,7 +53,7 @@ public class JsoupBase64ImageInliner implements ImageInliner {
 		return new ContentWithImages(doc.outerHtml(), new ArrayList<Attachment>(0));
 	}
 
-	private Elements getImagesToInline(Document doc, ImageResource image) {
+	private static Elements getImagesToInline(Document doc, ImageResource image) {
 		Elements imgs = doc.select(MessageFormat.format(IMG_SELECTOR, image.getSrcUrl()));
 		Elements found = new Elements();
 		for (Element img : imgs) {

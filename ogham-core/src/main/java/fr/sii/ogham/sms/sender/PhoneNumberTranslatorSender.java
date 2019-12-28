@@ -93,7 +93,7 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 		}
 	}
 
-	private void translatePhoneNumber(Contact contact, PhoneNumber senderPhoneNumber, PhoneNumberTranslator translator, String type, String field) throws PhoneNumberTranslatorException {
+	private static void translatePhoneNumber(Contact contact, PhoneNumber senderPhoneNumber, PhoneNumberTranslator translator, String type, String field) throws PhoneNumberTranslatorException {
 		if (senderPhoneNumber instanceof AddressedPhoneNumber) {
 			LOG.info("No need for {} translation. Already addressed : {}", type, senderPhoneNumber);
 		} else {

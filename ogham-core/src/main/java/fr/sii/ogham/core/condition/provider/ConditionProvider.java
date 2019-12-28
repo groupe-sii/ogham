@@ -22,5 +22,5 @@ public interface ConditionProvider<T, C> {
 	 *            the source object to analyze
 	 * @return the generated condition
 	 */
-	public Condition<C> provide(T source);
+	Condition<C> provide(T source);
 }

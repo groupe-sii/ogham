@@ -23,7 +23,7 @@ public interface HasRecipientsFluent<F, R extends Addressee> {
 	 *            the list of recipients of the message to set
 	 * @return this instance for fluent chaining
 	 */
-	public F recipients(List<R> recipients);
+	F recipients(List<R> recipients);
 
 	/**
 	 * Add a recipient for the message
@@ -33,6 +33,6 @@ public interface HasRecipientsFluent<F, R extends Addressee> {
 	 * @return this instance for fluent chaining
 	 */
 	@SuppressWarnings("unchecked")
-	public F recipient(R... recipients);
+	F recipient(R... recipients);
 
 }

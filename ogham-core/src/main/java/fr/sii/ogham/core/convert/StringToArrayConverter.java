@@ -2,8 +2,6 @@ package fr.sii.ogham.core.convert;
 
 import java.lang.reflect.Array;
 
-import fr.sii.ogham.core.exception.convert.ConversionException;
-
 /**
  * Converts a string to an array of anything. The string is split on
  * {@literal ,} by default. You can also provide your own separator.
@@ -75,7 +73,7 @@ public class StringToArrayConverter implements SupportingConverter {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T convert(Object source, Class<T> targetType) throws ConversionException {
+	public <T> T convert(Object source, Class<T> targetType) {
 		String s = (String) source;
 		String[] parts = s.split(splitPattern);
 		Object target = Array.newInstance(targetType.getComponentType(), parts.length);
