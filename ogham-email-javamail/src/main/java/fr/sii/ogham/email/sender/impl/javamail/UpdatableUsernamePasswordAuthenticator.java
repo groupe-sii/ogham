@@ -1,12 +1,10 @@
 package fr.sii.ogham.email.sender.impl.javamail;
 
-import java.util.List;
-
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
 
 /**
  * Basic authenticator that uses the provided username and password.
@@ -23,24 +21,24 @@ public class UpdatableUsernamePasswordAuthenticator extends Authenticator {
 	/**
 	 * The username for authentication
 	 */
-	private final List<String> usernames;
+	private final ConfigurationValueBuilderHelper<?, String> usernameValueBuilder;
 
 	/**
 	 * The password for authentication
 	 */
-	private final List<String> passwords;
+	private final ConfigurationValueBuilderHelper<?, String> passwordValueBuilder;
 
-	public UpdatableUsernamePasswordAuthenticator(PropertyResolver propertyResolver, List<String> usernameProperties, List<String> passwordProperties) {
+	public UpdatableUsernamePasswordAuthenticator(PropertyResolver propertyResolver, ConfigurationValueBuilderHelper<?, String> usernameValueBuilder, ConfigurationValueBuilderHelper<?, String> passwordValueBuilder) {
 		super();
 		this.propertyResolver = propertyResolver;
-		this.usernames = usernameProperties;
-		this.passwords = passwordProperties;
+		this.usernameValueBuilder = usernameValueBuilder;
+		this.passwordValueBuilder = passwordValueBuilder;
 	}
 
 	@Override
 	protected PasswordAuthentication getPasswordAuthentication() {
-		String username = BuilderUtils.evaluate(this.usernames, propertyResolver, String.class);
-		String password = BuilderUtils.evaluate(this.passwords, propertyResolver, String.class);
+		String username = usernameValueBuilder.getValue(propertyResolver);
+		String password = passwordValueBuilder.getValue(propertyResolver);
 		return new PasswordAuthentication(username, password);
 	}
 }

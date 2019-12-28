@@ -5,8 +5,6 @@ import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredPrope
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -22,6 +20,9 @@ import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
@@ -51,8 +52,8 @@ import fr.sii.ogham.email.sender.impl.javamail.ContentWithAttachmentsHandler;
 import fr.sii.ogham.email.sender.impl.javamail.FileResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.JavaMailInterceptor;
 import fr.sii.ogham.email.sender.impl.javamail.MapAttachmentResourceHandler;
-import fr.sii.ogham.email.sender.impl.javamail.PriorizedContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.MultiContentHandler;
+import fr.sii.ogham.email.sender.impl.javamail.PriorizedContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StreamResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
 
@@ -94,7 +95,8 @@ import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
  *    .and()
  * .email()
  *    .sender(JavaMailBuilder.class)    // registers the builder and accesses to that builder for configuring it
- *       .host("${custom.property.for.host}")
+ *       .host()
+ *       	.properties("${custom.property.for.host}")
  * </code>
  * </pre>
  * 
@@ -151,15 +153,13 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	private static final Logger LOG = LoggerFactory.getLogger(JavaMailBuilder.class);
 
 	private EnvironmentBuilder<JavaMailBuilder> environmentBuilder;
-	private List<String> hosts;
-	private List<String> ports;
-	private Integer port;
+	private final ConfigurationValueBuilderHelper<JavaMailBuilder, String> hostValueBuilder;
+	private final ConfigurationValueBuilderHelper<JavaMailBuilder, Integer> portValueBuilder;
+	private final ConfigurationValueBuilderHelper<JavaMailBuilder, Charset> charsetValueBuilder;
 	private Authenticator authenticator;
 	private UsernamePasswordAuthenticatorBuilder authenticatorBuilder;
 	private JavaMailInterceptor interceptor;
 	private MimetypeDetectionBuilder<JavaMailBuilder> mimetypeBuilder;
-	private List<String> charsets;
-	private Charset charset;
 	private CharsetDetector charsetDetector;
 
 	/**
@@ -188,215 +188,243 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public JavaMailBuilder(EmailBuilder parent) {
 		super(parent);
-		hosts = new ArrayList<>();
-		ports = new ArrayList<>();
-		charsets = new ArrayList<>();
+		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class);
+		charsetValueBuilder = new ConfigurationValueBuilderHelper<>(this, Charset.class);
 	}
 
 	/**
 	 * Set the mail server address host (IP or hostname).
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #host()}.
 	 * 
 	 * <pre>
-	 * .host("localhost");
+	 * .host("smtp.gmail.com")
+	 * .host()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("localhost")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .host("smtp.gmail.com")
+	 * .host()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("localhost")
+	 * </pre>
+	 * 
+	 * In both cases, {@code host("smtp.gmail.com")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param host
+	 *            the host of the mail server
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder host(String host) {
+		hostValueBuilder.setValue(host);
+		return this;
+	}
+	
+	
+	/**
+	 * Set the mail server address host (IP or hostname).
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .host()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("localhost")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #host(String)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .host("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .host("smtp.gmail.com")
+	 * .host()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("localhost")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "smtp.gmail.com"} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param host
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public JavaMailBuilder host(String... host) {
-		for (String h : host) {
-			if (h != null) {
-				hosts.add(h);
-			}
-		}
-		return this;
+	public ConfigurationValueBuilder<JavaMailBuilder, String> host() {
+		return hostValueBuilder;
 	}
-
+	
 	/**
 	 * Set the mail server port.
 	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #port(String...)} method.
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #port()}.
 	 * 
+	 * <pre>
+	 * .port(10025)
+	 * .port()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(25)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .port(10025)
+	 * .port()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(25)
+	 * </pre>
+	 * 
+	 * In both cases, {@code port(10025)} is used.
+	 * 
+	 * <p>
 	 * If this method is called several times, only the last value is used.
 	 * 
-	 * @param port
-	 *            the port to use
-	 * @return this instance for fluent chaining
-	 */
-	public JavaMailBuilder port(int port) {
-		return port(port, true);
-	}
-
-	/**
-	 * Set the mail server port. This version allows {@code null} value. In this
-	 * case, the {@code null} value is skipped.
-	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #port(String...)} method.
-	 * 
-	 * If this method is called several times, only the last value is used.
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param port
-	 *            the port to use (may be null)
+	 *            the port of mail server
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder port(Integer port) {
-		return port(port, true);
-	}
-
-	/**
-	 * Set the mail server port.
-	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #port(String...)} method.
-	 * 
-	 * @param port
-	 *            the port to use
-	 * @param override
-	 *            force to override any previously defined port value
-	 * @return this instance for fluent chaining
-	 */
-	public JavaMailBuilder port(int port, boolean override) {
-		// if port already defined and don't force override => skip
-		if(this.port != null && !override) {
-			return this;
-		}
-		this.port = port;
+		portValueBuilder.setValue(port);
 		return this;
 	}
 
+	
 	/**
-	 * Set the mail server port. This version allows {@code null} value. In this
-	 * case, the {@code null} value is skipped.
+	 * Set the mail server port
 	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #port(String...)} method.
-	 * 
-	 * @param port
-	 *            the port to use (may be null)
-	 * @param override
-	 *            force to override any previously defined port value
-	 * @return this instance for fluent chaining
-	 */
-	public JavaMailBuilder port(Integer port, boolean override) {
-		// if port already defined and don't force override => skip
-		if(this.port != null && !override) {
-			return this;
-		}
-		if (port != null) {
-			this.port = port;
-		}
-		return this;
-	}
-
-	/**
-	 * Set the mail server port.
-	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .port("25");
+	 * .port()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(25)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #port(Integer)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .port("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .port(10025)
+	 * .port()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(25)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param port
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public JavaMailBuilder port(String... port) {
-		for (String p : port) {
-			if (p != null) {
-				ports.add(p);
-			}
-		}
-		return this;
-	}
-
-	/**
-	 * Set charset to use for email body.
-	 * 
-	 * You can specify a direct value. For example:
-	 * 
-	 * <pre>
-	 * .charset("UTF-8");
-	 * </pre>
+	 * The value {@code 10025} is used regardless of the value of the properties
+	 * and default value.
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * <pre>
-	 * .charset("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param charsets
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * @return the builder to configure property keys/default value
 	 */
-	public JavaMailBuilder charset(String... charsets) {
-		for (String c : charsets) {
-			if (c != null) {
-				this.charsets.add(c);
-			}
-		}
-		return this;
+	public ConfigurationValueBuilder<JavaMailBuilder, Integer> port() {
+		return portValueBuilder;
 	}
-
+	
 	/**
 	 * Set charset to use for email body.
 	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #charset(String...)} method.
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #charset()}.
 	 * 
+	 * <pre>
+	 * .charset(StandardCharsets.UTF_16)
+	 * .charset()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(StandardCharsets.UTF_8)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .charset(StandardCharsets.UTF_16)
+	 * .charset()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(StandardCharsets.UTF_8)
+	 * </pre>
+	 * 
+	 * In both cases, {@code charset(StandardCharsets.UTF_16)} is used.
+	 * 
+	 * <p>
 	 * If this method is called several times, only the last value is used.
 	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
 	 * @param charset
-	 *            the charset value to use
+	 *            the charset to use for email body
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder charset(Charset charset) {
-		this.charset = charset;
+		charsetValueBuilder.setValue(charset);
 		return this;
+	}
+	
+	
+	/**
+	 * Set charset to use for email body
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .charset()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(StandardCharsets.UTF_8)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #charset(Charset)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .charset(StandardCharsets.UTF_16)
+	 * .charset()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(StandardCharsets.UTF_8)
+	 * </pre>
+	 * 
+	 * The value {@code StandardCharsets.UTF_16} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<JavaMailBuilder, Charset> charset() {
+		return charsetValueBuilder;
 	}
 
 	/**
@@ -656,7 +684,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	private OverrideJavaMailResolver buildPropertyResolver() {
-		return new OverrideJavaMailResolver(getPropertyResolver(), getConverter(), hosts, ports, port);
+		return new OverrideJavaMailResolver(getPropertyResolver(), getConverter(), hostValueBuilder, portValueBuilder);
 	}
 
 	private Converter getConverter() {
@@ -688,12 +716,9 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		if (this.charsetDetector != null) {
 			return this.charsetDetector;
 		}
+		Charset charset = this.charsetValueBuilder.getValue(getPropertyResolver());
 		if (charset != null) {
 			return new FixedCharsetDetector(charset);
-		}
-		if (!charsets.isEmpty()) {
-			String charsetValue = BuilderUtils.evaluate(charsets, getPropertyResolver(), String.class);
-			return new FixedCharsetDetector(Charset.forName(charsetValue));
 		}
 		return new FixedCharsetDetector();
 	}

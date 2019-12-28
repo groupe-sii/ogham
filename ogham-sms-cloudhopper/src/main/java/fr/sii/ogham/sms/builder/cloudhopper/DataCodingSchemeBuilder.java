@@ -1,10 +1,5 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 
 import com.cloudhopper.commons.charset.Charset;
@@ -14,9 +9,11 @@ import com.cloudhopper.smpp.SmppConstants;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToCharacterEncodingGroupDataCodingProvider;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToGeneralGroupDataCodingProvider;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.DataCodingProvider;
@@ -66,8 +63,8 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.FixedByteValueDataCod
 public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<DataCodingProvider> {
 	private final EnvironmentBuilder<?> environmentBuilder;
 	private final Function<PropertyResolver, Byte> interfaceVersionProvider;
-	private final List<String> autoProps;
-	private final List<String> valueProps;
+	private final ConfigurationValueBuilderHelper<DataCodingSchemeBuilder, Boolean> autoValueBuilder;
+	private final ConfigurationValueBuilderHelper<DataCodingSchemeBuilder, Byte> dcsValueBuilder;
 	private DataCodingProvider custom;
 
 	/**
@@ -81,19 +78,19 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 *            the configuration for property resolution and evaluation
 	 * @param interfaceVersionProvider
 	 *            A function used to retrieve the value of the interface
-	 *            version. This is needed when {@link #auto(String...)} mode is
+	 *            version. This is needed when {@link #auto(Boolean)} mode is
 	 *            enabled.
 	 */
 	public DataCodingSchemeBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder, Function<PropertyResolver, Byte> interfaceVersionProvider) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
 		this.interfaceVersionProvider = interfaceVersionProvider;
-		this.autoProps = new ArrayList<>();
-		this.valueProps = new ArrayList<>();
+		this.autoValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		this.dcsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Byte.class);
 	}
 
 	/**
-	 * Enable/disable automatic mode based on SMPP interface version.
+	 * * Enable/disable automatic mode based on SMPP interface version.
 	 * 
 	 * <p>
 	 * {@link DataCodingProvider} implementation is selected based on SMPP
@@ -145,55 +142,45 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * {@link DataCoding#CHAR_ENC_UCS2}</li>
 	 * </ul>
 	 * 
-	 * <h3>Behavior</h3>
-	 * <h4>Standalone</h4>
+	 * 
 	 * <p>
-	 * You can specify a direct value. For example:
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #auto()}.
 	 * 
 	 * <pre>
-	 * .enable("true");
+	 * .auto(false)
+	 * .auto()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
-	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
 	 * 
 	 * <pre>
-	 * .enable("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .auto(false)
+	 * .auto()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * In both cases, {@code auto(false)} is used.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * <h4>Custom {@link DataCodingProvider} also configured</h4>
 	 * <p>
-	 * If a custom {@link DataCodingProvider} instance is registered, this
-	 * instance is tried first (see {@link #custom(DataCodingProvider)} for more
-	 * information). The automatic behavior is applied after if returned value
-	 * of custom {@link DataCodingProvider} is {@code null}.
+	 * If this method is called several times, only the last value is used.
 	 * 
-	 * <h4>Fixed value also configured</h4>
 	 * <p>
-	 * If a fixed value is configured then it preempts any other configuration (
-	 * {@link #auto(String...)} and {@link #custom(DataCodingProvider)} are not
-	 * used at all).
-	 * </p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param enable
-	 *            one value, or one or several property keys
+	 *            enable or disable automatic Data Coding Scheme detection
 	 * @return this instance for fluent chaining
 	 */
-	public DataCodingSchemeBuilder auto(String... enable) {
-		Collections.addAll(autoProps, enable);
+	public DataCodingSchemeBuilder auto(Boolean enable) {
+		autoValueBuilder.setValue(enable);
 		return this;
 	}
 
 	/**
-	 * Enable/disable automatic mode based on SMPP interface version.
+	 * * Enable/disable automatic mode based on SMPP interface version.
 	 * 
 	 * <p>
 	 * {@link DataCodingProvider} implementation is selected based on SMPP
@@ -245,134 +232,141 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * {@link DataCoding#CHAR_ENC_UCS2}</li>
 	 * </ul>
 	 * 
-	 * <h3>Behavior</h3>
-	 * <h4>Standalone</h4>
-	 * <p>
-	 * If several properties are already set using {@link #auto(String...)},
-	 * then the enabled value is appended.
 	 * 
-	 * For example,
-	 * 
-	 * <pre>
-	 * {@code
-	 * .auto("${custom.property.high-priority}")
-	 * .auto(true)
-	 * }
-	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .auto(true)} is used. If "custom.property.high-priority" property
-	 * exists, then the value of "custom.property.high-priority" is used.
-	 * 
-	 * <pre>
-	 * {@code
-	 * .auto(true)
-	 * .auto("${custom.property.high-priority}")
-	 * }
-	 * </pre>
-	 * 
-	 * The value of {@code .auto(true)} is always used.
-	 * 
-	 * <h4>Custom {@link DataCodingProvider} also configured</h4>
+	 * <h3>Custom {@link DataCodingProvider} also configured</h3>
 	 * <p>
 	 * If a custom {@link DataCodingProvider} instance is registered, this
 	 * instance is tried first (see {@link #custom(DataCodingProvider)} for more
 	 * information). The automatic behavior is applied after if returned value
 	 * of custom {@link DataCodingProvider} is {@code null}.
 	 * 
-	 * <h4>Fixed value also configured</h4>
+	 * <h3>Fixed value also configured</h3>
 	 * <p>
 	 * If a fixed value is configured then it preempts any other configuration (
-	 * {@link #auto(String...)} and {@link #custom(DataCodingProvider)} are not
+	 * {@link #auto(Boolean)} and {@link #custom(DataCodingProvider)} are not
 	 * used at all).
-	 * </p>
 	 * 
-	 * @param enable
-	 *            enable (true) or disable (false) message splitting
-	 * @return this instance for fluent chaining
-	 */
-	public DataCodingSchemeBuilder auto(boolean enable) {
-		Collections.addAll(autoProps, String.valueOf(enable));
-		return this;
-	}
-
-	/**
-	 * Use the same Data Coding Scheme value for all messages.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .value((byte) 0x10);
+	 * .auto()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #auto(Boolean)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .value("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .auto(false)
+	 * .auto()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param dataCoding
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public DataCodingSchemeBuilder value(String... dataCoding) {
-		Collections.addAll(valueProps, dataCoding);
-		return this;
+	public ConfigurationValueBuilder<DataCodingSchemeBuilder, Boolean> auto() {
+		return autoValueBuilder;
 	}
 
 	/**
 	 * Use the same Data Coding Scheme value for all messages.
 	 * 
 	 * <p>
-	 * If several properties are already set using {@link #value(String...)},
-	 * then the Data Coding Scheme value is appended.
-	 * 
-	 * For example,
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #value()}.
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .value("${custom.property.high-priority}")
 	 * .value((byte) 0x10)
-	 * }
+	 * .value()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue((byte) 0)
 	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .value((byte) 0x10)} is used. If "custom.property.high-priority"
-	 * property exists, then the value of "custom.property.high-priority" is
-	 * used.
 	 * 
 	 * <pre>
-	 * {@code 
 	 * .value((byte) 0x10)
-	 * .value("${custom.property.high-priority}")
-	 * }
+	 * .value()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue((byte) 0)
 	 * </pre>
 	 * 
-	 * The value of {@code .value((byte) 0x10)} is always used.
+	 * In both cases, {@code value((byte) 0x10)} is used.
 	 * 
-	 * @param dataCoding
-	 *            the Data Coding Scheme value to use for all messages
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param value
+	 *            the Data Coding Scheme value for all messages
 	 * @return this instance for fluent chaining
 	 */
-	public DataCodingSchemeBuilder value(byte dataCoding) {
-		Collections.addAll(valueProps, String.valueOf(dataCoding));
+	public DataCodingSchemeBuilder value(Byte value) {
+		this.dcsValueBuilder.setValue(value);
 		return this;
+	}
+	
+	
+	/**
+	 * Use the same Data Coding Scheme value for all messages.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .value()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue((byte) 0)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #value(Byte)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .value((byte) 0x10)
+	 * .value()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue((byte) 0)
+	 * </pre>
+	 * 
+	 * The value {@code (byte) 0x10} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<DataCodingSchemeBuilder, Byte> value() {
+		return dcsValueBuilder;
 	}
 
 	/**
 	 * Register a custom strategy to determine Data Coding Scheme value.
 	 * 
 	 * <p>
-	 * Automatic behavior (see {@link #auto(String...)} is still active but
+	 * Automatic behavior (see {@link #auto(Boolean)} is still active but
 	 * custom strategy is executed first. As the custom
 	 * {@link DataCodingProvider} can return {@code null}, the automatic
 	 * behavior is executed in that case.
@@ -392,7 +386,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	@Override
 	public DataCodingProvider build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		Byte dataCodingValue = BuilderUtils.evaluate(valueProps, propertyResolver, Byte.class);
+		Byte dataCodingValue = dcsValueBuilder.getValue(propertyResolver);
 		if (dataCodingValue != null) {
 			return new FixedByteValueDataCodingProvider(dataCodingValue);
 		}
@@ -400,8 +394,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 		if (custom != null) {
 			firstSupporting.register(custom);
 		}
-		Boolean auto = evaluate(autoProps, propertyResolver, Boolean.class);
-		if (auto != null && auto) {
+		if (autoValueBuilder.getValue(propertyResolver, false)) {
 			registerAuto(propertyResolver, firstSupporting);
 		}
 		return firstSupporting;

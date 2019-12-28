@@ -1,7 +1,7 @@
 package fr.sii.ogham.core.util;
 
 import java.util.Comparator;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 /**
  * Comparator used to order objects. Higher priority will come first
@@ -12,7 +12,7 @@ import java.util.function.Function;
  *
  */
 public class PriorityComparator<T> implements Comparator<T> {
-	private final Function<T, Integer> priorityAccessor;
+	private final ToIntFunction<T> priorityAccessor;
 
 	/**
 	 * Initializes with the function used to access the priority attribute of
@@ -21,14 +21,14 @@ public class PriorityComparator<T> implements Comparator<T> {
 	 * @param priorityAccessor
 	 *            The function to get the priority value of compared objects
 	 */
-	public PriorityComparator(Function<T, Integer> priorityAccessor) {
+	public PriorityComparator(ToIntFunction<T> priorityAccessor) {
 		super();
 		this.priorityAccessor = priorityAccessor;
 	}
 
 	@Override
 	public int compare(T o1, T o2) {
-		return -Integer.compare(priorityAccessor.apply(o1), priorityAccessor.apply(o2));
+		return -Integer.compare(priorityAccessor.applyAsInt(o1), priorityAccessor.applyAsInt(o2));
 	}
 
 }

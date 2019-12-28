@@ -293,7 +293,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachme
 
 == Testing several emails at once
 
-When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `forEach` method to apply defined assertions on all messages.
+When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `every` method to apply defined assertions on all messages.
 
 [role="tab-container no-max-height"]
 Sample
@@ -306,7 +306,7 @@ image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java[]
 ----
 <1> Assert that 6 distinct messages are received
-<2> `forEach` applies all later defined assertions to all messages (the 6 messages)
+<2> `every` applies all later defined assertions to all messages (the 6 messages)
 <3> Assert that each received messages has exactly 3 `to` recipients
 <4> Assert that each received messages has exactly 2 `cc` recipients
 
@@ -323,7 +323,7 @@ The `bcc` recipient is not testable. Indeed, `bcc` recipients are hidden recipie
 -
 
 
-Sometimes you also need to send several different emails. The emails may have some identical information (sender or subject for example). So you can mix `forEach` (define assertions all messages) with `message` (define assertion for one particular message).
+Sometimes you also need to send several different emails. The emails may have some identical information (sender or subject for example). So you can mix `every` (define assertions all messages) with `message` (define assertion for one particular message).
 
 
 [role="tab-container no-max-height"]

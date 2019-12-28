@@ -120,28 +120,35 @@ public abstract class AbstractDefaultThymeleafSmsConfigurer implements Messaging
 		// @formatter:off
 		builder
 			.classpath()
-				.pathPrefix("${ogham.sms.thymeleaf.classpath.path-prefix}", 
-							"${ogham.sms.template.classpath.path-prefix}", 
-							"${ogham.sms.thymeleaf.path-prefix}", 
-							"${ogham.sms.template.path-prefix}", 
-							"${ogham.template.path-prefix}")
-				.pathSuffix("${ogham.sms.thymeleaf.classpath.path-suffix}", 
-							"${ogham.sms.template.classpath.path-suffix}", 
-							"${ogham.sms.thymeleaf.path-suffix}", 
-							"${ogham.sms.template.path-suffix}", 
-							"${ogham.template.path-suffix}")
+				.pathPrefix()
+					.properties("${ogham.sms.thymeleaf.classpath.path-prefix}", 
+								"${ogham.sms.template.classpath.path-prefix}", 
+								"${ogham.sms.thymeleaf.path-prefix}",
+								"${ogham.sms.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.and()
+				.pathSuffix()
+					.properties("${ogham.sms.thymeleaf.classpath.path-suffix}", 
+								"${ogham.sms.template.classpath.path-suffix}", 
+								"${ogham.sms.thymeleaf.path-suffix}",
+								"${ogham.sms.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
+					.and()
 				.and()
 			.file()
-				.pathPrefix("${ogham.sms.thymeleaf.file.path-prefix}", 
-							"${ogham.sms.template.file.path-prefix}", 
-							"${ogham.sms.thymeleaf.path-prefix}", 
-							"${ogham.sms.template.path-prefix}", 
-							"${ogham.template.path-prefix}")
-				.pathSuffix("${ogham.sms.thymeleaf.file.path-suffix}", 
-							"${ogham.sms.template.file.path-suffix}", 
-							"${ogham.sms.thymeleaf.path-suffix}", 
-							"${ogham.sms.template.path-suffix}", 
-							"${ogham.template.path-suffix}");
+				.pathPrefix()
+					.properties("${ogham.sms.thymeleaf.file.path-prefix}", 
+								"${ogham.sms.template.file.path-prefix}", 
+								"${ogham.sms.thymeleaf.path-prefix}",
+								"${ogham.sms.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.and()
+				.pathSuffix()
+					.properties("${ogham.sms.thymeleaf.file.path-suffix}", 
+								"${ogham.sms.template.file.path-suffix}", 
+								"${ogham.sms.thymeleaf.path-suffix}",
+								"${ogham.sms.template.path-suffix}", 
+								"${ogham.template.path-suffix}");
 		// @formatter:on
 	}
 

@@ -8,16 +8,15 @@ import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_GSM_
 import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_GSM_8BIT;
 import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_UCS2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.core.util.PriorizedList;
 import fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SegmentSizes;
 import fr.sii.ogham.sms.encoder.Encoder;
@@ -85,7 +84,10 @@ import fr.sii.ogham.sms.splitter.SupportingSplitter;
  * <pre>
  * {@code
  * .splitter()
- *   .enable("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.split.enable}", "true")
+ *   .enable()
+ *     .properties("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.split.enable}")
+ *     .devaultValue(true)
+ *     .and()
  *   .customSplitter(new MyCustomSplitter(), 100000)
  *   .referenceNumber()
  *     .random()
@@ -100,7 +102,7 @@ import fr.sii.ogham.sms.splitter.SupportingSplitter;
 public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<MessageSplitter> {
 	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ReadableEncoderBuilder encoderBuilder;
-	private final List<String> enableProps;
+	private final ConfigurationValueBuilderHelper<MessageSplitterBuilder, Boolean> enableValueBuilder;
 	private final PriorizedList<MessageSplitter> customSplitters;
 	private MessageSplitter customSplitter;
 	private ReferenceNumberGeneratorBuilder referenceNumberBuilder;
@@ -122,7 +124,7 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
 		this.encoderBuilder = encoderBuilder;
-		enableProps = new ArrayList<>();
+		enableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
 		customSplitters = new PriorizedList<>();
 	}
 
@@ -130,72 +132,79 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 	 * Enable/disable message splitting.
 	 * 
 	 * <p>
-	 * If several properties are already set using {@link #enable(String...)},
-	 * then the enabled value is appended.
-	 * 
-	 * For example,
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #enable()}.
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .enable("${custom.property.high-priority}")
-	 * .enable(true)
-	 * }
+	 * .enable(false)
+	 * .enable()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .enable(true)} is used. If "custom.property.high-priority"
-	 * property exists, then the value of "custom.property.high-priority" is
-	 * used.
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .enable(true)
-	 * .enable("${custom.property.high-priority}")
-	 * }
+	 * .enable(false)
+	 * .enable()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The value of {@code .enable(true)} is always used.
+	 * In both cases, {@code enable(false)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param enable
-	 *            enable (true) or disable (false) message splitting
+	 *            enable or disable message splitting
 	 * @return this instance for fluent chaining
 	 */
-	public MessageSplitterBuilder enable(boolean enable) {
-		enableProps.add(String.valueOf(enable));
+	public MessageSplitterBuilder enable(Boolean enable) {
+		enableValueBuilder.setValue(enable);
 		return this;
 	}
 
 	/**
 	 * Enable/disable message splitting.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .enable("true");
+	 * .enable()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #enable(Boolean)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .enable("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .enable(false)
+	 * .enable()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param enable
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public MessageSplitterBuilder enable(String... enable) {
-		Collections.addAll(enableProps, enable);
-		return this;
+	public ConfigurationValueBuilder<MessageSplitterBuilder, Boolean> enable() {
+		return enableValueBuilder;
 	}
 
 	/**
@@ -307,8 +316,7 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 	}
 
 	private boolean splittingEnabled(PropertyResolver propertyResolver) {
-		Boolean enableValue = BuilderUtils.evaluate(enableProps, propertyResolver, Boolean.class);
-		return enableValue != null && enableValue;
+		return enableValueBuilder.getValue(propertyResolver, false);
 	}
 
 	private MessageSplitter buildAutoGuessSplitter(PropertyResolver propertyResolver) {
@@ -321,8 +329,9 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 		return new FirstSupportingMessageSplitter(registry.getOrdered());
 	}
 
-	private void registerStandardSplitter(PropertyResolver propertyResolver, List<String> priorities, String supportedCharsetName, SegmentSizes maxSizes, PriorizedList<MessageSplitter> registry) {
-		Integer priority = BuilderUtils.evaluate(priorities, propertyResolver, Integer.class);
+	private void registerStandardSplitter(PropertyResolver propertyResolver, StandardEncodingHelper priorities, String supportedCharsetName, SegmentSizes maxSizes,
+			PriorizedList<MessageSplitter> registry) {
+		Integer priority = priorities.getValue(propertyResolver);
 		if (priority == null || priority <= 0) {
 			return;
 		}

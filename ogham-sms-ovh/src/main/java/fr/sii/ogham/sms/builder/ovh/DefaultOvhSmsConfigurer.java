@@ -1,6 +1,10 @@
 package fr.sii.ogham.sms.builder.ovh;
 
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
 import static fr.sii.ogham.sms.OvhSmsConstants.DEFAULT_OVHSMS_CONFIGURER_PRIORITY;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,16 +79,24 @@ public class DefaultOvhSmsConfigurer implements MessagingConfigurer {
 		OvhSmsBuilder builder = msgBuilder.sms().sender(OvhSmsBuilder.class);
 		// use same environment as parent builder
 		builder.environment(msgBuilder.environment());
+		try {
+			configure(builder);
+		} catch (MalformedURLException e) {
+			// skip it (can never be thrown)
+		}
+	}
+
+	private static void configure(OvhSmsBuilder builder) throws MalformedURLException {
 		// @formatter:off
 		builder
-			.url("${ogham.sms.ovh.url}", "https://www.ovh.com/cgi-bin/sms/http2sms.cgi")
-			.account("${ogham.sms.ovh.account}")
-			.login("${ogham.sms.ovh.login}")
-			.password("${ogham.sms.ovh.password}")
+			.url().properties("${ogham.sms.ovh.url}").defaultValue(overrideIfNotSet(new URL("https://www.ovh.com/cgi-bin/sms/http2sms.cgi"))).and()
+			.account().properties("${ogham.sms.ovh.account}").and()
+			.login().properties("${ogham.sms.ovh.login}").and()
+			.password().properties("${ogham.sms.ovh.password}").and()
 			.options()
-				.noStop("${ogham.sms.ovh.no-stop}", "true")
-				.smsCoding("${ogham.sms.ovh.sms-coding}")
-				.tag("${ogham.sms.ovh.tag}");
+				.noStop().properties("${ogham.sms.ovh.no-stop}").defaultValue(overrideIfNotSet(true)).and()
+				.smsCoding().properties("${ogham.sms.ovh.sms-coding}").and()
+				.tag().properties("${ogham.sms.ovh.tag}");
 		// @formatter:on
 	}
 

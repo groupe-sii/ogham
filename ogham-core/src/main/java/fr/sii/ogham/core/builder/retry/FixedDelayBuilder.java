@@ -1,15 +1,14 @@
 package fr.sii.ogham.core.builder.retry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
 import fr.sii.ogham.core.retry.RetryStrategy;
-import fr.sii.ogham.core.util.BuilderUtils;
 
 /**
  * Configures retry handling based on a fixed delay.
@@ -52,11 +51,9 @@ import fr.sii.ogham.core.util.BuilderUtils;
  *            method)
  */
 public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<RetryStrategy> {
-	private EnvironmentBuilder<?> environmentBuilder;
-	private Integer maxRetries;
-	private Long delay;
-	private List<String> maxRetriesProps;
-	private List<String> delayProps;
+	private final EnvironmentBuilder<?> environmentBuilder;
+	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Integer> maxRetriesValueBuilder;
+	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Long> delayValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -71,110 +68,164 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	public FixedDelayBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
-		maxRetriesProps = new ArrayList<>();
-		delayProps = new ArrayList<>();
+		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class);
+		delayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
 	}
-
+	
 	/**
 	 * Set the maximum number of attempts.
 	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #maxRetries()}.
+	 * 
+	 * <pre>
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(5)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(5)
+	 * </pre>
+	 * 
+	 * In both cases, {@code maxRetries(10)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
 	 * @param maxRetries
-	 *            the maximum number of retries
+	 *            the maximum number of attempts
 	 * @return this instance for fluent chaining
 	 */
 	public FixedDelayBuilder<P> maxRetries(Integer maxRetries) {
-		if (maxRetries != null) {
-			this.maxRetries = maxRetries;
-		}
+		this.maxRetriesValueBuilder.setValue(maxRetries);
 		return this;
 	}
 
-	/**
-	 * Set the delay between two executions (in milliseconds).
-	 * 
-	 * @param delay
-	 *            the delay between two executions
-	 * @return this instance for fluent chaining
-	 */
-	public FixedDelayBuilder<P> delay(Long delay) {
-		if (delay != null) {
-			this.delay = delay;
-		}
-		return this;
-	}
-
+	
 	/**
 	 * Set the maximum number of attempts.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .maxRetries("10");
+	 * .maxRetries()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(5)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #maxRetries(Integer)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .delay("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(5)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code 10} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param maxRetries
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public FixedDelayBuilder<P> maxRetries(String... maxRetries) {
-		for (String m : maxRetries) {
-			if (m != null) {
-				maxRetriesProps.add(m);
-			}
-		}
-		return this;
+	public ConfigurationValueBuilder<FixedDelayBuilder<P>, Integer> maxRetries() {
+		return maxRetriesValueBuilder;
 	}
-
+	
 	/**
 	 * Set the delay between two executions (in milliseconds).
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #delay()}.
 	 * 
 	 * <pre>
-	 * .delay("5000");
+	 * .delay(5000L)
+	 * .delay()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(10000L)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .delay(5000L)
+	 * .delay()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(10000L)
+	 * </pre>
+	 * 
+	 * In both cases, {@code delay(5000L)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param delay
+	 *            the time between two attempts
+	 * @return this instance for fluent chaining
+	 */
+	public FixedDelayBuilder<P> delay(Long delay) {
+		delayValueBuilder.setValue(delay);
+		return this;
+	}
+
+	
+	/**
+	 * Set the delay between two executions (in milliseconds).
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .delay()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(10000L)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #delay(Long)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .delay("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .delay(5000L)
+	 * .delay()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(10000L)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code 5000L} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param delays
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public FixedDelayBuilder<P> delay(String... delays) {
-		for (String d : delays) {
-			if (d != null) {
-				delayProps.add(d);
-			}
-		}
-		return this;
+	public ConfigurationValueBuilder<FixedDelayBuilder<P>, Long> delay() {
+		return delayValueBuilder;
 	}
 
 	@Override
@@ -186,18 +237,10 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	}
 
 	private int buildMaxRetries(PropertyResolver propertyResolver) {
-		if (this.maxRetries != null) {
-			return this.maxRetries;
-		}
-		Integer value = BuilderUtils.evaluate(maxRetriesProps, propertyResolver, Integer.class);
-		return value == null ? 0 : value;
+		return maxRetriesValueBuilder.getValue(propertyResolver, 0);
 	}
 
 	private long buildDelay(PropertyResolver propertyResolver) {
-		if (this.delay != null) {
-			return this.delay;
-		}
-		Long value = BuilderUtils.evaluate(delayProps, propertyResolver, Long.class);
-		return value == null ? 0 : value;
+		return delayValueBuilder.getValue(propertyResolver, 0L);
 	}
 }

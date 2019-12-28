@@ -3,20 +3,19 @@ package fr.sii.ogham.template.freemarker.builder;
 import static freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
 
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
-import fr.sii.ogham.core.util.BuilderUtils;
 import freemarker.core.Configurable;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.BeansWrapperBuilder;
@@ -39,16 +38,15 @@ import freemarker.template.Version;
  *            method)
  */
 public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> implements Builder<Configuration> {
+	private final EnvironmentBuilder<?> environmentBuilder;
+	private final ConfigurationValueBuilderHelper<FreemarkerConfigurationBuilder<P>, String> defaultEncodingValueBuilder;
+	private final ConfigurationValueBuilderHelper<FreemarkerConfigurationBuilder<P>, Boolean> enableStaticMethodAccessValueBuilder;
+	private final ConfigurationValueBuilderHelper<FreemarkerConfigurationBuilder<P>, String> staticMethodAccessVariableNameValueBuilder;
+	private final Map<String, Object> sharedVariables;
 	private Configuration base;
 	private Version version;
-	private List<String> defaultEncodings;
 	private TemplateExceptionHandler templateExceptionHandler;
-	private EnvironmentBuilder<?> environmentBuilder;
 	private TemplateHashModelEx variablesHash;
-	private Map<String, Object> sharedVariables;
-	private List<String> enableStaticMethodAccesses;
-	private List<String> staticMethodAccessVariableNames;
-	private boolean enableStaticMethodAccess;
 	// TODO: handle all other options
 
 	/**
@@ -63,11 +61,11 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 */
 	public FreemarkerConfigurationBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
-		defaultEncodings = new ArrayList<>();
-		sharedVariables = new HashMap<>();
-		enableStaticMethodAccesses = new ArrayList<>();
-		staticMethodAccessVariableNames = new ArrayList<>();
 		this.environmentBuilder = environmentBuilder;
+		defaultEncodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		enableStaticMethodAccessValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		staticMethodAccessVariableNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		sharedVariables = new HashMap<>();
 	}
 
 	/**
@@ -103,11 +101,12 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	}
 
 	/**
-	 * Sets the charset used for decoding byte sequences to character sequences
-	 * when reading template files in a locale for which no explicit encoding
-	 * was specified via {@link Configuration#setEncoding(Locale, String)}. Note
-	 * that by default there is no locale specified for any locale, so the
-	 * default encoding is always in effect.
+	 * * Sets the charset used for decoding byte sequences to character
+	 * sequences when reading template files in a locale for which no explicit
+	 * encoding was specified via
+	 * {@link Configuration#setEncoding(Locale, String)}. Note that by default
+	 * there is no locale specified for any locale, so the default encoding is
+	 * always in effect.
 	 * 
 	 * <p>
 	 * Defaults to the default system encoding, which can change from one server
@@ -119,34 +118,97 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 * Note that individual templates may specify their own charset by starting
 	 * with {@code <#ftl encoding="...">}
 	 * 
-	 * You can specify a direct value. For example:
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #defaultEncoding()}.
 	 * 
 	 * <pre>
-	 * .defaultEncoding("UTF-8");
+	 * .defaultEncoding("UTF-16")
+	 * .defaultEncoding()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("UTF-8")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .defaultEncoding("UTF-16")
+	 * .defaultEncoding()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("UTF-8")
+	 * </pre>
+	 * 
+	 * In both cases, {@code defaultEncoding("UTF-16")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param charsetName
+	 *            the name of the charset
+	 * @return this instance for fluent chaining
+	 */
+	public FreemarkerConfigurationBuilder<P> defaultEncoding(String charsetName) {
+		defaultEncodingValueBuilder.setValue(charsetName);
+		return this;
+	}
+
+	/**
+	 * * Sets the charset used for decoding byte sequences to character
+	 * sequences when reading template files in a locale for which no explicit
+	 * encoding was specified via
+	 * {@link Configuration#setEncoding(Locale, String)}. Note that by default
+	 * there is no locale specified for any locale, so the default encoding is
+	 * always in effect.
+	 * 
+	 * <p>
+	 * Defaults to the default system encoding, which can change from one server
+	 * to another, so <b>you should always set this setting</b>. If you don't
+	 * know what charset your should chose, {@code "UTF-8"} is usually a good
+	 * choice.
+	 * 
+	 * <p>
+	 * Note that individual templates may specify their own charset by starting
+	 * with {@code <#ftl encoding="...">}
+	 * 
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .defaultEncoding()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("UTF-8")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #defaultEncoding(String)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .defaultEncoding("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .defaultEncoding("UTF-16")
+	 * .defaultEncoding()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("UTF-8")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "UTF-16"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param encodings
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public FreemarkerConfigurationBuilder<P> defaultEncoding(String... encodings) {
-		this.defaultEncodings.addAll(Arrays.asList(encodings));
-		return this;
+	public ConfigurationValueBuilder<FreemarkerConfigurationBuilder<P>, String> defaultEncoding() {
+		return defaultEncodingValueBuilder;
 	}
 
 	/**
@@ -248,28 +310,171 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 		this.sharedVariables.put(name, value);
 		return this;
 	}
-	
-	public FreemarkerConfigurationBuilder<P> enableStaticMethodAccess(boolean enable) {
-		this.enableStaticMethodAccess = enable;
+
+	/**
+	 * Enable calls to static methods from templates:
+	 * 
+	 * <pre>
+	 * ${statics['foo.bar.StringUtils'].capitalize(name)}
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #enableStaticMethodAccess()}.
+	 * 
+	 * <pre>
+	 * .enableStaticMethodAccess(true)
+	 * .enableStaticMethodAccess()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .enableStaticMethodAccess(true)
+	 * .enableStaticMethodAccess()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * In both cases, {@code enableStaticMethodAccess(true)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable static method access
+	 * @return this instance for fluent chaining
+	 */
+	public FreemarkerConfigurationBuilder<P> enableStaticMethodAccess(Boolean enable) {
+		enableStaticMethodAccessValueBuilder.setValue(enable);
+		return this;
+	}
+
+	/**
+	 * Enable calls to static methods from templates:
+	 * 
+	 * <pre>
+	 * ${statics['foo.bar.StringUtils'].capitalize(name)}
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .enableStaticMethodAccess()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #enableStaticMethodAccess(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .enableStaticMethodAccess(true)
+	 * .enableStaticMethodAccess()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<FreemarkerConfigurationBuilder<P>, Boolean> enableStaticMethodAccess() {
+		return enableStaticMethodAccessValueBuilder;
+	}
+
+	/**
+	 * Change the name of the variable used to access static methods.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #staticMethodAccessVariableName()}.
+	 * 
+	 * <pre>
+	 * .staticMethodAccessVariableName("myStatics")
+	 * .staticMethodAccessVariableName()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("statics")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .staticMethodAccessVariableName("myStatics")
+	 * .staticMethodAccessVariableName()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("statics")
+	 * </pre>
+	 * 
+	 * In both cases, {@code staticMethodAccessVariableName("myStatics")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param variableName
+	 *            the name of the variable used to access static methods from templates
+	 * @return this instance for fluent chaining
+	 */
+	public FreemarkerConfigurationBuilder<P> staticMethodAccessVariableName(String variableName) {
+		staticMethodAccessVariableNameValueBuilder.setValue(variableName);
 		return this;
 	}
 	
-	public FreemarkerConfigurationBuilder<P> enableStaticMethodAccess(String... enable) {
-		for (String e : enable) {
-			if (e != null) {
-				enableStaticMethodAccesses.add(e);
-			}
-		}
-		return this;
-	}
-	
-	public FreemarkerConfigurationBuilder<P> staticMethodAccessVariableName(String... name) {
-		for (String n : name) {
-			if (n != null) {
-				staticMethodAccessVariableNames.add(n);
-			}
-		}
-		return this;	
+	/**
+	 * Change the name of the variable used to access static methods.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .staticMethodAccessVariableName()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("statics")
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #staticMethodAccessVariableName(String)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .staticMethodAccessVariableName("myStatics")
+	 * .staticMethodAccessVariableName()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("statics")
+	 * </pre>
+	 * 
+	 * The value {@code "myStatics"} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<FreemarkerConfigurationBuilder<P>, String> staticMethodAccessVariableName() {
+		return staticMethodAccessVariableNameValueBuilder;
 	}
 
 	/**
@@ -304,7 +509,7 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	public Configuration build() {
 		Configuration configuration = getConfiguration();
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		String defaultEncoding = BuilderUtils.evaluate(defaultEncodings, propertyResolver, String.class);
+		String defaultEncoding = defaultEncodingValueBuilder.getValue(propertyResolver);
 		if (defaultEncoding != null) {
 			configuration.setDefaultEncoding(defaultEncoding);
 		}
@@ -338,16 +543,16 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 			throw new BuildException("Failed to configure FreeMarker shared variables", e);
 		}
 	}
-	
+
 	private void buildStaticMethodAccess(Configuration configuration, PropertyResolver propertyResolver) {
-		Boolean enableStaticMethods = BuilderUtils.evaluate(enableStaticMethodAccesses, propertyResolver, Boolean.class);
-		if (enableStaticMethods != null && enableStaticMethods || enableStaticMethodAccess) {
-			String staticsVariableName = BuilderUtils.evaluate(staticMethodAccessVariableNames, propertyResolver, String.class);
+		boolean enableStaticMethods = enableStaticMethodAccessValueBuilder.getValue(propertyResolver, false);
+		if (enableStaticMethods) {
+			String staticsVariableName = staticMethodAccessVariableNameValueBuilder.getValue(propertyResolver);
 			configuration.setSharedVariable(staticsVariableName, getBeansWrapper(configuration).getStaticModels());
 		}
 	}
 
-	private BeansWrapper getBeansWrapper(Configuration configuration) {
+	private static BeansWrapper getBeansWrapper(Configuration configuration) {
 		ObjectWrapper objectWrapper = configuration.getObjectWrapper();
 		if (objectWrapper instanceof BeansWrapper) {
 			return (BeansWrapper) objectWrapper;

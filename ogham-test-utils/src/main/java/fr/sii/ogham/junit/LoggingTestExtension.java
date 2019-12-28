@@ -6,6 +6,20 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import fr.sii.ogham.common.TestLogger;
+
+/**
+ * Write information about test. This is useful when there are many tests:
+ * <ul>
+ * <li>To quickly find the logs for the test</li>
+ * <li>To quickly know if the test has failed or succeeded</li>
+ * <li>To quickly identify the test failure</li>
+ * <li>To quickly find failed tests</li>
+ * </ul>
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class LoggingTestExtension implements BeforeEachCallback, AfterEachCallback {
 	private final TestLogger logger;
 	
@@ -15,7 +29,8 @@ public class LoggingTestExtension implements BeforeEachCallback, AfterEachCallba
 	}
 	
 	public LoggingTestExtension() {
-		this(100);
+		super();
+		this.logger = new TestLogger();
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package fr.sii.ogham.sms.builder.smsglobal;
 
 import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
+import static fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion.VERSION_3_4;
 import static java.util.Arrays.asList;
 
 import org.slf4j.Logger;
@@ -111,24 +112,24 @@ public class SmsglobalServiceProviderConfigurer implements MessagingConfigurer {
 		builder
 			.userData()
 				// both supported but to benefit from 160 characters messages, we have to use Tlv message_payload because GSM 7-bit is not supported
-				.useShortMessage(false)
-				.useTlvMessagePayload(true)
+				.useShortMessage().defaultValue(false).and()
+				.useTlvMessagePayload().defaultValue(true).and()
 				.and()
 			.encoder()
-				.gsm7bitPacked(0)	// not supported by SmsGlobal
+				.gsm7bitPacked().defaultValue(0).and()	// not supported by SmsGlobal
 				.and()
 			.dataCodingScheme()
 				.custom(new SmsGlobalDataCodingProvider())
 				.and()
 			.splitter()
-				.enable(false)		// do not split when using Tlv message_payload
+				.enable().defaultValue(false).and()		// do not split when using Tlv message_payload
 				.and()
-			.port(1775)
-			.interfaceVersion("3.4");
+			.port().defaultValue(1775).and()
+			.interfaceVersion().defaultValue(VERSION_3_4);
 		// @formatter:on
 	}
 
-	private boolean usingSmsGlobal(PropertyResolver propertyResolver) {
+	private static boolean usingSmsGlobal(PropertyResolver propertyResolver) {
 		String host = evaluate(asList("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}"), propertyResolver, String.class);
 		return "smsglobal.com".equals(host);
 	}

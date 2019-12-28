@@ -1,5 +1,6 @@
 package fr.sii.ogham.template.freemarker.configurer;
 
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
 import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY;
 
 import org.slf4j.Logger;
@@ -146,38 +147,46 @@ public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
 		// @formatter:off
 		builder
 			.classpath()
-				.pathPrefix("${ogham.sms.freemarker.classpath.path-prefix}",
-							"${ogham.sms.template.classpath.path-prefix}", 
-							"${ogham.sms.freemarker.prefix}", 
-							"${ogham.sms.template.path-prefix}", 
-							"${ogham.template.path-prefix}")
-				.pathSuffix("${ogham.sms.freemarker.classpath.path-suffix}", 
-							"${ogham.sms.template.classpath.path-suffix}", 
-							"${ogham.sms.freemarker.suffix}", 
-							"${ogham.sms.template.path-suffix}", 
-							"${ogham.template.path-suffix}")
+				.pathPrefix()
+					.properties("${ogham.sms.freemarker.classpath.path-prefix}",
+								"${ogham.sms.template.classpath.path-prefix}", 
+								"${ogham.sms.freemarker.prefix}", 
+								"${ogham.sms.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.and()
+				.pathSuffix()
+					.properties("${ogham.sms.freemarker.classpath.path-suffix}", 
+								"${ogham.sms.template.classpath.path-suffix}", 
+								"${ogham.sms.freemarker.suffix}", 
+								"${ogham.sms.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
+					.and()
 				.and()
 			.file()
-				.pathPrefix("${ogham.sms.freemarker.file.path-prefix}", 
-							"${ogham.sms.template.file.path-prefix}", 
-							"${ogham.sms.freemarker.prefix}", 
-							"${ogham.sms.template.path-prefix}", 
-							"${ogham.template.path-prefix}")
-				.pathSuffix("${ogham.sms.freemarker.file.path-suffix}", 
-							"${ogham.sms.template.file.path-suffix}", 
-							"${ogham.sms.freemarker.suffix}", 
-							"${ogham.sms.template.path-suffix}", 
-							"${ogham.template.path-suffix}")
+				.pathPrefix()
+					.properties("${ogham.sms.freemarker.file.path-prefix}", 
+								"${ogham.sms.template.file.path-prefix}", 
+								"${ogham.sms.freemarker.prefix}", 
+								"${ogham.sms.template.path-prefix}", 
+								"${ogham.template.path-prefix}")
+					.and()
+				.pathSuffix()
+					.properties("${ogham.sms.freemarker.file.path-suffix}", 
+								"${ogham.sms.template.file.path-suffix}", 
+								"${ogham.sms.freemarker.suffix}", 
+								"${ogham.sms.template.path-suffix}", 
+								"${ogham.template.path-suffix}")
+					.and()
 				.and()
 			.configuration()
-				.defaultEncoding("${ogham.freemarker.default-encoding}", "UTF-8")
+				.defaultEncoding().properties("${ogham.freemarker.default-encoding}").defaultValue(overrideIfNotSet("UTF-8")).and()
 				.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)
-				.enableStaticMethodAccess("${ogham.freemarker.enable-static-method-access}", "true")
-				.staticMethodAccessVariableName("${ogham.freemarker.static-method-access-variable-name}", "statics");
+				.enableStaticMethodAccess().properties("${ogham.freemarker.enable-static-method-access}").defaultValue(overrideIfNotSet(true)).and()
+				.staticMethodAccessVariableName().properties("${ogham.freemarker.static-method-access-variable-name}").defaultValue(overrideIfNotSet("statics"));
 		// @formatter:on
 	}
 
-	private boolean canUseFreemaker() {
+	private static boolean canUseFreemaker() {
 		return ClasspathUtils.exists("freemarker.template.Configuration") && ClasspathUtils.exists("freemarker.template.Template");
 	}
 

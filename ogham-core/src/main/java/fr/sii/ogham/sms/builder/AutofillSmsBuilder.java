@@ -1,11 +1,11 @@
 package fr.sii.ogham.sms.builder;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.filler.EveryFillerDecorator;
@@ -79,9 +79,9 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 	@Override
 	public MessageFiller build() {
 		EveryFillerDecorator filler = new EveryFillerDecorator();
-		Map<String, List<String>> props = new HashMap<>();
-		props.put("from", senderNumberBuilder.getDefaultValueProperties());
-		props.put("to", recipientNumberBuilder.getDefaultValueProperties());
+		Map<String, ConfigurationValueBuilderHelper<?, String>> props = new HashMap<>();
+		props.put("from", (ConfigurationValueBuilderHelper<?, String>) senderNumberBuilder.defaultValue());
+		props.put("to", (ConfigurationValueBuilderHelper<?, String>) recipientNumberBuilder.defaultValue());
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		filler.addFiller(new SmsFiller(propertyResolver, props));
 		return filler;

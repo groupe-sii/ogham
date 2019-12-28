@@ -1,7 +1,6 @@
 package fr.sii.ogham.core.builder.mimetype;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.activation.MimeTypeParseException;
@@ -9,6 +8,9 @@ import javax.activation.MimeTypeParseException;
 import org.apache.tika.Tika;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
@@ -17,14 +19,13 @@ import fr.sii.ogham.core.mimetype.FixedMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.OverrideMimetypeProvider;
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
-import fr.sii.ogham.core.util.BuilderUtils;
 
 /**
  * Builds a {@link FallbackMimeTypeProvider}:
  * <ul>
  * <li>If {@link #tika()} has been called, then registers {@link Tika} as main
  * mimetype detector</li>
- * <li>If {@link #defaultMimetype(String...)} has been called, then registers a
+ * <li>If {@link #defaultMimetype(String)} has been called, then registers a
  * fallback to provide a default mimetype if none of the previously registered
  * detectors could detect mimetype</li>
  * <li>If no detector has been registered a {@link BuildException} is thrown
@@ -41,7 +42,7 @@ import fr.sii.ogham.core.util.BuilderUtils;
  */
 public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> implements MimetypeDetectionBuilder<P> {
 	private TikaBuilder<MimetypeDetectionBuilder<P>> tikaBuilder;
-	private List<String> defaultMimetypes;
+	private final ConfigurationValueBuilderHelper<SimpleMimetypeDetectionBuilder<P>, String> defaultMimetypeValueBuilder;
 	private final EnvironmentBuilder<?> environmentBuilder;
 	private SimpleReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replaceMimetypeBuilder;
 
@@ -59,21 +60,26 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	public SimpleMimetypeDetectionBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
-		defaultMimetypes = new ArrayList<>();
+		defaultMimetypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
 	}
 
 	@Override
 	public TikaBuilder<MimetypeDetectionBuilder<P>> tika() {
 		if (tikaBuilder == null) {
-			tikaBuilder = new SimpleTikaBuilder<>(this);
+			tikaBuilder = new SimpleTikaBuilder<>(this, environmentBuilder);
 		}
 		return tikaBuilder;
 	}
 
 	@Override
-	public SimpleMimetypeDetectionBuilder<P> defaultMimetype(String... mimetypes) {
-		defaultMimetypes.addAll(Arrays.asList(mimetypes));
+	public MimetypeDetectionBuilder<P> defaultMimetype(String mimetype) {
+		defaultMimetypeValueBuilder.setValue(mimetype);
 		return this;
+	}
+
+	@Override
+	public ConfigurationValueBuilder<MimetypeDetectionBuilder<P>, String> defaultMimetype() {
+		return new ConfigurationValueBuilderDelegate<>(this, defaultMimetypeValueBuilder);
 	}
 
 	@Override
@@ -98,13 +104,13 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 		}
 	}
 
-	private void assertNotEmpty(List<MimeTypeProvider> providers) {
+	private static void assertNotEmpty(List<MimeTypeProvider> providers) {
 		if (providers.isEmpty()) {
 			throw new BuildException("No mimetype detector configured");
 		}
 	}
 	
-	private MimeTypeProvider buildProvider(List<MimeTypeProvider> providers) {
+	private static MimeTypeProvider buildProvider(List<MimeTypeProvider> providers) {
 		if (providers.size() == 1) {
 			return providers.get(0);
 		}
@@ -126,11 +132,8 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	}
 
 	private void buildDefault(List<MimeTypeProvider> providers) throws MimeTypeParseException {
-		if (defaultMimetypes == null || defaultMimetypes.isEmpty()) {
-			return;
-		}
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		String mimetype = BuilderUtils.evaluate(defaultMimetypes, propertyResolver, String.class);
+		String mimetype = defaultMimetypeValueBuilder.getValue(propertyResolver);
 		if (mimetype != null) {
 			providers.add(new FixedMimeTypeProvider(mimetype));
 		}

@@ -2,8 +2,6 @@ package fr.sii.ogham.sms.builder.ovh;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -12,12 +10,13 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
@@ -64,7 +63,8 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  *    .and()
  * .email()
  *    .sender(OvhSmsBuilder.class)    // registers the builder and accesses to that builder for configuring it
- *       .host("${custom.property.for.url}")
+ *       .url()
+ *       	.properties("${custom.property.for.url}")
  * </code>
  * </pre>
  * 
@@ -76,10 +76,10 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	private static final Logger LOG = LoggerFactory.getLogger(OvhSmsBuilder.class);
 
 	private EnvironmentBuilder<OvhSmsBuilder> environmentBuilder;
-	private List<String> urls;
-	private List<String> accounts;
-	private List<String> logins;
-	private List<String> passwords;
+	private final ConfigurationValueBuilderHelper<OvhSmsBuilder, URL> urlValueBuilder;
+	private final ConfigurationValueBuilderHelper<OvhSmsBuilder, String> accountValueBuilder;
+	private final ConfigurationValueBuilderHelper<OvhSmsBuilder, String> loginValueBuilder;
+	private final ConfigurationValueBuilderHelper<OvhSmsBuilder, String> passwordValueBuilder;
 	private OvhOptionsBuilder ovhOptionsBuilder;
 
 	/**
@@ -107,10 +107,10 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 */
 	public OvhSmsBuilder(SmsBuilder parent) {
 		super(parent);
-		urls = new ArrayList<>();
-		accounts = new ArrayList<>();
-		logins = new ArrayList<>();
-		passwords = new ArrayList<>();
+		urlValueBuilder = new ConfigurationValueBuilderHelper<>(this, URL.class);
+		accountValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		loginValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
 	}
 
 	/**
@@ -191,149 +191,361 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	/**
 	 * Set the URL of the OVH SMS HTTP API.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #url()}.
 	 * 
 	 * <pre>
-	 * .url("https://www.ovh.com/cgi-bin/sms/http2sms.cgi");
+	 * .url(new URL("http://localhost"))
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(new URL("https://www.ovh.com/cgi-bin/sms/http2sms.cgi"))
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .url(new URL("http://localhost"))
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(new URL("https://www.ovh.com/cgi-bin/sms/http2sms.cgi"))
+	 * </pre>
+	 * 
+	 * In both cases, {@code url(new URL("http://localhost"))} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param url
+	 *            the url for Ovh HTTP API
+	 * @return this instance for fluent chaining
+	 */
+	public OvhSmsBuilder url(URL url) {
+		urlValueBuilder.setValue(url);
+		return this;
+	}
+
+	/**
+	 * Set the URL of the OVH SMS HTTP API.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #url()}.
+	 * 
+	 * <pre>
+	 * .url("http://localhost")
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("https://www.ovh.com/cgi-bin/sms/http2sms.cgi")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .url("http://localhost")
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("https://www.ovh.com/cgi-bin/sms/http2sms.cgi")
+	 * </pre>
+	 * 
+	 * In both cases, {@code url("http://localhost")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param url
+	 *            the url for Ovh HTTP API
+	 * @return this instance for fluent chaining
+	 * @throws IllegalArgumentException
+	 *             when URL is not valid
+	 */
+	public OvhSmsBuilder url(String url) {
+		try {
+			return url(new URL(url));
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Invalid URL " + url, e);
+		}
+	}
+
+	/**
+	 * Set the URL of the OVH SMS HTTP API.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(new URL("https://www.ovh.com/cgi-bin/sms/http2sms.cgi"))
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #url(URL)} takes precedence over property
+	 * values and default value.
 	 * 
 	 * <pre>
-	 * .host("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .url(new URL("http://localhost"))
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(new URL("https://www.ovh.com/cgi-bin/sms/http2sms.cgi"))
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code new URL("http://localhost")} is used regardless of the
+	 * value of the properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param url
-	 *            one value, or one or several property keys
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<OvhSmsBuilder, URL> url() {
+		return urlValueBuilder;
+	}
+
+	/**
+	 * Set the OVH account identifier.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #account()}.
+	 * 
+	 * <pre>
+	 * .account("my-account")
+	 * .account()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-account")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .account("my-account")
+	 * .account()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-account")
+	 * </pre>
+	 * 
+	 * In both cases, {@code account("my-account")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param account
+	 *            the account identifier
 	 * @return this instance for fluent chaining
 	 */
-	public OvhSmsBuilder url(String... url) {
-		for (String u : url) {
-			if (u != null) {
-				urls.add(u);
-			}
-		}
+	public OvhSmsBuilder account(String account) {
+		accountValueBuilder.setValue(account);
 		return this;
 	}
 
 	/**
 	 * Set the OVH account identifier.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .account("foo");
+	 * .account()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-account")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #account(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .account("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .account("my-account")
+	 * .account()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-account")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "my-account"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param account
-	 *            one value, or one or several property keys
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<OvhSmsBuilder, String> account() {
+		return accountValueBuilder;
+	}
+
+	/**
+	 * Set the OVH username.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #login()}.
+	 * 
+	 * <pre>
+	 * .login("my-username")
+	 * .login()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-username")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .login("my-username")
+	 * .login()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-username")
+	 * </pre>
+	 * 
+	 * In both cases, {@code login("my-username")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param login
+	 *            the OVH username
 	 * @return this instance for fluent chaining
 	 */
-	public OvhSmsBuilder account(String... account) {
-		for (String a : account) {
-			if (a != null) {
-				accounts.add(a);
-			}
-		}
+	public OvhSmsBuilder login(String login) {
+		loginValueBuilder.setValue(login);
 		return this;
 	}
 
 	/**
 	 * Set the OVH username.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .login("foo");
+	 * .login()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-username")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #login(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .login("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .login("my-username")
+	 * .login()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-username")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "my-username"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param login
-	 *            one value, or one or several property keys
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<OvhSmsBuilder, String> login() {
+		return loginValueBuilder;
+	}
+
+	/**
+	 * Set the OVH password.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #password()}.
+	 * 
+	 * <pre>
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
+	 * </pre>
+	 * 
+	 * In both cases, {@code password("my-password")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param password
+	 *            the OVH password
 	 * @return this instance for fluent chaining
 	 */
-	public OvhSmsBuilder login(String... login) {
-		for (String l : login) {
-			if (l != null) {
-				logins.add(l);
-			}
-		}
+	public OvhSmsBuilder password(String password) {
+		passwordValueBuilder.setValue(password);
 		return this;
 	}
 
 	/**
 	 * Set the OVH password.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .password("bar");
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #password(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .password("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "my-password"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param password
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public OvhSmsBuilder password(String... password) {
-		for (String p : password) {
-			if (p != null) {
-				passwords.add(p);
-			}
-		}
-		return this;
+	public ConfigurationValueBuilder<OvhSmsBuilder, String> password() {
+		return passwordValueBuilder;
 	}
 
 	/**
@@ -371,22 +583,14 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	}
 
 	private URL buildUrl(PropertyResolver propertyResolver) {
-		try {
-			String url = BuilderUtils.evaluate(urls, propertyResolver, String.class);
-			if (url != null) {
-				return new URL(url);
-			}
-			return null;
-		} catch (MalformedURLException e) {
-			throw new BuildException("Failed to create OVH SMS sender due to invalid URL", e);
-		}
+		return urlValueBuilder.getValue(propertyResolver);
 	}
 
 	private OvhAuthParams buildAuth(PropertyResolver propertyResolver) {
-		String account = BuilderUtils.evaluate(accounts, propertyResolver, String.class);
-		String login = BuilderUtils.evaluate(logins, propertyResolver, String.class);
-		String password = BuilderUtils.evaluate(passwords, propertyResolver, String.class);
-		return new OvhAuthParams(account, login, password);
+		String accountValue = accountValueBuilder.getValue(propertyResolver);
+		String loginValue = loginValueBuilder.getValue(propertyResolver);
+		String passwordValue = passwordValueBuilder.getValue(propertyResolver);
+		return new OvhAuthParams(accountValue, loginValue, passwordValue);
 	}
 
 	private OvhOptions buildOptions() {

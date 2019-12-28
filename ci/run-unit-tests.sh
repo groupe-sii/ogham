@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./mvnw test -Dmaven.test.redirectTestOutputToFile=true -fae -B -q
+./mvnw test -Dmaven.javadoc.skip=true -Dmaven.test.redirectTestOutputToFile=true -fae -B -q

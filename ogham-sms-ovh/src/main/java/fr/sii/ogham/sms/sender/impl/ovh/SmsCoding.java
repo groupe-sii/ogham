@@ -2,6 +2,9 @@ package fr.sii.ogham.sms.sender.impl.ovh;
 
 import java.util.regex.Pattern;
 
+import fr.sii.ogham.core.convert.StringToEnumConverter.FactoryMethod;
+
+@FactoryMethod(name="from")
 public enum SmsCoding {
 	/**
 	 * 7bit encoding

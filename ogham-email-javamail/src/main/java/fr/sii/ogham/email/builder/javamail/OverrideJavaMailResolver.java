@@ -1,10 +1,6 @@
 package fr.sii.ogham.email.builder.javamail;
 
-import static fr.sii.ogham.core.util.BuilderUtils.getPropertyKey;
-import static fr.sii.ogham.core.util.BuilderUtils.isExpression;
-
-import java.util.List;
-
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.env.PropertyResolver;
 
@@ -21,8 +17,7 @@ import fr.sii.ogham.core.env.PropertyResolver;
  * <li>the value of "mail.host" otherwise</li>
  * </ul>
  * 
- * It works the same for ports but in addition, if the port value is defined as
- * an integer, it is used directly.
+ * It works the same for ports.
  * 
  * @author Aurélien Baudet
  *
@@ -30,82 +25,80 @@ import fr.sii.ogham.core.env.PropertyResolver;
 public class OverrideJavaMailResolver implements PropertyResolver {
 	private final PropertyResolver delegate;
 	private final Converter converter;
-	private final List<String> hosts;
-	private final List<String> ports;
-	private final Integer port;
+	private final ConfigurationValueBuilderHelper<?, String> host;
+	private final ConfigurationValueBuilderHelper<?, Integer> port;
 
-	public OverrideJavaMailResolver(PropertyResolver delegate, Converter converter, List<String> hosts, List<String> ports, Integer port) {
+	public OverrideJavaMailResolver(PropertyResolver delegate, Converter converter, ConfigurationValueBuilderHelper<?, String> host, ConfigurationValueBuilderHelper<?, Integer> port) {
 		super();
 		this.delegate = delegate;
 		this.converter = converter;
-		this.hosts = hosts;
-		this.ports = ports;
+		this.host = host;
 		this.port = port;
 	}
 
 	@Override
 	public boolean containsProperty(String key) {
-		if (getDirectValue(key) != null) {
+		if (getValue(key) != null) {
 			return true;
 		}
-		return delegate.containsProperty(getOverridenKey((String) key));
+		return delegate.containsProperty(key);
 	}
 
 	@Override
 	public String getProperty(String key) {
-		String value = getDirectValue(key);
+		String value = getValue(key);
 		if (value != null) {
 			return value;
 		}
-		return delegate.getProperty(getOverridenKey(key));
+		return delegate.getProperty(key);
 	}
 
 	@Override
 	public String getProperty(String key, String defaultValue) {
-		String value = getDirectValue(key);
+		String value = getValue(key);
 		if (value != null) {
 			return value;
 		}
-		return delegate.getProperty((String) getOverridenKey(key), defaultValue);
+		return delegate.getProperty(key, defaultValue);
 	}
 
 	@Override
 	public <T> T getProperty(String key, Class<T> targetType) {
-		String value = getDirectValue(key);
+		String value = getValue(key);
 		if (value != null) {
 			return converter.convert(value, targetType);
 		}
-		return delegate.getProperty(getOverridenKey(key), targetType);
+		return delegate.getProperty(key, targetType);
 	}
 
 	@Override
 	public <T> T getProperty(String key, Class<T> targetType, T defaultValue) {
-		String value = getDirectValue(key);
+		String value = getValue(key);
 		if (value != null) {
 			return converter.convert(value, targetType);
 		}
-		return delegate.getProperty(getOverridenKey(key), targetType, defaultValue);
+		return delegate.getProperty(key, targetType, defaultValue);
 	}
 
 	@Override
 	public String getRequiredProperty(String key) throws IllegalStateException {
-		String value = getDirectValue(key);
+		String value = getValue(key);
 		if (value != null) {
 			return value;
 		}
-		return delegate.getRequiredProperty(getOverridenKey(key));
+		return delegate.getRequiredProperty(key);
 	}
 
 	@Override
 	public <T> T getRequiredProperty(String key, Class<T> targetType) throws IllegalStateException {
-		String value = getDirectValue(key);
+		String value = getValue(key);
 		if (value != null) {
 			return converter.convert(value, targetType);
 		}
-		return delegate.getRequiredProperty(getOverridenKey(key), targetType);
+		return delegate.getRequiredProperty(key, targetType);
 	}
 
-	private String getDirectValue(String key) {
+	private String getValue(String key) {
 		if (isPortKey(key) && getPortValue() != null) {
 			return getPortValue();
 		}
@@ -116,7 +109,11 @@ public class OverrideJavaMailResolver implements PropertyResolver {
 	}
 
 	private String getPortValue() {
-		return port == null ? null : port.toString();
+		Integer value = port.getValue(delegate);
+		if (value == null) {
+			return null;
+		}
+		return String.valueOf(value);
 	}
 
 	private boolean isHostKey(Object key) {
@@ -127,37 +124,7 @@ public class OverrideJavaMailResolver implements PropertyResolver {
 		return "mail.smtp.port".equals(key) || "mail.port".equals(key);
 	}
 
-	private boolean containsPropertyExpression(String prop) {
-		return isExpression(prop) && delegate.containsProperty(getPropertyKey(prop));
-	}
-
 	private String getHostValue() {
-		for (String host : hosts) {
-			if (!isExpression(host)) {
-				return host;
-			}
-		}
-		return null;
-	}
-
-	private String getOverridenKey(String key) {
-		String overrideKey = key;
-		if (isHostKey(key)) {
-			for (String hostProp : hosts) {
-				if (containsPropertyExpression(hostProp)) {
-					overrideKey = getPropertyKey(hostProp);
-					break;
-				}
-			}
-		}
-		if (isPortKey(key)) {
-			for (String portProp : ports) {
-				if (containsPropertyExpression(portProp)) {
-					overrideKey = getPropertyKey(portProp);
-					break;
-				}
-			}
-		}
-		return overrideKey;
+		return host.getValue(delegate);
 	}
 }

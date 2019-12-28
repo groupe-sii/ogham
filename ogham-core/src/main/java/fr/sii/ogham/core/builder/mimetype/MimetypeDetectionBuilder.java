@@ -10,7 +10,8 @@ import org.apache.tika.config.TikaConfig;
 
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.Parent;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**
@@ -62,7 +63,7 @@ public interface MimetypeDetectionBuilder<P> extends Parent<P>, Builder<MimeType
 	 * this case {@code application/octet-stream} mimetype is returned by Tika.
 	 * The builder let you make detection fail if
 	 * {@code application/octet-stream} is returned (see
-	 * {@link TikaBuilder#failIfOctetStream(boolean)}). This is useful in order
+	 * {@link TikaBuilder#failIfOctetStream(Boolean)}). This is useful in order
 	 * to try detection with another implementation.
 	 * </p>
 	 * 
@@ -100,30 +101,74 @@ public interface MimetypeDetectionBuilder<P> extends Parent<P>, Builder<MimeType
 	 * use a default value.
 	 * 
 	 * <p>
-	 * You can specify a direct value as default mimetype. For example:
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #defaultMimetype()}.
 	 * 
 	 * <pre>
-	 * .defaultMimetype("text/plain");
+	 * .defaultMimetype("text/html")
+	 * .defaultMimetype()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("text/plain")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .defaultMimetype("text/html")
+	 * .defaultMimetype()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("text/plain")
+	 * </pre>
+	 * 
+	 * In both cases, {@code defaultMimetype("text/html")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param mimetype
+	 *            the default mimetype
+	 * @return this instance for fluent chaining
+	 */
+	MimetypeDetectionBuilder<P> defaultMimetype(String mimetype);
+
+	/**
+	 * If no previously registered mimetype detector could determine mimetype,
+	 * use a default value.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .defaultMimetype()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("text/plain")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #defaultMimetype(String)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .defaultMimetype("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .defaultMimetype("text/html")
+	 * .defaultMimetype()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("text/plain")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "text/html"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param mimetype
-	 *            one mimetype value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	MimetypeDetectionBuilder<P> defaultMimetype(String... mimetype);
+	ConfigurationValueBuilder<MimetypeDetectionBuilder<P>, String> defaultMimetype();
 }

@@ -173,7 +173,7 @@ import fr.sii.ogham.email.sender.EmailSender;
  *       .and()
  *     .autofill()    // enables and configures autofilling
  *       .from()
- *         .defaultValueProperty("${email.sender.address}")
+ *         .defaultValue("${email.sender.address}")
  *         .and()
  *     .and()
  *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
@@ -216,7 +216,7 @@ import fr.sii.ogham.email.sender.EmailSender;
  *       .and()
  *     .autofill()    // enables and configures autofilling
  *       .from()
- *         .defaultValueProperty("${email.sender.address}")
+ *         .defaultValue().properties("${email.sender.address}").and()
  *         .and()
  *       .subject()
  *         .htmlTitle(true)    // enables use of html title tag as subject
@@ -307,7 +307,9 @@ import fr.sii.ogham.email.sender.EmailSender;
  *   .email()
  *     .autofill()
  *       .from()
- *         .defaultValueProperty("${email.sender.address}")   // overrides default sender email address property
+ *         .defaultValue()
+ *           .properties("${email.sender.address}")   // overrides default sender email address property
+ *           .and()
  *         .and()
  *       .and()
  *     .and()
@@ -460,21 +462,21 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 * builder
 	 *  .autofill()
 	 *    .subject()
-	 *      .defaultValueProperty("${ogham.email.subject}")
+	 *      .defaultValue().properties("${ogham.email.subject}").and()
 	 *      .htmlTitle(true)
-	 *      .text("${ogham.email.subject-first-line-prefix}", "Subject:")
+	 *      .text().properties("${ogham.email.subject-first-line-prefix}").defaultValue("Subject:").and()
 	 *	    .and()
 	 *    .from()
-	 *	    .defaultValueProperty("${ogham.email.from}", "${mail.smtp.from}")
+	 *	    .defaultValue().properties("${ogham.email.from}", "${mail.smtp.from}").and()
 	 *	    .and()
 	 *    .to()
-	 *	    .defaultValueProperty("${ogham.email.to}")
+	 *	    .defaultValue().properties("${ogham.email.to}").and()
 	 *	    .and()
 	 *    .cc()
-	 *	    .defaultValueProperty("${ogham.email.cc}")
+	 *	    .defaultValue().properties("${ogham.email.cc}").and()
 	 *	    .and()
 	 *    .bcc()
-	 *	    .defaultValueProperty("${ogham.email.bcc}")
+	 *	    .defaultValue().properties("${ogham.email.bcc}")
 	 * </code>
 	 * </pre>
 	 * 

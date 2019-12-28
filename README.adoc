@@ -280,7 +280,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class BasicSample 
+public class BasicSample {
 
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
@@ -301,7 +301,7 @@ public class BasicSample
                         .subject("subject")
                         .content("email content")
                         .to("ogham-test@yopmail.com"));
-    
+    }
 
 }
 ----
@@ -345,7 +345,7 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlTemplateSample 
+public class HtmlTemplateSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -366,22 +366,22 @@ public class HtmlTemplateSample
                         .content(new TemplateContent("classpath:/template/thymeleaf/simple.html",         // <5>
                                                     new SimpleBean("foo", 42)))                            // <6>
                         .to("ogham-test@yopmail.com"));
-    
+    }
 
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -405,8 +405,8 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="$name"></h1>        <!--2-->
-        <p class="text" th:text="$value"></p>            <!--3-->
+        <h1 class="title" th:text="${name}"></h1>        <!--2-->
+        <p class="text" th:text="${value}"></p>            <!--3-->
     </body>
 </html>
 ----
@@ -455,7 +455,7 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlTemplateWithSubjectSample 
+public class HtmlTemplateWithSubjectSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -477,22 +477,22 @@ public class HtmlTemplateWithSubjectSample
                         .content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", 
                                                     new SimpleBean("foo", 42)))
                         .to("ogham-test@yopmail.com"));
+    }
     
-    
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -508,12 +508,12 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Subject of the email - $name</title>                <!--1-->
+        <title>Subject of the email - ${name}</title>                <!--1-->
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="$name"></h1>
-        <p class="text" th:text="$value"></p>
+        <h1 class="title" th:text="${name}"></h1>
+        <p class="text" th:text="${value}"></p>
     </body>
 </html>
 ----
@@ -547,7 +547,7 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class TextTemplateWithSubjectSample 
+public class TextTemplateWithSubjectSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -569,22 +569,22 @@ public class TextTemplateWithSubjectSample
                         .content(new TemplateContent("classpath:/template/freemarker/simpleWithSubject.txt.ftl", 
                                                     new SimpleBean("foo", 42)))
                         .to("ogham-test@yopmail.com"));
+    }
     
-    
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -598,10 +598,10 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 
 [source, text, role="highlight-lines:1"]
 ----
-Subject: Welcome $name !
-Hello $name,
+Subject: Welcome ${name} !
+Hello ${name},
 
-Foo bar $value
+Foo bar ${value}
 ----
 
 NOTE: The subject of the email will be `Welcome foo !`
@@ -651,7 +651,7 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlWithImagesAndCssTemplateSample 
+public class HtmlWithImagesAndCssTemplateSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -674,22 +674,22 @@ public class HtmlWithImagesAndCssTemplateSample
                         .content(new MultiTemplateContent("classpath:/template/withImagesAndCss/resources",        // <1>
                                                             new SimpleBean("foo", 42)))                            // <2>
                         .to("ogham-test@yopmail.com"));
-    
+    }
 
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -729,11 +729,11 @@ image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] Thy
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td id="td_2a02_3">
-                                        <b th:text="$name">$name</b>
+                                        <b th:text="${name}">${name}</b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td id="td_2a02_4" class="paragraph" th:text="$value">
+                                    <td id="td_2a02_4" class="paragraph" th:text="${value}">
                                     </td>
                                 </tr>
                                 <tr>
@@ -944,7 +944,7 @@ import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlAndTextSample 
+public class HtmlAndTextSample {
     private static String html = "<!DOCTYPE html>"
                                 + "<html>"
                                 +     "<head><meta charset=\"utf-8\" /></head>"
@@ -975,7 +975,7 @@ public class HtmlAndTextSample
                         .subject("subject")
                         .content(new MultiContent(text, html))        // <1>
                         .to("ogham-test@yopmail.com"));
-    
+    }
 }
 ----
 <1> The content is using the type `MultiContent` with a text and HTML content
@@ -1008,7 +1008,7 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlAndTextTemplateSample 
+public class HtmlAndTextTemplateSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -1032,22 +1032,22 @@ public class HtmlAndTextTemplateSample
                         .content(new MultiTemplateContent("classpath:/template/thymeleaf/simple",         // <1>
                                                             new SimpleBean("foo", 42)))                    // <2>
                         .to("ogham-test@yopmail.com"));
+    }
     
-    
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -1063,7 +1063,7 @@ image:src/docs/resources/images/icons/thymeleaf-text.jpg[width=30,height=30] Tex
 [source, txt]
 ----
 <html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">
-[[$name]] [[$value]]
+[[${name}]] [[${value}]]
 </html>
 ----
 
@@ -1082,8 +1082,8 @@ image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] HTM
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="$name"></h1>        <!--2-->
-        <p class="text" th:text="$value"></p>            <!--3-->
+        <h1 class="title" th:text="${name}"></h1>        <!--2-->
+        <p class="text" th:text="${value}"></p>            <!--3-->
     </body>
 </html>
 ----
@@ -1124,7 +1124,7 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class HtmlAndTextMixedTemplateEnginesSample 
+public class HtmlAndTextMixedTemplateEnginesSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -1148,22 +1148,22 @@ public class HtmlAndTextMixedTemplateEnginesSample
                         .content(new MultiTemplateContent("classpath:/template/mixed/simple",         // <1>
                                                             new SimpleBean("foo", 42)))                // <2>
                         .to("ogham-test@yopmail.com"));
+    }
     
-    
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -1178,7 +1178,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 .Text template located in `src/main/resources/template/mixed/simple.txt.ftl`
 [source, txt]
 ----
-$name $value
+${name} ${value}
 ----
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=4[Source code of the text template]
@@ -1196,8 +1196,8 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="$name"></h1>
-        <p class="text" th:text="$value"></p>
+        <h1 class="title" th:text="${name}"></h1>
+        <p class="text" th:text="${value}"></p>
     </body>
 </html>
 ----
@@ -1232,7 +1232,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
-public class WithAttachmentSample 
+public class WithAttachmentSample {
     public static void main(String[] args) throws MessagingException, IOException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -1254,11 +1254,11 @@ public class WithAttachmentSample
                         .to("ogham-test@yopmail.com")
                         .attach(new Attachment("classpath:/attachment/test.pdf"))            // <1>
                         .attach(new Attachment("from-stream.pdf", loadInputStream())));        // <2>
-    
+    }
 
-    private static InputStream loadInputStream() 
+    private static InputStream loadInputStream() {
         return WithAttachmentSample.class.getResourceAsStream("/attachment/test.pdf");
-    
+    }
 }
 ----
 <1> Attach a PDF file that exists in the classpath to the email
@@ -1308,7 +1308,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class OverrideDefaultSenderSample 
+public class OverrideDefaultSenderSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -1336,7 +1336,7 @@ public class OverrideDefaultSenderSample
                 .from("override@test.com")                                    // <3>
                 .to("ogham-test@yopmail.com"));
         // => the sender address is now override@test.com
-    
+    }
 }
 ----
 <1> Set the default sender address globally using properties
@@ -1401,7 +1401,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.junit.LoggingTestRule;
 
-public class EmailPropertiesTest 
+public class EmailPropertiesTest {
 
     private MessagingService oghamService;
     
@@ -1426,10 +1426,10 @@ public class EmailPropertiesTest
                     .properties(additional)
                     .and()
                 .build();
-    
+    }
     
     @Test
-    public void simple() throws MessagingException, javax.mail.MessagingException 
+    public void simple() throws MessagingException, javax.mail.MessagingException {
         oghamService.send(new Email()
                             .subject("Simple")
                             .content("string body"));
@@ -1446,7 +1446,7 @@ public class EmailPropertiesTest
                         .address(containsInAnyOrder("recipient.to1@sii.fr", "recipient.to2@sii.fr", "recipient.to3@sii.fr")).and()
                     .cc()
                         .address(containsInAnyOrder("recipient.cc1@sii.fr", "recipient.cc2@sii.fr"));
-    
+    }
 }
 ----
 <1> Define 3 `to` recipients
@@ -1526,7 +1526,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class GmailSSLBasicSample 
+public class GmailSSLBasicSample {
 
     public static void main(String[] args) throws MessagingException {
         // Instantiate the messaging service using default behavior and
@@ -1549,7 +1549,7 @@ public class GmailSSLBasicSample
                         .subject("subject")
                         .content("email content")
                         .to("ogham-test@yopmail.com"));
-    
+    }
 }
 ----
 <1> Use the standard builder to configure and instantiate the MessagingService as usual
@@ -1638,7 +1638,7 @@ import fr.sii.ogham.email.message.Email;
  * @author Aurélien Baudet
  *
  */
-public class SendGridFullSample 
+public class SendGridFullSample {
     public static void main(String[] args) throws MessagingException, IOException {
         // Instantiate the messaging service using default behavior and
         // provided properties
@@ -1655,22 +1655,22 @@ public class SendGridFullSample
                         .content(new MultiTemplateContent("full", new SimpleBean("foo", 42)))        // <3>
                         .to("ogham-test@yopmail.com")
                         .attach(new Attachment("/attachment/test.pdf")));
-    
+    }
 
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -1735,7 +1735,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class BasicSample 
+public class BasicSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -1756,7 +1756,7 @@ public class BasicSample
         service.send(new Sms()                                                                        // <9>
                         .content("sms content")
                         .to("+33752962193"));
-    
+    }
 
 }
 ----
@@ -1803,7 +1803,7 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class TemplateSample 
+public class TemplateSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -1825,22 +1825,22 @@ public class TemplateSample
                         .content(new TemplateContent("classpath:/template/thymeleaf/simple.txt",     // <5>
                                                     new SimpleBean("foo", 42)))                        // <6>
                         .to("+33752962193"));
-    
+    }
 
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -1859,7 +1859,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 [source, html]
 ----
 <html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">
-[[$name]] [[$value]]
+[[${name}]] [[${value}]]
 </html>
 ----
 
@@ -1902,7 +1902,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class LongMessageSample 
+public class LongMessageSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -1927,7 +1927,7 @@ public class LongMessageSample
         service.send(new Sms()
                         .content(longMessage)
                         .to("+33752962193"));
-    
+    }
 
 }
 ----
@@ -1972,7 +1972,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class BasicSmsglobalSmppSample 
+public class BasicSmsglobalSmppSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -1992,8 +1992,7 @@ public class BasicSmsglobalSmppSample
         service.send(new Sms()                                                                                    // <8>
                 .content("sms content")
                 .to("+33752962193"));
-    
-
+    }
 }
 ----
 <1> The SmsGlobal server host
@@ -2055,7 +2054,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
-public class OverrideDefaultSenderSample 
+public class OverrideDefaultSenderSample {
     public static void main(String[] args) throws MessagingException {
         // configure properties (could be stored in a properties file or defined
         // in System properties)
@@ -2083,7 +2082,7 @@ public class OverrideDefaultSenderSample
                 .from("+33700000000")                                        // <3>
                 .to("+33752962193"));
         // => the sender phone number is now +33700000000
-    
+    }
 }
 ----
 <1> Set the default sender phone number globally using properties
@@ -2268,7 +2267,7 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 
-public class PropertiesSample 
+public class PropertiesSample {
     public static void main(String[] args) throws MessagingException, IOException {
         Properties props = new Properties();
         props.setProperty("ogham.email.from", "hello@world.com");
@@ -2283,7 +2282,7 @@ public class PropertiesSample
                     .systemProperties()                                        // <5>
                     .and()
                 .build();
-    
+    }
 
 }
 ----
@@ -2340,7 +2339,7 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 
-public class PropertiesSample 
+public class PropertiesSample {
     public static void main(String[] args) throws MessagingException, IOException {
         Properties props = new Properties();
         props.setProperty("ogham.email.from", "hello@world.com");
@@ -2355,7 +2354,7 @@ public class PropertiesSample
                     .systemProperties()                                        // <5>
                     .and()
                 .build();
-    
+    }
 
 }
 ----
@@ -2705,14 +2704,14 @@ import fr.sii.ogham.email.message.Email;
 
 @SpringBootApplication
 @PropertySource("application-email-template.properties")    // just needed to be able to run the sample
-public class ThymeleafHtmlAndFreemarkerTextSample 
+public class ThymeleafHtmlAndFreemarkerTextSample {
 
     public static void main(String[] args) throws MessagingException {
         SpringApplication.run(ThymeleafHtmlAndFreemarkerTextSample.class, args);
-    
+    }
     
     @RestController
-    public static class EmailController 
+    public static class EmailController {
         // Messaging service is automatically created using Spring Boot features
         // The configuration can be set into application-email-template.properties
         // The configuration files are stored into src/main/resources
@@ -2728,23 +2727,23 @@ public class ThymeleafHtmlAndFreemarkerTextSample
                                     .content(new MultiTemplateContent("mixed",                         // <3>
                                                                     new SimpleBean(name, value)))    // <4>
                                     .to(to));                                                        // <5>
-        
+        }
     }
 
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -2768,8 +2767,8 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="$name"></h1>        <!--3-->
-        <p class="text" th:text="$value"></p>            <!--4-->
+        <h1 class="title" th:text="${name}"></h1>        <!--3-->
+        <p class="text" th:text="${value}"></p>            <!--4-->
     </body>
 </html>
 ----
@@ -2785,7 +2784,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 
 [source, txt]
 ----
-$name $value
+${name} ${value}
 ----
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/resources/email/mixed.txt.ftl?ts=4[Source code of the text template]
@@ -2856,14 +2855,14 @@ import fr.sii.ogham.sms.message.Sms;
 
 @SpringBootApplication
 @PropertySource("application-sms-template.properties")    // just needed to be able to run the sample
-public class TemplateSample 
+public class TemplateSample {
 
     public static void main(String[] args) throws MessagingException {
         SpringApplication.run(TemplateSample.class, args);
-    
+    }
     
     @RestController
-    public static class SmsController 
+    public static class SmsController {
         // Messaging service is automatically created using Spring Boot features
         // The configuration can be set into application-sms-template.properties
         // The configuration files are stored into src/main/resources
@@ -2878,23 +2877,23 @@ public class TemplateSample
                                     .content(new TemplateContent("register",                     // <3>
                                                                 new SimpleBean(name, value)))    // <4>
                                     .to(to));                                                    // <5>
-        
+        }
     }
 
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -2911,7 +2910,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 
 [source]
 ----
-Hello $name, the confirmation code is $value
+Hello ${name}, the confirmation code is ${value}
 ----
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/resources/sms/register.txt.ftl?ts=4[Source code of the template]
@@ -3091,7 +3090,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class EmailTestSample 
+public class EmailTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -3108,10 +3107,10 @@ public class EmailTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
 
     @Test
-    public void simple() throws MessagingException, javax.mail.MessagingException 
+    public void simple() throws MessagingException, javax.mail.MessagingException {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Simple")
@@ -3133,7 +3132,7 @@ public class EmailTestSample
                 .alternative(nullValue())                                                // <14>
                 .attachments(emptyIterable());                                            // <15>
         // @formatter:on
-    
+    }
 }
 ----
 <1> Declare and initialize the GreenMail JUnit rule to start a local SMTP server
@@ -3204,7 +3203,7 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class EmailHtmlTestSample 
+public class EmailHtmlTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -3221,10 +3220,10 @@ public class EmailHtmlTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
 
     @Test
-    public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException 
+    public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
         // @formatter:off
         oghamService.send(new Email()
                                 .content(new TemplateContent("/template/register.html",             // <1>
@@ -3246,22 +3245,22 @@ public class EmailHtmlTestSample
                 .alternative(nullValue())
                 .attachments(emptyIterable());
         // @formatter:on
+    }
     
-    
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -3281,13 +3280,13 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
  <head>
-  <title th:text="|$name - Confirm your registration|"></title>
+  <title th:text="|${name} - Confirm your registration|"></title>
   <meta charset="utf-8" />
  </head>
  <body>
-  <h1 title="foo" class="title" th:text="|Hello $name|"></h1>
+  <h1 title="foo" class="title" th:text="|Hello ${name}|"></h1>
   
-  <p class="text" th:text="$value">
+  <p class="text" th:text="${value}">
   </p>
  </body>
 </html>
@@ -3362,7 +3361,7 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class EmailHtmlTestSample 
+public class EmailHtmlTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -3379,10 +3378,10 @@ public class EmailHtmlTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
 
     @Test
-    public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException 
+    public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
         // @formatter:off
         oghamService.send(new Email()
                                 .content(new TemplateContent("/template/register.html",             // <1>
@@ -3404,22 +3403,22 @@ public class EmailHtmlTestSample
                 .alternative(nullValue())
                 .attachments(emptyIterable());
         // @formatter:on
+    }
     
-    
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -3439,13 +3438,13 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
  <head>
-  <title th:text="|$name - Confirm your registration|"></title>
+  <title th:text="|${name} - Confirm your registration|"></title>
   <meta charset="utf-8" />
  </head>
  <body>
-  <h1 title="foo" class="title" th:text="|Hello $name|"></h1>
+  <h1 title="foo" class="title" th:text="|Hello ${name}|"></h1>
   
-  <p class="text" th:text="$value">
+  <p class="text" th:text="${value}">
   </p>
  </body>
 </html>
@@ -3543,7 +3542,7 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class EmailHtmlAndTextTestSample 
+public class EmailHtmlAndTextTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -3560,10 +3559,10 @@ public class EmailHtmlAndTextTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
 
     @Test
-    public void multiTemplateContent() throws MessagingException, javax.mail.MessagingException, IOException 
+    public void multiTemplateContent() throws MessagingException, javax.mail.MessagingException, IOException {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Multi")
@@ -3584,22 +3583,22 @@ public class EmailHtmlAndTextTestSample
                     .contentType(startsWith("text/plain")).and()                                                    // <6>
                 .attachments(emptyIterable());
         // @formatter:on
-    
+    }
 
-    public static class SimpleBean 
+    public static class SimpleBean {
         private String name;
         private int value;
         public SimpleBean(String name, int value) {
             super();
             this.name = name;
             this.value = value;
-        
-        public String getName() 
+        }
+        public String getName() {
             return name;
-        
-        public int getValue() 
+        }
+        public int getValue() {
             return value;
-        
+        }
     }
 }
 ----
@@ -3625,8 +3624,8 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
         <meta charset="utf-8" />
     </head>
     <body>
-        <h1 class="title" th:text="$name"></h1>
-        <p class="text" th:text="$value"></p>
+        <h1 class="title" th:text="${name}"></h1>
+        <p class="text" th:text="${value}"></p>
     </body>
 </html>
 ----
@@ -3640,7 +3639,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 
 [source, html]
 ----
-$name $value
+${name} ${value}
 ----
 
 
@@ -3725,7 +3724,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
-public class EmailAttachmentTestSample 
+public class EmailAttachmentTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -3742,10 +3741,10 @@ public class EmailAttachmentTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
 
     @Test
-    public void simple() throws MessagingException, javax.mail.MessagingException, IOException 
+    public void simple() throws MessagingException, javax.mail.MessagingException, IOException {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Test")
@@ -3769,7 +3768,7 @@ public class EmailAttachmentTestSample
                     .filename(is("test.pdf"))                                // <5>
                     .disposition(is(ATTACHMENT_DISPOSITION));                // <6>
         // @formatter:on
-    
+    }
 }
 ----
 <1> Assert that exactly one attachment is attached to the received email
@@ -3791,7 +3790,7 @@ _____
 
 ==== Testing several emails at once
 
-When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `forEach` method to apply defined assertions on all messages.
+When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `every` method to apply defined assertions on all messages.
 
 [role="tab-container no-max-height"]
 _____
@@ -3825,7 +3824,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class SeveralRecipientsTestSample 
+public class SeveralRecipientsTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -3842,10 +3841,10 @@ public class SeveralRecipientsTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
 
     @Test
-    public void severalRecipients() throws MessagingException, javax.mail.MessagingException 
+    public void severalRecipients() throws MessagingException, javax.mail.MessagingException {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Simple")
@@ -3873,11 +3872,11 @@ public class SeveralRecipientsTestSample
                 .alternative(nullValue())
                 .attachments(emptyIterable());
         // @formatter:on
-    
+    }
 }
 ----
 <1> Assert that 6 distinct messages are received
-<2> `forEach` applies all later defined assertions to all messages (the 6 messages)
+<2> `every` applies all later defined assertions to all messages (the 6 messages)
 <3> Assert that each received messages has exactly 3 `to` recipients
 <4> Assert that each received messages has exactly 2 `cc` recipients
 
@@ -3894,7 +3893,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/j
 _____
 
 
-Sometimes you also need to send several different emails. The emails may have some identical information (sender or subject for example). So you can mix `forEach` (define assertions all messages) with `message` (define assertion for one particular message).
+Sometimes you also need to send several different emails. The emails may have some identical information (sender or subject for example). So you can mix `every` (define assertions all messages) with `message` (define assertion for one particular message).
 
 
 [role="tab-container no-max-height"]
@@ -3928,7 +3927,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
-public class SeveralEmailsTestSample 
+public class SeveralEmailsTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -3945,10 +3944,10 @@ public class SeveralEmailsTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
 
     @Test
-    public void severalDisctinctMessages() throws MessagingException, javax.mail.MessagingException 
+    public void severalDisctinctMessages() throws MessagingException, javax.mail.MessagingException {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Simple")
@@ -3997,7 +3996,7 @@ public class SeveralEmailsTestSample
                 .to()
                     .address(hasItems("recipient3@sii.fr"));
         // @formatter:on
-    
+    }
 }
 ----
 <1> Shared assertions (subject, sender and body mimetype)
@@ -4049,7 +4048,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.junit.LoggingTestRule;
 
-public class EmailSMTPAuthenticationTest 
+public class EmailSMTPAuthenticationTest {
     private MessagingService oghamService;
 
     @Rule
@@ -4073,10 +4072,10 @@ public class EmailSMTPAuthenticationTest
                     .properties(additionalProps)
                     .and()
                 .build();
-    
+    }
     
     @Test
-    public void authenticated() throws MessagingException, javax.mail.MessagingException 
+    public void authenticated() throws MessagingException, javax.mail.MessagingException {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Simple")
@@ -4098,7 +4097,7 @@ public class EmailSMTPAuthenticationTest
                 .alternative(nullValue())
                 .attachments(emptyIterable());
         // @formatter:on
-    
+    }
 }
 ----
 <1> Configure GreenMail to register a user
@@ -4153,7 +4152,7 @@ import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
 import fr.sii.ogham.sms.message.Sms;
 
-public class SmsTestSample 
+public class SmsTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -4170,10 +4169,10 @@ public class SmsTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
     
     @Test
-    public void simple() throws MessagingException 
+    public void simple() throws MessagingException {
         // @formatter:off
         oghamService.send(new Sms()
                             .content("sms content")
@@ -4188,7 +4187,7 @@ public class SmsTestSample
                 .to()
                     .number(is("0601020304"));                                                    // <9>
         // @formatter:on
-    
+    }
 }
 ----
 <1> Declare and initialize the JUnit rule that encapsulates jSMPP for starting a local SMPP server in tests (you can set a different port than the default one)
@@ -4209,9 +4208,9 @@ _____
 
 ==== Testing long messages and several recipients
 
-When a long message is sent, it must be split. Each part of the message is received by the SMPP server as distinct messages. The first message doesn't have any additional information indicating that it is split. Successive messages have an additional header (contained in the body). Ogham hides this protocol specific complexity. So you can test your SMS without needing to know about the header. Ogham provides `message` method to access a particular message for doing assertions on it. Ogham also provides `forEach` to apply same assertions on all received messages.
+When a long message is sent, it must be split. Each part of the message is received by the SMPP server as distinct messages. The first message doesn't have any additional information indicating that it is split. Successive messages have an additional header (contained in the body). Ogham hides this protocol specific complexity. So you can test your SMS without needing to know about the header. Ogham provides `message` method to access a particular message for doing assertions on it. Ogham also provides `every` to apply same assertions on all received messages.
 
-Sending a SMS to several recipients is the same as sending several distinct SMS. So the SMPP server receives the same number as SMS as the number of recipients. In that case, you can use `forEach` to make same assertions on all messages. 
+Sending a SMS to several recipients is the same as sending several distinct SMS. So the SMPP server receives the same number as SMS as the number of recipients. In that case, you can use `every` to make same assertions on all messages. 
 
 [role="tab-container no-max-height"]
 _____
@@ -4240,7 +4239,7 @@ import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
 import fr.sii.ogham.helper.sms.rule.SmppServerRule;
 import fr.sii.ogham.sms.message.Sms;
 
-public class LongSmsTestSample 
+public class LongSmsTestSample {
     private MessagingService oghamService;
     
     @Rule
@@ -4257,10 +4256,10 @@ public class LongSmsTestSample
                         .and()
                     .and()
                 .build();
-    
+    }
     
     @Test
-    public void longMessageUsingGsm8bit() throws MessagingException, IOException 
+    public void longMessageUsingGsm8bit() throws MessagingException, IOException {
         // @formatter:off
         oghamService.send(new Sms()
                             .content("sms content with a very very very loooooooooo"
@@ -4283,7 +4282,7 @@ public class LongSmsTestSample
                 .to()
                     .number(is("0601020304"));                                                // <8>
         // @formatter:on
-    
+    }
 }
 ----
 <1> Message is split so the SMPP server receives two messages
@@ -4291,7 +4290,7 @@ public class LongSmsTestSample
 <3> Assert that the first message is correctly split (contains the beginning of the message)
 <4> Access second message to declare assertions on it
 <5> Assert that the second message contains the end of the whole message
-<6> `forEach` applies all later defined assertions to all messages (the 2 messages here)
+<6> `every` applies all later defined assertions to all messages (the 2 messages here)
 <7> Assert that the sender phone number is `+33603040506` for every message
 <8> Assert that the recipient phone number is `0601020304` for every message
 

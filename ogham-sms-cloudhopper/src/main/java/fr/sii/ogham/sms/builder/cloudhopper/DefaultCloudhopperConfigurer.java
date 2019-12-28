@@ -1,7 +1,9 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
+import static fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion.VERSION_3_4;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,8 +82,7 @@ import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
  * characters (Unicode characters) that can't be encoded on one octet. Each
  * character is encoded on two octets.<br>
  * It uses one of "ogham.sms.cloudhopper.encoder.ucs-2.priority" or
- * "ogham.sms.encoder.ucs-2.priority" to set priority of GSM 8-bit
- * encoding.<br>
+ * "ogham.sms.encoder.ucs-2.priority" to set priority of GSM 8-bit encoding.<br>
  * Default priority is set to 98000.</li>
  * </ul>
  * </li>
@@ -133,6 +134,21 @@ import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
 @ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY)
 public class DefaultCloudhopperConfigurer implements MessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultCloudhopperConfigurer.class);
+	private static final int DEFAULT_SMPP_PORT = 2775;
+	private static final int DEFAULT_GSM8_ENCODING_PRIORITY = 99000;
+	private static final int DEFAULT_LATIN1_ENCODING_PRIORITY = 98000;
+	private static final int DEFAULT_UCS2_ENCODING_PRIORITY = 90000;
+	private static final long DEFAULT_BIND_TIMEOUT = 5000L;
+	private static final long DEFAULT_CONNECT_TIMEOUT = 10000L;
+	private static final long DEFAULT_REQUEST_EXPIRY_TIMEOUT = -1L;
+	private static final long DEFAULT_WINDOW_MONITOR_INTERVAL = -1L;
+	private static final int DEFAULT_WINDOW_SIZE = 1;
+	private static final long DEFAULT_WINDOW_WAIT_TIMEOUT = 60000L;
+	private static final long DEFAULT_WRITE_TIMEOUT = 0L;
+	private static final long DEFAULT_RESPONSE_TIMEOUT = 5000L;
+	private static final long DEFAULT_UNBIND_TIMEOUT = 5000L;
+	private static final int DEFAULT_CONNECT_MAX_RETRIES = 5;
+	private static final long DEFAULT_CONNECT_RETRY_DELAY = 500L;
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
@@ -147,50 +163,50 @@ public class DefaultCloudhopperConfigurer implements MessagingConfigurer {
 		// @formatter:off
 		builder
 			.userData()
-				.useShortMessage("${ogham.sms.cloudhopper.user-data.use-short-message}", "${ogham.sms.user-data.use-short-message}", "true")
-				.useTlvMessagePayload("${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}", "${ogham.sms.user-data.use-tlv-message-payload}", "false")
+				.useShortMessage().properties("${ogham.sms.cloudhopper.user-data.use-short-message}", "${ogham.sms.user-data.use-short-message}").defaultValue(overrideIfNotSet(true)).and()
+				.useTlvMessagePayload().properties("${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}", "${ogham.sms.user-data.use-tlv-message-payload}").defaultValue(overrideIfNotSet(false)).and()
 				.and()
 			.encoder()
 				// packed algorithm disabled by default because it is not supported by most of providers
-				.gsm7bitPacked("${ogham.sms.cloudhopper.encoder.gsm-7bit-packed.priority}", "${ogham.sms.encoder.gsm-7bit-packed.priority}")
-				.gsm8bit("${ogham.sms.cloudhopper.encoder.gsm-8bit.priority}", "${ogham.sms.encoder.gsm-8bit.priority}", "99000")
-				.latin1("${ogham.sms.cloudhopper.encoder.latin1.priority}", "${ogham.sms.encoder.latin1.priority}", "98000")
-				.ucs2("${ogham.sms.cloudhopper.encoder.ucs-2.priority}", "${ogham.sms.encoder.ucs-2.priority}", "90000")
-				.autoGuess("${ogham.sms.cloudhopper.encoder.auto-guess}", "${ogham.sms.encoder.auto-guess}", "true")
-				.fallback("${ogham.sms.cloudhopper.encoder.default-charset}", NAME_GSM)
+				.gsm7bitPacked().properties("${ogham.sms.cloudhopper.encoder.gsm-7bit-packed.priority}", "${ogham.sms.encoder.gsm-7bit-packed.priority}").and()
+				.gsm8bit().properties("${ogham.sms.cloudhopper.encoder.gsm-8bit.priority}", "${ogham.sms.encoder.gsm-8bit.priority}").defaultValue(overrideIfNotSet(DEFAULT_GSM8_ENCODING_PRIORITY)).and()
+				.latin1().properties("${ogham.sms.cloudhopper.encoder.latin1.priority}", "${ogham.sms.encoder.latin1.priority}").defaultValue(overrideIfNotSet(DEFAULT_LATIN1_ENCODING_PRIORITY)).and()
+				.ucs2().properties("${ogham.sms.cloudhopper.encoder.ucs-2.priority}", "${ogham.sms.encoder.ucs-2.priority}").defaultValue(overrideIfNotSet(DEFAULT_UCS2_ENCODING_PRIORITY)).and()
+				.autoGuess().properties("${ogham.sms.cloudhopper.encoder.auto-guess}", "${ogham.sms.encoder.auto-guess}").defaultValue(overrideIfNotSet(true)).and()
+				.fallback().properties("${ogham.sms.cloudhopper.encoder.default-charset}").defaultValue(overrideIfNotSet(NAME_GSM)).and()
 				.and()
 			.splitter()
-				.enable("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.split.enable}", "true")
+				.enable().properties("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.split.enable}").defaultValue(overrideIfNotSet(true)).and()
 				.referenceNumber()
 					.random()
 					.and()
 				.and()
 			.dataCodingScheme()
-				.auto("${ogham.sms.cloudhopper.data-coding-scheme.auto.enable}", "${ogham.sms.data-coding-scheme.auto.enable}", "true")
-				.value("${ogham.sms.cloudhopper.data-coding-scheme.value}", "${ogham.sms.data-coding-scheme.value}")
+				.auto().properties("${ogham.sms.cloudhopper.data-coding-scheme.auto.enable}", "${ogham.sms.data-coding-scheme.auto.enable}").defaultValue(overrideIfNotSet(true)).and()
+				.value().properties("${ogham.sms.cloudhopper.data-coding-scheme.value}", "${ogham.sms.data-coding-scheme.value}").and()
 				.and()
-			.systemId("${ogham.sms.cloudhopper.system-id}", "${ogham.sms.smpp.system-id}")
-			.password("${ogham.sms.cloudhopper.password}", "${ogham.sms.smpp.password}")
-			.host("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}")
-			.port("${ogham.sms.cloudhopper.port}", "${ogham.sms.smpp.port}", "2775")
-			.bindType("${ogham.sms.cloudhopper.bind-type}", "${ogham.sms.smpp.bind-type}")
-			.systemType("${ogham.sms.cloudhopper.system-type}", "${ogham.sms.smpp.system-type}")
-			.interfaceVersion("${ogham.sms.cloudhopper.interface-version}", "3.4")
+			.systemId().properties("${ogham.sms.cloudhopper.system-id}", "${ogham.sms.smpp.system-id}").and()
+			.password().properties("${ogham.sms.cloudhopper.password}", "${ogham.sms.smpp.password}").and()
+			.host().properties("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}").and()
+			.port().properties("${ogham.sms.cloudhopper.port}", "${ogham.sms.smpp.port}").defaultValue(overrideIfNotSet(DEFAULT_SMPP_PORT)).and()
+			.bindType().properties("${ogham.sms.cloudhopper.bind-type}", "${ogham.sms.smpp.bind-type}").and()
+			.systemType().properties("${ogham.sms.cloudhopper.system-type}", "${ogham.sms.smpp.system-type}").and()
+			.interfaceVersion().properties("${ogham.sms.cloudhopper.interface-version}").defaultValue(overrideIfNotSet(VERSION_3_4)).and()
 			.session()
-				.sessionName("${ogham.sms.cloudhopper.session-name}")
-				.bindTimeout("${ogham.sms.cloudhopper.bind-timeout}", "5000")
-				.connectTimeout("${ogham.sms.cloudhopper.connect-timeout}", "10000")
-				.requestExpiryTimeout("${ogham.sms.cloudhopper.request-expiry-timeout}", "-1")
-				.windowMonitorInterval("${ogham.sms.cloudhopper.window-monitor-interval}", "-1")
-				.windowSize("${ogham.sms.cloudhopper.window-size}", "1")
-				.windowWait("${ogham.sms.cloudhopper.window-wait-timeout}", "60000")
-				.writeTimeout("${ogham.sms.cloudhopper.write-timeout}", "0")
-				.responseTimeout("${ogham.sms.cloudhopper.response-timeout}", "5000")
-				.unbindTimeout("${ogham.sms.cloudhopper.unbind-timeout}", "5000")
+				.sessionName().properties("${ogham.sms.cloudhopper.session-name}").and()
+				.bindTimeout().properties("${ogham.sms.cloudhopper.bind-timeout}").defaultValue(overrideIfNotSet(DEFAULT_BIND_TIMEOUT)).and()
+				.connectTimeout().properties("${ogham.sms.cloudhopper.connect-timeout}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_TIMEOUT)).and()
+				.requestExpiryTimeout().properties("${ogham.sms.cloudhopper.request-expiry-timeout}").defaultValue(overrideIfNotSet(DEFAULT_REQUEST_EXPIRY_TIMEOUT)).and()
+				.windowMonitorInterval().properties("${ogham.sms.cloudhopper.window-monitor-interval}").defaultValue(overrideIfNotSet(DEFAULT_WINDOW_MONITOR_INTERVAL)).and()
+				.windowSize().properties("${ogham.sms.cloudhopper.window-size}").defaultValue(overrideIfNotSet(DEFAULT_WINDOW_SIZE)).and()
+				.windowWait().properties("${ogham.sms.cloudhopper.window-wait-timeout}").defaultValue(overrideIfNotSet(DEFAULT_WINDOW_WAIT_TIMEOUT)).and()
+				.writeTimeout().properties("${ogham.sms.cloudhopper.write-timeout}").defaultValue(overrideIfNotSet(DEFAULT_WRITE_TIMEOUT)).and()
+				.responseTimeout().properties("${ogham.sms.cloudhopper.response-timeout}").defaultValue(overrideIfNotSet(DEFAULT_RESPONSE_TIMEOUT)).and()
+				.unbindTimeout().properties("${ogham.sms.cloudhopper.unbind-timeout}").defaultValue(overrideIfNotSet(DEFAULT_UNBIND_TIMEOUT)).and()
 				.connectRetry()
 					.fixedDelay()
-						.maxRetries("${ogham.sms.cloudhopper.connect-max-retry}", "5")
-						.delay("${ogham.sms.cloudhopper.connect-retry-delay}", "500");
+						.maxRetries().properties("${ogham.sms.cloudhopper.connect-max-retry}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()
+						.delay().properties("${ogham.sms.cloudhopper.connect-retry-delay}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_RETRY_DELAY));
 		// @formatter:on
 	}
 

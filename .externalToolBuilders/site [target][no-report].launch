@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType">
-<booleanAttribute key="org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND" value="true"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;resources&gt;&#10;&lt;item path=&quot;/ogham/pom.xml&quot; type=&quot;1&quot;/&gt;&#10;&lt;item path=&quot;/ogham/src/site/asciidoc&quot; type=&quot;2&quot;/&gt;&#10;&lt;item path=&quot;/ogham/src/site/resources&quot; type=&quot;2&quot;/&gt;&#10;&lt;item path=&quot;/ogham/src/site/site.xml&quot; type=&quot;1&quot;/&gt;&#10;&lt;/resources&gt;}"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/ogham/mvnw}"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="auto,"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="post-site -N&#10;-DgenerateProjectInfo=false&#10;-DgenerateReports=false&#10;-DgenerateSitemap=false&#10;-Dmaven.javadoc.skip=true&#10;-Dmpir.skip=true&#10;-Dasciidoctor.skip=true&#10;-Dsass.skip=true"/>
-<booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/ogham}"/>
+    <booleanAttribute key="org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND" value="true"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;resources&gt;&#10;&lt;item path=&quot;/ogham/pom.xml&quot; type=&quot;1&quot;/&gt;&#10;&lt;item path=&quot;/ogham/src/site/asciidoc&quot; type=&quot;2&quot;/&gt;&#10;&lt;item path=&quot;/ogham/src/site/resources&quot; type=&quot;2&quot;/&gt;&#10;&lt;item path=&quot;/ogham/src/site/site.xml&quot; type=&quot;1&quot;/&gt;&#10;&lt;item path=&quot;/sample-spring-usage/src&quot; type=&quot;2&quot;/&gt;&#10;&lt;item path=&quot;/sample-standard-usage/src&quot; type=&quot;2&quot;/&gt;&#10;&lt;/resources&gt;}"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/ogham/mvnw}"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="auto,"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="post-site -N&#10;-DgenerateProjectInfo=false&#10;-DgenerateReports=false&#10;-DgenerateSitemap=false&#10;-Dmaven.javadoc.skip=true&#10;-Dmpir.skip=true&#10;-Dasciidoctor.skip=true&#10;-Dsass.skip=true"/>
+    <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/ogham}"/>
 </launchConfiguration>

@@ -164,14 +164,14 @@ import fr.sii.ogham.sms.sender.SmsSender;
  *     .and()
  *   .sms()
  *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
- *       .host("${smpp.host}")
- *       .port("${smpp.port}")
- *       .systemId("${smpp.system-id}")
- *       .password("${smpp.password}")
+ *       .host().properties("${smpp.host}").and()
+ *       .port().properties("${smpp.port}").and()
+ *       .systemId().properties("${smpp.system-id}").and()
+ *       .password().properties("${smpp.password}").and()
  *       .and()
  *     .autofill()    // enables and configures autofilling
  *       .from()
- *         .defaultValueProperty("${sms.sender.number}")
+ *         .defaultValue().properties("${sms.sender.number}").and()
  *         .and()
  *       .and()
  *     .and()
@@ -247,7 +247,7 @@ import fr.sii.ogham.sms.sender.SmsSender;
  *   .sms()
  *     .autofill()
  *       .from()
- *         .defaultValueProperty("${sms.sender.number}")   // overrides default sender phone number property
+ *         .defaultValue().properties("${sms.sender.number}").and()   // overrides default sender phone number property
  *         .and()
  *       .and()
  *     .and()
@@ -313,10 +313,10 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	 *	builder
 	 *	  .autofill()
 	 *	    .from()
-	 *	      .defaultValueProperty("${ogham.sms.from}")
+	 *	      .defaultValue().properties("${ogham.sms.from}").and()
 	 *	        .and()
 	 *	    .to()
-	 *	      .defaultValueProperty("${ogham.sms.to}")
+	 *	      .defaultValue().properties("${ogham.sms.to}").and()
 	 *	        .and()
 	 *	    .and()
 	 * </code>
@@ -349,14 +349,14 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	 *	  .numbers()
 	 *	    .from()
 	 *	      .format()
-	 *	        .alphanumericCode("${ogham.sms.from-format-enable-alphanumeric}", "true")
-	 *	        .shortCode("${ogham.sms.from-format-enable-shortcode}", "true")
-	 *	        .internationalNumber("${ogham.sms.from-format-enable-international}", "true")
+	 *	        .alphanumericCode().properties("${ogham.sms.from-format-enable-alphanumeric}").defaultValue(true).and()
+	 *	        .shortCode().properties("${ogham.sms.from-format-enable-shortcode}").defaultValue(true).and()
+	 *	        .internationalNumber().properties("${ogham.sms.from-format-enable-international}").defaultValue(true).and()
 	 *	        .and()
 	 *	      .and()
 	 *	    .to()
 	 *	      .format()
-	 *	        .internationalNumber("${ogham.sms.to-format-enable-international}", "true");
+	 *	        .internationalNumber().properties("${ogham.sms.to-format-enable-international}").defaultValue(true);
 	 * </code>
 	 * </pre>
 	 * 

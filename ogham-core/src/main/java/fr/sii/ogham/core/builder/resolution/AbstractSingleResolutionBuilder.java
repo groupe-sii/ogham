@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
 import fr.sii.ogham.core.resource.resolver.RelativisableResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
 
 /**
  * Base implementation to handle lookup prefix configuration. Path prefix/suffix
@@ -35,11 +35,11 @@ import fr.sii.ogham.core.util.BuilderUtils;
 public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSingleResolutionBuilder<MYSELF, P>, P> extends AbstractParent<P> implements Builder<ResourceResolver> {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractSingleResolutionBuilder.class);
 
-	protected List<String> lookups;
-	protected List<String> pathPrefixes;
-	protected List<String> pathSuffixes;
-	protected EnvironmentBuilder<?> environmentBuilder;
-	protected MYSELF myself;
+	protected final List<String> lookups;
+	protected final ConfigurationValueBuilderHelper<MYSELF, String> pathPrefixValueBuilder;
+	protected final ConfigurationValueBuilderHelper<MYSELF, String> pathSuffixValueBuilder;
+	protected final EnvironmentBuilder<?> environmentBuilder;
+	protected final MYSELF myself;
 
 	@SuppressWarnings("unchecked")
 	protected AbstractSingleResolutionBuilder(Class<?> selfType, P parent, EnvironmentBuilder<?> environmentBuilder) {
@@ -47,8 +47,8 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 		myself = (MYSELF) selfType.cast(this);
 		this.environmentBuilder = environmentBuilder;
 		lookups = new ArrayList<>();
-		pathPrefixes = new ArrayList<>();
-		pathSuffixes = new ArrayList<>();
+		pathPrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
+		pathSuffixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
 	}
 
 	/**
@@ -150,8 +150,8 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 			return resolver;
 		}
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		String resolvedPathPrefix = getValue(propertyResolver, pathPrefixes);
-		String resolvedPathSuffix = getValue(propertyResolver, pathSuffixes);
+		String resolvedPathPrefix = pathPrefixValueBuilder.getValue(propertyResolver, "");
+		String resolvedPathSuffix = pathSuffixValueBuilder.getValue(propertyResolver, "");
 		if (!resolvedPathPrefix.isEmpty() || !resolvedPathSuffix.isEmpty()) {
 			LOG.debug("Using parentPath {} and extension {} for resource resolution", resolvedPathPrefix, resolvedPathSuffix);
 			resolver = new RelativeResolver((RelativisableResourceResolver) resolver, resolvedPathPrefix, resolvedPathSuffix);
@@ -168,13 +168,5 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 	 */
 	public List<String> getLookups() {
 		return lookups;
-	}
-
-	protected String getValue(PropertyResolver propertyResolver, List<String> props) {
-		if (props == null) {
-			return "";
-		}
-		String value = BuilderUtils.evaluate(props, propertyResolver, String.class);
-		return value == null ? "" : value;
 	}
 }

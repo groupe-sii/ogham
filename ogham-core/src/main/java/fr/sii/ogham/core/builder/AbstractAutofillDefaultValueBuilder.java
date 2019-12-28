@@ -1,9 +1,8 @@
 package fr.sii.ogham.core.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 
 /**
  * Base class to configure a property key that will be used to automatically
@@ -19,8 +18,8 @@ import fr.sii.ogham.core.util.BuilderUtils;
  *            method)
  */
 public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends AbstractParent<P> {
-	protected MYSELF myself;
-	protected List<String> defaultValueProperties;
+	protected final MYSELF myself;
+	protected final ConfigurationValueBuilderHelper<MYSELF, String> defaultValueBuilder;
 
 	/**
 	 * Initializes the builder with the explicit type of this instance for
@@ -43,32 +42,84 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends Abs
 	public AbstractAutofillDefaultValueBuilder(Class<?> selfType, P parent) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
-		defaultValueProperties = new ArrayList<>();
+		defaultValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
 	}
-
+	
+	
 	/**
-	 * Registers a property key. The key may be either of the form
-	 * <code>"${custom.foo.bar}"</code> or <code>"custom.foo.bar"</code>.
+	 * Register a default value to use if no value is specified on the message.
 	 * 
-	 * @param properties
-	 *            the property keys to register
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #defaultValue()}.
+	 * 
+	 * <pre>
+	 * .defaultValue("my-value")
+	 * .defaultValue()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .defaultValue("my-value")
+	 * .defaultValue()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default")
+	 * </pre>
+	 * 
+	 * In both cases, {@code defaultValue("my-value")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param value
+	 *            the default value if no value is defined
 	 * @return this instance for fluent chaining
 	 */
-	public MYSELF defaultValueProperty(String... properties) {
-		for (String prop : properties) {
-			String propertyKey = BuilderUtils.isExpression(prop) ? BuilderUtils.getPropertyKey(prop) : prop;
-			this.defaultValueProperties.add(propertyKey);
-		}
+	public MYSELF defaultValue(String value) {
+		defaultValueBuilder.setValue(value);
 		return myself;
 	}
 
 	/**
-	 * Get registered properties (key will always be of the form
-	 * <code>"custom.foo.bar"</code>
+	 * Register a default value to use if no value is specified on the message.
 	 * 
-	 * @return the list of previsouly registered property keys
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .defaultValue()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default")
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #defaultValue(String)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .defaultValue("my-value")
+	 * .defaultValue()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default")
+	 * </pre>
+	 * 
+	 * The value {@code "my-value"} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public List<String> getDefaultValueProperties() {
-		return defaultValueProperties;
+	public ConfigurationValueBuilder<MYSELF, String> defaultValue() {
+		return defaultValueBuilder;
 	}
 }

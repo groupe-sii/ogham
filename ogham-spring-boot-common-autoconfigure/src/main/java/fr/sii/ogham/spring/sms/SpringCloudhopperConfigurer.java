@@ -1,11 +1,14 @@
 package fr.sii.ogham.spring.sms;
 
+import static java.util.Optional.ofNullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.sms.CloudhopperConstants;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
+import fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion;
 import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 /**
@@ -45,10 +48,10 @@ public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
 		// @formatter:off
 		builder.sms()
 			.sender(CloudhopperBuilder.class)
-				.systemId(smppProperties.getSystemId())
-				.password(smppProperties.getPassword())
-				.host(smppProperties.getHost())
-				.port(smppProperties.getPort());
+				.systemId().value(ofNullable(smppProperties.getSystemId())).and()
+				.password().value(ofNullable(smppProperties.getPassword())).and()
+				.host().value(ofNullable(smppProperties.getHost())).and()
+				.port().value(ofNullable(smppProperties.getPort()));
 		// @formatter:on
 	}
 
@@ -57,32 +60,26 @@ public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
 		// @formatter:off
 		builder.sms()
 			.sender(CloudhopperBuilder.class)
-				.charset()
-					.convert(cloudhopperProperties.getDefaultAppCharset(), cloudhopperProperties.getSmppCharset())
-					.detector()
-						.defaultCharset(cloudhopperProperties.getDefaultAppCharset())
-						.and()
-					.and()
-				.systemId(cloudhopperProperties.getSystemId())
-				.password(cloudhopperProperties.getPassword())
-				.host(cloudhopperProperties.getHost())
-				.port(cloudhopperProperties.getPort())
-				.interfaceVersion(cloudhopperProperties.getInterfaceVersion())
+				.systemId().value(ofNullable(cloudhopperProperties.getSystemId())).and()
+				.password().value(ofNullable(cloudhopperProperties.getPassword())).and()
+				.host().value(ofNullable(cloudhopperProperties.getHost())).and()
+				.port().value(ofNullable(cloudhopperProperties.getPort())).and()
+				.interfaceVersion().value(ofNullable(InterfaceVersion.of(cloudhopperProperties.getInterfaceVersion()))).and()
 				.session()
-					.sessionName(cloudhopperProperties.getSession().getSessionName())
-					.bindTimeout(cloudhopperProperties.getSession().getBindTimeout())
-					.connectTimeout(cloudhopperProperties.getSession().getConnectTimeout())
-					.requestExpiryTimeout(cloudhopperProperties.getSession().getRequestExpiryTimeout())
-					.windowMonitorInterval(cloudhopperProperties.getSession().getWindowMonitorInterval())
-					.windowSize(cloudhopperProperties.getSession().getWindowSize())
-					.windowWait(cloudhopperProperties.getSession().getWindowWaitTimeout())
-					.writeTimeout(cloudhopperProperties.getSession().getWriteTimeout())
-					.responseTimeout(cloudhopperProperties.getSession().getResponseTimeout())
-					.unbindTimeout(cloudhopperProperties.getSession().getUnbindTimeout())
+					.sessionName().value(ofNullable(cloudhopperProperties.getSession().getSessionName())).and()
+					.bindTimeout().value(ofNullable(cloudhopperProperties.getSession().getBindTimeout())).and()
+					.connectTimeout().value(ofNullable(cloudhopperProperties.getSession().getConnectTimeout())).and()
+					.requestExpiryTimeout().value(ofNullable(cloudhopperProperties.getSession().getRequestExpiryTimeout())).and()
+					.windowMonitorInterval().value(ofNullable(cloudhopperProperties.getSession().getWindowMonitorInterval())).and()
+					.windowSize().value(ofNullable(cloudhopperProperties.getSession().getWindowSize())).and()
+					.windowWait().value(ofNullable(cloudhopperProperties.getSession().getWindowWaitTimeout())).and()
+					.writeTimeout().value(ofNullable(cloudhopperProperties.getSession().getWriteTimeout())).and()
+					.responseTimeout().value(ofNullable(cloudhopperProperties.getSession().getResponseTimeout())).and()
+					.unbindTimeout().value(ofNullable(cloudhopperProperties.getSession().getUnbindTimeout())).and()
 					.connectRetry()
 						.fixedDelay()
-							.maxRetries(cloudhopperProperties.getSession().getConnectRetry().getConnectMaxRetry())
-							.delay(cloudhopperProperties.getSession().getConnectRetry().getConnectRetryDelay());
+							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getConnectMaxRetry())).and()
+							.delay().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getConnectRetryDelay()));
 		// @formatter:on
 	}
 

@@ -1,6 +1,8 @@
 package fr.sii.ogham.email.builder.javamail;
 
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
 import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +75,7 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
 @ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY)
 public class DefaultJavaMailConfigurer implements MessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultJavaMailConfigurer.class);
+	private static final int DEFAULT_SMTP_PORT = 25;
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
@@ -86,16 +89,16 @@ public class DefaultJavaMailConfigurer implements MessagingConfigurer {
 		builder.environment(msgBuilder.environment());
 		// @formatter:off
 		builder
-			.host("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}")
-			.port("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}", "25")
+			.host().properties("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}").and()
+			.port().properties("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}").defaultValue(overrideIfNotSet(DEFAULT_SMTP_PORT)).and()
 			.authenticator()
-				.username("${ogham.email.javamail.authenticator.username}")
-				.password("${ogham.email.javamail.authenticator.password}")
+				.username().properties("${ogham.email.javamail.authenticator.username}").and()
+				.password().properties("${ogham.email.javamail.authenticator.password}").and()
 				.and()
-			.charset("${ogham.email.javamail.body.charset}", "UTF-8")
+			.charset().properties("${ogham.email.javamail.body.charset}").defaultValue(overrideIfNotSet(UTF_8)).and()
 			.mimetype()
 				.tika()
-					.failIfOctetStream(false)
+					.failIfOctetStream().defaultValue(overrideIfNotSet(false)).and()
 					.and()
 				.replace()
 					// the distinction between xhtml and html can be useful in some cases
@@ -105,7 +108,7 @@ public class DefaultJavaMailConfigurer implements MessagingConfigurer {
 		// @formatter:on
 	}
 
-	private boolean canUseJavaMail() {
+	private static boolean canUseJavaMail() {
 		return ClasspathUtils.exists("javax.mail.Transport") && ClasspathUtils.exists("javax.mail.internet.MimeMessage");
 	}
 }

@@ -1,5 +1,10 @@
 package fr.sii.ogham.spring.sms;
 
+import static java.util.Optional.ofNullable;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,15 +44,24 @@ public class SpringOvhSmsConfigurer implements SpringMessagingConfigurer {
 		LOG.debug("[{}] apply ogham configuration properties to {}", this, builder);
 		// @formatter:off
 		builder.sms().sender(OvhSmsBuilder.class)
-			.url(properties.getUrl())
-			.account(properties.getAccount())
-			.login(properties.getLogin())
-			.password(properties.getPassword())
+			.url().value(ofNullable(getUrl())).and()
+			.account().value(ofNullable(properties.getAccount())).and()
+			.login().value(ofNullable(properties.getLogin())).and()
+			.password().value(ofNullable(properties.getPassword())).and()
 			.options()
-				.noStop(properties.getOptions().isNoStop())
-				.smsCoding(properties.getOptions().getSmsCoding())
-				.tag(properties.getOptions().getTag());
+				.noStop().value(ofNullable(properties.getOptions().isNoStop())).and()
+				.smsCoding().value(ofNullable(properties.getOptions().getSmsCoding())).and()
+				.tag().value(ofNullable(properties.getOptions().getTag()));
 		// @formatter:on
+	}
+
+	private URL getUrl() {
+		String url = properties.getUrl();
+		try {
+			return url == null ? null : new URL(url);
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Invalid URL "+url, e);
+		}
 	}
 
 	@Override

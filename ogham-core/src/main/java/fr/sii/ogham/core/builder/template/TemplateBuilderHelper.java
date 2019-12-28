@@ -9,7 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
@@ -47,7 +51,7 @@ public class TemplateBuilderHelper<P> {
 	private final P parent;
 	private final List<Builder<? extends TemplateParser>> templateBuilders;
 	private final EnvironmentBuilder<?> environmentBuilder;
-	private boolean missingVariantFail;
+	private final ConfigurationValueBuilderHelper<TemplateBuilderHelper<P>, Boolean> missingVariantFailValueBuilder;
 	private VariantResolver missingResolver;
 
 	/**
@@ -67,6 +71,7 @@ public class TemplateBuilderHelper<P> {
 		this.parent = parent;
 		this.environmentBuilder = environmentBuilder;
 		templateBuilders = new ArrayList<>();
+		missingVariantFailValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
 	}
 
 	/**
@@ -79,6 +84,7 @@ public class TemplateBuilderHelper<P> {
 		return !templateBuilders.isEmpty();
 	}
 
+	
 	/**
 	 * If a variant is missing, then force to fail.
 	 * 
@@ -89,11 +95,85 @@ public class TemplateBuilderHelper<P> {
 	 * forgetting to write text template, set this to true.
 	 * </p>
 	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #failIfMissingVariant()}.
+	 * 
+	 * <pre>
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * In both cases, {@code failIfMissingVariant(false)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
 	 * @param fail
-	 *            if true, it fails if a variant is missing
+	 *            fail if a variant is missing
+	 * @return this instance for fluent chaining
 	 */
-	public void missingVariant(boolean fail) {
-		this.missingVariantFail = fail;
+	public TemplateBuilderHelper<P> failIfMissingVariant(Boolean fail) {
+		missingVariantFailValueBuilder.setValue(fail);
+		return this;
+	}
+
+	/**
+	 * If a variant is missing, then force to fail.
+	 * 
+	 * <p>
+	 * This may be useful if you want for example to always provide a text
+	 * fallback when using an html template. So if a client can't read the html
+	 * version, the fallback version will still always be readable. So to avoid
+	 * forgetting to write text template, set this to true.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .failIfMissingVariant()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #failIfMissingVariant(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<TemplateBuilderHelper<P>, Boolean> failIfMissingVariant() {
+		return missingVariantFailValueBuilder;
 	}
 
 	/**
@@ -206,7 +286,7 @@ public class TemplateBuilderHelper<P> {
 	 * Instantiates and configures the variant resolution. Variant resolution is
 	 * a chain of resolvers. The first resolver that is able to resolve a
 	 * variant is used. If no resolver is able to resolve a variant, it uses the
-	 * default variant resolver (see {@link #missingVariant(boolean)} and
+	 * default variant resolver (see {@link #failIfMissingVariant(Boolean)} and
 	 * {@link #missingVariant(VariantResolver)}).
 	 * 
 	 * @return the variant resolver
@@ -225,7 +305,8 @@ public class TemplateBuilderHelper<P> {
 		if (missingResolver != null) {
 			return missingResolver;
 		}
-		if (missingVariantFail) {
+		PropertyResolver propertyResolver = environmentBuilder.build();
+		if (missingVariantFailValueBuilder.getValue(propertyResolver, false)) {
 			return new FailIfNotFoundVariantResolver();
 		}
 		FailIfNotFoundWithTestedPathsVariantResolver fail = new FailIfNotFoundWithTestedPathsVariantResolver();

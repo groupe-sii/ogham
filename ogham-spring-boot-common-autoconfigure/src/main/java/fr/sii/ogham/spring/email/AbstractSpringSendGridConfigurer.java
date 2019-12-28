@@ -1,5 +1,7 @@
 package fr.sii.ogham.spring.email;
 
+import static java.util.Optional.ofNullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.sendgrid.SendGridProperties;
@@ -16,7 +18,7 @@ import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
  * Integrates with Spring SendGrid by using Spring properties defined with
  * prefix {@code spring.sendgrid} (see {@link SendGridProperties}).
  * 
- * If both Spring property and Ogham property is defined, Spring property is
+ * If both Spring property and Ogham property is defined, Ogham property is
  * used.
  * 
  * For example, if the file application.properties contains the following
@@ -60,11 +62,11 @@ public abstract class AbstractSpringSendGridConfigurer implements SpringMessagin
 		AbstractSendGridBuilder<?, ?> sendgridBuilder = builder.email().sender(getSendGridBuilderClass());
 		sendgridBuilder.environment(builder.environment());
 		// Ogham specific properties take precedence over Spring properties if specified
-		if (properties != null) {
-			applyOghamConfiguration(builder);
-		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
+		}
+		if (properties != null) {
+			applyOghamConfiguration(builder);
 		}
 	}
 
@@ -76,9 +78,9 @@ public abstract class AbstractSpringSendGridConfigurer implements SpringMessagin
 		// @formatter:off
 		builder.email()
 			.sender(getSendGridBuilderClass())
-				.apiKey(properties.getApiKey())
-				.username(properties.getUsername())
-				.password(properties.getPassword());
+				.apiKey().value(ofNullable(properties.getApiKey())).and()
+				.username().value(ofNullable(properties.getUsername())).and()
+				.password().value(ofNullable(properties.getPassword()));
 		// @formatter:on
 	}
 
@@ -102,7 +104,7 @@ public abstract class AbstractSpringSendGridConfigurer implements SpringMessagin
 		// @formatter:off
 		builder.email()
 			.sender(getSendGridBuilderClass())
-				.apiKey(springProperties.getApiKey());
+				.apiKey().value(ofNullable(springProperties.getApiKey()));
 		// @formatter:on
 	}
 

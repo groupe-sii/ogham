@@ -39,14 +39,14 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 		implements DetectorBuilder<MYSELF>, ResourceResolutionBuilder<MYSELF>, Builder<TemplateParser> {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractThymeleafBuilder.class);
 
-	protected MYSELF myself;
+	protected final MYSELF myself;
 	protected EnvironmentBuilder<MYSELF> environmentBuilder;
 	protected TemplateEngineDetector detector;
 	protected ResourceResolutionBuilderHelper<MYSELF> resourceResolutionBuilderHelper;
 	protected TemplateEngine engine;
 	protected ThymeleafContextConverter contextConverter;
 	protected E engineBuilder;
-	protected List<TemplateResolverAdapter> customAdapters;
+	protected final List<TemplateResolverAdapter> customAdapters;
 
 	protected AbstractThymeleafBuilder(Class<?> selfType) {
 		this(selfType, null, null);
@@ -264,9 +264,9 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 
 	protected TemplateEngine buildEngine() {
 		TemplateEngine builtEngine;
-		if (this.engine != null) {
+		if (engine != null) {
 			LOG.debug("Using custom Thymeleaf engine");
-			builtEngine = this.engine;
+			builtEngine = engine;
 		} else if (engineBuilder != null) {
 			LOG.debug("Using custom Thymeleaf engine built using engine()");
 			builtEngine = engineBuilder.build();

@@ -1,10 +1,9 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
+import static com.cloudhopper.smpp.SmppBindType.TRANSMITTER;
+import static fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion.VERSION_3_4;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -29,13 +28,14 @@ import com.cloudhopper.smpp.type.LoggingOptions;
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.retry.RetryExecutor;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import fr.sii.ogham.sms.builder.cloudhopper.UserDataBuilder.UserDataPropValues;
 import fr.sii.ogham.sms.encoder.Encoder;
@@ -103,7 +103,8 @@ import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
  *    .and()
  * .sms()
  *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
- *       .host("${custom.property.for.host}")
+ *       .host()
+ *         .properties("${custom.property.for.host}")
  * </code>
  * </pre>
  * 
@@ -127,23 +128,23 @@ import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
  * @author Aurélien Baudet
  */
 public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Builder<CloudhopperSMPPSender> {
+	private static final long DEFAULT_UNBIND_TIMEOUT = 5000L;
+
+	private static final long DEFAULT_RESPONSE_TIMEOUT = 5000L;
+
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperBuilder.class);
 
 	private final ReadableEncoderBuilder sharedEncoderBuilder;
 	private EnvironmentBuilder<CloudhopperBuilder> environmentBuilder;
-	private List<String> systemIds;
-	private List<String> passwords;
-	private List<String> hosts;
-	private List<String> ports;
-	private Integer port;
-	private List<String> systemTypes;
-	private Byte interfaceVersion;
-	private List<String> interfaceVersions;
-	private List<String> bindTypes;
-	private SmppBindType bindType;
+	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, String> systemIdValueBuilder;
+	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, String> passwordValueBuilder;
+	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, String> hostValueBuilder;
+	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, Integer> portValueBuilder;
+	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, String> systemTypeValueBuilder;
+	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, InterfaceVersion> interfaceVersionValueBuilder;
+	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, SmppBindType> bindTypeValueBuilder;
 	private SessionBuilder sessionBuilder;
 	private SmppSessionConfiguration sessionConfiguration;
-	private CharsetBuilder charsetBuilder;
 	private Address addressRange;
 	private SslBuilder sslBuilder;
 	private LoggingBuilder loggingBuilder;
@@ -181,13 +182,13 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	public CloudhopperBuilder(SmsBuilder parent) {
 		super(parent);
 		sharedEncoderBuilder = new ReadableEncoderBuilder();
-		systemIds = new ArrayList<>();
-		passwords = new ArrayList<>();
-		hosts = new ArrayList<>();
-		ports = new ArrayList<>();
-		interfaceVersions = new ArrayList<>();
-		systemTypes = new ArrayList<>();
-		bindTypes = new ArrayList<>();
+		systemIdValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class);
+		interfaceVersionValueBuilder = new ConfigurationValueBuilderHelper<>(this, InterfaceVersion.class);
+		systemTypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		bindTypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmppBindType.class);
 	}
 
 	/**
@@ -271,39 +272,82 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
 	 * system_id provides an identification of the SMSC to the ESME.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #systemId()}.
 	 * 
 	 * <pre>
-	 * .systemId("foo");
+	 * .systemId("my-system-id")
+	 * .systemId()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-system-id")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .systemId("my-system-id")
+	 * .systemId()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-system-id")
+	 * </pre>
+	 * 
+	 * In both cases, {@code systemId("my-system-id")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param systemId
+	 *            the system_id value
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder systemId(String systemId) {
+		systemIdValueBuilder.setValue(systemId);
+		return this;
+	}
+	
+	
+	/**
+	 * The system_id parameter is used to identify an ESME ( External Short
+	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
+	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
+	 * system_id provides an identification of the SMSC to the ESME.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .systemId()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-system-id")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #systemId(String)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .systemId("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .systemId("my-system-id")
+	 * .systemId()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-system-id")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "my-system-id"} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
 	 * 
-	 * @param systemId
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * @return the builder to configure property keys/default value
 	 */
-	public CloudhopperBuilder systemId(String... systemId) {
-		for (String s : systemId) {
-			if (s != null) {
-				systemIds.add(s);
-			}
-		}
-		return this;
+	public ConfigurationValueBuilder<CloudhopperBuilder, String> systemId() {
+		return systemIdValueBuilder;
 	}
 
 	/**
@@ -315,41 +359,87 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
 	 * etc.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #systemType()}.
 	 * 
 	 * <pre>
-	 * .systemType("foo");
+	 * .systemType("my-system-type")
+	 * .systemType()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-system-type")
 	 * </pre>
+	 * 
+	 * <pre>
+	 * .systemType("my-system-type")
+	 * .systemType()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-system-type")
+	 * </pre>
+	 * 
+	 * In both cases, {@code systemType("my-system-type")} is used.
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * If this method is called several times, only the last value is used.
 	 * 
-	 * <pre>
-	 * .systemType("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param systemType
-	 *            one value, or one or several property keys
+	 *            the system type value
 	 * @return this instance for fluent chaining
 	 */
-	public CloudhopperBuilder systemType(String... systemType) {
-		for (String s : systemType) {
-			if (s != null) {
-				systemTypes.add(s);
-			}
-		}
+	public CloudhopperBuilder systemType(String systemType) {
+		systemTypeValueBuilder.setValue(systemType);
 		return this;
 	}
 
+	
+	/**
+	 * The system_type parameter is used to categorize the type of ESME that is
+	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
+	 * (over-the-air activation system). Specification of the system_type is
+	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
+	 * this case, the ESME can set the system_type to NULL. The system_type
+	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
+	 * etc.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .systemType()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("defaut-system-type")
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #systemType(String)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .systemType("my-system-type")
+	 * .systemType()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("defaut-system-type")
+	 * </pre>
+	 * 
+	 * The value {@code "my-system-type"} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<CloudhopperBuilder, String> systemType() {
+		return systemTypeValueBuilder;
+	}
+	
 	/**
 	 * The password parameter is used by the SMSC to authenticate the identity
 	 * of the binding ESME. The Service Provider may require ESME’s to provide a
@@ -358,228 +448,438 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * the ESME to authenticate the identity of the binding SMSC (e.g. in the
 	 * case of the outbind operation).
 	 * 
-	 * The ESME may set the password to NULL to gain insecure access (if allowed
-	 * by SMSC administration).
-	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #password()}.
 	 * 
 	 * <pre>
-	 * .password("foo");
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
 	 * </pre>
+	 * 
+	 * <pre>
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
+	 * </pre>
+	 * 
+	 * In both cases, {@code password("my-password")} is used.
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * If this method is called several times, only the last value is used.
 	 * 
-	 * <pre>
-	 * .password("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param password
-	 *            one value, or one or several property keys
+	 *            the password used to authenticate
 	 * @return this instance for fluent chaining
 	 */
-	public CloudhopperBuilder password(String... password) {
-		for (String p : password) {
-			if (p != null) {
-				passwords.add(p);
-			}
-		}
+	public CloudhopperBuilder password(String password) {
+		passwordValueBuilder.setValue(password);
 		return this;
 	}
 
+	
+	/**
+	 * The password parameter is used by the SMSC to authenticate the identity
+	 * of the binding ESME. The Service Provider may require ESME’s to provide a
+	 * password when binding to the SMSC. This password is normally issued by
+	 * the SMSC system administrator. The password parameter may also be used by
+	 * the ESME to authenticate the identity of the binding SMSC (e.g. in the
+	 * case of the outbind operation).
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #password(String)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
+	 * </pre>
+	 * 
+	 * The value {@code "my-password"} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<CloudhopperBuilder, String> password() {
+		return passwordValueBuilder;
+	}
+	
 	/**
 	 * The SMPP server host (IP or address).
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #host()}.
 	 * 
 	 * <pre>
-	 * .host("localhost");
+	 * .host("localhost")
+	 * .host()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-host")
 	 * </pre>
+	 * 
+	 * <pre>
+	 * .host("localhost")
+	 * .host()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-host")
+	 * </pre>
+	 * 
+	 * In both cases, {@code host("localhost")} is used.
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * If this method is called several times, only the last value is used.
 	 * 
-	 * <pre>
-	 * .host("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param host
-	 *            one value, or one or several property keys
+	 *            the host address
 	 * @return this instance for fluent chaining
 	 */
-	public CloudhopperBuilder host(String... host) {
-		for (String h : host) {
-			if (h != null) {
-				hosts.add(h);
-			}
-		}
+	public CloudhopperBuilder host(String host) {
+		hostValueBuilder.setValue(host);
 		return this;
 	}
 
+	
 	/**
-	 * Set the SMPP server port.
+	 * The SMPP server host (IP or address).
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .port("2775");
+	 * .host()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-host")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #host(String)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .port("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .host("localhost")
+	 * .host()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-host")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "localhost"} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param port
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public CloudhopperBuilder port(String... port) {
-		for (String p : port) {
-			if (port != null) {
-				ports.add(p);
-			}
-		}
-		return this;
+	public ConfigurationValueBuilder<CloudhopperBuilder, String> host() {
+		return hostValueBuilder;
 	}
-
+	
 	/**
 	 * Set the SMPP server port.
 	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #port(String...)} method.
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #port()}.
 	 * 
+	 * <pre>
+	 * .port(2775)
+	 * .port()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(1775)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .port(2775)
+	 * .port()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(1775)
+	 * </pre>
+	 * 
+	 * In both cases, {@code port(2775)} is used.
+	 * 
+	 * <p>
 	 * If this method is called several times, only the last value is used.
 	 * 
-	 * @param port
-	 *            the port to use
-	 * @return this instance for fluent chaining
-	 */
-	public CloudhopperBuilder port(int port) {
-		this.port = port;
-		return this;
-	}
-
-	/**
-	 * Set the SMPP server port. This version allows {@code null} value. In this
-	 * case, the {@code null} value is skipped.
-	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #port(String...)} method.
-	 * 
-	 * If this method is called several times, only the last value is used.
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param port
-	 *            the port to use (may be null)
+	 *            the SMPP server port
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperBuilder port(Integer port) {
-		if (port != null) {
-			this.port = port;
-		}
+		portValueBuilder.setValue(port);
 		return this;
 	}
 
+	
+	/**
+	 * Set the SMPP server port.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .port()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(1775)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #port(Integer)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .port(2775)
+	 * .port()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(1775)
+	 * </pre>
+	 * 
+	 * The value {@code 2775} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<CloudhopperBuilder, Integer> port() {
+		return portValueBuilder;
+	}
+	
+	/**
+	 * The SMPP protocol version (one of {@link InterfaceVersion#VERSION_3_3},
+	 * {@link InterfaceVersion#VERSION_3_4}, {@link InterfaceVersion#VERSION_5_0}).
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #interfaceVersion()}.
+	 * 
+	 * <pre>
+	 * .interfaceVersion(InterfaceVersion.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .interfaceVersion(InterfaceVersion.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
+	 * </pre>
+	 * 
+	 * In both cases, {@code interfaceVersion(InterfaceVersion.VERSION_5_0)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param version
+	 *            the version of the SMPP protocol
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder interfaceVersion(InterfaceVersion version) {
+		interfaceVersionValueBuilder.setValue(version);
+		return this;
+	}
+	
 	/**
 	 * The SMPP protocol version (one of {@link SmppConstants#VERSION_3_3},
 	 * {@link SmppConstants#VERSION_3_4}, {@link SmppConstants#VERSION_5_0}).
 	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #interfaceVersion(String...)} method.
-	 * 
-	 * @param version
-	 *            the version as byte value
-	 * @return this instance for fluent chaining
-	 */
-	public CloudhopperBuilder interfaceVersion(byte version) {
-		interfaceVersion = version;
-		return this;
-	}
-
-	/**
-	 * Set the SMPP protocol version.
-	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #interfaceVersion()}.
 	 * 
 	 * <pre>
-	 * .interfaceVersion("3.4");
+	 * .interfaceVersion(SmppConstants.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmppConstants.VERSION_3_4)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .interfaceVersion(SmppConstants.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmppConstants.VERSION_3_4)
+	 * </pre>
+	 * 
+	 * In both cases, {@code interfaceVersion(SmppConstants.VERSION_5_0)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param version
+	 *            the version of the SMPP protocol
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder interfaceVersion(Byte version) {
+		interfaceVersionValueBuilder.setValue(InterfaceVersion.fromValue(version));
+		return this;
+	}
+	
+	/**
+	 * 	 * The SMPP protocol version (one of {@link InterfaceVersion#VERSION_3_3},
+	 * {@link InterfaceVersion#VERSION_3_4}, {@link InterfaceVersion#VERSION_5_0}).
+
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .interfaceVersion()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #interfaceVersion(InterfaceVersion)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .interfaceVersion("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .interfaceVersion(InterfaceVersion.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code InterfaceVersion.VERSION_5_0} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param version
-	 *            one value, or one or several property keys
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<CloudhopperBuilder, InterfaceVersion> interfaceVersion() {
+		return interfaceVersionValueBuilder;
+	}
+	
+	/**
+	 * The bind command type (see {@link SmppBindType}).
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #bindType()}.
+	 * 
+	 * <pre>
+	 * .bindType(SmppBindType.TRANSCEIVER)
+	 * .bindType()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmppBindType.RECEIVER)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .bindType(SmppBindType.TRANSCEIVER)
+	 * .bindType()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmppBindType.RECEIVER)
+	 * </pre>
+	 * 
+	 * In both cases, {@code bindType(SmppBindType.TRANSCEIVER)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param bindType
+	 *            the bind type
 	 * @return this instance for fluent chaining
 	 */
-	public CloudhopperBuilder interfaceVersion(String... version) {
-		for (String v : version) {
-			if (v != null) {
-				interfaceVersions.add(v);
-			}
-		}
+	public CloudhopperBuilder bindType(SmppBindType bindType) {
+		bindTypeValueBuilder.setValue(bindType);
 		return this;
 	}
 
+	
 	/**
-	 * Configures how Cloudhopper will handle charset encoding for SMS messages.
-	 * Charsets defined by the SMPP protocol may be different from NIO charsets.
+	 * The bind command type (see {@link SmppBindType}).
 	 * 
-	 * This builder configures detection of the NIO charset defined by the SMS
-	 * content handle by the Java application.
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
 	 * 
-	 * This builder also configures how conversion from NIO charset to SMPP
-	 * charset is handled.
+	 * <pre>
+	 * .bindType()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmppBindType.RECEIVER)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #bindType(SmppBindType)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .bindType(SmppBindType.TRANSCEIVER)
+	 * .bindType()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmppBindType.RECEIVER)
+	 * </pre>
+	 * 
+	 * The value {@code SmppBindType.TRANSCEIVER} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
 	 * 
-	 * @return the builder to configure the charset handling
-	 * @deprecated Configuring charset handling has no effect anyore. Use
-	 *             {@link #encoder()} instead
+	 * @return the builder to configure property keys/default value
 	 */
-	@Deprecated
-	public CharsetBuilder charset() {
-		if (charsetBuilder == null) {
-			charsetBuilder = new CharsetBuilder(this, environmentBuilder);
-		}
-		return charsetBuilder;
+	public ConfigurationValueBuilder<CloudhopperBuilder, SmppBindType> bindType() {
+		return bindTypeValueBuilder;
 	}
 
 	/**
@@ -610,11 +910,26 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * <pre>
 	 * {@code
 	 * .encoder()
-	 *    .gsm7("${ogham.sms.cloudhopper.encoder.gsm-7bit.priority}", "${ogham.sms.encoder.gsm-7bit.priority}", "100000")
-	 *    .gsm8("${ogham.sms.cloudhopper.encoder.gsm-8bit.priority}", "${ogham.sms.encoder.gsm-8bit.priority}", "99000")
-	 *    .ucs2("${ogham.sms.cloudhopper.encoder.ucs-2.priority}", "${ogham.sms.encoder.ucs-2.priority}", "98000")
-	 *    .autoGuess("${ogham.sms.cloudhopper.encoder.auto-guess}", "${ogham.sms.encoder.auto-guess}", "true")
-	 *    .fallback("${ogham.sms.cloudhopper.encoder.default-charset}", CharsetUtil.NAME_GSM)
+	 *    .gsm7()
+	 *      .properties("${ogham.sms.cloudhopper.encoder.gsm-7bit.priority}", "${ogham.sms.encoder.gsm-7bit.priority}")
+	 *      .defaultValue(100000)
+	 *      .and()
+	 *    .gsm8()
+	 *      .properties("${ogham.sms.cloudhopper.encoder.gsm-8bit.priority}", "${ogham.sms.encoder.gsm-8bit.priority}")
+	 *      .defaultValue(99000)
+	 *      .and()
+	 *    .ucs2()
+	 *      .properties("${ogham.sms.cloudhopper.encoder.ucs-2.priority}", "${ogham.sms.encoder.ucs-2.priority}")
+	 *      .defaultValue(98000)
+	 *      .and()
+	 *    .autoGuess()
+	 *      .properties("${ogham.sms.cloudhopper.encoder.auto-guess}", "${ogham.sms.encoder.auto-guess}")
+	 *      .defaultValue(true)
+	 *      .and()
+	 *    .fallback()
+	 *      .properties("${ogham.sms.cloudhopper.encoder.default-charset}")
+	 *      .defaultValue(CharsetUtil.NAME_GSM)
+	 *      .and()
 	 *    .customEncoder(new MyCustomEncoder(), 50000)
 	 * }
 	 * </pre>
@@ -686,7 +1001,10 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * <pre>
 	 * {@code
 	 * .splitter()
-	 *   .enable("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.split.enable}", "true")
+	 *   .enable()
+	 *     .properties("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.split.enable}")
+	 *     .defaultValue(true)
+	 *     .and()
 	 *   .customSplitter(new MyCustomSplitter(), 100000)
 	 *   .referenceNumber()
 	 *     .random()
@@ -704,57 +1022,6 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return messageSplitterBuilder;
 	}
 
-	/**
-	 * The bind command type (see {@link SmppBindType}).
-	 * 
-	 * Default value is {@link SmppBindType#TRANSMITTER}.
-	 * 
-	 * You can specify one or several property keys. For example:
-	 * 
-	 * <pre>
-	 * .bindType("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * 
-	 * @param bindType
-	 *            one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public CloudhopperBuilder bindType(String... bindType) {
-		for (String b : bindType) {
-			if (b != null) {
-				bindTypes.add(b);
-			}
-		}
-		return this;
-	}
-
-	/**
-	 * Set the bind command type.
-	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #bindType(String...)} method.
-	 * 
-	 * If this method is called several times, only the last value is used.
-	 * 
-	 * Default value is {@link SmppBindType#TRANSMITTER}.
-	 * 
-	 * @param bindType
-	 *            the type of the bind command
-	 * @return this instance for fluent chaining
-	 */
-	public CloudhopperBuilder bindType(SmppBindType bindType) {
-		this.bindType = bindType;
-		return this;
-	}
 
 	/**
 	 * Configures Cloudhopper session management (timeouts, retry, session
@@ -802,7 +1069,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * Note: It is likely that the addr_range field is not supported or
 	 * deliberately ignored on most Message Centres. The reason for this is that
 	 * most carriers will not allow an ESME control the message routing as this
-	 * can carry the risk of mis-routing mesages. In such circumstances, the
+	 * can carry the risk of mis-routing messages. In such circumstances, the
 	 * ESME will be requested to set the field to NULL.
 	 * 
 	 * @param range
@@ -825,7 +1092,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public SslBuilder ssl() {
 		if (sslBuilder == null) {
-			sslBuilder = new SslBuilder(this);
+			sslBuilder = new SslBuilder(this, environmentBuilder);
 		}
 		return sslBuilder;
 	}
@@ -937,8 +1204,13 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * <pre>
 	 * {@code
 	 * .userData()
-	 *   .useShortMessage("${ogham.sms.cloudhopper.user-data.use-short-message}", "${ogham.sms.user-data.use-short-message}", "true")
-	 *   .useTlvMessagePayload("${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}", "${ogham.sms.user-data.use-tlv-message-payload}", "false")
+	 *   .useShortMessage()
+	 *     .properties("${ogham.sms.cloudhopper.user-data.use-short-message}", "${ogham.sms.user-data.use-short-message}")
+	 *     .defaultValue(true)
+	 *     .and()
+	 *   .useTlvMessagePayload()
+	 *     .properties("${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}", "${ogham.sms.user-data.use-tlv-message-payload}")
+	 *     .defaultValue(false)
 	 * }
 	 * </pre>
 	 * 
@@ -998,7 +1270,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * determined:
 	 * <ul>
 	 * <li>Use automatic mode base on interface version (see
-	 * {@link #interfaceVersion(String...)} and {@link #interfaceVersion(byte)})
+	 * {@link #interfaceVersion(InterfaceVersion)} and {@link #interfaceVersion(Byte)})
 	 * and charset encoding (see {@link #encoder()}) used to encode the message
 	 * ("User Data")</li>
 	 * <li>Use a fixed value used for every message</li>
@@ -1017,8 +1289,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * }
 	 * </pre>
 	 * 
-	 * See {@link DataCodingSchemeBuilder#auto(String...)},
-	 * {@link DataCodingSchemeBuilder#value(String...)} and
+	 * See {@link DataCodingSchemeBuilder#auto(Boolean)},
+	 * {@link DataCodingSchemeBuilder#value(Byte)} and
 	 * {@link DataCodingSchemeBuilder#custom(DataCodingProvider)} for more
 	 * information.
 	 * 
@@ -1123,10 +1395,10 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		if (sessionConfiguration != null) {
 			return sessionConfiguration;
 		}
-		SmppSessionConfiguration session = new SmppSessionConfiguration(buildBindType(propertyResolver), getStringValue(propertyResolver, systemIds), getStringValue(propertyResolver, passwords));
+		SmppSessionConfiguration session = new SmppSessionConfiguration(buildBindType(propertyResolver), systemIdValueBuilder.getValue(propertyResolver), passwordValueBuilder.getValue(propertyResolver));
 		session.setHost(getHost(propertyResolver));
 		session.setPort(getPort(propertyResolver));
-		session.setSystemType(getStringValue(propertyResolver, systemTypes));
+		session.setSystemType(systemTypeValueBuilder.getValue(propertyResolver));
 		set(session::setBindTimeout, sessionOpts::getBindTimeout);
 		set(session::setConnectTimeout, sessionOpts::getConnectTimeout);
 		session.setInterfaceVersion(getInterfaceVersion(propertyResolver));
@@ -1171,74 +1443,25 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	}
 
 	private SmppBindType buildBindType(PropertyResolver propertyResolver) {
-		if (bindType != null) {
-			return bindType;
-		}
-		String type = getStringValue(propertyResolver, bindTypes);
-		if (type != null) {
-			return SmppBindType.valueOf(type);
-		}
-		return SmppBindType.TRANSMITTER;
+		return bindTypeValueBuilder.getValue(propertyResolver, TRANSMITTER);
 	}
 
 	private Byte getInterfaceVersion(PropertyResolver propertyResolver) {
-		return interfaceVersion == null ? getInterfaceVersion(propertyResolver, interfaceVersions) : interfaceVersion;
-	}
-
-	private Byte getInterfaceVersion(PropertyResolver propertyResolver, List<String> interfaceVersions) {
-		String version = getStringValue(propertyResolver, interfaceVersions);
-		if (version == null) {
-			return SmppConstants.VERSION_3_4;
-		}
-		try {
-			String fieldName = "VERSION_" + version.replaceAll("[.]", "_");
-			Field field = SmppConstants.class.getField(fieldName);
-			return field.getByte(SmppConstants.class);
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			LOG.trace("Failed to get interface version using reflection", e);
-		}
-		if ("3.3".equals(version)) {
-			return SmppConstants.VERSION_3_3;
-		}
-		if ("3.4".equals(version)) {
-			return SmppConstants.VERSION_3_4;
-		}
-		if ("5.0".equals(version)) {
-			return SmppConstants.VERSION_5_0;
-		}
-		throw new BuildException("Unknown interface version (" + version + ") for Cloudhopper session configuration");
+		InterfaceVersion version = interfaceVersionValueBuilder.getValue(propertyResolver, VERSION_3_4);
+		return version.value();
 	}
 
 	private int getPort(PropertyResolver propertyResolver) {
-		if (this.port != null) {
-			return this.port;
-		}
-		Integer evaluatedPort = getIntValue(propertyResolver, ports);
-		if (evaluatedPort != null) {
-			return evaluatedPort;
-		}
-		return 0;
+		return portValueBuilder.getValue(propertyResolver, 0);
 	}
 
 	private String getHost(PropertyResolver propertyResolver) {
-		return getStringValue(propertyResolver, hosts);
+		return hostValueBuilder.getValue(propertyResolver);
 	}
 
-	private String getStringValue(PropertyResolver propertyResolver, List<String> props) {
-		return getValue(propertyResolver, props, String.class);
-	}
-
-	private Integer getIntValue(PropertyResolver propertyResolver, List<String> props) {
-		return getValue(propertyResolver, props, Integer.class);
-	}
-
-	private <T> T getValue(PropertyResolver propertyResolver, List<String> props, Class<T> targetType) {
-		return BuilderUtils.evaluate(props, propertyResolver, targetType);
-	}
-
-	private CloudhopperOptions buildOptions(CloudhopperSessionOptions sessionOpts) {
-		Long responseTimeout = sessionOpts.getResponseTimeout() == null ? 5000L : sessionOpts.getResponseTimeout();
-		Long unbindTimeout = sessionOpts.getUnbindTimeout() == null ? 5000L : sessionOpts.getUnbindTimeout();
+	private static CloudhopperOptions buildOptions(CloudhopperSessionOptions sessionOpts) {
+		Long responseTimeout = sessionOpts.getResponseTimeout() == null ? DEFAULT_RESPONSE_TIMEOUT : sessionOpts.getResponseTimeout();
+		Long unbindTimeout = sessionOpts.getUnbindTimeout() == null ? DEFAULT_UNBIND_TIMEOUT : sessionOpts.getUnbindTimeout();
 		RetryExecutor connectRetry = sessionOpts.getConnectRetry();
 		return new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry, sessionOpts.isKeepSession());
 	}

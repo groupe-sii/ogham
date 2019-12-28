@@ -3,6 +3,8 @@ package fr.sii.ogham.core.builder.mimetype;
 import org.apache.tika.Tika;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**
@@ -44,11 +46,16 @@ public class TikaBuilderDelegate<P> extends AbstractParent<P> implements TikaBui
 		delegate.instance(tika);
 		return this;
 	}
-	
+
 	@Override
-	public TikaBuilderDelegate<P> failIfOctetStream(boolean fail) {
+	public TikaBuilder<P> failIfOctetStream(Boolean fail) {
 		delegate.failIfOctetStream(fail);
 		return this;
+	}
+
+	@Override
+	public ConfigurationValueBuilder<TikaBuilder<P>, Boolean> failIfOctetStream() {
+		return new ConfigurationValueBuilderDelegate<>(this, delegate.failIfOctetStream());
 	}
 
 	@Override

@@ -88,14 +88,6 @@ public class RelativeResolver implements DelegateResourceResolver {
 		}
 	}
 
-	public String getParentPath() {
-		return parentPath;
-	}
-
-	public String getExtension() {
-		return extension;
-	}
-
 	@Override
 	public boolean supports(ResourcePath path) {
 		return delegate.supports(path);

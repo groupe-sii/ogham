@@ -4,7 +4,8 @@ import java.nio.charset.Charset;
 
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.Parent;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.charset.CharsetDetector;
 
 /**
@@ -21,33 +22,76 @@ import fr.sii.ogham.core.charset.CharsetDetector;
  *            method)
  */
 public interface CharsetDetectorBuilder<P> extends Parent<P>, Builder<CharsetDetector> {
+	
 	/**
 	 * Set the default {@link Charset} that is used by the Java application.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #defaultCharset()}.
 	 * 
 	 * <pre>
-	 * .defaultCharset("UTF-8");
+	 * .defaultCharset("UTF-16")
+	 * .defaultCharset()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("UTF-8")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .defaultCharset("UTF-16")
+	 * .defaultCharset()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("UTF-8")
+	 * </pre>
+	 * 
+	 * In both cases, {@code defaultCharset("UTF-16")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param charsetName
+	 *            the charset
+	 * @return this instance for fluent chaining
+	 */
+	CharsetDetectorBuilder<P> defaultCharset(String charsetName);
+
+	/**
+	 * Set the default {@link Charset} that is used by the Java application.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .defaultCharset()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("UTF-8")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #defaultCharset(String)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .defaultCharset("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .defaultCharset("UTF-16")
+	 * .defaultCharset()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("UTF-8")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "UTF-16"} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param charsets
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	CharsetDetectorBuilder<P> defaultCharset(String... charsets);
+	ConfigurationValueBuilder<CharsetDetectorBuilder<P>, String> defaultCharset();
 }

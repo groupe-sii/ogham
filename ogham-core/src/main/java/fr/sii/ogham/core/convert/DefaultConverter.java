@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.convert;
 
 import java.net.URL;
+import java.nio.charset.Charset;
 
 /**
  * The default converter delegates conversion to registered
@@ -16,6 +17,12 @@ import java.net.URL;
  * </li>
  * <li>Converts a string to an {@link URL} or byte (see
  * {@link StringToURLConverter})
+ * </li>
+ * <li>Converts a string to an {@link Charset} or byte (see
+ * {@link StringToCharsetConverter})
+ * </li>
+ * <li>Converts a string to an {@link Enum} or byte (see
+ * {@link StringToEnumConverter})
  * </li>
  * </ul>
  * 
@@ -35,6 +42,8 @@ public class DefaultConverter extends DelegateConverter {
 		register(new StringToBooleanConverter());
 		register(new StringToNumberConverter());
 		register(new StringToURLConverter());
+		register(new StringToCharsetConverter());
+		register(new StringToEnumConverter());
 		register(new NoConversionNeededConverter());
 	}
 }

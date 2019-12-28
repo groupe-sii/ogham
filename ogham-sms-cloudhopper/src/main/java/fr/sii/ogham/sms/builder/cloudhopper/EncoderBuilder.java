@@ -2,23 +2,20 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM7;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_ISO_8859_1;
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
-import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.commons.charset.CharsetUtil;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.core.util.PriorizedList;
-import fr.sii.ogham.core.util.PropertyListOrValue;
 import fr.sii.ogham.sms.encoder.Encoder;
 import fr.sii.ogham.sms.encoder.SupportingEncoder;
 import fr.sii.ogham.sms.exception.message.EncodingException;
@@ -36,28 +33,21 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  * <li>It encodes using GSM 7-bit default alphabet if the message contains only
  * characters defined in the table. Message is packed so the message can have a
  * maximum length of 160 characters. This is enable only if automatic guessing
- * is enabled (using {@link #autoGuess(boolean)} or
- * {@link #autoGuess(String...)}) and GSM 7-bit is enabled (using
- * {@link #gsm7bitPacked(int)}, {@link #gsm7bitPacked(String...)} or
- * {@link #gsm7bitPacked(int, boolean)}).</li>
+ * is enabled (using {@link #autoGuess(Boolean)}) and GSM 7-bit is enabled (using
+ * {@link #gsm7bitPacked(Integer)}).</li>
  * <li>It encodes using GSM 8-bit data encoding if the message contains only
  * characters that can be encoded on one octet. This is enable only if automatic
- * guessing is enabled (using {@link #autoGuess(boolean)} or
- * {@link #autoGuess(String...)}) and GSM 8-bit is enabled (using
- * {@link #gsm8bit(int)}, {@link #gsm8bit(String...)} or
- * {@link #gsm8bit(int, boolean)}).</li>
+ * guessing is enabled (using {@link #autoGuess(Boolean)}) and GSM 8-bit is enabled (using
+ * {@link #gsm8bit(Integer)}).</li>
  * <li>It encodes using Latin 1 (ISO-8859-1) data encoding if the message
  * contains only characters that can be encoded on one octet. This is enable
- * only if automatic guessing is enabled (using {@link #autoGuess(boolean)} or
- * {@link #autoGuess(String...)}) and GSM 8-bit is enabled (using
- * {@link #latin1(int)}, {@link #latin1(String...)} or
- * {@link #latin1(int, boolean)}).</li>
+ * only if automatic guessing is enabled (using {@link #autoGuess(Boolean)}) and Latin-1 is enabled (using
+ * {@link #latin1(Integer)}).</li>
  * <li>It encodes using UCS-2 encoding if the message contains special
  * characters that can't be encoded on one octet. Each character is encoded on
  * two octets. This is enable only if automatic guessing is enabled (using
- * {@link #autoGuess(boolean)} or {@link #autoGuess(String...)}) and UCS-2 is
- * enabled (using {@link #ucs2(int)}, {@link #ucs2(String...)} or
- * {@link #ucs2(int, boolean)}).</li>
+ * {@link #autoGuess(Boolean)}) and UCS-2 is
+ * enabled (using {@link #ucs2(Integer)}).</li>
  * </ul>
  * 
  * <h3>Automatic guessing enabled</h3>
@@ -89,7 +79,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  * 
  * <p>
  * If no custom encoders are registered, then default charset encoding is used
- * (see {@link #fallback(String...)}).
+ * (see {@link #fallback(String)}).
  * </p>
  * 
  * 
@@ -98,13 +88,13 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  */
 public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<Encoder> {
 	private final EnvironmentBuilder<?> environmentBuilder;
-	protected final StandardEncodingHelper gsm7Packed;
-	protected final StandardEncodingHelper gsm8;
-	protected final StandardEncodingHelper ucs2;
-	protected final StandardEncodingHelper latin1;
+	protected final StandardEncodingHelper gsm7PackedValueBuilder;
+	protected final StandardEncodingHelper gsm8ValueBuilder;
+	protected final StandardEncodingHelper ucs2ValueBuilder;
+	protected final StandardEncodingHelper latin1ValueBuilder;
 	protected final PriorizedList<Encoder> customEncoders;
-	protected final PropertyListOrValue<Boolean> autoGuess;
-	protected final List<String> fallbackCharsetNames;
+	protected final ConfigurationValueBuilderHelper<EncoderBuilder, Boolean> autoGuessValueBuilder;
+	protected final ConfigurationValueBuilderHelper<EncoderBuilder, String> fallbackCharsetNameValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -119,13 +109,13 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public EncoderBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
-		gsm7Packed = new StandardEncodingHelper(NAME_GSM7);
-		gsm8 = new StandardEncodingHelper(NAME_GSM);
-		ucs2 = new StandardEncodingHelper(NAME_UCS_2);
-		latin1 = new StandardEncodingHelper(CharsetUtil.NAME_ISO_8859_1);
+		gsm7PackedValueBuilder = new StandardEncodingHelper(this, NAME_GSM7);
+		gsm8ValueBuilder = new StandardEncodingHelper(this, NAME_GSM);
+		ucs2ValueBuilder = new StandardEncodingHelper(this, NAME_UCS_2);
+		latin1ValueBuilder = new StandardEncodingHelper(this, NAME_ISO_8859_1);
 		customEncoders = new PriorizedList<>();
-		autoGuess = new PropertyListOrValue<>();
-		fallbackCharsetNames = new ArrayList<>();
+		autoGuessValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		fallbackCharsetNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
 	}
 
 	/**
@@ -137,82 +127,42 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * for the same number of octets.
 	 * 
 	 * <p>
-	 * If several properties are already set using {@link #gsm7bitPacked(String...)},
-	 * then the priority value is appended (low priority).
+	 * If priority value is 0 or negative, it disables GSM 7-bit encoding.
 	 * 
-	 * For example,
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .gsm7bitPacked("${custom.property.high-priority}")
-	 * .gsm7bitPacked(1000)
-	 * }
-	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .gsm7bitPacked(1000)} is used. If "custom.property.high-priority"
-	 * property exists, then the value of "custom.property.high-priority" is
-	 * used.
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #gsm7bitPacked()}.
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .gsm7bitPacked(1000)
-	 * .gsm7bitPacked("${custom.property.high-priority}")
-	 * }
+	 * .gsm7bitPacked(10)
+	 * .gsm7bitPacked()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(0)
 	 * </pre>
 	 * 
-	 * The value of {@code .gsm7bitPacked(1000)} is always used.
+	 * <pre>
+	 * .gsm7bitPacked(10)
+	 * .gsm7bitPacked()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(0)
+	 * </pre>
+	 * 
+	 * In both cases, {@code gsm7bitPacked(10)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param priority
-	 *            the priority for GSM 7-bit encoding
+	 *            the priority (highest value means that GSM 7-bit encoding is
+	 *            tried first)
 	 * @return this instance for fluent chaining
 	 */
-	public EncoderBuilder gsm7bitPacked(int priority) {
-		gsm7Packed.register(priority);
-		return this;
-	}
-
-	/**
-	 * Set priority for encoding text messages using GSM 7-bit encoding. GSM
-	 * 7-bit encoding and GSM 8-bit encoding use the same character tables. Only
-	 * 7 bits are necessary to represents characters. In GSM 8-bit encoding a
-	 * leading 0 is added. However, GSM 7-bit encoding is packed. Every
-	 * character is "merged" with the next one in order to use more characters
-	 * for the same number of octets.
-	 * 
-	 * <p>
-	 * If priority value is 0 (or negative number), the GSM 7-bit encoding is
-	 * disabled.
-	 * 
-	 * <p>
-	 * If several properties are already set using
-	 * {@link #gsm7bitPacked(String...)} and override parameter is true, the
-	 * priority value is added first (highest priority).
-	 * 
-	 * For example,
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .gsm7bitPacked("${custom.property.high-priority}")
-	 * .gsm7bitPacked(1000, true)
-	 * }
-	 * </pre>
-	 * 
-	 * The value of {@code .gsm7bitPacked(1000, true)} is always used.
-	 * 
-	 * <p>
-	 * If override parameter is false, this method behaves exactly the same as
-	 * {@link #gsm7bitPacked(int)}.
-	 * 
-	 * @param priority
-	 *            the priority for GSM 7-bit encoding
-	 * @param override
-	 *            if true the priority value is added at the beginning, if false
-	 *            the priority value is added at the end
-	 * @return this instance for fluent chaining
-	 */
-	public EncoderBuilder gsm7bitPacked(int priority, boolean override) {
-		gsm7Packed.register(priority, override);
+	public EncoderBuilder gsm7bitPacked(Integer priority) {
+		gsm7PackedValueBuilder.setValue(priority);
 		return this;
 	}
 
@@ -225,33 +175,88 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * for the same number of octets.
 	 * 
 	 * <p>
-	 * You can specify a direct value. For example:
+	 * If priority value is 0 or negative, it disables GSM 7-bit encoding.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .gsm8bit("1000");
+	 * .gsm7bitPacked()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(0)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #gsm7bitPacked(Integer)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
-	 * .gsm8bit("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .gsm7bitPacked(10)
+	 * .gsm7bitPacked()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(0)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code 10} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<EncoderBuilder, Integer> gsm7bitPacked() {
+		return gsm7PackedValueBuilder;
+	}
+
+	/**
+	 * Set priority for encoding text messages using GSM 8-bit encoding. GSM
+	 * 7-bit encoding and GSM 8-bit encoding use the same character tables. Only
+	 * 7 bits are necessary to represents characters. In GSM 8-bit encoding a
+	 * leading 0 is added.
+	 * 
+	 * <p>
+	 * If priority value is 0 or negative, it disables GSM 8-bit encoding.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #gsm8bit()}.
+	 * 
+	 * <pre>
+	 * .gsm8bit(10)
+	 * .gsm8bit()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(5)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .gsm8bit(10)
+	 * .gsm8bit()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(5)
+	 * </pre>
+	 * 
+	 * In both cases, {@code gsm8bit(10)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param priority
-	 *            one value, or one or several property keys
+	 *            the priority (highest value means that GSM 8-bit encoding is
+	 *            tried first)
 	 * @return this instance for fluent chaining
 	 */
-	public EncoderBuilder gsm7bitPacked(String... priority) {
-		gsm7Packed.register(priority);
+	public EncoderBuilder gsm8bit(Integer priority) {
+		gsm8ValueBuilder.setValue(priority);
 		return this;
 	}
 
@@ -262,117 +267,86 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * leading 0 is added.
 	 * 
 	 * <p>
-	 * If several properties are already set using {@link #gsm8bit(String...)},
-	 * then the priority value is appended (low priority).
+	 * If priority value is 0 or negative, it disables GSM 8-bit encoding.
 	 * 
-	 * For example,
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .gsm8bit("${custom.property.high-priority}")
-	 * .gsm8bit(1000)
-	 * }
-	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .gsm8bit(1000)} is used. If "custom.property.high-priority"
-	 * property exists, then the value of "custom.property.high-priority" is
-	 * used.
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .gsm8bit(1000)
-	 * .gsm8bit("${custom.property.high-priority}")
-	 * }
+	 * .gsm8bit()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(5)
 	 * </pre>
 	 * 
-	 * The value of {@code .gsm8bit(1000)} is always used.
+	 * <p>
+	 * Non-null value set using {@link #gsm8bit(Integer)} takes precedence over
+	 * property values and default value.
 	 * 
-	 * @param priority
-	 *            the priority for GSM 8-bit encoding
-	 * @return this instance for fluent chaining
+	 * <pre>
+	 * .gsm8bit(10)
+	 * .gsm8bit()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(5)
+	 * </pre>
+	 * 
+	 * The value {@code 10} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public EncoderBuilder gsm8bit(int priority) {
-		gsm8.register(priority);
-		return this;
+	public ConfigurationValueBuilder<EncoderBuilder, Integer> gsm8bit() {
+		return gsm8ValueBuilder;
 	}
 
 	/**
-	 * Set priority for encoding text messages using GSM 8-bit encoding. GSM
-	 * 7-bit encoding and GSM 8-bit encoding use the same character tables. Only
-	 * 7 bits are necessary to represents characters. In GSM 8-bit encoding a
-	 * leading 0 is added.
+	 * Set priority for encoding text messages using UCS-2. UCS-2 uses two
+	 * octets per character.
 	 * 
 	 * <p>
-	 * If priority value is 0 (or negative number), the GSM 8-bit encoding is
-	 * disabled.
+	 * If priority value is 0 or negative, it disables UCS-2 encoding.
 	 * 
 	 * <p>
-	 * If several properties are already set using {@link #gsm8bit(String...)}
-	 * and override parameter is true, the priority value is added first
-	 * (highest priority).
-	 * 
-	 * For example,
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #ucs2()}.
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .gsm8bit("${custom.property.high-priority}")
-	 * .gsm8bit(1000, true)
-	 * }
+	 * .ucs2(10)
+	 * .ucs2()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(2)
 	 * </pre>
 	 * 
-	 * The value of {@code .gsm8bit(1000, true)} is always used.
+	 * <pre>
+	 * .ucs2(10)
+	 * .ucs2()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(2)
+	 * </pre>
+	 * 
+	 * In both cases, {@code ucs2(10)} is used.
 	 * 
 	 * <p>
-	 * If override parameter is false, this method behaves exactly the same as
-	 * {@link #gsm8bit(int)}.
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param priority
-	 *            the priority for GSM 8-bit encoding
-	 * @param override
-	 *            if true the priority value is added at the beginning, if false
-	 *            the priority value is added at the end
+	 *            the priority (highest value means that UCS-2 encoding is tried
+	 *            first)
 	 * @return this instance for fluent chaining
 	 */
-	public EncoderBuilder gsm8bit(int priority, boolean override) {
-		gsm8.register(priority, override);
-		return this;
-	}
-
-	/**
-	 * Set priority for encoding text messages using GSM 8-bit encoding. GSM
-	 * 7-bit encoding and GSM 8-bit encoding use the same character tables. Only
-	 * 7 bits are necessary to represents characters. In GSM 8-bit encoding a
-	 * leading 0 is added.
-	 * 
-	 * <p>
-	 * You can specify a direct value. For example:
-	 * 
-	 * <pre>
-	 * .gsm8bit("1000");
-	 * </pre>
-	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
-	 * 
-	 * <pre>
-	 * .gsm8bit("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param priority
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public EncoderBuilder gsm8bit(String... priority) {
-		gsm8.register(priority);
+	public EncoderBuilder ucs2(Integer priority) {
+		ucs2ValueBuilder.setValue(priority);
 		return this;
 	}
 
@@ -381,222 +355,129 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * octets per character.
 	 * 
 	 * <p>
-	 * If several properties are already set using {@link #ucs2(String...)},
-	 * then the priority value is appended (low priority).
+	 * If priority value is 0 or negative, it disables UCS-2 encoding.
 	 * 
-	 * For example,
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .ucs2("${custom.property.high-priority}")
-	 * .ucs2(1000)
-	 * }
-	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .ucs2(1000)} is used. If "custom.property.high-priority" property
-	 * exists, then the value of "custom.property.high-priority" is used.
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .ucs2(1000)
-	 * .ucs2("${custom.property.high-priority}")
-	 * }
+	 * .ucs2()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(2)
 	 * </pre>
 	 * 
-	 * The value of {@code .ucs2(1000)} is always used.
+	 * <p>
+	 * Non-null value set using {@link #ucs2(Integer)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * <pre>
+	 * .ucs2(10)
+	 * .ucs2()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(2)
+	 * </pre>
+	 * 
+	 * The value {@code 10} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<EncoderBuilder, Integer> ucs2() {
+		return ucs2ValueBuilder;
+	}
+
+	/**
+	 * Set priority for encoding text messages using Latin-1 (ISO-8859-1).
+	 * 
+	 * <p>
+	 * If priority value is 0 or negative, it disables Latin-1 encoding.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #latin1()}.
+	 * 
+	 * <pre>
+	 * .latin1(10)
+	 * .latin1()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(4)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .latin1(10)
+	 * .latin1()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(4)
+	 * </pre>
+	 * 
+	 * In both cases, {@code latin1(10)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param priority
-	 *            the priority for UCS-2 encoding
+	 *            the priority (highest value means that Latin-1 encoding is
+	 *            tried first)
 	 * @return this instance for fluent chaining
 	 */
-	public EncoderBuilder ucs2(int priority) {
-		ucs2.register(priority);
+	public EncoderBuilder latin1(Integer priority) {
+		latin1ValueBuilder.setValue(priority);
 		return this;
 	}
 
 	/**
-	 * Set priority for encoding text messages using UCS-2. UCS-2 uses two
-	 * octets per character.
+	 * Set priority for encoding text messages using Latin-1 (ISO-8859-1).
 	 * 
 	 * <p>
-	 * If priority value is 0 (or negative number), the UCS-2 is disabled.
+	 * If priority value is 0 or negative, it disables Latin-1 encoding.
 	 * 
 	 * <p>
-	 * If several properties are already set using {@link #ucs2(String...)} and
-	 * override parameter is true, the priority value is added first (highest
-	 * priority).
-	 * 
-	 * For example,
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .ucs2("${custom.property.high-priority}")
-	 * .ucs2(1000, true)
-	 * }
+	 * .latin1()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(4)
 	 * </pre>
 	 * 
-	 * The value of {@code .ucs2(1000, true)} is always used.
+	 * <p>
+	 * Non-null value set using {@link #latin1(Integer)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * <pre>
+	 * .latin1(10)
+	 * .latin1()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(4)
+	 * </pre>
+	 * 
+	 * The value {@code 10} is used regardless of the value of the properties
+	 * and default value.
 	 * 
 	 * <p>
-	 * If override parameter is false, this method behaves exactly the same as
-	 * {@link #ucs2(int)}.
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param priority
-	 *            the priority for UCS-2 encoding
-	 * @param override
-	 *            if true the priority value is added at the beginning, if false
-	 *            the priority value is added at the end
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public EncoderBuilder ucs2(int priority, boolean override) {
-		ucs2.register(priority, override);
-		return this;
-	}
-
-	/**
-	 * Set priority for encoding text messages using UCS-2. UCS-2 uses two
-	 * octets per character.
-	 * 
-	 * You can specify a direct value. For example:
-	 * 
-	 * <pre>
-	 * .ucs2("1000");
-	 * </pre>
-	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
-	 * 
-	 * <pre>
-	 * .ucs2("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param priority
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public EncoderBuilder ucs2(String... priority) {
-		ucs2.register(priority);
-		return this;
-	}
-
-	/**
-	 * Set priority for encoding text messages using Latin 1 (ISO-8859-1).
-	 * 
-	 * You can specify a direct value. For example:
-	 * 
-	 * <pre>
-	 * .latin1("1000");
-	 * </pre>
-	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
-	 * 
-	 * <pre>
-	 * .latin1("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param priority
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public EncoderBuilder latin1(String... priority) {
-		latin1.register(priority);
-		return this;
-	}
-
-	/**
-	 * Set priority for encoding text messages using Latin 1 (ISO-8859-1).
-	 * 
-	 * <p>
-	 * If several properties are already set using {@link #latin1(String...)},
-	 * then the priority value is appended (low priority).
-	 * 
-	 * For example,
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .latin1("${custom.property.high-priority}")
-	 * .latin1(1000)
-	 * }
-	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .latin1(1000)} is used. If "custom.property.high-priority"
-	 * property exists, then the value of "custom.property.high-priority" is
-	 * used.
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .latin1(1000)
-	 * .latin1("${custom.property.high-priority}")
-	 * }
-	 * </pre>
-	 * 
-	 * The value of {@code .latin1(1000)} is always used.
-	 * 
-	 * @param priority
-	 *            the priority for Latin 1 (ISO-8859-1) encoding
-	 * @return this instance for fluent chaining
-	 */
-	public EncoderBuilder latin1(int priority) {
-		latin1.register(priority);
-		return this;
-	}
-
-	/**
-	 * Set priority for encoding text messages using Latin 1 (ISO-8859-1).
-	 * 
-	 * <p>
-	 * If priority value is 0 (or negative number), the Latin 1 (ISO-8859-1) is
-	 * disabled.
-	 * 
-	 * <p>
-	 * If several properties are already set using {@link #latin1(String...)}
-	 * and override parameter is true, the priority value is added first
-	 * (highest priority).
-	 * 
-	 * For example,
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .latin1("${custom.property.high-priority}")
-	 * .latin1(1000, true)
-	 * }
-	 * </pre>
-	 * 
-	 * The value of {@code .latin1(1000, true)} is always used.
-	 * 
-	 * <p>
-	 * If override parameter is false, this method behaves exactly the same as
-	 * {@link #latin1(int)}.
-	 * 
-	 * @param priority
-	 *            the priority for Latin 1 (ISO-8859-1) encoding
-	 * @param override
-	 *            if true the priority value is added at the beginning, if false
-	 *            the priority value is added at the end
-	 * @return this instance for fluent chaining
-	 */
-	public EncoderBuilder latin1(int priority, boolean override) {
-		latin1.register(priority, override);
-		return this;
+	public ConfigurationValueBuilder<EncoderBuilder, Integer> latin1() {
+		return latin1ValueBuilder;
 	}
 
 	/**
@@ -604,11 +485,11 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * 
 	 * <p>
 	 * The encoder is registered like standard encoders (see
-	 * {@link #gsm7bitPacked(String...)}, {@link #gsm8bit(String...)},
-	 * {@link #latin1(String...)}, {@link #ucs2(String...)}).
+	 * {@link #gsm7bitPacked(Integer)}, {@link #gsm8bit(Integer)},
+	 * {@link #latin1(Integer)}, {@link #ucs2(Integer)}).
 	 * 
 	 * <p>
-	 * If automatic guessing is enabled (see {@link #autoGuess(String...)}), the
+	 * If automatic guessing is enabled (see {@link #autoGuess(Boolean)}), the
 	 * registered encoder is also used in automatic guessing (according to
 	 * priorities).
 	 * 
@@ -646,65 +527,56 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * <li>It encodes using GSM 7-bit default alphabet if the message contains
 	 * only characters defined in the table. Message is packed so the message
 	 * can have a maximum length of 160 characters. This is enable only if
-	 * automatic guessing is enabled (using {@link #autoGuess(boolean)} or
-	 * {@link #autoGuess(String...)}) and GSM 7-bit is enabled (using
-	 * {@link #gsm7bitPacked(int)}, {@link #gsm7bitPacked(String...)} or
-	 * {@link #gsm7bitPacked(int, boolean)}).</li>
+	 * automatic guessing is enabled (using {@link #autoGuess(Boolean)}) and GSM
+	 * 7-bit is enabled (using {@link #gsm7bitPacked(Integer)}).</li>
 	 * <li>It encodes using GSM 8-bit data encoding if the message contains only
 	 * characters that can be encoded on one octet. This is enable only if
-	 * automatic guessing is enabled (using {@link #autoGuess(boolean)} or
-	 * {@link #autoGuess(String...)}) and GSM 8-bit is enabled (using
-	 * {@link #gsm8bit(int)}, {@link #gsm8bit(String...)} or
-	 * {@link #gsm8bit(int, boolean)}).</li>
+	 * automatic guessing is enabled (using {@link #autoGuess(Boolean)} and GSM
+	 * 8-bit is enabled (using {@link #gsm8bit(Integer)}).</li>
 	 * <li>It encodes using Latin 1 (ISO-8859-1) data encoding if the message
 	 * contains only characters that can be encoded on one octet. This is enable
-	 * only if automatic guessing is enabled (using {@link #autoGuess(boolean)}
-	 * or {@link #autoGuess(String...)}) and GSM 8-bit is enabled (using
-	 * {@link #latin1(int)}, {@link #latin1(String...)} or
-	 * {@link #latin1(int, boolean)}).</li>
+	 * only if automatic guessing is enabled (using {@link #autoGuess(Boolean)}
+	 * and GSM 8-bit is enabled (using {@link #latin1(Integer)}).</li>
 	 * <li>It encodes using UCS-2 encoding if the message contains special
 	 * characters that can't be encoded on one octet. Each character is encoded
 	 * on two octets. This is enable only if automatic guessing is enabled
-	 * (using {@link #autoGuess(boolean)} or {@link #autoGuess(String...)}) and
-	 * UCS-2 is enabled (using {@link #ucs2(int)}, {@link #ucs2(String...)} or
-	 * {@link #ucs2(int, boolean)}).</li>
+	 * (using {@link #autoGuess(Boolean)}) and UCS-2 is enabled (using
+	 * {@link #ucs2(Integer)}).</li>
 	 * </ul>
 	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #autoGuess()}.
+	 * 
+	 * <pre>
+	 * .autoGuess(false)
+	 * .autoGuess()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .autoGuess(false)
+	 * .autoGuess()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * In both cases, {@code autoGuess(false)} is used.
 	 * 
 	 * <p>
-	 * If several properties are already set using
-	 * {@link #autoGuess(String...)}, then the enabled value is appended (low
-	 * priority).
+	 * If this method is called several times, only the last value is used.
 	 * 
-	 * For example,
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .autoGuess("${custom.property.high-priority}")
-	 * .autoGuess(true)
-	 * }
-	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .autoGuess(true)} is used. If "custom.property.high-priority"
-	 * property exists, then the value of "custom.property.high-priority" is
-	 * used.
-	 * 
-	 * <pre>
-	 * {@code 
-	 * .autoGuess(true)
-	 * .autoGuess("${custom.property.high-priority}")
-	 * }
-	 * </pre>
-	 * 
-	 * The value of {@code .autoGuess(true)} is always used.
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param enable
-	 *            enable (true) or disable (false) automatic encoding guessing
+	 *            enable or disable automatic guessing of encoding
 	 * @return this instance for fluent chaining
 	 */
-	public EncoderBuilder autoGuess(boolean enable) {
-		autoGuess.register(enable);
+	public EncoderBuilder autoGuess(Boolean enable) {
+		autoGuessValueBuilder.setValue(enable);
 		return this;
 	}
 
@@ -718,57 +590,97 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * <li>It encodes using GSM 7-bit default alphabet if the message contains
 	 * only characters defined in the table. Message is packed so the message
 	 * can have a maximum length of 160 characters. This is enable only if
-	 * automatic guessing is enabled (using {@link #autoGuess(boolean)} or
-	 * {@link #autoGuess(String...)}) and GSM 7-bit is enabled (using
-	 * {@link #gsm7bitPacked(int)}, {@link #gsm7bitPacked(String...)} or
-	 * {@link #gsm7bitPacked(int, boolean)}).</li>
+	 * automatic guessing is enabled (using {@link #autoGuess(Boolean)}) and GSM
+	 * 7-bit is enabled (using {@link #gsm7bitPacked(Integer)}).</li>
 	 * <li>It encodes using GSM 8-bit data encoding if the message contains only
 	 * characters that can be encoded on one octet. This is enable only if
-	 * automatic guessing is enabled (using {@link #autoGuess(boolean)} or
-	 * {@link #autoGuess(String...)}) and GSM 8-bit is enabled (using
-	 * {@link #gsm8bit(int)}, {@link #gsm8bit(String...)} or
-	 * {@link #gsm8bit(int, boolean)}).</li>
+	 * automatic guessing is enabled (using {@link #autoGuess(Boolean)} and GSM
+	 * 8-bit is enabled (using {@link #gsm8bit(Integer)}).</li>
 	 * <li>It encodes using Latin 1 (ISO-8859-1) data encoding if the message
 	 * contains only characters that can be encoded on one octet. This is enable
-	 * only if automatic guessing is enabled (using {@link #autoGuess(boolean)}
-	 * or {@link #autoGuess(String...)}) and GSM 8-bit is enabled (using
-	 * {@link #latin1(int)}, {@link #latin1(String...)} or
-	 * {@link #latin1(int, boolean)}).</li>
+	 * only if automatic guessing is enabled (using {@link #autoGuess(Boolean)}
+	 * and GSM 8-bit is enabled (using {@link #latin1(Integer)}).</li>
 	 * <li>It encodes using UCS-2 encoding if the message contains special
 	 * characters that can't be encoded on one octet. Each character is encoded
 	 * on two octets. This is enable only if automatic guessing is enabled
-	 * (using {@link #autoGuess(boolean)} or {@link #autoGuess(String...)}) and
-	 * UCS-2 is enabled (using {@link #ucs2(int)}, {@link #ucs2(String...)} or
-	 * {@link #ucs2(int, boolean)}).</li>
+	 * (using {@link #autoGuess(Boolean)}) and UCS-2 is enabled (using
+	 * {@link #ucs2(Integer)}).</li>
 	 * </ul>
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .autoGuess("true");
+	 * .autoGuess()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #autoGuess(Boolean)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
-	 * .autoGuess("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .autoGuess(false)
+	 * .autoGuess()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param enable
-	 *            one value, or one or several property keys
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<EncoderBuilder, Boolean> autoGuess() {
+		return autoGuessValueBuilder;
+	}
+
+	/**
+	 * Set which Cloudhopper {@link Charset} should be used if nothing else is
+	 * configured.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #fallback()}.
+	 * 
+	 * <pre>
+	 * .fallback(CharsetUtil.NAME_GSM8)
+	 * .fallback()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(CharsetUtil.NAME_GSM)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .fallback(CharsetUtil.NAME_GSM8)
+	 * .fallback()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(CharsetUtil.NAME_GSM)
+	 * </pre>
+	 * 
+	 * In both cases, {@code fallback(CharsetUtil.NAME_GSM8)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param charsetName
+	 *            the name of the charset to use (see {@link CharsetUtil})
 	 * @return this instance for fluent chaining
 	 */
-	public EncoderBuilder autoGuess(String... enable) {
-		autoGuess.register(enable);
+	public EncoderBuilder fallback(String charsetName) {
+		fallbackCharsetNameValueBuilder.setValue(charsetName);
 		return this;
 	}
 
@@ -776,34 +688,41 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * Set which Cloudhopper {@link Charset} should be used if nothing else is
 	 * configured.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .fallback("GSM");
+	 * .fallback()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(CharsetUtil.NAME_GSM)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #fallback(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .fallback("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .fallback(CharsetUtil.NAME_GSM8)
+	 * .fallback()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(CharsetUtil.NAME_GSM)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code CharsetUtil.NAME_GSM8} is used regardless of the value
+	 * of the properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param charsetName
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public EncoderBuilder fallback(String... charsetName) {
-		Collections.addAll(fallbackCharsetNames, charsetName);
-		return this;
+	public ConfigurationValueBuilder<EncoderBuilder, String> fallback() {
+		return fallbackCharsetNameValueBuilder;
 	}
 
 	@Override
@@ -815,13 +734,12 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 		if (customEncodersRegistered()) {
 			return new GuessEncodingEncoder(customEncoders.getOrdered());
 		}
-		String fallbackCharsetName = evaluate(fallbackCharsetNames, propertyResolver, String.class);
+		String fallbackCharsetName = fallbackCharsetNameValueBuilder.getValue(propertyResolver);
 		return buildFixedEncoder(fallbackCharsetName == null ? NAME_GSM : fallbackCharsetName);
 	}
 
 	protected boolean autoGuessEnabled(PropertyResolver propertyResolver) {
-		Boolean autoGuessValue = autoGuess.evaluate(propertyResolver, Boolean.class);
-		return autoGuessValue != null && autoGuessValue;
+		return autoGuessValueBuilder.getValue(propertyResolver, false);
 	}
 
 	private boolean customEncodersRegistered() {
@@ -830,10 +748,10 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 
 	private Encoder buildAutoGuessEncoder(PropertyResolver propertyResolver) {
 		PriorizedList<Encoder> registry = new PriorizedList<>();
-		registerStandardEncoder(propertyResolver, gsm7Packed, registry);
-		registerStandardEncoder(propertyResolver, gsm8, registry);
-		registerStandardEncoder(propertyResolver, latin1, registry);
-		registerStandardEncoder(propertyResolver, ucs2, registry);
+		registerStandardEncoder(propertyResolver, gsm7PackedValueBuilder, registry);
+		registerStandardEncoder(propertyResolver, gsm8ValueBuilder, registry);
+		registerStandardEncoder(propertyResolver, latin1ValueBuilder, registry);
+		registerStandardEncoder(propertyResolver, ucs2ValueBuilder, registry);
 		registry.register(customEncoders);
 		return new GuessEncodingEncoder(registry.getOrdered());
 	}
@@ -843,23 +761,10 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	}
 
 	private static void registerStandardEncoder(PropertyResolver propertyResolver, StandardEncodingHelper helper, PriorizedList<Encoder> registry) {
-		Integer priority = BuilderUtils.evaluate(helper.getProperties(), propertyResolver, Integer.class);
+		Integer priority = helper.getValue(propertyResolver);
 		if (priority == null || priority <= 0) {
 			return;
 		}
 		registry.register(new CloudhopperCharsetSupportingEncoder(helper.getCharset()), priority);
-	}
-
-	protected static class StandardEncodingHelper extends PropertyListOrValue<Integer> {
-		private final String charsetName;
-
-		public StandardEncodingHelper(String charsetName) {
-			super();
-			this.charsetName = charsetName;
-		}
-
-		public NamedCharset getCharset() {
-			return NamedCharset.from(charsetName);
-		}
 	}
 }

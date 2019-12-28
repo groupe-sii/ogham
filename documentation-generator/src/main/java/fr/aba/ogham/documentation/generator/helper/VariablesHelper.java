@@ -44,7 +44,7 @@ public class VariablesHelper {
 			while (m.find()) {
 				String value = evaluate(vars.get(m.group(1)));
 				if (value == null) {
-					value = m.group(1);
+					value = m.group();
 				}
 				m.appendReplacement(sb, Matcher.quoteReplacement(value));
 			}

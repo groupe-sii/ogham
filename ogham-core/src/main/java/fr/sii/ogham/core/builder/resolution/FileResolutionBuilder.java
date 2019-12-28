@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.builder.resolution;
 
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -45,8 +47,7 @@ public class FileResolutionBuilder<P> extends AbstractSingleResolutionBuilder<Fi
 	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
 	 * The parent builder is used when calling the {@link #and()} method. The
 	 * {@link EnvironmentBuilder} is used when calling {@link #build()} method
-	 * in order to evaluate property values (defined by
-	 * {@link #pathPrefix(String...)} or {@link #pathSuffix(String...)}).
+	 * in order to evaluate property value.
 	 * 
 	 * @param parent
 	 *            the parent builder
@@ -63,22 +64,24 @@ public class FileResolutionBuilder<P> extends AbstractSingleResolutionBuilder<Fi
 	}
 
 	@Override
-	public FileResolutionBuilder<P> pathPrefix(String... pathPrefix) {
-		for (String p : pathPrefix) {
-			if (p != null) {
-				pathPrefixes.add(p);
-			}
-		}
+	public FileResolutionBuilder<P> pathPrefix(String prefix) {
+		pathPrefixValueBuilder.setValue(prefix);
 		return myself;
 	}
 
 	@Override
-	public FileResolutionBuilder<P> pathSuffix(String... pathSuffix) {
-		for (String p : pathSuffix) {
-			if (p != null) {
-				pathSuffixes.add(p);
-			}
-		}
+	public ConfigurationValueBuilder<FileResolutionBuilder<P>, String> pathPrefix() {
+		return new ConfigurationValueBuilderDelegate<>(myself, pathPrefixValueBuilder);
+	}
+
+	@Override
+	public FileResolutionBuilder<P> pathSuffix(String suffix) {
+		pathSuffixValueBuilder.setValue(suffix);
 		return myself;
+	}
+
+	@Override
+	public ConfigurationValueBuilder<FileResolutionBuilder<P>, String> pathSuffix() {
+		return new ConfigurationValueBuilderDelegate<>(myself, pathSuffixValueBuilder);
 	}
 }

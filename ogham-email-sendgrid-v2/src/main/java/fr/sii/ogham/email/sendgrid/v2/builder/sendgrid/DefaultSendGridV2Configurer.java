@@ -69,16 +69,16 @@ public class DefaultSendGridV2Configurer implements MessagingConfigurer {
 		// @formatter:off
 		SendGridV2Builder builder = msgBuilder.email().sender(SendGridV2Builder.class);
 		builder
-			.apiKey("${ogham.email.sengrid.api-key}")
-			.username("${ogham.email.sendgrid.username}")
-			.password("${ogham.email.sendgrid.password}");
+			.apiKey().properties("${ogham.email.sengrid.api-key}").and()
+			.username().properties("${ogham.email.sendgrid.username}").and()
+			.password().properties("${ogham.email.sendgrid.password}");
 		// @formatter:on
 		// use same environment as parent builder
 		builder.environment(msgBuilder.environment());
 		builder.mimetype(msgBuilder.mimetype());
 	}
 
-	private boolean canUseSendGrid() {
+	private static boolean canUseSendGrid() {
 		return ClasspathUtils.exists("com.sendgrid.SendGrid") && ClasspathUtils.exists("com.sendgrid.SendGrid$Email");
 	}
 }

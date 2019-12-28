@@ -28,5 +28,4 @@ public class BasicSmsglobalSmppSample {
 				.content("sms content")
 				.to("+33752962193"));
 	}
-
 }

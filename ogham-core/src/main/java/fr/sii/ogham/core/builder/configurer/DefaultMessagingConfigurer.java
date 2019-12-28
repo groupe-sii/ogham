@@ -4,6 +4,7 @@ import static fr.sii.ogham.core.CoreConstants.CLASSPATH_LOOKUPS;
 import static fr.sii.ogham.core.CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIORITY;
 import static fr.sii.ogham.core.CoreConstants.FILE_LOOKUPS;
 import static fr.sii.ogham.core.CoreConstants.STRING_LOOKUPS;
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
 
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -123,7 +124,7 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 	public void configure(MessagingBuilder builder) {
 		LOG.debug("[{}] apply configuration", this);
 		super.configure(builder);
-		builder.wrapUncaught(true);
+		builder.wrapUncaught().properties("${ogham.wrap-uncaught-exceptions.enable}").defaultValue(overrideIfNotSet(true));
 	}
 
 	@Override
@@ -164,21 +165,21 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		builder
 			.autofill()
 				.subject()
-					.defaultValueProperty("${ogham.email.subject}")
-					.htmlTitle(true)
-					.text("${ogham.email.subject-first-line-prefix}", "Subject:")
+					.defaultValue().properties("${ogham.email.subject}").and()
+					.htmlTitle().properties("${ogham.email.subject.extract-html-title.enable").defaultValue(overrideIfNotSet(true)).and()
+					.text().properties("${ogham.email.subject.text.first-line-prefix}").defaultValue(overrideIfNotSet("Subject:")).and()
 					.and()
 				.from()
-					.defaultValueProperty("${ogham.email.from}", "${mail.smtp.from}", "${mail.from}")
+					.defaultValue().properties("${ogham.email.from}", "${mail.smtp.from}", "${mail.from}").and()
 					.and()
 				.to()
-					.defaultValueProperty("${ogham.email.to}")
+					.defaultValue().properties("${ogham.email.to}").and()
 					.and()
 				.cc()
-					.defaultValueProperty("${ogham.email.cc}")
+					.defaultValue().properties("${ogham.email.cc}").and()
 					.and()
 				.bcc()
-					.defaultValueProperty("${ogham.email.bcc}")
+					.defaultValue().properties("${ogham.email.bcc}").and()
 					.and()
 				.and()
 			.css()
@@ -203,23 +204,23 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		builder
 			.autofill()
 				.from()
-					.defaultValueProperty("${ogham.sms.from}")
+					.defaultValue().properties("${ogham.sms.from}").and()
 					.and()
 				.to()
-					.defaultValueProperty("${ogham.sms.to}")
+					.defaultValue().properties("${ogham.sms.to}").and()
 					.and()
 				.and()
 			.numbers()
 				.from()
 					.format()
-						.alphanumericCode("${ogham.sms.from-format-enable-alphanumeric}", "true")
-						.shortCode("${ogham.sms.from-format-enable-shortcode}", "true")
-						.internationalNumber("${ogham.sms.from-format-enable-international}", "true")
+						.alphanumericCode().properties("${ogham.sms.from-format-enable-alphanumeric}").defaultValue(overrideIfNotSet(true)).and()
+						.shortCode().properties("${ogham.sms.from-format-enable-shortcode}").defaultValue(overrideIfNotSet(true)).and()
+						.internationalNumber().properties("${ogham.sms.from-format-enable-international}").defaultValue(overrideIfNotSet(true)).and()
 						.and()
 					.and()
 				.to()
 					.format()
-						.internationalNumber("${ogham.sms.to-format-enable-international}", "true");
+						.internationalNumber().properties("${ogham.sms.to-format-enable-international}").defaultValue(overrideIfNotSet(true));
 		// @formatter:on
 	}
 
@@ -229,9 +230,9 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		builder
 			.tika()
 				.instance(new Tika())
-				.failIfOctetStream(true)
+				.failIfOctetStream().properties("${ogham.mimetype.tika.fail-if-octet-stream}").defaultValue(overrideIfNotSet(true)).and()
 				.and()
-			.defaultMimetype("${ogham.mimetype.default-mimetype}", "application/octet-stream");
+			.defaultMimetype().properties("${ogham.mimetype.default-mimetype}").defaultValue(overrideIfNotSet("application/octet-stream"));
 		// @formatter:on
 	}
 

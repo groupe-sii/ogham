@@ -4,8 +4,21 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import fr.sii.ogham.common.TestLogger;
+
+/**
+ * Write information about test. This is useful when there are many tests:
+ * <ul>
+ * <li>To quickly find the logs for the test</li>
+ * <li>To quickly know if the test has failed or succeeded</li>
+ * <li>To quickly identify the test failure</li>
+ * <li>To quickly find failed tests</li>
+ * </ul>
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class LoggingTestRule implements TestRule {
-	private static final int MAX_LENGTH = 100;
 	private static final String SEPARATOR = ".";
 	
 	private final TestLogger logger;
@@ -16,7 +29,8 @@ public class LoggingTestRule implements TestRule {
 	}
 
 	public LoggingTestRule() {
-		this(MAX_LENGTH);
+		super();
+		this.logger = new TestLogger();
 	}
 
 
@@ -42,7 +56,7 @@ public class LoggingTestRule implements TestRule {
 				logger.writeStart(testName);
 				base.evaluate();
 				logger.writeSuccess(testName);
-			} catch(Exception e) {		// NOSONAR
+			} catch(Throwable e) {		// NOSONAR
 				logger.writeFailure(testName, e);
 				throw e;
 			}

@@ -1,14 +1,12 @@
 package fr.sii.ogham.sms.builder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
 import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
@@ -24,9 +22,8 @@ import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
  *
  */
 public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumberBuilder> implements Builder<PhoneNumberTranslator> {
-	private EnvironmentBuilder<?> environmentBuilder;
-	private Boolean enableInternational;
-	private List<String> enableInternationalProps;
+	private final EnvironmentBuilder<?> environmentBuilder;
+	private final ConfigurationValueBuilderHelper<RecipientNumberFormatBuilder, Boolean> enableInternationalValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -41,65 +38,101 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 	public RecipientNumberFormatBuilder(RecipientNumberBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
-		enableInternationalProps = new ArrayList<>();
+		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
 	}
-
+	
 	/**
 	 * Enable/disable international number conversion: if the sender starts with
 	 * a "+", TON is set to 1, and NPI is set to 1.
 	 * 
-	 * You can specify one or several property keys. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #internationalNumber()}.
 	 * 
 	 * <pre>
-	 * .charset("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * <pre>
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * In both cases, {@code internationalNumber(false)} is used.
 	 * 
-	 * @param properties
-	 *            one or several property keys
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable international format
 	 * @return this instance for fluent chaining
 	 */
-	public RecipientNumberFormatBuilder internationalNumber(String... properties) {
-		enableInternationalProps.addAll(Arrays.asList(properties));
+	public RecipientNumberFormatBuilder internationalNumber(Boolean enable) {
+		enableInternationalValueBuilder.setValue(enable);
 		return this;
 	}
 
+	
 	/**
 	 * Enable/disable international number conversion: if the sender starts with
 	 * a "+", TON is set to 1, and NPI is set to 1.
 	 * 
-	 * @param enable
-	 *            true to enable the conversion, false to disable
-	 * @return this instance for fluent chaining
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .internationalNumber()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #internationalNumber(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public RecipientNumberFormatBuilder internationalNumber(boolean enable) {
-		enableInternational = enable;
-		return this;
+	public ConfigurationValueBuilder<RecipientNumberFormatBuilder, Boolean> internationalNumber() {
+		return enableInternationalValueBuilder;
 	}
 
 	@Override
 	public PhoneNumberTranslator build() {
 		CompositePhoneNumberTranslator translator = new CompositePhoneNumberTranslator();
-		if (enabled(enableInternational, enableInternationalProps)) {
+		if (enabled(enableInternationalValueBuilder)) {
 			translator.add(new InternationalNumberFormatHandler());
 		}
 		translator.add(new DefaultHandler());
 		return translator;
 	}
 
-	private boolean enabled(Boolean enable, List<String> enableProps) {
-		if (enable != null && enable) {
-			return true;
-		}
+	private boolean enabled(ConfigurationValueBuilderHelper<?, Boolean> enableInternational) {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		Boolean value = BuilderUtils.evaluate(enableProps, propertyResolver, Boolean.class);
-		return value != null && value;
+		return enableInternational.getValue(propertyResolver, false);
 	}
 }

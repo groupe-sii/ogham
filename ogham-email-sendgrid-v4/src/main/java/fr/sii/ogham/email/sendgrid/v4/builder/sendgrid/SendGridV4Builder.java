@@ -1,10 +1,6 @@
 package fr.sii.ogham.email.sendgrid.v4.builder.sendgrid;
 
-import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
-
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -15,7 +11,9 @@ import com.sendgrid.Client;
 import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
@@ -28,8 +26,8 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.CustomizableUr
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridInterceptor;
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.PriorizedContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MultiContentHandler;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.PriorizedContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
 
 /**
@@ -101,8 +99,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	private SendGridClient client;
 	private SendGridInterceptor interceptor;
 	private Client clientHelper;
-	private boolean unitTesting;
-	private List<String> unitTestingKeys;
+	private ConfigurationValueBuilderHelper<SendGridV4Builder, Boolean> unitTestingValueBuilder;
 
 	/**
 	 * Default constructor when using SendGrid sender without all Ogham work.
@@ -128,142 +125,132 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 */
 	public SendGridV4Builder(EmailBuilder parent) {
 		super(SendGridV4Builder.class, parent);
-		unitTestingKeys = new ArrayList<>();
+		unitTestingValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
 	}
 
 	/**
 	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
-	 *             use an {@link #apiKey(String...)}.
-	 * 
-	 *             Set username for SendGrid HTTP API.
-	 * 
-	 *             You can specify a direct value. For example:
-	 * 
-	 *             <pre>
-	 * .username("foo");
-	 *             </pre>
-	 * 
-	 *             <p>
-	 *             You can also specify one or several property keys. For
-	 *             example:
-	 * 
-	 *             <pre>
-	 * .username("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 *             </pre>
-	 * 
-	 *             The properties are not immediately evaluated. The evaluation
-	 *             will be done when the {@link #build()} method is called.
-	 * 
-	 *             If you provide several property keys, evaluation will be done
-	 *             on the first key and if the property exists (see
-	 *             {@link EnvironmentBuilder}), its value is used. If the first
-	 *             property doesn't exist in properties, then it tries with the
-	 *             second one and so on.
-	 * 
-	 * @param username
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 *             use an {@link #apiKey(String)}.
 	 */
-	@Override
 	@Deprecated
-	public SendGridV4Builder username(String... username) {
+	@Override
+	public SendGridV4Builder username(String username) {
 		LOG.warn("username and password are no more available with SendGrid v4");
 		return this;
 	}
 
 	/**
 	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
-	 *             use an {@link #apiKey(String...)}.
-	 * 
-	 *             Set password for SendGrid HTTP API.
-	 * 
-	 *             You can specify a direct value. For example:
-	 * 
-	 *             <pre>
-	 * .password("foo");
-	 *             </pre>
-	 * 
-	 *             <p>
-	 *             You can also specify one or several property keys. For
-	 *             example:
-	 * 
-	 *             <pre>
-	 * .password("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 *             </pre>
-	 * 
-	 *             The properties are not immediately evaluated. The evaluation
-	 *             will be done when the {@link #build()} method is called.
-	 * 
-	 *             If you provide several property keys, evaluation will be done
-	 *             on the first key and if the property exists (see
-	 *             {@link EnvironmentBuilder}), its value is used. If the first
-	 *             property doesn't exist in properties, then it tries with the
-	 *             second one and so on.
-	 * 
-	 * @param password
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 *             use an {@link #apiKey(String)}.
 	 */
-	@Override
 	@Deprecated
-	public SendGridV4Builder password(String... password) {
+	@Override
+	public ConfigurationValueBuilder<SendGridV4Builder, String> username() {
+		LOG.warn("username and password are no more available with SendGrid v4");
+		return new ConfigurationValueBuilderHelper<>(this, String.class);
+	}
+
+	/**
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
+	 *             use an {@link #apiKey(String)}.
+	 */
+	@Deprecated
+	@Override
+	public SendGridV4Builder password(String password) {
 		LOG.warn("username and password are no more available with SendGrid v4");
 		return this;
+	}
+
+	/**
+	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
+	 *             use an {@link #apiKey(String)}.
+	 */
+	@Deprecated
+	@Override
+	public ConfigurationValueBuilder<SendGridV4Builder, String> password() {
+		LOG.warn("username and password are no more available with SendGrid v4");
+		return new ConfigurationValueBuilderHelper<>(this, String.class);
 	}
 
 	/**
 	 * SendGrid allows to call API for unit tests. Set this to true if you are
 	 * unit testing.
-	 * 
-	 * You can specify a direct value. For example:
-	 * 
-	 * <pre>
-	 * .unitTesting("true");
-	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
-	 * 
-	 * <pre>
-	 * .unitTesting("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param key
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public SendGridV4Builder unitTesting(String... key) {
-		for (String k : key) {
-			if (k != null) {
-				unitTestingKeys.add(k);
-			}
-		}
-		return this;
-	}
-
-	/**
-	 * SendGrid allows to call API for unit tests. Set this to true if you are
-	 * unit testing.
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #unitTesting()}.
 	 * 
 	 * <pre>
 	 * .unitTesting(true)
+	 * .unitTesting()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
 	 * </pre>
 	 * 
-	 * @param test
-	 *            true if you are unit testing
+	 * <pre>
+	 * .unitTesting(true)
+	 * .unitTesting()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * In both cases, {@code unitTesting(true)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param unitTesting
+	 *            true to use SendGrid in unit testing mode
 	 * @return this instance for fluent chaining
 	 */
-	public SendGridV4Builder unitTesting(boolean test) {
-		this.unitTesting = test;
+	public SendGridV4Builder unitTesting(Boolean unitTesting) {
+		unitTestingValueBuilder.setValue(unitTesting);
 		return this;
+	}
+
+	/**
+	 * SendGrid allows to call API for unit tests. Set this to true if you are
+	 * unit testing.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .unitTesting()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #unitTesting(Boolean)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * <pre>
+	 * .unitTesting(true)
+	 * .unitTesting()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<SendGridV4Builder, Boolean> unitTesting() {
+		return unitTestingValueBuilder;
 	}
 
 	/**
@@ -276,7 +263,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * </pre>
 	 * 
 	 * NOTE: if you provide a custom {@link Client}, the
-	 * {@link #unitTesting(boolean)}, {@link #unitTesting(String...)} and
+	 * {@link #unitTesting(Boolean)} or
 	 * {@link #httpClient(org.apache.http.impl.client.CloseableHttpClient)}
 	 * configurations are not used. You have to handle it manually.
 	 * 
@@ -300,8 +287,8 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * </pre>
 	 * 
 	 * NOTE: if you provide your custom implementation, any defined properties
-	 * and values using {@link #apiKey(String...)}, {@link #username(String...)}
-	 * or {@link #password(String...)} won't be used at all. You then have to
+	 * and values using {@link #apiKey(String)}, {@link #username(String)}
+	 * or {@link #password(String)} won't be used at all. You then have to
 	 * handle it by yourself.
 	 * 
 	 * @param client
@@ -325,8 +312,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * </pre>
 	 * 
 	 * NOTE: if you provide your custom implementation, any defined properties
-	 * and values using {@link #unitTesting(boolean)} or
-	 * {@link #unitTesting(String...)} won't be used at all. You then have to
+	 * and values using {@link #unitTesting(Boolean)} won't be used at all. You then have to
 	 * handle it by yourself.
 	 * 
 	 * @param httpClient
@@ -335,6 +321,8 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 *            {@link CloseableHttpClient}.
 	 * @return this instance for fluent chaining
 	 */
+	@SuppressWarnings("squid:S1185")
+	@Override
 	public SendGridV4Builder httpClient(CloseableHttpClient httpClient) {
 		return super.httpClient(httpClient);
 	}
@@ -365,10 +353,10 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	@Override
 	public SendGridV4Sender build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		String apiKey = evaluate(this.apiKeys, propertyResolver, String.class);
-		Boolean test = evaluate(this.unitTestingKeys, propertyResolver, Boolean.class);
-		URL url = evaluate(this.urls, propertyResolver, URL.class);
-		SendGridClient builtClient = buildClient(apiKey, buildClientHelper(clientHelper, httpClient, unitTesting || test != null && test, url), url);
+		String apiKey = apiKeyValueBuilder.getValue(propertyResolver);
+		boolean test = unitTestingValueBuilder.getValue(propertyResolver, false);
+		URL url = urlValueBuilder.getValue(propertyResolver);
+		SendGridClient builtClient = buildClient(apiKey, buildClientHelper(clientHelper, httpClient, test, url), url);
 		if (builtClient == null) {
 			return null;
 		}

@@ -1,9 +1,9 @@
 package fr.sii.ogham.email.sendgrid.builder;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -15,6 +15,9 @@ import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
@@ -24,11 +27,11 @@ import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
 import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
 
 public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBuilder<MYSELF, EmailBuilder>, EmailBuilder> extends AbstractParent<EmailBuilder> implements Builder<SendGridSender> {
-	protected MYSELF myself;
+	protected final MYSELF myself;
 	protected EnvironmentBuilder<MYSELF> environmentBuilder;
 	protected MimetypeDetectionBuilder<MYSELF> mimetypeBuilder;
-	protected List<String> apiKeys;
-	protected List<String> urls;
+	protected final ConfigurationValueBuilderHelper<MYSELF, String> apiKeyValueBuilder;
+	protected final ConfigurationValueBuilderHelper<MYSELF, URL> urlValueBuilder;
 	protected CloseableHttpClient httpClient;
 
 	public AbstractSendGridBuilder(Class<?> selfType) {
@@ -39,6 +42,8 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	protected AbstractSendGridBuilder(Class<?> selfType, EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder, MimetypeDetectionBuilder<?> mimetypeBuilder) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
+		apiKeyValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
+		urlValueBuilder = new ConfigurationValueBuilderHelper<>(myself, URL.class);
 		if (environmentBuilder != null) {
 			environment(environmentBuilder);
 		}
@@ -49,8 +54,6 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 
 	public AbstractSendGridBuilder(Class<?> selfType, EmailBuilder parent) {
 		this(selfType, parent, null, null);
-		apiKeys = new ArrayList<>();
-		urls = new ArrayList<>();
 		environment();
 		mimetype();
 	}
@@ -60,144 +63,368 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	 * "https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html">API
 	 * key</a>.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #apiKey()}.
 	 * 
 	 * <pre>
-	 * .apiKey("localhost");
+	 * .apiKey("my-key")
+	 * .apiKey()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-key")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .apiKey("my-key")
+	 * .apiKey()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-key")
+	 * </pre>
+	 * 
+	 * In both cases, {@code apiKey("my-key")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param apiKey
+	 *            the API key to use
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF apiKey(String apiKey) {
+		apiKeyValueBuilder.setValue(apiKey);
+		return myself;
+	}
+
+	/**
+	 * Set SendGrid <a href=
+	 * "https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html">API
+	 * key</a>.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .apiKey()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-key")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #apiKey(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .apiKey("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .apiKey("my-key")
+	 * .apiKey()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-key")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link Builder#build()} method is called.
+	 * The value {@code "my-key"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param key
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public MYSELF apiKey(String... key) {
-		for (String k : key) {
-			if (k != null) {
-				apiKeys.add(k);
-			}
-		}
-		return myself;
+	public ConfigurationValueBuilder<MYSELF, String> apiKey() {
+		return apiKeyValueBuilder;
 	}
 
 	/**
 	 * Set username for SendGrid HTTP API.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * <strong>WARNING:</strong> SendGrid v4 doesn't use username/password
+	 * anymore. You must use an {@link #apiKey(String)}.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #username()}.
 	 * 
 	 * <pre>
-	 * .username("foo");
+	 * .username("my-username")
+	 * .username()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-username")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .username("my-username")
+	 * .username()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-username")
+	 * </pre>
+	 * 
+	 * In both cases, {@code username("my-username")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param username
+	 *            the user name for SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 * 
+	 */
+	public abstract MYSELF username(String username);
+
+	/**
+	 * Set username for SendGrid HTTP API.
+	 * 
+	 * <p>
+	 * <strong>WARNING:</strong> SendGrid v4 doesn't use username/password
+	 * anymore. You must use an {@link #apiKey(String)}.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .username()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-username")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #username(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .username("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .username("my-username")
+	 * .username()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-username")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link Builder#build()} method is called.
+	 * The value {@code "my-username"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param username
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 * 
-	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
-	 *             use an {@link #apiKey(String...)}.
-	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	@Deprecated
-	public abstract MYSELF username(String... username);
+	public abstract ConfigurationValueBuilder<MYSELF, String> username();
 
 	/**
 	 * Set password for SendGrid HTTP API.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * <strong>WARNING:</strong> SendGrid v4 doesn't use username/password
+	 * anymore. You must use an {@link #apiKey(String)}.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #password()}.
 	 * 
 	 * <pre>
-	 * .password("foo");
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
+	 * </pre>
+	 * 
+	 * In both cases, {@code password("my-password")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param password
+	 *            the password value
+	 * @return this instance for fluent chaining
+	 */
+	public abstract MYSELF password(String password);
+
+	/**
+	 * Set password for SendGrid HTTP API.
+	 * 
+	 * <p>
+	 * <strong>WARNING:</strong> SendGrid v4 doesn't use username/password
+	 * anymore. You must use an {@link #apiKey(String)}.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #password(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .password("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .password("my-password")
+	 * .password()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-password")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link Builder#build()} method is called.
+	 * The value {@code "my-password"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param password
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 * 
-	 * @deprecated SendGrid v4 doesn't use username/password anymore. You must
-	 *             use an {@link #apiKey(String...)}.
+	 * @return the builder to configure property keys/default value
 	 */
-	@Deprecated
-	public abstract MYSELF password(String... password);
+	public abstract ConfigurationValueBuilder<MYSELF, String> password();
 
 	/**
 	 * Set SendGrid API base URL.
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #url()}.
 	 * 
 	 * <pre>
-	 * .url("https://api.sendgrid.com");
+	 * .url("http://localhost/sendgrid")
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("http://api.sendgrid.com")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .url("http://localhost/sendgrid")
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("http://api.sendgrid.com")
+	 * </pre>
+	 * 
+	 * In both cases, {@code url("http://localhost/sendgrid")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param url
+	 *            the base URL for SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF url(URL url) {
+		urlValueBuilder.setValue(url);
+		return myself;
+	}
+
+	/**
+	 * Set SendGrid API base URL.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #url()}.
+	 * 
+	 * <pre>
+	 * .url("http://localhost/sendgrid")
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("http://api.sendgrid.com")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .url("http://localhost/sendgrid")
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("http://api.sendgrid.com")
+	 * </pre>
+	 * 
+	 * In both cases, {@code url("http://localhost/sendgrid")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param url
+	 *            the base URL for SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 * @throws IllegalArgumentException
+	 *             if URL is malformed
+	 */
+	public MYSELF url(String url) {
+		try {
+			return url(new URL(url));
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Invalid URL " + url, e);
+		}
+	}
+
+	/**
+	 * Set SendGrid API base URL.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("http://api.sendgrid.com")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #url(URL)} takes precedence over property
+	 * values and default value.
 	 * 
 	 * <pre>
-	 * .url("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .url("http://localhost/sendgrid")
+	 * .url()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("http://api.sendgrid.com")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link Builder#build()} method is called.
+	 * The value {@code "http://localhost/sendgrid"} is used regardless of the
+	 * value of the properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param url
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public MYSELF url(String... url) {
-		for (String u : url) {
-			if (u != null) {
-				urls.add(u);
-			}
-		}
-		return myself;
+	public ConfigurationValueBuilder<MYSELF, URL> url() {
+		return urlValueBuilder;
 	}
 
 	/**

@@ -1,13 +1,12 @@
 package fr.sii.ogham.sms.builder.ovh;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
 import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
 
@@ -27,12 +26,10 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  *
  */
 public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements Builder<OvhOptions> {
-	private EnvironmentBuilder<?> environmentBuilder;
-	private List<String> noStops;
-	private Boolean noStop;
-	private List<String> tags;
-	private List<String> smsCodings;
-	private SmsCoding smsCoding;
+	private final EnvironmentBuilder<?> environmentBuilder;
+	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, Boolean> noStopValueBuilder;
+	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, String> tagValueBuilder;
+	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, SmsCoding> smsCodingValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -47,9 +44,9 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	public OvhOptionsBuilder(OvhSmsBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
-		noStops = new ArrayList<>();
-		tags = new ArrayList<>();
-		smsCodings = new ArrayList<>();
+		noStopValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		tagValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		smsCodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmsCoding.class);
 	}
 
 	/**
@@ -57,30 +54,38 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * disable for non-commercial SMS).
 	 * 
 	 * <p>
-	 * You can specify one or several property keys. For example:
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #noStop()}.
 	 * 
 	 * <pre>
-	 * .soStop("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .noStop(true)
+	 * .noStop()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * <pre>
+	 * .noStop(true)
+	 * .noStop()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * In both cases, {@code noStop(true)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param noStop
-	 *            one value, or one or several property keys
+	 *            true to disable STOP message
 	 * @return this instance for fluent chaining
 	 */
-	public OvhOptionsBuilder noStop(String... noStop) {
-		for (String n : noStop) {
-			if (n != null) {
-				noStops.add(n);
-			}
-		}
+	public OvhOptionsBuilder noStop(Boolean noStop) {
+		noStopValueBuilder.setValue(noStop);
 		return this;
 	}
 
@@ -88,51 +93,165 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * Enable/disable "STOP" indication at the end of the message (useful to
 	 * disable for non-commercial SMS).
 	 * 
-	 * @param noStop
-	 *            enable or disable (no effect if {@code null})
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .noStop()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #noStop(Boolean)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * <pre>
+	 * .noStop(true)
+	 * .noStop()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<OvhOptionsBuilder, Boolean> noStop() {
+		return noStopValueBuilder;
+	}
+
+	/**
+	 * Set a tag to mark sent messages (20 maximum character string).
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #tag()}.
+	 * 
+	 * <pre>
+	 * .tag("my-tag")
+	 * .tag()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-tag")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .tag("my-tag")
+	 * .tag()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-tag")
+	 * </pre>
+	 * 
+	 * In both cases, {@code tag("my-tag")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param tag
+	 *            tag name to use
 	 * @return this instance for fluent chaining
 	 */
-	public OvhOptionsBuilder noStop(Boolean noStop) {
-		if (noStop != null) {
-			this.noStop = noStop;
-		}
+	public OvhOptionsBuilder tag(String tag) {
+		tagValueBuilder.setValue(tag);
 		return this;
 	}
 
 	/**
 	 * Set a tag to mark sent messages (20 maximum character string).
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .tag("my tag");
+	 * .tag()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-tag")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #tag(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .tag("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .tag("my-tag")
+	 * .tag()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("default-tag")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "my-tag"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param tag
-	 *            one value, or one or several property keys
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<OvhOptionsBuilder, String> tag() {
+		return tagValueBuilder;
+	}
+
+	/**
+	 * Set the message encoding:
+	 * <ul>
+	 * <li>"1" or "GSM7" for 7bit encoding</li>
+	 * <li>"2" or "UNICODE" for 16bit encoding</li>
+	 * </ul>
+	 * If you use Unicode, your SMS will have a maximum size of 70 characters
+	 * instead of 160.
+	 * 
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #smsCoding()}.
+	 * 
+	 * <pre>
+	 * .smsCoding(SmsCoding.UNICODE)
+	 * .smsCoding()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmsCoding.GSM7)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .smsCoding(SmsCoding.UNICODE)
+	 * .smsCoding()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmsCoding.GSM7)
+	 * </pre>
+	 * 
+	 * In both cases, {@code smsCoding(SmsCoding.UNICODE)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param smsCoding
+	 *            the coding for messages
 	 * @return this instance for fluent chaining
 	 */
-	public OvhOptionsBuilder tag(String... tag) {
-		for (String t : tag) {
-			if (t != null) {
-				tags.add(t);
-			}
-		}
+	public OvhOptionsBuilder smsCoding(SmsCoding smsCoding) {
+		smsCodingValueBuilder.setValue(smsCoding);
 		return this;
 	}
 
@@ -145,51 +264,42 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * If you use Unicode, your SMS will have a maximum size of 70 characters
 	 * instead of 160.
 	 * 
-	 * You can specify one or several property keys. For example:
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .smsCoding("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .smsCoding()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmsCoding.GSM7)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * <p>
+	 * Non-null value set using {@link #smsCoding(SmsCoding)} takes precedence
+	 * over property values and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <pre>
+	 * .smsCoding(SmsCoding.UNICODE)
+	 * .smsCoding()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(SmsCoding.GSM7)
+	 * </pre>
 	 * 
-	 * @param smsCoding
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * The value {@code SmsCoding.UNICODE} is used regardless of the value of
+	 * the properties and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public OvhOptionsBuilder smsCoding(String... smsCoding) {
-		for (String s : smsCoding) {
-			if (s != null) {
-				smsCodings.add(s);
-			}
-		}
-		return this;
-	}
-
-	/**
-	 * Set the message encoding:
-	 * <ul>
-	 * <li>{@link SmsCoding#GSM7}: 7bit encoding</li>
-	 * <li>{@link SmsCoding#UNICODE}: 16bit encoding (Unicode)</li>
-	 * </ul>
-	 * If you use Unicode, your SMS will have a maximum size of 70 characters
-	 * instead of 160.
-	 * 
-	 * @param smsCoding
-	 *            the SMS encoding
-	 * @return this instance for fluent chaining
-	 */
-	public OvhOptionsBuilder smsCoding(SmsCoding smsCoding) {
-		if (smsCoding != null) {
-			this.smsCoding = smsCoding;
-		}
-		return this;
+	public ConfigurationValueBuilder<OvhOptionsBuilder, SmsCoding> smsCoding() {
+		return smsCodingValueBuilder;
 	}
 
 	@Override
@@ -202,21 +312,14 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	}
 
 	private boolean buildNoStop(PropertyResolver propertyResolver) {
-		if (noStop != null) {
-			return noStop;
-		}
-		return BuilderUtils.evaluate(noStops, propertyResolver, Boolean.class);
+		return noStopValueBuilder.getValue(propertyResolver, false);
 	}
 
 	private String buildTag(PropertyResolver propertyResolver) {
-		return BuilderUtils.evaluate(tags, propertyResolver, String.class);
+		return tagValueBuilder.getValue(propertyResolver);
 	}
 
 	private SmsCoding buildSmsCoding(PropertyResolver propertyResolver) {
-		if (smsCoding != null) {
-			return smsCoding;
-		}
-		String nameOrValue = BuilderUtils.evaluate(smsCodings, propertyResolver, String.class);
-		return nameOrValue == null ? null : SmsCoding.from(nameOrValue);
+		return smsCodingValueBuilder.getValue(propertyResolver);
 	}
 }

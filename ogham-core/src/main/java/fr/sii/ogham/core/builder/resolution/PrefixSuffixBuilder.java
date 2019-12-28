@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.builder.resolution;
 
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 
 /**
  * Configure path prefix/suffix for a resource resolver.
@@ -34,6 +35,7 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
  *            type for fluent chaining with inheritance
  */
 public interface PrefixSuffixBuilder<MYSELF> {
+	
 	/**
 	 * You can set the path prefix for resource resolution. The aim is to define
 	 * only the name of the resource (or a subset) and the system will find it
@@ -56,26 +58,147 @@ public interface PrefixSuffixBuilder<MYSELF> {
 	 * </ul>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #pathPrefix()}.
 	 * 
 	 * <pre>
-	 * .pathPrefix("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .pathPrefix("/foo/template/")
+	 * .pathPrefix()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("/template/")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the build() method of the specialized resource resolution builder is
-	 * called.
+	 * <pre>
+	 * .pathPrefix("/foo/template/")
+	 * .pathPrefix()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("/template/")
+	 * </pre>
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * In both cases, {@code pathPrefix("/foo/template/")} is used.
 	 * 
-	 * @param prefixes
-	 *            one path prefix, or one or several property keys
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param prefix
+	 *            the path prefix
 	 * @return this instance for fluent chaining
 	 */
-	MYSELF pathPrefix(String... prefixes);
+	MYSELF pathPrefix(String prefix);
+
+	/**
+	 * You can set the path prefix for resource resolution. The aim is to define
+	 * only the name of the resource (or a subset) and the system will find it
+	 * for you. It avoids to explicitly write the whole path and let you change
+	 * the resource resolution easily.
+	 * 
+	 * For example:
+	 * <ul>
+	 * <li>You have one template located into
+	 * <code>/foo/template/createAccount.html</code></li>
+	 * <li>You have one template located into
+	 * <code>/foo/template/resetPassword.html</code></li>
+	 * </ul>
+	 * 
+	 * So you can set the prefix path to <code>/foo/template/</code>. You can
+	 * now reference the templates using the file name:
+	 * <ul>
+	 * <li><code>createAccount.html</code></li>
+	 * <li><code>resetPassword.html</code></li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .pathPrefix()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("/template/")
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #pathPrefix(String)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .pathPrefix("/foo/template/")
+	 * .pathPrefix()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("/template/")
+	 * </pre>
+	 * 
+	 * The value {@code "/foo/template/"} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	ConfigurationValueBuilder<MYSELF, String> pathPrefix();
+
+	
+	/**
+	 * You can set the path suffix for resource resolution. The aim is to define
+	 * only the name of the resource (or a subset) and the system will find it
+	 * for you. It avoids to explicitly write the whole path and let you change
+	 * the resource resolution easily.
+	 * 
+	 * For example:
+	 * <ul>
+	 * <li>You have one template located into
+	 * <code>createAccount.html</code></li>
+	 * <li>You have one template located into
+	 * <code>resetPassword.html</code></li>
+	 * </ul>
+	 * 
+	 * So you can set the suffix path to <code>.html</code>. You can now
+	 * reference the templates using the file name:
+	 * <ul>
+	 * <li><code>createAccount</code></li>
+	 * <li><code>resetPassword</code></li>
+	 * </ul>
+
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #pathSuffix()}.
+	 * 
+	 * <pre>
+	 * .pathSuffix(".html")
+	 * .pathSuffix()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(".txt")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .pathSuffix(".html")
+	 * .pathSuffix()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(".txt")
+	 * </pre>
+	 * 
+	 * In both cases, {@code pathSuffix(".html")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param suffix
+	 *            the path suffix
+	 * @return this instance for fluent chaining
+	 */
+	MYSELF pathSuffix(String suffix);
 
 	/**
 	 * You can set the path suffix for resource resolution. The aim is to define
@@ -97,26 +220,38 @@ public interface PrefixSuffixBuilder<MYSELF> {
 	 * <li><code>createAccount</code></li>
 	 * <li><code>resetPassword</code></li>
 	 * </ul>
+
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .pathSuffix("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .pathSuffix()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(".txt")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the build() method of the specialized resource resolution builder is
-	 * called.
+	 * <p>
+	 * Non-null value set using {@link #pathSuffix(String)} takes
+	 * precedence over property values and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <pre>
+	 * .pathSuffix(".html")
+	 * .pathSuffix()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(".txt")
+	 * </pre>
 	 * 
-	 * @param suffixes
-	 *            one path suffix, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * The value {@code ".html"} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	MYSELF pathSuffix(String... suffixes);
+	ConfigurationValueBuilder<MYSELF, String> pathSuffix();
 }

@@ -18,5 +18,5 @@ public interface SubjectProvider {
 	 *            the message to generate subject for
 	 * @return the generated subject or null if none has been generated
 	 */
-	public String provide(Message message);
+	String provide(Message message);
 }

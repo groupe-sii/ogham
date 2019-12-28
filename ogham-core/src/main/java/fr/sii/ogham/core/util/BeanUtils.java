@@ -44,6 +44,15 @@ public final class BeanUtils {
 		registerDefaultConverters();
 	}
 
+	/**
+	 * Register the followinf converters:
+	 * <ul>
+	 * <li>{@link EmailAddressConverter}</li>
+	 * <li>{@link SmsSenderConverter}</li>
+	 * </ul>
+	 * 
+	 * If a conversion error occurs it throws an exception.
+	 */
 	public static void registerDefaultConverters() {
 		// TODO: auto-detect converters in the classpath ?
 		// Add converter for being able to convert string address into

@@ -18,7 +18,10 @@ import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -137,9 +140,9 @@ import fr.sii.ogham.sms.message.Sms;
  * MessagingService service = MessagingBuilder.minimal()
  *   .email()
  *     .sender(JavaMailBuilder.class)
- *       .host("${mail.host}")
- *       .port("${mail.port}")
- *       .charset("${ogham.email.javamail.body.charset}", "UTF-8")
+ *       .host().properties("${mail.host}").and()
+ *       .port().properties("${mail.port}").and()
+ *       .charset().properties("${ogham.email.javamail.body.charset}").defaultValue("UTF-8").and()
  *       .mimetype()
  *         .tika()
  *           .failIfOctetStream(false)
@@ -235,15 +238,15 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	private static final Logger LOG = LoggerFactory.getLogger(MessagingBuilder.class);
 	private static final String BASE_PACKAGE = "fr.sii.ogham";
 
-	private final boolean autoconfigure;
-	private final Map<ConfigurationPhase, Boolean> alreadyConfigured;
-	private final PriorizedList<ConfigurerWithPhase> configurers;
-	private EnvironmentBuilder<MessagingBuilder> environmentBuilder;
-	private MimetypeDetectionBuilder<MessagingBuilder> mimetypeBuilder;
-	private StandaloneResourceResolutionBuilder<MessagingBuilder> resourceBuilder;
-	private EmailBuilder emailBuilder;
-	private SmsBuilder smsBuilder;
-	private boolean wrapUncaught;
+	protected final boolean autoconfigure;
+	protected final Map<ConfigurationPhase, Boolean> alreadyConfigured;
+	protected final PriorizedList<ConfigurerWithPhase> configurers;
+	protected EnvironmentBuilder<MessagingBuilder> environmentBuilder;
+	protected MimetypeDetectionBuilder<MessagingBuilder> mimetypeBuilder;
+	protected StandaloneResourceResolutionBuilder<MessagingBuilder> resourceBuilder;
+	protected EmailBuilder emailBuilder;
+	protected SmsBuilder smsBuilder;
+	protected final ConfigurationValueBuilderHelper<MessagingBuilder, Boolean> wrapUncaughtValueBuilder;
 
 	/**
 	 * Initializes the builder with minimal requirements:
@@ -275,6 +278,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		environmentBuilder = new SimpleEnvironmentBuilder<>(this);
 		mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, environmentBuilder);
 		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this, environmentBuilder);
+		wrapUncaughtValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
 	}
 
 	/**
@@ -553,13 +557,103 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * all exceptions including {@link RuntimeException}. It wraps any
 	 * exceptions into a {@link MessagingException}.
 	 * 
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #wrapUncaught()}.
+	 * 
+	 * <pre>
+	 * .wrapUncaught(false)
+	 * .wrapUncaught()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .wrapUncaught(false)
+	 * .wrapUncaught()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * In both cases, {@code wrapUncaught(false)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
 	 * @param enable
-	 *            enable or disable wrapping of exceptions
+	 *            enable or disable catching of unchecked exceptions
 	 * @return this instance for fluent chaining
 	 */
-	public MessagingBuilder wrapUncaught(boolean enable) {
-		wrapUncaught = enable;
+	public MessagingBuilder wrapUncaught(Boolean enable) {
+		wrapUncaughtValueBuilder.setValue(enable);
 		return this;
+	}
+
+	/**
+	 * There are technical exceptions that are thrown by libraries used by
+	 * Ogham. Those exceptions are often {@link RuntimeException}s. It can be
+	 * difficult for developers of a big application to quickly identify what
+	 * caused this {@link RuntimeException}. The stack trace doesn't always help
+	 * to find the real source of the error. If enables, this option ensures
+	 * that work done by Ogham will always throw a {@link MessagingException}
+	 * even if it was a {@link RuntimeException} thrown by any component. It
+	 * then helps the developer to know that the error comes from Ogham or a any
+	 * used library and not something else in its application. The other benefit
+	 * is that in your code you only catch a {@link MessagingException} and you
+	 * are sure that it will handle all cases, no surprise with an unchecked
+	 * exception that could make a big failure in your system because you didn't
+	 * know this could happen. Sending a message is often not critical (if
+	 * message can't be sent now, it can be sent later or manually). It it fails
+	 * the whole system must keep on working. With this option enabled, your
+	 * system will never fail due to an unchecked exception and you can handle
+	 * the failure the same way as with checked exceptions.
+	 * 
+	 * Concretely, call of
+	 * {@link MessagingService#send(fr.sii.ogham.core.message.Message)} catches
+	 * all exceptions including {@link RuntimeException}. It wraps any
+	 * exceptions into a {@link MessagingException}.
+	 * 
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .wrapUncaught()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #wrapUncaught(Boolean)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * <pre>
+	 * .wrapUncaught(false)
+	 * .wrapUncaught()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<MessagingBuilder, Boolean> wrapUncaught() {
+		return wrapUncaughtValueBuilder;
 	}
 
 	/**
@@ -654,8 +748,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *     .and()
 	 *   .email()
 	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
-	 *       .host("${mail.host}")
-	 *       .port("${mail.port}")
+	 *       .host().properties("${mail.host}").and()
+	 *       .port().properties("${mail.port}").and()
 	 *       .and()
 	 *     .and()
 	 *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
@@ -694,12 +788,12 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *     .and()
 	 *   .email()
 	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
-	 *       .host("${mail.host}")
-	 *       .port("${mail.port}")
+	 *       .host().properties("${mail.host}").and()
+	 *       .port().properties("${mail.port}").and()
 	 *       .and()
 	 *     .autofill()    // enables and configures autofilling
 	 *       .from()
-	 *         .defaultValueProperty("${email.sender.address}")
+	 *         .defaultValue().properties("${email.sender.address}").and()
 	 *         .and()
 	 *     .and()
 	 *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
@@ -737,12 +831,12 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *     .and()
 	 *   .email()
 	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
-	 *       .host("${mail.host}")
-	 *       .port("${mail.port}")
+	 *       .host().properties("${mail.host}").and()
+	 *       .port().properties("${mail.port}").and()
 	 *       .and()
 	 *     .autofill()    // enables and configures autofilling
 	 *       .from()
-	 *         .defaultValueProperty("${email.sender.address}")
+	 *         .defaultValue().properties("${email.sender.address}").and()
 	 *         .and()
 	 *       .subject()
 	 *         .htmlTitle(true)    // enables use of html title tag as subject
@@ -834,7 +928,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *   .email()
 	 *     .autofill()
 	 *       .from()
-	 *         .defaultValueProperty("${email.sender.address}")   // overrides default sender email address property
+	 *         .defaultValue().properties("${email.sender.address}").and()   // overrides default sender email address property
 	 *         .and()
 	 *       .and()
 	 *     .and()
@@ -950,10 +1044,10 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *     .and()
 	 *   .sms()
 	 *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
-	 *       .host("${smpp.host}")
-	 *       .port("${smpp.port}")
-	 *       .systemId("${smpp.system-id}")
-	 *       .password("${smpp.password}")
+	 *       .host().properties("${smpp.host}").and()
+	 *       .port().properties("${smpp.port}").and()
+	 *       .systemId().properties("${smpp.system-id}").and()
+	 *       .password().properties("${smpp.password}").and()
 	 *       .and()
 	 *     .and()
 	 *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
@@ -993,14 +1087,14 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *     .and()
 	 *   .sms()
 	 *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
-	 *       .host("${smpp.host}")
-	 *       .port("${smpp.port}")
-	 *       .systemId("${smpp.system-id}")
-	 *       .password("${smpp.password}")
+	 *       .host().properties("${smpp.host}").and()
+	 *       .port().properties("${smpp.port}").and()
+	 *       .systemId().properties("${smpp.system-id}").and()
+	 *       .password().properties("${smpp.password}").and()
 	 *       .and()
 	 *     .autofill()    // enables and configures autofilling
 	 *       .from()
-	 *         .defaultValueProperty("${sms.sender.number}")
+	 *         .defaultValue().properties("${sms.sender.number}").and()
 	 *         .and()
 	 *       .and()
 	 *     .and()
@@ -1077,7 +1171,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 *   .sms()
 	 *     .autofill()
 	 *       .from()
-	 *         .defaultValueProperty("${sms.sender.number}")   // overrides default sender phone number property
+	 *         .defaultValue().properties("${sms.sender.number}").and()   // overrides default sender phone number property
 	 *         .and()
 	 *       .and()
 	 *     .and()
@@ -1137,7 +1231,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		List<ConditionalSender> senders = buildSenders();
 		LOG.debug("Registered senders: {}", senders);
 		MessagingService service = new EverySupportingMessagingService(senders);
-		if (wrapUncaught) {
+		if (wrapUncaughtValueBuilder.getValue(environmentBuilder.build(), false)) {
 			service = new WrapExceptionMessagingService(service);
 		}
 		return service;

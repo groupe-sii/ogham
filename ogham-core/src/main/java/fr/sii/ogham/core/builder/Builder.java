@@ -21,6 +21,6 @@ public interface Builder<T> {
 	 * @throws BuildException
 	 *             when the object couldn't be constructed
 	 */
-	public T build();
+	T build();
 
 }

@@ -1,5 +1,7 @@
 package fr.sii.ogham.spring.email;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.Map;
 import java.util.Properties;
 
@@ -17,7 +19,7 @@ import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
  * Integrates with Spring Mail by using Spring properties defined with prefix
  * {@code spring.mail} (see {@link MailProperties}).
  * 
- * If both Spring property and Ogham property is defined, Spring property is
+ * If both Spring property and Ogham property is defined, Ogham property is
  * used.
  * 
  * For example, if the file application.properties contains the following
@@ -56,11 +58,11 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 		// use same environment as parent builder
 		builder.email().sender(JavaMailBuilder.class).environment(builder.environment());
 		// Ogham specific properties take precedence over Spring properties if specified
-		if (properties != null) {
-			applyOghamConfiguration(builder);
-		}
 		if (springMailProperties != null) {
 			applySpringMailConfiguration(builder);
+		}
+		if (properties != null) {
+			applyOghamConfiguration(builder);
 		}
 	}
 
@@ -70,12 +72,12 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 		builder.email()
 			.sender(JavaMailBuilder.class)
 				.authenticator()
-					.username(properties.getAuthenticator().getUsername())
-					.password(properties.getAuthenticator().getPassword())
+					.username().value(ofNullable(properties.getAuthenticator().getUsername())).and()
+					.password().value(ofNullable(properties.getAuthenticator().getPassword())).and()
 					.and()
-				.charset(properties.getBody().getCharset())
-				.host(properties.getHost())
-				.port(properties.getPort(), false);
+				.charset().value(ofNullable(properties.getBody().getCharset())).and()
+				.host().value(ofNullable(properties.getHost())).and()
+				.port().value(ofNullable(properties.getPort()));
 		// @formatter:on
 	}
 
@@ -85,26 +87,26 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 		builder.email()
 			.sender(JavaMailBuilder.class)
 				.authenticator()
-					.username(springMailProperties.getUsername())
-					.password(springMailProperties.getPassword())
+					.username().value(ofNullable(springMailProperties.getUsername())).and()
+					.password().value(ofNullable(springMailProperties.getPassword())).and()
 					.and()
-				.charset(springMailProperties.getDefaultEncoding())
-				.host(springMailProperties.getHost())
-				.port(springMailProperties.getPort(), false)
+				.charset().value(ofNullable(springMailProperties.getDefaultEncoding())).and()
+				.host().value(ofNullable(springMailProperties.getHost())).and()
+				.port().value(ofNullable(springMailProperties.getPort())).and()
 				.environment()
 					.properties(asProperties(springMailProperties.getProperties()));
 		// @formatter:on
 	}
 
-	private Properties asProperties(Map<String, String> source) {
-		Properties props = new Properties();
-		props.putAll(source);
-		return props;
-	}
-
 	@Override
 	public int getOrder() {
 		return JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY + 1000;
+	}
+
+	private static Properties asProperties(Map<String, String> source) {
+		Properties props = new Properties();
+		props.putAll(source);
+		return props;
 	}
 
 }

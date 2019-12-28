@@ -104,7 +104,7 @@ public class SpecialCharactersTest {
 	@SuppressWarnings("javadoc")
 	public void gsm8bit() throws MessagingException, IOException {
 		// @formatter:off
-		builder.encoder().gsm7bitPacked(0, true);
+		builder.encoder().gsm7bitPacked(0);
 		CloudhopperSMPPSender sender = builder.build();
 		sender.send(new Sms()
 						.content("abcdefghijklmnopqrstuvwxyz0123456789 @£$¥\nØø\rΔ_ΦΓΛΩΠΨΣΘΞÆæß!\"#¤%&'()*+,-./:;<=>?¡¿§ èéùìòÇÅåÉÄÖÑÜäöñüà")

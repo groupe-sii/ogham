@@ -1,5 +1,8 @@
 package fr.sii.ogham.spring.template;
 
+import static fr.sii.ogham.core.util.ConfigurationValueUtils.firstValue;
+import static java.util.Optional.ofNullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
@@ -116,11 +119,11 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		builder.configuration(emailConfiguration, true);
 		// specific Ogham properties explicitly take precedence over Spring
 		// properties
-		if (emailProperties != null) {
-			applyOghamConfiguration(builder, emailProperties);
-		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
+		}
+		if (emailProperties != null) {
+			applyOghamConfiguration(builder, emailProperties);
 		}
 		if (oghamFreemarkerProperties.isEnableSpringBeans()) {
 			registerSpringBeans(builder, emailConfiguration);
@@ -136,11 +139,11 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		builder.configuration(smsConfiguration, true);
 		// specific Ogham properties explicitly take precedence over Spring
 		// properties
-		if (smsProperties != null) {
-			applyOghamConfiguration(builder, smsProperties);
-		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
+		}
+		if (smsProperties != null) {
+			applyOghamConfiguration(builder, smsProperties);
 		}
 		if (oghamFreemarkerProperties.isEnableSpringBeans()) {
 			registerSpringBeans(builder, smsConfiguration);
@@ -160,31 +163,38 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		// @formatter:off
 		builder
 			.classpath()
-				.pathPrefix(props.getFreemarker().getClasspath().getPathPrefix(),
-							props.getTemplate().getClasspath().getPathPrefix(),
-							props.getFreemarker().getPathPrefix(),
-							props.getTemplate().getPathPrefix(),
-							templateProperties.getPathPrefix())
-				.pathSuffix(props.getFreemarker().getClasspath().getPathSuffix(),
-							props.getTemplate().getClasspath().getPathSuffix(),
-							props.getFreemarker().getPathSuffix(),
-							props.getTemplate().getPathSuffix(),
-							templateProperties.getPathSuffix())
+				.pathPrefix()
+					.value(ofNullable(firstValue(props.getFreemarker().getClasspath().getPathPrefix(),
+												props.getTemplate().getClasspath().getPathPrefix(),
+												props.getFreemarker().getPathPrefix(),
+												props.getTemplate().getPathPrefix(),
+												templateProperties.getPathPrefix())))
+					.and()
+				.pathSuffix()
+					.value(ofNullable(firstValue(props.getFreemarker().getClasspath().getPathSuffix(),
+												props.getTemplate().getClasspath().getPathSuffix(),
+												props.getFreemarker().getPathSuffix(),
+												props.getTemplate().getPathSuffix(),
+												templateProperties.getPathSuffix())))
+					.and()
 				.and()
 			.file()
-				.pathPrefix(props.getFreemarker().getFile().getPathPrefix(),
-							props.getTemplate().getFile().getPathPrefix(),
-							props.getFreemarker().getPathPrefix(),
-							props.getTemplate().getPathPrefix(),
-							templateProperties.getPathPrefix())
-				.pathSuffix(props.getFreemarker().getFile().getPathSuffix(),
-							props.getTemplate().getFile().getPathSuffix(),
-							props.getFreemarker().getPathSuffix(),
-							props.getTemplate().getPathSuffix(),
-							templateProperties.getPathSuffix());
+				.pathPrefix()
+					.value(ofNullable(firstValue(props.getFreemarker().getFile().getPathPrefix(),
+												props.getTemplate().getFile().getPathPrefix(),
+												props.getFreemarker().getPathPrefix(),
+												props.getTemplate().getPathPrefix(),
+												templateProperties.getPathPrefix())))
+					.and()
+				.pathSuffix()
+					.value(ofNullable(firstValue(props.getFreemarker().getFile().getPathSuffix(),
+											props.getTemplate().getFile().getPathSuffix(),
+											props.getFreemarker().getPathSuffix(),
+											props.getTemplate().getPathSuffix(),
+											templateProperties.getPathSuffix())));
 		builder
 			.configuration()
-				.defaultEncoding(oghamFreemarkerProperties.getDefaultEncoding());
+				.defaultEncoding().value(ofNullable(oghamFreemarkerProperties.getDefaultEncoding()));
 		// @formatter:on
 	}
 
@@ -193,15 +203,15 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		// @formatter:off
 		builder
 			.classpath()
-				.pathPrefix(springProperties.getPrefix())
-				.pathSuffix(springProperties.getSuffix())
+				.pathPrefix().value(ofNullable(springProperties.getPrefix())).and()
+				.pathSuffix().value(ofNullable(springProperties.getSuffix())).and()
 				.and()
 			.file()
-				.pathPrefix(springProperties.getPrefix())
-				.pathSuffix(springProperties.getSuffix());
+				.pathPrefix().value(ofNullable(springProperties.getPrefix())).and()
+				.pathSuffix().value(ofNullable(springProperties.getSuffix()));
 		builder
 			.configuration()
-				.defaultEncoding(springProperties.getCharsetName());
+				.defaultEncoding().value(ofNullable(springProperties.getCharsetName()));
 		// @formatter:on
 	}
 
@@ -209,7 +219,7 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		builder.configuration().addSharedVariables(new SpringBeansTemplateHashModelEx(applicationContext, getBeansWrapper(configuration)));
 	}
 
-	private BeansWrapper getBeansWrapper(Configuration configuration) {
+	private static BeansWrapper getBeansWrapper(Configuration configuration) {
 		ObjectWrapper objectWrapper = configuration.getObjectWrapper();
 		if (objectWrapper instanceof BeansWrapper) {
 			return (BeansWrapper) objectWrapper;

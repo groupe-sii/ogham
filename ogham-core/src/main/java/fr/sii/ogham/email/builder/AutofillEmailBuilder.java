@@ -1,11 +1,11 @@
 package fr.sii.ogham.email.builder;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.filler.EveryFillerDecorator;
@@ -151,22 +151,22 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 		return filler;
 	}
 
-	private Map<String, List<String>> buildDefaultValueProps() {
-		Map<String, List<String>> props = new HashMap<>();
+	private Map<String, ConfigurationValueBuilderHelper<?, String>> buildDefaultValueProps() {
+		Map<String, ConfigurationValueBuilderHelper<?, String>> props = new HashMap<>();
 		if (subjectBuilder != null) {
-			props.put("subject", subjectBuilder.getDefaultValueProperties());
+			props.put("subject", (ConfigurationValueBuilderHelper<?, String>) subjectBuilder.defaultValue());
 		}
 		if (fromBuilder != null) {
-			props.put("from", fromBuilder.getDefaultValueProperties());
+			props.put("from", (ConfigurationValueBuilderHelper<?, String>) fromBuilder.defaultValue());
 		}
 		if (toBuilder != null) {
-			props.put("to", toBuilder.getDefaultValueProperties());
+			props.put("to", (ConfigurationValueBuilderHelper<?, String>) toBuilder.defaultValue());
 		}
 		if (ccBuilder != null) {
-			props.put("cc", ccBuilder.getDefaultValueProperties());
+			props.put("cc", (ConfigurationValueBuilderHelper<?, String>) ccBuilder.defaultValue());
 		}
 		if (bccBuilder != null) {
-			props.put("bcc", bccBuilder.getDefaultValueProperties());
+			props.put("bcc", (ConfigurationValueBuilderHelper<?, String>) bccBuilder.defaultValue());
 		}
 		return props;
 	}

@@ -1,4 +1,4 @@
-package fr.sii.ogham.it.email.javamail;
+package fr.sii.ogham.it.email.javamail.builder;
 
 import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,6 +31,8 @@ public class JavaMailCustomConfigurationTest {
 		MessagingService service = MessagingBuilder.empty()
 				.email()
 					.sender(JavaMailBuilder.class)
+					.environment()
+						.and()
 					.mimetype()
 						.tika()
 							.failIfOctetStream(false)
@@ -67,8 +69,8 @@ public class JavaMailCustomConfigurationTest {
 							.failIfOctetStream(false)
 							.and()
 						.and()
-					.host("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}")
-					.port("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}")
+					.host().properties("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}").and()
+					.port().properties("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}").and()
 					.and()
 				.and()
 				.build();
@@ -101,9 +103,11 @@ public class JavaMailCustomConfigurationTest {
 							.failIfOctetStream(false)
 							.and()
 						.and()
-					.host("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}")
+					// simulate automatic configuration
+					.host().properties("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}").defaultValue("default-host").and()
+					.port().properties("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}").defaultValue(1).and()
+					// developer sets values explicitly
 					.host(ServerSetupTest.SMTP.getBindAddress())
-					.port("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}")
 					.port(ServerSetupTest.SMTP.getPort())
 					.and()
 				.and()
@@ -115,5 +119,45 @@ public class JavaMailCustomConfigurationTest {
 				.content("test")
 				.subject("subject"));
 		assertThat(greenMail).receivedMessages().count(is(1));
+//		
+//		// 1) instantiate builder (use empty() here to show complete lifecycle)
+//		MessagingBuilder builder = MessagingBuilder.empty();
+//		// 2) find all configurers for "standard" configuration (see MessagingBuilder.standard())
+//		MessagingBuilder.findAndRegister(builder, "standard");
+//		// 3) trigger ConfigurationPhase.AFTER_INIT configuration
+//		builder.configure(ConfigurationPhase.AFTER_INIT);
+//		// => some early configuration may be applied
+//		builder
+//			.wrapUncaught(property("${configurer.after-init.high-priority}"), property("${configurer.after-init.low-priority}"), defaultValue("after-init default value"));
+//		// 4) developer can configure Ogham for its needs
+//		// 4a) developer can set property values from everywhere
+//		builder
+//			.environment()
+//				// system properties
+//				.systemProperties()
+//				// from external configuration file
+//				.properties("file:/path/to/external-file.properties")
+//				// from an Properties instance
+//				.properties(new Properties())
+//				// set property values directly from code
+//				.properties()
+//					.set("property.key", "value from propertie().set()")
+//					.and()
+//				// use configuration file present in the classpath
+//				.properties("classpath:/internal.properties");
+//		// 4b) developer can customize parts of Ogham
+//		builder
+//			.wrapUncaught("${custom.property.key}", "default value set by developer");
+//		// 5) developer has finished configuring so he calls .build() method to get instance of MessagingBuilder
+//		// 5a) trigger ConfigurationPhase.BEFORE_BUILD configuration
+//		builder.configure(ConfigurationPhase.BEFORE_BUILD);
+//		// => some configuration may be applied (service providers for example)
+//		builder
+//			.wrapUncaught("${configurer.before-build.service-provider.high-priority}", "${configurer.before-build.service-provider.low-priority}", "before-build service provider default value");
+//		// => some configuration may be applied (default configuration)
+//		builder
+//			.wrapUncaught("${configurer.before-build.default.high-priority}", "${configurer.before-build.default.low-priority}", "before-build default value");
+//		// 5b) MessagingService is created with merged configuration
+//		MessagingService service = builder.build();
 	}
 }

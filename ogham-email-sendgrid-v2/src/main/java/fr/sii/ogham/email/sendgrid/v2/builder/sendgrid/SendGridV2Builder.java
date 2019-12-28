@@ -1,10 +1,6 @@
 package fr.sii.ogham.email.sendgrid.v2.builder.sendgrid;
 
-import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
-
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +8,8 @@ import org.slf4j.LoggerFactory;
 import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
@@ -24,8 +21,8 @@ import fr.sii.ogham.email.sendgrid.v2.sender.impl.SendGridV2Sender;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridInterceptor;
-import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.PriorizedContentHandler;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.MultiContentHandler;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.PriorizedContentHandler;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContentHandler;
 
 /**
@@ -94,8 +91,8 @@ import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContent
 public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder, EmailBuilder> {
 	private static final Logger LOG = LoggerFactory.getLogger(SendGridV2Builder.class);
 
-	private List<String> usernames;
-	private List<String> passwords;
+	private final ConfigurationValueBuilderHelper<SendGridV2Builder, String> usernameValueBuilder;
+	private final ConfigurationValueBuilderHelper<SendGridV2Builder, String> passwordValueBuilder;
 	private SendGridClient client;
 	private SendGridInterceptor interceptor;
 
@@ -116,91 +113,40 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 * msgBuilder
 	 * .email()
 	 *    .sender(SendGridV2Builder.class)
-	 * </pre>
+	 *ConfigurationValueRegistry</pre>
 	 * 
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
 	 */
 	public SendGridV2Builder(EmailBuilder parent) {
 		super(SendGridV2Builder.class, parent);
-		usernames = new ArrayList<>();
-		passwords = new ArrayList<>();
+		usernameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
 	}
 
-	/**
-	 * Set username for SendGrid HTTP API.
-	 * 
-	 * You can specify a direct value. For example:
-	 * 
-	 * <pre>
-	 * .username("foo");
-	 * </pre>
-	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
-	 * 
-	 * <pre>
-	 * .username("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param username
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public SendGridV2Builder username(String... username) {
-		for (String u : username) {
-			if (u != null) {
-				usernames.add(u);
-			}
-		}
+
+	@Override
+	public SendGridV2Builder username(String username) {
+		usernameValueBuilder.setValue(username);
 		return this;
 	}
 
-	/**
-	 * Set password for SendGrid HTTP API.
-	 * 
-	 * You can specify a direct value. For example:
-	 * 
-	 * <pre>
-	 * .password("foo");
-	 * </pre>
-	 * 
-	 * <p>
-	 * You can also specify one or several property keys. For example:
-	 * 
-	 * <pre>
-	 * .password("${custom.property.high-priority}", "${custom.property.low-priority}");
-	 * </pre>
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param password
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public SendGridV2Builder password(String... password) {
-		for (String p : password) {
-			if (p != null) {
-				passwords.add(p);
-			}
-		}
+	@Override
+	public ConfigurationValueBuilder<SendGridV2Builder, String> username() {
+		return usernameValueBuilder;
+	}
+
+	@Override
+	public SendGridV2Builder password(String password) {
+		passwordValueBuilder.setValue(password);
 		return this;
 	}
 
+	@Override
+	public ConfigurationValueBuilder<SendGridV2Builder, String> password() {
+		return passwordValueBuilder;
+	}
+	
 	/**
 	 * By default, calling SendGrid HTTP API is done through the default
 	 * {@link SendGrid} implementation. If you want to use another client
@@ -212,8 +158,8 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 * </pre>
 	 * 
 	 * NOTE: if you provide your custom implementation, any defined properties
-	 * and values using {@link #apiKey(String...)}, {@link #username(String...)}
-	 * or {@link #password(String...)} won't be used at all. You then have to
+	 * and values using {@link #apiKey(String)}, {@link #username(String)}
+	 * or {@link #password(String)} won't be used at all. You then have to
 	 * handle it by yourself.
 	 * 
 	 * @param client
@@ -252,10 +198,10 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	@Override
 	public SendGridV2Sender build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		String apiKey = evaluate(this.apiKeys, propertyResolver, String.class);
-		String username = evaluate(this.usernames, propertyResolver, String.class);
-		String password = evaluate(this.passwords, propertyResolver, String.class);
-		URL url = evaluate(this.urls, propertyResolver, URL.class);
+		String apiKey = apiKeyValueBuilder.getValue(propertyResolver);
+		String username = usernameValueBuilder.getValue(propertyResolver);
+		String password = passwordValueBuilder.getValue(propertyResolver);
+		URL url = urlValueBuilder.getValue(propertyResolver);
 		SendGridClient builtClient = buildClient(apiKey, username, password, url);
 		if (builtClient == null) {
 			return null;

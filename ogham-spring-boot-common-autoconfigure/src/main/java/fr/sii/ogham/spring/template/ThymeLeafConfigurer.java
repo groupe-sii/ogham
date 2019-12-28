@@ -1,5 +1,8 @@
 package fr.sii.ogham.spring.template;
 
+import static fr.sii.ogham.core.util.ConfigurationValueUtils.firstValue;
+import static java.util.Optional.ofNullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
@@ -87,11 +90,11 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 		configureSpringEngine(builder);
 		// specific Ogham properties explicitly take precedence over Spring
 		// properties
-		if (emailProperties != null) {
-			applyOghamConfiguration(builder, emailProperties);
-		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
+		}
+		if (emailProperties != null) {
+			applyOghamConfiguration(builder, emailProperties);
 		}
 	}
 
@@ -101,11 +104,11 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 		configureSpringEngine(builder);
 		// specific Ogham properties explicitly take precedence over Spring
 		// properties
-		if (smsProperties != null) {
-			applyOghamConfiguration(builder, smsProperties);
-		}
 		if (springProperties != null) {
 			applySpringConfiguration(builder);
+		}
+		if (smsProperties != null) {
+			applyOghamConfiguration(builder, smsProperties);
 		}
 	}
 
@@ -128,28 +131,35 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 		// @formatter:off
 		builder
 			.classpath()
-				.pathPrefix(props.getThymeleaf().getClasspath().getPathPrefix(),
-							props.getTemplate().getClasspath().getPathPrefix(),
-							props.getThymeleaf().getPathPrefix(),
-							props.getTemplate().getPathPrefix(),
-							templateProperties.getPathPrefix())
-				.pathSuffix(props.getThymeleaf().getClasspath().getPathSuffix(),
-							props.getTemplate().getClasspath().getPathSuffix(),
-							props.getThymeleaf().getPathSuffix(),
-							props.getTemplate().getPathSuffix(),
-							templateProperties.getPathSuffix())
+				.pathPrefix()
+					.value(ofNullable(firstValue(props.getThymeleaf().getClasspath().getPathPrefix(),
+												props.getTemplate().getClasspath().getPathPrefix(),
+												props.getThymeleaf().getPathPrefix(),
+												props.getTemplate().getPathPrefix(),
+												templateProperties.getPathPrefix())))
+					.and()
+				.pathSuffix()
+					.value(ofNullable(firstValue(props.getThymeleaf().getClasspath().getPathSuffix(),
+												props.getTemplate().getClasspath().getPathSuffix(),
+												props.getThymeleaf().getPathSuffix(),
+												props.getTemplate().getPathSuffix(),
+												templateProperties.getPathSuffix())))
+					.and()
 				.and()
 			.file()
-				.pathPrefix(props.getThymeleaf().getFile().getPathPrefix(),
-							props.getTemplate().getFile().getPathPrefix(),
-							props.getThymeleaf().getPathPrefix(),
-							props.getTemplate().getPathPrefix(),
-							templateProperties.getPathPrefix())
-				.pathSuffix(props.getThymeleaf().getFile().getPathSuffix(),
-							props.getTemplate().getFile().getPathSuffix(),
-							props.getThymeleaf().getPathSuffix(),
-							props.getTemplate().getPathSuffix(),
-							templateProperties.getPathSuffix());
+				.pathPrefix()
+					.value(ofNullable(firstValue(props.getThymeleaf().getFile().getPathPrefix(),
+												props.getTemplate().getFile().getPathPrefix(),
+												props.getThymeleaf().getPathPrefix(),
+												props.getTemplate().getPathPrefix(),
+												templateProperties.getPathPrefix())))
+					.and()
+				.pathSuffix()
+					.value(ofNullable(firstValue(props.getThymeleaf().getFile().getPathSuffix(),
+												props.getTemplate().getFile().getPathSuffix(),
+												props.getThymeleaf().getPathSuffix(),
+												props.getTemplate().getPathSuffix(),
+												templateProperties.getPathSuffix())));
 		// @formatter:on
 	}
 
@@ -158,12 +168,12 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 		// @formatter:off
 		builder
 			.classpath()
-				.pathPrefix(springProperties.getPrefix())
-				.pathSuffix(springProperties.getSuffix())
+				.pathPrefix().value(ofNullable(springProperties.getPrefix())).and()
+				.pathSuffix().value(ofNullable(springProperties.getSuffix())).and()
 				.and()
 			.file()
-				.pathPrefix(springProperties.getPrefix())
-				.pathSuffix(springProperties.getSuffix());
+				.pathPrefix().value(ofNullable(springProperties.getPrefix())).and()
+				.pathSuffix().value(ofNullable(springProperties.getSuffix()));
 		// @formatter:on
 	}
 

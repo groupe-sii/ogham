@@ -1,6 +1,8 @@
 package fr.sii.ogham.core.builder.mimetype;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**
@@ -21,7 +23,7 @@ import fr.sii.ogham.core.mimetype.MimeTypeProvider;
  *            method)
  */
 public class MimetypeDetectionBuilderDelegate<P> extends AbstractParent<P> implements MimetypeDetectionBuilder<P> {
-	private MimetypeDetectionBuilder<?> delegate;
+	private final MimetypeDetectionBuilder<?> delegate;
 
 	/**
 	 * Wraps the delegate builder. The delegated builder parent is not used.
@@ -43,10 +45,16 @@ public class MimetypeDetectionBuilderDelegate<P> extends AbstractParent<P> imple
 	}
 
 	@Override
-	public MimetypeDetectionBuilderDelegate<P> defaultMimetype(String... mimetypes) {
-		delegate.defaultMimetype(mimetypes);
+	public MimetypeDetectionBuilder<P> defaultMimetype(String mimetype) {
+		delegate.defaultMimetype(mimetype);
 		return this;
 	}
+
+	@Override
+	public ConfigurationValueBuilder<MimetypeDetectionBuilder<P>, String> defaultMimetype() {
+		return new ConfigurationValueBuilderDelegate<>(this, delegate.defaultMimetype());
+	}
+
 
 	@Override
 	public ReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replace() {

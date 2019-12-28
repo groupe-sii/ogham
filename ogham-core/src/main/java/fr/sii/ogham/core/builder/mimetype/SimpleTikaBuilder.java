@@ -4,6 +4,11 @@ import org.apache.tika.Tika;
 import org.apache.tika.config.TikaConfig;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.TikaProvider;
 
@@ -17,7 +22,7 @@ import fr.sii.ogham.core.mimetype.TikaProvider;
  * {@link TikaConfig#getDefaultConfig()})</li>
  * <li>Tika may be in some conditions not enough accurate. In this case, it will
  * return application/octet-stream mimetype. If
- * {@link #failIfOctetStream(boolean)} is set to true, then if Tika returns an
+ * {@link #failIfOctetStream(Boolean)} is set to true, then if Tika returns an
  * application/octet-stream, it will throw an exception. The purpose is to let
  * another {@link MimeTypeProvider} implementation take over and try to make a
  * better detection.</li>
@@ -30,17 +35,25 @@ import fr.sii.ogham.core.mimetype.TikaProvider;
  *            method)
  */
 public class SimpleTikaBuilder<P> extends AbstractParent<P> implements TikaBuilder<P> {
+	private final EnvironmentBuilder<?> environmentBuilder;
 	private Tika tika;
-	private boolean failIfOctetStream = true;
+	private final ConfigurationValueBuilderHelper<SimpleTikaBuilder<P>, Boolean> failIfOctetStreamValueBuilder;
 
 	/**
-	 * The parent builder (it is used when calling {@link #and()} method).
+	 * Initializes the builder with the parent instance (used by the
+	 * {@link #and()} method) and the {@link EnvironmentBuilder}. The
+	 * {@link EnvironmentBuilder} is used to evaluate property values when
+	 * {@link #build()} is called.
 	 * 
 	 * @param parent
-	 *            the parent builder
+	 *            the parent instance
+	 * @param environmentBuilder
+	 *            used to evaluate property values
 	 */
-	public SimpleTikaBuilder(P parent) {
+	public SimpleTikaBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
+		this.environmentBuilder = environmentBuilder;
+		failIfOctetStreamValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
 	}
 
 	@Override
@@ -50,14 +63,20 @@ public class SimpleTikaBuilder<P> extends AbstractParent<P> implements TikaBuild
 	}
 
 	@Override
-	public TikaBuilder<P> failIfOctetStream(boolean fail) {
-		failIfOctetStream = fail;
+	public TikaBuilder<P> failIfOctetStream(Boolean fail) {
+		failIfOctetStreamValueBuilder.setValue(fail);
 		return this;
+	}
+
+	@Override
+	public ConfigurationValueBuilder<TikaBuilder<P>, Boolean> failIfOctetStream() {
+		return new ConfigurationValueBuilderDelegate<>(this, failIfOctetStreamValueBuilder);
 	}
 
 	@Override
 	public MimeTypeProvider build() {
 		Tika tikaInstance = this.tika == null ? new Tika() : this.tika;
-		return new TikaProvider(tikaInstance, failIfOctetStream);
+		PropertyResolver propertyResolver = environmentBuilder.build();
+		return new TikaProvider(tikaInstance, failIfOctetStreamValueBuilder.getValue(propertyResolver, false));
 	}
 }

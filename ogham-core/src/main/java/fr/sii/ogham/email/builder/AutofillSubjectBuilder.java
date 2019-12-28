@@ -1,13 +1,10 @@
 package fr.sii.ogham.email.builder;
 
-import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import fr.sii.ogham.core.builder.AbstractAutofillDefaultValueBuilder;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.filler.MessageFiller;
@@ -35,8 +32,8 @@ import fr.sii.ogham.email.message.Email;
  *
  */
 public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<AutofillSubjectBuilder, AutofillEmailBuilder> implements Builder<MessageFiller> {
-	private boolean enableHtmlTitle;
-	private List<String> firstLinePrefixes;
+	private final ConfigurationValueBuilderHelper<AutofillSubjectBuilder, Boolean> enableHtmlTitleValueBuilder;
+	private final ConfigurationValueBuilderHelper<AutofillSubjectBuilder, String> firstLinePrefixValueBuilder;
 	private SubjectProvider customProvider;
 	private EnvironmentBuilder<?> environmentBuilder;
 
@@ -54,54 +51,168 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 	public AutofillSubjectBuilder(AutofillEmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(AutofillSubjectBuilder.class, parent);
 		this.environmentBuilder = environmentBuilder;
-		firstLinePrefixes = new ArrayList<>();
+		enableHtmlTitleValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class);
+		firstLinePrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
 	}
-
+	
 	/**
 	 * Enable/disable using HTML {@code <title>} tag to provide a subject on the
 	 * {@link Email} if none was explicitly defined.
 	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #htmlTitle()}.
+	 * 
+	 * <pre>
+	 * .htmlTitle(false)
+	 * .htmlTitle()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .htmlTitle(false)
+	 * .htmlTitle()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * In both cases, {@code htmlTitle(false)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
 	 * @param enable
-	 *            true to enable, false to disable
+	 *            enable (true) or disable (false) extraction of HTML title to be used as subject of the email
 	 * @return this instance for fluent chaining
 	 */
-	public AutofillSubjectBuilder htmlTitle(boolean enable) {
-		enableHtmlTitle = enable;
-		return myself;
+	public AutofillSubjectBuilder htmlTitle(Boolean enable) {
+		enableHtmlTitleValueBuilder.setValue(enable);
+		return this;
 	}
 
+	
+	/**
+	 * Enable/disable using HTML {@code <title>} tag to provide a subject on the
+	 * {@link Email} if none was explicitly defined.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .htmlTitle()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #htmlTitle(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .htmlTitle(false)
+	 * .htmlTitle()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<AutofillSubjectBuilder, Boolean> htmlTitle() {
+		return enableHtmlTitleValueBuilder;
+	}
+	
 	/**
 	 * Uses first line of text template to define the email subject (only if a
 	 * prefix is defined).
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #text()}.
 	 * 
 	 * <pre>
-	 * .text("Subject:");
+	 * .text("MyPrefix:")
+	 * .text()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("Subject:")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .text("MyPrefix:")
+	 * .text()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("Subject:")
+	 * </pre>
+	 * 
+	 * In both cases, {@code text("MyPrefix:")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param firstLinePrefix
+	 *            the prefix used to indicate that subject should be extracted
+	 * @return this instance for fluent chaining
+	 */
+	public AutofillSubjectBuilder text(String firstLinePrefix) {
+		firstLinePrefixValueBuilder.setValue(firstLinePrefix);
+		return this;
+	}
+
+	
+	/**
+	 * Uses first line of text template to define the email subject (only if a
+	 * prefix is defined).
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .text()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("Subject:")
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #text(String)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .text("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .text("MyPrefix:")
+	 * .text()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("Subject:")
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code "MyPrefix:"} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param firstLinePrefixes
-	 *            one value, or one or serveral property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public AutofillSubjectBuilder text(String... firstLinePrefixes) {
-		this.firstLinePrefixes.addAll(Arrays.asList(firstLinePrefixes));
-		return myself;
+	public ConfigurationValueBuilder<AutofillSubjectBuilder, String> text() {
+		return firstLinePrefixValueBuilder;
 	}
 
 	/**
@@ -133,14 +244,13 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 			return customProvider;
 		}
 		FirstSupportingSubjectProvider provider = new FirstSupportingSubjectProvider();
-		if (!firstLinePrefixes.isEmpty()) {
-			PropertyResolver propertyResolver = environmentBuilder.build();
-			String prefix = evaluate(firstLinePrefixes, propertyResolver, String.class);
-			if (prefix != null) {
-				provider.addProvider(new TextPrefixSubjectProvider(prefix));
-			}
+		PropertyResolver propertyResolver = environmentBuilder.build();
+		String prefix = firstLinePrefixValueBuilder.getValue(propertyResolver);
+		if (prefix != null) {
+			provider.addProvider(new TextPrefixSubjectProvider(prefix));
 		}
-		if (enableHtmlTitle) {
+		boolean htmlTitle = enableHtmlTitleValueBuilder.getValue(propertyResolver, false);
+		if (htmlTitle) {
 			provider.addProvider(new HtmlTitleSubjectProvider());
 		}
 		SubjectProvider multiContentProvider = new MultiContentSubjectProvider(provider);

@@ -1,13 +1,10 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.sms.builder.cloudhopper.UserDataBuilder.UserDataPropValues;
@@ -42,8 +39,8 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
  */
 public class UserDataBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<UserDataPropValues> {
 	private final EnvironmentBuilder<?> environmentBuilder;
-	private final List<String> useShortMessageProps;
-	private final List<String> useTlvMessagePayloadProps;
+	private final ConfigurationValueBuilderHelper<UserDataBuilder, Boolean> useShortMessageValueBuilder;
+	private final ConfigurationValueBuilderHelper<UserDataBuilder, Boolean> useTlvMessagePayloadValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -58,165 +55,183 @@ public class UserDataBuilder extends AbstractParent<CloudhopperBuilder> implemen
 	public UserDataBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
 		this.environmentBuilder = environmentBuilder;
-		useShortMessageProps = new ArrayList<>();
-		useTlvMessagePayloadProps = new ArrayList<>();
+		useShortMessageValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		useTlvMessagePayloadValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
 	}
 
 	/**
 	 * Enable/disable use of {@code short_message} field.
 	 * 
 	 * <p>
-	 * If several properties are already set using
-	 * {@link #useShortMessage(String...)}, then the enabled value is appended.
-	 * 
-	 * For example,
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #useShortMessage()}.
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .useShortMessage("${custom.property.high-priority}")
 	 * .useShortMessage(true)
-	 * }
+	 * .useShortMessage()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
 	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .useTlvMessagePayload(true)} is used. If
-	 * "custom.property.high-priority" property exists, then the value of
-	 * "custom.property.high-priority" is used.
 	 * 
 	 * <pre>
-	 * {@code 
 	 * .useShortMessage(true)
-	 * .useShortMessage("${custom.property.high-priority}")
-	 * }
+	 * .useShortMessage()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
 	 * </pre>
 	 * 
-	 * The value of {@code .useShortMessage(true)} is always used.
+	 * In both cases, {@code useShortMessage(true)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param useShortMessage
 	 *            enable (true) or disable (false) use of {@code short_message}
 	 *            field
 	 * @return this instance for fluent chaining
 	 */
-	public UserDataBuilder useShortMessage(boolean useShortMessage) {
-		useShortMessageProps.add(String.valueOf(useShortMessage));
+	public UserDataBuilder useShortMessage(Boolean useShortMessage) {
+		useShortMessageValueBuilder.setValue(useShortMessage);
 		return this;
 	}
 
 	/**
-	 * Enable/disable use of {@code short_message} field.
+	 * Enable/disable use of {@code short_message} field to carry text message
+	 * (named User Data).
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .useShortMessage("true");
+	 * .useShortMessage()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #useShortMessage(Boolean)} takes
+	 * precedence over property values and default value:
 	 * 
 	 * <pre>
-	 * .useShortMessage("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .useShortMessage(false)
+	 * .useShortMessage()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param useShortMessage
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public UserDataBuilder useShortMessage(String... useShortMessage) {
-		Collections.addAll(useShortMessageProps, useShortMessage);
-		return this;
+	public ConfigurationValueBuilder<UserDataBuilder, Boolean> useShortMessage() {
+		return useShortMessageValueBuilder;
 	}
 
 	/**
 	 * Enable/disable use of {@code message_payload} optional TLV
-	 * (Tag-Value-Length) parameter.
+	 * (Tag-Value-Length) parameter to carry text message (named User Data).
+	 * 
+	 * <strong>NOTE:</strong> The TLV optional parameters are available since
+	 * SMPP version 3.4.
 	 * 
 	 * <p>
-	 * If several properties are already set using
-	 * {@link #useTlvMessagePayload(String...)}, then the enabled value is
-	 * appended.
-	 * 
-	 * For example,
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #useTlvMessagePayload()}.
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .useTlvMessagePayload("${custom.property.high-priority}")
-	 * .useTlvMessagePayload(true)
-	 * }
+	 * .useTlvMessagePayload(false)
+	 * .useTlvMessagePayload()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
-	 * 
-	 * If "custom.property.high-priority" property doesn't exist, then
-	 * {@code .useTlvMessagePayload(true)} is used. If
-	 * "custom.property.high-priority" property exists, then the value of
-	 * "custom.property.high-priority" is used.
 	 * 
 	 * <pre>
-	 * {@code 
-	 * .useTlvMessagePayload(true)
-	 * .useTlvMessagePayload("${custom.property.high-priority}")
-	 * }
+	 * .useTlvMessagePayload(false)
+	 * .useTlvMessagePayload()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The value of {@code .useTlvMessagePayload(true)} is always used.
+	 * In both cases, {@code useTlvMessagePayload(false)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param useTlvMessagePayload
 	 *            enable (true) or disable (false) use of
-	 *            {@code message_payload} optional TLV parameter
+	 *            {@code message_payload} optional parameter to carry text
+	 *            message
 	 * @return this instance for fluent chaining
 	 */
-	public UserDataBuilder useTlvMessagePayload(boolean useTlvMessagePayload) {
-		useTlvMessagePayloadProps.add(String.valueOf(useTlvMessagePayload));
+	public UserDataBuilder useTlvMessagePayload(Boolean useTlvMessagePayload) {
+		useTlvMessagePayloadValueBuilder.setValue(useTlvMessagePayload);
 		return this;
 	}
 
 	/**
 	 * Enable/disable use of {@code message_payload} optional TLV
-	 * (Tag-Length-Value) parameter.
+	 * (Tag-Value-Length) parameter to carry text message (named User Data).
 	 * 
-	 * You can specify a direct value. For example:
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .useTlvMessagePayload("true");
+	 * .useTlvMessagePayload()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
 	 * <p>
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #useTlvMessagePayload(Boolean)} takes
+	 * precedence over property values and default value.
 	 * 
 	 * <pre>
-	 * .useTlvMessagePayload("${custom.property.high-priority}", "${custom.property.low-priority}");
+	 * .useTlvMessagePayload(false)
+	 * .useTlvMessagePayload()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
 	 * </pre>
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param useTlvMessagePayload
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public UserDataBuilder useTlvMessagePayload(String... useTlvMessagePayload) {
-		Collections.addAll(useTlvMessagePayloadProps, useTlvMessagePayload);
-		return this;
+	public ConfigurationValueBuilder<UserDataBuilder, Boolean> useTlvMessagePayload() {
+		return useTlvMessagePayloadValueBuilder;
 	}
 
 	@Override
 	public UserDataPropValues build() {
 		PropertyResolver propertyResolver = environmentBuilder.build();
-		Boolean useShortMessage = evaluate(useShortMessageProps, propertyResolver, Boolean.class);
-		Boolean useTlvMessagePayload = evaluate(useTlvMessagePayloadProps, propertyResolver, Boolean.class);
-		return new UserDataPropValues(useShortMessage != null && useShortMessage, useTlvMessagePayload != null && useTlvMessagePayload);
+		boolean useShort = useShortMessageValueBuilder.getValue(propertyResolver, false);
+		boolean useTlv = useTlvMessagePayloadValueBuilder.getValue(propertyResolver, false);
+		return new UserDataPropValues(useShort, useTlv);
 	}
 
 	/**

@@ -1,8 +1,9 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import static java.util.Arrays.asList;
-
-import java.util.List;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM7;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_ISO_8859_1;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
 
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.sms.encoder.Encoder;
@@ -43,41 +44,41 @@ public class ReadableEncoderBuilder {
 	/**
 	 * @return the registered properties/values for GSM 7-bit encoding
 	 */
-	public List<String> getGsm7Priorities() {
+	public StandardEncodingHelper getGsm7Priorities() {
 		if (delegate == null) {
-			return asList();
+			return new StandardEncodingHelper(delegate, NAME_GSM7);
 		}
-		return delegate.gsm7Packed.getProperties();
+		return delegate.gsm7PackedValueBuilder;
 	}
 
 	/**
 	 * @return the registered properties/values for GSM 8-bit encoding
 	 */
-	public List<String> getGsm8Priorities() {
+	public StandardEncodingHelper getGsm8Priorities() {
 		if (delegate == null) {
-			return asList();
+			return new StandardEncodingHelper(delegate, NAME_GSM);
 		}
-		return delegate.gsm8.getProperties();
+		return delegate.gsm8ValueBuilder;
 	}
 
 	/**
 	 * @return the registered properties/values for UCS-2 encoding
 	 */
-	public List<String> getUcs2Priorities() {
+	public StandardEncodingHelper getUcs2Priorities() {
 		if (delegate == null) {
-			return asList();
+			return new StandardEncodingHelper(delegate, NAME_UCS_2);
 		}
-		return delegate.ucs2.getProperties();
+		return delegate.ucs2ValueBuilder;
 	}
 
 	/**
 	 * @return the registered properties/values for Latin 1 encoding
 	 */
-	public List<String> getLatin1Priorities() {
+	public StandardEncodingHelper getLatin1Priorities() {
 		if (delegate == null) {
-			return asList();
+			return new StandardEncodingHelper(delegate, NAME_ISO_8859_1);
 		}
-		return delegate.latin1.getProperties();
+		return delegate.latin1ValueBuilder;
 	}
 
 	/**
