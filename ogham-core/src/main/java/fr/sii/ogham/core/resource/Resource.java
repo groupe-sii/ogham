@@ -21,5 +21,5 @@ public interface Resource {
 	 * @throws IOException
 	 *             when the input stream can't be accessed or read
 	 */
-	public InputStream getInputStream() throws IOException;
+	InputStream getInputStream() throws IOException;
 }

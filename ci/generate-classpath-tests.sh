@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -e
 
 # start Spring Initializr
 touch "$HOME/$INITIALIZER_NAME.log"

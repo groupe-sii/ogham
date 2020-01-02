@@ -45,7 +45,7 @@ public final class BeanUtils {
 	}
 
 	/**
-	 * Register the followinf converters:
+	 * Register the following converters:
 	 * <ul>
 	 * <li>{@link EmailAddressConverter}</li>
 	 * <li>{@link SmsSenderConverter}</li>
@@ -179,10 +179,8 @@ public final class BeanUtils {
 			handleUnknown(bean, options, entry, e);
 		} catch (ConversionException e) {
 			handleConversion(bean, options, entry, e);
-		} catch (IllegalAccessException e) {
-			throw new BeanException("Failed to populate bean due to security restrictions", bean, e);
-		} catch (InvocationTargetException e) {
-			throw new BeanException("Failed to populate bean due to invalid setter call", bean, e);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			handleInvocation(bean, options, entry, e);
 		}
 	}
 
@@ -227,7 +225,9 @@ public final class BeanUtils {
 	 * </pre>
 	 * 
 	 * <p>
-	 * It doesn't fail if a property doesn't exist.
+	 * It doesn't fail if a property doesn't exist or if the new value can't be
+	 * converted or property can't be accessed or set. The new value is just not
+	 * set.
 	 * </p>
 	 * 
 	 * @param bean
@@ -238,7 +238,7 @@ public final class BeanUtils {
 	 *             when the bean couldn't be populated
 	 */
 	public static void populate(Object bean, Map<String, Object> values) throws BeanException {
-		populate(bean, values, new Options(false, true));
+		populate(bean, values, new Options(false, true, true, true));
 	}
 
 	private static void handleUnknown(Object bean, Options options, Entry<String, Object> entry, Exception e) throws BeanException {
@@ -250,22 +250,51 @@ public final class BeanUtils {
 	}
 
 	private static void handleConversion(Object bean, Options options, Entry<String, Object> entry, ConversionException e) throws BeanException {
-		if (options.isSkipUnknown()) {
+		if (options.isSkipConversionError()) {
 			LOG.debug("skipping property {}: can't convert value", entry.getKey(), e);
 		} else {
 			throw new BeanException("Failed to populate bean due to conversion error", bean, e);
 		}
 	}
 
+	private static void handleInvocation(Object bean, Options options, Entry<String, Object> entry, ReflectiveOperationException e) throws BeanException {
+		if (options.isSkipInvocationError()) {
+			LOG.debug("skipping property {}: can't set value", entry.getKey(), e);
+		} else {
+			throw new BeanException("Failed to populate bean due to invalid setter call or security retrictions", bean, e);
+		}
+	}
+
+	/**
+	 * Populate options:
+	 * <ul>
+	 * <li><strong>override</strong>: If true it overrides any previously set
+	 * value. If false it set the value only if previous value is not set
+	 * (null)</li>
+	 * <li><strong>skipUnknown</strong>: If true and a property doesn't exist,
+	 * do no fail and log the error. If false and a property doesn't exist, it
+	 * fails</li>
+	 * <li><strong>skipConversionError</strong>: If true and a property value
+	 * can't be set because of invalid value/type, do not fail and log the
+	 * error. If false and a property value can't be set because of invalid
+	 * value/type, it fails</li>
+	 * </ul>
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
 	public static class Options {
-		private boolean override;
+		private final boolean override;
+		private final boolean skipUnknown;
+		private final boolean skipConversionError;
+		private final boolean skipInvocationError;
 
-		private boolean skipUnknown;
-
-		public Options(boolean override, boolean skipUnknown) {
+		public Options(boolean override, boolean skipUnknown, boolean skipConversionError, boolean skipInvocationError) {
 			super();
 			this.override = override;
 			this.skipUnknown = skipUnknown;
+			this.skipConversionError = skipConversionError;
+			this.skipInvocationError = skipInvocationError;
 		}
 
 		public boolean isOverride() {
@@ -274,6 +303,14 @@ public final class BeanUtils {
 
 		public boolean isSkipUnknown() {
 			return skipUnknown;
+		}
+
+		public boolean isSkipConversionError() {
+			return skipConversionError;
+		}
+
+		public boolean isSkipInvocationError() {
+			return skipInvocationError;
 		}
 	}
 

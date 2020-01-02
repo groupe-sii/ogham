@@ -56,7 +56,10 @@
 		<junit.version>4.12</junit.version>
 		<junit-jupiter.version>5.5.2</junit-jupiter.version>
 		<xmlunit.version>1.6</xmlunit.version>
-		<mockito.version>2.28.2</mockito.version>
+		<mockito-junit-jupiter.version>3.2.4</mockito-junit-jupiter.version>
+		<mockito.version>${mockito-junit-jupiter.version}</mockito.version>
+		<byte-buddy.version>1.10.6</byte-buddy.version>
+		<objenesis.version>3.1</objenesis.version>
 		<cloning.version>1.9.12</cloning.version>
 		<greenmail.version>1.5.11</greenmail.version>
 		<jsmpp.version>2.3.7</jsmpp.version>
@@ -65,8 +68,8 @@
 		<wiremock.version>2.23.2</wiremock.version>
 		<hamcrest.version>2.1</hamcrest.version>
 		<spock.version>1.3-groovy-2.5</spock.version>
-		<groovy-eclipse-compiler.version>3.4.0-01</groovy-eclipse-compiler.version>
-		<groovy-eclipse-batch.version>2.5.7-01</groovy-eclipse-batch.version>
+		<groovy-eclipse-compiler.version>3.6.0-03</groovy-eclipse-compiler.version>
+		<groovy-eclipse-batch.version>2.5.8-03</groovy-eclipse-batch.version>
 		<!-- Dependencies - documentation -->
 		<asciidoctorj-diagram.version>1.5.16</asciidoctorj-diagram.version>
 		<asciidoctorj.version>1.5.6</asciidoctorj.version>
@@ -80,6 +83,7 @@
 
 		<!-- Mutation testing -->
 		<pit.report.path>${project.basedir}/../target/site/pit-reports</pit.report.path>
+		<pit.mutation-engine>descartes</pit.mutation-engine>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -99,7 +103,7 @@
 		<github.code.url>${github.url}/blob/${git.branch}</github.code.url>
 		<project.url>https://groupe-sii.github.io/ogham/</project.url>
 		<scm.url>git@github.com:groupe-sii/ogham.git</scm.url>
-		<site.url>http://groupe-sii.github.io/ogham</site.url>
+		<site.url>https://groupe-sii.github.io/ogham</site.url>
 		<site.deploy.url>gitsite:git@github.com/groupe-sii/ogham.git</site.deploy.url>
 
 		<!-- Documentation -->
@@ -112,6 +116,7 @@
 		<doc-theme>cerulean</doc-theme>
 		<asciidoctor.skip>${maven.site.skip}</asciidoctor.skip>
 		<sass.skip>${maven.site.skip}</sass.skip>
+		<asciidoctor.resources.output-directory>target/generated-docs</asciidoctor.resources.output-directory>
 
 		<!-- Plugins -->
 		<maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
@@ -124,8 +129,11 @@
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
 		<!-- Plugins - mutation testing -->
-		<pitest-maven.version>1.4.9-SNAPSHOT</pitest-maven.version>
+		<pit.version>1.4.11-OGHAM</pit.version>
+		<pitest-maven.version>${pit.version}</pitest-maven.version>
+		<pitest-junit5-plugin.version>0.7</pitest-junit5-plugin.version>
 		<pitmp-maven-plugin.version>1.3.7</pitmp-maven-plugin.version>
+		<descartes.version>1.2.6</descartes.version>
 		<!-- Plugins - documentation -->
 		<maven-site-plugin.version>3.7</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
@@ -509,6 +517,26 @@
 				<version>${mockito.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-junit-jupiter</artifactId>
+				<version>${mockito-junit-jupiter.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.bytebuddy</groupId>
+				<artifactId>byte-buddy</artifactId>
+				<version>${byte-buddy.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.bytebuddy</groupId>
+				<artifactId>byte-buddy-agent</artifactId>
+				<version>${byte-buddy.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.objenesis</groupId>
+				<artifactId>objenesis</artifactId>
+				<version>${objenesis.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail</artifactId>
 				<version>${greenmail.version}</version>
@@ -542,6 +570,14 @@
 				<groupId>org.opensmpp</groupId>
 				<artifactId>opensmpp-sim</artifactId>
 				<version>${opensmpp.version}</version>
+			</dependency>
+			<!-- Must be at the end to avoid overriding versions explicitly set -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-parent</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -737,12 +773,11 @@
 							<attributes>
 								<toc>left</toc>
 								<icons>font</icons>
-								<tabsize>3</tabsize>
 								<linkcss>true</linkcss>
 								<sectanchors>true</sectanchors>
 								<docinfo2>true</docinfo2>
 								<experimental>true</experimental>
-								<tabsize>4</tabsize>
+								<tabsize>2</tabsize>
 								<imagesdir />
 								<ogham-version>${docLatestReleaseVersion}</ogham-version>
 								<ogham-dev-version>${docFutureDevVersion}</ogham-dev-version>
@@ -776,7 +811,7 @@
 									<directory>src/docs/resources</directory>
 								</resource>
 							</resources>
-							<outputDirectory>target/generated-docs</outputDirectory>
+							<outputDirectory>${asciidoctor.resources.output-directory}</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -839,12 +874,11 @@
 							<nofooter>true</nofooter>
 							<toc>left</toc>
 							<icons>font</icons>
-							<tabsize>3</tabsize>
 							<linkcss>true</linkcss>
 							<sectanchors>true</sectanchors>
 							<docinfo2>true</docinfo2>
 							<experimental>true</experimental>
-							<tabsize>4</tabsize>
+							<tabsize>2</tabsize>
 							<imagesdir />
 							<ogham-version>${docLatestReleaseVersion}</ogham-version>
 							<ogham-dev-version>${docFutureDevVersion}</ogham-dev-version>
@@ -1138,28 +1172,68 @@
 								<goal>run</goal>
 							</goals>
 							<configuration>
-								<mutationEngine>descartes</mutationEngine>
+								<mutationEngine>${pit.mutation-engine}</mutationEngine>
 								<skippedModules>
 									<param>ogham-spring-boot-autoconfigure</param>
 									<param>ogham-spring-boot-starter-all</param>
 									<param>ogham-spring-boot-starter-email</param>
 									<param>ogham-spring-boot-starter-sms</param>
 									<param>ogham-spring-boot-common-autoconfigure</param>
+									<param>ogham-test-utils-internal</param>
+									<param>ogham-test-classpath</param>
+									<param>reporting</param>
 								</skippedModules>
+								<excludedTestClasses>
+									<excludedClasse>*.SpockLoggingExtensionSpec</excludedClasse>
+									<excludedClasse>*.SendGridHttpTest</excludedClasse>
+								</excludedTestClasses>
 								<outputFormats>
 									<outputFormat>HTML</outputFormat>
 									<outputFormat>XML</outputFormat>
 								</outputFormats>
 								<exportLineCoverage>true</exportLineCoverage>
 								<withHistory>true</withHistory>
+								<avoidCallsTo>
+									<avoidCallsTo>java.util.logging</avoidCallsTo>
+									<avoidCallsTo>org.apache.log4j</avoidCallsTo>
+									<avoidCallsTo>org.slf4j</avoidCallsTo>
+									<avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
+									<avoidCallsTo>com.github.tomakehurst.wiremock</avoidCallsTo>
+								</avoidCallsTo>
+								<excludedClasses>
+									<excludedClasse>com.github.tomakehurst.wiremock.*</excludedClasse>
+								</excludedClasses>
 							</configuration>
 						</execution>
 					</executions>
+					<dependencies>
+						<dependency>
+							<groupId>org.pitest</groupId>
+							<artifactId>pitest-maven</artifactId>
+							<version>${pit.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.pitest</groupId>
+							<artifactId>pitest-entry</artifactId>
+							<version>${pit.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>eu.stamp-project</groupId>
+							<artifactId>descartes</artifactId>
+							<version>${descartes.version}</version>
+						</dependency>
+						<!-- FIXME: restore when JUnit 5 is fully supported by PIT and Spock 
+							<dependency> <groupId>org.pitest</groupId> <artifactId>pitest-junit5-plugin</artifactId> 
+							<version>${pitest-junit5-plugin.version}</version> </dependency> -->
+					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>org.pitest</groupId>
 					<artifactId>pitest-maven</artifactId>
 					<version>${pitest-maven.version}</version>
+					<!-- FIXME: restore when JUnit 5 is fully supported by PIT and Spock 
+						<dependencies> <dependency> <groupId>org.pitest</groupId> <artifactId>pitest-junit5-plugin</artifactId> 
+						<version>${pitest-junit5-plugin.version}</version> </dependency> </dependencies> -->
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -1310,6 +1384,7 @@
 			</properties>
 		</profile>
 		<profile>
+			<!-- Enable mutation testing with other tasks -->
 			<id>mutation-testing</id>
 			<build>
 				<plugins>
@@ -1322,6 +1397,8 @@
 			</build>
 		</profile>
 		<profile>
+			<!-- Run mutation testing and report generation (disable tests, javadoc, 
+				site) -->
 			<id>mutation-testing-only</id>
 			<properties>
 				<skip.integration.tests>true</skip.integration.tests>
@@ -1345,6 +1422,7 @@
 			</build>
 		</profile>
 		<profile>
+			<!-- Run only mutation report generation -->
 			<id>mutation-testing-aggregate-report-only</id>
 			<properties>
 				<skip.integration.tests>true</skip.integration.tests>

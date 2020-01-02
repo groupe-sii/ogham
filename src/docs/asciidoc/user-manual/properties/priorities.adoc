@@ -37,7 +37,7 @@ include::{standard-samples-sourcedir}/fr/sii/ogham/sample/standard/PropertiesSam
 <5> Use standard `System.getProperties()`
 
 
-{standard-email-samples-sourcedir-url}/fr/sii/ogham/sample/standard/PropertiesSample.java?ts=4[Source code of the sample].
+{standard-email-samples-sourcedir-url}/fr/sii/ogham/sample/standard/PropertiesSample.java?ts={tabsize}[Source code of the sample].
 
 
 
@@ -90,7 +90,7 @@ Gives the following property values:
 [role=tab-container-end]
 -
 
-NOTE: See the {sourcedir-url}/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts=4[test that ensures this order].
+NOTE: See the {sourcedir-url}/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts={tabsize}[test that ensures this order].
 
 == What happens if there are several values for the same property and for the same source ?
 

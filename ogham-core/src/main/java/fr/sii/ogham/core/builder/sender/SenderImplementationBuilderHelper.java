@@ -1,7 +1,7 @@
 package fr.sii.ogham.core.builder.sender;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import static fr.sii.ogham.core.util.BuilderUtils.instantiateBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +18,6 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.fluent.MessageConditions;
 import fr.sii.ogham.core.condition.provider.ImplementationConditionProvider;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.core.sender.MultiImplementationSender;
@@ -167,32 +166,22 @@ public class SenderImplementationBuilderHelper<P> {
 	 * 
 	 * @param builderClass
 	 *            the builder class to instantiate
-	 * @param <T>
+	 * @param <B>
 	 *            the type of the builder
 	 * @return the builder to configure the implementation
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Builder<? extends MessageSender>> T register(Class<T> builderClass) {
+	public <B extends Builder<? extends MessageSender>> B register(Class<B> builderClass) {
 		// if builder already registered => provide same instance
 		for (Builder<? extends MessageSender> builder : senderBuilders) {
 			if (builderClass.isAssignableFrom(builder.getClass())) {
-				return (T) builder;
+				return (B) builder;
 			}
 		}
-		try {
-			T builder;
-			Constructor<T> constructor = builderClass.getConstructor(parent.getClass());
-			if (constructor != null) {
-				builder = constructor.newInstance(parent);
-			} else {
-				builder = builderClass.newInstance();
-			}
-			senderBuilders.add(builder);
-			return builder;
-		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
-			throw new BuildException("Can't instantiate builder from class " + builderClass.getSimpleName(), e);
-		}
+		B builder = instantiateBuilder(builderClass, parent, environmentBuilder);
+		senderBuilders.add(builder);
+		return builder;
 	}
 
 	/**

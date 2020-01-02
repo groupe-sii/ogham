@@ -14,7 +14,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="fr.sii.ogham.helper.rule" additivity="false">
+	<logger name="fr.sii.ogham.extension" additivity="false">
 		<appender-ref ref="TEST" />
 	</logger>
 

@@ -1,7 +1,6 @@
 package fr.sii.ogham.template.thymeleaf.common.configure;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
@@ -90,29 +89,27 @@ import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
  *
  */
 public abstract class AbstractDefaultThymeleafSmsConfigurer implements MessagingConfigurer {
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractDefaultThymeleafSmsConfigurer.class);
-	
+	private final Logger log;
 	private final MessagingConfigurerAdapter delegate;
 
-	public AbstractDefaultThymeleafSmsConfigurer() {
-		this(new DefaultMessagingConfigurer());
+	public AbstractDefaultThymeleafSmsConfigurer(Logger log) {
+		this(log, new DefaultMessagingConfigurer());
 	}
 
-	public AbstractDefaultThymeleafSmsConfigurer(MessagingConfigurerAdapter delegate) {
+	public AbstractDefaultThymeleafSmsConfigurer(Logger log, MessagingConfigurerAdapter delegate) {
 		super();
+		this.log = log;
 		this.delegate = delegate;
 	}
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
 		if (!canUseThymeleaf()) {
-			LOG.debug("[{}] skip configuration", this);
+			log.debug("[{}] skip configuration", this);
 			return;
 		}
-		LOG.debug("[{}] apply configuration", this);
+		log.debug("[{}] apply configuration", this);
 		AbstractThymeleafBuilder<?, ?, ?> builder = msgBuilder.sms().template(getBuilderClass());
-		// use same environment as parent builder
-		builder.environment(msgBuilder.environment());
 		// apply default resource resolution configuration
 		if (delegate != null) {
 			delegate.configure(builder);

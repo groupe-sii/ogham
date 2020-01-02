@@ -1,6 +1,6 @@
 package fr.sii.ogham.sample.test;
 
-import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
@@ -13,9 +13,9 @@ import org.junit.Test;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.helper.sms.rule.SmppServerRule;
 import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
+import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
 
 public class LongSmsTestSample {
 	private MessagingService oghamService;

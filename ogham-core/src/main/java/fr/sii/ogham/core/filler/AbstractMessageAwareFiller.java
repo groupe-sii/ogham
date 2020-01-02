@@ -16,9 +16,9 @@ import fr.sii.ogham.core.message.Message;
  *            the type of the message that the filler is able to handle
  */
 public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
-	protected PropertyResolver resolver;
-	protected Map<String, ConfigurationValueBuilderHelper<?, String>> defaultValues;
-	private Class<M> messageType;
+	protected final PropertyResolver resolver;
+	protected final Map<String, ConfigurationValueBuilderHelper<?, ?>> defaultValues;
+	private final Class<M> messageType;
 
 	/**
 	 * The list of properties is indexed by an alias that is known by the
@@ -46,7 +46,7 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	 * @param messageType
 	 *            the class of the message that this implementation can handle
 	 */
-	protected AbstractMessageAwareFiller(PropertyResolver resolver, Map<String, ConfigurationValueBuilderHelper<?, String>> defaultValues, Class<M> messageType) {
+	protected AbstractMessageAwareFiller(PropertyResolver resolver, Map<String, ConfigurationValueBuilderHelper<?, ?>> defaultValues, Class<M> messageType) {
 		super();
 		this.resolver = resolver;
 		this.defaultValues = defaultValues;
@@ -73,7 +73,7 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	 * @return true if property exists, false otherwise
 	 */
 	protected boolean containsProperty(String alias) {
-		ConfigurationValueBuilderHelper<?, String> valueBuilder = defaultValues.get(alias);
+		ConfigurationValueBuilderHelper<?, ?> valueBuilder = defaultValues.get(alias);
 		return valueBuilder != null && valueBuilder.getValue(resolver) != null;
 	}
 
@@ -83,23 +83,15 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	 * 
 	 * @param alias
 	 *            the property alias to resolve
+	 * @param valueClass
+	 *            the class of the resulting value
+	 * @param <T>
+	 *            the type of the resulting value
 	 * @return the property value or null
 	 */
-	protected String getProperty(String alias) {
-		ConfigurationValueBuilderHelper<?, String> valueBuilder = defaultValues.get(alias);
+	@SuppressWarnings("unchecked")
+	protected <T> T getProperty(String alias, Class<T> valueClass) {
+		ConfigurationValueBuilderHelper<?, T> valueBuilder = (ConfigurationValueBuilderHelper<?, T>) defaultValues.get(alias);
 		return valueBuilder == null ? null : valueBuilder.getValue(resolver);
-	}
-
-	/**
-	 * Returns the value of first property represented by the provided alias
-	 * that has a value (not {@code null}).
-	 * 
-	 * @param alias
-	 *            the property alias to resolve
-	 * @return The property value or null
-	 */
-	protected String[] getPropertyArray(String alias) {
-		String value = getProperty(alias);
-		return value == null ? null : value.split(",");
 	}
 }

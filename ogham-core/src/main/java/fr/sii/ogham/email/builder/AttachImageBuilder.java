@@ -65,6 +65,9 @@ public class AttachImageBuilder extends AbstractParent<ImageInliningBuilder> imp
 
 	@Override
 	public ImageInliner build() {
+		if (cidBuilder == null) {
+			throw new BuildException("Can't build inliner that attaches images because no identifier generator configured");
+		}
 		IdGenerator idGenerator = cidBuilder.build();
 		if (idGenerator == null) {
 			throw new BuildException("Can't build inliner that attaches images because no identifier generator configured");

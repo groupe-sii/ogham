@@ -49,7 +49,9 @@ public class DelegateConverter implements Converter, ConverterRegistry {
 
 	@Override
 	public ConverterRegistry register(SupportingConverter converter) {
-		delegates.add(converter);
+		if (!delegates.contains(converter)) {
+			delegates.add(converter);
+		}
 		return this;
 	}
 

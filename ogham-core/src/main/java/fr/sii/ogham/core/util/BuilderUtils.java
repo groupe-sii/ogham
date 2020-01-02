@@ -1,13 +1,20 @@
 package fr.sii.ogham.core.util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringJoiner;
 
+import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.Parent;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.JavaPropertiesResolver;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.email.builder.EmailBuilder;
 
 /**
  * Helper class for {@link Builder} implementations. It separates the builder
@@ -131,6 +138,124 @@ public final class BuilderUtils {
 		BuilderUtils.converter = converter;
 	}
 
+	// @formatter:off
+	/**
+	 * Utility method used to dynamically instantiate a builder instance.
+	 * 
+	 * <p>
+	 * If you want fluent chaining, your builder class <strong>MUST</strong>
+	 * declare parent of type {@code P} as first parameter. The builder can
+	 * implement {@link Parent} or even extend {@link AbstractParent}. For
+	 * example, if builder is a child of {@link EmailBuilder}:
+	 * 
+	 * <pre>
+	 * {@code
+	 * class MyBuilder extends AbstractParent<EmailBuilder> implements Builder<Foo> {
+	 *   public MyBuilder(EmailBuilder parent) {
+	 *     super(parent);
+	 *   }
+	 * }
+	 * }</pre>
+	 * 
+	 * 
+	 * <p>
+	 * You may need {@link EnvironmentBuilder} in order to be able to evaluate
+	 * properties in your {@link Builder#build()} method. Just declare a
+	 * parameter of type {@link EnvironmentBuilder} either as first parameter if
+	 * you don't want fluent chaining:
+	 * 
+	 * <pre>
+	 * {@code
+	 * class MyBuilder implements Builder<Foo> {
+	 *   public MyBuilder(EnvironmentBuilder<?> env) {
+	 *     this.env = env;
+	 *   }
+	 * }
+	 * }</pre>
+	 * 
+	 * or as second parameter if you want fluent chaining:
+	 * 
+	 * <pre>
+	 * {@code
+	 * class MyBuilder extends AbstractParent<EmailBuilder> implements Builder<Foo> {
+	 *   public MyBuilder(EmailBuilder parent, EnvironmentBuilder<?> env) {
+	 *     super(parent);
+	 *     this.env = env;
+	 *   }
+	 * }
+	 * }</pre>
+	 * 
+	 * 
+	 * <p>
+	 * If you need none of these features, you still have to provide a public
+	 * default constructor.
+	 * 
+	 * <p>
+	 * If several constructors exist, the following order is used (first
+	 * matching constructor is used):
+	 * <ul>
+	 * <li>{@code contructor(P parent, EnvironmentBuilder<?> env)}</li>
+	 * <li>{@code contructor(P parent}</li>
+	 * <li>{@code contructor(EnvironmentBuilder<?> env)}</li>
+	 * <li>{@code contructor(}</li>
+	 * </ul>
+	 * 
+	 * @param <T>
+	 *            The type of the built object
+	 * @param <B>
+	 *            The type of the builder that builds T
+	 * @param <P>
+	 *            The type of the parent builder (used for fluent chaining)
+	 * @param builderClass
+	 *            The builder class to instantiate
+	 * @param parent
+	 *            The parent builder for fluent chaining
+	 * @param environmentBuilder
+	 *            The environment builder to inherit if needed
+	 * @return the builder instance
+	 * @throws BuildException
+	 *             when builder can't be instantiated
+	 */
+	// @formatter:on
+	@SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
+	public static <T, B extends Builder<? extends T>, P> B instantiateBuilder(Class<B> builderClass, P parent, EnvironmentBuilder<?> environmentBuilder) throws BuildException {
+		try {
+			return instantiate(builderClass, parent, environmentBuilder);
+		} catch (InstantiationException | IllegalAccessException | InvocationTargetException | SecurityException | IllegalArgumentException e) {
+			throw new BuildException("Can't instantiate builder from class " + builderClass.getSimpleName(), e);
+		}
+	}
+
+	private static <T, B extends Builder<? extends T>, P> B instantiate(Class<B> builderClass, P parent, EnvironmentBuilder<?> environmentBuilder)
+			throws InstantiationException, IllegalAccessException, InvocationTargetException {
+		try {
+			return builderClass.getConstructor(parent.getClass(), EnvironmentBuilder.class).newInstance(parent, environmentBuilder);
+		} catch (NoSuchMethodException e) {
+			// skip
+		}
+		try {
+			return builderClass.getConstructor(parent.getClass()).newInstance(parent);
+		} catch (NoSuchMethodException e) {
+			// skip
+		}
+		try {
+			return builderClass.getConstructor(EnvironmentBuilder.class).newInstance(environmentBuilder);
+		} catch (NoSuchMethodException e) {
+			// skip
+		}
+		try {
+			return builderClass.getConstructor().newInstance();
+		} catch (NoSuchMethodException e) {
+			// skip
+		}
+		StringJoiner joiner = new StringJoiner("\n- ", "\n- ", "\n");
+		joiner.add("constructor(" + parent.getClass().getName() + ", " + EnvironmentBuilder.class.getName() + ")\n   if you want fluent chaining and inherit current environment variable evaluation");
+		joiner.add("constructor(" + parent.getClass().getName() + ")\n   if you want fluent chaining");
+		joiner.add("constructor(" + EnvironmentBuilder.class.getName() + ")\n   if you don't want fluent chaining but inherit current environment variable evaluation");
+		joiner.add("constructor()\n   if you don't want fluent chaining and inherit current environment variable evaluation");
+		throw new BuildException("No matching constructor found. The builder implementation must provide one of following constructors:" + joiner.toString());
+	}
+
 	private static Converter getConverter() {
 		if (converter == null) {
 			converter = new DefaultConverter();
@@ -141,4 +266,5 @@ public final class BuilderUtils {
 	private BuilderUtils() {
 		super();
 	}
+
 }

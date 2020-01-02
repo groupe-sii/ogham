@@ -1,11 +1,12 @@
 package fr.sii.ogham.email.sendgrid.v4.sender.impl;
 
 import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.email.sendgrid.sender.EmailValidator.validate;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,8 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridConte
  * SendGrid-backed implementation of the email sender.
  */
 public final class SendGridV4Sender extends AbstractSpecializedSender<Email> implements SendGridSender {
-
 	private static final Logger LOG = LoggerFactory.getLogger(SendGridV4Sender.class);
+	private static final Pattern CID = Pattern.compile("^<(.+)>$");
 
 	private final SendGridClient delegate;
 	private final SendGridContentHandler handler;
@@ -123,44 +124,15 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 		return interceptor.intercept(sendGridEmail, source);
 	}
 
-	private static Set<String> validate(final Email message) {
-		final Set<String> violations = new HashSet<>();
-
-		if (message.getContent() == null) {
-			violations.add("Missing content");
-		}
-		if (message.getSubject() == null) {
-			violations.add("Missing subject");
-		}
-
-		if (message.getFrom() == null) {
-			violations.add("Missing sender email address");
-		}
-
-		if (message.getRecipients().isEmpty()) {
-			violations.add("Missing recipients");
-		}
-
-		for (Recipient recipient : message.getRecipients()) {
-			if (recipient.getAddress().getAddress() == null) {
-				violations.add("Missing recipient address " + recipient);
-			}
-		}
-
-		return violations;
-	}
-
 	private Mail toSendGridEmail(final Email message) throws ContentHandlerException, AttachmentReadException {
 		final Mail sendGridMail = new Mail();
 		sendGridMail.setSubject(message.getSubject());
 
 		sendGridMail.setFrom(new com.sendgrid.helpers.mail.objects.Email(message.getFrom().getAddress(), message.getFrom().getPersonal()));
 
-		for (Recipient recipient : message.getRecipients()) {
-			sendGridMail.addPersonalization(toPersonalization(recipient));
-		}
+		sendGridMail.addPersonalization(toPersonalization(message));
 
-		handler.setContent(sendGridMail, message.getContent());
+		handler.setContent(message, sendGridMail, message.getContent());
 
 		for (Attachment attachment : message.getAttachments()) {
 			addAttachment(sendGridMail, attachment);
@@ -169,9 +141,11 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 		return sendGridMail;
 	}
 
-	private Personalization toPersonalization(Recipient recipient) {
+	private static Personalization toPersonalization(final Email message) {
 		Personalization personalization = new Personalization();
-		addRecipient(personalization, recipient);
+		for (Recipient recipient : message.getRecipients()) {
+			addRecipient(personalization, recipient);
+		}
 		return personalization;
 	}
 
@@ -195,7 +169,7 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 			Attachments sendGridAttachment = new Attachments();
 			byte[] bytes = IOUtils.toByteArray(attachment.getResource().getInputStream());
 			sendGridAttachment.setContent(Base64Utils.encodeToString(bytes));
-			sendGridAttachment.setContentId(attachment.getContentId());
+			sendGridAttachment.setContentId(toCid(attachment.getContentId()));
 			sendGridAttachment.setDisposition(attachment.getDisposition());
 			sendGridAttachment.setFilename(attachment.getResource().getName());
 			sendGridAttachment.setType(mimetypeProvider.detect(new ByteArrayInputStream(bytes)).toString());
@@ -205,6 +179,13 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 		} catch (MimeTypeDetectionException e) {
 			throw new AttachmentReadException("Failed to determine mimetype for email attachment named " + attachment.getResource().getName(), attachment, e);
 		}
+	}
+
+	private static String toCid(final String contentId) {
+		if (contentId == null) {
+			return null;
+		}
+		return CID.matcher(contentId).replaceAll("$1");
 	}
 
 	public SendGridClient getDelegate() {

@@ -1,7 +1,7 @@
 package fr.sii.ogham.core.builder.template;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import static fr.sii.ogham.core.util.BuilderUtils.instantiateBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -222,32 +222,22 @@ public class TemplateBuilderHelper<P> {
 	 * 
 	 * @param builderClass
 	 *            the builder class to instantiate
-	 * @param <T>
+	 * @param <B>
 	 *            the type of the builder
 	 * @return the builder to configure the implementation
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Builder<? extends TemplateParser>> T register(Class<T> builderClass) {
+	public <B extends Builder<? extends TemplateParser>> B register(Class<B> builderClass) {
 		// if already registered => provide same instance
 		for (Builder<? extends TemplateParser> builder : templateBuilders) {
 			if (builderClass.isAssignableFrom(builder.getClass())) {
-				return (T) builder;
+				return (B) builder;
 			}
 		}
 		// create the builder instance
-		try {
-			T builder;
-			Constructor<T> constructor = builderClass.getConstructor(parent.getClass(), EnvironmentBuilder.class);
-			if (constructor != null) {
-				builder = constructor.newInstance(parent, environmentBuilder);
-			} else {
-				builder = builderClass.newInstance();
-			}
-			templateBuilders.add(builder);
-			return builder;
-		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
-			throw new BuildException("Can't instantiate builder from class " + builderClass.getSimpleName(), e);
-		}
+		B builder = instantiateBuilder(builderClass, parent, environmentBuilder);
+		templateBuilders.add(builder);
+		return builder;
 	}
 
 	/**
@@ -332,4 +322,5 @@ public class TemplateBuilderHelper<P> {
 		}
 		return impls;
 	}
+
 }

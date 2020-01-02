@@ -17,7 +17,7 @@ include::{standard-email-samples-sourcedir}/TextTemplateWithSubjectSample.java[]
 ----
 <1> Subject is no more in Java code
 
-{standard-email-samples-sourcedir-url}/TextTemplateWithSubjectSample.java?ts=4[Source code of the sample]
+{standard-email-samples-sourcedir-url}/TextTemplateWithSubjectSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
 
@@ -30,7 +30,7 @@ include::{standard-samples-resourcesdir}/template/freemarker/simpleWithSubject.t
 
 NOTE: The subject of the email will be `Welcome foo !`
 
-{standard-samples-resourcesdir-url}/template/freemarker/simpleWithSubject.txt.ftl?ts=4[Source code of the text template]
+{standard-samples-resourcesdir-url}/template/freemarker/simpleWithSubject.txt.ftl?ts={tabsize}[Source code of the text template]
 
 [role=tab-container-end]
 -

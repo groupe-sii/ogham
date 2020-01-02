@@ -51,6 +51,11 @@
 			<artifactId>ogham-test-utils</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-test-utils-internal</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 </project>

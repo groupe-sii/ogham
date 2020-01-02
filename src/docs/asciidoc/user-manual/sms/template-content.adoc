@@ -20,7 +20,7 @@ include::{standard-sms-samples-sourcedir}/TemplateSample.java[]
 <5> Indicate the path to the template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-{standard-sms-samples-sourcedir-url}/TemplateSample.java?ts=4[Source code of the sample].
+{standard-sms-samples-sourcedir-url}/TemplateSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
 image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
@@ -30,7 +30,7 @@ image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
 include::{standard-samples-resourcesdir}/template/thymeleaf/simple.txt[]
 ----
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts=4[Source code of the template]
+{standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts={tabsize}[Source code of the template]
 
 [role=tab-container-end]
 -

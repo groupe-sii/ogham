@@ -16,7 +16,7 @@ include::{standard-email-samples-sourcedir}/sendgrid/SendGridFullSample.java[]
 <1> Load properties from a file that is in the classpath.
 <2> Use an `InputStream` and name the attachment
 
-{standard-email-samples-sourcedir-url}/SendGridFullSample.java?ts=4[Source code of the sample]
+{standard-email-samples-sourcedir-url}/SendGridFullSample.java?ts={tabsize}[Source code of the sample]
 
 
 [role=tab]
@@ -29,7 +29,7 @@ include::{standard-samples-resourcesdir}/sendgrid-template.properties[]
 <1> The sender email address
 <2> A prefix for all template paths. In this example, the template paths are `/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt`.
 
-{standard-samples-resourcesdir-url}/sendgrid-template.properties?ts=4[Source code of the configuration file]
+{standard-samples-resourcesdir-url}/sendgrid-template.properties?ts={tabsize}[Source code of the configuration file]
 
 [role=tab-container-end]
 -

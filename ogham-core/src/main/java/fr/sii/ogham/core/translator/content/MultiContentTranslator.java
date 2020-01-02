@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
 import fr.sii.ogham.core.exception.handler.NoContentException;
-import fr.sii.ogham.core.exception.handler.TemplateNotFoundException;
+import fr.sii.ogham.core.exception.handler.Recoverable;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 
@@ -58,22 +58,7 @@ public class MultiContentTranslator implements ContentTranslator {
 		MultiContent result = new MultiContent();
 		List<ContentTranslatorException> missing = new ArrayList<>();
 		for (Content c : ((MultiContent) content).getContents()) {
-			LOG.debug("Translate the sub content using {}", delegate);
-			LOG.trace("sub content: {}", c);
-			try {
-				Content translated = delegate.translate(c);
-				if (translated == null) {
-					LOG.debug("Sub content skipped");
-					LOG.trace("sub-content: {}", c);
-				} else {
-					LOG.debug("Sub content added");
-					LOG.trace("sub-content: {}", c);
-					result.addContent(translated);
-				}
-			} catch (TemplateNotFoundException e) {
-				LOG.info("{} => ignoring", e.getMessage(), e);
-				missing.add(e);
-			}
+			translate(c, result, missing);
 		}
 		if (result.getContents().isEmpty()) {
 			handleEmptyContent(content, missing);
@@ -86,6 +71,33 @@ public class MultiContentTranslator implements ContentTranslator {
 		return "MultiContentTranslator";
 	}
 
+
+	private void translate(Content c, MultiContent result, List<ContentTranslatorException> missing) throws ContentTranslatorException {
+		LOG.debug("Translate the sub content using {}", delegate);
+		LOG.trace("sub content: {}", c);
+		try {
+			Content translated = delegate.translate(c);
+			if (translated == null) {
+				LOG.debug("Sub content skipped");
+				LOG.trace("sub-content: {}", c);
+			} else {
+				LOG.debug("Sub content added");
+				LOG.trace("sub-content: {}", c);
+				result.addContent(translated);
+			}
+		} catch (ContentTranslatorException e) {
+			handleException(e, missing);
+		}
+	}
+
+	private static void handleException(ContentTranslatorException e, List<ContentTranslatorException> missing) throws ContentTranslatorException {
+		if (!isRecoverable(e)) {
+			throw e;
+		}
+		LOG.info("{} => ignoring", e.getMessage(), e);
+		missing.add(e);
+	}
+
 	private static void handleEmptyContent(Content content, List<ContentTranslatorException> missing) throws NoContentException {
 		if (!missing.isEmpty()) {
 			String notFoundTemplates = missing.stream().map(Exception::getMessage).collect(Collectors.joining("\n"));
@@ -93,4 +105,9 @@ public class MultiContentTranslator implements ContentTranslator {
 		}
 		throw new NoContentException("The message is empty", (MultiContent) content, missing);
 	}
+
+	private static boolean isRecoverable(ContentTranslatorException e) {
+		return e.getClass().isAnnotationPresent(Recoverable.class);
+	}
+
 }

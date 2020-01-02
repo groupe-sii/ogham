@@ -27,7 +27,7 @@ include::{spring-sms-samples-sourcedir}/TemplateSample.java[]
 <4> Use any Java object for evaluating template variables
 <5> The sender phone number that comes from request parameter
 
-{spring-sms-samples-sourcedir-url}/TemplateSample.java?ts=4[Source code of the sample].
+{spring-sms-samples-sourcedir-url}/TemplateSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
 image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Template
@@ -37,7 +37,7 @@ image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Template
 include::{spring-samples-resourcesdir}/sms/register.txt.ftl[]
 ----
 
-{spring-samples-resourcesdir-url}/sms/register.txt.ftl?ts=4[Source code of the template]
+{spring-samples-resourcesdir-url}/sms/register.txt.ftl?ts={tabsize}[Source code of the template]
 
 
 [role=tab]
@@ -55,7 +55,7 @@ include::{spring-samples-resourcesdir}/application-sms-template.properties[]
 <6> The path prefix for SMS templates
 <7> The path suffix for SMS templates (FreeMarker extension in this case)
 
-{spring-samples-resourcesdir-url}/application-sms-template.properties?ts=4[Source code of the properties]
+{spring-samples-resourcesdir-url}/application-sms-template.properties?ts={tabsize}[Source code of the properties]
 
 [role=tab-container-end]
 -

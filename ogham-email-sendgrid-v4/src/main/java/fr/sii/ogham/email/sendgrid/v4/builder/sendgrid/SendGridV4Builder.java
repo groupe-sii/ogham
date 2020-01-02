@@ -20,12 +20,14 @@ import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.message.content.ContentWithAttachments;
 import fr.sii.ogham.email.sendgrid.builder.AbstractSendGridBuilder;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.CustomizableUrlClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridInterceptor;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.ContentWithAttachmentsHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MultiContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.PriorizedContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
@@ -424,6 +426,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();
 		PriorizedContentHandler contentHandler = new PriorizedContentHandler();
 		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
+		contentHandler.register(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler));
 		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider));
 		return contentHandler;
 	}

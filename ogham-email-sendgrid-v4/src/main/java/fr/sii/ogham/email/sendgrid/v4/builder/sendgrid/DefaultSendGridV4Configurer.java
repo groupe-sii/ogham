@@ -1,5 +1,6 @@
 package fr.sii.ogham.email.sendgrid.v4.builder.sendgrid;
 
+import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.email.sendgrid.SendGridConstants.DEFAULT_SENDGRID_CONFIGURER_PRIORITY;
 
 import org.slf4j.Logger;
@@ -54,30 +55,45 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_SENDGRID_CONFIGURER_PRIORITY)
-public class DefaultSendGridV4Configurer implements MessagingConfigurer {
+public final class DefaultSendGridV4Configurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultSendGridV4Configurer.class);
-	
 
-	@Override
-	public void configure(MessagingBuilder msgBuilder) {
-		if (!canUseSendGrid()) {
-			LOG.debug("[{}] skip configuration", this);
-			return;
+	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_SENDGRID_CONFIGURER_PRIORITY, phase = AFTER_INIT)
+	public static class EnvironmentPropagator implements MessagingConfigurer {
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+			if (canUseSendGrid()) {
+				SendGridV4Builder builder = msgBuilder.email().sender(SendGridV4Builder.class);
+				// use same environment as parent builder
+				builder.environment(msgBuilder.environment());
+				builder.mimetype(msgBuilder.mimetype());
+			}
 		}
-		LOG.debug("[{}] apply configuration", this);
-		// @formatter:off
-		SendGridV4Builder builder = msgBuilder.email().sender(SendGridV4Builder.class);
-		builder
-			.apiKey().properties("${ogham.email.sengrid.api-key}").and()
-			.unitTesting().properties("${ogham.email.sendgrid.unit-testing}");
-		// @formatter:on
-		// use same environment as parent builder
-		builder.environment(msgBuilder.environment());
-		builder.mimetype(msgBuilder.mimetype());
 	}
 
+	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_SENDGRID_CONFIGURER_PRIORITY)
+	public static class SendGridV2Configurer implements MessagingConfigurer {
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+			if (!canUseSendGrid()) {
+				LOG.debug("[{}] skip configuration", this);
+				return;
+			}
+			LOG.debug("[{}] apply configuration", this);
+			// @formatter:off
+			SendGridV4Builder builder = msgBuilder.email().sender(SendGridV4Builder.class);
+			builder
+				.apiKey().properties("${ogham.email.sendgrid.api-key}").and()
+				.unitTesting().properties("${ogham.email.sendgrid.unit-testing}");
+			// @formatter:on
+		}
+	}
+	
 	private static boolean canUseSendGrid() {
 		return ClasspathUtils.exists("com.sendgrid.SendGrid") && ClasspathUtils.exists("com.sendgrid.helpers.mail.Mail");
+	}
+	
+	private DefaultSendGridV4Configurer() {
+		super();
 	}
 }

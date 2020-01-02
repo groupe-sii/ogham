@@ -6,9 +6,15 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.template.thymeleaf.common.TemplateResolverOptions;
+import fr.sii.ogham.template.thymeleaf.common.adapter.ClassPathResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.FileResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
 import fr.sii.ogham.template.thymeleaf.v3.ThymeLeafV3FirstSupportingTemplateResolver;
 import fr.sii.ogham.template.thymeleaf.v3.ThymeleafV3TemplateDetector;
+import fr.sii.ogham.template.thymeleaf.v3.adapter.StringResolverAdapter;
 
 /**
  * Configures parsing of templates using Thymeleaf.
@@ -86,5 +92,18 @@ public class ThymeleafV3SmsBuilder extends AbstractThymeleafBuilder<ThymeleafV3S
 	@Override
 	protected ThymeleafV3EngineConfigBuilder<ThymeleafV3SmsBuilder> getThymeleafEngineConfigBuilder() {
 		return new ThymeleafV3EngineConfigBuilder<>(myself);
+	}
+	
+	@Override
+	protected FirstSupportingResolverAdapter buildAdapters() {
+		FirstSupportingResolverAdapter adapter = new FirstSupportingResolverAdapter();
+		for (TemplateResolverAdapter custom : customAdapters) {
+			adapter.addAdapter(custom);
+		}
+		adapter.addAdapter(new ClassPathResolverAdapter());
+		adapter.addAdapter(new FileResolverAdapter());
+		adapter.addAdapter(new StringResolverAdapter());
+		adapter.setOptions(new TemplateResolverOptions());
+		return adapter;
 	}
 }

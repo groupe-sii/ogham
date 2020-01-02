@@ -3,7 +3,7 @@ package fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sendgrid.SendGrid.Email;
+import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.message.content.Content;
@@ -11,6 +11,7 @@ import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
 
 /**
  * Content handler that puts plain text or HTML content into email to be sent
@@ -56,7 +57,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 	 *             the content provided is not of the right type
 	 */
 	@Override
-	public void setContent(final Email email, final Content content) throws ContentHandlerException {
+	public void setContent(final Email original, final SendGrid.Email email, final Content content) throws ContentHandlerException {
 		if (email == null) {
 			throw new IllegalArgumentException("[email] cannot be null");
 		}
@@ -81,7 +82,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 
 	}
 
-	private static void setMimeContent(final Email email, final String contentStr, final String mime) throws ContentHandlerException {
+	private static void setMimeContent(final SendGrid.Email email, final String contentStr, final String mime) throws ContentHandlerException {
 		if ("text/plain".equals(mime)) {
 			email.setText(contentStr);
 		} else if ("text/html".equals(mime)) {

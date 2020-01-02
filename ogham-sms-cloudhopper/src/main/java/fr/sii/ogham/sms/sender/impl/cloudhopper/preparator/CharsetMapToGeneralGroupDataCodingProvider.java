@@ -19,17 +19,20 @@ import com.cloudhopper.commons.gsm.DataCoding;
 
 import fr.sii.ogham.sms.encoder.Encoded;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.DataCodingException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.UnsupportedCharsetException;
 
 /**
  * Provide a Data Coding Scheme according to charset used to encode the message.
  * The resulting encoding is <b>General Data Coding Group</b>:
  * 
  * <ul>
- * <li>If Bits 4 {@literal &} 5 are 0 {@literal &} 0 then see above "0000 Character Encoding
- * Group"</li>
+ * <li>If Bits 4 {@literal &} 5 are 0 {@literal &} 0 then see above "0000
+ * Character Encoding Group"</li>
  * <li>Message Class (Bit 0 {@literal &} 1) (default 0, 0)</li>
  * <li>Alphabet (Bit 2 {@literal &} 3) (default 0, 0)</li>
- * <li>Message Class Present (Bit 4) (whether bits 0 {@literal &} 1 have meaning)</li>
+ * <li>Message Class Present (Bit 4) (whether bits 0 {@literal &} 1 have
+ * meaning)</li>
  * <li>Compression Flag (Bit 5) (0 - uncompressed, 1 - compressed)</li>
  * </ul>
  * 
@@ -45,8 +48,9 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  *
  */
 public class CharsetMapToGeneralGroupDataCodingProvider implements DataCodingProvider {
+	private final boolean failIfUnknown;
 	private final Map<String, Byte> alphabetIndexedByCharsetName;
-	private final byte messageClass;
+	private final Byte messageClass;
 	private final boolean compressed;
 
 	/**
@@ -60,7 +64,8 @@ public class CharsetMapToGeneralGroupDataCodingProvider implements DataCodingPro
 	 * {@link DataCoding#CHAR_ENC_DEFAULT}</li>
 	 * <li>{@link CharsetUtil#NAME_PACKED_GSM} {@literal ->}
 	 * {@link DataCoding#CHAR_ENC_DEFAULT}</li>
-	 * <li>{@link CharsetUtil#NAME_GSM} {@literal ->} {@link DataCoding#CHAR_ENC_8BIT}</li>
+	 * <li>{@link CharsetUtil#NAME_GSM} {@literal ->}
+	 * {@link DataCoding#CHAR_ENC_8BIT}</li>
 	 * <li>{@link CharsetUtil#NAME_GSM8} {@literal ->}
 	 * {@link DataCoding#CHAR_ENC_8BIT}</li>
 	 * <li>{@link CharsetUtil#NAME_UCS_2} {@literal ->}
@@ -74,9 +79,14 @@ public class CharsetMapToGeneralGroupDataCodingProvider implements DataCodingPro
 	 * <p>
 	 * The compressed field is set to false.
 	 * 
+	 * @param failIfUnknown
+	 *            if true it throws {@link UnsupportedCharsetException}, if
+	 *            false is returns null to let other
+	 *            {@link DataCodingProvider}(s) being executed.
+	 * 
 	 */
-	public CharsetMapToGeneralGroupDataCodingProvider() {
-		this(defaultMap());
+	public CharsetMapToGeneralGroupDataCodingProvider(boolean failIfUnknown) {
+		this(failIfUnknown, defaultMap());
 	}
 
 	/**
@@ -94,12 +104,17 @@ public class CharsetMapToGeneralGroupDataCodingProvider implements DataCodingPro
 	 * The compressed field is set to false.
 	 * 
 	 * 
+	 * 
+	 * @param failIfUnknown
+	 *            if true it throws {@link UnsupportedCharsetException}, if
+	 *            false is returns null to let other
+	 *            {@link DataCodingProvider}(s) being executed.
 	 * @param alphabetIndexedByCharsetName
 	 *            the map used to determine Data Coding Alphabet from charset
 	 *            name
 	 */
-	public CharsetMapToGeneralGroupDataCodingProvider(Map<String, Byte> alphabetIndexedByCharsetName) {
-		this(alphabetIndexedByCharsetName, null, false);
+	public CharsetMapToGeneralGroupDataCodingProvider(boolean failIfUnknown, Map<String, Byte> alphabetIndexedByCharsetName) {
+		this(failIfUnknown, alphabetIndexedByCharsetName, null, false);
 	}
 
 	/**
@@ -121,6 +136,11 @@ public class CharsetMapToGeneralGroupDataCodingProvider implements DataCodingPro
 	 * compressed or not.
 	 * 
 	 * 
+	 * 
+	 * @param failIfUnknown
+	 *            if true it throws {@link UnsupportedCharsetException}, if
+	 *            false is returns null to let other
+	 *            {@link DataCodingProvider}(s) being executed.
 	 * @param alphabetIndexedByCharsetName
 	 *            the map used to determine Data Coding Alphabet from charset
 	 *            name
@@ -129,17 +149,25 @@ public class CharsetMapToGeneralGroupDataCodingProvider implements DataCodingPro
 	 * @param compressed
 	 *            indicate if message is compressed or not
 	 */
-	public CharsetMapToGeneralGroupDataCodingProvider(Map<String, Byte> alphabetIndexedByCharsetName, Byte messageClass, boolean compressed) {
+	public CharsetMapToGeneralGroupDataCodingProvider(boolean failIfUnknown, Map<String, Byte> alphabetIndexedByCharsetName, Byte messageClass, boolean compressed) {
 		super();
+		this.failIfUnknown = failIfUnknown;
 		this.alphabetIndexedByCharsetName = alphabetIndexedByCharsetName;
 		this.messageClass = messageClass;
 		this.compressed = compressed;
 	}
 
 	@Override
-	public DataCoding provide(Encoded encoded) {
+	public DataCoding provide(Encoded encoded) throws DataCodingException {
 		NamedCharset charset = NamedCharset.from(encoded.getCharsetName());
-		return DataCoding.createGeneralGroup(alphabetIndexedByCharsetName.get(charset.getCharsetName()), messageClass, compressed);
+		Byte encoding = alphabetIndexedByCharsetName.get(charset.getCharsetName());
+		if (encoding == null) {
+			if (failIfUnknown) {
+				throw new UnsupportedCharsetException(encoded.getCharsetName() + " charset not supported for General Group Data Coding Scheme", encoded);
+			}
+			return null;
+		}
+		return DataCoding.createGeneralGroup(encoding, messageClass, compressed);
 	}
 
 	/**
@@ -150,7 +178,8 @@ public class CharsetMapToGeneralGroupDataCodingProvider implements DataCodingPro
 	 * {@link DataCoding#CHAR_ENC_DEFAULT}</li>
 	 * <li>{@link CharsetUtil#NAME_PACKED_GSM} {@literal ->}
 	 * {@link DataCoding#CHAR_ENC_DEFAULT}</li>
-	 * <li>{@link CharsetUtil#NAME_GSM} {@literal ->} {@link DataCoding#CHAR_ENC_8BIT}</li>
+	 * <li>{@link CharsetUtil#NAME_GSM} {@literal ->}
+	 * {@link DataCoding#CHAR_ENC_8BIT}</li>
 	 * <li>{@link CharsetUtil#NAME_GSM8} {@literal ->}
 	 * {@link DataCoding#CHAR_ENC_8BIT}</li>
 	 * <li>{@link CharsetUtil#NAME_UCS_2} {@literal ->}

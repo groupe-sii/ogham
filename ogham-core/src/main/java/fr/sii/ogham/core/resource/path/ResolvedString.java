@@ -2,7 +2,7 @@ package fr.sii.ogham.core.resource.path;
 
 import fr.sii.ogham.core.CoreConstants;
 
-public class ResolvedString implements ResourcePath, ResolvedPath {
+public class ResolvedString implements ResolvedPath {
 	private final String content;
 	private final String lookup;
 

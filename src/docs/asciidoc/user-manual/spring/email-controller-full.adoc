@@ -27,7 +27,7 @@ include::{spring-email-samples-sourcedir}/ThymeleafHtmlAndFreemarkerTextSample.j
 <4> Use any Java object for evaluating template variables
 <5> The sender email address that comes from request parameter
 
-{spring-email-samples-sourcedir-url}/ThymeleafHtmlAndFreemarkerTextSample.java?ts=4[Source code of the sample].
+{spring-email-samples-sourcedir-url}/ThymeleafHtmlAndFreemarkerTextSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
 image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
@@ -41,7 +41,7 @@ include::{spring-samples-resourcesdir}/email/mixed.html[]
 <3> Evaluate the `name` attribute value of `SimpleBean` in the template
 <4> Evaluate the `value` attribute value of `SimpleBean` in the template
 
-{spring-samples-resourcesdir-url}/email/mixed.html?ts=4[Source code of the HTML template]
+{spring-samples-resourcesdir-url}/email/mixed.html?ts={tabsize}[Source code of the HTML template]
 
 [role=tab]
 image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
@@ -51,7 +51,7 @@ image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
 include::{spring-samples-resourcesdir}/email/mixed.txt.ftl[]
 ----
 
-{spring-samples-resourcesdir-url}/email/mixed.txt.ftl?ts=4[Source code of the text template]
+{spring-samples-resourcesdir-url}/email/mixed.txt.ftl?ts={tabsize}[Source code of the text template]
 
 
 [role=tab]
@@ -67,7 +67,7 @@ include::{spring-samples-resourcesdir}/application-email-template.properties[]
 <4> The path prefix for ThymeLeaf templates
 <5> The path prefix for FreeMarker templates
 
-{spring-samples-resourcesdir-url}/application-email-template.properties?ts=4[Source code of the properties]
+{spring-samples-resourcesdir-url}/application-email-template.properties?ts={tabsize}[Source code of the properties]
 
 [role=tab-container-end]
 -

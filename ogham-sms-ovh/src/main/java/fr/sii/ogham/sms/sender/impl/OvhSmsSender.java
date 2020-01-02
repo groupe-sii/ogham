@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	private static final String RECIPIENTS_SEPARATOR = ",";
 	private static final int OK_STATUS = 200;
 	private static final int INTERNATIONAL_FORMAT_LENGTH = 13;
+	private static final Pattern SPACES = Pattern.compile("\\s+");
 
 	/**
 	 * The authentication parameters
@@ -193,6 +195,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 *            the list of recipients
 	 * @return the list of international phone numbers
 	 * @throws PhoneNumberException
+	 *             when phone number can't be handled by OVH
 	 */
 	private static List<String> convert(List<Recipient> recipients) throws PhoneNumberException {
 		List<String> tos = new ArrayList<>(recipients.size());
@@ -210,13 +213,17 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	 * @param phoneNumber
 	 *            the phone number to transform
 	 * @return the international phone number
+	 * @throws PhoneNumberException
+	 *             when phone number can't be handled by OVH
 	 */
-	private static String toInternational(PhoneNumber phoneNumber) {
+	private static String toInternational(PhoneNumber phoneNumber) throws PhoneNumberException {
 		String number = phoneNumber.getNumber();
 		if (number.startsWith("+") || number.length() == INTERNATIONAL_FORMAT_LENGTH) {
-			return StringUtils.leftPad(number.replace("+", "").replaceAll("\\s+", ""), INTERNATIONAL_FORMAT_LENGTH, '0');
+			String withoutPlus = number.replace("+", "");
+			String withoutSpaces = SPACES.matcher(withoutPlus).replaceAll("");
+			return StringUtils.leftPad(withoutSpaces, INTERNATIONAL_FORMAT_LENGTH, '0');
 		} else {
-			throw new IllegalArgumentException("Invalid phone number. OVH only accepts international phone numbers. Please write the phone number with the country prefix. "
+			throw new PhoneNumberException("Invalid phone number. OVH only accepts international phone numbers. Please write the phone number with the country prefix. "
 					+ "For example, if the number is 0601020304 and it is a French number, then the international number is +33601020304");
 		}
 	}

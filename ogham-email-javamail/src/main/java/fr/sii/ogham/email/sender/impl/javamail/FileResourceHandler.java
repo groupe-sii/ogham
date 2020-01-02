@@ -17,7 +17,7 @@ import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
 
 public class FileResourceHandler implements JavaMailAttachmentResourceHandler {
-	private static final String ERROR_MESSAGE_PREFIX = "Failed to attach ";
+	private static final String ERROR_MESSAGE_PREFIX = "Failed to attach '";
 	
 	/**
 	 * The Mime Type detector
@@ -35,13 +35,13 @@ public class FileResourceHandler implements JavaMailAttachmentResourceHandler {
 		try (FileInputStream fis = new FileInputStream(fileResource.getFile())) {
 			part.setDataHandler(new DataHandler(new ByteArrayDataSource(fis, mimetypeProvider.getMimeType(fileResource.getFile()).toString())));
 		} catch (MimeTypeDetectionException e) {
-			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + ". Mime type can't be detected", attachment, e);
+			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + "'. Mime type can't be detected", attachment, e);
 		} catch (FileNotFoundException e) {
-			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + ". File doesn't exists", attachment, e);
+			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + "'. File doesn't exists", attachment, e);
 		} catch (MessagingException e) {
-			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName(), attachment, e);
+			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + "'", attachment, e);
 		} catch (IOException e) {
-			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + ". File can't be read", attachment, e);
+			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + "'. File can't be read", attachment, e);
 		}
 	}
 

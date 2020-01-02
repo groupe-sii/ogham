@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.configuration.MayOverride;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.ConverterRegistry;
 import fr.sii.ogham.core.convert.DefaultConverter;
@@ -26,8 +27,9 @@ import fr.sii.ogham.core.convert.SupportingConverter;
  *            method)
  */
 public class SimpleConverterBuilder<P> extends AbstractParent<P> implements ConverterBuilder<P> {
-	private Converter converter;
 	private List<SupportingConverter> delegates;
+	private Converter converter;
+	private Converter defaultConverter;
 
 	/**
 	 * Initializes the builder with the provided parent. The list of
@@ -67,6 +69,12 @@ public class SimpleConverterBuilder<P> extends AbstractParent<P> implements Conv
 		return this;
 	}
 
+	@Override
+	public ConverterBuilder<P> defaultConverter(MayOverride<Converter> converter) {
+		defaultConverter = converter.override(defaultConverter);
+		return this;
+	}
+
 	/**
 	 * Build the converter:
 	 * <ul>
@@ -79,15 +87,22 @@ public class SimpleConverterBuilder<P> extends AbstractParent<P> implements Conv
 	 */
 	@Override
 	public Converter build() {
-		Converter builtConverter = this.converter;
-		if (builtConverter == null) {
-			builtConverter = new DefaultConverter();
-		}
+		Converter builtConverter = buildBaseConverter();
 		if (builtConverter instanceof ConverterRegistry) {
 			for (SupportingConverter conv : delegates) {
 				((ConverterRegistry) builtConverter).register(conv);
 			}
 		}
 		return builtConverter;
+	}
+
+	private Converter buildBaseConverter() {
+		if (converter != null) {
+			return converter;
+		}
+		if (defaultConverter != null) {
+			return defaultConverter;
+		}
+		return new DefaultConverter();
 	}
 }

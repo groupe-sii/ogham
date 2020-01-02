@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -12,7 +14,7 @@
 	<description>
 		SendGrid v4 implementation for Ogham
 	</description>
-	
+
 	<properties>
 		<sendgrid-java.version>${sendgrid-java-v4.version}</sendgrid-java.version>
 	</properties>
@@ -41,4 +43,33 @@
 		</dependency>
 	</dependencies>
 
+	<!-- FIXME: remove this when JUnit 5 is fully supported by PIT and Spock -->
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>eu.stamp-project</groupId>
+					<artifactId>pitmp-maven-plugin</artifactId>
+					<dependencies>
+						<dependency>
+							<groupId>org.pitest</groupId>
+							<artifactId>pitest-junit5-plugin</artifactId>
+							<version>${pitest-junit5-plugin.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<dependencies>
+						<dependency>
+							<groupId>org.pitest</groupId>
+							<artifactId>pitest-junit5-plugin</artifactId>
+							<version>${pitest-junit5-plugin.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>

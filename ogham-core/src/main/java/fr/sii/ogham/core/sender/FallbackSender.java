@@ -2,6 +2,7 @@ package fr.sii.ogham.core.sender;
 
 import static fr.sii.ogham.core.util.LogUtils.summarize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.exception.MessageNotSentException;
+import fr.sii.ogham.core.exception.MultipleCauseExceptionWrapper;
 import fr.sii.ogham.core.message.Message;
 
 /**
@@ -54,6 +57,7 @@ public class FallbackSender implements MessageSender {
 	@Override
 	@SuppressWarnings("squid:S2221")
 	public void send(Message message) throws MessageException {
+		List<Exception> causes = new ArrayList<>();
 		for (MessageSender sender : senders) {
 			try {
 				LOG.debug("Try to send message {} using sender {}", summarize(message), sender);
@@ -61,10 +65,12 @@ public class FallbackSender implements MessageSender {
 				LOG.debug("Message {} sent using sender {}", summarize(message), sender);
 				return;
 			} catch (Exception e) {
-				LOG.debug("Message {} couldn't be sent using sender {}. Cause: {}", summarize(message), sender, e);
+				LOG.debug("Message {} couldn't be sent using sender {}. Cause: {}", summarize(message), sender, e.getMessage());
+				LOG.trace("", e);
+				causes.add(e);
 			}
 		}
-		throw new MessageException("No sender could handle the message", message);
+		throw new MessageNotSentException("No sender could handle the message", message, new MultipleCauseExceptionWrapper(causes));
 	}
 
 	/**

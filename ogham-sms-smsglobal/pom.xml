@@ -13,10 +13,19 @@
 		SMS implementation for Ogham that uses SmsGlobal REST API
 	</description>
 
+	<properties>
+		<sonar.tests>src/test/groovy</sonar.tests>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-sms-cloudhopper</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Tests -->
@@ -25,6 +34,10 @@
 			<artifactId>ogham-test-utils</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-test-utils-internal</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-
 </project>

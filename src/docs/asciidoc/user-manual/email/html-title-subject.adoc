@@ -16,7 +16,7 @@ include::{standard-email-samples-sourcedir}/HtmlTemplateWithSubjectSample.java[]
 ----
 <1> Subject is no more in Java code
 
-{standard-email-samples-sourcedir-url}/HtmlTemplateWithSubjectSample.java?ts=4[Source code of the sample]
+{standard-email-samples-sourcedir-url}/HtmlTemplateWithSubjectSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
 image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
@@ -27,7 +27,7 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simpleWithSubject.ht
 ----
 <1> The subject is defined in the template and can use same evaluation context (`SimpleBean`)
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simpleWithSubject.html?ts=4[Source code of the HTML template]
+{standard-samples-resourcesdir-url}/template/thymeleaf/simpleWithSubject.html?ts={tabsize}[Source code of the HTML template]
 
 [role=tab-container-end]
 -

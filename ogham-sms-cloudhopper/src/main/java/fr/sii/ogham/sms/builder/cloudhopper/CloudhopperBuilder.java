@@ -25,6 +25,7 @@ import com.cloudhopper.smpp.ssl.SslConfiguration;
 import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.LoggingOptions;
 
+import fr.sii.ogham.core.async.ThreadSleepAwaiter;
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
@@ -36,6 +37,7 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.retry.SimpleRetryExecutor;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import fr.sii.ogham.sms.builder.cloudhopper.UserDataBuilder.UserDataPropValues;
 import fr.sii.ogham.sms.encoder.Encoder;
@@ -1308,7 +1310,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	@Override
 	public CloudhopperSMPPSender build() {
 		PropertyResolver propertyResolver = buildPropertyResolver();
-		CloudhopperSessionOptions sessionOpts = sessionBuilder.build();
+		CloudhopperSessionOptions sessionOpts = buildSessionOpts();
 		SmppSessionConfiguration session = buildSession(sessionOpts, propertyResolver);
 		if (session.getHost() == null || session.getPort() == 0) {
 			return null;
@@ -1317,6 +1319,19 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		LOG.info("Sending SMS using Cloudhopper is registered");
 		LOG.debug("SMPP server address: {}:{}", session.getHost(), session.getPort());
 		return new CloudhopperSMPPSender(session, options, buildPreparator(), buildClientSupplier(), buildSmppSessionHandler());
+	}
+
+	private CloudhopperSessionOptions buildSessionOpts() {
+		if (sessionBuilder != null) {
+			return sessionBuilder.build();
+		}
+		CloudhopperSessionOptions cloudhopperSessionOptions = new CloudhopperSessionOptions();
+		cloudhopperSessionOptions.setConnectRetry(noRetry());
+		return cloudhopperSessionOptions;
+	}
+
+	private SimpleRetryExecutor noRetry() {
+		return new SimpleRetryExecutor(() -> null, new ThreadSleepAwaiter());
 	}
 
 	private MessagePreparator buildPreparator() {
@@ -1352,7 +1367,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 
 	private DataCodingProvider buildDataCodingProvider() {
 		if (dataCodingBuilder == null) {
-			return new CharsetMapToCharacterEncodingGroupDataCodingProvider();
+			return new CharsetMapToCharacterEncodingGroupDataCodingProvider(true);
 		}
 		return dataCodingBuilder.build();
 	}

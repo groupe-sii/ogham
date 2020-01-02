@@ -77,7 +77,7 @@ public class RelativePath implements ResourcePath {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RelativePath [merged path=").append(getOriginalPath()).append(", base=").append(basePath).append(", relative=").append(relativePath).append("]");
+		builder.append("'").append(mergedPath).append("' (merged from ").append(relativePath).append(" relative to ").append(basePath).append(")");
 		return builder.toString();
 	}
 }

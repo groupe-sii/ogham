@@ -33,7 +33,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailTestSamp
 <15> Assert that recevied email has no attachment
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailTestSample.java?ts=4[Source code of the sample].
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailTestSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab-container-end]
 -
@@ -65,7 +65,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTest
 <3> Assert that HTML is similar as an expected HTML content
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
 
 
 [role=tab]
@@ -77,7 +77,7 @@ include::{standard-samples-resourcesdir}/template/register.html[]
 ----
 
 
-{standard-samples-resourcesdir-url}/template/register.html?ts=4[Source code of the template].
+{standard-samples-resourcesdir-url}/template/register.html?ts={tabsize}[Source code of the template].
 
 
 [role=tab]
@@ -89,7 +89,7 @@ include::{standard-samples-testresourcesdir}/expected/register.html[]
 ----
 
 
-{standard-samples-testresourcesdir-url}/expected/register.html?ts=4[Source code of the expected HTML].
+{standard-samples-testresourcesdir-url}/expected/register.html?ts={tabsize}[Source code of the expected HTML].
 
 
 [role=tab-container-end]
@@ -116,7 +116,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTest
 <3> Assert that HTML is similar as an expected HTML content
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts=4[Source code of the sample].
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
 
 
 [role=tab]
@@ -128,7 +128,7 @@ include::{standard-samples-resourcesdir}/template/register.html[]
 ----
 
 
-{standard-samples-resourcesdir-url}/template/register.html?ts=4[Source code of the template].
+{standard-samples-resourcesdir-url}/template/register.html?ts={tabsize}[Source code of the template].
 
 
 [role=tab]
@@ -203,7 +203,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlAndT
 <6> Assert that alternative body message mimetype is `text/plain`
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts=4[Source code of the sample].
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts={tabsize}[Source code of the sample].
 
 
 [role=tab]
@@ -215,7 +215,7 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
 ----
 
 
-{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts=4[Source code of the template].
+{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts={tabsize}[Source code of the template].
 
 
 [role=tab]
@@ -227,7 +227,7 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
 ----
 
 
-{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts=4[Source code of the template].
+{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the template].
 
 
 [role=tab]
@@ -239,7 +239,7 @@ include::{standard-samples-testresourcesdir}/expected/simple_bar_42.html[]
 ----
 
 
-{standard-samples-testresourcesdir-url}/expected/simple_bar_42.html?ts=4[Source code of the expected HTML].
+{standard-samples-testresourcesdir-url}/expected/simple_bar_42.html?ts={tabsize}[Source code of the expected HTML].
 
 
 [role=tab]
@@ -251,7 +251,7 @@ include::{standard-samples-testresourcesdir}/expected/simple_bar_42.txt[]
 ----
 
 
-{standard-samples-testresourcesdir-url}/expected/simple_bar_42.txt?ts=4[Source code of the expected text].
+{standard-samples-testresourcesdir-url}/expected/simple_bar_42.txt?ts={tabsize}[Source code of the expected text].
 
 
 [role=tab-container-end]
@@ -282,7 +282,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachme
 <6> Assert that the attachment disposition is correct
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts=4[Source code of the sample].
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts={tabsize}[Source code of the sample].
 
 
 [role=tab-container-end]
@@ -316,7 +316,7 @@ The `bcc` recipient is not testable. Indeed, `bcc` recipients are hidden recipie
 ====
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts=4[Source code of the sample].
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts={tabsize}[Source code of the sample].
 
 
 [role=tab-container-end]
@@ -342,7 +342,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SeveralEmails
 <4> Specific assertions for third sent message (recipient and message content)
 
 
-{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts=4[Source code of the sample].
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts={tabsize}[Source code of the sample].
 
 
 [role=tab-container-end]
@@ -360,7 +360,7 @@ image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,52-75 highlight-lines:37,41-43"]
 ----
-include::{ogham-all-testsourcedir}/fr/sii/ogham/it/email/EmailSMTPAuthenticationTest.java[]
+include::{ogham-all-testsourcedir}/oghamall/it/email/EmailSMTPAuthenticationTest.java[]
 ----
 <1> Configure GreenMail to register a user
 <2> Configure JavaMail to enable authentication
@@ -368,7 +368,7 @@ include::{ogham-all-testsourcedir}/fr/sii/ogham/it/email/EmailSMTPAuthentication
 <4> Configure Ogham to provide the authentication password
 
 
-{ogham-all-testsourcedir-url}/fr/sii/ogham/it/email/EmailSMTPAuthenticationTest.java?ts=4[Source code of the sample].
+{ogham-all-testsourcedir-url}/oghamall/it/email/EmailSMTPAuthenticationTest.java?ts={tabsize}[Source code of the sample].
 
 NOTE: Only the setup differs, the test is the same.
 

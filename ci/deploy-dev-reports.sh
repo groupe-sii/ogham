@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 REPORTS_DIR=${1:-/tmp/ogham-dev-reports}
 
 # accept github.com host
@@ -15,12 +17,12 @@ links=""
 while read branch; do
 	if [ -d "$REPORTS_DIR/$branch" ]; then
 		echo "$branch"
-		links="$links <a href='$branch'>$branch</a>"
+		links="$links <li><a href='$branch'>$branch</a></li>"
 	fi
 done << EOF
 $(echo "$branchnames")
 EOF
-echo "<html><head></head><body>$links</body>" > $REPORTS_DIR/index.html
+echo "<html><head></head><body><ul>$links</ul></body>" > $REPORTS_DIR/index.html
 # TODO: remove old branches ?
 
 # commit and push generated site

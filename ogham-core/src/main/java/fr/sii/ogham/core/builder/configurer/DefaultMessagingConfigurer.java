@@ -133,7 +133,7 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		builder
 			.systemProperties()
 			.converter()
-				.override(new DefaultConverter());
+				.defaultConverter(overrideIfNotSet(new DefaultConverter()));
 		// @formatter:on
 	}
 

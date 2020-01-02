@@ -1,6 +1,11 @@
 package fr.sii.ogham.core.id.generator;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates a simple sequence:
@@ -10,11 +15,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * {@code <name>}n</li>
  * </ul>
  * 
+ * NOTE: name is URL encoded
+ * 
  * 
  * @author Aurélien Baudet
  *
  */
 public class SequentialIdGenerator implements IdGenerator {
+	private static final Logger LOG = LoggerFactory.getLogger(SequentialIdGenerator.class);
+	
 	private final AtomicInteger idx;
 	private final boolean useNamePrefix;
 
@@ -53,7 +62,19 @@ public class SequentialIdGenerator implements IdGenerator {
 
 	@Override
 	public String generate(String name) {
-		return (useNamePrefix ? name : "") + idx.getAndIncrement();
+		return namePrefix(name) + idx.getAndIncrement();
+	}
+
+	private String namePrefix(String name) {
+		if (!useNamePrefix) {
+			return "";
+		}
+		try {
+			return URLEncoder.encode(name, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			LOG.warn("Failed to use "+name+" as id prefix => no prefix used", e);
+			return "";
+		}
 	}
 
 }

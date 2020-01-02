@@ -74,6 +74,9 @@ public class StringToArrayConverter implements SupportingConverter {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T convert(Object source, Class<T> targetType) {
+		if (source == null) {
+			return null;
+		}
 		String s = (String) source;
 		String[] parts = s.split(splitPattern);
 		Object target = Array.newInstance(targetType.getComponentType(), parts.length);
@@ -87,7 +90,14 @@ public class StringToArrayConverter implements SupportingConverter {
 
 	@Override
 	public boolean supports(Class<?> sourceType, Class<?> targetType) {
-		return String.class.isAssignableFrom(sourceType) && String[].class.isAssignableFrom(targetType);
+		return String.class.isAssignableFrom(sourceType) && Object[].class.isAssignableFrom(targetType) && elementsConverterSupports(sourceType, targetType);
+	}
+
+	private boolean elementsConverterSupports(Class<?> sourceType, Class<?> targetType) {
+		if (elementsConverter instanceof SupportingConverter) {
+			return ((SupportingConverter) elementsConverter).supports(sourceType, targetType);
+		}
+		return true;
 	}
 
 }

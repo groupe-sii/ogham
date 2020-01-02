@@ -29,8 +29,8 @@ import fr.sii.ogham.sms.message.Sms;
  */
 public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Builder<MessageFiller> {
 	private EnvironmentBuilder<?> environmentBuilder;
-	private AutofillDefaultPhoneNumberBuilder senderNumberBuilder;
-	private AutofillDefaultPhoneNumberBuilder recipientNumberBuilder;
+	private AutofillDefaultPhoneNumberBuilder<String> senderNumberBuilder;
+	private AutofillDefaultPhoneNumberBuilder<String[]> recipientNumberBuilder;
 
 	/**
 	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
@@ -55,9 +55,9 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * 
 	 * @return the builder to configure default sender number
 	 */
-	public AutofillDefaultPhoneNumberBuilder from() {
+	public AutofillDefaultPhoneNumberBuilder<String> from() {
 		if (senderNumberBuilder == null) {
-			senderNumberBuilder = new AutofillDefaultPhoneNumberBuilder(this);
+			senderNumberBuilder = new AutofillDefaultPhoneNumberBuilder<>(this, String.class);
 		}
 		return senderNumberBuilder;
 	}
@@ -69,9 +69,9 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * 
 	 * @return the builder to configure default recipient number
 	 */
-	public AutofillDefaultPhoneNumberBuilder to() {
+	public AutofillDefaultPhoneNumberBuilder<String[]> to() {
 		if (recipientNumberBuilder == null) {
-			recipientNumberBuilder = new AutofillDefaultPhoneNumberBuilder(this);
+			recipientNumberBuilder = new AutofillDefaultPhoneNumberBuilder<>(this, String[].class);
 		}
 		return recipientNumberBuilder;
 	}
@@ -79,9 +79,9 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 	@Override
 	public MessageFiller build() {
 		EveryFillerDecorator filler = new EveryFillerDecorator();
-		Map<String, ConfigurationValueBuilderHelper<?, String>> props = new HashMap<>();
+		Map<String, ConfigurationValueBuilderHelper<?, ?>> props = new HashMap<>();
 		props.put("from", (ConfigurationValueBuilderHelper<?, String>) senderNumberBuilder.defaultValue());
-		props.put("to", (ConfigurationValueBuilderHelper<?, String>) recipientNumberBuilder.defaultValue());
+		props.put("to", (ConfigurationValueBuilderHelper<?, String[]>) recipientNumberBuilder.defaultValue());
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		filler.addFiller(new SmsFiller(propertyResolver, props));
 		return filler;

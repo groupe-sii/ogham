@@ -35,6 +35,9 @@ public enum SmsCoding {
 	 * @return the corresponding {@link SmsCoding}
 	 */
 	public static SmsCoding from(String nameOrValue) {
+		if (nameOrValue == null) {
+			throw new IllegalArgumentException("Invalid SmsCoding (null)");
+		}
 		if (IS_NUMBER.matcher(nameOrValue).matches()) {
 			return from(Integer.parseInt(nameOrValue));
 		}

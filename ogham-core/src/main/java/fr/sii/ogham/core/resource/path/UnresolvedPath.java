@@ -29,7 +29,7 @@ public class UnresolvedPath implements ResourcePath {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("StringPath [original path=").append(originalPath).append("]");
+		builder.append("'").append(originalPath).append("'");
 		return builder.toString();
 	}
 }

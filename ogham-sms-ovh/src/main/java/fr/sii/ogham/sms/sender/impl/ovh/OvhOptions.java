@@ -34,7 +34,7 @@ public class OvhOptions {
 
 	public OvhOptions(boolean noStop, String tag, SmsCoding smsCoding) {
 		super();
-		this.noStop = noStop ? 1 : 0;
+		this.noStop = toInt(noStop);
 		this.tag = tag;
 		this.smsCoding = smsCoding;
 	}
@@ -52,7 +52,7 @@ public class OvhOptions {
 	}
 
 	public void setNoStop(boolean noStop) {
-		this.noStop = noStop ? 1 : 0;
+		this.noStop = toInt(noStop);
 	}
 
 	public void setTag(String tag) {
@@ -61,5 +61,9 @@ public class OvhOptions {
 
 	public void setSmsCoding(SmsCoding smsCoding) {
 		this.smsCoding = smsCoding;
+	}
+
+	private static int toInt(boolean noStop) {
+		return noStop ? 1 : 0;
 	}
 }

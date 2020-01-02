@@ -45,13 +45,25 @@ public class StringToBooleanConverter implements SupportingConverter {
 		falseValues.add("0");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T convert(Object source, Class<T> targetType) {
+		if (source == null) {
+			return null;
+		}
 		String value = ((String) source).trim();
 		if ("".equals(value)) {
 			return null;
 		}
+		return toBoolean(source, value);
+	}
+
+	@Override
+	public boolean supports(Class<?> sourceType, Class<?> targetType) {
+		return String.class.isAssignableFrom(sourceType) && Boolean.class.isAssignableFrom(targetType);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> T toBoolean(Object source, String value) {
 		value = value.toLowerCase(ENGLISH);
 		if (trueValues.contains(value)) {
 			return (T) Boolean.TRUE;
@@ -61,10 +73,4 @@ public class StringToBooleanConverter implements SupportingConverter {
 			throw new ConversionException("Invalid boolean value '" + source + "'");
 		}
 	}
-
-	@Override
-	public boolean supports(Class<?> sourceType, Class<?> targetType) {
-		return String.class.isAssignableFrom(sourceType) && Boolean.class.isAssignableFrom(targetType);
-	}
-
 }

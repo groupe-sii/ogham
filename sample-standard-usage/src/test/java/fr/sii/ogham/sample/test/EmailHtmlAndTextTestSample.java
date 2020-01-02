@@ -1,9 +1,9 @@
 package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
-import static fr.sii.ogham.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.Matchers.hasItems;

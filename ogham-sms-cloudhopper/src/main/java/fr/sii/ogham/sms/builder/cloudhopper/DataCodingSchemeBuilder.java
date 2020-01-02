@@ -404,11 +404,11 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	private void registerAuto(PropertyResolver propertyResolver, FirstSupportingDataCodingProvider firstSupporting) {
 		Byte interfaceVersion = interfaceVersionProvider.apply(propertyResolver);
 		if (interfaceVersion == SmppConstants.VERSION_3_3) {
-			firstSupporting.register(new CharsetMapToGeneralGroupDataCodingProvider());
+			firstSupporting.register(new CharsetMapToGeneralGroupDataCodingProvider(false));
 			return;
 		}
 		// 3.4+
-		firstSupporting.register(new CharsetMapToCharacterEncodingGroupDataCodingProvider());
+		firstSupporting.register(new CharsetMapToCharacterEncodingGroupDataCodingProvider(false));
 	}
 
 }

@@ -315,6 +315,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	}
 
 	protected List<ResourceResolver> buildResolvers() {
+		initResolutionBuilder();
 		return resourceResolutionBuilderHelper.buildResolvers();
 	}
 

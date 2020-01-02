@@ -1,2 +1,2 @@
-${statics['fr.sii.ogham.it.freemarker.mock.UtilityClass'].hello(name)}
-${statics['fr.sii.ogham.it.freemarker.mock.UtilityClass$NestedClass'].hello(name)}
+${statics['mock.UtilityClass'].hello(name)}
+${statics['mock.UtilityClass$NestedClass'].hello(name)}

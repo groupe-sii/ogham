@@ -52,4 +52,9 @@ public class NamedCharset {
 	public static NamedCharset from(String charsetName) {
 		return new NamedCharset(charsetName, CharsetUtil.map(charsetName));
 	}
+
+	@Override
+	public String toString() {
+		return charsetName + " <-> " + charset;
+	}
 }

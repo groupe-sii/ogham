@@ -2,6 +2,7 @@ package fr.sii.ogham.core.exception.handler;
 
 import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
+@Recoverable
 public class TemplateNotFoundException extends ContentTranslatorException {
 	/**
 	 * 

@@ -68,10 +68,7 @@ public class StringToNumberConverter implements SupportingConverter {
 
 	private static boolean isHexOrOctalNumber(String value) {
 		int index = value.startsWith("-") ? 1 : 0;
-		return value.startsWith("0x", index) 
-				|| value.startsWith("0X", index) 
-				|| value.startsWith("#", index) 
-				|| value.startsWith("0", index);
+		return value.startsWith("#", index) || value.startsWith("0", index);
 	}
 
 	private static String trimAllWhitespace(String str) {
@@ -113,6 +110,6 @@ public class StringToNumberConverter implements SupportingConverter {
 		}
 
 		BigInteger result = new BigInteger(value.substring(index), radix);
-		return (negative ? result.negate() : result);
+		return negative ? result.negate() : result;
 	}
 }

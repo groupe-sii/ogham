@@ -53,6 +53,7 @@ import fr.sii.ogham.core.exception.convert.ConversionException;
  * @author Aurélien Baudet
  *
  */
+@SuppressWarnings("squid:S1192")
 public class StringToEnumConverter implements SupportingConverter {
 
 	/**
@@ -98,10 +99,8 @@ public class StringToEnumConverter implements SupportingConverter {
 		try {
 			Method method = targetType.getMethod(methodName, String.class);
 			return (T) method.invoke(null, value);
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException e) {
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new ConversionException("Failed to convert " + value + " into Enum using custom factory method", e);
-		} catch (InvocationTargetException e) {
-			throw new ConversionException("Failed to convert " + value + " into Enum using custom factory method", e.getCause());
 		}
 	}
 

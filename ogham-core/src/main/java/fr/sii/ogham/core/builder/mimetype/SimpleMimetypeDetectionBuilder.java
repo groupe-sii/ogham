@@ -98,7 +98,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 			buildDefault(providers);
 			assertNotEmpty(providers);
 			MimeTypeProvider provider = buildProvider(providers);
-			return ovverideProvider(provider);
+			return overrideProvider(provider);
 		} catch (MimeTypeParseException e) {
 			throw new BuildException("Failed to build mimetype provider", e);
 		}
@@ -117,7 +117,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 		return new FallbackMimeTypeProvider(providers);
 	}
 
-	private MimeTypeProvider ovverideProvider(MimeTypeProvider provider) {
+	private MimeTypeProvider overrideProvider(MimeTypeProvider provider) {
 		if(replaceMimetypeBuilder==null) {
 			return provider;
 		}

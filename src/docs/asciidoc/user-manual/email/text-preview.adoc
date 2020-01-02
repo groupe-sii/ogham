@@ -17,7 +17,7 @@ include::{standard-email-samples-sourcedir}/HtmlAndTextSample.java[]
 ----
 <1> The content is using the type `MultiContent` with a text and HTML content
 
-{standard-email-samples-sourcedir-url}/HtmlAndTextSample.java?ts=4[Source code of the sample]
+{standard-email-samples-sourcedir-url}/HtmlAndTextSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab-container-end]
 -
@@ -40,7 +40,7 @@ include::{standard-email-samples-sourcedir}/HtmlAndTextTemplateSample.java[]
 <1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
-{standard-email-samples-sourcedir-url}/HtmlAndTextTemplateSample.java?ts=4[Source code of the sample]
+{standard-email-samples-sourcedir-url}/HtmlAndTextTemplateSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
 image:{images-dir}/icons/thymeleaf-text.jpg[width=30,height=30] Text template
@@ -51,7 +51,7 @@ image:{images-dir}/icons/thymeleaf-text.jpg[width=30,height=30] Text template
 include::{standard-samples-resourcesdir}/template/thymeleaf/simple.txt[]
 ----
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts=4[Source code of the text template]
+{standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts={tabsize}[Source code of the text template]
 
 
 [role=tab]
@@ -63,7 +63,7 @@ image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] HTML template
 include::{standard-samples-resourcesdir}/template/thymeleaf/simple.html[]
 ----
 
-{standard-samples-resourcesdir-url}/template/thymeleaf/simple.html?ts=4[Source code of the HTML template]
+{standard-samples-resourcesdir-url}/template/thymeleaf/simple.html?ts={tabsize}[Source code of the HTML template]
 
 [role=tab-container-end]
 -
@@ -94,7 +94,7 @@ include::{standard-email-samples-sourcedir}/HtmlAndTextMixedTemplateEnginesSampl
 <1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
-{standard-email-samples-sourcedir-url}/HtmlAndTextMixedTemplateEnginesSample.java?ts=4[Source code of the sample]
+{standard-email-samples-sourcedir-url}/HtmlAndTextMixedTemplateEnginesSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
 image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
@@ -105,7 +105,7 @@ image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
 include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
 ----
 
-{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts=4[Source code of the text template]
+{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the text template]
 
 
 [role=tab]
@@ -117,7 +117,7 @@ image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
 include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
 ----
 
-{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts=4[Source code of the HTML template]
+{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts={tabsize}[Source code of the HTML template]
 
 [role=tab-container-end]
 -

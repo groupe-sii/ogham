@@ -21,6 +21,8 @@ import com.cloudhopper.commons.gsm.DataCoding;
 
 import fr.sii.ogham.sms.encoder.Encoded;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.DataCodingException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.UnsupportedCharsetException;
 
 /**
  * Provide a Data Coding Scheme according to charset used to encode the message.
@@ -41,6 +43,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  *
  */
 public class CharsetMapToCharacterEncodingGroupDataCodingProvider implements DataCodingProvider {
+	private final boolean failIfUnknown;
 	private final Map<String, Byte> alphabetIndexedByCharsetName;
 
 	/**
@@ -64,16 +67,28 @@ public class CharsetMapToCharacterEncodingGroupDataCodingProvider implements Dat
 	 * {@link DataCoding#CHAR_ENC_UCS2}</li>
 	 * </ul>
 	 * 
+	 * @param failIfUnknown
+	 *            if true it throws {@link UnsupportedCharsetException}, if
+	 *            false is returns null to let other
+	 *            {@link DataCodingProvider}(s) being executed.
 	 */
-	public CharsetMapToCharacterEncodingGroupDataCodingProvider() {
+	public CharsetMapToCharacterEncodingGroupDataCodingProvider(boolean failIfUnknown) {
 		super();
+		this.failIfUnknown = failIfUnknown;
 		this.alphabetIndexedByCharsetName = defaultMap();
 	}
 
 	@Override
-	public DataCoding provide(Encoded encoded) {
+	public DataCoding provide(Encoded encoded) throws DataCodingException {
 		NamedCharset charset = NamedCharset.from(encoded.getCharsetName());
-		return DataCoding.createCharacterEncodingGroup(alphabetIndexedByCharsetName.get(charset.getCharsetName()));
+		Byte encoding = alphabetIndexedByCharsetName.get(charset.getCharsetName());
+		if (encoding == null) {
+			if (failIfUnknown) {
+				throw new UnsupportedCharsetException(encoded.getCharsetName() + " charset not supported for Character Encoding Group Data Coding Scheme", encoded);
+			}
+			return null;
+		}
+		return DataCoding.createCharacterEncodingGroup(encoding);
 	}
 
 	/**
@@ -84,7 +99,8 @@ public class CharsetMapToCharacterEncodingGroupDataCodingProvider implements Dat
 	 * {@link DataCoding#CHAR_ENC_DEFAULT}</li>
 	 * <li>{@link CharsetUtil#NAME_PACKED_GSM} {@literal ->}
 	 * {@link DataCoding#CHAR_ENC_DEFAULT}</li>
-	 * <li>{@link CharsetUtil#NAME_GSM} {@literal ->} {@link DataCoding#CHAR_ENC_8BIT}</li>
+	 * <li>{@link CharsetUtil#NAME_GSM} {@literal ->}
+	 * {@link DataCoding#CHAR_ENC_8BIT}</li>
 	 * <li>{@link CharsetUtil#NAME_GSM8} {@literal ->}
 	 * {@link DataCoding#CHAR_ENC_8BIT}</li>
 	 * <li>{@link CharsetUtil#NAME_ISO_8859_1} {@literal ->}

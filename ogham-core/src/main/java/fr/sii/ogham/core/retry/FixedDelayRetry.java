@@ -1,5 +1,8 @@
 package fr.sii.ogham.core.retry;
 
+import java.time.Instant;
+import java.util.function.Supplier;
+
 /**
  * Retry several times with a fixed delay between each try until the maximum
  * attempts is reached.
@@ -33,23 +36,51 @@ package fr.sii.ogham.core.retry;
 public class FixedDelayRetry implements RetryStrategy {
 	private final int maxRetries;
 	private final long delay;
+	private final Supplier<Instant> currentTimeSupplier;
 	private int retries;
 
+	/**
+	 * Initializes with the maximum attempts and the delay between each attempt.
+	 * 
+	 * <p>
+	 * The next date is determined using {@link Instant#now()}.
+	 * 
+	 * @param maxRetries
+	 *            the maximum attempts
+	 * @param delay
+	 *            the delay between two attempts
+	 */
 	public FixedDelayRetry(int maxRetries, long delay) {
+		this(maxRetries, delay, Instant::now);
+	}
+
+	/**
+	 * Initializes with the maximum attempts and the delay between each attempt.
+	 * 
+	 * @param maxRetries
+	 *            the maximum attempts
+	 * @param delay
+	 *            the delay between two attempts
+	 * @param currentTimeSupplier
+	 *            a custom implementation used to provide current time
+	 */
+	public FixedDelayRetry(int maxRetries, long delay, Supplier<Instant> currentTimeSupplier) {
 		super();
 		this.maxRetries = maxRetries;
 		this.delay = delay;
+		this.currentTimeSupplier = currentTimeSupplier;
 		retries = maxRetries;
 	}
 
 	@Override
 	public boolean terminated() {
-		return retries-- < 0;
+		return retries <= 0;
 	}
 
 	@Override
-	public long nextDate() {
-		return System.currentTimeMillis() + delay;
+	public Instant nextDate() {
+		retries--;
+		return currentTimeSupplier.get().plusMillis(delay);
 	}
 
 	public int getRemainingRetries() {

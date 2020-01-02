@@ -2,10 +2,10 @@ package fr.sii.ogham.sms.builder;
 
 import fr.sii.ogham.core.builder.AbstractAutofillDefaultValueBuilder;
 
-public class AutofillDefaultPhoneNumberBuilder extends AbstractAutofillDefaultValueBuilder<AutofillDefaultPhoneNumberBuilder, AutofillSmsBuilder> {
+public class AutofillDefaultPhoneNumberBuilder<V> extends AbstractAutofillDefaultValueBuilder<AutofillDefaultPhoneNumberBuilder<V>, AutofillSmsBuilder, V> {
 
-	public AutofillDefaultPhoneNumberBuilder(AutofillSmsBuilder parent) {
-		super(AutofillDefaultPhoneNumberBuilder.class, parent);
+	public AutofillDefaultPhoneNumberBuilder(AutofillSmsBuilder parent, Class<V> valueClass) {
+		super(AutofillDefaultPhoneNumberBuilder.class, parent, valueClass);
 	}
 
 }

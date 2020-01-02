@@ -11,6 +11,7 @@ import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
 
 /**
  * Content handler that puts plain text or HTML content into email to be sent
@@ -46,6 +47,8 @@ public final class StringContentHandler implements SendGridContentHandler {
 	 * parameter, the method will fail if anything other than a
 	 * {@link StringContent} is provided.
 	 * 
+	 * @param original
+	 *            the original Ogham email
 	 * @param email
 	 *            the email to put the content in
 	 * @param content
@@ -56,7 +59,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 	 *             the content provided is not of the right type
 	 */
 	@Override
-	public void setContent(final Mail email, final Content content) throws ContentHandlerException {
+	public void setContent(final Email original, final Mail email, final Content content) throws ContentHandlerException {
 		if (email == null) {
 			throw new IllegalArgumentException("[email] cannot be null");
 		}

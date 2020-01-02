@@ -73,7 +73,7 @@ public class FirstSupportingResolverAdapter implements TemplateLoaderAdapter {
 				return adapter.adapt(resolver);
 			}
 		}
-		throw new NoResolverAdapterException("No resolver adapter found for the provided resolver: " + resolver.getClass().getSimpleName(), resolver);
+		throw new NoResolverAdapterException("No resolver adapter found for the provided resolver: " + resolverName(resolver), resolver);
 	}
 
 	/**
@@ -95,5 +95,9 @@ public class FirstSupportingResolverAdapter implements TemplateLoaderAdapter {
 		for (TemplateLoaderAdapter adapter : adapters) {
 			adapter.setOptions(options);
 		}
+	}
+
+	private String resolverName(ResourceResolver resolver) {
+		return resolver==null ? "null" : resolver.getClass().getSimpleName();
 	}
 }

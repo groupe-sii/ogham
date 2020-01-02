@@ -49,6 +49,8 @@ public class SimplePropertiesBuilder<P> extends AbstractParent<P> implements Pro
 		for (Property prop : properties) {
 			if (prop.getKey() != null && prop.getValue() != null) {
 				props.put(prop.getKey(), prop.getValue());
+			} else if (prop.getValue() == null) {
+				props.remove(prop.getKey());
 			}
 		}
 		return props;

@@ -1,68 +1,368 @@
+aliases:
+  - &save-m2-cache
+    paths:
+      - ~/.m2
+    key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+    
+  - &restore-m2-cache
+    keys:
+      - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+      - maven-repo-v1-{{ .Branch }}-
+      - maven-repo-v1-
+    
+  - &save-pit-history
+    paths:
+      - /tmp/*_pitest_history.bin
+    key: pit-history-{{ .Branch }}
+    
+  - &restore-pit-history
+    keys:
+      - pit-history-{{ .Branch }}
+    
+  - &restore-workspace
+    at: '~'
+  - &save-for-next-step
+    root: '~'
+    paths:
+      - project/*/target/pit-reports
+      
+defaults: &defaults
+  docker:
+    - image: circleci/openjdk:8-jdk
+  environment:
+    JAVA_TOOL_OPTIONS: '-Xmx2g'
+
 version: 2.1
 orbs:
   slack: circleci/slack@3.2.0
 jobs:
-  build:
-    docker:
-      - image: circleci/openjdk:8-jdk
+  #--------------------------------------------
+  # build pitest (with report aggregation fix)
+  # TODO: remove when pull request merged
+  #--------------------------------------------
+  prepare:
+    <<: *defaults
     steps:
       - checkout
-      #---------------------------------------
-      # restore cache from previous build
-      #---------------------------------------
-      - restore_cache:
-          keys:
-            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v1-{{ .Branch }}-
-            - maven-repo-v1-
-      - restore_cache:
-          keys:
-            - pit-history-{{ .Branch }}
-      - run: cp -f ~/.pitest/* /tmp/ || echo 'no pitest history copied to /tmp'
-      - run: ls -l /tmp/
-      - run: ls -l ~/.pitest/ || echo ".pitest folder doesn't exist"
-      #---------------------------------------
-      # build test and generate reports
-      #---------------------------------------
-      - run: ci/./generate-documentation.sh
+      - restore_cache: *restore-m2-cache
+      - run: ci/./build-pitest.sh
+      - save_cache: *save-m2-cache
+  
+  #--------------------------------------------
+  # run mutation testing on each module
+  #--------------------------------------------
+  ogham-test-utils:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-test-utils
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+  
+  ogham-core:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-core
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+  
+  ogham-template-thymeleaf-common:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-template-thymeleaf-common
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+  
+  ogham-template-thymeleaf-v2:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-template-thymeleaf-v2
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+  
+  ogham-template-thymeleaf-v3:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-template-thymeleaf-v3
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+  
+#  ogham-template-thymeleaf:
+#    <<: *defaults
+#    steps:
+#      - checkout
+#      - restore_cache: *restore-m2-cache
+#      - restore_cache: *restore-pit-history
+#      - attach_workspace: *restore-workspace
+#      - run: ci/./build-pitest.sh
+#      - run:
+#          command: ci/./run-single-module-mutation-tests.sh ogham-template-thymeleaf
+#          no_output_timeout: 1h
+#      - persist_to_workspace: *save-for-next-step
+#      - save_cache: *save-pit-history
+  
+  ogham-template-freemarker:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-template-freemarker
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+  
+  ogham-email-javamail:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-email-javamail
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+      
+#  ogham-email-sendgrid-common:
+#    <<: *defaults
+#    steps:
+#      - checkout
+#      - restore_cache: *restore-m2-cache
+#      - restore_cache: *restore-pit-history
+#      - attach_workspace: *restore-workspace
+#      - run: ci/./build-pitest.sh
+#      - run:
+#          command: ci/./run-single-module-mutation-tests.sh ogham-email-sendgrid-common
+#          no_output_timeout: 1h
+#      - persist_to_workspace: *save-for-next-step
+#      - save_cache: *save-pit-history
+      
+  ogham-email-sendgrid-v2:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-email-sendgrid-v2
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+      
+  ogham-email-sendgrid-v4:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-email-sendgrid-v4
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+       
+#  ogham-email-sendgrid:
+#    <<: *defaults
+#    steps:
+#      - checkout
+#      - restore_cache: *restore-m2-cache
+#      - restore_cache: *restore-pit-history
+#      - attach_workspace: *restore-workspace
+#      - run: ci/./build-pitest.sh
+#      - run:
+#          command: ci/./run-single-module-mutation-tests.sh ogham-email-sendgrid
+#          no_output_timeout: 1h
+#      - persist_to_workspace: *save-for-next-step
+#      - save_cache: *save-pit-history
+       
+  ogham-sms-cloudhopper:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-sms-cloudhopper
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+       
+  ogham-sms-ovh:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-sms-ovh
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+       
+  ogham-sms-smsglobal:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-sms-smsglobal
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+       
+  ogham-all:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run: 
+          command: ci/./run-single-module-mutation-tests.sh ogham-all
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+       
+  ogham-spring-boot-v1-autoconfigure:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-spring-boot-v1-autoconfigure
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+       
+  ogham-spring-boot-v2-autoconfigure:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          command: ci/./run-single-module-mutation-tests.sh ogham-spring-boot-v2-autoconfigure
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - save_cache: *save-pit-history
+      
+  #--------------------------------------------
+  # generate reports documentation and site
+  #--------------------------------------------
+  generate-documentation:
+    machine: true
+    environment:
+      JAVA_TOOL_OPTIONS: '-Xmx4096m'
+#      MAVEN_OPTS: '-Xmx4096m'
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+          name: Generate reports and documentation
+          command: ci/./generate-documentation.sh
       - persist_to_workspace:
-          root: .
+          root: '~'
           paths:
-            - target
-      #---------------------------------------
+            - project/*/target
+            - project/target
+      - save_cache: *save-pit-history
+
+  #--------------------------------------------
+  # export for next build
+  #--------------------------------------------
+  export:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-m2-cache
+      - attach_workspace: *restore-workspace
+      #--------------------------------------------
       # save/update cache
-      #---------------------------------------
+      #--------------------------------------------
       - run: rm -rf ~/.m2/repository/fr/sii
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
-      - run: mkdir ~/.pitest || echo 'skip creating .pitest'
-      - run: cp -f /tmp/*_pitest_history.bin ~/.pitest/ || echo 'no pitest history saved'
-      - save_cache:
-          paths:
-            - ~/.pitest
-          key: pit-history-{{ .Branch }}
-      - run: ls -l /tmp/
-      - run: ls -l ~/.pitest/ || echo ".pitest folder doesn't exist"
-      #---------------------------------------
+      - save_cache: *save-m2-cache
+      #--------------------------------------------
       # store build information
-      #---------------------------------------
+      #--------------------------------------------
       - store_test_results:
           path: .
+
+  #--------------------------------------------
+  # upload
+  #--------------------------------------------
   deploy:
     docker:
       - image: alpine/git
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - restore_cache: *restore-m2-cache
+      - attach_workspace: *restore-workspace
       - add_ssh_keys:
           fingerprints:
             - "9a:b0:42:93:73:3e:35:21:62:23:48:eb:79:88:17:d5"
-      #---------------------------------------
+      #--------------------------------------------
       # deploy to Github Pages
-      #---------------------------------------
+      #--------------------------------------------
       - run: ci/./deploy-dev-reports.sh
   notify:
     docker:
@@ -78,13 +378,91 @@ jobs:
           * <https://codecov.io/gh/groupe-sii/ogham/branch/${CIRCLE_BRANCH}|Codecov>
           
           * <https://aurelien-baudet.github.io/ogham-dev-reports/${CIRCLE_BRANCH}/pit-reports/index.html|Mutation testing>"
+
 workflows:
   generate-documentation:
     jobs:
-      - build
+      - prepare
+      - ogham-test-utils:
+          requires:
+            - prepare
+      - ogham-core:
+          requires:
+            - prepare
+      - ogham-template-thymeleaf-common:
+          requires:
+            - prepare
+      - ogham-template-thymeleaf-v2:
+          requires:
+            - prepare
+      - ogham-template-thymeleaf-v3:
+          requires:
+            - prepare
+#      - ogham-template-thymeleaf:
+#          requires:
+#            - prepare
+      - ogham-template-freemarker:
+          requires:
+            - prepare
+      - ogham-email-javamail:
+          requires:
+            - prepare
+#      - ogham-email-sendgrid-common:
+#          requires:
+#            - prepare
+      - ogham-email-sendgrid-v2:
+          requires:
+            - prepare
+      - ogham-email-sendgrid-v4:
+          requires:
+            - prepare
+#      - ogham-email-sendgrid:
+#          requires:
+#            - prepare
+      - ogham-sms-cloudhopper:
+          requires:
+            - prepare
+      - ogham-sms-ovh:
+          requires:
+            - prepare
+      - ogham-sms-smsglobal:
+          requires:
+            - prepare
+      - ogham-all:
+          requires:
+            - prepare
+      - ogham-spring-boot-v1-autoconfigure:
+          requires:
+            - prepare
+      - ogham-spring-boot-v2-autoconfigure:
+          requires:
+            - prepare
+      - generate-documentation:
+          requires:
+            - ogham-test-utils
+            - ogham-core
+            - ogham-template-thymeleaf-common
+            - ogham-template-thymeleaf-v2
+            - ogham-template-thymeleaf-v3
+#            - ogham-template-thymeleaf
+            - ogham-template-freemarker
+            - ogham-email-javamail
+#            - ogham-email-sendgrid-common
+            - ogham-email-sendgrid-v2
+            - ogham-email-sendgrid-v4
+#            - ogham-email-sendgrid
+            - ogham-sms-cloudhopper
+            - ogham-sms-ovh
+            - ogham-sms-smsglobal
+            - ogham-all
+            - ogham-spring-boot-v1-autoconfigure
+            - ogham-spring-boot-v2-autoconfigure
+      - export:
+          requires:
+            - generate-documentation
       - deploy:
           requires:
-            - build
+            - export
       - notify:
           requires:
             - deploy

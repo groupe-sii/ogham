@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.builder.retry;
 
+import fr.sii.ogham.core.async.Awaiter;
+import fr.sii.ogham.core.async.ThreadSleepAwaiter;
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -29,6 +31,7 @@ import fr.sii.ogham.core.retry.SimpleRetryExecutor;
 public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryExecutor> {
 	private EnvironmentBuilder<?> environmentBuilder;
 	private FixedDelayBuilder<RetryBuilder<P>> fixedDelay;
+	private Awaiter awaiter;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -87,11 +90,33 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 		return fixedDelay;
 	}
 
+	/**
+	 * Change implementation used to wait for some delay between retries.
+	 * 
+	 * By default, {@link ThreadSleepAwaiter} is used (internally uses
+	 * {@link Thread#sleep(long)} to wait for some point in time.
+	 * 
+	 * @param impl
+	 *            the custom implementation
+	 * @return this instance for fluent chaining
+	 */
+	public RetryBuilder<P> awaiter(Awaiter impl) {
+		this.awaiter = impl;
+		return this;
+	}
+
 	@Override
 	public RetryExecutor build() {
 		if (fixedDelay == null) {
 			return null;
 		}
-		return new SimpleRetryExecutor(new BuilderToRetryStrategyProviderBridge(fixedDelay));
+		return new SimpleRetryExecutor(new BuilderToRetryStrategyProviderBridge(fixedDelay), buildAwaiter());
+	}
+
+	private Awaiter buildAwaiter() {
+		if (awaiter == null) {
+			return new ThreadSleepAwaiter();
+		}
+		return null;
 	}
 }

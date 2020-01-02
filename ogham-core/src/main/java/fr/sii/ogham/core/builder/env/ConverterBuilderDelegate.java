@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.builder.env;
 
 import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.configuration.MayOverride;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.SupportingConverter;
 
@@ -47,6 +48,12 @@ public class ConverterBuilderDelegate<P> extends AbstractParent<P> implements Co
 	@Override
 	public ConverterBuilderDelegate<P> register(SupportingConverter converter) {
 		delegate.register(converter);
+		return this;
+	}
+
+	@Override
+	public ConverterBuilder<P> defaultConverter(MayOverride<Converter> converter) {
+		delegate.defaultConverter(converter);
 		return this;
 	}
 

@@ -13,6 +13,10 @@
 		Separate module for tests. It provides many helpers for testing email, SMS. It also provides useful tools for testing
 	</description>
 
+	<properties>
+		<sonar.tests>src/test/groovy,src/test/java</sonar.tests>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -30,9 +34,19 @@
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
 		</dependency>
+		<!-- junit-platform-launcher is needed due to junit-platform-testkit test 
+			scope -->
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
@@ -78,6 +92,18 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
+		</dependency>
+
+		<!-- dependencies for testing -->
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-testkit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

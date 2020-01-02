@@ -26,6 +26,6 @@ public class BasicSmsglobalSmppSample {
 		// send the sms using fluent API
 		service.send(new Sms()																					// <8>
 				.content("sms content")
-				.to("+33752962193"));
+				.to("+262693493696"));
 	}
 }

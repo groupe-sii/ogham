@@ -7,12 +7,13 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sendgrid.SendGrid.Email;
+import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.util.PriorityComparator;
 import fr.sii.ogham.core.util.PriorizedMatchingHandler;
 import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
 
 /**
  * Implementation of {@link SendGridContentHandler} that delegates content
@@ -123,7 +124,7 @@ public final class PriorizedContentHandler implements SendGridContentHandler {
 	}
 
 	@Override
-	public void setContent(final Email email, final Content content) throws ContentHandlerException {
+	public void setContent(final Email original, final SendGrid.Email email, final Content content) throws ContentHandlerException {
 		if (email == null) {
 			throw new IllegalArgumentException("[email] cannot be null");
 		}
@@ -138,7 +139,7 @@ public final class PriorizedContentHandler implements SendGridContentHandler {
 			LOG.warn("No content handler found for requested type {}", clazz);
 			throw new ContentHandlerException("No content handler found for content type " + clazz.getSimpleName());
 		} else {
-			handler.setContent(email, content);
+			handler.setContent(original, email, content);
 		}
 	}
 

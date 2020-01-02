@@ -24,7 +24,7 @@ include::{standard-email-samples-sourcedir}/BasicSample.java[]
 <3> Create a MessagingService instance
 <4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from` property
 
-{standard-email-samples-sourcedir-url}/BasicSample.java?ts=4[Source code of the sample].
+{standard-email-samples-sourcedir-url}/BasicSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab-container-end]
 -

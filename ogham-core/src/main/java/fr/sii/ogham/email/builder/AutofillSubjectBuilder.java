@@ -31,7 +31,7 @@ import fr.sii.ogham.email.message.Email;
  * @author Aurélien Baudet
  *
  */
-public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<AutofillSubjectBuilder, AutofillEmailBuilder> implements Builder<MessageFiller> {
+public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<AutofillSubjectBuilder, AutofillEmailBuilder, String> implements Builder<MessageFiller> {
 	private final ConfigurationValueBuilderHelper<AutofillSubjectBuilder, Boolean> enableHtmlTitleValueBuilder;
 	private final ConfigurationValueBuilderHelper<AutofillSubjectBuilder, String> firstLinePrefixValueBuilder;
 	private SubjectProvider customProvider;
@@ -49,7 +49,7 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 	 *            configuration about property resolution
 	 */
 	public AutofillSubjectBuilder(AutofillEmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(AutofillSubjectBuilder.class, parent);
+		super(AutofillSubjectBuilder.class, parent, String.class);
 		this.environmentBuilder = environmentBuilder;
 		enableHtmlTitleValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class);
 		firstLinePrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);

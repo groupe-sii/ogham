@@ -21,7 +21,7 @@ include::{standard-email-samples-sourcedir}/OverrideDefaultSenderSample.java[]
 <2> Do not provide `from` field so the sender address is `foo.bar@test.com`
 <3> Override the default sender address by providing a `from` field. The address is now `override@test.com`
 
-{standard-email-samples-sourcedir-url}/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
+{standard-email-samples-sourcedir-url}/OverrideDefaultSenderSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab-container-end]
 -
@@ -55,13 +55,13 @@ image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
 [source, java, role="collapse-lines:1-24,26-34,51-70 irrelevant-lines:1-24 highlight-lines:41-43"]
 ----
-include::{ogham-all-testsourcedir}/fr/sii/ogham/it/email/EmailPropertiesTest.java[]
+include::{ogham-all-testsourcedir}/oghamall/it/email/EmailPropertiesTest.java[]
 ----
 <1> Define 3 `to` recipients
 <2> Define 2 `cc` recipients
 <3> Define a single `bcc` recipient
 
-{ogham-all-testsourcedir-url}/fr/sii/ogham/it/email/EmailPropertiesTest.java?ts=4[Source code of the sample].
+{ogham-all-testsourcedir-url}/oghamall/it/email/EmailPropertiesTest.java?ts={tabsize}[Source code of the sample].
 
 [role=tab-container-end]
 -

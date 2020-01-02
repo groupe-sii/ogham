@@ -5,6 +5,7 @@ import com.sendgrid.helpers.mail.Mail;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
 
 /**
  * Content handler for {@link MultiContent} instances. All it does is, for each
@@ -40,6 +41,8 @@ public final class MultiContentHandler implements SendGridContentHandler {
 	 * parameter, the method will fail if anything other than a
 	 * {@link MultiContent} is provided.
 	 * 
+	 * @param original
+	 *            the original Ogham email
 	 * @param email
 	 *            the email to put the content in
 	 * @param content
@@ -50,7 +53,7 @@ public final class MultiContentHandler implements SendGridContentHandler {
 	 *             the content provided is not of the right type
 	 */
 	@Override
-	public void setContent(final Mail email, final Content content) throws ContentHandlerException {
+	public void setContent(final Email original, final Mail email, final Content content) throws ContentHandlerException {
 		if (email == null) {
 			throw new IllegalArgumentException("[email] cannot be null");
 		}
@@ -60,7 +63,7 @@ public final class MultiContentHandler implements SendGridContentHandler {
 
 		if (content instanceof MultiContent) {
 			for (Content subContent : ((MultiContent) content).getContents()) {
-				delegate.setContent(email, subContent);
+				delegate.setContent(original, email, subContent);
 			}
 		} else {
 			throw new IllegalArgumentException("This instance can only work with MultiContent instances, but was passed " + content.getClass().getSimpleName());

@@ -22,7 +22,8 @@ public interface ResourceResolverRegistry {
 	ResourceResolverRegistry register(ResourceResolver resolver);
 
 	/**
-	 * Get a resource resolver that is able to handle a particular path.
+	 * Get a resource resolver that is able to handle a particular path. Returns
+	 * {@code null} when no resource resolver can handle the path.
 	 * 
 	 * @param path
 	 *            the path that will be later resolved

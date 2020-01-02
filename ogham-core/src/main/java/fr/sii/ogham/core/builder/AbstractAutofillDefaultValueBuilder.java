@@ -16,11 +16,13 @@ import fr.sii.ogham.core.builder.configurer.Configurer;
  * @param <P>
  *            the type of the parent builder (when calling {@link #and()}
  *            method)
+ * @param <V>
+ *            The type of the value
  */
 @SuppressWarnings("squid:S00119")
-public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends AbstractParent<P> {
+public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P, V> extends AbstractParent<P> {
 	protected final MYSELF myself;
-	protected final ConfigurationValueBuilderHelper<MYSELF, String> defaultValueBuilder;
+	protected final ConfigurationValueBuilderHelper<MYSELF, V> defaultValueBuilder;
 
 	/**
 	 * Initializes the builder with the explicit type of this instance for
@@ -38,15 +40,16 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends Abs
 	 *            calls
 	 * @param parent
 	 *            the parent builder
+	 * @param valueClass
+	 *            the type of the value
 	 */
 	@SuppressWarnings("unchecked")
-	public AbstractAutofillDefaultValueBuilder(Class<?> selfType, P parent) {
+	public AbstractAutofillDefaultValueBuilder(Class<?> selfType, P parent, Class<V> valueClass) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
-		defaultValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
+		defaultValueBuilder = new ConfigurationValueBuilderHelper<>(myself, valueClass);
 	}
-	
-	
+
 	/**
 	 * Register a default value to use if no value is specified on the message.
 	 * 
@@ -81,7 +84,7 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends Abs
 	 *            the default value if no value is defined
 	 * @return this instance for fluent chaining
 	 */
-	public MYSELF defaultValue(String value) {
+	public MYSELF defaultValue(V value) {
 		defaultValueBuilder.setValue(value);
 		return myself;
 	}
@@ -90,9 +93,11 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends Abs
 	 * Register a default value to use if no value is specified on the message.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .defaultValue()
@@ -101,8 +106,8 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends Abs
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #defaultValue(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #defaultValue(Object)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .defaultValue("my-value")
@@ -111,8 +116,8 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends Abs
 	 *   .defaultValue("default")
 	 * </pre>
 	 * 
-	 * The value {@code "my-value"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "my-value"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -120,7 +125,7 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P> extends Abs
 	 * 
 	 * @return the builder to configure property keys/default value
 	 */
-	public ConfigurationValueBuilder<MYSELF, String> defaultValue() {
+	public ConfigurationValueBuilder<MYSELF, V> defaultValue() {
 		return defaultValueBuilder;
 	}
 }

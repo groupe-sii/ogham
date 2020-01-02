@@ -9,12 +9,12 @@ import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.template.thymeleaf.common.TemplateResolverOptions;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FileResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
-import fr.sii.ogham.template.thymeleaf.common.adapter.StringResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiContentBuilder;
 import fr.sii.ogham.template.thymeleaf.v2.ThymeLeafV2FirstSupportingTemplateResolver;
 import fr.sii.ogham.template.thymeleaf.v2.ThymeleafV2TemplateDetector;
 import fr.sii.ogham.template.thymeleaf.v2.adapter.FixClassPathResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.v2.adapter.StringResolverAdapter;
 
 /**
  * Configures parsing of templates using Thymeleaf.

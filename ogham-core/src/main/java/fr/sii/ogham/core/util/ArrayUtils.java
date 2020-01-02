@@ -21,8 +21,13 @@ public final class ArrayUtils {
 	 * @param <T>
 	 *            the type of each element in the array
 	 * @return the combined array
+	 * @throws IllegalArgumentException
+	 *             if first or others is null
 	 */
 	public static <T> T[] concat(T first, T[] others) {
+		if (first == null) {
+			throw new IllegalArgumentException("first cannot be null");
+		}
 		@SuppressWarnings("unchecked")
 		T[] arr = (T[]) Array.newInstance(first.getClass(), 1);
 		arr[0] = first;
@@ -40,8 +45,16 @@ public final class ArrayUtils {
 	 * @param <T>
 	 *            the type of each element in the array
 	 * @return the combined array
+	 * @throws IllegalArgumentException
+	 *             if first or second is null
 	 */
 	public static <T> T[] concat(T[] first, T[] second) {
+		if (first == null) {
+			throw new IllegalArgumentException("first cannot be null");
+		}
+		if (second == null) {
+			throw new IllegalArgumentException("second cannot be null");
+		}
 		T[] result = Arrays.copyOf(first, first.length + second.length);
 		System.arraycopy(second, 0, result, first.length, second.length);
 		return result;

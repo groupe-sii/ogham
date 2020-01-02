@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.id.generator;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.util.UUID;
 
 /**
@@ -12,8 +14,7 @@ public class UUIDGenerator implements IdGenerator {
 
 	@Override
 	public String generate(String name) {
-		// TODO: name should be exactly 5 characters
-		return UUID.fromString(name).toString();
+		return UUID.nameUUIDFromBytes(name.getBytes(UTF_8)).toString();
 	}
 
 }

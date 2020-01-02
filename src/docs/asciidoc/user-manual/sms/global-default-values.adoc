@@ -21,7 +21,7 @@ include::{standard-sms-samples-sourcedir}/OverrideDefaultSenderSample.java[]
 <2> Do not provide `from` field so the sender phone number is `+33699999999`
 <3> Override the default sender phone number by providing a `from` field. The phone number is now `+33700000000`
 
-{standard-sms-samples-sourcedir-url}/OverrideDefaultSenderSample.java?ts=4[Source code of the sample].
+{standard-sms-samples-sourcedir-url}/OverrideDefaultSenderSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab-container-end]
 -

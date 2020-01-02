@@ -9,17 +9,17 @@ import fr.sii.ogham.sms.message.Sms;
 
 public class SmsFiller extends AbstractMessageAwareFiller<Sms> {
 
-	public SmsFiller(PropertyResolver resolver, Map<String, ConfigurationValueBuilderHelper<?, String>> defaultValues) {
+	public SmsFiller(PropertyResolver resolver, Map<String, ConfigurationValueBuilderHelper<?, ?>> defaultValues) {
 		super(resolver, defaultValues, Sms.class);
 	}
 
 	@Override
 	protected void fill(Sms sms) {
 		if(sms.getFrom()==null && containsProperty("from")) {
-			sms.from(getProperty("from"));
+			sms.from(getProperty("from", String.class));
 		}
 		if(!hasRecipients(sms) && containsProperty("to")) {
-			sms.to(getPropertyArray("to"));
+			sms.to(getProperty("to", String[].class));
 		}
 	}
 	

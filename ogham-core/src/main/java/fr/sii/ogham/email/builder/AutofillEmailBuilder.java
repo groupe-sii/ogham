@@ -36,10 +36,10 @@ import fr.sii.ogham.email.message.Email;
  */
 public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implements Builder<MessageFiller> {
 	private AutofillSubjectBuilder subjectBuilder;
-	private AutofillDefaultEmailAddressBuilder fromBuilder;
-	private AutofillDefaultEmailAddressBuilder toBuilder;
-	private AutofillDefaultEmailAddressBuilder ccBuilder;
-	private AutofillDefaultEmailAddressBuilder bccBuilder;
+	private AutofillDefaultEmailAddressBuilder<String> fromBuilder;
+	private AutofillDefaultEmailAddressBuilder<String[]> toBuilder;
+	private AutofillDefaultEmailAddressBuilder<String[]> ccBuilder;
+	private AutofillDefaultEmailAddressBuilder<String[]> bccBuilder;
 	private EnvironmentBuilder<?> environmentBuilder;
 
 	/**
@@ -88,9 +88,9 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * @return the builder to configure default sender address handling
 	 */
-	public AutofillDefaultEmailAddressBuilder from() {
+	public AutofillDefaultEmailAddressBuilder<String> from() {
 		if (fromBuilder == null) {
-			fromBuilder = new AutofillDefaultEmailAddressBuilder(this);
+			fromBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String.class);
 		}
 		return fromBuilder;
 	}
@@ -103,9 +103,9 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * @return the builder to configure default address handling
 	 */
-	public AutofillDefaultEmailAddressBuilder to() {
+	public AutofillDefaultEmailAddressBuilder<String[]> to() {
 		if (toBuilder == null) {
-			toBuilder = new AutofillDefaultEmailAddressBuilder(this);
+			toBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class);
 		}
 		return toBuilder;
 	}
@@ -118,9 +118,9 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * @return the builder to configure default address handling
 	 */
-	public AutofillDefaultEmailAddressBuilder cc() {
+	public AutofillDefaultEmailAddressBuilder<String[]> cc() {
 		if (ccBuilder == null) {
-			ccBuilder = new AutofillDefaultEmailAddressBuilder(this);
+			ccBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class);
 		}
 		return ccBuilder;
 	}
@@ -133,9 +133,9 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * @return the builder to configure default address handling
 	 */
-	public AutofillDefaultEmailAddressBuilder bcc() {
+	public AutofillDefaultEmailAddressBuilder<String[]> bcc() {
 		if (bccBuilder == null) {
-			bccBuilder = new AutofillDefaultEmailAddressBuilder(this);
+			bccBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class);
 		}
 		return bccBuilder;
 	}
@@ -151,8 +151,8 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 		return filler;
 	}
 
-	private Map<String, ConfigurationValueBuilderHelper<?, String>> buildDefaultValueProps() {
-		Map<String, ConfigurationValueBuilderHelper<?, String>> props = new HashMap<>();
+	private Map<String, ConfigurationValueBuilderHelper<?, ?>> buildDefaultValueProps() {
+		Map<String, ConfigurationValueBuilderHelper<?, ?>> props = new HashMap<>();
 		if (subjectBuilder != null) {
 			props.put("subject", (ConfigurationValueBuilderHelper<?, String>) subjectBuilder.defaultValue());
 		}
@@ -160,13 +160,13 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 			props.put("from", (ConfigurationValueBuilderHelper<?, String>) fromBuilder.defaultValue());
 		}
 		if (toBuilder != null) {
-			props.put("to", (ConfigurationValueBuilderHelper<?, String>) toBuilder.defaultValue());
+			props.put("to", (ConfigurationValueBuilderHelper<?, String[]>) toBuilder.defaultValue());
 		}
 		if (ccBuilder != null) {
-			props.put("cc", (ConfigurationValueBuilderHelper<?, String>) ccBuilder.defaultValue());
+			props.put("cc", (ConfigurationValueBuilderHelper<?, String[]>) ccBuilder.defaultValue());
 		}
 		if (bccBuilder != null) {
-			props.put("bcc", (ConfigurationValueBuilderHelper<?, String>) bccBuilder.defaultValue());
+			props.put("bcc", (ConfigurationValueBuilderHelper<?, String[]>) bccBuilder.defaultValue());
 		}
 		return props;
 	}

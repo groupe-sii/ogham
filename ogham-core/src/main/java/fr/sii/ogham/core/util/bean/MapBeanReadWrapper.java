@@ -98,7 +98,7 @@ public class MapBeanReadWrapper implements BeanReadWrapper, Map<String, Object> 
 	@Override
 	public Object get(Object key) {
 		if (key == null) {
-			throw new IllegalArgumentException("key must ot be null");
+			throw new IllegalArgumentException("key must not be null");
 		}
 		return getPropertyValue(key.toString());
 	}

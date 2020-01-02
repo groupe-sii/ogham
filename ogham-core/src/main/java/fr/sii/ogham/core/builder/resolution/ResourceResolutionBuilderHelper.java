@@ -87,9 +87,15 @@ public class ResourceResolutionBuilderHelper<FLUENT extends ResourceResolutionBu
 	 */
 	public Map<String, List<String>> getAllLookups() {
 		Map<String, List<String>> all = new HashMap<>();
-		all.put("string", string.getLookups());
-		all.put("file", file.getLookups());
-		all.put("classpath", classPath.getLookups());
+		if (string != null) {
+			all.put("string", string.getLookups());
+		}
+		if (file != null) {
+			all.put("file", file.getLookups());
+		}
+		if (classPath != null) {
+			all.put("classpath", classPath.getLookups());
+		}
 		return all;
 	}
 

@@ -1,6 +1,7 @@
 package fr.sii.ogham.template.freemarker.configurer;
 
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY;
 
 import org.slf4j.Logger;
@@ -115,79 +116,94 @@ import freemarker.template.TemplateExceptionHandler;
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
-public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
+public final class DefaultFreemarkerSmsConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultFreemarkerSmsConfigurer.class);
 
-	private final MessagingConfigurerAdapter delegate;
-
-	public DefaultFreemarkerSmsConfigurer() {
-		this(new DefaultMessagingConfigurer());
-	}
-
-	public DefaultFreemarkerSmsConfigurer(MessagingConfigurerAdapter delegate) {
-		super();
-		this.delegate = delegate;
-	}
-
-	@Override
-	public void configure(MessagingBuilder msgBuilder) {
-		if (!canUseFreemaker()) {
-			LOG.debug("[{}] skip configuration", this);
-			return;
+	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY, phase = AFTER_INIT)
+	public static class EnvironmentPropagator implements MessagingConfigurer {
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+			if (canUseFreemaker()) {
+				FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);
+				// use same environment as parent builder
+				builder.environment(msgBuilder.environment());
+			}
 		}
-		LOG.debug("[{}] apply configuration", this);
-		FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);
-		// use same environment as parent builder
-		builder.environment(msgBuilder.environment());
-		// apply default resource resolution configuration
-		if (delegate != null) {
-			delegate.configure(builder);
-		}
-		// @formatter:off
-		builder
-			.classpath()
-				.pathPrefix()
-					.properties("${ogham.sms.freemarker.classpath.path-prefix}",
-								"${ogham.sms.template.classpath.path-prefix}", 
-								"${ogham.sms.freemarker.prefix}", 
-								"${ogham.sms.template.path-prefix}", 
-								"${ogham.template.path-prefix}")
-					.and()
-				.pathSuffix()
-					.properties("${ogham.sms.freemarker.classpath.path-suffix}", 
-								"${ogham.sms.template.classpath.path-suffix}", 
-								"${ogham.sms.freemarker.suffix}", 
-								"${ogham.sms.template.path-suffix}", 
-								"${ogham.template.path-suffix}")
-					.and()
-				.and()
-			.file()
-				.pathPrefix()
-					.properties("${ogham.sms.freemarker.file.path-prefix}", 
-								"${ogham.sms.template.file.path-prefix}", 
-								"${ogham.sms.freemarker.prefix}", 
-								"${ogham.sms.template.path-prefix}", 
-								"${ogham.template.path-prefix}")
-					.and()
-				.pathSuffix()
-					.properties("${ogham.sms.freemarker.file.path-suffix}", 
-								"${ogham.sms.template.file.path-suffix}", 
-								"${ogham.sms.freemarker.suffix}", 
-								"${ogham.sms.template.path-suffix}", 
-								"${ogham.template.path-suffix}")
-					.and()
-				.and()
-			.configuration()
-				.defaultEncoding().properties("${ogham.freemarker.default-encoding}").defaultValue(overrideIfNotSet("UTF-8")).and()
-				.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)
-				.enableStaticMethodAccess().properties("${ogham.freemarker.enable-static-method-access}").defaultValue(overrideIfNotSet(true)).and()
-				.staticMethodAccessVariableName().properties("${ogham.freemarker.static-method-access-variable-name}").defaultValue(overrideIfNotSet("statics"));
-		// @formatter:on
 	}
-
+	
+	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
+	public static class FreemakerConfigurer implements MessagingConfigurer {
+		private final MessagingConfigurerAdapter delegate;
+	
+		public FreemakerConfigurer() {
+			this(new DefaultMessagingConfigurer());
+		}
+	
+		public FreemakerConfigurer(MessagingConfigurerAdapter delegate) {
+			super();
+			this.delegate = delegate;
+		}
+	
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+			if (!canUseFreemaker()) {
+				LOG.debug("[{}] skip configuration", this);
+				return;
+			}
+			LOG.debug("[{}] apply configuration", this);
+			FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);
+			// apply default resource resolution configuration
+			if (delegate != null) {
+				delegate.configure(builder);
+			}
+			// @formatter:off
+			builder
+				.classpath()
+					.pathPrefix()
+						.properties("${ogham.sms.freemarker.classpath.path-prefix}",
+									"${ogham.sms.template.classpath.path-prefix}", 
+									"${ogham.sms.freemarker.prefix}", 
+									"${ogham.sms.template.path-prefix}", 
+									"${ogham.template.path-prefix}")
+						.and()
+					.pathSuffix()
+						.properties("${ogham.sms.freemarker.classpath.path-suffix}", 
+									"${ogham.sms.template.classpath.path-suffix}", 
+									"${ogham.sms.freemarker.suffix}", 
+									"${ogham.sms.template.path-suffix}", 
+									"${ogham.template.path-suffix}")
+						.and()
+					.and()
+				.file()
+					.pathPrefix()
+						.properties("${ogham.sms.freemarker.file.path-prefix}", 
+									"${ogham.sms.template.file.path-prefix}", 
+									"${ogham.sms.freemarker.prefix}", 
+									"${ogham.sms.template.path-prefix}", 
+									"${ogham.template.path-prefix}")
+						.and()
+					.pathSuffix()
+						.properties("${ogham.sms.freemarker.file.path-suffix}", 
+									"${ogham.sms.template.file.path-suffix}", 
+									"${ogham.sms.freemarker.suffix}", 
+									"${ogham.sms.template.path-suffix}", 
+									"${ogham.template.path-suffix}")
+						.and()
+					.and()
+				.configuration()
+					.defaultEncoding().properties("${ogham.freemarker.default-encoding}").defaultValue(overrideIfNotSet("UTF-8")).and()
+					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)
+					.enableStaticMethodAccess().properties("${ogham.freemarker.enable-static-method-access}").defaultValue(overrideIfNotSet(true)).and()
+					.staticMethodAccessVariableName().properties("${ogham.freemarker.static-method-access-variable-name}").defaultValue(overrideIfNotSet("statics"));
+			// @formatter:on
+		}
+	}
+	
 	private static boolean canUseFreemaker() {
 		return ClasspathUtils.exists("freemarker.template.Configuration") && ClasspathUtils.exists("freemarker.template.Template");
 	}
 
+	private DefaultFreemarkerSmsConfigurer() {
+		super();
+	}
 }

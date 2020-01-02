@@ -25,13 +25,9 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.thymeleaf.common.SimpleThymeleafContextConverter;
-import fr.sii.ogham.template.thymeleaf.common.TemplateResolverOptions;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafContextConverter;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafParser;
-import fr.sii.ogham.template.thymeleaf.common.adapter.ClassPathResolverAdapter;
-import fr.sii.ogham.template.thymeleaf.common.adapter.FileResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
-import fr.sii.ogham.template.thymeleaf.common.adapter.StringResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.configure.AbstractDefaultThymeleafEmailConfigurer;
 
@@ -290,20 +286,11 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	}
 
 	private List<ResourceResolver> buildResolvers() {
+		initResolutionBuilder();
 		return resourceResolutionBuilderHelper.buildResolvers();
 	}
 
-	protected FirstSupportingResolverAdapter buildAdapters() {
-		FirstSupportingResolverAdapter adapter = new FirstSupportingResolverAdapter();
-		for (TemplateResolverAdapter custom : customAdapters) {
-			adapter.addAdapter(custom);
-		}
-		adapter.addAdapter(new ClassPathResolverAdapter());
-		adapter.addAdapter(new FileResolverAdapter());
-		adapter.addAdapter(new StringResolverAdapter());
-		adapter.setOptions(new TemplateResolverOptions());
-		return adapter;
-	}
+	protected abstract FirstSupportingResolverAdapter buildAdapters();
 
 	private void initResolutionBuilder() {
 		if (resourceResolutionBuilderHelper == null) {

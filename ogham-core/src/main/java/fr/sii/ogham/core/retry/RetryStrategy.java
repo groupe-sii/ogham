@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.retry;
 
+import java.time.Instant;
+
 /**
  * Strategy that indicates how to handle retries.
  * 
@@ -24,13 +26,12 @@ public interface RetryStrategy {
 	boolean terminated();
 
 	/**
-	 * Indicate the next date (timestamp in milliseconds) when the next retry
-	 * should operate.
+	 * Indicate the next date when the next retry should operate.
 	 * 
 	 * Strategy may define a fixed delay, random delay, exponential delay or
 	 * anything else.
 	 * 
-	 * @return the next execution date (timestamp milliseconds)
+	 * @return the next execution date
 	 */
-	long nextDate();
+	Instant nextDate();
 }

@@ -1,6 +1,7 @@
 package fr.sii.ogham.email.builder.javamail;
 
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -72,43 +73,59 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY)
-public class DefaultJavaMailConfigurer implements MessagingConfigurer {
+public final class DefaultJavaMailConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultJavaMailConfigurer.class);
 	private static final int DEFAULT_SMTP_PORT = 25;
 
-	@Override
-	public void configure(MessagingBuilder msgBuilder) {
-		if (!canUseJavaMail()) {
-			LOG.debug("[{}] skip configuration", this);
-			return;
+	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY, phase = AFTER_INIT)
+	public static class EnvironmentPropagator implements MessagingConfigurer {
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+			if(canUseJavaMail()) {
+				JavaMailBuilder builder = msgBuilder.email().sender(JavaMailBuilder.class);
+				// use same environment as parent builder
+				builder.environment(msgBuilder.environment());
+			}
 		}
-		LOG.debug("[{}] apply configuration", this);
-		JavaMailBuilder builder = msgBuilder.email().sender(JavaMailBuilder.class);
-		// use same environment as parent builder
-		builder.environment(msgBuilder.environment());
-		// @formatter:off
-		builder
-			.host().properties("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}").and()
-			.port().properties("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}").defaultValue(overrideIfNotSet(DEFAULT_SMTP_PORT)).and()
-			.authenticator()
-				.username().properties("${ogham.email.javamail.authenticator.username}").and()
-				.password().properties("${ogham.email.javamail.authenticator.password}").and()
-				.and()
-			.charset().properties("${ogham.email.javamail.body.charset}").defaultValue(overrideIfNotSet(UTF_8)).and()
-			.mimetype()
-				.tika()
-					.failIfOctetStream().defaultValue(overrideIfNotSet(false)).and()
-					.and()
-				.replace()
-					// the distinction between xhtml and html can be useful in some cases
-					// most email clients don't understand xhtml mimetype
-					// for emails, this distinction must not be done
-					.pattern("application/xhtml[^;]*(;.*)?", "text/html$1");
-		// @formatter:on
 	}
-
+	
+	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY)
+	public static class JavaMailConfigurer implements MessagingConfigurer {
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+			if (!canUseJavaMail()) {
+				LOG.debug("[{}] skip configuration", this);
+				return;
+			}
+			LOG.debug("[{}] apply configuration", this);
+			JavaMailBuilder builder = msgBuilder.email().sender(JavaMailBuilder.class);
+			// @formatter:off
+			builder
+				.host().properties("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}").and()
+				.port().properties("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}").defaultValue(overrideIfNotSet(DEFAULT_SMTP_PORT)).and()
+				.authenticator()
+					.username().properties("${ogham.email.javamail.authenticator.username}").and()
+					.password().properties("${ogham.email.javamail.authenticator.password}").and()
+					.and()
+				.charset().properties("${ogham.email.javamail.body.charset}").defaultValue(overrideIfNotSet(UTF_8)).and()
+				.mimetype()
+					.tika()
+						.failIfOctetStream().defaultValue(overrideIfNotSet(false)).and()
+						.and()
+					.replace()
+						// the distinction between xhtml and html can be useful in some cases
+						// most email clients don't understand xhtml mimetype
+						// for emails, this distinction must not be done
+						.pattern("application/xhtml[^;]*(;.*)?", "text/html$1");
+			// @formatter:on
+		}
+	}
+	
 	private static boolean canUseJavaMail() {
 		return ClasspathUtils.exists("javax.mail.Transport") && ClasspathUtils.exists("javax.mail.internet.MimeMessage");
+	}
+	
+	private DefaultJavaMailConfigurer() {
+		super();
 	}
 }

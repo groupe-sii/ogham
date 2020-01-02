@@ -13,6 +13,7 @@ import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
 
+import fr.sii.ogham.core.clean.Cleanable;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
 import fr.sii.ogham.core.exception.retry.RetryException;
@@ -33,7 +34,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
  * 
  * @author Aurélien Baudet
  */
-public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
+public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> implements Cleanable {
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperSMPPSender.class);
 
 	/** Configuration to bind an SmppSession as an ESME to an SMSC. */
@@ -130,10 +131,25 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		} catch (RetryException e) {
 			throw new MessageException("Failed to initialize SMPP session", message, e);
 		} finally {
-			clean();
+			autoclean();
 		}
 	}
 
+	@Override
+	public void clean() {
+		if (currentSession != null) {
+			LOG.debug("Closing SMPP session");
+			currentSession.unbind(options.getUnbindTimeout());
+			currentSession.destroy();
+			currentSession = null;
+		}
+		if (currentClient != null) {
+			LOG.debug("Destroying SMPP client");
+			currentClient.destroy();
+			currentClient = null;
+		}
+	}
+	
 	private SmppSession connectOrReuseSession() throws RetryException {
 		// if no client or always use a new client => create a new instance
 		if (currentClient == null || !options.isKeepSession()) {
@@ -148,23 +164,14 @@ public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> {
 		}
 		return currentSession;
 	}
-
-	private void clean() {
+	
+	private void autoclean() {
 		// do not close and destroy anything if session should stay open
 		if (options.isKeepSession()) {
 			LOG.debug("Keep current SMPP session open");
 			return;
 		}
-		if (currentSession != null) {
-			LOG.debug("Closing SMPP session");
-			currentSession.unbind(options.getUnbindTimeout());
-			currentSession.close();
-			currentSession.destroy();
-			currentSession = null;
-		}
-		LOG.debug("Destroying SMPP client");
-		currentClient.destroy();
-		currentClient = null;
+		clean();
 	}
 
 	private void send(Sms message, SmppSession session) throws MessageException {

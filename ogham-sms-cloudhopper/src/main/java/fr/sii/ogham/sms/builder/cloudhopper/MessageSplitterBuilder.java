@@ -17,6 +17,7 @@ import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.util.PriorizedList;
 import fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SegmentSizes;
 import fr.sii.ogham.sms.encoder.Encoder;
@@ -312,7 +313,7 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 		if (!customSplitters.isEmpty()) {
 			return new FirstSupportingMessageSplitter(customSplitters.getOrdered());
 		}
-		return null;
+		throw new BuildException("Split of SMS is enabled but no splitter is configured");
 	}
 
 	private boolean splittingEnabled(PropertyResolver propertyResolver) {

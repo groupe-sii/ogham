@@ -100,7 +100,7 @@ public enum InterfaceVersion {
 	 *             if the version name doesn't match any known version
 	 */
 	public static InterfaceVersion of(String version) {
-		if (version == null) {
+		if (version == null || version.isEmpty()) {
 			return null;
 		}
 		for (InterfaceVersion iv : values()) {

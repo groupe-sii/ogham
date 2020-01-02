@@ -168,7 +168,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public JavaMailBuilder() {
-		this(null);
+		this(null, null);
 		environment();
 		mimetype();
 	}
@@ -183,11 +183,22 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 *    .sender(JavaMailBuilder.class)
 	 * </pre>
 	 * 
+	 * <p>
+	 * Initializes the builder with the parent instance (used by the
+	 * {@link #and()} method) and the {@link EnvironmentBuilder}. The
+	 * {@link EnvironmentBuilder} is used to evaluate property values when
+	 * {@link #build()} is called.
+	 * 
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
+	 * @param environmentBuilder
+	 *            used to evaluate property values
 	 */
-	public JavaMailBuilder(EmailBuilder parent) {
+	public JavaMailBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
 		super(parent);
+		if (environmentBuilder != null) {
+			this.environmentBuilder = new EnvironmentBuilderDelegate<>(this, environmentBuilder);
+		}
 		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
 		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class);
 		charsetValueBuilder = new ConfigurationValueBuilderHelper<>(this, Charset.class);

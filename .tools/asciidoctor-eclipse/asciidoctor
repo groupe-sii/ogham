@@ -1,0 +1,71 @@
+#!/bin/bash
+
+set
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+OGHAM_HOME=$DIR/../..
+
+args="$@"
+
+
+eclipse_sourcefile="${@: -1}"
+eclipse_generatedfile=${eclipse_sourcefile/.adoc/.html}
+eclipse_generatedfile_internal=${eclipse_generatedfile/hidden-editorfile/internal}
+relative_sourcefile=`cat $eclipse_sourcefile | grep 'origin' | sed -re 's#// origin :.+src/docs/asciidoc/(.+)#\1#'`
+relative_generatedfile=${relative_sourcefile/.adoc/.html}
+
+
+build="true"
+asciidoctor_args=
+
+while [[ "$#" -gt 0 ]]; do case $1 in
+  -D) outdir="$2"; shift;;
+  --use-project-output) build="false";;
+  --asciidoctor-path) asciidoctor="$2"; shift;;
+  *) asciidoctor_args="$asciidoctor_args $1";;
+esac; shift; done
+
+
+if [[ $relative_sourcefile =~ "// origin" ]]; then
+   >&2 $($asciidoctor $asciidoctor_args);
+  exit 0;
+fi
+
+>&2 echo "[INFO]  |SCRIPT|  $relative_sourcefile: Generating..."
+
+
+
+if [ "$build" == "false" ]; then
+	outdir="$OGHAM_HOME/target/generated-docs"
+fi
+
+final_sourcefile="$outdir/$relative_sourcefile"
+final_generatedfile="$outdir/$relative_generatedfile"
+
+>&2 echo "[DEBUG] |SCRIPT|     eclipse_sourcefile=$eclipse_sourcefile"
+>&2 echo "[DEBUG] |SCRIPT|     eclipse_generatedfile=$eclipse_generatedfile"
+>&2 echo "[DEBUG] |SCRIPT|     eclipse_generatedfile_internal=$eclipse_generatedfile_internal"
+>&2 echo "[DEBUG] |SCRIPT|     relative_sourcefile=$relative_sourcefile"
+>&2 echo "[DEBUG] |SCRIPT|     relative_generatedfile=$relative_generatedfile"
+>&2 echo "[DEBUG] |SCRIPT|     final_sourcefile=$final_sourcefile"
+>&2 echo "[DEBUG] |SCRIPT|     final_generatedfile=$final_generatedfile"
+
+
+cd $OGHAM_HOME
+if [ "$build" == "true" ]; then
+	{
+		>&2 ./mvnw post-site -N -Dasciidoctor.skip=false -Dmaven.site.skip -Dsass.skip=true -Dasciidoctor.outputDirectory=$outdir -Dasciidoctor.resources.output-directory=$outdir -Dasciidoctor.imagesDir="$outdir/images" -Dasciidoctor.attributes="images-dir=images/ relfileprefix=." -Dasciidoctor.sourceDocumentName=$relative_sourcefile -q;
+    # move styles and scripts at the end because they are overridden by eclipse plugin
+		echo $(cat $final_generatedfile | sed ':a;N;$!ba;s/\n/\\n/g' | sed ':a;N;$!ba;s/\r/\\r/g' | sed -re "s|^(.+</title>[^<]*)(<link.+)(</head>.+)(</body>.+)$|\1\3\2\4|" | sed -e 's/\\n/\r/g' | sed -e 's/\\r/\r/g') > $final_generatedfile;
+  } || {
+    >&2 $($asciidoctor $asciidoctor_args);
+		exit 0;
+  }
+fi
+rm -f $eclipse_generatedfile $eclipse_generatedfile_internal
+ln -s $final_generatedfile $eclipse_generatedfile
+ln -s $final_generatedfile $eclipse_generatedfile_internal
+
+>&2 echo "[INFO]  |SCRIPT|  $relative_sourcefile: Generated"
+
