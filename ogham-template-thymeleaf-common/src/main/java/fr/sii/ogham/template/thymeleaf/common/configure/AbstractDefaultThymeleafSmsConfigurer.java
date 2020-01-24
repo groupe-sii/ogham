@@ -145,7 +145,13 @@ public abstract class AbstractDefaultThymeleafSmsConfigurer implements Messaging
 								"${ogham.sms.template.file.path-suffix}", 
 								"${ogham.sms.thymeleaf.path-suffix}",
 								"${ogham.sms.template.path-suffix}", 
-								"${ogham.template.path-suffix}");
+								"${ogham.template.path-suffix}")
+					.and()
+				.and()
+			.cache()
+				.properties("${ogham.sms.thymeleaf.cache}",
+							"${ogham.sms.template.cache}",
+							"${ogham.template.cache}");
 		// @formatter:on
 	}
 

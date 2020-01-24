@@ -9,20 +9,27 @@ import fr.sii.ogham.template.exception.TemplateRuntimeException;
 public class TemplateResolutionException extends TemplateRuntimeException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
+	private final String templateName;
 	private final transient ResourcePath templatePath;
 
-	public TemplateResolutionException(String message, ResourcePath templatePath, Throwable cause) {
+	public TemplateResolutionException(String message, String templateName, ResourcePath templatePath, Throwable cause) {
 		super(message, cause);
+		this.templateName = templateName;
 		this.templatePath = templatePath;
 	}
 
-	public TemplateResolutionException(String message, ResourcePath templatePath) {
+	public TemplateResolutionException(String message, String templateName, ResourcePath templatePath) {
 		super(message);
+		this.templateName = templateName;
 		this.templatePath = templatePath;
 	}
 
 	public ResourcePath getTemplatePath() {
 		return templatePath;
+	}
+
+	public String getTemplateName() {
+		return templateName;
 	}
 
 }

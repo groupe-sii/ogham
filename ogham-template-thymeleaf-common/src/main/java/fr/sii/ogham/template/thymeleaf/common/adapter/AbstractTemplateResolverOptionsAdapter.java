@@ -12,7 +12,14 @@ import fr.sii.ogham.template.thymeleaf.common.TemplateResolverOptions;
  *
  */
 public abstract class AbstractTemplateResolverOptionsAdapter implements TemplateResolverAdapter {
+	private final TemplateResolverOptionsApplier optionsSetter;
 	private TemplateResolverOptions options;
+	
+
+	public AbstractTemplateResolverOptionsAdapter(TemplateResolverOptionsApplier optionsSetter) {
+		super();
+		this.optionsSetter = optionsSetter;
+	}
 
 	public TemplateResolverOptions getOptions() {
 		return options;
@@ -30,6 +37,6 @@ public abstract class AbstractTemplateResolverOptionsAdapter implements Template
 	 *            TemplateResolver to configure
 	 */
 	protected void applyOptions(ITemplateResolver templateResolver) {
-		// TODO managing options
+		optionsSetter.apply(templateResolver, options);
 	}
 }

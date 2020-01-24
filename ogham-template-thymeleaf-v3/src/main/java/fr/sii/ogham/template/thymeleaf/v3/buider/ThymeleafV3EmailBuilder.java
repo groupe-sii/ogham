@@ -6,7 +6,6 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.email.builder.EmailBuilder;
-import fr.sii.ogham.template.thymeleaf.common.TemplateResolverOptions;
 import fr.sii.ogham.template.thymeleaf.common.adapter.ClassPathResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FileResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
@@ -15,6 +14,7 @@ import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiConte
 import fr.sii.ogham.template.thymeleaf.v3.ThymeLeafV3FirstSupportingTemplateResolver;
 import fr.sii.ogham.template.thymeleaf.v3.ThymeleafV3TemplateDetector;
 import fr.sii.ogham.template.thymeleaf.v3.adapter.StringResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.v3.adapter.ThymeleafV3TemplateOptionsApplier;
 
 /**
  * Configures parsing of templates using Thymeleaf.
@@ -95,6 +95,15 @@ import fr.sii.ogham.template.thymeleaf.v3.adapter.StringResolverAdapter;
  */
 public class ThymeleafV3EmailBuilder extends AbstractThymeleafMultiContentBuilder<ThymeleafV3EmailBuilder, EmailBuilder, ThymeleafV3EngineConfigBuilder<ThymeleafV3EmailBuilder>> {
 	/**
+	 * Default constructor when using Thymeleaf without all Ogham work.
+	 * 
+	 * <strong>WARNING: use is only if you know what you are doing !</strong>
+	 */
+	public ThymeleafV3EmailBuilder() {
+		super(ThymeleafV3EmailBuilder.class, null, null);
+	}
+
+	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
 	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
 	 * used to evaluate properties when {@link #build()} method is called.
@@ -129,10 +138,11 @@ public class ThymeleafV3EmailBuilder extends AbstractThymeleafMultiContentBuilde
 		for (TemplateResolverAdapter custom : customAdapters) {
 			adapter.addAdapter(custom);
 		}
-		adapter.addAdapter(new ClassPathResolverAdapter());
-		adapter.addAdapter(new FileResolverAdapter());
-		adapter.addAdapter(new StringResolverAdapter());
-		adapter.setOptions(new TemplateResolverOptions());
+		ThymeleafV3TemplateOptionsApplier applier = new ThymeleafV3TemplateOptionsApplier();
+		adapter.addAdapter(new ClassPathResolverAdapter(applier));
+		adapter.addAdapter(new FileResolverAdapter(applier));
+		adapter.addAdapter(new StringResolverAdapter(applier));
+		adapter.setOptions(buildTemplateResolverOptions());
 		return adapter;
 	}
 }

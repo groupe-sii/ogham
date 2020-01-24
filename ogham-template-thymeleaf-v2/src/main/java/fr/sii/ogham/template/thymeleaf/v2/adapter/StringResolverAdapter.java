@@ -5,6 +5,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.thymeleaf.common.adapter.AbstractTemplateResolverOptionsAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverOptionsApplier;
 import fr.sii.ogham.template.thymeleaf.v2.resolver.StringTemplateResolver;
 
 /**
@@ -16,6 +17,10 @@ import fr.sii.ogham.template.thymeleaf.v2.resolver.StringTemplateResolver;
  *
  */
 public class StringResolverAdapter extends AbstractTemplateResolverOptionsAdapter {
+
+	public StringResolverAdapter(TemplateResolverOptionsApplier optionsSetter) {
+		super(optionsSetter);
+	}
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {

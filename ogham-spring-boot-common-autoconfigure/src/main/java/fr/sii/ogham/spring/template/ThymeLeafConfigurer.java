@@ -159,7 +159,12 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 												props.getTemplate().getFile().getPathSuffix(),
 												props.getThymeleaf().getPathSuffix(),
 												props.getTemplate().getPathSuffix(),
-												templateProperties.getPathSuffix())));
+												templateProperties.getPathSuffix())))
+					.and()
+				.and()
+			.cache().value(ofNullable(firstValue(props.getThymeleaf().getCache(),
+												props.getTemplate().getCache(),
+												templateProperties.getCache())));
 		// @formatter:on
 	}
 
@@ -173,7 +178,10 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 				.and()
 			.file()
 				.pathPrefix().value(ofNullable(springProperties.getPrefix())).and()
-				.pathSuffix().value(ofNullable(springProperties.getSuffix()));
+				.pathSuffix().value(ofNullable(springProperties.getSuffix()))
+				.and()
+			.and()
+			.cache().value(ofNullable(springProperties.isCache()));
 		// @formatter:on
 	}
 

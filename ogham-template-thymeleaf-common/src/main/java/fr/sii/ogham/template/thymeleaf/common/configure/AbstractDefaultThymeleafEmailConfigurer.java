@@ -158,7 +158,11 @@ public abstract class AbstractDefaultThymeleafEmailConfigurer implements Messagi
 			.string()
 				.and()
 			.variant(EmailVariant.HTML, "html")
-			.variant(EmailVariant.TEXT, "txt");
+			.variant(EmailVariant.TEXT, "txt")
+			.cache()
+				.properties("${ogham.email.thymeleaf.cache}",
+							"${ogham.email.template.cache}",
+							"${ogham.template.cache}");
 		// @formatter:on
 	}
 

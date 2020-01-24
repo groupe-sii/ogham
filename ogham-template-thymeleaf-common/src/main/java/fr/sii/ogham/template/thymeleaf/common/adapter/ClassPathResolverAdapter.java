@@ -15,6 +15,10 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
  *
  */
 public class ClassPathResolverAdapter extends AbstractTemplateResolverOptionsAdapter {
+	public ClassPathResolverAdapter(TemplateResolverOptionsApplier optionsSetter) {
+		super(optionsSetter);
+	}
+
 	@Override
 	public boolean supports(ResourceResolver resolver) {
 		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;

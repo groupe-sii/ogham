@@ -7,6 +7,7 @@ import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
 import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.thymeleaf.common.adapter.AbstractTemplateResolverOptionsAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverOptionsApplier;
 import fr.sii.ogham.template.thymeleaf.v2.resolver.FixClassLoaderTemplateResolver;
 
 /**
@@ -17,6 +18,10 @@ import fr.sii.ogham.template.thymeleaf.v2.resolver.FixClassLoaderTemplateResolve
  *
  */
 public class FixClassPathResolverAdapter extends AbstractTemplateResolverOptionsAdapter {
+	public FixClassPathResolverAdapter(TemplateResolverOptionsApplier optionsSetter) {
+		super(optionsSetter);
+	}
+
 	@Override
 	public boolean supports(ResourceResolver resolver) {
 		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;

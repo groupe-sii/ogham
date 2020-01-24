@@ -1,4 +1,4 @@
-package oghamthymeleaf.it;
+package oghamthymeleafv2.it;
 
 import static fr.sii.ogham.testing.helper.template.AssertTemplate.assertSimilar;
 import static org.junit.Assert.assertNotNull;

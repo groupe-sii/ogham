@@ -3,7 +3,9 @@ package fr.sii.ogham.spring.sms;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import fr.sii.ogham.spring.common.OghamResolutionProperties;
+import fr.sii.ogham.spring.common.MessageSpecificFreemarkerProperties;
+import fr.sii.ogham.spring.common.MessageSpecificTemplateProperties;
+import fr.sii.ogham.spring.common.MessageSpecificThymeleafProperties;
 import fr.sii.ogham.spring.common.OghamTemplateProperties;
 
 @ConfigurationProperties("ogham.sms")
@@ -46,11 +48,11 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 	 */
 	private boolean toFormatEnableInternational = true;
 	@NestedConfigurationProperty
-	private OghamResolutionProperties freemarker = new OghamResolutionProperties();
+	private MessageSpecificFreemarkerProperties freemarker = new MessageSpecificFreemarkerProperties();
 	@NestedConfigurationProperty
-	private OghamResolutionProperties thymeleaf = new OghamResolutionProperties();
+	private MessageSpecificThymeleafProperties thymeleaf = new MessageSpecificThymeleafProperties();
 	@NestedConfigurationProperty
-	private OghamResolutionProperties template = new OghamResolutionProperties();
+	private MessageSpecificTemplateProperties template = new MessageSpecificTemplateProperties();
 
 	public String getFrom() {
 		return from;
@@ -100,27 +102,27 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 		this.toFormatEnableInternational = toFormatEnableInternational;
 	}
 
-	public OghamResolutionProperties getFreemarker() {
+	public MessageSpecificFreemarkerProperties getFreemarker() {
 		return freemarker;
 	}
 
-	public void setFreemarker(OghamResolutionProperties freemarker) {
+	public void setFreemarker(MessageSpecificFreemarkerProperties freemarker) {
 		this.freemarker = freemarker;
 	}
 
-	public OghamResolutionProperties getThymeleaf() {
+	public MessageSpecificThymeleafProperties getThymeleaf() {
 		return thymeleaf;
 	}
 
-	public void setThymeleaf(OghamResolutionProperties thymeleaf) {
+	public void setThymeleaf(MessageSpecificThymeleafProperties thymeleaf) {
 		this.thymeleaf = thymeleaf;
 	}
 
-	public OghamResolutionProperties getTemplate() {
+	public MessageSpecificTemplateProperties getTemplate() {
 		return template;
 	}
 
-	public void setTemplate(OghamResolutionProperties template) {
+	public void setTemplate(MessageSpecificTemplateProperties template) {
 		this.template = template;
 	}
 }

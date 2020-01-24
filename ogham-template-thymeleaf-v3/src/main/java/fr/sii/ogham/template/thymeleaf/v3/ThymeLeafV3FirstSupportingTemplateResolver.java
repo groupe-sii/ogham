@@ -14,7 +14,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
-import fr.sii.ogham.template.thymeleaf.v3.exception.TemplateResolutionException;
+import fr.sii.ogham.template.thymeleaf.common.exception.TemplateResolutionException;
 
 /**
  * <p>

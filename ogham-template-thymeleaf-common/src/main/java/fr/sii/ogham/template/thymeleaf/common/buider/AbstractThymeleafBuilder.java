@@ -11,6 +11,9 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
@@ -20,11 +23,13 @@ import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
+import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.thymeleaf.common.SimpleThymeleafContextConverter;
+import fr.sii.ogham.template.thymeleaf.common.TemplateResolverOptions;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafContextConverter;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafParser;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
@@ -32,7 +37,7 @@ import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.configure.AbstractDefaultThymeleafEmailConfigurer;
 
 @SuppressWarnings("squid:S00119")
-public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafBuilder<MYSELF, P, E>, P, E extends ThymeleafEngineConfigBuilder<MYSELF>> extends AbstractParent<P>
+public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafBuilder<MYSELF, P, E>, P, E extends AbstractThymeleafEngineConfigBuilder<E, MYSELF>> extends AbstractParent<P>
 		implements DetectorBuilder<MYSELF>, ResourceResolutionBuilder<MYSELF>, Builder<TemplateParser> {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractThymeleafBuilder.class);
 
@@ -44,6 +49,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	protected ThymeleafContextConverter contextConverter;
 	protected E engineBuilder;
 	protected final List<TemplateResolverAdapter> customAdapters;
+	protected final ConfigurationValueBuilderHelper<MYSELF, Boolean> enableCacheValueBuilder;
 
 	protected AbstractThymeleafBuilder(Class<?> selfType) {
 		this(selfType, null, null);
@@ -57,6 +63,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 			environment(environmentBuilder);
 		}
 		customAdapters = new ArrayList<>();
+		enableCacheValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class);
 	}
 
 	protected AbstractThymeleafBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
@@ -136,6 +143,83 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	public MYSELF environment(EnvironmentBuilder<?> builder) {
 		environmentBuilder = new EnvironmentBuilderDelegate<>(myself, builder);
 		return myself;
+	}
+	
+	/**
+	 * Enable/disable cache for templates.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #cache()}.
+	 * 
+	 * <pre>
+	 * .cache(false)
+	 * .cache()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .cache(false)
+	 * .cache()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * In both cases, {@code cache(false)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable cache
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF cache(Boolean enable) {
+		enableCacheValueBuilder.setValue(enable);
+		return myself;
+	}
+
+	/**
+	 * Enable/disable cache for templates.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .cache()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #cache(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .cache(false)
+	 * .cache()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<MYSELF, Boolean> cache() {
+		return enableCacheValueBuilder;
 	}
 
 	/**
@@ -291,6 +375,14 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	}
 
 	protected abstract FirstSupportingResolverAdapter buildAdapters();
+
+	protected TemplateResolverOptions buildTemplateResolverOptions() {
+		PropertyResolver propertyResolver = environmentBuilder.build();
+		TemplateResolverOptions options = new TemplateResolverOptions();
+		options.setCacheable(enableCacheValueBuilder.getValue(propertyResolver));
+		// TODO: handle other options
+		return options;
+	}
 
 	private void initResolutionBuilder() {
 		if (resourceResolutionBuilderHelper == null) {

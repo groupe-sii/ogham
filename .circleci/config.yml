@@ -310,7 +310,7 @@ jobs:
     machine: true
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx4096m'
-#      MAVEN_OPTS: '-Xmx4096m'
+      MAVEN_OPTS: '-Xmx4096m'
     steps:
       - checkout
       - restore_cache: *restore-m2-cache

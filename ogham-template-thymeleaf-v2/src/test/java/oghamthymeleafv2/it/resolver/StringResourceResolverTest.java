@@ -1,4 +1,4 @@
-package oghamthymeleaf.it.resolver;
+package oghamthymeleafv2.it.resolver;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
 import static fr.sii.ogham.testing.helper.template.AssertTemplate.assertSimilar;
