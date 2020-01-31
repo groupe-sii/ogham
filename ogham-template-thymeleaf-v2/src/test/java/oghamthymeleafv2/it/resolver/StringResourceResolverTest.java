@@ -1,7 +1,7 @@
 package oghamthymeleafv2.it.resolver;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
-import static fr.sii.ogham.testing.helper.template.AssertTemplate.assertSimilar;
+import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertSimilar;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 

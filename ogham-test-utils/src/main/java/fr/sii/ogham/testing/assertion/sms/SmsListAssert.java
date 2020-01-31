@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.AssertionHelper;
-import fr.sii.ogham.testing.assertion.HasParent;
-import fr.sii.ogham.testing.helper.sms.bean.SubmitSm;
+import fr.sii.ogham.testing.assertion.util.AssertionHelper;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Make assertions on received messages
@@ -73,7 +73,7 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public SmsAssert<SmsListAssert<P, S>, S> message(int index) {
-		return new SmsAssert<>(actual.get(index), this);
+		return new SmsAssert<>(actual.get(index), index, this);
 	}
 
 	/**

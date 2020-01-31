@@ -1,5 +1,6 @@
 package fr.sii.ogham.core.resource;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -26,9 +27,6 @@ import fr.sii.ogham.core.util.HashCodeBuilder;
  *
  */
 public class LookupResource implements NamedResource {
-	private static final char WINDOWS_SEPARATOR = '\\';
-	private static final char UNIX_SEPARATOR = '/';
-
 	/**
 	 * The path that may contain a lookup
 	 */
@@ -82,14 +80,9 @@ public class LookupResource implements NamedResource {
 
 	private static String extractName(ResourcePath resolvedPath) {
 		String path = resolvedPath.getOriginalPath();
-		String name;
-		int lastSeparatorIdx = Math.max(path.lastIndexOf(UNIX_SEPARATOR), path.lastIndexOf(WINDOWS_SEPARATOR));
-		if (lastSeparatorIdx >= 0) {
-			name = path.substring(lastSeparatorIdx + 1);
-		} else {
-			int colonIdx = path.indexOf(':');
-			name = colonIdx > 0 ? path.substring(colonIdx + 1) : path;
-		}
+		String name = new File(path).getName();
+		int colonIdx = path.indexOf(':');
+		name = colonIdx >= 0 ? name.substring(colonIdx + 1) : name;
 		return name;
 	}
 

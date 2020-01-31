@@ -9,7 +9,7 @@ import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
 import fr.sii.ogham.sms.splitter.MessageSplitter;
 import fr.sii.ogham.sms.splitter.NoSplitMessageSplitter;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Make assertions on splitter instance to ensure that it is correctly

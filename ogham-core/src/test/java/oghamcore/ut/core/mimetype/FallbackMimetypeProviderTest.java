@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.stubbing.answers.AnswerFunctionalInterfaces.toAnswer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -58,6 +59,21 @@ public class FallbackMimetypeProviderTest {
 		when(provider1.detect(any(InputStream.class))).thenThrow(MimeTypeDetectionException.class);
 		when(provider2.detect(any(InputStream.class))).thenThrow(MimeTypeDetectionException.class);
 		fallback.detect(stream);
+	}
+	
+	@Test
+	public void ensureToAlwaysReadBeginningOfTheFile() throws MimeTypeDetectionException, MimeTypeParseException {
+		when(provider1.detect(any(InputStream.class))).then(toAnswer((InputStream stream) -> {
+			int next = stream.read();
+			assertThat("should read first byte", next, is(1));
+			throw new MimeTypeDetectionException("");
+		}));
+		when(provider2.detect(any(InputStream.class))).then(toAnswer((InputStream stream) -> {
+			int next = stream.read();
+			assertThat("should read first byte", next, is(1));
+			return new MimeType("foo/bar");
+		}));
+		assertThat(fallback.detect(stream).toString(), is("foo/bar"));
 	}
 	
 	@Test

@@ -1,16 +1,16 @@
 package fr.sii.ogham.testing.assertion.sms;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.usingContext;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
 import static org.apache.commons.lang3.ArrayUtils.toObject;
 
 import java.util.List;
 
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.HasParent;
-import fr.sii.ogham.testing.helper.sms.bean.OptionalParameter;
-import fr.sii.ogham.testing.helper.sms.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Make assertions on optional parameters of a {@link SubmitSm}.
@@ -65,7 +65,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public OptionalParameterAssert<P> parameter(Matcher<? super OptionalParameter> matcher) {
-		String message = "optional parameter ${tagName} of ${name} of message ${messageIndex}";
+		String message = "optional parameter '${tagName}'${found} of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();
 			assertThat(parameter, usingContext(message, parameterWithContext, matcher));
@@ -101,7 +101,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public OptionalParameterAssert<P> value(Matcher<? super Byte[]> matcher) {
-		String message = "optional parameter ${tagName} value of ${name} of message ${messageIndex}";
+		String message = "optional parameter '${tagName}'${found} value of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();
 			assertThat(toObject(parameter.getValue()), usingContext(message, parameterWithContext, matcher));
@@ -137,7 +137,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public OptionalParameterAssert<P> length(Matcher<? super Integer> matcher) {
-		String message = "optional parameter ${tagName} length of ${name} of message ${messageIndex}";
+		String message = "optional parameter '${tagName}'${found} length of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();
 			assertThat(parameter.getLength(), usingContext(message, parameterWithContext, matcher));

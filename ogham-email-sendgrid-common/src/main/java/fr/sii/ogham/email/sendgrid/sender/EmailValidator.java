@@ -3,6 +3,7 @@ package fr.sii.ogham.email.sendgrid.sender;
 import java.util.HashSet;
 import java.util.Set;
 
+import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.Recipient;
 
@@ -24,9 +25,10 @@ public final class EmailValidator {
 	 * 
 	 * @param message
 	 *            the email to validate
-	 * @return the violations if not valid or an empty list if valid
+	 * @throws InvalidMessageException
+	 *             when the email is not valid
 	 */
-	public static Set<String> validate(final Email message) {
+	public static void validate(final Email message) throws InvalidMessageException {
 		final Set<String> violations = new HashSet<>();
 
 		if (message.getContent() == null) {
@@ -50,7 +52,9 @@ public final class EmailValidator {
 			}
 		}
 
-		return violations;
+		if (!violations.isEmpty()) {
+			throw new InvalidMessageException("The provided email is invalid. (Violations: " + violations + ")", message, violations);
+		}
 	}
 
 	private EmailValidator() {

@@ -25,10 +25,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
+import fr.sii.ogham.testing.assertion.email.AssertEmail;
+import fr.sii.ogham.testing.assertion.email.ExpectedContent;
+import fr.sii.ogham.testing.assertion.email.ExpectedEmail;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.email.AssertEmail;
-import fr.sii.ogham.testing.helper.email.ExpectedContent;
-import fr.sii.ogham.testing.helper.email.ExpectedEmail;
 import mock.MockApplication;
 import mock.context.NestedBean;
 import mock.context.SimpleBean;

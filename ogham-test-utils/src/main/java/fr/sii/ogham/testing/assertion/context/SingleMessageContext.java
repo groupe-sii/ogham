@@ -1,6 +1,6 @@
 package fr.sii.ogham.testing.assertion.context;
 
-import java.util.regex.Pattern;
+import static java.util.regex.Pattern.quote;
 
 public class SingleMessageContext implements Context {
 	private final int index;
@@ -10,6 +10,6 @@ public class SingleMessageContext implements Context {
 	}
 	@Override
 	public String evaluate(String template) {
-		return template.replaceAll(Pattern.quote("${messageIndex}"), Integer.toString(index));
+		return template.replaceAll(quote("${messageIndex}"), Integer.toString(index));
 	}
 }

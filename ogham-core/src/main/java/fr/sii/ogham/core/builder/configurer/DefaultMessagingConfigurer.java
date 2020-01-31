@@ -194,7 +194,11 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 							.sequential()
 							.and()
 						.and()
-					.base64();
+					.base64().and()
+					.and()
+				.and()
+			.failIfMissingVariant().defaultValue(overrideIfNotSet(true)).and()
+			.listPossiblePaths().defaultValue(overrideIfNotSet(true));
 		// @formatter:on
 	}
 

@@ -1,8 +1,8 @@
 package oghamall.it.html.translator;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;

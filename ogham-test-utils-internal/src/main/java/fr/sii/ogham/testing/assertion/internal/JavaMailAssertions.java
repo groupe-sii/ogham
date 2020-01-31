@@ -1,7 +1,7 @@
 package fr.sii.ogham.testing.assertion.internal;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
 import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinder.findSender;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 
 import java.util.Properties;
@@ -10,7 +10,7 @@ import org.hamcrest.Matcher;
 
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Helper to mke assertions on {@link JavaMailSender} instance created by Ogham.

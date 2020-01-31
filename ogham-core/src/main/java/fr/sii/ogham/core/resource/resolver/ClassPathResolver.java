@@ -1,5 +1,6 @@
 package fr.sii.ogham.core.resource.resolver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -60,14 +61,7 @@ public class ClassPathResolver extends AbstractPrefixedLookupPathResolver implem
 	}
 
 	private static String extractName(String path) {
-		String name;
-		int lastSlashIdx = path.lastIndexOf('/');
-		if (lastSlashIdx >= 0) {
-			name = path.substring(lastSlashIdx + 1);
-		} else {
-			name = path;
-		}
-		return name;
+		return new File(path).getName();
 	}
 
 

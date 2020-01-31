@@ -2,8 +2,8 @@ package oghamcloudhopper.it;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
-import static fr.sii.ogham.testing.helper.sms.bean.NumberingPlanIndicator.ISDN;
-import static fr.sii.ogham.testing.helper.sms.bean.TypeOfNumber.UNKNOWN;
+import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
+import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
 import static java.lang.Math.ceil;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.instanceOf;
@@ -27,10 +27,10 @@ import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.MessagePreparationException;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.bean.Alphabet;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
 
 public class PartialConfigurationTest {
 	ExpectedException thrown = ExpectedException.none();

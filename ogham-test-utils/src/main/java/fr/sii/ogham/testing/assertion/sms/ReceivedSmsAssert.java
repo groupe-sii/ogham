@@ -6,7 +6,7 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
-import fr.sii.ogham.testing.helper.sms.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 
 /**
  * Make assertions on received messages
@@ -50,7 +50,7 @@ public class ReceivedSmsAssert<S extends SubmitSm> {
 	 * @return the fluent API for assertions on the particular message
 	 */
 	public SmsAssert<ReceivedSmsAssert<S>, S> receivedMessage(int index) {
-		return new SmsAssert<>(actual.get(index), this);
+		return new SmsAssert<>(actual.get(index), index, this);
 	}
 
 	/**

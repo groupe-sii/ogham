@@ -1,15 +1,15 @@
 package fr.sii.ogham.testing.assertion.sms;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.usingContext;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
 
 import java.util.List;
 
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.HasParent;
-import fr.sii.ogham.testing.helper.sms.bean.NumberingPlanIndicator;
-import fr.sii.ogham.testing.helper.sms.bean.TypeOfNumber;
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Make assertions on phone number of received messages.

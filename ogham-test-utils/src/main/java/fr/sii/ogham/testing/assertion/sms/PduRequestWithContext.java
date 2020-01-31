@@ -1,9 +1,10 @@
 package fr.sii.ogham.testing.assertion.sms;
 
-import java.util.regex.Pattern;
+import static java.util.regex.Matcher.quoteReplacement;
+import static java.util.regex.Pattern.quote;
 
 import fr.sii.ogham.testing.assertion.context.Context;
-import fr.sii.ogham.testing.helper.sms.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 
 /**
  * Dedicated context for one particular {@link SubmitSm}
@@ -35,7 +36,7 @@ public class PduRequestWithContext<S extends SubmitSm> implements Context {
 
 	@Override
 	public String evaluate(String template) {
-		String result = template.replaceAll(Pattern.quote("${name}"), name);
+		String result = template.replaceAll(quote("${name}"), quoteReplacement(name));
 		return parent.evaluate(result);
 	}
 

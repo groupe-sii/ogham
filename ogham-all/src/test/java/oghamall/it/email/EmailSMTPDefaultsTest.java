@@ -2,10 +2,11 @@ package oghamall.it.email;
 
 import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resource;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
-import static fr.sii.ogham.testing.helper.email.EmailUtils.ATTACHMENT_DISPOSITION;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.ATTACHMENT_DISPOSITION;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
@@ -134,22 +135,27 @@ public class EmailSMTPDefaultsTest {
 				.attachment("h1.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/h1.gif")))
+					.header("Content-ID", contains("<h1.gif0>"))
 					.disposition(is(INLINE)).and()
 				.attachment("fb.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/fb.gif")))
+					.header("Content-ID", contains("<fb.gif4>"))
 					.disposition(is(INLINE)).and()
 				.attachment("left.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/left.gif")))
+					.header("Content-ID", contains("<left.gif1>"))
 					.disposition(is(INLINE)).and()
 				.attachment("right1.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/right1.gif")))
+					.header("Content-ID", contains("<right1.gif2>"))
 					.disposition(is(INLINE)).and()
 				.attachment("tw.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/tw.gif")))
+					.header("Content-ID", contains("<tw.gif3>"))
 					.disposition(is(INLINE));
 		// @formatter:on
 	}
@@ -175,22 +181,27 @@ public class EmailSMTPDefaultsTest {
 				.attachment("h1.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/h1.gif")))
+					.header("Content-ID", contains("<h1.gif0>"))
 					.disposition(is(INLINE)).and()
 				.attachment("fb.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/fb.gif")))
+					.header("Content-ID", contains("<fb.gif4>"))
 					.disposition(is(INLINE)).and()
 				.attachment("left.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/left.gif")))
+					.header("Content-ID", contains("<left.gif1>"))
 					.disposition(is(INLINE)).and()
 				.attachment("right1.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/right1.gif")))
+					.header("Content-ID", contains("<right1.gif2>"))
 					.disposition(is(INLINE)).and()
 				.attachment("tw.gif")
 					.contentType(startsWith("image/gif"))
 					.content(is(resource("/template/freemarker/source/images/tw.gif")))
+					.header("Content-ID", contains("<tw.gif3>"))
 					.disposition(is(INLINE));
 		// @formatter:on
 	}

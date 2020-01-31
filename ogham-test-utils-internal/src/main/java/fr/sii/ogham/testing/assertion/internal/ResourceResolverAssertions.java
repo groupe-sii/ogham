@@ -11,7 +11,7 @@ import fr.sii.ogham.core.resource.resolver.FileResolver;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Make assertions on resource resolution.

@@ -1,6 +1,6 @@
 package oghamall.it.html.translator;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsString;
 
@@ -27,8 +27,8 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
 import fr.sii.ogham.html.translator.InlineCssTranslator;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
+import fr.sii.ogham.testing.assertion.html.AssertHtml;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.html.AssertHtml;
 
 public class JsoupInlineCssTranslatorTest {
 	private static String FOLDER = "/inliner/css/jsoup/";

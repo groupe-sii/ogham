@@ -4,7 +4,6 @@ import static fr.sii.ogham.core.util.LogUtils.summarize;
 import static fr.sii.ogham.email.sendgrid.sender.EmailValidator.validate;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -79,10 +78,7 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 		if (message == null) {
 			throw new IllegalArgumentException("[message] cannot be null");
 		}
-		final Set<String> violations = validate(message);
-		if (!violations.isEmpty()) {
-			throw new MessageException("The provided email is invalid. (Violations: " + violations + ")", message);
-		}
+		validate(message);
 
 		try {
 			LOG.debug("Preparing to send email using SendGrid: {}", summarize(message));

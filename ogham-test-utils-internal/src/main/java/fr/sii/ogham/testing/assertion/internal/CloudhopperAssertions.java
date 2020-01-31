@@ -1,13 +1,13 @@
 package fr.sii.ogham.testing.assertion.internal;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
 import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinder.findSender;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 
 import org.hamcrest.Matcher;
 
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Helper class to make assertions on Cloudhopper instance created by Ogham.

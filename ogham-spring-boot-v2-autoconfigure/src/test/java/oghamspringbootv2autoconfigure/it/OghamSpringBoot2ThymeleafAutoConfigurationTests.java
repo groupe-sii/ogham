@@ -26,9 +26,9 @@ import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
 import fr.sii.ogham.testing.assertion.OghamInternalAssertions;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 
 public class OghamSpringBoot2ThymeleafAutoConfigurationTests {
 	@Rule

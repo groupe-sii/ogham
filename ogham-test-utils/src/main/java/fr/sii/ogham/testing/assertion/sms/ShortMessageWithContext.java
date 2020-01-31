@@ -1,7 +1,7 @@
 package fr.sii.ogham.testing.assertion.sms;
 
 import fr.sii.ogham.testing.assertion.context.Context;
-import fr.sii.ogham.testing.helper.sms.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 
 /**
  * Context dedicated to the {@code short_message} field of a {@link SubmitSm}.

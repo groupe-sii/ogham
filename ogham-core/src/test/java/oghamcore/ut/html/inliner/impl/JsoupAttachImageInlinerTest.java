@@ -1,8 +1,8 @@
 package oghamcore.ut.html.inliner.impl;
 
 import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resource;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,8 +26,8 @@ import fr.sii.ogham.email.attachment.ContentDisposition;
 import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+import fr.sii.ogham.testing.assertion.html.AssertHtml;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.html.AssertHtml;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JsoupAttachImageInlinerTest {

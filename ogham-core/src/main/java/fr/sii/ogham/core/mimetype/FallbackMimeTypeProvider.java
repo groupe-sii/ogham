@@ -76,7 +76,6 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 	public MimeType detect(InputStream stream) throws MimeTypeDetectionException {
 		try {
 			ByteArrayInputStream copy = new ByteArrayInputStream(IOUtils.toByteArray(stream));
-			copy.mark(Integer.MAX_VALUE);
 			MimeType mimetype = detect(copy);
 			if(mimetype==null) {
 				throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");

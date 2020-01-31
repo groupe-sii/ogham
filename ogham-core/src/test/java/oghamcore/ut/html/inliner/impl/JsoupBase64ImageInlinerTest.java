@@ -1,8 +1,8 @@
 package oghamcore.ut.html.inliner.impl;
 
 import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resource;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageResource;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
+import fr.sii.ogham.testing.assertion.html.AssertHtml;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.html.AssertHtml;
 
 public class JsoupBase64ImageInlinerTest {
 	private static String FOLDER = "/inliner/images/jsoup/";

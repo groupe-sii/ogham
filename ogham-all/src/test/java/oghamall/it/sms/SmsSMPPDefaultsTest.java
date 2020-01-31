@@ -20,12 +20,12 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.bean.Alphabet;
-import fr.sii.ogham.testing.helper.sms.bean.NumberingPlanIndicator;
-import fr.sii.ogham.testing.helper.sms.bean.TypeOfNumber;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
 import mock.context.SimpleBean;
 
 public class SmsSMPPDefaultsTest {

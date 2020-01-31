@@ -24,9 +24,9 @@ import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 import freemarker.core.InvalidReferenceException;
 import mock.context.SimpleBean;
 

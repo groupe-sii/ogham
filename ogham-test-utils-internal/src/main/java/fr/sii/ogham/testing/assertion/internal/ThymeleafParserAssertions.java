@@ -1,6 +1,6 @@
 package fr.sii.ogham.testing.assertion.internal;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,7 +11,7 @@ import org.thymeleaf.TemplateEngine;
 
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafParser;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Helper class to make assertions on {@link ThymeleafParser} instance created

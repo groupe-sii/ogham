@@ -11,8 +11,8 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafParser;
-import fr.sii.ogham.testing.assertion.HasParent;
 import fr.sii.ogham.testing.assertion.internal.helper.FoundParser;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Helper class to make assertions on Thymealf instances created by Ogham.

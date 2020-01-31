@@ -1,8 +1,8 @@
 package oghamthymeleafv2.it;
 
 import static fr.sii.ogham.core.util.IOUtils.copy;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resource;
-import static fr.sii.ogham.testing.helper.template.AssertTemplate.assertSimilar;
+import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertSimilar;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

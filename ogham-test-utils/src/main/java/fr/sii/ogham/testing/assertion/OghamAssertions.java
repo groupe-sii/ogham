@@ -2,33 +2,21 @@ package fr.sii.ogham.testing.assertion;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.io.IOUtils;
-import org.hamcrest.Matcher;
 import org.jsmpp.bean.SubmitSm;
-import org.w3c.dom.Document;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 
-import fr.sii.ogham.testing.assertion.context.Context;
 import fr.sii.ogham.testing.assertion.email.EmailsAssert;
 import fr.sii.ogham.testing.assertion.email.ReceivedEmailsAssert;
-import fr.sii.ogham.testing.assertion.hamcrest.CustomReason;
-import fr.sii.ogham.testing.assertion.hamcrest.IdenticalHtmlMatcher;
-import fr.sii.ogham.testing.assertion.hamcrest.SimilarHtmlMatcher;
 import fr.sii.ogham.testing.assertion.sms.ReceivedSmsAssert;
 import fr.sii.ogham.testing.assertion.sms.SmsListAssert;
-import fr.sii.ogham.testing.helper.sms.jsmpp.SubmitSmAdapter;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter;
 
 /**
  * Utility class that helps writing message assertions. For emails, you can
@@ -206,97 +194,6 @@ public final class OghamAssertions {
 	 */
 	public static SmsListAssert<Void, SubmitSmAdapter> assertThat(List<SubmitSm> receivedSms) {
 		return new SmsListAssert<>(receivedSms.stream().map(SubmitSmAdapter::new).collect(toList()), null);
-	}
-
-	/**
-	 * Ogham helper for keeping context information when using fluent
-	 * assertions.
-	 * 
-	 * @param reasonTemplate
-	 *            the template for the reason
-	 * @param context
-	 *            the evaluation context
-	 * @param delegate
-	 *            the matcher to decorate
-	 * @param <T>
-	 *            the type used for the matcher
-	 * @return the matcher
-	 */
-	public static <T> Matcher<T> usingContext(String reasonTemplate, Context context, Matcher<T> delegate) {
-		return new CustomReason<>(context.evaluate(reasonTemplate), delegate);
-	}
-
-	/**
-	 * Check if the HTML is similar to the expected. The HTML strings are parsed
-	 * into {@link Document}s. Two documents are considered to be "similar" if
-	 * they contain the same elements and attributes regardless of order.
-	 * 
-	 * @param expectedHtml
-	 *            the expected HTML
-	 * @return the matcher that will check if HTML is identical to expected HTML
-	 */
-	public static Matcher<String> isSimilarHtml(String expectedHtml) {
-		return new SimilarHtmlMatcher(expectedHtml);
-	}
-
-	/**
-	 * Check if the HTML is identical to the expected. The HTML strings are
-	 * parsed into {@link Document}s. Two documents are considered to be
-	 * "identical" if they contain the same elements and attributes in the same
-	 * order.
-	 * 
-	 * @param expectedHtml
-	 *            the expected HTML
-	 * @return the matcher that will check if HTML is identical to expected HTML
-	 */
-	public static Matcher<String> isIdenticalHtml(String expectedHtml) {
-		return new IdenticalHtmlMatcher(expectedHtml);
-	}
-
-	/**
-	 * Utility method that loads a file content from the classpath. UTF-8
-	 * charset is used.
-	 * 
-	 * @param path
-	 *            the path to the classpath resource
-	 * @return the content of the file
-	 * @throws IOException
-	 *             when resource can't be read or doesn't exist
-	 */
-	public static String resourceAsString(String path) throws IOException {
-		return resourceAsString(path, StandardCharsets.UTF_8);
-	}
-
-	/**
-	 * Utility method that loads a file content from the classpath.
-	 * 
-	 * @param path
-	 *            the path to the classpath resource
-	 * @param charset
-	 *            the charset used for reading the file
-	 * @return the content of the file
-	 * @throws IOException
-	 *             when resource can't be read or doesn't exist
-	 */
-	public static String resourceAsString(String path, Charset charset) throws IOException {
-		return IOUtils.toString(resource(path), charset.name());
-	}
-
-	/**
-	 * Utility method that loads a file content from the classpath.
-	 * 
-	 * @param path
-	 *            the path to the classpath resource
-	 * @return the content of the file as byte array
-	 * @throws IOException
-	 *             when resource can't be read or doesn't exist
-	 */
-	public static byte[] resource(String path) throws IOException {
-		InputStream resource = OghamAssertions.class.getClassLoader().getResourceAsStream(path.startsWith("/") ? path.substring(1) : path);
-		if (resource == null) {
-			throw new FileNotFoundException("No resource found for path " + path);
-		}
-		return IOUtils.toByteArray(resource);
 	}
 
 	private OghamAssertions() {

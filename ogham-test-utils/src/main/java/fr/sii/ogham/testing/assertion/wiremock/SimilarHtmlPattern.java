@@ -7,7 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
 
-import fr.sii.ogham.testing.helper.html.HtmlUtils;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
 
 /**
  * Check if the HTML is similar to the expected. The HTML strings are parsed

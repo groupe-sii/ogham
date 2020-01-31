@@ -233,7 +233,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	 *             when the email address is not valid
 	 */
 	private void setMimeContent(Email email, MimeMessage mimeMsg) throws MessagingException, ContentHandlerException, AttachmentResourceHandlerException {
-		LOG.debug("Add message content for email {}", summarize(email));
+		LOG.debug("Add message co=ntent for email {}", summarize(email));
 		// create the root as mixed
 		MimeMultipart rootContainer = new MimeMultipart("mixed");
 		// create the container in case of attachments

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import fr.sii.ogham.testing.assertion.OghamAssertions;
-import fr.sii.ogham.testing.helper.html.HtmlUtils;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
 
 /**
  * Check if the HTML is identical to the expected. The HTML strings are parsed

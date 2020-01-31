@@ -1,9 +1,9 @@
 package oghamall.it.email;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resource;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;

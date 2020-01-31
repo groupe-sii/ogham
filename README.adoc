@@ -2985,7 +2985,7 @@ _____
 
 This will include:
 
-* http://junit.org/junit4/[JUnit to run tests]
+* http://junit.org/junit5/[JUnit to run tests (JUnit 4 and Junit 5)]
 * http://site.mockito.org/[Mockito for mocking Java code]
 * http://hamcrest.org/JavaHamcrest/[Hamcrest for assertions]
 * http://www.icegreen.com/greenmail/[GreenMail for mocking a SMTP server]
@@ -3026,15 +3026,19 @@ Recommended imports to add:
 * `org.hamcrest.Matchers.*`
 * `org.hamcrest.CoreMatchers.*`
 
-Optional assertions that may be useful:
+Optional imports that may be useful:
 
+* `fr.sii.ogham.assertion.OghamMatchers.*`
+* `fr.sii.ogham.util.ResourceUtils.*`
 * `org.mockito.ArgumentMatchers.*`
 * `org.mockito.Mockito.*`
-* `org.junit.*`
-* `org.junit.Assert.*`
-* `org.junit.matchers.JUnitMatchers.*`
-* `org.junit.Assume.*`
-* `org.assertj.core.api.Assertions.*`
+* `org.junit.*` (if you are using JUnit 4)
+* `org.junit.Assert.*` (if you are using JUnit 4)
+* `org.junit.matchers.JUnitMatchers.*` (if you are using JUnit 4)
+* `org.junit.Assume.*` (if you are using JUnit 4)
+* `org.junit.jupiter.api.Assertions.*` (if you are using JUnit 5)
+* `org.junit.jupiter.api.Assumptions.*` (if you are using JUnit 5)
+* `org.assertj.core.api.Assertions.*` (if you are using AssertJ)
 
 
 .Result with all static imports described above
@@ -3181,8 +3185,8 @@ package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
@@ -3339,8 +3343,8 @@ package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
@@ -3520,8 +3524,8 @@ package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.Matchers.hasItems;
@@ -3702,8 +3706,8 @@ package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resource;
-import static fr.sii.ogham.testing.helper.email.EmailUtils.ATTACHMENT_DISPOSITION;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.ATTACHMENT_DISPOSITION;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -4149,8 +4153,8 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 
 public class SmsTestSample {
     private MessagingService oghamService;
@@ -4236,8 +4240,8 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 
 public class LongSmsTestSample {
     private MessagingService oghamService;

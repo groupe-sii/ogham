@@ -1,7 +1,9 @@
 package fr.sii.ogham.testing.assertion.email;
 
+import static java.util.regex.Matcher.quoteReplacement;
+import static java.util.regex.Pattern.quote;
+
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.mail.internet.InternetAddress;
 
@@ -20,7 +22,7 @@ public class AddressesWithContext implements Context {
 	}
 	
 	public String evaluate(String template) {
-		String result = template.replaceAll(Pattern.quote("${fieldName}"), field);
+		String result = template.replaceAll(quote("${fieldName}"), quoteReplacement(field));
 		return parent.evaluate(result);
 	}
 	

@@ -117,6 +117,6 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 		if (awaiter == null) {
 			return new ThreadSleepAwaiter();
 		}
-		return null;
+		return awaiter;
 	}
 }

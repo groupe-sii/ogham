@@ -1,6 +1,6 @@
 package fr.sii.ogham.testing.assertion.email;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +37,10 @@ public class ReceivedEmailsAssert {
 	 * @return the fluent API for assertions on the particular message
 	 */
 	public EmailAssert<ReceivedEmailsAssert> receivedMessage(int index) {
-		return new EmailAssert<>(actual.get(index), this);
+		if (index >= actual.size()) {
+			throw new AssertionError("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received");
+		}
+		return new EmailAssert<>(actual.get(index), index, this);
 	}
 
 	/**
@@ -99,7 +102,7 @@ public class ReceivedEmailsAssert {
 	 * @return the fluent API for assertions on messages
 	 */
 	public EmailsAssert<ReceivedEmailsAssert> receivedMessages(Matcher<Collection<? extends Message>> matcher) {
-		assertThat(actual, matcher);
+		assertThat("Received messages", actual, matcher);
 		return receivedMessages();
 	}
 

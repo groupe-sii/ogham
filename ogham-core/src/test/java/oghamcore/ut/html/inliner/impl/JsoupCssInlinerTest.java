@@ -1,6 +1,6 @@
 package oghamcore.ut.html.inliner.impl;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ import org.junit.Test;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.html.inliner.ExternalCss;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupCssInliner;
+import fr.sii.ogham.testing.assertion.html.AssertHtml;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.html.AssertHtml;
 
 public class JsoupCssInlinerTest {
 	private static String FOLDER = "/inliner/css/jsoup/";

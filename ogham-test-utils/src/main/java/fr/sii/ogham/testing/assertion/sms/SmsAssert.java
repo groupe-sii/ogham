@@ -1,8 +1,8 @@
 package fr.sii.ogham.testing.assertion.sms;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.usingContext;
-import static fr.sii.ogham.testing.helper.sms.util.SmsUtils.getSmsContent;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+import static fr.sii.ogham.testing.sms.simulator.decode.SmsUtils.getSmsContent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,9 +10,10 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.HasParent;
 import fr.sii.ogham.testing.assertion.context.SingleMessageContext;
-import fr.sii.ogham.testing.helper.sms.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.decode.Charset;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Make assertions on particular message.
@@ -29,17 +30,21 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * The list of messages that will be used for assertions
 	 */
 	private final List<S> actual;
+	private int index;
 
 	/**
 	 * Initializes with a single received message
 	 * 
 	 * @param actual
 	 *            received message
+	 * @param index
+	 *            the index of the message
 	 * @param parent
 	 *            the parent
 	 */
-	public SmsAssert(S actual, P parent) {
+	public SmsAssert(S actual, int index, P parent) {
 		this(Arrays.asList(actual), parent);
+		this.index = index;
 	}
 
 	/**
@@ -56,7 +61,8 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	}
 
 	/**
-	 * Make assertions on the content of the message(s).
+	 * Make assertions on the content of the message(s). Alphabet/encoding is
+	 * automatically determined from message (based on Data Coding Scheme).
 	 * 
 	 * <pre>
 	 * .receivedMessages().message(0)
@@ -94,60 +100,62 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion to apply on message content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public SmsAssert<P, S> content(Matcher<String> matcher) {
+	public SmsAssert<P, S> content(Matcher<? super String> matcher) {
 		String desc = "content of message ${messageIndex}";
-		int index = 0;
+		int msgIdx = index;
 		for (S message : actual) {
-			assertThat(getSmsContent(message), usingContext(desc, new SingleMessageContext(index++), matcher));
+			assertThat(getSmsContent(message), usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
 		}
 		return this;
 	}
 
 	/**
-	 * Make assertions on the short message (raw content in byte array) of the
-	 * message(s). User Data Header bytes may be included.
+	 * Make assertions on the content of the message(s). Alphabet/encoding used
+	 * to decode the message is explicitly provided.
 	 * 
 	 * <pre>
 	 * .receivedMessages().message(0)
-	 *    .shortMessage(allOf(notNullValue(), hasSize(10))
+	 *    .content(allOf(notNullValue(), is("hello world"))
 	 * </pre>
 	 * 
 	 * Or:
 	 * 
 	 * <pre>
 	 * .receivedMessages().message(0)
-	 *    .shortMessage(notNullValue())
-	 *    .shortMessage(hasSize(10))
+	 *    .content(notNullValue())
+	 *    .content(is("hello world"))
 	 * </pre>
 	 * 
-	 * Will check if the content of the first message is not null and its size
-	 * is exactly 10 bytes.
+	 * Will check if the content of the first message is not null and is exactly
+	 * "hello world".
 	 * 
 	 * <pre>
 	 * .receivedMessages().every()
-	 *    .shortMessage(allOf(notNullValue(), hasSize(10))
+	 *    .content(allOf(notNullValue(), is("hello world"))
 	 * </pre>
 	 * 
 	 * Or:
 	 * 
 	 * <pre>
 	 * .receivedMessages().every()
-	 *    .shortMessage(notNullValue())
-	 *    .shortMessage(hasSize(10))
+	 *    .content(notNullValue())
+	 *    .content(is("hello world"))
 	 * </pre>
 	 * 
-	 * Will check if the content of every message is not null and its size is
-	 * exactly 10 bytes.
+	 * Will check if the content of every message is not null and is exactly
+	 * "hello world".
 	 * 
+	 * @param charset
+	 *            the charset to use to decode the message (bytes to string)
 	 * @param matcher
 	 *            the assertion to apply on message content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public SmsAssert<P, S> shortMessage(Matcher<byte[]> matcher) {
-		String desc = "raw content of message ${messageIndex}";
-		int index = 0;
+	public SmsAssert<P, S> content(Charset charset, Matcher<? super String> matcher) {
+		String desc = "content of message ${messageIndex}";
+		int msgIdx = index;
 		for (S message : actual) {
-			assertThat(message.getShortMessage(), usingContext(desc, new SingleMessageContext(index++), matcher));
+			assertThat(getSmsContent(message, charset), usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
 		}
 		return this;
 	}
@@ -184,9 +192,9 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 */
 	public PduRequestAssert<SmsAssert<P, S>, S> rawRequest() {
 		List<PduRequestWithContext<S>> requests = new ArrayList<>();
-		int index = 0;
+		int msgIdx = index;
 		for (S request : actual) {
-			requests.add(new PduRequestWithContext<>(request, "raw request", new SingleMessageContext(index++)));
+			requests.add(new PduRequestWithContext<>(request, "raw request", new SingleMessageContext(msgIdx++)));
 		}
 		return new PduRequestAssert<>(requests, this);
 	}
@@ -214,10 +222,10 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 */
 	public SmsAssert<P, S> from(Matcher<PhoneNumberInfo> matcher) {
 		String desc = "sender of message ${messageIndex}";
-		int index = 0;
+		int msgIdx = index;
 		for (S message : actual) {
 			PhoneNumberInfo number = new PhoneNumberInfo(message.getSourceAddress());
-			assertThat(number, usingContext(desc, new SingleMessageContext(index++), matcher));
+			assertThat(number, usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
 		}
 		return this;
 	}
@@ -249,10 +257,10 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 */
 	public PhoneNumberAssert<SmsAssert<P, S>> from() {
 		List<PhoneNumberWithContext> numbers = new ArrayList<>();
-		int index = 0;
+		int msgIdx = index;
 		for (S message : actual) {
 			PhoneNumberInfo number = new PhoneNumberInfo(message.getSourceAddress());
-			numbers.add(new PhoneNumberWithContext(number, "sender", new SingleMessageContext(index++)));
+			numbers.add(new PhoneNumberWithContext(number, "sender", new SingleMessageContext(msgIdx++)));
 		}
 		return new PhoneNumberAssert<>(numbers, this);
 	}
@@ -280,11 +288,11 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public SmsAssert<P, S> to(Matcher<PhoneNumberInfo> matcher) {
-		String desc = "dest of message ${messageIndex}";
-		int index = 0;
+		String desc = "recipient of message ${messageIndex}";
+		int msgIdx = index;
 		for (S message : actual) {
 			PhoneNumberInfo number = new PhoneNumberInfo(message.getDestAddress());
-			assertThat(number, usingContext(desc, new SingleMessageContext(index++), matcher));
+			assertThat(number, usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
 		}
 		return this;
 	}
@@ -316,10 +324,10 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 */
 	public PhoneNumberAssert<SmsAssert<P, S>> to() {
 		List<PhoneNumberWithContext> numbers = new ArrayList<>();
-		int index = 0;
+		int msgIdx = index;
 		for (S message : actual) {
 			PhoneNumberInfo number = new PhoneNumberInfo(message.getDestAddress());
-			numbers.add(new PhoneNumberWithContext(number, "dest", new SingleMessageContext(index++)));
+			numbers.add(new PhoneNumberWithContext(number, "recipient", new SingleMessageContext(msgIdx++)));
 		}
 		return new PhoneNumberAssert<>(numbers, this);
 	}

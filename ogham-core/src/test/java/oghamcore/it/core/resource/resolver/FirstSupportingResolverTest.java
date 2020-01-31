@@ -1,6 +1,6 @@
 package oghamcore.it.core.resource.resolver;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resource;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
 
 import java.io.File;
 import java.io.IOException;

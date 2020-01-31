@@ -1,15 +1,12 @@
 package oghamtesting.it.assertion
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isIdenticalHtml
-import static fr.sii.ogham.testing.assertion.OghamAssertions.usingContext
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext
 import static org.hamcrest.Matchers.is
 
-import org.hamcrest.Matcher
 import org.junit.ComparisonFailure
 
-import fr.sii.ogham.testing.assertion.AssertionHelper
-import fr.sii.ogham.testing.assertion.OghamAssertions
 import fr.sii.ogham.testing.assertion.context.Context
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import spock.lang.Specification

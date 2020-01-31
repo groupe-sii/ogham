@@ -1,6 +1,6 @@
 package oghamfremarker.it;
 
-import static fr.sii.ogham.testing.helper.template.AssertTemplate.assertSimilar;
+import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertSimilar;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 

@@ -1,23 +1,13 @@
 package oghamtesting.it.assertion.hamcrest
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isIdenticalHtml
-import static fr.sii.ogham.testing.assertion.OghamAssertions.usingContext
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage
-import static org.hamcrest.CoreMatchers.containsString
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat
 import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.instanceOf
-import static org.hamcrest.Matchers.is
 
 import java.lang.reflect.InvocationTargetException
 
-import org.hamcrest.Matcher
-import org.junit.ComparisonFailure
-
-import fr.sii.ogham.testing.assertion.AssertionHelper
-import fr.sii.ogham.testing.assertion.OghamAssertions
-import fr.sii.ogham.testing.assertion.context.Context
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import spock.lang.Specification
 import spock.lang.Unroll

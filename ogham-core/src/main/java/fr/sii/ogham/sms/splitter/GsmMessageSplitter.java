@@ -395,7 +395,7 @@ public class GsmMessageSplitter implements MessageSplitter {
 		int end = start + maximumStringLengthPerSegment;
 		String part = message.substring(start, Math.min(message.length(), end));
 		int lengthOfPart = lengthCounter.count(part);
-		while (lengthOfPart > maximumStringLengthPerSegment && end > start && end > 0) {
+		while (lengthOfPart > maximumStringLengthPerSegment && end > start) {
 			end--;
 			part = message.substring(start, Math.min(message.length(), end));
 			lengthOfPart = lengthCounter.count(part);

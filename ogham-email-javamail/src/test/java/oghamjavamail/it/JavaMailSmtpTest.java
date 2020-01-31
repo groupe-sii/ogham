@@ -1,8 +1,8 @@
 package oghamjavamail.it;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resource;
-import static fr.sii.ogham.testing.helper.email.EmailUtils.ATTACHMENT_DISPOSITION;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.ATTACHMENT_DISPOSITION;
+import static fr.sii.ogham.testing.util.ResourceUtils.resource;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;

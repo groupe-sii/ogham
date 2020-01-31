@@ -34,7 +34,7 @@ TODO: gradle code sample
 
 This will include:
 
-* http://junit.org/junit4/[JUnit to run tests]
+* http://junit.org/junit5/[JUnit to run tests (JUnit 4 and Junit 5)]
 * http://site.mockito.org/[Mockito for mocking Java code]
 * http://hamcrest.org/JavaHamcrest/[Hamcrest for assertions]
 * http://www.icegreen.com/greenmail/[GreenMail for mocking a SMTP server]
@@ -75,15 +75,19 @@ Recommended imports to add:
 * `org.hamcrest.Matchers.*`
 * `org.hamcrest.CoreMatchers.*`
 
-Optional assertions that may be useful:
+Optional imports that may be useful:
 
+* `fr.sii.ogham.assertion.OghamMatchers.*`
+* `fr.sii.ogham.util.ResourceUtils.*`
 * `org.mockito.ArgumentMatchers.*`
 * `org.mockito.Mockito.*`
-* `org.junit.*`
-* `org.junit.Assert.*`
-* `org.junit.matchers.JUnitMatchers.*`
-* `org.junit.Assume.*`
-* `org.assertj.core.api.Assertions.*`
+* `org.junit.*` (if you are using JUnit 4)
+* `org.junit.Assert.*` (if you are using JUnit 4)
+* `org.junit.matchers.JUnitMatchers.*` (if you are using JUnit 4)
+* `org.junit.Assume.*` (if you are using JUnit 4)
+* `org.junit.jupiter.api.Assertions.*` (if you are using JUnit 5)
+* `org.junit.jupiter.api.Assumptions.*` (if you are using JUnit 5)
+* `org.assertj.core.api.Assertions.*` (if you are using AssertJ)
 
 
 .Result with all static imports described above

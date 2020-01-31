@@ -4,7 +4,7 @@ import org.w3c.dom.Document;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 
-import fr.sii.ogham.testing.helper.html.HtmlUtils;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
 
 /**
  * Additional matchers for {@link WireMock}.

@@ -1,6 +1,7 @@
 package fr.sii.ogham.testing.assertion.email;
 
-import java.util.regex.Pattern;
+import static java.util.regex.Matcher.quoteReplacement;
+import static java.util.regex.Pattern.quote;
 
 import javax.mail.Part;
 
@@ -18,7 +19,7 @@ public class PartWithContext implements Context {
 	}
 	
 	public String evaluate(String template) {
-		String result = template.replaceAll(Pattern.quote("${partName}"), partName);
+		String result = template.replaceAll(quote("${partName}"), quoteReplacement(partName));
 		return parent.evaluate(result);
 	}
 	

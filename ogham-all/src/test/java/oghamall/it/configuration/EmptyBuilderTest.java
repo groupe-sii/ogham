@@ -6,6 +6,7 @@ import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.BEFORE_BUI
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
@@ -29,7 +30,7 @@ import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.exception.handler.ImageInliningException;
-import fr.sii.ogham.core.exception.handler.TemplateParsingFailedException;
+import fr.sii.ogham.core.exception.handler.NoContentException;
 import fr.sii.ogham.core.exception.resource.NoResolverException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -43,12 +44,11 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
-import fr.sii.ogham.template.exception.UnknownVariantException;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 import mock.context.SimpleBean;
 
 public class EmptyBuilderTest {
@@ -237,8 +237,7 @@ public class EmptyBuilderTest {
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new MultiTemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
 		thrown.expect(MessageNotSentException.class);
-		thrown.expectCause(instanceOf(TemplateParsingFailedException.class));
-		thrown.expect(hasAnyCause(UnknownVariantException.class, hasMessage(containsString("unknown variant/extension"))));
+		thrown.expectCause(allOf(instanceOf(NoContentException.class), hasMessage(containsString("Template not found for simple.txt.ftl"))));
 		
 		service.send(message);
 	}

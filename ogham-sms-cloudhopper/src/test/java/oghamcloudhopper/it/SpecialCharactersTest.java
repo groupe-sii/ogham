@@ -15,10 +15,10 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.bean.Alphabet;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
 
 public class SpecialCharactersTest {
 	private CloudhopperBuilder builder;

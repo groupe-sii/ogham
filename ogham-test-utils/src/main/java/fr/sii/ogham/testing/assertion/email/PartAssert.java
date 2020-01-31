@@ -1,11 +1,10 @@
 package fr.sii.ogham.testing.assertion.email;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.usingContext;
-import static fr.sii.ogham.testing.helper.email.EmailUtils.getContent;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getContent;
+import static java.util.Arrays.asList;
 import static java.util.Collections.list;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -20,7 +19,7 @@ import javax.mail.Part;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 public class PartAssert<P> extends HasParent<P> {
 	/**
@@ -62,7 +61,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on string content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> contentAsString(Matcher<String> matcher) {
+	public PartAssert<P> contentAsString(Matcher<? super String> matcher) {
 		return contentAsString(matcher, StandardCharsets.UTF_8);
 	}
 
@@ -92,8 +91,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the charset used to decode the content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> contentAsString(Matcher<String> matcher, Charset charset) {
-		assertThat("no attachments are matching the predicate so can't check content", actual, not(empty()));
+	public PartAssert<P> contentAsString(Matcher<? super String> matcher, Charset charset) {
 		try {
 			String message = charset.name() + " content of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -131,7 +129,6 @@ public class PartAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public PartAssert<P> content(Matcher<byte[]> matcher) {
-		assertThat("no attachments are matching the predicate so can't check content", actual, not(empty()));
 		try {
 			String message = "raw content of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -168,8 +165,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on content-type
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> contentType(Matcher<String> matcher) {
-		assertThat("no attachments are matching the predicate so can't check content-type", actual, not(empty()));
+	public PartAssert<P> contentType(Matcher<? super String> matcher) {
 		try {
 			String message = "content-type of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -206,8 +202,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on description
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> description(Matcher<String> matcher) {
-		assertThat("no attachments are matching the predicate so can't check description", actual, not(empty()));
+	public PartAssert<P> description(Matcher<? super String> matcher) {
 		try {
 			String message = "description of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -244,8 +239,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on disposition
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> disposition(Matcher<String> matcher) {
-		assertThat("no attachments are matching the predicate so can't check disposition", actual, not(empty()));
+	public PartAssert<P> disposition(Matcher<? super String> matcher) {
 		try {
 			String message = "disposition of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -282,8 +276,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on filename
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> filename(Matcher<String> matcher) {
-		assertThat("no attachments are matching the predicate so can't check filename", actual, not(empty()));
+	public PartAssert<P> filename(Matcher<? super String> matcher) {
 		try {
 			String message = "filename of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -296,8 +289,31 @@ public class PartAssert<P> extends HasParent<P> {
 		}
 	}
 
-	public PartAssert<P> headers(Matcher<Iterable<? extends Header>> matcher) {
-		assertThat("no attachments are matching the predicate so can't check headers", actual, not(empty()));
+	/**
+	 * Make assertions on the headers of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * <pre>
+	 * .receivedMessages().message(0).attachment(0)
+	 *    .headers(hasItem(new Header("name", "value")))
+	 * </pre>
+	 * 
+	 * Will check if the headers of the first attachment of the first message
+	 * contains a header with name "name" and value "value".
+	 * 
+	 * <pre>
+	 * .receivedMessages().every().attachment(0)
+	 *    .header(hasItem(new Header("name", "value")))
+	 * </pre>
+	 * 
+	 * Will check if the headers of the first attachment of every message is
+	 * contains a header with name "name" and value "value".
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on headers
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public PartAssert<P> headers(Matcher<? super Iterable<Header>> matcher) {
 		try {
 			String message = "headers of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -306,7 +322,57 @@ public class PartAssert<P> extends HasParent<P> {
 			}
 			return this;
 		} catch (MessagingException e) {
-			throw new AssertionError("Failed to get filename of part", e);
+			throw new AssertionError("Failed to get headers of part", e);
 		}
+	}
+
+	/**
+	 * Make assertions on a single header of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * <pre>
+	 * .receivedMessages().message(0).attachment(0)
+	 *    .header("Content-ID", contains("foo"))
+	 * </pre>
+	 * 
+	 * Will check if the "Content-ID" header of the first attachment of the
+	 * first message values "foo".
+	 * 
+	 * <pre>
+	 * .receivedMessages().every().attachment(0)
+	 *    .header("Content-ID", contains("foo"))
+	 * </pre>
+	 * 
+	 * Will check if the "Content-ID" header of the first attachment of every
+	 * message values "foo".
+	 * 
+	 * @param headerName
+	 *            the name of the header to check
+	 * @param matcher
+	 *            the assertion to apply on the header header
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public PartAssert<P> header(String headerName, Matcher<? super Iterable<String>> matcher) {
+		try {
+			String message = "header " + headerName + " of ${partName} of message ${messageIndex}";
+			for (PartWithContext partWithContext : actual) {
+				Part part = partWithContext.getPart();
+				assertThat(getHeaderValues(part, headerName), usingContext(message, partWithContext, matcher));
+			}
+			return this;
+		} catch (MessagingException e) {
+			throw new AssertionError("Failed to get header" + headerName + " of part", e);
+		}
+	}
+	
+	@SuppressWarnings("squid:S1168")
+	private static List<String> getHeaderValues(Part part, String headerName) throws MessagingException {
+		if (part != null) {
+			String[] vals = part.getHeader(headerName);
+			if (vals != null) {
+				return asList(vals);
+			}
+		}
+		return null;
 	}
 }

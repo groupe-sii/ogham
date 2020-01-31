@@ -1,9 +1,9 @@
 package oghamspringbootv1autoconfigure.it;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
@@ -35,9 +35,9 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 import freemarker.core.InvalidReferenceException;
 import mock.context.SimpleBean;
 

@@ -1,6 +1,6 @@
 package fr.sii.ogham.testing.assertion.email;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import javax.mail.Message;
 
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 public class EmailsAssert<P> extends HasParent<P> {
 	/**
@@ -33,7 +33,7 @@ public class EmailsAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public EmailsAssert<P> count(Matcher<Integer> matcher) {
-		assertThat(actual.size(), matcher);
+		assertThat("Received messages count", actual.size(), matcher);
 		return this;
 	}
 
@@ -59,7 +59,10 @@ public class EmailsAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public EmailAssert<EmailsAssert<P>> message(int index) {
-		return new EmailAssert<>(actual.get(index), this);
+		if (index >= actual.size()) {
+			throw new AssertionError("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received");
+		}
+		return new EmailAssert<>(actual.get(index), index, this);
 	}
 
 	/**

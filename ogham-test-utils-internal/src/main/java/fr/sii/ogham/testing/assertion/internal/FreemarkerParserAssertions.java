@@ -10,7 +10,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.freemarker.FreeMarkerParser;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 import freemarker.template.Configuration;
 
 /**

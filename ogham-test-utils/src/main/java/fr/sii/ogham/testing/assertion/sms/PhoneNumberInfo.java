@@ -1,8 +1,8 @@
 package fr.sii.ogham.testing.assertion.sms;
 
-import fr.sii.ogham.testing.helper.sms.bean.Address;
-import fr.sii.ogham.testing.helper.sms.bean.NumberingPlanIndicator;
-import fr.sii.ogham.testing.helper.sms.bean.TypeOfNumber;
+import fr.sii.ogham.testing.sms.simulator.bean.Address;
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
 
 /**
  * Represents a phone number with {@link TypeOfNumber} and
@@ -61,5 +61,10 @@ public class PhoneNumberInfo {
 	 */
 	public byte getTon() {
 		return ton;
+	}
+
+	@Override
+	public String toString() {
+		return "PhoneNumberInfo [address=" + address + ", npi=" + npi + ", ton=" + ton + "]";
 	}
 }

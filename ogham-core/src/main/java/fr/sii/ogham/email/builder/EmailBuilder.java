@@ -11,6 +11,9 @@ import fr.sii.ogham.core.builder.annotation.RequiredClass;
 import fr.sii.ogham.core.builder.annotation.RequiredClasses;
 import fr.sii.ogham.core.builder.annotation.RequiredProperties;
 import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
@@ -35,6 +38,7 @@ import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.sender.AttachmentResourceTranslatorSender;
 import fr.sii.ogham.email.sender.EmailSender;
+import fr.sii.ogham.template.common.adapter.VariantResolver;
 
 /**
  * Configures how to send {@link Email} messages. It allows to:
@@ -694,6 +698,187 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 */
 	public <T extends Builder<? extends MessageSender>> T sender(Class<T> builderClass) {
 		return senderBuilderHelper.register(builderClass);
+	}
+	
+	/**
+	 * If a variant is missing, then force to fail.
+	 * 
+	 * <p>
+	 * This may be useful if you want for example to always provide a text
+	 * fallback when using an html template. So if a client can't read the html
+	 * version, the fallback version will still always be readable. So to avoid
+	 * forgetting to write text template, set this to true.
+	 * </p>
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #failIfMissingVariant()}.
+	 * 
+	 * <pre>
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * In both cases, {@code failIfMissingVariant(false)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param fail
+	 *            fail if a variant is missing
+	 * @return this instance for fluent chaining
+	 */
+	public EmailBuilder failIfMissingVariant(Boolean fail) {
+		templateBuilderHelper.failIfMissingVariant(fail);
+		return this;
+	}
+
+	/**
+	 * If a variant is missing, then force to fail.
+	 * 
+	 * <p>
+	 * This may be useful if you want for example to always provide a text
+	 * fallback when using an html template. So if a client can't read the html
+	 * version, the fallback version will still always be readable. So to avoid
+	 * forgetting to write text template, set this to true.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .failIfMissingVariant()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #failIfMissingVariant(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(true)
+	 * </pre>
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<EmailBuilder, Boolean> failIfMissingVariant() {
+		return new ConfigurationValueBuilderDelegate<>(this, templateBuilderHelper.failIfMissingVariant());
+	}
+	
+	
+	/**
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which paths were tried in order to help debugging why a variant was not found.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #listPossiblePaths()}.
+	 * 
+	 * <pre>
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * In both cases, {@code listPossiblePaths(true)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable/disable tracking of possible paths for template variants
+	 * @return this instance for fluent chaining
+	 */
+	public EmailBuilder listPossiblePaths(Boolean enable) {
+		templateBuilderHelper.listPossiblePaths(enable);
+		return this;
+	}
+
+	/**
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which paths were tried in order to help debugging why a variant was not found.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .listPossiblePaths()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #listPossiblePaths(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<EmailBuilder, Boolean> listPossiblePaths() {
+		return new ConfigurationValueBuilderDelegate<>(this, templateBuilderHelper.listPossiblePaths());
+	}
+
+	/**
+	 * Provide custom resolver that will handle a missing variant.
+	 * 
+	 * @param resolver
+	 *            the custom resolver
+	 * @return this instance for fluent chaining
+	 */
+	public EmailBuilder missingVariant(VariantResolver resolver) {
+		templateBuilderHelper.missingVariant(resolver);
+		return this;
 	}
 
 	@Override

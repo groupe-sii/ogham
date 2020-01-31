@@ -1,7 +1,7 @@
 package fr.sii.ogham.testing.assertion.internal;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
 import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinder.findSender;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 
 import org.hamcrest.Matcher;
@@ -13,7 +13,7 @@ import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.SendGridV2Sender;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Helper to make assertions on SendGrid instance created by Ogham.

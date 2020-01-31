@@ -9,7 +9,7 @@ import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.ShortMessagePreparator;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.TlvMessagePayloadMessagePreparator;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Make assertions on "User Data" to ensure that it is transported using the

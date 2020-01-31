@@ -1,7 +1,7 @@
 package oghamspringbootv2autoconfigure.it;
 
-import static fr.sii.ogham.testing.assertion.OghamAssertions.isSimilarHtml;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.resourceAsString;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -35,9 +35,9 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 import mock.context.SimpleBean;
 import oghamspringbootv2autoconfigure.it.SpringWebBeanResolutionTest.TestApplication;
 

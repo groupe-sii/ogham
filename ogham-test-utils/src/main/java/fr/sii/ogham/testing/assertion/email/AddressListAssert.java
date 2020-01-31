@@ -1,7 +1,7 @@
 package fr.sii.ogham.testing.assertion.email;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamAssertions.usingContext;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 public class AddressListAssert<P> extends HasParent<P> {
 	/**

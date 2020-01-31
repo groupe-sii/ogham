@@ -25,6 +25,7 @@ import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.template.common.adapter.FailIfNotFoundVariantResolver;
 import fr.sii.ogham.template.common.adapter.FailIfNotFoundWithTestedPathsVariantResolver;
 import fr.sii.ogham.template.common.adapter.FirstExistingResourceVariantResolver;
+import fr.sii.ogham.template.common.adapter.NullVariantResolver;
 import fr.sii.ogham.template.common.adapter.VariantResolver;
 
 /**
@@ -52,6 +53,7 @@ public class TemplateBuilderHelper<P> {
 	private final List<Builder<? extends TemplateParser>> templateBuilders;
 	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<TemplateBuilderHelper<P>, Boolean> missingVariantFailValueBuilder;
+	private final ConfigurationValueBuilderHelper<TemplateBuilderHelper<P>, Boolean> listPossiblePathsValueBuilder;
 	private VariantResolver missingResolver;
 
 	/**
@@ -72,6 +74,7 @@ public class TemplateBuilderHelper<P> {
 		this.environmentBuilder = environmentBuilder;
 		templateBuilders = new ArrayList<>();
 		missingVariantFailValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		listPossiblePathsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
 	}
 
 	/**
@@ -174,6 +177,84 @@ public class TemplateBuilderHelper<P> {
 	 */
 	public ConfigurationValueBuilder<TemplateBuilderHelper<P>, Boolean> failIfMissingVariant() {
 		return missingVariantFailValueBuilder;
+	}
+	
+	
+	/**
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which paths were tried in order to help debugging why a variant was not found.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #listPossiblePaths()}.
+	 * 
+	 * <pre>
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * In both cases, {@code listPossiblePaths(true)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable/disable tracking of possible paths for template variants
+	 * @return this instance for fluent chaining
+	 */
+	public TemplateBuilderHelper<P> listPossiblePaths(Boolean enable) {
+		listPossiblePathsValueBuilder.setValue(enable);
+		return this;
+	}
+
+	/**
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which paths were tried in order to help debugging why a variant was not found.
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .listPossiblePaths()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #listPossiblePaths(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * <pre>
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(false)
+	 * </pre>
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder<TemplateBuilderHelper<P>, Boolean> listPossiblePaths() {
+		return listPossiblePathsValueBuilder;
 	}
 
 	/**
@@ -298,15 +379,23 @@ public class TemplateBuilderHelper<P> {
 		}
 		PropertyResolver propertyResolver = environmentBuilder.build();
 		if (missingVariantFailValueBuilder.getValue(propertyResolver, false)) {
+			return buildFailingVariantResolver(propertyResolver);
+		}
+		return new NullVariantResolver();
+	}
+
+	@SuppressWarnings("squid:S5411")
+	private VariantResolver buildFailingVariantResolver(PropertyResolver propertyResolver) {
+		if (!listPossiblePathsValueBuilder.getValue(propertyResolver, false)) {
 			return new FailIfNotFoundVariantResolver();
 		}
-		FailIfNotFoundWithTestedPathsVariantResolver fail = new FailIfNotFoundWithTestedPathsVariantResolver();
+		FailIfNotFoundWithTestedPathsVariantResolver failResolver = new FailIfNotFoundWithTestedPathsVariantResolver();
 		for (Builder<? extends TemplateParser> builder : templateBuilders) {
 			if (builder instanceof VariantBuilder) {
-				fail.addVariantResolver(((VariantBuilder<?>) builder).buildVariant());
+				failResolver.addVariantResolver(((VariantBuilder<?>) builder).buildVariant());
 			}
 		}
-		return fail;
+		return failResolver;
 	}
 
 	private List<TemplateImplementation> buildTemplateParserImpls() {

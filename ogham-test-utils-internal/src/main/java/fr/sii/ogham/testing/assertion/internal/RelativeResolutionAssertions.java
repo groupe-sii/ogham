@@ -9,7 +9,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hamcrest.Matcher;
 
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 
 /**
  * Make assertions on resource resolution.

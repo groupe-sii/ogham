@@ -42,12 +42,12 @@ import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
 import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.ogham.testing.assertion.sms.AssertSms;
+import fr.sii.ogham.testing.assertion.sms.ExpectedAddressedPhoneNumber;
+import fr.sii.ogham.testing.assertion.sms.ExpectedSms;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.AssertSms;
-import fr.sii.ogham.testing.helper.sms.ExpectedAddressedPhoneNumber;
-import fr.sii.ogham.testing.helper.sms.ExpectedSms;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 
 public class KeepSessionTest {
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";

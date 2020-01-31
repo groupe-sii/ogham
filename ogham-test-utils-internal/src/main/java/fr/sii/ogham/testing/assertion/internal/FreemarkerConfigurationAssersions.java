@@ -1,12 +1,12 @@
 package fr.sii.ogham.testing.assertion.internal;
 
-import static fr.sii.ogham.testing.assertion.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 
 import java.util.Set;
 
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.HasParent;
+import fr.sii.ogham.testing.util.HasParent;
 import freemarker.template.Configuration;
 
 /**

@@ -1,6 +1,7 @@
 package fr.sii.ogham.testing.assertion.sms;
 
-import java.util.regex.Pattern;
+import static java.util.regex.Matcher.quoteReplacement;
+import static java.util.regex.Pattern.quote;
 
 import fr.sii.ogham.testing.assertion.context.Context;
 
@@ -32,7 +33,7 @@ public class PhoneNumberWithContext implements Context {
 
 	@Override
 	public String evaluate(String template) {
-		String result = template.replaceAll(Pattern.quote("${numberName}"), name);
+		String result = template.replaceAll(quote("${numberName}"), quoteReplacement(name));
 		return parent.evaluate(result);
 	}
 

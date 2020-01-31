@@ -19,11 +19,11 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.helper.sms.rule.JsmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.SmppServerRule;
-import fr.sii.ogham.testing.helper.sms.rule.config.annotation.Slow;
-import fr.sii.ogham.testing.helper.sms.rule.config.annotation.SmppServerConfig;
+import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.config.Slow;
+import fr.sii.ogham.testing.extension.junit.sms.config.SmppServerConfig;
 
 public class SendTimeoutTest {
 	ExpectedException thrown = ExpectedException.none();
