@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
 import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
@@ -27,6 +28,7 @@ import fr.sii.ogham.testing.util.HasParent;
  */
 public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	private final List<PduRequestWithContext<S>> actual;
+	private final AssertionRegistry registry;
 
 	/**
 	 * 
@@ -34,10 +36,13 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the received messages
 	 * @param parent
 	 *            the parent
+	 * @param registry
+	 *            used to register assertions
 	 */
-	public PduRequestAssert(List<PduRequestWithContext<S>> actual, P parent) {
+	public PduRequestAssert(List<PduRequestWithContext<S>> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -67,7 +72,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 		String message = "encoding of ${name} of message ${messageIndex}";
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
-			assertThat(org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value(), usingContext(message, rawContentWithContext, matcher));
+			registry.register(() -> assertThat(org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value(), usingContext(message, rawContentWithContext, matcher)));
 		}
 		return this;
 	}
@@ -105,7 +110,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 		String message = "alphabet of ${name} of message ${messageIndex}";
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
-			assertThat(Alphabet.from(org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value()), usingContext(message, rawContentWithContext, matcher));
+			registry.register(() -> assertThat(Alphabet.from(org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value()), usingContext(message, rawContentWithContext, matcher)));
 		}
 		return this;
 	}
@@ -147,7 +152,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 		String message = "shortMessage of ${name} of message ${messageIndex}";
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
-			assertThat(toObject(msg.getShortMessage()), usingContext(message, rawContentWithContext, matcher));
+			registry.register(() -> assertThat(toObject(msg.getShortMessage()), usingContext(message, rawContentWithContext, matcher)));
 		}
 		return this;
 	}
@@ -191,7 +196,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 			S msg = rawContentWithContext.getRequest();
 			shortMessages.add(new ShortMessageWithContext<>(msg, rawContentWithContext));
 		}
-		return new ShortMessageMessageAssert<>(shortMessages, this);
+		return new ShortMessageMessageAssert<>(shortMessages, this, registry);
 	}
 
 	/**
@@ -229,7 +234,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 			OptionalParameter parameter = getOptionalParameter(rawContentWithContext.getRequest(), withTag);
 			parameters.add(new OptionalParameterWithContext(withTag, parameter, rawContentWithContext));
 		}
-		return new OptionalParameterAssert<>(this, parameters);
+		return new OptionalParameterAssert<>(this, parameters, registry);
 	}
 
 	private OptionalParameter getOptionalParameter(S msg, Tag tag) {

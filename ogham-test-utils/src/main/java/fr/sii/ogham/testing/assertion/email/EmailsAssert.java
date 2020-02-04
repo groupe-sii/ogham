@@ -1,6 +1,8 @@
 package fr.sii.ogham.testing.assertion.email;
 
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.overrideDescription;
+import static org.hamcrest.Matchers.lessThan;
 
 import java.util.List;
 
@@ -8,6 +10,7 @@ import javax.mail.Message;
 
 import org.hamcrest.Matcher;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.util.HasParent;
 
 public class EmailsAssert<P> extends HasParent<P> {
@@ -15,10 +18,16 @@ public class EmailsAssert<P> extends HasParent<P> {
 	 * The list of messages that will be used for assertions
 	 */
 	private final List<? extends Message> actual;
+	/**
+	 * Registry to register assertions
+	 */
+	private final AssertionRegistry registry;
 
-	public EmailsAssert(List<? extends Message> actual, P parent) {
+
+	public EmailsAssert(List<? extends Message> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -33,7 +42,7 @@ public class EmailsAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public EmailsAssert<P> count(Matcher<Integer> matcher) {
-		assertThat("Received messages count", actual.size(), matcher);
+		registry.register(() -> assertThat("Received messages count", actual.size(), matcher));
 		return this;
 	}
 
@@ -59,10 +68,8 @@ public class EmailsAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public EmailAssert<EmailsAssert<P>> message(int index) {
-		if (index >= actual.size()) {
-			throw new AssertionError("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received");
-		}
-		return new EmailAssert<>(actual.get(index), index, this);
+		registry.register(() -> assertThat(index, overrideDescription("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received", lessThan(actual.size()))));
+		return new EmailAssert<>(index<actual.size() ? actual.get(index) : null, index, this, registry);
 	}
 
 	/**
@@ -91,7 +98,7 @@ public class EmailsAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public EmailAssert<EmailsAssert<P>> every() {
-		return new EmailAssert<>(actual, this);
+		return new EmailAssert<>(actual, this, registry);
 	}
 
 	/**
@@ -122,6 +129,6 @@ public class EmailsAssert<P> extends HasParent<P> {
 	 */
 	@Deprecated
 	public EmailAssert<EmailsAssert<P>> forEach() {
-		return new EmailAssert<>(actual, this);
+		return new EmailAssert<>(actual, this, registry);
 	}
 }

@@ -6,6 +6,7 @@ import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
 import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
 import fr.sii.ogham.testing.sms.simulator.jsmpp.JSMPPServer;
+import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter;
 
 /**
  * JUnit rule that start a SMPP server based on JSMPP implementation.
@@ -58,6 +59,11 @@ public class JsmppServerRule extends SmppServerRule<SubmitSm> {
 	@Override
 	protected SmppServerSimulator<SubmitSm> initServer(SimulatorConfiguration config) {
 		return new JSMPPServer(getPort(), config);
+	}
+
+	@Override
+	protected fr.sii.ogham.testing.sms.simulator.bean.SubmitSm convert(SubmitSm raw) {
+		return new SubmitSmAdapter(raw);
 	}
 
 }

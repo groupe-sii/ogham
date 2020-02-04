@@ -10,6 +10,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.hamcrest.Matcher;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.util.HasParent;
 
 public class AddressListAssert<P> extends HasParent<P> {
@@ -17,10 +18,15 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 * The list of addresses that will be used for assertions
 	 */
 	private List<AddressesWithContext> actual;
+	/**
+	 * Registry to register assertions
+	 */
+	private final AssertionRegistry registry;
 
-	public AddressListAssert(List<AddressesWithContext> actual, P parent) {
+	public AddressListAssert(List<AddressesWithContext> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -61,7 +67,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 			for (InternetAddress address : addresses.getAddresses()) {
 				addressesStr.add(address.getAddress());
 			}
-			assertThat(addressesStr, usingContext(desc, addresses, matcher));
+			registry.register(() -> assertThat(addressesStr, usingContext(desc, addresses, matcher)));
 		}
 		return this;
 	}
@@ -106,7 +112,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 			for (InternetAddress address : addresses.getAddresses()) {
 				addressesStr.add(address.toString());
 			}
-			assertThat(addressesStr, usingContext(desc, addresses, matcher));
+			registry.register(() -> assertThat(addressesStr, usingContext(desc, addresses, matcher)));
 		}
 		return this;
 	}
@@ -141,7 +147,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 			for (InternetAddress address : addresses.getAddresses()) {
 				addressesStr.add(address.getType());
 			}
-			assertThat(addressesStr, usingContext(desc, addresses, matcher));
+			registry.register(() -> assertThat(addressesStr, usingContext(desc, addresses, matcher)));
 		}
 		return this;
 	}
@@ -184,7 +190,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 			for (InternetAddress address : addresses.getAddresses()) {
 				addressesStr.add(address.getPersonal());
 			}
-			assertThat(addressesStr, usingContext(desc, addresses, matcher));
+			registry.register(() -> assertThat(addressesStr, usingContext(desc, addresses, matcher)));
 		}
 		return this;
 	}

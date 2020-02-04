@@ -1,6 +1,8 @@
 package fr.sii.ogham.testing.assertion.email;
 
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.overrideDescription;
+import static org.hamcrest.Matchers.lessThan;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,14 +11,21 @@ import javax.mail.Message;
 
 import org.hamcrest.Matcher;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+
 public class ReceivedEmailsAssert {
 	/**
 	 * List of received messages
 	 */
 	private final List<? extends Message> actual;
+	/**
+	 * Registry to register assertions
+	 */
+	private final AssertionRegistry registry;
 
-	public ReceivedEmailsAssert(List<? extends Message> actual) {
+	public ReceivedEmailsAssert(List<? extends Message> actual, AssertionRegistry registry) {
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -37,10 +46,8 @@ public class ReceivedEmailsAssert {
 	 * @return the fluent API for assertions on the particular message
 	 */
 	public EmailAssert<ReceivedEmailsAssert> receivedMessage(int index) {
-		if (index >= actual.size()) {
-			throw new AssertionError("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received");
-		}
-		return new EmailAssert<>(actual.get(index), index, this);
+		registry.register(() -> assertThat(index, overrideDescription("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received", lessThan(actual.size()))));
+		return new EmailAssert<>(index<actual.size() ? actual.get(index) : null, index, this, registry);
 	}
 
 	/**
@@ -83,7 +90,7 @@ public class ReceivedEmailsAssert {
 	 * @return the fluent API for assertions on messages
 	 */
 	public EmailsAssert<ReceivedEmailsAssert> receivedMessages() {
-		return new EmailsAssert<>(actual, this);
+		return new EmailsAssert<>(actual, this, registry);
 	}
 
 	/**
@@ -102,7 +109,7 @@ public class ReceivedEmailsAssert {
 	 * @return the fluent API for assertions on messages
 	 */
 	public EmailsAssert<ReceivedEmailsAssert> receivedMessages(Matcher<Collection<? extends Message>> matcher) {
-		assertThat("Received messages", actual, matcher);
+		registry.register(() -> assertThat("Received messages", actual, matcher));
 		return receivedMessages();
 	}
 

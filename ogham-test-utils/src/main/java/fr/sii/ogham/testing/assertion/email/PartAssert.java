@@ -6,7 +6,6 @@ import static fr.sii.ogham.testing.assertion.util.EmailUtils.getContent;
 import static java.util.Arrays.asList;
 import static java.util.Collections.list;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -19,6 +18,7 @@ import javax.mail.Part;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matcher;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.util.HasParent;
 
 public class PartAssert<P> extends HasParent<P> {
@@ -26,14 +26,19 @@ public class PartAssert<P> extends HasParent<P> {
 	 * The list of messages that will be used for assertions
 	 */
 	private final List<PartWithContext> actual;
+	/**
+	 * Registry to register assertions
+	 */
+	private final AssertionRegistry registry;
 
-	public PartAssert(PartWithContext actual, P parent) {
-		this(Arrays.asList(actual), parent);
+	public PartAssert(PartWithContext actual, P parent, AssertionRegistry registry) {
+		this(Arrays.asList(actual), parent, registry);
 	}
 
-	public PartAssert(List<PartWithContext> actual, P parent) {
+	public PartAssert(List<PartWithContext> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -96,10 +101,10 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = charset.name() + " content of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : IOUtils.toString(getContent(part), charset.name()), usingContext(message, partWithContext, matcher));
+				registry.register(() -> assertThat(part == null ? null : IOUtils.toString(getContent(part), charset.name()), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
-		} catch (IOException | MessagingException e) {
+		} catch (Exception e) {
 			throw new AssertionError("Failed to get string content for part", e);
 		}
 	}
@@ -133,10 +138,10 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = "raw content of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : getContent(part), usingContext(message, partWithContext, matcher));
+				registry.register(() -> assertThat(part == null ? null : getContent(part), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
-		} catch (IOException | MessagingException e) {
+		} catch (Exception e) {
 			throw new AssertionError("Failed to get content for part", e);
 		}
 	}
@@ -170,7 +175,7 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = "content-type of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : part.getContentType(), usingContext(message, partWithContext, matcher));
+				registry.register(() -> assertThat(part == null ? null : part.getContentType(), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
 		} catch (MessagingException e) {
@@ -207,7 +212,7 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = "description of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : part.getDescription(), usingContext(message, partWithContext, matcher));
+				registry.register(() -> assertThat(part == null ? null : part.getDescription(), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
 		} catch (MessagingException e) {
@@ -244,7 +249,7 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = "disposition of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : part.getDisposition(), usingContext(message, partWithContext, matcher));
+				registry.register(() -> assertThat(part == null ? null : part.getDisposition(), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
 		} catch (MessagingException e) {
@@ -281,7 +286,7 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = "filename of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : part.getFileName(), usingContext(message, partWithContext, matcher));
+				registry.register(() -> assertThat(part == null ? null : part.getFileName(), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
 		} catch (MessagingException e) {
@@ -318,7 +323,7 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = "headers of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(part == null ? null : list(part.getAllHeaders()), usingContext(message, partWithContext, matcher));
+				registry.register(() -> assertThat(part == null ? null : list(part.getAllHeaders()), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
 		} catch (MessagingException e) {
@@ -357,7 +362,7 @@ public class PartAssert<P> extends HasParent<P> {
 			String message = "header " + headerName + " of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				assertThat(getHeaderValues(part, headerName), usingContext(message, partWithContext, matcher));
+				registry.register(() -> assertThat(getHeaderValues(part, headerName), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
 		} catch (MessagingException e) {

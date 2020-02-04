@@ -162,6 +162,9 @@ public final class EmailUtils {
 	 *             when message can't be read
 	 */
 	public static List<BodyPart> getAttachments(Multipart multipart, Predicate<Part> filter) throws MessagingException {
+		if (multipart == null) {
+			throw new IllegalStateException("The multipart can't be null");
+		}
 		List<BodyPart> found = new ArrayList<>();
 		for (int i = 0; i < multipart.getCount(); i++) {
 			BodyPart bodyPart = multipart.getBodyPart(i);

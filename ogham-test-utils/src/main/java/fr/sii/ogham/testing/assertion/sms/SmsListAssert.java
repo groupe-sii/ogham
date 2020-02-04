@@ -1,10 +1,14 @@
 package fr.sii.ogham.testing.assertion.sms;
 
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.overrideDescription;
+import static org.hamcrest.Matchers.lessThan;
+
 import java.util.List;
 
 import org.hamcrest.Matcher;
 
-import fr.sii.ogham.testing.assertion.util.AssertionHelper;
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.util.HasParent;
 
@@ -23,16 +27,20 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * The list of messages that will be used for assertions
 	 */
 	private final List<S> actual;
+	private final AssertionRegistry registry;
 
 	/**
 	 * @param actual
 	 *            the received messages
 	 * @param parent
 	 *            the parent
+	 * @param registry
+	 *            used to register assertions
 	 */
-	public SmsListAssert(List<S> actual, P parent) {
+	public SmsListAssert(List<S> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -47,7 +55,7 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public SmsListAssert<P, S> count(Matcher<Integer> matcher) {
-		AssertionHelper.assertThat(actual.size(), matcher);
+		registry.register(() -> assertThat(actual.size(), matcher));
 		return this;
 	}
 
@@ -73,7 +81,8 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public SmsAssert<SmsListAssert<P, S>, S> message(int index) {
-		return new SmsAssert<>(actual.get(index), index, this);
+		registry.register(() -> assertThat(index, overrideDescription("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received", lessThan(actual.size()))));
+		return new SmsAssert<>(index<actual.size() ? actual.get(index) : null, index, this, registry);
 	}
 
 	/**
@@ -104,7 +113,7 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received messages
 	 */
 	public SmsAssert<SmsListAssert<P, S>, S> every() {
-		return new SmsAssert<>(actual, this);
+		return new SmsAssert<>(actual, this, registry);
 	}
 
 	/**
@@ -137,7 +146,7 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 */
 	@Deprecated
 	public SmsAssert<SmsListAssert<P, S>, S> forEach() {
-		return new SmsAssert<>(actual, this);
+		return new SmsAssert<>(actual, this, registry);
 	}
 
 }

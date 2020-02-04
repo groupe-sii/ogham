@@ -3,6 +3,9 @@ package fr.sii.ogham.testing.assertion.sms;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+
 public class ExpectedAddressedPhoneNumber {
 	private final String number;
 	
@@ -12,6 +15,20 @@ public class ExpectedAddressedPhoneNumber {
 	/** <li>The numbering plan identification (NPI). */
 	private final byte npi;
 
+	/**
+	 * Initializes the phone number with the given number, TON and NPI.
+	 * 
+	 * @param number
+	 *            Phone number in text format
+	 * @param ton
+	 *            Type of number
+	 * @param npi
+	 *            Numbering plan identification
+	 */
+	public ExpectedAddressedPhoneNumber(String number, TypeOfNumber ton, NumberingPlanIndicator npi) {
+		this(number, ton.value(), npi.value());
+	}
+	
 	/**
 	 * Initializes the phone number with the given number, TON and NPI.
 	 * 

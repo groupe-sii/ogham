@@ -57,7 +57,7 @@ public final class ResourceUtils {
 	public static byte[] resource(String path) throws IOException {
 		InputStream resource = ResourceUtils.class.getClassLoader().getResourceAsStream(path.startsWith("/") ? path.substring(1) : path);
 		if (resource == null) {
-			throw new FileNotFoundException("No resource found for path " + path);
+			throw new FileNotFoundException("No resource found for path '" + path + "'");
 		}
 		return IOUtils.toByteArray(resource);
 	}

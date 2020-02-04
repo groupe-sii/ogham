@@ -1,13 +1,9 @@
 package oghamtesting.it.assertion
 
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat
-import static javax.mail.Message.RecipientType.BCC
 import static javax.mail.Message.RecipientType.CC
 import static javax.mail.Message.RecipientType.TO
-import static org.hamcrest.CoreMatchers.containsString
-import static org.hamcrest.CoreMatchers.notNullValue
-import static org.hamcrest.CoreMatchers.nullValue
-import static org.hamcrest.CoreMatchers.startsWith
 import static org.hamcrest.Matchers.allOf
 import static org.hamcrest.Matchers.arrayWithSize
 import static org.hamcrest.Matchers.contains
@@ -15,29 +11,36 @@ import static org.hamcrest.Matchers.containsString
 import static org.hamcrest.Matchers.everyItem
 import static org.hamcrest.Matchers.hasItems
 import static org.hamcrest.Matchers.hasSize
-import static org.hamcrest.Matchers.instanceOf
 import static org.hamcrest.Matchers.is
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.Matchers.nullValue
 import static org.hamcrest.Matchers.startsWith
 
-import javax.mail.Address
+import java.util.function.Consumer
+
 import javax.mail.BodyPart
-import javax.mail.Message.RecipientType
 import javax.mail.Multipart
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 import com.icegreen.greenmail.junit.GreenMailRule
 
+import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
 import fr.sii.ogham.testing.extension.common.LogTestInformation
-import spock.lang.IgnoreRest
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @LogTestInformation
 @Unroll
-class EmailAssertionsSpec extends Specification {
+class FluentEmailAssertionsSpec extends Specification {
+	def setupSpec() {
+		System.setProperty("ogham.testing.assertions.fail-at-end.throw-comparison-failure", "false");
+	}
+	
+	def cleanupSpec() {
+		System.clearProperty("ogham.testing.assertions.fail-at-end.throw-comparison-failure");
+	}
+	
 	def "message(0).subject(#matcher1) & message(1).subject(#matcher2) with #subject1 & #subject2 #desc"() {
 		given:
 			GreenMailRule greenMail = Mock()
@@ -48,15 +51,15 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessage(0).subject(matcher1) },
-				{ assertThat(greenMail).receivedMessage(1).subject(matcher2) },
-				{ assertThat(greenMail).receivedMessages().message(0).subject(matcher1) },
-				{ assertThat(greenMail).receivedMessages().message(1).subject(matcher2) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessage(0).subject(matcher1).and().receivedMessage(1).subject(matcher2) },
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().message(0).subject(matcher1).and().message(1).subject(matcher2) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc					| subject1		| subject2			| matcher1			| matcher2			|| expected
@@ -87,12 +90,14 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessages().every().subject(matcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().every().subject(matcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc					| subject1		| subject2		| matcher		|| expected
@@ -105,8 +110,7 @@ class EmailAssertionsSpec extends Specification {
 					]
 			"should be detected"	| "bar"			| "baz"			| is("foo")		||  [
 					 [klass: AssertionError, message: 'subject of message 0 Expected: is "foo" but: was "bar"'],
-					 // TODO: raise all errors 
-					 //[klass: AssertionError, message: 'subject of message 1 Expected: is "foo" but: was "baz"'],
+					 [klass: AssertionError, message: 'subject of message 1 Expected: is "foo" but: was "baz"'],
 					]
 	}
 	
@@ -131,19 +135,29 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessages().message(0).from().address(addressMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).from().personal(personalMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).from().textual(textualMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).from().type(typeMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).from().address(addressMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).from().personal(personalMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).from().textual(textualMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).from().type(typeMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessages()
+							.message(0)
+								.from()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher)
+									.and()
+								.and()
+							.message(1)
+								.from()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc					| addressMatcher					| personalMatcher					| textualMatcher														| typeMatcher					|| expected
@@ -182,19 +196,29 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessages().message(0).to().address(addressMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).to().personal(personalMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).to().textual(textualMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).to().type(typeMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).to().address(addressMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).to().personal(personalMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).to().textual(textualMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).to().type(typeMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessages()
+							.message(0)
+								.to()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher)
+									.and()
+								.and()
+							.message(1)
+								.to()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc					| addressMatcher					| personalMatcher					| textualMatcher														| typeMatcher					|| expected
@@ -232,19 +256,29 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessages().message(0).cc().address(addressMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).cc().personal(personalMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).cc().textual(textualMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).cc().type(typeMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).cc().address(addressMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).cc().personal(personalMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).cc().textual(textualMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).cc().type(typeMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessages()
+							.message(0)
+								.cc()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher)
+									.and()
+								.and()
+							.message(1)
+								.cc()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc					| addressMatcher					| personalMatcher					| textualMatcher														| typeMatcher					|| expected
@@ -286,19 +320,35 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessage(0).body(bodyMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).body().content(contentMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).body().contentAsString(contentAsStringMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).body().contentType(contentTypeMatcher) },
-				{ assertThat(greenMail).receivedMessage(1).body(bodyMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).body().content(contentMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).body().contentAsString(contentAsStringMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).body().contentType(contentTypeMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessage(0)
+							.body(bodyMatcher)
+							.and()
+						.receivedMessages()
+							.message(0)
+								.body()
+									.content(contentMatcher)
+									.contentAsString(contentAsStringMatcher)
+									.contentType(contentTypeMatcher)
+									.and()
+								.and()
+							.and()
+						.receivedMessage(1)
+							.body(bodyMatcher)
+							.and()
+						.receivedMessages()
+							.message(1)
+								.body()
+									.content(contentMatcher)
+									.contentAsString(contentAsStringMatcher)
+									.contentType(contentTypeMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc					| bodyMatcher		| contentMatcher	| contentAsStringMatcher	| contentTypeMatcher		|| expected
@@ -347,19 +397,35 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessage(0).alternative(bodyMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).alternative().content(contentMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).alternative().contentAsString(contentAsStringMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).alternative().contentType(contentTypeMatcher) },
-				{ assertThat(greenMail).receivedMessage(1).alternative(bodyMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).alternative().content(contentMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).alternative().contentAsString(contentAsStringMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).alternative().contentType(contentTypeMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessage(0)
+							.alternative(bodyMatcher)
+							.and()
+						.receivedMessages()
+							.message(0)
+								.alternative()
+									.content(contentMatcher)
+									.contentAsString(contentAsStringMatcher)
+									.contentType(contentTypeMatcher)
+									.and()
+								.and()
+							.and()
+						.receivedMessage(1)
+							.alternative(bodyMatcher)
+							.and()
+						.receivedMessages()
+							.message(1)
+								.alternative()
+									.content(contentMatcher)
+									.contentAsString(contentAsStringMatcher)
+									.contentType(contentTypeMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc					| bodyMatcher		| contentMatcher	| contentAsStringMatcher	| contentTypeMatcher		|| expected
@@ -391,15 +457,23 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessage(0).alternative(bodyMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).alternative().content(contentMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).alternative().contentAsString(contentAsStringMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).alternative().contentType(contentTypeMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessage(0)
+							.alternative(bodyMatcher)
+							.and()
+						.receivedMessages()
+							.message(0)
+								.alternative()
+									.content(contentMatcher)
+									.contentAsString(contentAsStringMatcher)
+									.contentType(contentTypeMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc					| bodyMatcher		| contentMatcher	| contentAsStringMatcher	| contentTypeMatcher		|| expected
@@ -457,25 +531,31 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessage(0).attachment(attachmentIndex).filename(nameMatcher) },
-				{ assertThat(greenMail).receivedMessage(0).attachment(attachmentIndex).description(descriptionMatcher) },
-				{ assertThat(greenMail).receivedMessage(0).attachment(attachmentIndex).disposition(dispositionMatcher) },
-				{ assertThat(greenMail).receivedMessage(0).attachment(attachmentIndex).header("Content-ID", headerMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).attachment(attachmentName).description(descriptionMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).attachment(attachmentName).disposition(dispositionMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).attachment(attachmentName).header("Content-ID", headerMatcher) },
-				{ assertThat(greenMail).receivedMessage(1).attachment(attachmentIndex).filename(nameMatcher) },
-				{ assertThat(greenMail).receivedMessage(1).attachment(attachmentIndex).description(descriptionMatcher) },
-				{ assertThat(greenMail).receivedMessage(1).attachment(attachmentIndex).disposition(dispositionMatcher) },
-				{ assertThat(greenMail).receivedMessage(1).attachment(attachmentIndex).header("Content-ID", headerMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).attachment(attachmentName).description(descriptionMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).attachment(attachmentName).disposition(dispositionMatcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).attachment(attachmentName).header("Content-ID", headerMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessage(0).attachment(attachmentIndex)
+							.filename(nameMatcher)
+							.description(descriptionMatcher)
+							.disposition(dispositionMatcher)
+							.header("Content-ID", headerMatcher) },
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().message(0).attachment(attachmentName)
+							.description(descriptionMatcher)
+							.disposition(dispositionMatcher)
+							.header("Content-ID", headerMatcher) },
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessage(1).attachment(attachmentIndex)
+							.filename(nameMatcher)
+							.description(descriptionMatcher)
+							.disposition(dispositionMatcher)
+							.header("Content-ID", headerMatcher) },
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().message(1).attachment(attachmentName)
+							.description(descriptionMatcher)
+							.disposition(dispositionMatcher)
+							.header("Content-ID", headerMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc											| attachmentIndex	| attachmentName	| nameMatcher				| descriptionMatcher	| dispositionMatcher	| headerMatcher					|| expected
@@ -537,15 +617,15 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessage(0).attachments(matcher) },
-				{ assertThat(greenMail).receivedMessage(1).attachments(matcher) },
-				{ assertThat(greenMail).receivedMessages().message(0).attachments(matcher) },
-				{ assertThat(greenMail).receivedMessages().message(1).attachments(matcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessage(0).attachments(matcher).and().receivedMessage(1).attachments(matcher) },
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().message(0).attachments(matcher).and().and().receivedMessages().message(1).attachments(matcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 		
 		where:
 			desc															| attachments				| matcher					|| expected
@@ -565,20 +645,21 @@ class EmailAssertionsSpec extends Specification {
 						]
 	}
 
-
 	def "assertions on message #index but only #messages.size() messages received"() {
 		given:
 			GreenMailRule greenMail = Mock()
 			greenMail.getReceivedMessages() >> (messages as MimeMessage[])
 		
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessage(index) },
-				{ assertThat(greenMail).receivedMessages().message(index) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessage(index) },
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().message(index) },
+				)
+			}
 
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			messages				| index			|| expected
@@ -606,13 +687,15 @@ class EmailAssertionsSpec extends Specification {
 			greenMail.getReceivedMessages() >> (messages as MimeMessage[])
 		
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(greenMail).receivedMessages(matcher) },
-				{ assertThat(greenMail).receivedMessages().count(countMatcher) },
-			)
-
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages(matcher) },
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().count(countMatcher) },
+				)
+			}
+			
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			desc 					| messages	| matcher		| countMatcher		|| expected
@@ -638,14 +721,19 @@ class EmailAssertionsSpec extends Specification {
 	}
 
 
-	private List collectAssertions(Closure<?>... closures) {
+	private List collectFailures(Closure cl) {
+		try {
+			cl()
+			return []
+		} catch(MultipleAssertionError e) {
+			return failures(e)
+		}
+	}
+	
+	private List failures(MultipleAssertionError e) {
 		def assertions = []
-		for (Closure closure : closures) {
-			try {
-				closure()
-			} catch(Throwable e) {
-				assertions += [klass: e.getClass(), message: e.getMessage().replaceAll("\\s+", " ")];
-			}
+		for (Throwable t : e.getFailures()) {
+			assertions += [klass: t.getClass(), message: t.getMessage().replaceAll("\\s+", " ")];
 		}
 		return assertions
 	}

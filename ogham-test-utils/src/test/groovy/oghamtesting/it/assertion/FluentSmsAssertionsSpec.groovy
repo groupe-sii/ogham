@@ -2,6 +2,7 @@ package oghamtesting.it.assertion
 
 import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM7
 import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat
 import static fr.sii.ogham.testing.sms.simulator.bean.Alphabet.ALPHA_8_BIT
 import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.DATA
@@ -24,12 +25,15 @@ import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.Matchers.nullValue
 import static org.hamcrest.Matchers.startsWith
 
+import java.util.function.Consumer
+
 import org.jsmpp.bean.OptionalParameter
 import org.jsmpp.bean.OptionalParameter.Number_of_messages
 import org.jsmpp.bean.OptionalParameter.Tag
 
 import com.cloudhopper.commons.charset.CharsetUtil
 
+import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import fr.sii.ogham.testing.extension.junit.SmppServerRule
 import fr.sii.ogham.testing.sms.simulator.bean.Address
@@ -38,18 +42,27 @@ import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm
 import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber
 import fr.sii.ogham.testing.sms.simulator.decode.CloudhopperCharsetAdapter
+import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @LogTestInformation
 @Unroll
-class SmsAssertionsSpec extends Specification {
+class FluentSmsAssertionsSpec extends Specification {
+	def setupSpec() {
+		System.setProperty("ogham.testing.assertions.fail-at-end.throw-comparison-failure", "false");
+	}
+	
+	def cleanupSpec() {
+		System.clearProperty("ogham.testing.assertions.fail-at-end.throw-comparison-failure");
+	}
+
 	def "from(#matcher) & from().number(#numberMatcher) & from().numeringPlanIndicator(#npiMatcher) & from().typeOfNumber(#tonMatcher) #desc"() {
 		given:
 			SmppServerRule smpp = Mock()
 			org.jsmpp.bean.SubmitSm sms1 = Mock()
 			org.jsmpp.bean.SubmitSm sms2 = Mock()
-			smpp.getReceivedMessages() >> [sms1, sms2]
+			smpp.getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			
 			sms1.getSourceAddr() >> "0102030405"
 			sms1.getSourceAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
@@ -60,27 +73,45 @@ class SmsAssertionsSpec extends Specification {
 			sms2.getSourceAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 		
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(smpp).receivedMessage(0).from(matcher) },
-				{ assertThat(smpp).receivedMessage(0).from().number(numberMatcher) },
-				{ assertThat(smpp).receivedMessage(0).from().numberingPlanIndicator(npiMatcher) },
-				{ assertThat(smpp).receivedMessage(0).from().typeOfNumber(tonMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).from(matcher) },
-				{ assertThat(smpp).receivedMessages().message(0).from().number(numberMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).from().numberingPlanIndicator(npiMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).from().typeOfNumber(tonMatcher) },
-				{ assertThat(smpp).receivedMessage(1).from(matcher) },
-				{ assertThat(smpp).receivedMessage(1).from().number(numberMatcher) },
-				{ assertThat(smpp).receivedMessage(1).from().numberingPlanIndicator(npiMatcher) },
-				{ assertThat(smpp).receivedMessage(1).from().typeOfNumber(tonMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).from(matcher) },
-				{ assertThat(smpp).receivedMessages().message(1).from().number(numberMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).from().numberingPlanIndicator(npiMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).from().typeOfNumber(tonMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessage(0)
+							.from(matcher)
+							.from()
+								.number(numberMatcher)
+								.numberingPlanIndicator(npiMatcher)
+								.typeOfNumber(tonMatcher)
+								.and()
+							.and()
+						.receivedMessages()
+							.message(0)
+								.from(matcher)
+								.from()
+									.number(numberMatcher)
+									.numberingPlanIndicator(npiMatcher)
+									.typeOfNumber(tonMatcher) },
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessage(1)
+							.from(matcher)
+							.from()
+								.number(numberMatcher)
+								.numberingPlanIndicator(npiMatcher)
+								.typeOfNumber(tonMatcher)
+								.and()
+							.and()
+						.receivedMessages()
+							.message(1)
+								.from(matcher)
+								.from()
+								.number(numberMatcher)
+								.numberingPlanIndicator(npiMatcher)
+								.typeOfNumber(tonMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			desc					| matcher			| numberMatcher			| npiMatcher		| tonMatcher		|| expected
@@ -110,7 +141,7 @@ class SmsAssertionsSpec extends Specification {
 			SmppServerRule smpp = Mock()
 			org.jsmpp.bean.SubmitSm sms1 = Mock()
 			org.jsmpp.bean.SubmitSm sms2 = Mock()
-			smpp.getReceivedMessages() >> [sms1, sms2]
+			smpp.getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			
 			sms1.getDestAddress() >> "0102030405"
 			sms1.getDestAddrNpi() >> org.jsmpp.bean.NumberingPlanIndicator.NATIONAL.value()
@@ -121,27 +152,47 @@ class SmsAssertionsSpec extends Specification {
 			sms2.getDestAddrTon() >> org.jsmpp.bean.TypeOfNumber.INTERNATIONAL.value()
 		
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(smpp).receivedMessage(0).to(matcher) },
-				{ assertThat(smpp).receivedMessage(0).to().number(numberMatcher) },
-				{ assertThat(smpp).receivedMessage(0).to().numberingPlanIndicator(npiMatcher) },
-				{ assertThat(smpp).receivedMessage(0).to().typeOfNumber(tonMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).to(matcher) },
-				{ assertThat(smpp).receivedMessages().message(0).to().number(numberMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).to().numberingPlanIndicator(npiMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).to().typeOfNumber(tonMatcher) },
-				{ assertThat(smpp).receivedMessage(1).to(matcher) },
-				{ assertThat(smpp).receivedMessage(1).to().number(numberMatcher) },
-				{ assertThat(smpp).receivedMessage(1).to().numberingPlanIndicator(npiMatcher) },
-				{ assertThat(smpp).receivedMessage(1).to().typeOfNumber(tonMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).to(matcher) },
-				{ assertThat(smpp).receivedMessages().message(1).to().number(numberMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).to().numberingPlanIndicator(npiMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).to().typeOfNumber(tonMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessage(0)
+							.to(matcher)
+							.to()
+								.number(numberMatcher)
+								.numberingPlanIndicator(npiMatcher)
+								.typeOfNumber(tonMatcher)
+								.and()
+							.and()
+						.receivedMessages()
+							.message(0)
+								.to(matcher)
+								.to()
+									.number(numberMatcher)
+									.numberingPlanIndicator(npiMatcher)
+									.typeOfNumber(tonMatcher)
+									.and()
+								.and()
+							.and()
+						.receivedMessage(1)
+							.to(matcher)
+							.to()
+								.number(numberMatcher)
+								.numberingPlanIndicator(npiMatcher)
+								.typeOfNumber(tonMatcher)
+								.and()
+							.and()
+						.receivedMessages()
+							.message(1)
+								.to(matcher)
+								.to()
+									.number(numberMatcher)
+									.numberingPlanIndicator(npiMatcher)
+									.typeOfNumber(tonMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			desc					| matcher			| numberMatcher			| npiMatcher		| tonMatcher		|| expected
@@ -171,7 +222,7 @@ class SmsAssertionsSpec extends Specification {
 			SmppServerRule smpp = Mock()
 			org.jsmpp.bean.SubmitSm sms1 = Mock()
 			org.jsmpp.bean.SubmitSm sms2 = Mock()
-			smpp.getReceivedMessages() >> [sms1, sms2]
+			smpp.getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			
 			sms1.getShortMessage() >> CHARSET_GSM8.encode("sms1")
 			sms1.getDataCoding() >> ALPHA_8_BIT.value()
@@ -179,15 +230,28 @@ class SmsAssertionsSpec extends Specification {
 			sms2.getDataCoding() >> ALPHA_8_BIT.value()
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(smpp).receivedMessage(0).content(matcher) },
-				{ assertThat(smpp).receivedMessages().message(0).content(matcher) },
-				{ assertThat(smpp).receivedMessage(1).content(matcher) },
-				{ assertThat(smpp).receivedMessages().message(1).content(matcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessage(0)
+							.content(matcher)
+							.and()
+						.receivedMessages()
+							.message(0)
+								.content(matcher)
+								.and()
+							.and()
+						.receivedMessage(1)
+							.content(matcher)
+							.and()
+						.receivedMessages()
+							.message(1)
+								.content(matcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			desc					| matcher				|| expected
@@ -205,21 +269,34 @@ class SmsAssertionsSpec extends Specification {
 			SmppServerRule smpp = Mock()
 			org.jsmpp.bean.SubmitSm sms1 = Mock()
 			org.jsmpp.bean.SubmitSm sms2 = Mock()
-			smpp.getReceivedMessages() >> [sms1, sms2]
+			smpp.getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			
 			sms1.getShortMessage() >> CHARSET_GSM8.encode("sms1")
 			sms2.getShortMessage() >> CHARSET_GSM8.encode("sms2")
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(smpp).receivedMessage(0).content(new CloudhopperCharsetAdapter(charset), matcher) },
-				{ assertThat(smpp).receivedMessages().message(0).content(new CloudhopperCharsetAdapter(charset), matcher) },
-				{ assertThat(smpp).receivedMessage(1).content(new CloudhopperCharsetAdapter(charset), matcher) },
-				{ assertThat(smpp).receivedMessages().message(1).content(new CloudhopperCharsetAdapter(charset), matcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessage(0)
+							.content(new CloudhopperCharsetAdapter(charset), matcher)
+							.and()
+						.receivedMessages()
+							.message(0)
+								.content(new CloudhopperCharsetAdapter(charset), matcher)
+								.and()
+							.and()
+						.receivedMessage(1)
+							.content(new CloudhopperCharsetAdapter(charset), matcher)
+							.and()
+						.receivedMessages()
+							.message(1)
+								.content(new CloudhopperCharsetAdapter(charset), matcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			desc							| charset		| matcher				|| expected
@@ -237,29 +314,49 @@ class SmsAssertionsSpec extends Specification {
 			SmppServerRule smpp = Mock()
 			org.jsmpp.bean.SubmitSm sms1 = Mock()
 			org.jsmpp.bean.SubmitSm sms2 = Mock()
-			smpp.getReceivedMessages() >> [sms1, sms2]
+			smpp.getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			
 			sms1.getShortMessage() >> CHARSET_GSM8.encode("sms1")
 			sms2.getShortMessage() >> CHARSET_GSM8.encode("sms2")
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(smpp).receivedMessage(0).rawRequest().shortMessage(matcher) },
-				{ assertThat(smpp).receivedMessage(0).rawRequest().shortMessage().header(headerMatcher) },
-				{ assertThat(smpp).receivedMessage(0).rawRequest().shortMessage().payload(payloadMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).rawRequest().shortMessage(matcher) },
-				{ assertThat(smpp).receivedMessages().message(0).rawRequest().shortMessage().header(headerMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).rawRequest().shortMessage().payload(payloadMatcher) },
-				{ assertThat(smpp).receivedMessage(1).rawRequest().shortMessage(matcher) },
-				{ assertThat(smpp).receivedMessage(1).rawRequest().shortMessage().header(headerMatcher) },
-				{ assertThat(smpp).receivedMessage(1).rawRequest().shortMessage().payload(payloadMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).rawRequest().shortMessage(matcher) },
-				{ assertThat(smpp).receivedMessages().message(1).rawRequest().shortMessage().header(headerMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).rawRequest().shortMessage().payload(payloadMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessage(0)
+							.rawRequest()
+								.shortMessage(matcher)
+								.shortMessage()
+									.header(headerMatcher)
+									.payload(payloadMatcher) },
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessages()
+							.message(0)
+								.rawRequest()
+									.shortMessage(matcher)
+									.shortMessage()
+										.header(headerMatcher)
+										.payload(payloadMatcher) },
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessage(1)
+							.rawRequest()
+								.shortMessage(matcher)
+								.shortMessage()
+									.header(headerMatcher)
+									.payload(payloadMatcher) },
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessages()
+							.message(1)
+								.rawRequest()
+									.shortMessage(matcher)
+									.shortMessage()
+										.header(headerMatcher)
+										.payload(payloadMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			desc					| matcher				| headerMatcher		| payloadMatcher	|| expected
@@ -286,21 +383,31 @@ class SmsAssertionsSpec extends Specification {
 			SmppServerRule smpp = Mock()
 			org.jsmpp.bean.SubmitSm sms1 = Mock()
 			org.jsmpp.bean.SubmitSm sms2 = Mock()
-			smpp.getReceivedMessages() >> [sms1, sms2]
+			smpp.getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			
 			sms1.getDataCoding() >> ALPHA_8_BIT.value()
 			sms2.getDataCoding() >> ALPHA_8_BIT.value()
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(smpp).receivedMessages().message(0).rawRequest().encoding(encodingMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).rawRequest().alphabet(alphabetMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).rawRequest().encoding(encodingMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).rawRequest().alphabet(alphabetMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessages()
+							.message(0)
+								.rawRequest()
+									.encoding(encodingMatcher)
+									.alphabet(alphabetMatcher) },
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessages()
+							.message(1)
+								.rawRequest()
+									.encoding(encodingMatcher)
+									.alphabet(alphabetMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			desc					| encodingMatcher						| alphabetMatcher			|| expected
@@ -318,23 +425,35 @@ class SmsAssertionsSpec extends Specification {
 			SmppServerRule smpp = Mock()
 			org.jsmpp.bean.SubmitSm sms1 = Mock()
 			org.jsmpp.bean.SubmitSm sms2 = Mock()
-			smpp.getReceivedMessages() >> [sms1, sms2]
+			smpp.getReceivedMessages() >> [new SubmitSmAdapter(sms1), new SubmitSmAdapter(sms2)]
 			
 			sms1.getOptionalParameter(Tag.NUMBER_OF_MESSAGES.code()) >> new Number_of_messages((byte) 2)
 			sms2.getOptionalParameter(Tag.NUMBER_OF_MESSAGES.code()) >> new Number_of_messages((byte) 3)
 			
 		when:
-			def failingAssertions = collectAssertions(
-				{ assertThat(smpp).receivedMessages().message(0).rawRequest().optionalParameter(tag).parameter(paramMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).rawRequest().optionalParameter(tag).value(valueMatcher) },
-				{ assertThat(smpp).receivedMessages().message(0).rawRequest().optionalParameter(tag).length(lengthMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).rawRequest().optionalParameter(tag).parameter(paramMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).rawRequest().optionalParameter(tag).value(valueMatcher) },
-				{ assertThat(smpp).receivedMessages().message(1).rawRequest().optionalParameter(tag).length(lengthMatcher) },
-			)
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessages()
+							.message(0)
+								.rawRequest()
+									.optionalParameter(tag)
+										.parameter(paramMatcher)
+										.value(valueMatcher)
+										.length(lengthMatcher) },
+					(Consumer) { reg -> assertThat(smpp, reg)
+						.receivedMessages()
+							.message(1)
+								.rawRequest()
+									.optionalParameter(tag)
+										.parameter(paramMatcher)
+										.value(valueMatcher)
+										.length(lengthMatcher) },
+				)
+			}
 		
 		then:
-			failingAssertions == expected
+			failures == expected
 			
 		where:
 			desc					| tag					| paramMatcher											| valueMatcher					| lengthMatcher		|| expected
@@ -358,14 +477,20 @@ class SmsAssertionsSpec extends Specification {
 	}
 	
 		
-	private List collectAssertions(Closure<?>... closures) {
+
+	private List collectFailures(Closure cl) {
+		try {
+			cl()
+			return []
+		} catch(MultipleAssertionError e) {
+			return failures(e)
+		}
+	}
+	
+	private List failures(MultipleAssertionError e) {
 		def assertions = []
-		for (Closure closure : closures) {
-			try {
-				closure()
-			} catch(Throwable e) {
-				assertions += [klass: e.getClass(), message: e.getMessage().replaceAll("\\s+", " ")];
-			}
+		for (Throwable t : e.getFailures()) {
+			assertions += [klass: t.getClass(), message: t.getMessage().replaceAll("\\s+", " ")];
 		}
 		return assertions
 	}

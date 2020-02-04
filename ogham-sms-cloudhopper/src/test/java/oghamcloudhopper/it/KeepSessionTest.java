@@ -1,5 +1,7 @@
 package oghamcloudhopper.it;
 
+import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
+import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
@@ -108,11 +110,11 @@ public class KeepSessionTest {
 		AssertSms.assertEquals(
 				Arrays.asList(
 						new ExpectedSms("sms content",
-								new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
-								new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value())),
+								new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, UNKNOWN, ISDN),
+								new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, UNKNOWN, ISDN)),
 						new ExpectedSms("sms content 2", 
-								new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()),
-								new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, TypeOfNumber.UNKNOWN.value(), NumberingPlanIndicator.ISDN_TELEPHONE.value()))),
+								new ExpectedAddressedPhoneNumber(INTERNATIONAL_PHONE_NUMBER, UNKNOWN, ISDN),
+								new ExpectedAddressedPhoneNumber(NATIONAL_PHONE_NUMBER, UNKNOWN, ISDN))),
 				smppServer.getReceivedMessages());
 		// ensure that connection has been done only one time
 		verify(client1, times(1)).bind(any(SmppSessionConfiguration.class), isNull());

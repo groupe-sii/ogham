@@ -1,5 +1,8 @@
 package fr.sii.ogham.testing.assertion.email;
 
+import static java.util.Arrays.asList;
+
+import java.util.List;
 
 /**
  * Class used in tests for ensuring that the email is respected. It provides the
@@ -18,7 +21,8 @@ public class ExpectedMultiPartEmail extends ExpectedEmailHeader {
 	/**
 	 * List of expected contents
 	 */
-	private ExpectedContent[] expectedContents;
+	private List<ExpectedContent> expectedContents;
+
 
 	/**
 	 * Initialize the expected email with provided values.
@@ -33,12 +37,29 @@ public class ExpectedMultiPartEmail extends ExpectedEmailHeader {
 	 * @param to
 	 *            the expected recipients
 	 */
-	public ExpectedMultiPartEmail(String subject, ExpectedContent[] bodies, String from, String... to) {
+	public ExpectedMultiPartEmail(String subject, List<ExpectedContent> bodies, String from, String... to) {
 		super(subject, from, to);
 		this.expectedContents = bodies;
 	}
+	
+	/**
+	 * Initialize the expected email with provided values.
+	 * 
+	 * @param subject
+	 *            the expected subject of the email
+	 * @param bodies
+	 *            the list of expected bodies of the email with their respective
+	 *            expected Mime Type
+	 * @param from
+	 *            the expected email sender address
+	 * @param to
+	 *            the expected recipients
+	 */
+	public ExpectedMultiPartEmail(String subject, ExpectedContent[] bodies, String from, String... to) {
+		this(subject, asList(bodies), from, to);
+	}
 
-	public ExpectedContent[] getExpectedContents() {
+	public List<ExpectedContent> getExpectedContents() {
 		return expectedContents;
 	}
 }

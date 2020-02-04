@@ -1,11 +1,15 @@
 package fr.sii.ogham.testing.assertion.sms;
 
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.overrideDescription;
+import static org.hamcrest.Matchers.lessThan;
+
 import java.util.Collection;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.hamcrest.MatcherAssert;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 
 /**
@@ -21,15 +25,22 @@ public class ReceivedSmsAssert<S extends SubmitSm> {
 	 * List of received messages
 	 */
 	private final List<S> actual;
+	/**
+	 * the registry for assertions
+	 */
+	private final AssertionRegistry registry;
 
 	/**
 	 * Initializes with the list of received messages
 	 * 
 	 * @param actual
 	 *            received messages
+	 * @param registry
+	 *            used to register assertions
 	 */
-	public ReceivedSmsAssert(List<S> actual) {
+	public ReceivedSmsAssert(List<S> actual, AssertionRegistry registry) {
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -50,7 +61,8 @@ public class ReceivedSmsAssert<S extends SubmitSm> {
 	 * @return the fluent API for assertions on the particular message
 	 */
 	public SmsAssert<ReceivedSmsAssert<S>, S> receivedMessage(int index) {
-		return new SmsAssert<>(actual.get(index), index, this);
+		registry.register(() -> assertThat(index, overrideDescription("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received", lessThan(actual.size()))));
+		return new SmsAssert<>(index<actual.size() ? actual.get(index) : null, index, this, registry);
 	}
 
 	/**
@@ -93,7 +105,7 @@ public class ReceivedSmsAssert<S extends SubmitSm> {
 	 * @return the fluent API for assertions on messages
 	 */
 	public SmsListAssert<ReceivedSmsAssert<S>, S> receivedMessages() {
-		return new SmsListAssert<>(actual, this);
+		return new SmsListAssert<>(actual, this, registry);
 	}
 
 	/**
@@ -112,7 +124,7 @@ public class ReceivedSmsAssert<S extends SubmitSm> {
 	 * @return the fluent API for assertions on messages
 	 */
 	public SmsListAssert<ReceivedSmsAssert<S>, S> receivedMessages(Matcher<Collection<? extends S>> matcher) {
-		MatcherAssert.assertThat(actual, matcher);
+		registry.register(() -> assertThat("received messages", actual, matcher));
 		return receivedMessages();
 	}
 

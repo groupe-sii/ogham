@@ -11,6 +11,7 @@ import java.util.List;
 import org.hamcrest.Matcher;
 
 import fr.sii.ogham.testing.assertion.context.SingleMessageContext;
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.sms.simulator.decode.Charset;
 import fr.sii.ogham.testing.util.HasParent;
@@ -31,6 +32,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 */
 	private final List<S> actual;
 	private int index;
+	private final AssertionRegistry registry;
 
 	/**
 	 * Initializes with a single received message
@@ -41,9 +43,11 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the index of the message
 	 * @param parent
 	 *            the parent
+	 * @param registry
+	 *            used to register assertions
 	 */
-	public SmsAssert(S actual, int index, P parent) {
-		this(Arrays.asList(actual), parent);
+	public SmsAssert(S actual, int index, P parent, AssertionRegistry registry) {
+		this(Arrays.asList(actual), parent, registry);
 		this.index = index;
 	}
 
@@ -54,10 +58,13 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            received messages
 	 * @param parent
 	 *            the parent
+	 * @param registry
+	 *            used to register assertions
 	 */
-	public SmsAssert(List<S> actual, P parent) {
+	public SmsAssert(List<S> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -104,7 +111,9 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 		String desc = "content of message ${messageIndex}";
 		int msgIdx = index;
 		for (S message : actual) {
-			assertThat(getSmsContent(message), usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
+			final int idx = msgIdx;
+			registry.register(() -> assertThat(getSmsContent(message), usingContext(desc, new SingleMessageContext(idx), matcher)));
+			msgIdx++;
 		}
 		return this;
 	}
@@ -155,7 +164,9 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 		String desc = "content of message ${messageIndex}";
 		int msgIdx = index;
 		for (S message : actual) {
-			assertThat(getSmsContent(message, charset), usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
+			final int idx = msgIdx;
+			registry.register(() -> assertThat(getSmsContent(message, charset), usingContext(desc, new SingleMessageContext(idx), matcher)));
+			msgIdx++;
 		}
 		return this;
 	}
@@ -194,9 +205,10 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 		List<PduRequestWithContext<S>> requests = new ArrayList<>();
 		int msgIdx = index;
 		for (S request : actual) {
-			requests.add(new PduRequestWithContext<>(request, "raw request", new SingleMessageContext(msgIdx++)));
+			requests.add(new PduRequestWithContext<>(request, "raw request", new SingleMessageContext(msgIdx)));
+			msgIdx++;
 		}
-		return new PduRequestAssert<>(requests, this);
+		return new PduRequestAssert<>(requests, this, registry);
 	}
 
 	/**
@@ -225,7 +237,9 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 		int msgIdx = index;
 		for (S message : actual) {
 			PhoneNumberInfo number = new PhoneNumberInfo(message.getSourceAddress());
-			assertThat(number, usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
+			final int idx = msgIdx;
+			registry.register(() -> assertThat(number, usingContext(desc, new SingleMessageContext(idx), matcher)));
+			msgIdx++;
 		}
 		return this;
 	}
@@ -260,9 +274,10 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 		int msgIdx = index;
 		for (S message : actual) {
 			PhoneNumberInfo number = new PhoneNumberInfo(message.getSourceAddress());
-			numbers.add(new PhoneNumberWithContext(number, "sender", new SingleMessageContext(msgIdx++)));
+			numbers.add(new PhoneNumberWithContext(number, "sender", new SingleMessageContext(msgIdx)));
+			msgIdx++;
 		}
-		return new PhoneNumberAssert<>(numbers, this);
+		return new PhoneNumberAssert<>(numbers, this, registry);
 	}
 
 	/**
@@ -292,7 +307,9 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 		int msgIdx = index;
 		for (S message : actual) {
 			PhoneNumberInfo number = new PhoneNumberInfo(message.getDestAddress());
-			assertThat(number, usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
+			final int idx = msgIdx;
+			registry.register(() -> assertThat(number, usingContext(desc, new SingleMessageContext(idx), matcher)));
+			msgIdx++;
 		}
 		return this;
 	}
@@ -327,9 +344,10 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 		int msgIdx = index;
 		for (S message : actual) {
 			PhoneNumberInfo number = new PhoneNumberInfo(message.getDestAddress());
-			numbers.add(new PhoneNumberWithContext(number, "recipient", new SingleMessageContext(msgIdx++)));
+			numbers.add(new PhoneNumberWithContext(number, "recipient", new SingleMessageContext(msgIdx)));
+			msgIdx++;
 		}
-		return new PhoneNumberAssert<>(numbers, this);
+		return new PhoneNumberAssert<>(numbers, this, registry);
 	}
 
 }

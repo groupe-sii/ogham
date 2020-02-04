@@ -1,5 +1,7 @@
 package fr.sii.ogham.testing.extension.junit;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import fr.sii.ogham.testing.extension.junit.sms.config.SmppServerConfig;
 import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
 
 /**
@@ -89,11 +92,23 @@ public abstract class SmppServerRule<M> implements TestRule {
 	 * 
 	 * @return the list of received messages
 	 */
-	public List<M> getReceivedMessages() {
+	public List<M> getRawMessages() {
 		if (server == null) {
 			return Collections.emptyList();
 		}
 		return server.getReceivedMessages();
+	}
+
+	/**
+	 * Provide the list of received messages during the execution of the test.
+	 * 
+	 * The raw messages are converted to the common interface
+	 * ({@link SubmitSm}).
+	 * 
+	 * @return the list of received messages
+	 */
+	public List<SubmitSm> getReceivedMessages() {
+		return getRawMessages().stream().map(this::convert).collect(toList());
 	}
 
 	/**
@@ -104,6 +119,8 @@ public abstract class SmppServerRule<M> implements TestRule {
 	 * @return the server instance
 	 */
 	protected abstract SmppServerSimulator<M> initServer(SimulatorConfiguration simulatorConfiguration);
+
+	protected abstract SubmitSm convert(M raw);
 
 	private final class StartServerStatement extends Statement {
 		private final Statement base;

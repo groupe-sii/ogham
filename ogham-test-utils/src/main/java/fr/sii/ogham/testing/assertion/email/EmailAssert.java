@@ -28,6 +28,7 @@ import org.junit.Assert;
 
 import fr.sii.ogham.testing.assertion.context.SingleMessageContext;
 import fr.sii.ogham.testing.assertion.filter.FileNamePredicate;
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.assertion.util.EmailUtils;
 import fr.sii.ogham.testing.util.HasParent;
 
@@ -38,15 +39,20 @@ public class EmailAssert<P> extends HasParent<P> {
 	 */
 	private final List<? extends Message> actual;
 	private int index;
+	/**
+	 * Registry to register assertions
+	 */
+	private final AssertionRegistry registry;
 
-	public EmailAssert(Message actual, int index, P parent) {
-		this(Arrays.asList(actual), parent);
+	public EmailAssert(Message actual, int index, P parent, AssertionRegistry registry) {
+		this(Arrays.asList(actual), parent, registry);
 		this.index = index;
 	}
 
-	public EmailAssert(List<? extends Message> actual, P parent) {
+	public EmailAssert(List<? extends Message> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -75,7 +81,9 @@ public class EmailAssert<P> extends HasParent<P> {
 			String desc = "subject of message ${messageIndex}";
 			int msgIdx = this.index;
 			for (Message message : actual) {
-				assertThat(message.getSubject(), usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
+				final int idx = msgIdx;
+				registry.register(() -> assertThat(message.getSubject(), usingContext(desc, new SingleMessageContext(idx), matcher)));
+				msgIdx++;
 			}
 			return this;
 		} catch (MessagingException e) {
@@ -119,9 +127,10 @@ public class EmailAssert<P> extends HasParent<P> {
 			int msgIdx = this.index;
 			List<PartWithContext> bodies = new ArrayList<>();
 			for (Message message : actual) {
-				bodies.add(new PartWithContext(getBodyPart(message), "body", new SingleMessageContext(msgIdx++)));
+				bodies.add(new PartWithContext(getBodyPart(message), "body", new SingleMessageContext(msgIdx)));
+				msgIdx++;
 			}
-			return new PartAssert<>(bodies, this);
+			return new PartAssert<>(bodies, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get body of messsage", e);
 		}
@@ -169,9 +178,10 @@ public class EmailAssert<P> extends HasParent<P> {
 			int msgIdx = this.index;
 			List<PartWithContext> bodies = new ArrayList<>();
 			for (Message message : actual) {
-				bodies.add(new PartWithContext(getAlternativePart(message), "alternative", new SingleMessageContext(msgIdx++)));
+				bodies.add(new PartWithContext(getAlternativePart(message), "alternative", new SingleMessageContext(msgIdx)));
+				msgIdx++;
 			}
-			return new PartAssert<>(bodies, this);
+			return new PartAssert<>(bodies, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get body of messsage", e);
 		}
@@ -218,7 +228,9 @@ public class EmailAssert<P> extends HasParent<P> {
 			String desc = "body of message ${messageIndex}";
 			int msgIdx = this.index;
 			for (Message message : actual) {
-				assertThat(getBodyPart(message), usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
+				final int idx = msgIdx;
+				registry.register(() -> assertThat(getBodyPart(message), usingContext(desc, new SingleMessageContext(idx), matcher)));
+				msgIdx++;
 			}
 			return this;
 		} catch (MessagingException e) {
@@ -274,7 +286,9 @@ public class EmailAssert<P> extends HasParent<P> {
 			String desc = "alternative of message ${messageIndex}";
 			int msgIdx = this.index;
 			for (Message message : actual) {
-				assertThat(getAlternativePart(message), usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
+				final int idx = msgIdx;
+				registry.register(() -> assertThat(getAlternativePart(message), usingContext(desc, new SingleMessageContext(idx), matcher)));
+				msgIdx++;
 			}
 			return this;
 		} catch (MessagingException e) {
@@ -312,9 +326,10 @@ public class EmailAssert<P> extends HasParent<P> {
 			int msgIdx = this.index;
 			List<AddressesWithContext> addresses = new ArrayList<>();
 			for (Message message : actual) {
-				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getFrom()), "from", new SingleMessageContext(msgIdx++)));
+				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getFrom()), "from", new SingleMessageContext(msgIdx)));
+				msgIdx++;
 			}
-			return new AddressListAssert<>(addresses, this);
+			return new AddressListAssert<>(addresses, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get from field of messsage", e);
 		}
@@ -352,9 +367,10 @@ public class EmailAssert<P> extends HasParent<P> {
 			int msgIdx = this.index;
 			List<AddressesWithContext> addresses = new ArrayList<>();
 			for (Message message : actual) {
-				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(TO)), "to", new SingleMessageContext(msgIdx++)));
+				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(TO)), "to", new SingleMessageContext(msgIdx)));
+				msgIdx++;
 			}
-			return new AddressListAssert<>(addresses, this);
+			return new AddressListAssert<>(addresses, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get to field of messsage", e);
 		}
@@ -392,9 +408,10 @@ public class EmailAssert<P> extends HasParent<P> {
 			int msgIdx = this.index;
 			List<AddressesWithContext> addresses = new ArrayList<>();
 			for (Message message : actual) {
-				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(CC)), "cc", new SingleMessageContext(msgIdx++)));
+				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(CC)), "cc", new SingleMessageContext(msgIdx)));
+				msgIdx++;
 			}
-			return new AddressListAssert<>(addresses, this);
+			return new AddressListAssert<>(addresses, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get cc field of messsage", e);
 		}
@@ -435,8 +452,10 @@ public class EmailAssert<P> extends HasParent<P> {
 			int msgIdx = this.index;
 			for (Message message : actual) {
 				Object content = message.getContent();
-				Assert.assertTrue("should be multipart message", content instanceof Multipart);
-				assertThat(getAttachments(message), usingContext(desc, new SingleMessageContext(msgIdx++), matcher));
+				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
+				final int idx = msgIdx;
+				registry.register(() -> assertThat(getAttachments(message), usingContext(desc, new SingleMessageContext(idx), matcher)));
+				msgIdx++;
 			}
 			return this;
 		} catch (MessagingException | IOException e) {
@@ -505,12 +524,12 @@ public class EmailAssert<P> extends HasParent<P> {
 			List<PartWithContext> attachments = new ArrayList<>();
 			for (Message message : actual) {
 				Object content = message.getContent();
-				Assert.assertTrue("should be multipart message", content instanceof Multipart);
+				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 				List<BodyPart> found = getAttachments(message);
 				BodyPart attachment = index >= found.size() ? null : found.get(index);
 				attachments.add(new PartWithContext(attachment, "attachment with index " + index + (attachment == null ? " (/!\\ not found)" : ""), new SingleMessageContext(msgIndex++)));
 			}
-			return new PartAssert<>(attachments, this);
+			return new PartAssert<>(attachments, this, registry);
 		} catch (MessagingException | IOException e) {
 			throw new AssertionError("Failed to get attachment with index " + index + " of messsage", e);
 		}
@@ -547,7 +566,7 @@ public class EmailAssert<P> extends HasParent<P> {
 			List<PartWithContext> attachments = new ArrayList<>();
 			for (Message message : actual) {
 				Object content = message.getContent();
-				Assert.assertTrue("should be multipart message", content instanceof Multipart);
+				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 				int matchingIdx = 0;
 				for (BodyPart attachment : EmailUtils.<BodyPart>getAttachments(message, filter)) {
 					attachments.add(new PartWithContext(attachment, "attachment " + filter + " (matching index: " + matchingIdx + ")", new SingleMessageContext(msgIdx)));
@@ -558,7 +577,7 @@ public class EmailAssert<P> extends HasParent<P> {
 				}
 				msgIdx++;
 			}
-			return new PartAssert<>(attachments, this);
+			return new PartAssert<>(attachments, this, registry);
 		} catch (MessagingException | IOException e) {
 			throw new AssertionError("Failed to get attachment " + filter + " of messsage", e);
 		}

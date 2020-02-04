@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.util.HasParent;
@@ -21,7 +22,8 @@ import fr.sii.ogham.testing.util.HasParent;
  *            The parent type
  */
 public class OptionalParameterAssert<P> extends HasParent<P> {
-	private List<OptionalParameterWithContext> actual;
+	private final List<OptionalParameterWithContext> actual;
+	private final AssertionRegistry registry;
 
 	/**
 	 * Initializes with the parent instance and optional parameters for each
@@ -31,10 +33,13 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 	 *            the parent instance
 	 * @param parameters
 	 *            the optional parameters (with some contextual information)
+	 * @param registry
+	 *            used to regsiter assertions
 	 */
-	public OptionalParameterAssert(P parent, List<OptionalParameterWithContext> parameters) {
+	public OptionalParameterAssert(P parent, List<OptionalParameterWithContext> parameters, AssertionRegistry registry) {
 		super(parent);
 		this.actual = parameters;
+		this.registry = registry;
 	}
 
 	/**
@@ -68,7 +73,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 		String message = "optional parameter '${tagName}'${found} of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();
-			assertThat(parameter, usingContext(message, parameterWithContext, matcher));
+			registry.register(() -> assertThat(parameter, usingContext(message, parameterWithContext, matcher)));
 		}
 		return this;
 	}
@@ -104,7 +109,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 		String message = "optional parameter '${tagName}'${found} value of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();
-			assertThat(toObject(parameter.getValue()), usingContext(message, parameterWithContext, matcher));
+			registry.register(() -> assertThat(toObject(parameter.getValue()), usingContext(message, parameterWithContext, matcher)));
 		}
 		return this;
 	}
@@ -140,7 +145,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 		String message = "optional parameter '${tagName}'${found} length of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();
-			assertThat(parameter.getLength(), usingContext(message, parameterWithContext, matcher));
+			registry.register(() -> assertThat(parameter.getLength(), usingContext(message, parameterWithContext, matcher)));
 		}
 		return this;
 	}

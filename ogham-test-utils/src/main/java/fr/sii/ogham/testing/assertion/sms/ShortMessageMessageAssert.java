@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.util.HasParent;
 
@@ -25,6 +26,7 @@ import fr.sii.ogham.testing.util.HasParent;
  */
 public class ShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<P> {
 	private final List<ShortMessageWithContext<S>> actual;
+	private final AssertionRegistry registry;
 
 	/**
 	 * Initializes with the list of short messages and the parent.
@@ -34,10 +36,13 @@ public class ShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<
 	 *            reporting)
 	 * @param parent
 	 *            the parent (used by {@link #and()})
+	 * @param registry
+	 *            used to register assertions
 	 */
-	public ShortMessageMessageAssert(List<ShortMessageWithContext<S>> actual, P parent) {
+	public ShortMessageMessageAssert(List<ShortMessageWithContext<S>> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = unmodifiableList(actual);
+		this.registry = registry;
 	}
 
 	/**
@@ -78,7 +83,7 @@ public class ShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<
 		String message = "header of ${name} of message ${messageIndex}";
 		for (ShortMessageWithContext<S> shortMessageWithContext : actual) {
 			S msg = shortMessageWithContext.getRequest();
-			assertThat(toObject(getHeader(msg)), usingContext(message, shortMessageWithContext, matcher));
+			registry.register(() -> assertThat(toObject(getHeader(msg)), usingContext(message, shortMessageWithContext, matcher)));
 		}
 		return this;
 	}
@@ -119,7 +124,7 @@ public class ShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<
 		String message = "payload of ${name} of message ${messageIndex}";
 		for (ShortMessageWithContext<S> shortMessageWithContext : actual) {
 			S msg = shortMessageWithContext.getRequest();
-			assertThat(toObject(getPayload(msg)), usingContext(message, shortMessageWithContext, matcher));
+			registry.register(() -> assertThat(toObject(getPayload(msg)), usingContext(message, shortMessageWithContext, matcher)));
 		}
 		return this;
 	}

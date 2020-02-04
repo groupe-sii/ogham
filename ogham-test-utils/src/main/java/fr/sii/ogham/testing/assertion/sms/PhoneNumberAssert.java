@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
 import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
 import fr.sii.ogham.testing.util.HasParent;
@@ -24,6 +25,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 * The list of phone numbers that will be used for assertions
 	 */
 	private final List<PhoneNumberWithContext> actual;
+	private final AssertionRegistry registry;
 
 	/**
 	 * 
@@ -31,10 +33,13 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 *            the received messages
 	 * @param parent
 	 *            the parent
+	 * @param registry
+	 *            used to register assertions
 	 */
-	public PhoneNumberAssert(List<PhoneNumberWithContext> actual, P parent) {
+	public PhoneNumberAssert(List<PhoneNumberWithContext> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
+		this.registry = registry;
 	}
 
 	/**
@@ -64,7 +69,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 		String message = "number of ${numberName} of message ${messageIndex}";
 		for (PhoneNumberWithContext numberWithContext : actual) {
 			PhoneNumberInfo number = numberWithContext.getNumber();
-			assertThat(number.getAddress(), usingContext(message, numberWithContext, matcher));
+			registry.register(() -> assertThat(number.getAddress(), usingContext(message, numberWithContext, matcher)));
 		}
 		return this;
 	}
@@ -96,7 +101,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 		String message = "TypeOfNumber of ${numberName} of message ${messageIndex}";
 		for (PhoneNumberWithContext numberWithContext : actual) {
 			PhoneNumberInfo number = numberWithContext.getNumber();
-			assertThat(TypeOfNumber.valueOf(number.getTon()), usingContext(message, numberWithContext, matcher));
+			registry.register(() -> assertThat(TypeOfNumber.valueOf(number.getTon()), usingContext(message, numberWithContext, matcher)));
 		}
 		return this;
 	}
@@ -128,7 +133,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 		String message = "NumberPlanIndicator of ${numberName} of message ${messageIndex}";
 		for (PhoneNumberWithContext numberWithContext : actual) {
 			PhoneNumberInfo number = numberWithContext.getNumber();
-			assertThat(NumberingPlanIndicator.valueOf(number.getNpi()), usingContext(message, numberWithContext, matcher));
+			registry.register(() -> assertThat(NumberingPlanIndicator.valueOf(number.getNpi()), usingContext(message, numberWithContext, matcher)));
 		}
 		return this;
 	}

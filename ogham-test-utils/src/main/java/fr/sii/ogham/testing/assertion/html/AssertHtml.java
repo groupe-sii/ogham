@@ -49,7 +49,7 @@ public final class AssertHtml {
 		try {
 			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));
 			Document expectedDoc = builder.parse(expected);
-			Document actualDoc = builder.parse(actual);
+			Document actualDoc = builder.parse(actual==null ? "" : actual);
 			DetailedDiff diff = new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));
 			if (!diff.identical()) {
 				logDifferences(diff);

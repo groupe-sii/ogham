@@ -8,9 +8,11 @@ import org.junit.ComparisonFailure;
 
 import fr.sii.ogham.testing.assertion.context.Context;
 import fr.sii.ogham.testing.assertion.hamcrest.ComparisonAwareMatcher;
+import fr.sii.ogham.testing.assertion.hamcrest.CustomDescriptionProvider;
 import fr.sii.ogham.testing.assertion.hamcrest.CustomReason;
 import fr.sii.ogham.testing.assertion.hamcrest.DecoratorMatcher;
 import fr.sii.ogham.testing.assertion.hamcrest.ExpectedValueProvider;
+import fr.sii.ogham.testing.assertion.hamcrest.OverrideDescription;
 
 /**
  * Utility class for Ogham assertions.
@@ -72,11 +74,44 @@ public final class AssertionHelper {
 
 			if (hasExpectedValue(matcher)) {
 				ExpectedValueProvider<T> comparable = getComparable(matcher);
-				throw new ComparisonFailure(description.toString(), String.valueOf(comparable==null ? null : comparable.getExpectedValue()), String.valueOf(actual));
+				throw new ComparisonFailure(description.toString(), String.valueOf(comparable == null ? null : comparable.getExpectedValue()), String.valueOf(actual));
 			} else {
 				throw new AssertionError(description.toString());
 			}
 		}
+	}
+
+	/**
+	 * Ogham helper for keeping context information when using fluent
+	 * assertions.
+	 * 
+	 * @param reasonTemplate
+	 *            the template for the reason
+	 * @param context
+	 *            the evaluation context
+	 * @param delegate
+	 *            the matcher to decorate
+	 * @param <T>
+	 *            the type used for the matcher
+	 * @return the matcher
+	 */
+	public static <T> Matcher<T> usingContext(String reasonTemplate, Context context, Matcher<T> delegate) {
+		return new CustomReason<>(context.evaluate(reasonTemplate), delegate);
+	}
+
+	/**
+	 * Ogham helper for overriding default description.
+	 * 
+	 * @param description
+	 *            the description to display
+	 * @param delegate
+	 *            the matcher to decorate
+	 * @param <T>
+	 *            the type used for the matcher
+	 * @return the matcher
+	 */
+	public static <T> Matcher<T> overrideDescription(String description, Matcher<T> delegate) {
+		return new OverrideDescription<>(description, delegate);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -104,7 +139,7 @@ public final class AssertionHelper {
 	private static <T> Description getDescription(String reason, T actual, Matcher<? super T> matcher) {
 		String additionalText = null;
 		ComparisonAwareMatcher cam = getComparisonAwareMatcher(matcher);
-		if(cam!=null) {
+		if (cam != null) {
 			additionalText = cam.comparisonMessage();
 		}
 		return getDescription(reason, actual, matcher, additionalText);
@@ -121,7 +156,11 @@ public final class AssertionHelper {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T> Description getDescription(String reason, T actual, Matcher<? super T> matcher, String additionalText) {
+		if (matcher instanceof CustomDescriptionProvider) {
+			return ((CustomDescriptionProvider<T>) matcher).describe(reason, actual, additionalText);
+		}
 		// @formatter:off
 		Description description = new StringDescription();
 		description.appendText(getReason(reason, matcher))
@@ -148,21 +187,4 @@ public final class AssertionHelper {
 		super();
 	}
 
-	/**
-	 * Ogham helper for keeping context information when using fluent
-	 * assertions.
-	 * 
-	 * @param reasonTemplate
-	 *            the template for the reason
-	 * @param context
-	 *            the evaluation context
-	 * @param delegate
-	 *            the matcher to decorate
-	 * @param <T>
-	 *            the type used for the matcher
-	 * @return the matcher
-	 */
-	public static <T> Matcher<T> usingContext(String reasonTemplate, Context context, Matcher<T> delegate) {
-		return new CustomReason<>(context.evaluate(reasonTemplate), delegate);
-	}
 }
