@@ -26,7 +26,7 @@ import fr.sii.ogham.testing.util.HasParent;
  * @param <S>
  *            the type of the {@link SubmitSm}
  */
-public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
+public class FluentSmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	/**
 	 * The list of messages that will be used for assertions
 	 */
@@ -46,7 +46,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @param registry
 	 *            used to register assertions
 	 */
-	public SmsAssert(S actual, int index, P parent, AssertionRegistry registry) {
+	public FluentSmsAssert(S actual, int index, P parent, AssertionRegistry registry) {
 		this(Arrays.asList(actual), parent, registry);
 		this.index = index;
 	}
@@ -61,7 +61,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @param registry
 	 *            used to register assertions
 	 */
-	public SmsAssert(List<S> actual, P parent, AssertionRegistry registry) {
+	public FluentSmsAssert(List<S> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
 		this.registry = registry;
@@ -107,7 +107,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion to apply on message content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public SmsAssert<P, S> content(Matcher<? super String> matcher) {
+	public FluentSmsAssert<P, S> content(Matcher<? super String> matcher) {
 		String desc = "content of message ${messageIndex}";
 		int msgIdx = index;
 		for (S message : actual) {
@@ -160,7 +160,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion to apply on message content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public SmsAssert<P, S> content(Charset charset, Matcher<? super String> matcher) {
+	public FluentSmsAssert<P, S> content(Charset charset, Matcher<? super String> matcher) {
 		String desc = "content of message ${messageIndex}";
 		int msgIdx = index;
 		for (S message : actual) {
@@ -201,14 +201,14 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PduRequestAssert<SmsAssert<P, S>, S> rawRequest() {
+	public FluentPduRequestAssert<FluentSmsAssert<P, S>, S> rawRequest() {
 		List<PduRequestWithContext<S>> requests = new ArrayList<>();
 		int msgIdx = index;
 		for (S request : actual) {
 			requests.add(new PduRequestWithContext<>(request, "raw request", new SingleMessageContext(msgIdx)));
 			msgIdx++;
 		}
-		return new PduRequestAssert<>(requests, this, registry);
+		return new FluentPduRequestAssert<>(requests, this, registry);
 	}
 
 	/**
@@ -232,7 +232,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion to apply on the phone number
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public SmsAssert<P, S> from(Matcher<PhoneNumberInfo> matcher) {
+	public FluentSmsAssert<P, S> from(Matcher<PhoneNumberInfo> matcher) {
 		String desc = "sender of message ${messageIndex}";
 		int msgIdx = index;
 		for (S message : actual) {
@@ -269,7 +269,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PhoneNumberAssert<SmsAssert<P, S>> from() {
+	public FluentPhoneNumberAssert<FluentSmsAssert<P, S>> from() {
 		List<PhoneNumberWithContext> numbers = new ArrayList<>();
 		int msgIdx = index;
 		for (S message : actual) {
@@ -277,7 +277,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 			numbers.add(new PhoneNumberWithContext(number, "sender", new SingleMessageContext(msgIdx)));
 			msgIdx++;
 		}
-		return new PhoneNumberAssert<>(numbers, this, registry);
+		return new FluentPhoneNumberAssert<>(numbers, this, registry);
 	}
 
 	/**
@@ -302,7 +302,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion to apply on the phone number
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public SmsAssert<P, S> to(Matcher<PhoneNumberInfo> matcher) {
+	public FluentSmsAssert<P, S> to(Matcher<PhoneNumberInfo> matcher) {
 		String desc = "recipient of message ${messageIndex}";
 		int msgIdx = index;
 		for (S message : actual) {
@@ -339,7 +339,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PhoneNumberAssert<SmsAssert<P, S>> to() {
+	public FluentPhoneNumberAssert<FluentSmsAssert<P, S>> to() {
 		List<PhoneNumberWithContext> numbers = new ArrayList<>();
 		int msgIdx = index;
 		for (S message : actual) {
@@ -347,7 +347,7 @@ public class SmsAssert<P, S extends SubmitSm> extends HasParent<P> {
 			numbers.add(new PhoneNumberWithContext(number, "recipient", new SingleMessageContext(msgIdx)));
 			msgIdx++;
 		}
-		return new PhoneNumberAssert<>(numbers, this, registry);
+		return new FluentPhoneNumberAssert<>(numbers, this, registry);
 	}
 
 }

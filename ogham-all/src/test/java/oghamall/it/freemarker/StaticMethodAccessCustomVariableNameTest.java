@@ -1,6 +1,6 @@
 package oghamall.it.freemarker;
 
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.is;
 
@@ -61,7 +61,7 @@ public class StaticMethodAccessCustomVariableNameTest {
 				.count(is(1))
 				.message(0)
 					.body()
-						.contentAsString(isSimilarHtml(resourceAsString("/template/freemarker/expected/static-methods.html")));
+						.contentAsString(isIdenticalHtml(resourceAsString("/template/freemarker/expected/static-methods.html")));
 	}
 
 	@Test

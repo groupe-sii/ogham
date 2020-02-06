@@ -1,5 +1,7 @@
 package fr.sii.ogham.testing.assertion.hamcrest;
 
+import java.util.function.Consumer;
+
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Difference;
 import org.hamcrest.BaseMatcher;
@@ -33,11 +35,17 @@ public class IdenticalHtmlMatcher extends BaseMatcher<String> implements Expecte
 	private static final Logger LOG = LoggerFactory.getLogger(IdenticalHtmlMatcher.class);
 	
 	private final String expected;
+	private final Consumer<String> printer;
 	private DetailedDiff diff;
 
 	public IdenticalHtmlMatcher(String expected) {
+		this(expected, LOG::warn);
+	}
+
+	public IdenticalHtmlMatcher(String expected, Consumer<String> printer) {
 		super();
 		this.expected = expected;
+		this.printer = printer;
 	}
 
 	@Override
@@ -45,7 +53,7 @@ public class IdenticalHtmlMatcher extends BaseMatcher<String> implements Expecte
 		diff = HtmlUtils.compare(expected, (String) item);
 		boolean identical = diff.identical();
 		if(!identical) {
-			LOG.warn(comparisonMessage());	// NOSONAR
+			printer.accept(comparisonMessage());
 		}
 		return identical;
 	}

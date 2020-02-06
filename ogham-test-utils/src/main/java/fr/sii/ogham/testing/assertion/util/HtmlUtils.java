@@ -39,10 +39,13 @@ public final class HtmlUtils {
 	 *         strings
 	 */
 	public static DetailedDiff compare(String expected, String actual) {
+		if (expected == null) {
+			throw new IllegalArgumentException("expected html can't be null");
+		}
 		try {
 			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));
-			Document expectedDoc = expected==null ? null : builder.parse(expected);
-			Document actualDoc = actual==null ? null : builder.parse(actual);
+			Document expectedDoc = builder.parse(expected);
+			Document actualDoc = builder.parse(actual==null ? "" : actual);
 			return new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));
 		} catch (SAXException | IOException | ConfigurationException | ParserConfigurationException e) {
 			throw new ComparisonException("Failed to compare HTML", e);

@@ -33,4 +33,7 @@ public class SpringContextAssertions {
 		return new IsSpringBeanInstance<>(context, beanClass);
 	}
 
+	private SpringContextAssertions() {
+		super();
+	}
 }

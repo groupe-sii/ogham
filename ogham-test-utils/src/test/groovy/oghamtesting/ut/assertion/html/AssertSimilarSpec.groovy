@@ -1,4 +1,4 @@
-package oghamtesting.ut.helper.html
+package oghamtesting.ut.assertion.html
 
 import static fr.sii.ogham.testing.assertion.html.AssertHtml.assertSimilar
 

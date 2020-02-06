@@ -33,11 +33,11 @@ public class OptionalParameterAdapter implements OptionalParameter {
 
 	@Override
 	public Short getTag() {
-		byte[] tag = getOptionalParameterBytes(0, 2);
-		if (tag == null) {
+		byte[] tagValue = getOptionalParameterBytes(0, 2);
+		if (tagValue == null) {
 			return null;
 		}
-		return new BigInteger(tag).shortValue();
+		return new BigInteger(tagValue).shortValue();
 	}
 
 	@Override

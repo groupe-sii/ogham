@@ -142,11 +142,13 @@ public class LoggingRuleTest {
 					.around(thrown);
 			
 			@Test
+			@SuppressWarnings("squid:S2699")
 			public void success() {
 				Assume.assumeTrue(System.getProperty("execute-fake-test-for-testing-logging-extension", "").equals("true"));
 			}
 			
 			@Test
+			@SuppressWarnings("squid:S2699")
 			public void failure() throws CustomException {
 				Assume.assumeTrue(System.getProperty("execute-fake-test-for-testing-logging-extension", "").equals("true"));
 				throw new CustomException("exception message", new IllegalArgumentException("cause message"));
@@ -240,11 +242,13 @@ public class LoggingRuleTest {
 			@Rule public final ExpectedException thrown = ExpectedException.none();
 			
 			@Test
+			@SuppressWarnings("squid:S2699")
 			public void success() {
 				Assume.assumeTrue(System.getProperty("execute-fake-test-for-testing-logging-extension", "").equals("true"));
 			}
 			
 			@Test
+			@SuppressWarnings("squid:S2699")
 			public void failure() throws CustomException {
 				Assume.assumeTrue(System.getProperty("execute-fake-test-for-testing-logging-extension", "").equals("true"));
 				throw new CustomException("exception message", new IllegalArgumentException("cause message"));

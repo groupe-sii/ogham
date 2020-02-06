@@ -3,7 +3,7 @@ package oghamthymeleafv3.it;
 import static fr.sii.ogham.core.util.IOUtils.copy;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
-import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertSimilar;
+import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertEquals;
 import static fr.sii.ogham.testing.util.ResourceUtils.resource;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
@@ -75,7 +75,7 @@ public class ExternalFileTest {
 		
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/thymeleaf/expected/simple_foo_42.html", content);
+		assertEquals("/template/thymeleaf/expected/simple_foo_42.html", content);
 	}
 	
 	@Test
@@ -110,11 +110,11 @@ public class ExternalFileTest {
 		
 		assertNotNull("content should not be null", content1);
 		assertTrue("content should be MayHaveStringContent", content1 instanceof MayHaveStringContent);
-		assertSimilar("/template/thymeleaf/expected/simple_foo_42.html", content1);
+		assertEquals("/template/thymeleaf/expected/simple_foo_42.html", content1);
 		
 		assertNotNull("content should not be null", content2);
 		assertTrue("content should be MayHaveStringContent", content2 instanceof MayHaveStringContent);
-		assertSimilar("/template/thymeleaf/expected/simple_foo_42.html", content2);
+		assertEquals("/template/thymeleaf/expected/simple_foo_42.html", content2);
 	}
 	
 	@Test
@@ -128,10 +128,10 @@ public class ExternalFileTest {
 		
 		assertNotNull("content should not be null", content1);
 		assertTrue("content should be MayHaveStringContent", content1 instanceof MayHaveStringContent);
-		assertSimilar("/template/thymeleaf/expected/simple_foo_42.html", content1);
+		assertEquals("/template/thymeleaf/expected/simple_foo_42.html", content1);
 		
 		assertNotNull("content should not be null", content2);
 		assertTrue("content should be MayHaveStringContent", content2 instanceof MayHaveStringContent);
-		assertSimilar("/template/thymeleaf/expected/simple_foo_42.txt", content2);
+		assertEquals("/template/thymeleaf/expected/simple_foo_42.txt", content2);
 	}
 }

@@ -1,6 +1,6 @@
 package oghamthymeleafv3.it.resolver;
 
-import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertSimilar;
+import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertEquals;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +51,7 @@ public class StringResourceResolverTest {
 		Content content = parser.parse(new ResolvedString(resourceAsString("/template/thymeleaf/source/simple.txt"), "s:"), new BeanContext(new SimpleBean("foo", 42)));
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/thymeleaf/expected/simple_foo_42.txt", content);
+		assertEquals("/template/thymeleaf/expected/simple_foo_42.txt", content);
 	}
 	
 	@Test
@@ -59,6 +59,6 @@ public class StringResourceResolverTest {
 		Content content = parser.parse(new ResolvedString(resourceAsString("/template/thymeleaf/source/simple.html"), "s:"), new BeanContext(new SimpleBean("foo", 42)));
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/thymeleaf/expected/simple_foo_42.html", content);
+		assertEquals("/template/thymeleaf/expected/simple_foo_42.html", content);
 	}
 }

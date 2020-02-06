@@ -1,6 +1,6 @@
 package oghamfremarker.it;
 
-import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertSimilar;
+import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -60,7 +60,7 @@ public class FreeMarkerParserTest {
 		Content content = parser.parse(new UnresolvedPath("classpath:simple.html.ftl"), new BeanContext(new SimpleBean("foo", 42)));
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/freemarker/expected/simple_foo_42.html", content);
+		assertEquals("/template/freemarker/expected/simple_foo_42.html", content);
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public class FreeMarkerParserTest {
 		Content content = parser.parse(new UnresolvedPath("classpath:simple.txt.ftl"), new BeanContext(new SimpleBean("foo", 42)));
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/freemarker/expected/simple_foo_42.txt", content);
+		assertEquals("/template/freemarker/expected/simple_foo_42.txt", content);
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class FreeMarkerParserTest {
 		Content content = parser.parse(new UnresolvedPath("classpath:nested.html.ftl"), new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/freemarker/expected/nested_foo_42.html", content);
+		assertEquals("/template/freemarker/expected/nested_foo_42.html", content);
 	}
 
 	@Test
@@ -84,7 +84,7 @@ public class FreeMarkerParserTest {
 		Content content = parser.parse(new UnresolvedPath("classpath:layout.html.ftl"), new BeanContext(new NestedBean(new SimpleBean("foo", 42))));
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/freemarker/expected/layout_foo_42.html", content);
+		assertEquals("/template/freemarker/expected/layout_foo_42.html", content);
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class FreeMarkerParserTest {
 		Content content = parser.parse(new UnresolvedPath("classpath:locale.txt.ftl"), new LocaleContext(new SimpleBean("foo", 42, date), Locale.FRENCH));
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/freemarker/expected/locale_foo_42_fr.txt", content);
+		assertEquals("/template/freemarker/expected/locale_foo_42_fr.txt", content);
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class FreeMarkerParserTest {
 		Content content = parser.parse(new UnresolvedPath("classpath:locale.txt.ftl"), new LocaleContext(new SimpleBean("foo", 42, date), Locale.ENGLISH));
 		assertNotNull("content should not be null", content);
 		assertTrue("content should be MayHaveStringContent", content instanceof MayHaveStringContent);
-		assertSimilar("/template/freemarker/expected/locale_foo_42_en.txt", content);
+		assertEquals("/template/freemarker/expected/locale_foo_42_en.txt", content);
 	}
 
 	@Test(expected = ParseException.class)

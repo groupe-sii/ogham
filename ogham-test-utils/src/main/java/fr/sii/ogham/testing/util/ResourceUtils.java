@@ -27,7 +27,7 @@ public final class ResourceUtils {
 	 *             when resource can't be read or doesn't exist
 	 */
 	public static String resourceAsString(String path) throws IOException {
-		return ResourceUtils.resourceAsString(path, StandardCharsets.UTF_8);
+		return resourceAsString(path, StandardCharsets.UTF_8);
 	}
 
 	/**

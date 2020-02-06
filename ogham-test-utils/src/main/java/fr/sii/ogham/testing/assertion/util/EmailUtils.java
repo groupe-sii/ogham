@@ -273,7 +273,7 @@ public final class EmailUtils {
 		if (isMultipart(part)) {
 			findBodyParts(part, filter, founds, indent + "   ");
 		} else if (filter.test(part)) {
-			LOG.trace("{}add {}", indent + "   ", part.getContentType());
+			LOG.trace("{}{}add {}", indent, "   ", part.getContentType());
 			founds.add((T) part);
 		}
 	}

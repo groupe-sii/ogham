@@ -78,6 +78,55 @@ class AssertTemplateSpec extends Specification {
 						]
 	}
 
+	
+	def "assertEquals('#str', '#content') #desc"() {
+		when:
+			def failures = collectFailures {
+				AssertTemplate.assertEquals(str, (String) content);
+			}
+			
+		then:
+			failures == expected
+		
+		where:
+			desc										| str					| content					|| expected
+			"shoud pass"								| "template content"	| "template content"		|| []
+			"shoud detect differences"					| "template content"	| "foo"						|| [
+						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[foo]>']
+						]
+			"shoud detect differences with new lines"	| "template content"	| "\ntemplate content\n"	|| [
+						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[ template content ]>']
+						]
+			"shoud detect differences with new lines"	| "\ntemplate content\n"| "template content"		|| [
+						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[ template content ]> but was:<[template content]>']
+						]
+			"null content"								| "template content"	| null						|| [
+						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<template content> but was:<null>']
+						]
+	}
+	
+	
+	def "assertSimilar('#str', '#content') #desc"() {
+		when:
+			def failures = collectFailures {
+				AssertTemplate.assertSimilar(str, (String) content);
+			}
+			
+		then:
+			failures == expected
+		
+		where:
+			desc										| str					| content					|| expected
+			"shoud pass"								| "template content"	| "template content"		|| []
+			"shoud detect differences"					| "template content"	| "foo"						|| [
+						 [klass: ComparisonFailure, message: 'parsed template is different to expected content expected:<[template content]> but was:<[foo]>']
+						]
+			"shoud skip differences with new lines"		| "template content"	| "\ntemplate content\n"	|| []
+			"null content"								| "template content"	| null						|| [
+						 [klass: AssertionError, message: 'parsed template is different to expected content expected:<template content> but was:<null>']
+						]
+	}
+
 
 	private List collectFailures(Closure cl) {
 		try {

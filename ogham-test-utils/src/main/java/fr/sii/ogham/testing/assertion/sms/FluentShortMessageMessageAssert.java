@@ -24,7 +24,7 @@ import fr.sii.ogham.testing.util.HasParent;
  * @param <S>
  *            Sent SubmitSm type
  */
-public class ShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<P> {
+public class FluentShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<P> {
 	private final List<ShortMessageWithContext<S>> actual;
 	private final AssertionRegistry registry;
 
@@ -39,7 +39,7 @@ public class ShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<
 	 * @param registry
 	 *            used to register assertions
 	 */
-	public ShortMessageMessageAssert(List<ShortMessageWithContext<S>> actual, P parent, AssertionRegistry registry) {
+	public FluentShortMessageMessageAssert(List<ShortMessageWithContext<S>> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = unmodifiableList(actual);
 		this.registry = registry;
@@ -79,7 +79,7 @@ public class ShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<
 	 *            the assertion to apply on the header
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public ShortMessageMessageAssert<P, S> header(Matcher<? super Byte[]> matcher) {
+	public FluentShortMessageMessageAssert<P, S> header(Matcher<? super Byte[]> matcher) {
 		String message = "header of ${name} of message ${messageIndex}";
 		for (ShortMessageWithContext<S> shortMessageWithContext : actual) {
 			S msg = shortMessageWithContext.getRequest();
@@ -120,7 +120,7 @@ public class ShortMessageMessageAssert<P, S extends SubmitSm> extends HasParent<
 	 *            the assertion to apply on the payload
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public ShortMessageMessageAssert<P, S> payload(Matcher<? super Byte[]> matcher) {
+	public FluentShortMessageMessageAssert<P, S> payload(Matcher<? super Byte[]> matcher) {
 		String message = "payload of ${name} of message ${messageIndex}";
 		for (ShortMessageWithContext<S> shortMessageWithContext : actual) {
 			S msg = shortMessageWithContext.getRequest();

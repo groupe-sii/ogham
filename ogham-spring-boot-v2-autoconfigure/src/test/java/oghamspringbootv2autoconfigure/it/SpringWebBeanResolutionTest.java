@@ -1,6 +1,6 @@
 package oghamspringbootv2autoconfigure.it;
 
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -75,7 +75,7 @@ public class SpringWebBeanResolutionTest {
 				.count(is(1))
 				.message(0)
 					.body()
-						.contentAsString(isSimilarHtml(resourceAsString("/thymeleaf/expected/web-bean-resolution.html")));
+						.contentAsString(isIdenticalHtml(resourceAsString("/thymeleaf/expected/web-bean-resolution.html")));
 	}
 
 	@Test

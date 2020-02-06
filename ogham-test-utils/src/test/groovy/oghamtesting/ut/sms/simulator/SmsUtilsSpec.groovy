@@ -1,4 +1,4 @@
-package oghamtesting.ut.helper.sms
+package oghamtesting.ut.sms.simulator
 
 import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM7
 import static com.cloudhopper.commons.charset.CharsetUtil.CHARSET_GSM8

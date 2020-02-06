@@ -111,10 +111,12 @@ public class LoggingExtensionTest {
 	static class FakeTest {
 		
 		@Test
+		@SuppressWarnings("squid:S2699")
 		public void success() {
 		}
 		
 		@Test
+		@SuppressWarnings("squid:S2699")
 		public void failure() throws CustomException {
 			throw new CustomException("exception message", new IllegalArgumentException("cause message"));
 		}

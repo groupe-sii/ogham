@@ -1,5 +1,7 @@
 package fr.sii.ogham.testing.sms.simulator.jsmpp;
 
+import static org.awaitility.Awaitility.await;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -18,8 +20,6 @@ import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
 
@@ -31,8 +31,6 @@ import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
  *
  */
 public class SlowPduSender implements PDUSender {
-	private static final Logger LOG = LoggerFactory.getLogger(SlowPduSender.class);
-
 	private final PDUSender delegate;
 	private final ServerDelays delays;
 
@@ -205,15 +203,11 @@ public class SlowPduSender implements PDUSender {
 		return delegate.sendAlertNotification(os, sequenceNumber, sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr, optionalParameters);
 	}
 
-	private void waitFor(long delay) {
+	private static void waitFor(long delay) {
 		if (delay == 0) {
 			return;
 		}
-		try {
-			Thread.sleep(delay);
-		} catch (InterruptedException e) {
-			LOG.error("Failed to sleep for " + delay, e);
-			Thread.currentThread().interrupt();
-		}
+		final long end = System.currentTimeMillis();
+		await().until(() -> System.currentTimeMillis() + delay < end);
 	}
 }

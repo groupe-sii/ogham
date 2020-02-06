@@ -26,7 +26,7 @@ import fr.sii.ogham.testing.util.HasParent;
  * @param <S>
  *            the type of received messages
  */
-public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
+public class FluentPduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	private final List<PduRequestWithContext<S>> actual;
 	private final AssertionRegistry registry;
 
@@ -39,7 +39,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @param registry
 	 *            used to register assertions
 	 */
-	public PduRequestAssert(List<PduRequestWithContext<S>> actual, P parent, AssertionRegistry registry) {
+	public FluentPduRequestAssert(List<PduRequestWithContext<S>> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
 		this.registry = registry;
@@ -68,7 +68,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion to apply on the encoding
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PduRequestAssert<P, S> encoding(Matcher<Byte> matcher) {
+	public FluentPduRequestAssert<P, S> encoding(Matcher<Byte> matcher) {
 		String message = "encoding of ${name} of message ${messageIndex}";
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
@@ -106,7 +106,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion to apply on the alphabet
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PduRequestAssert<P, S> alphabet(Matcher<Alphabet> matcher) {
+	public FluentPduRequestAssert<P, S> alphabet(Matcher<Alphabet> matcher) {
 		String message = "alphabet of ${name} of message ${messageIndex}";
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
@@ -119,8 +119,8 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * Make assertions on the short message byte array of the message(s) using
 	 * fluent API. The short message corresponds to the whole array of data. It
 	 * always contains the payload (see
-	 * {@link ShortMessageMessageAssert#payload(Matcher)}). It may contain the
-	 * header (see {@link ShortMessageMessageAssert#header(Matcher)}). For
+	 * {@link FluentShortMessageMessageAssert#payload(Matcher)}). It may contain the
+	 * header (see {@link FluentShortMessageMessageAssert#header(Matcher)}). For
 	 * example, if the original message is split into several segments, then
 	 * each received message contains a header to indicate how the message was
 	 * split (number of segments, reference number, current segment number,
@@ -148,7 +148,7 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion to apply on the short message (header + payload)
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PduRequestAssert<P, S> shortMessage(Matcher<? super Byte[]> matcher) {
+	public FluentPduRequestAssert<P, S> shortMessage(Matcher<? super Byte[]> matcher) {
 		String message = "shortMessage of ${name} of message ${messageIndex}";
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
@@ -161,8 +161,8 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * Make assertions on the short message byte array of the message(s) using
 	 * fluent API. The short message corresponds to the whole array of data. It
 	 * always contains the payload (see
-	 * {@link ShortMessageMessageAssert#payload(Matcher)}). It may contain the
-	 * header (see {@link ShortMessageMessageAssert#header(Matcher)}). For
+	 * {@link FluentShortMessageMessageAssert#payload(Matcher)}). It may contain the
+	 * header (see {@link FluentShortMessageMessageAssert#header(Matcher)}). For
 	 * example, if the original message is split into several segments, then
 	 * each received message contains a header to indicate how the message was
 	 * split (number of segments, reference number, current segment number,
@@ -190,13 +190,13 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public ShortMessageMessageAssert<PduRequestAssert<P, S>, S> shortMessage() {
+	public FluentShortMessageMessageAssert<FluentPduRequestAssert<P, S>, S> shortMessage() {
 		List<ShortMessageWithContext<S>> shortMessages = new ArrayList<>();
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			S msg = rawContentWithContext.getRequest();
 			shortMessages.add(new ShortMessageWithContext<>(msg, rawContentWithContext));
 		}
-		return new ShortMessageMessageAssert<>(shortMessages, this, registry);
+		return new FluentShortMessageMessageAssert<>(shortMessages, this, registry);
 	}
 
 	/**
@@ -228,13 +228,13 @@ public class PduRequestAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * @see Tag
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public OptionalParameterAssert<PduRequestAssert<P, S>> optionalParameter(Tag withTag) {
+	public FluentOptionalParameterAssert<FluentPduRequestAssert<P, S>> optionalParameter(Tag withTag) {
 		List<OptionalParameterWithContext> parameters = new ArrayList<>();
 		for (PduRequestWithContext<S> rawContentWithContext : actual) {
 			OptionalParameter parameter = getOptionalParameter(rawContentWithContext.getRequest(), withTag);
 			parameters.add(new OptionalParameterWithContext(withTag, parameter, rawContentWithContext));
 		}
-		return new OptionalParameterAssert<>(this, parameters, registry);
+		return new FluentOptionalParameterAssert<>(this, parameters, registry);
 	}
 
 	private OptionalParameter getOptionalParameter(S msg, Tag tag) {

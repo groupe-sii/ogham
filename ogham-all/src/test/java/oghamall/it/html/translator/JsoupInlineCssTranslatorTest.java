@@ -68,7 +68,7 @@ public class JsoupInlineCssTranslatorTest {
 		Content result = translator.translate(sourceContent);
 		// StringContent is now updatable => now it remains the same instance
 		Assert.assertSame("Content should be the same (updated)", sourceContent, result);
-		AssertHtml.assertSimilar(expected, result.toString());
+		AssertHtml.assertEquals(expected, result.toString());
 	}
 
 	@Test

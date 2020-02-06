@@ -70,6 +70,7 @@
 		<spock.version>1.3-groovy-2.5</spock.version>
 		<groovy-eclipse-compiler.version>3.6.0-03</groovy-eclipse-compiler.version>
 		<groovy-eclipse-batch.version>2.5.8-03</groovy-eclipse-batch.version>
+		<awaitility.version>3.0.0</awaitility.version>
 		<!-- Dependencies - documentation -->
 		<asciidoctorj-diagram.version>1.5.16</asciidoctorj-diagram.version>
 		<asciidoctorj.version>1.5.6</asciidoctorj.version>
@@ -570,6 +571,11 @@
 				<groupId>org.opensmpp</groupId>
 				<artifactId>opensmpp-sim</artifactId>
 				<version>${opensmpp.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.awaitility</groupId>
+				<artifactId>awaitility</artifactId>
+				<version>${awaitility.version}</version>
 			</dependency>
 			<!-- Must be at the end to avoid overriding versions explicitly set -->
 			<dependency>

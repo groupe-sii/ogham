@@ -37,14 +37,14 @@ public class JsoupCssInlinerTest {
 	public void noStyles() throws IOException {
 		String source = resourceAsString(SOURCE_FOLDER+"noStyles.html");
 		String expected = resourceAsString(EXPECTED_FOLDER+"noStyles.html");
-		AssertHtml.assertSimilar(expected, inliner.inline(source, new ArrayList<ExternalCss>()));
+		AssertHtml.assertEquals(expected, inliner.inline(source, new ArrayList<ExternalCss>()));
 	}
 	
 	@Test
 	public void internalStyles() throws IOException {
 		String source = resourceAsString(SOURCE_FOLDER+"internalStyles.html");
 		String expected = resourceAsString(EXPECTED_FOLDER+"internalStyles.html");
-		AssertHtml.assertSimilar(expected, inliner.inline(source, new ArrayList<ExternalCss>()));
+		AssertHtml.assertEquals(expected, inliner.inline(source, new ArrayList<ExternalCss>()));
 	}
 	
 	@Test
@@ -52,7 +52,7 @@ public class JsoupCssInlinerTest {
 		String source = resourceAsString(SOURCE_FOLDER+"mixedStyles.html");
 		String css1 = resourceAsString(SOURCE_FOLDER+"css/external1.css");
 		String expected = resourceAsString(EXPECTED_FOLDER+"mixedStyles.html");
-		AssertHtml.assertSimilar(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/external1.css"), css1))));
+		AssertHtml.assertEquals(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/external1.css"), css1))));
 	}
 	
 	@Test
@@ -61,7 +61,7 @@ public class JsoupCssInlinerTest {
 		String css1 = resourceAsString(SOURCE_FOLDER+"css/external1.css");
 		String css2 = resourceAsString(SOURCE_FOLDER+"css/external2.css");
 		String expected = resourceAsString(EXPECTED_FOLDER+"externalStyles.html");
-		AssertHtml.assertSimilar(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/external1.css"), css1), new ExternalCss(new UnresolvedPath("css/external2.css"), css2))));
+		AssertHtml.assertEquals(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/external1.css"), css1), new ExternalCss(new UnresolvedPath("css/external2.css"), css2))));
 	}
 	
 	@Test
@@ -72,7 +72,7 @@ public class JsoupCssInlinerTest {
 		String css2 = resourceAsString(SOURCE_FOLDER+"css/external2.css");
 		String css3 = resourceAsString(SOURCE_FOLDER+"css/override1.css");
 		String expected = resourceAsString(EXPECTED_FOLDER+"overrideStyles.html");
-		AssertHtml.assertSimilar(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/external1.css"), css1), new ExternalCss(new UnresolvedPath("css/external2.css"), css2), new ExternalCss(new UnresolvedPath("css/override1.css"), css3))));
+		AssertHtml.assertEquals(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/external1.css"), css1), new ExternalCss(new UnresolvedPath("css/external2.css"), css2), new ExternalCss(new UnresolvedPath("css/override1.css"), css3))));
 	}
 	
 	@Test

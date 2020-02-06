@@ -67,7 +67,7 @@ public class JsoupAttachImageInlinerTest {
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(images);
 		// assertions
-		AssertHtml.assertSimilar(expected, inlinedHtml);
+		AssertHtml.assertEquals(expected, inlinedHtml);
 		Assert.assertEquals("should have 5 attachments", 5, inlined.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
 	}
@@ -86,7 +86,7 @@ public class JsoupAttachImageInlinerTest {
 		// prepare expected attachments
 		List<Attachment> expectedAttachments = getAttachments(loadImages("fb.gif", "h1.gif"));
 		// assertions
-		AssertHtml.assertSimilar(expected, inlinedHtml);
+		AssertHtml.assertEquals(expected, inlinedHtml);
 		Assert.assertEquals("should have 2 attachments", 2, inlined.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", expectedAttachments, inlined.getAttachments());
 	}

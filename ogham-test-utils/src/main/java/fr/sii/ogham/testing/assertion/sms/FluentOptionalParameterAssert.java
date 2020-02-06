@@ -21,7 +21,7 @@ import fr.sii.ogham.testing.util.HasParent;
  * @param <P>
  *            The parent type
  */
-public class OptionalParameterAssert<P> extends HasParent<P> {
+public class FluentOptionalParameterAssert<P> extends HasParent<P> {
 	private final List<OptionalParameterWithContext> actual;
 	private final AssertionRegistry registry;
 
@@ -36,7 +36,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 	 * @param registry
 	 *            used to regsiter assertions
 	 */
-	public OptionalParameterAssert(P parent, List<OptionalParameterWithContext> parameters, AssertionRegistry registry) {
+	public FluentOptionalParameterAssert(P parent, List<OptionalParameterWithContext> parameters, AssertionRegistry registry) {
 		super(parent);
 		this.actual = parameters;
 		this.registry = registry;
@@ -69,7 +69,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the optional parameter
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public OptionalParameterAssert<P> parameter(Matcher<? super OptionalParameter> matcher) {
+	public FluentOptionalParameterAssert<P> parameter(Matcher<? super OptionalParameter> matcher) {
 		String message = "optional parameter '${tagName}'${found} of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();
@@ -105,7 +105,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the optional parameter value
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public OptionalParameterAssert<P> value(Matcher<? super Byte[]> matcher) {
+	public FluentOptionalParameterAssert<P> value(Matcher<? super Byte[]> matcher) {
 		String message = "optional parameter '${tagName}'${found} value of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();
@@ -141,7 +141,7 @@ public class OptionalParameterAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the optional parameter value
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public OptionalParameterAssert<P> length(Matcher<? super Integer> matcher) {
+	public FluentOptionalParameterAssert<P> length(Matcher<? super Integer> matcher) {
 		String message = "optional parameter '${tagName}'${found} length of ${name} of message ${messageIndex}";
 		for (OptionalParameterWithContext parameterWithContext : actual) {
 			OptionalParameter parameter = parameterWithContext.getParameter();

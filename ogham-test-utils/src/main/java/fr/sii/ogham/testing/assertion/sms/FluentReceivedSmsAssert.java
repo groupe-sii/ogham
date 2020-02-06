@@ -1,4 +1,4 @@
-package fr.sii.ogham.testing.assertion.email;
+package fr.sii.ogham.testing.assertion.sms;
 
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.overrideDescription;
@@ -7,23 +7,38 @@ import static org.hamcrest.Matchers.lessThan;
 import java.util.Collection;
 import java.util.List;
 
-import javax.mail.Message;
-
 import org.hamcrest.Matcher;
 
 import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 
-public class ReceivedEmailsAssert {
+/**
+ * Make assertions on received messages
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param <S>
+ *            the type of the {@link SubmitSm} to make assertions on
+ */
+public class FluentReceivedSmsAssert<S extends SubmitSm> {
 	/**
 	 * List of received messages
 	 */
-	private final List<? extends Message> actual;
+	private final List<S> actual;
 	/**
-	 * Registry to register assertions
+	 * the registry for assertions
 	 */
 	private final AssertionRegistry registry;
 
-	public ReceivedEmailsAssert(List<? extends Message> actual, AssertionRegistry registry) {
+	/**
+	 * Initializes with the list of received messages
+	 * 
+	 * @param actual
+	 *            received messages
+	 * @param registry
+	 *            used to register assertions
+	 */
+	public FluentReceivedSmsAssert(List<S> actual, AssertionRegistry registry) {
 		this.actual = actual;
 		this.registry = registry;
 	}
@@ -35,19 +50,19 @@ public class ReceivedEmailsAssert {
 	 * 
 	 * <pre>
 	 * .receivedMessages().message(0)
-	 *                       .subject(is("foobar"))
+	 *                       .content(is("foobar"))
 	 *                    .and()
 	 *                    .message(1)
-	 *                       .subject(is("bar"))
+	 *                       .content(is("bar"))
 	 * </pre>
 	 * 
 	 * @param index
 	 *            the index of the received message
 	 * @return the fluent API for assertions on the particular message
 	 */
-	public EmailAssert<ReceivedEmailsAssert> receivedMessage(int index) {
+	public FluentSmsAssert<FluentReceivedSmsAssert<S>, S> receivedMessage(int index) {
 		registry.register(() -> assertThat(index, overrideDescription("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received", lessThan(actual.size()))));
-		return new EmailAssert<>(index<actual.size() ? actual.get(index) : null, index, this, registry);
+		return new FluentSmsAssert<>(index<actual.size() ? actual.get(index) : null, index, this, registry);
 	}
 
 	/**
@@ -59,7 +74,7 @@ public class ReceivedEmailsAssert {
 	 * 
 	 * <pre>
 	 * .receivedMessages().message(0)
-	 *                       .subject(is("foobar"))
+	 *                       .content(is("foobar"))
 	 * </pre>
 	 * 
 	 * For writing assertions that are applied on every received message, you
@@ -67,10 +82,10 @@ public class ReceivedEmailsAssert {
 	 * 
 	 * <pre>
 	 * .receivedMessages().every()
-	 *                       .subject(is("foobar"))
+	 *                       .content(is("foobar"))
 	 * </pre>
 	 * 
-	 * Will check that subject of every message is "foobar".
+	 * Will check that content of every message is "foobar".
 	 * 
 	 * <p>
 	 * You can use this method to factorize several assertions on a message and
@@ -78,19 +93,19 @@ public class ReceivedEmailsAssert {
 	 * 
 	 * <pre>
 	 * .receivedMessages().every()
-	 *                       .subject(is("foobar"))
+	 *                       .content(is("foobar"))
 	 *                    .and()
 	 *                    .message(0)
-	 *                       .body().contentAsString(is("toto"))
+	 *                       .from().number(is("+33102030405"))
 	 * </pre>
 	 * 
-	 * Will check that subject of every message is "foobar" and that body of
-	 * first received message is "toto".
+	 * Will check that content of every message is "foobar" and that phone
+	 * nuumber of sender of first received message is "+33102030405".
 	 * 
 	 * @return the fluent API for assertions on messages
 	 */
-	public EmailsAssert<ReceivedEmailsAssert> receivedMessages() {
-		return new EmailsAssert<>(actual, this, registry);
+	public FluentSmsListAssert<FluentReceivedSmsAssert<S>, S> receivedMessages() {
+		return new FluentSmsListAssert<>(actual, this, registry);
 	}
 
 	/**
@@ -108,7 +123,7 @@ public class ReceivedEmailsAssert {
 	 *            the assertion to apply on message list
 	 * @return the fluent API for assertions on messages
 	 */
-	public EmailsAssert<ReceivedEmailsAssert> receivedMessages(Matcher<Collection<? extends Message>> matcher) {
+	public FluentSmsListAssert<FluentReceivedSmsAssert<S>, S> receivedMessages(Matcher<Collection<? extends S>> matcher) {
 		registry.register(() -> assertThat("Received messages", actual, matcher));
 		return receivedMessages();
 	}

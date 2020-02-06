@@ -2,7 +2,7 @@ package oghamall.it.resolver;
 
 import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resource;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.hasItems;
@@ -88,7 +88,7 @@ public class ThymeleafRelativeResourcesTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(hasSize(5))
@@ -130,7 +130,7 @@ public class ThymeleafRelativeResourcesTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(hasSize(5))
@@ -173,7 +173,7 @@ public class ThymeleafRelativeResourcesTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(hasSize(5))
@@ -216,10 +216,10 @@ public class ThymeleafRelativeResourcesTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.txt")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.txt")))
 					.contentType(startsWith("text/plain")).and()
 				.attachments(hasSize(5))
 				.attachment("h1.gif")

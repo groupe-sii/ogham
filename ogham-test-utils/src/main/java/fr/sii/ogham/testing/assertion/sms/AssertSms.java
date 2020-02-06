@@ -38,7 +38,7 @@ public final class AssertSms {
 	 */
 	public static void assertEquals(ExpectedSms expected, SubmitSm actual) {
 		AssertionRegistry registry = new FailAtEndRegistry();
-		assertEquals(expected, actual, registry);
+		assertEquals("1/1", expected, actual, registry);
 		registry.execute();
 	}
 
@@ -67,7 +67,7 @@ public final class AssertSms {
 	public static void assertEquals(ExpectedSms expected, List<SubmitSm> receivedMessages) {
 		AssertionRegistry registry = new FailAtEndRegistry();
 		registry.register(() -> Assert.assertEquals("should have received exactly one message", 1, receivedMessages.size()));
-		assertEquals(expected, receivedMessages.size()==1 ? receivedMessages.get(0) : null, registry);
+		assertEquals("1/1", expected, receivedMessages.size()==1 ? receivedMessages.get(0) : null, registry);
 		registry.execute();
 	}
 
@@ -129,22 +129,22 @@ public final class AssertSms {
 	}
 
 	private static void assertEquals(List<ExpectedSms> expected, List<SubmitSm> receivedMessages, AssertionRegistry registry) {
-		registry.register(() -> Assert.assertEquals("should have received exactly " + expected.size() + " messages", expected.size(), receivedMessages.size()));
+		registry.register(() -> Assert.assertEquals("should have received exactly " + expected.size() + " message(s)", expected.size(), receivedMessages.size()));
 		for (int i = 0; i < expected.size(); i++) {
-			assertEquals(expected.get(i), i<receivedMessages.size() ? receivedMessages.get(i) : null, registry);
+			assertEquals((i+1)+"/"+expected.size(), expected.get(i), i<receivedMessages.size() ? receivedMessages.get(i) : null, registry);
 		}
 	}
 
-	private static void assertEquals(ExpectedSms expected, SubmitSm actual, AssertionRegistry registry) {
-		registry.register(() -> Assert.assertEquals("Sender number should be " + expected.getSenderNumber().getNumber(), expected.getSenderNumber().getNumber(), getValue(actual, SubmitSm::getSourceAddress, Address::getAddress)));
-		registry.register(() -> Assert.assertEquals("Sender ton should be " + expected.getSenderNumber().getTon(), (Byte) expected.getSenderNumber().getTon(), getValue(actual, SubmitSm::getSourceAddress, Address::getTon)));
-		registry.register(() -> Assert.assertEquals("Sender npi should be " + expected.getSenderNumber().getNpi(), (Byte) expected.getSenderNumber().getNpi(), getValue(actual, SubmitSm::getSourceAddress, Address::getNpi)));
+	private static void assertEquals(String msgIdx, ExpectedSms expected, SubmitSm actual, AssertionRegistry registry) {
+		registry.register(() -> Assert.assertEquals("Sender number of message "+ msgIdx + " should be " + expected.getSenderNumber().getNumber(), expected.getSenderNumber().getNumber(), getValue(actual, SubmitSm::getSourceAddress, Address::getAddress)));
+		registry.register(() -> Assert.assertEquals("Sender ton of message "+ msgIdx + " should be " + expected.getSenderNumber().getTon(), (Byte) expected.getSenderNumber().getTon(), getValue(actual, SubmitSm::getSourceAddress, Address::getTon)));
+		registry.register(() -> Assert.assertEquals("Sender npi of message "+ msgIdx + " should be " + expected.getSenderNumber().getNpi(), (Byte) expected.getSenderNumber().getNpi(), getValue(actual, SubmitSm::getSourceAddress, Address::getNpi)));
 
-		registry.register(() -> Assert.assertEquals("Receiver number should be " + expected.getReceiverNumber().getNumber(), expected.getReceiverNumber().getNumber(), getValue(actual, SubmitSm::getDestAddress, Address::getAddress)));
-		registry.register(() -> Assert.assertEquals("Receiver ton should be " + expected.getReceiverNumber().getTon(), (Byte) expected.getReceiverNumber().getTon(), getValue(actual, SubmitSm::getDestAddress, Address::getTon)));
-		registry.register(() -> Assert.assertEquals("Receiver npi should be " + expected.getReceiverNumber().getNpi(), (Byte) expected.getReceiverNumber().getNpi(), getValue(actual, SubmitSm::getDestAddress, Address::getNpi)));
+		registry.register(() -> Assert.assertEquals("Receiver number of message "+ msgIdx + " should be " + expected.getReceiverNumber().getNumber(), expected.getReceiverNumber().getNumber(), getValue(actual, SubmitSm::getDestAddress, Address::getAddress)));
+		registry.register(() -> Assert.assertEquals("Receiver ton of message "+ msgIdx + "  should be " + expected.getReceiverNumber().getTon(), (Byte) expected.getReceiverNumber().getTon(), getValue(actual, SubmitSm::getDestAddress, Address::getTon)));
+		registry.register(() -> Assert.assertEquals("Receiver npi of message "+ msgIdx + "  should be " + expected.getReceiverNumber().getNpi(), (Byte) expected.getReceiverNumber().getNpi(), getValue(actual, SubmitSm::getDestAddress, Address::getNpi)));
 
-		registry.register(() -> Assert.assertEquals("Message not consistent with expected", expected.getMessage(), actual==null ? null : getSmsContent(actual)));
+		registry.register(() -> Assert.assertEquals("Message " + msgIdx + " not consistent with expected", expected.getMessage(), actual==null ? null : getSmsContent(actual)));
 	}
 
 	private static <T> T getValue(SubmitSm actual, Function<SubmitSm, Address> addressAccessor, Function<Address, T> valueAccessor) {

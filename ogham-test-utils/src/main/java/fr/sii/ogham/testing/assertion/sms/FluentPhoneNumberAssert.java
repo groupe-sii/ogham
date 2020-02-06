@@ -20,7 +20,7 @@ import fr.sii.ogham.testing.util.HasParent;
  * @param <P>
  *            the parent type
  */
-public class PhoneNumberAssert<P> extends HasParent<P> {
+public class FluentPhoneNumberAssert<P> extends HasParent<P> {
 	/**
 	 * The list of phone numbers that will be used for assertions
 	 */
@@ -36,7 +36,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 * @param registry
 	 *            used to register assertions
 	 */
-	public PhoneNumberAssert(List<PhoneNumberWithContext> actual, P parent, AssertionRegistry registry) {
+	public FluentPhoneNumberAssert(List<PhoneNumberWithContext> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
 		this.registry = registry;
@@ -65,7 +65,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the phone number
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PhoneNumberAssert<P> number(Matcher<String> matcher) {
+	public FluentPhoneNumberAssert<P> number(Matcher<String> matcher) {
 		String message = "number of ${numberName} of message ${messageIndex}";
 		for (PhoneNumberWithContext numberWithContext : actual) {
 			PhoneNumberInfo number = numberWithContext.getNumber();
@@ -97,7 +97,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the type of number
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PhoneNumberAssert<P> typeOfNumber(Matcher<TypeOfNumber> matcher) {
+	public FluentPhoneNumberAssert<P> typeOfNumber(Matcher<TypeOfNumber> matcher) {
 		String message = "TypeOfNumber of ${numberName} of message ${messageIndex}";
 		for (PhoneNumberWithContext numberWithContext : actual) {
 			PhoneNumberInfo number = numberWithContext.getNumber();
@@ -129,7 +129,7 @@ public class PhoneNumberAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the numbering plan indicator
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PhoneNumberAssert<P> numberingPlanIndicator(Matcher<NumberingPlanIndicator> matcher) {
+	public FluentPhoneNumberAssert<P> numberingPlanIndicator(Matcher<NumberingPlanIndicator> matcher) {
 		String message = "NumberPlanIndicator of ${numberName} of message ${messageIndex}";
 		for (PhoneNumberWithContext numberWithContext : actual) {
 			PhoneNumberInfo number = numberWithContext.getNumber();

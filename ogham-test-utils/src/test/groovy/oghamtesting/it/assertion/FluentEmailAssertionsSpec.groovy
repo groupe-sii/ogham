@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.nullValue
 import static org.hamcrest.Matchers.startsWith
 
 import java.util.function.Consumer
+import java.util.function.Predicate
 
 import javax.mail.BodyPart
 import javax.mail.Multipart
@@ -43,12 +44,15 @@ class FluentEmailAssertionsSpec extends Specification {
 	
 	def "message(0).subject(#matcher1) & message(1).subject(#matcher2) with #subject1 & #subject2 #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			MimeMessage message1 = Mock()
-			message1.getSubject() >> subject1
-			MimeMessage message2 = Mock()
-			message2.getSubject() >> subject2
-			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			MimeMessage message1 = Mock {
+				getSubject() >> subject1
+			}
+			MimeMessage message2 = Mock {
+				getSubject() >> subject2
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
 		when:
 			def failures = collectFailures { 
@@ -114,25 +118,29 @@ class FluentEmailAssertionsSpec extends Specification {
 					]
 	}
 	
-	def "from().address(#addressMacher) & from().personal(#personalMacher) & from().textual(#textualMacher) & from().type(#typeMacher) #desc"() {
+	def "from().address(#addressMatcher) & from().personal(#personalMatcher) & from().textual(#textualMatcher) & from().type(#typeMatcher) #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			MimeMessage message1 = Mock()
-			InternetAddress from1 = Mock()
-			message1.getFrom() >> ([from1] as InternetAddress[])
-			from1.getAddress() >> "address1"
-			from1.getPersonal() >> "personal1"
-			from1.getType() >> "type1"
-			from1.toString() >> "personal1 <address1>"
-			
-			MimeMessage message2 = Mock()
-			InternetAddress from2 = Mock()
-			message2.getFrom() >> ([from2] as InternetAddress[])
-			from2.getAddress() >> "address2"
-			from2.getPersonal() >> "personal2"
-			from2.getType() >> "type2"
-			from2.toString() >> "personal2 <address2>"
-			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			MimeMessage message1 = Mock {
+				InternetAddress from1 = Mock {
+					getAddress() >> "address1"
+					getPersonal() >> "personal1"
+					getType() >> "type1"
+					toString() >> "personal1 <address1>"
+				}
+				getFrom() >> ([from1] as InternetAddress[])
+			}
+			MimeMessage message2 = Mock {
+				InternetAddress from2 = Mock {
+					getAddress() >> "address2"
+					getPersonal() >> "personal2"
+					getType() >> "type2"
+					toString() >> "personal2 <address2>"
+				}
+				getFrom() >> ([from2] as InternetAddress[])
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
 		when:
 			def failures = collectFailures { 
@@ -175,26 +183,86 @@ class FluentEmailAssertionsSpec extends Specification {
 	}
 	
 	
-	def "to().address(#addressMacher) & to().personal(#personalMacher) & to().textual(#textualMacher) & to().type(#typeMacher) #desc"() {
+	def "every().from().address(#addressMatcher) & every().from().personal(#personalMatcher) & every().from().textual(#textualMatcher) & every().from().type(#typeMatcher) #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			MimeMessage message1 = Mock()
-			InternetAddress to1 = Mock()
-			message1.getRecipients(TO) >> ([to1] as InternetAddress[])
-			to1.getAddress() >> "address1"
-			to1.getPersonal() >> "personal1"
-			to1.getType() >> "type1"
-			to1.toString() >> "personal1 <address1>"
+			MimeMessage message1 = Mock {
+				InternetAddress from1 = Mock {
+					getAddress() >> "address1"
+					getPersonal() >> "personal1"
+					getType() >> "type1"
+					toString() >> "personal1 <address1>"
+				}
+				getFrom() >> ([from1] as InternetAddress[])
+			}
+			MimeMessage message2 = Mock {
+				InternetAddress from2 = Mock {
+					getAddress() >> "address2"
+					getPersonal() >> "personal2"
+					getType() >> "type2"
+					toString() >> "personal2 <address2>"
+				}
+				getFrom() >> ([from2] as InternetAddress[])
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
-			MimeMessage message2 = Mock()
-			InternetAddress to2 = Mock()
-			message2.getRecipients(TO) >> ([to2] as InternetAddress[])
-			to2.getAddress() >> "address2"
-			to2.getPersonal() >> "personal2"
-			to2.getType() >> "type2"
-			to2.toString() >> "personal2 <address2>"
-			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
-			
+		when:
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessages()
+							.every()
+								.from()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher) },
+				)
+			}
+		
+		then:
+			failures == expected
+		
+		where:
+			desc					| addressMatcher					| personalMatcher					| textualMatcher														| typeMatcher					|| expected
+			"should pass"			| everyItem(startsWith("address"))	| everyItem(startsWith("personal"))	| everyItem(allOf(startsWith("personal"), containsString("address")))	| everyItem(startsWith("type"))	||  []
+			"should detect all"		| everyItem(is("address"))			| everyItem(is("personal"))			| everyItem(is("personal <address>"))									| everyItem(is("type"))			||  [
+						 [klass: AssertionError, message: "email addresses of 'from' field of message 0 Expected: every item is is \"address\" but: was <[address1]>"], 
+						 [klass: AssertionError, message: "email addresses of 'from' field of message 1 Expected: every item is is \"address\" but: was <[address2]>"], 
+						 [klass: AssertionError, message: "personal of 'from' field of message 0 Expected: every item is is \"personal\" but: was <[personal1]>"], 
+						 [klass: AssertionError, message: "personal of 'from' field of message 1 Expected: every item is is \"personal\" but: was <[personal2]>"], 
+						 [klass: AssertionError, message: "textual addresses of 'from' field of message 0 Expected: every item is is \"personal <address>\" but: was <[personal1 <address1>]>"], 
+						 [klass: AssertionError, message: "textual addresses of 'from' field of message 1 Expected: every item is is \"personal <address>\" but: was <[personal2 <address2>]>"], 
+						 [klass: AssertionError, message: "address types of 'from' field of message 0 Expected: every item is is \"type\" but: was <[type1]>"], 
+						 [klass: AssertionError, message: "address types of 'from' field of message 1 Expected: every item is is \"type\" but: was <[type2]>"]
+						]
+	}
+
+	def "to().address(#addressMatcher) & to().personal(#personalMatcher) & to().textual(#textualMatcher) & to().type(#typeMatcher) #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				InternetAddress to1 = Mock {
+					getAddress() >> "address1"
+					getPersonal() >> "personal1"
+					getType() >> "type1"
+					toString() >> "personal1 <address1>"
+				}
+				getRecipients(TO) >> ([to1] as InternetAddress[])
+			}
+			MimeMessage message2 = Mock {
+				InternetAddress to2 = Mock {
+					getAddress() >> "address2"
+					getPersonal() >> "personal2"
+					getType() >> "type2"
+					toString() >> "personal2 <address2>"
+				}
+				getRecipients(TO) >> ([to2] as InternetAddress[])
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+						
 		when:
 			def failures = collectFailures { 
 				assertAll(
@@ -235,25 +303,86 @@ class FluentEmailAssertionsSpec extends Specification {
 					]
 	}
 	
-	def "cc().address(#addressMacher) & cc().personal(#personalMacher) & cc().textual(#textualMacher) & cc().type(#typeMacher) #desc"() {
+	def "every().to().address(#addressMatcher) & every().to().personal(#personalMatcher) & every().to().textual(#textualMatcher) & every().to().type(#typeMatcher) #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			MimeMessage message1 = Mock()
-			InternetAddress cc1 = Mock()
-			message1.getRecipients(CC) >> ([cc1] as InternetAddress[])
-			cc1.getAddress() >> "address1"
-			cc1.getPersonal() >> "personal1"
-			cc1.getType() >> "type1"
-			cc1.toString() >> "personal1 <address1>"
+			MimeMessage message1 = Mock {
+				InternetAddress to1 = Mock {
+					getAddress() >> "address1"
+					getPersonal() >> "personal1"
+					getType() >> "type1"
+					toString() >> "personal1 <address1>"
+				}
+				getRecipients(TO) >> ([to1] as InternetAddress[])
+			}
+			MimeMessage message2 = Mock {
+				InternetAddress to2 = Mock {
+					getAddress() >> "address2"
+					getPersonal() >> "personal2"
+					getType() >> "type2"
+					toString() >> "personal2 <address2>"
+				}
+				getRecipients(TO) >> ([to2] as InternetAddress[])
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
-			MimeMessage message2 = Mock()
-			InternetAddress cc2 = Mock()
-			message2.getRecipients(CC) >> ([cc2] as InternetAddress[])
-			cc2.getAddress() >> "address2"
-			cc2.getPersonal() >> "personal2"
-			cc2.getType() >> "type2"
-			cc2.toString() >> "personal2 <address2>"
-			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+		when:
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessages()
+							.every()
+								.to()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher) },
+				)
+			}
+		
+		then:
+			failures == expected
+		
+		where:
+			desc					| addressMatcher					| personalMatcher					| textualMatcher														| typeMatcher					|| expected
+			"should pass"			| everyItem(startsWith("address"))	| everyItem(startsWith("personal"))	| everyItem(allOf(startsWith("personal"), containsString("address")))	| everyItem(startsWith("type"))	||  []
+			"should detect all"		| everyItem(is("address"))			| everyItem(is("personal"))			| everyItem(is("personal <address>"))									| everyItem(is("type"))			||  [
+					 [klass: AssertionError, message: "email addresses of 'to' field of message 0 Expected: every item is is \"address\" but: was <[address1]>"], 
+					 [klass: AssertionError, message: "email addresses of 'to' field of message 1 Expected: every item is is \"address\" but: was <[address2]>"], 
+					 [klass: AssertionError, message: "personal of 'to' field of message 0 Expected: every item is is \"personal\" but: was <[personal1]>"], 
+					 [klass: AssertionError, message: "personal of 'to' field of message 1 Expected: every item is is \"personal\" but: was <[personal2]>"], 
+					 [klass: AssertionError, message: "textual addresses of 'to' field of message 0 Expected: every item is is \"personal <address>\" but: was <[personal1 <address1>]>"], 
+					 [klass: AssertionError, message: "textual addresses of 'to' field of message 1 Expected: every item is is \"personal <address>\" but: was <[personal2 <address2>]>"], 
+					 [klass: AssertionError, message: "address types of 'to' field of message 0 Expected: every item is is \"type\" but: was <[type1]>"], 
+					 [klass: AssertionError, message: "address types of 'to' field of message 1 Expected: every item is is \"type\" but: was <[type2]>"]
+					]
+	}
+
+
+	def "cc().address(#addressMatcher) & cc().personal(#personalMatcher) & cc().textual(#textualMatcher) & cc().type(#typeMatcher) #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				InternetAddress cc1 = Mock {
+					getAddress() >> "address1"
+					getPersonal() >> "personal1"
+					getType() >> "type1"
+					toString() >> "personal1 <address1>"
+				}
+				getRecipients(CC) >> ([cc1] as InternetAddress[])
+			}			
+			MimeMessage message2 = Mock {
+				InternetAddress cc2 = Mock {
+					getAddress() >> "address2"
+					getPersonal() >> "personal2"
+					getType() >> "type2"
+					toString() >> "personal2 <address2>"
+				}
+				getRecipients(CC) >> ([cc2] as InternetAddress[])
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
 		when:
 			def failures = collectFailures { 
@@ -295,29 +424,92 @@ class FluentEmailAssertionsSpec extends Specification {
 					]
 	}
 
+	
+	def "every().cc().address(#addressMatcher) & every().cc().personal(#personalMatcher) & every().cc().textual(#textualMatcher) & every().cc().type(#typeMatcher) #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				InternetAddress cc1 = Mock {
+					getAddress() >> "address1"
+					getPersonal() >> "personal1"
+					getType() >> "type1"
+					toString() >> "personal1 <address1>"
+				}
+				getRecipients(CC) >> ([cc1] as InternetAddress[])
+			}			
+			MimeMessage message2 = Mock {
+				InternetAddress cc2 = Mock {
+					getAddress() >> "address2"
+					getPersonal() >> "personal2"
+					getType() >> "type2"
+					toString() >> "personal2 <address2>"
+				}
+				getRecipients(CC) >> ([cc2] as InternetAddress[])
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+			
+		when:
+			def failures = collectFailures {
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessages()
+							.every()
+								.cc()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.textual(textualMatcher)
+									.type(typeMatcher) },
+				)
+			}
+		
+		then:
+			failures == expected
+		
+		where:
+			desc					| addressMatcher					| personalMatcher					| textualMatcher														| typeMatcher					|| expected
+			"should pass"			| everyItem(startsWith("address"))	| everyItem(startsWith("personal"))	| everyItem(allOf(startsWith("personal"), containsString("address")))	| everyItem(startsWith("type"))	||  []
+			"should detect all"		| everyItem(is("address"))			| everyItem(is("personal"))			| everyItem(is("personal <address>"))									| everyItem(is("type"))			||  [
+					 [klass: AssertionError, message: "email addresses of 'cc' field of message 0 Expected: every item is is \"address\" but: was <[address1]>"],
+					 [klass: AssertionError, message: "email addresses of 'cc' field of message 1 Expected: every item is is \"address\" but: was <[address2]>"],
+					 [klass: AssertionError, message: "personal of 'cc' field of message 0 Expected: every item is is \"personal\" but: was <[personal1]>"],
+					 [klass: AssertionError, message: "personal of 'cc' field of message 1 Expected: every item is is \"personal\" but: was <[personal2]>"],
+					 [klass: AssertionError, message: "textual addresses of 'cc' field of message 0 Expected: every item is is \"personal <address>\" but: was <[personal1 <address1>]>"],
+					 [klass: AssertionError, message: "textual addresses of 'cc' field of message 1 Expected: every item is is \"personal <address>\" but: was <[personal2 <address2>]>"],
+					 [klass: AssertionError, message: "address types of 'cc' field of message 0 Expected: every item is is \"type\" but: was <[type1]>"],
+					 [klass: AssertionError, message: "address types of 'cc' field of message 1 Expected: every item is is \"type\" but: was <[type2]>"]
+					]
+	}
+
 
 	def "body(#bodyMatcher) & body().content(#contentMatcher) & body().contentAsString(#contentAsStringMatcher) & body().contentType(#contentTypeMatcher) #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			MimeMessage message1 = Mock()
-			Multipart multipart1 = Mock()
-			BodyPart bodyPart1 = Mock()
-			message1.getContent() >> multipart1
-			multipart1.getCount() >> 1
-			multipart1.getBodyPart(0) >> bodyPart1
-			bodyPart1.getInputStream() >> { new ByteArrayInputStream("body 1".getBytes("UTF-8")) }
-			bodyPart1.getContentType() >> "text/plain"
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					BodyPart bodyPart1 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("body 1".getBytes("UTF-8")) }
+						getContentType() >> "text/plain"
+					}
+					getCount() >> 1
+					getBodyPart(0) >> bodyPart1
+				}
+				getContent() >> multipart1
+			}
 			
-			MimeMessage message2 = Mock()
-			Multipart multipart2 = Mock()
-			BodyPart bodyPart2 = Mock()
-			message2.getContent() >> multipart2
-			multipart2.getCount() >> 1
-			multipart2.getBodyPart(0) >> bodyPart2
-			bodyPart2.getInputStream() >> { new ByteArrayInputStream("body 2".getBytes("UTF-8")) }
-			bodyPart2.getContentType() >> "text/html"
-			
-			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					BodyPart bodyPart2 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("body 2".getBytes("UTF-8")) }
+						getContentType() >> "text/html"
+					}
+					getCount() >> 1
+					getBodyPart(0) >> bodyPart2
+				}
+				getContent() >> multipart2
+			}			
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
 		when:
 			def failures = collectFailures { 
@@ -365,36 +557,103 @@ class FluentEmailAssertionsSpec extends Specification {
 						]
 	}
 	
+	def "every().body(#bodyMatcher) & every().body().content(#contentMatcher) & every().body().contentAsString(#contentAsStringMatcher) & every().body().contentType(#contentTypeMatcher) #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					BodyPart bodyPart1 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("body 1".getBytes("UTF-8")) }
+						getContentType() >> "text/plain"
+					}
+					getCount() >> 1
+					getBodyPart(0) >> bodyPart1
+				}
+				getContent() >> multipart1
+			}
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					BodyPart bodyPart2 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("body 2".getBytes("UTF-8")) }
+						getContentType() >> "text/html"
+					}
+					getCount() >> 1
+					getBodyPart(0) >> bodyPart2
+				}
+				getContent() >> multipart2
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+			
+		when:
+			def failures = collectFailures { 
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessages()
+							.every()
+								.body(bodyMatcher)
+								.body()
+									.content(contentMatcher)
+									.contentAsString(contentAsStringMatcher)
+									.contentType(contentTypeMatcher) },
+				)
+			}
+		
+		then:
+			failures == expected
+		
+		where:
+			desc					| bodyMatcher		| contentMatcher	| contentAsStringMatcher	| contentTypeMatcher		|| expected
+			"should pass"			| notNullValue()	| notNullValue()	| containsString("body")	| startsWith("text/")		||  []
+			"should detect all"		| nullValue()		| arrayWithSize(0)	| is("foo")					| is("application/html")	||  [
+						 [klass: AssertionError, message: "body of message 0 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart1'>"],
+						 [klass: AssertionError, message: "body of message 1 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart2'>"],
+						 [klass: AssertionError, message: "raw content of body of message 0 Expected: an array with size <0> but: was [<98>, <111>, <100>, <121>, <32>, <49>]"],
+						 [klass: AssertionError, message: "raw content of body of message 1 Expected: an array with size <0> but: was [<98>, <111>, <100>, <121>, <32>, <50>]"],
+						 [klass: AssertionError, message: 'UTF-8 content of body of message 0 Expected: is "foo" but: was "body 1"'],
+						 [klass: AssertionError, message: 'UTF-8 content of body of message 1 Expected: is "foo" but: was "body 2"'],
+						 [klass: AssertionError, message: 'content-type of body of message 0 Expected: is "application/html" but: was "text/plain"'],
+						 [klass: AssertionError, message: 'content-type of body of message 1 Expected: is "application/html" but: was "text/html"'],
+						]
+	}
+	
 	def "alternative(#bodyMatcher) & alternative().content(#contentMatcher) & alternative().contentAsString(#contentAsStringMatcher) & alternative().contentType(#contentTypeMatcher) #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			MimeMessage message1 = Mock()
-			Multipart multipart1 = Mock()
-			BodyPart bodyPart1 = Mock()
-			BodyPart bodyPart2 = Mock()
-			message1.getContent() >> multipart1
-			multipart1.getCount() >> 2
-			multipart1.getBodyPart(0) >> bodyPart1
-			multipart1.getBodyPart(1) >> bodyPart2
-			bodyPart1.getInputStream() >> { new ByteArrayInputStream("alt 1".getBytes("UTF-8")) }
-			bodyPart1.getContentType() >> "text/plain"
-			bodyPart2.getInputStream() >> { new ByteArrayInputStream("<html><body>alt 1</body></html>".getBytes("UTF-8")) }
-			bodyPart2.getContentType() >> "text/html"
-
-			MimeMessage message2 = Mock()
-			Multipart multipart2 = Mock()
-			BodyPart bodyPart3 = Mock()
-			BodyPart bodyPart4 = Mock()
-			message2.getContent() >> multipart2
-			multipart2.getCount() >> 2
-			multipart2.getBodyPart(0) >> bodyPart3
-			multipart2.getBodyPart(1) >> bodyPart4
-			bodyPart3.getInputStream() >> { new ByteArrayInputStream("alt 2".getBytes("UTF-8")) }
-			bodyPart3.getContentType() >> "text/plain"
-			bodyPart4.getInputStream() >> { new ByteArrayInputStream("<html><body>alt 2</body></html>".getBytes("UTF-8")) }
-			bodyPart4.getContentType() >> "text/html"
-
-			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					BodyPart bodyPart1 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("alt 1".getBytes("UTF-8")) }
+						getContentType() >> "text/plain"
+					}
+					BodyPart bodyPart2 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("<html><body>alt 1</body></html>".getBytes("UTF-8")) }
+						getContentType() >> "text/html"
+					}
+					getCount() >> 2
+					getBodyPart(0) >> bodyPart1
+					getBodyPart(1) >> bodyPart2
+				}
+				getContent() >> multipart1
+			}
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					BodyPart bodyPart3 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("alt 2".getBytes("UTF-8")) }
+						getContentType() >> "text/plain"
+					}
+					BodyPart bodyPart4 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("<html><body>alt 2</body></html>".getBytes("UTF-8")) }
+						getContentType() >> "text/html"
+					}
+					getCount() >> 2
+					getBodyPart(0) >> bodyPart3
+					getBodyPart(1) >> bodyPart4
+				}
+				getContent() >> multipart2
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
 		when:
 			def failures = collectFailures { 
@@ -431,30 +690,104 @@ class FluentEmailAssertionsSpec extends Specification {
 			desc					| bodyMatcher		| contentMatcher	| contentAsStringMatcher	| contentTypeMatcher		|| expected
 			"should pass"			| notNullValue()	| notNullValue()	| containsString("alt")		| startsWith("text/")		||  []
 			"should detect all"		| nullValue()		| arrayWithSize(0)	| is("foo")					| is("application/html")	||  [
-					 [klass: AssertionError, message: "alternative of message 0 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart1'>"], 
-					 [klass: AssertionError, message: "raw content of alternative of message 0 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <49>]"], 
-					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 0 Expected: is "foo" but: was "alt 1"'], 
-					 [klass: AssertionError, message: 'content-type of alternative of message 0 Expected: is "application/html" but: was "text/plain"'], 
-					 [klass: AssertionError, message: "alternative of message 1 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart3'>"], 
-					 [klass: AssertionError, message: "raw content of alternative of message 1 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <50>]"], 
-					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 1 Expected: is "foo" but: was "alt 2"'], 
+					 [klass: AssertionError, message: "alternative of message 0 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart1'>"],
+					 [klass: AssertionError, message: "raw content of alternative of message 0 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <49>]"],
+					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 0 Expected: is "foo" but: was "alt 1"'],
+					 [klass: AssertionError, message: 'content-type of alternative of message 0 Expected: is "application/html" but: was "text/plain"'],
+					 [klass: AssertionError, message: "alternative of message 1 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart3'>"],
+					 [klass: AssertionError, message: "raw content of alternative of message 1 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <50>]"],
+					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 1 Expected: is "foo" but: was "alt 2"'],
 					 [klass: AssertionError, message: 'content-type of alternative of message 1 Expected: is "application/html" but: was "text/plain"']
 					]
 	}
 	
+	def "every().alternative(#bodyMatcher) & every().alternative().content(#contentMatcher) & every().alternative().contentAsString(#contentAsStringMatcher) & every().alternative().contentType(#contentTypeMatcher) #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					BodyPart bodyPart1 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("alt 1".getBytes("UTF-8")) }
+						getContentType() >> "text/plain"
+					}
+					BodyPart bodyPart2 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("<html><body>alt 1</body></html>".getBytes("UTF-8")) }
+						getContentType() >> "text/html"
+					}
+					getCount() >> 2
+					getBodyPart(0) >> bodyPart1
+					getBodyPart(1) >> bodyPart2
+				}
+				getContent() >> multipart1
+			}
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					BodyPart bodyPart3 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("alt 2".getBytes("UTF-8")) }
+						getContentType() >> "text/plain"
+					}
+					BodyPart bodyPart4 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("<html><body>alt 2</body></html>".getBytes("UTF-8")) }
+						getContentType() >> "text/html"
+					}
+					getCount() >> 2
+					getBodyPart(0) >> bodyPart3
+					getBodyPart(1) >> bodyPart4
+				}
+				getContent() >> multipart2
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+			
+		when:
+			def failures = collectFailures {
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg)
+						.receivedMessages()
+							.every()
+								.alternative(bodyMatcher)
+								.alternative()
+									.content(contentMatcher)
+									.contentAsString(contentAsStringMatcher)
+									.contentType(contentTypeMatcher) },
+				)
+			}
+		
+		then:
+			failures == expected
+		
+		where:
+			desc					| bodyMatcher		| contentMatcher	| contentAsStringMatcher	| contentTypeMatcher		|| expected
+			"should pass"			| notNullValue()	| notNullValue()	| containsString("alt")		| startsWith("text/")		||  []
+			"should detect all"		| nullValue()		| arrayWithSize(0)	| is("foo")					| is("application/html")	||  [
+					 [klass: AssertionError, message: "alternative of message 0 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart1'>"],
+					 [klass: AssertionError, message: "alternative of message 1 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart3'>"],
+					 [klass: AssertionError, message: "raw content of alternative of message 0 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <49>]"], 
+					 [klass: AssertionError, message: "raw content of alternative of message 1 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <50>]"], 
+					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 0 Expected: is "foo" but: was "alt 1"'], 
+					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 1 Expected: is "foo" but: was "alt 2"'], 
+					 [klass: AssertionError, message: 'content-type of alternative of message 0 Expected: is "application/html" but: was "text/plain"'], 
+					 [klass: AssertionError, message: 'content-type of alternative of message 1 Expected: is "application/html" but: was "text/plain"'],
+					]
+	}
+
 	def "assertion on missing alternative"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			MimeMessage message1 = Mock()
-			Multipart multipart1 = Mock()
-			BodyPart bodyPart1 = Mock()
-			message1.getContent() >> multipart1
-			multipart1.getCount() >> 1
-			multipart1.getBodyPart(0) >> bodyPart1
-			bodyPart1.getInputStream() >> { new ByteArrayInputStream("alt 1".getBytes("UTF-8")) }
-			bodyPart1.getContentType() >> "text/plain"
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					BodyPart bodyPart1 = Mock {
+						getInputStream() >> { new ByteArrayInputStream("alt 1".getBytes("UTF-8")) }
+						getContentType() >> "text/plain"
+					}
+					getCount() >> 1
+					getBodyPart(0) >> bodyPart1
+				}
+				getContent() >> multipart1
+			}
 
-			greenMail.getReceivedMessages() >> ([message1] as MimeMessage[])
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1] as MimeMessage[])
+			}
 			
 		when:
 			def failures = collectFailures { 
@@ -489,46 +822,53 @@ class FluentEmailAssertionsSpec extends Specification {
 	
 	def "attachment(#attachmentIndex | #attachmentName).filename(#nameMatcher) & attachment().description(#descriptionMatcher) & attachment().disposition(#dispositionMatcher) & attachment.header('Content-ID', #headerMatcher) #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			MimeMessage message1 = Mock()
-			Multipart multipart1 = Mock()
-			BodyPart attachment1 = Mock()
-			BodyPart attachment2 = Mock()
-			message1.getContent() >> multipart1
-			multipart1.getCount() >> 2
-			multipart1.getBodyPart(0) >> attachment1
-			multipart1.getBodyPart(1) >> attachment2
-			attachment1.getContentType() >> "application/pdf"
-			attachment1.getFileName() >> "foo1.pdf"
-			attachment1.getDescription() >> "desc1"
-			attachment1.getDisposition() >> "dispo1"
-			attachment1.getHeader("Content-ID") >> (["cid1"] as String[])
-			attachment2.getContentType() >> "application/pdf"
-			attachment2.getFileName() >> "foo2.pdf"
-			attachment2.getDescription() >> "desc2"
-			attachment2.getDisposition() >> "dispo2"
-			attachment2.getHeader("Content-ID") >> (["cid2"] as String[])
-
-			MimeMessage message2 = Mock()
-			Multipart multipart2 = Mock()
-			BodyPart attachment3 = Mock()
-			BodyPart attachment4 = Mock()
-			message2.getContent() >> multipart2
-			multipart2.getCount() >> 2
-			multipart2.getBodyPart(0) >> attachment3
-			multipart2.getBodyPart(1) >> attachment4
-			attachment3.getContentType() >> "application/x-pdf"
-			attachment3.getFileName() >> "foo1.pdf"
-			attachment3.getDescription() >> "desc3"
-			attachment3.getDisposition() >> "dispo3"
-			attachment3.getHeader("Content-ID") >> (["cid3"] as String[])
-			attachment4.getContentType() >> "application/x-pdf"
-			attachment4.getFileName() >> "foo2.pdf"
-			attachment4.getDescription() >> "desc4"
-			attachment4.getDisposition() >> "dispo4"
-			attachment4.getHeader("Content-ID") >> (["cid4"] as String[])
-
-			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					BodyPart attachment1 = Mock {
+						getContentType() >> "application/pdf"
+						getFileName() >> "foo1.pdf"
+						getDescription() >> "desc1"
+						getDisposition() >> "dispo1"
+						getHeader("Content-ID") >> (["cid1"] as String[])
+					}
+					BodyPart attachment2 = Mock {
+						getContentType() >> "application/pdf"
+						getFileName() >> "foo2.pdf"
+						getDescription() >> "desc2"
+						getDisposition() >> "dispo2"
+						getHeader("Content-ID") >> (["cid2"] as String[])
+					}
+					getCount() >> 2
+					getBodyPart(0) >> attachment1
+					getBodyPart(1) >> attachment2
+				}
+				getContent() >> multipart1
+			}
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					BodyPart attachment3 = Mock {
+						getContentType() >> "application/x-pdf"
+						getFileName() >> "foo1.pdf"
+						getDescription() >> "desc3"
+						getDisposition() >> "dispo3"
+						getHeader("Content-ID") >> (["cid3"] as String[])
+					}
+					BodyPart attachment4 = Mock {
+						getContentType() >> "application/x-pdf"
+						getFileName() >> "foo2.pdf"
+						getDescription() >> "desc4"
+						getDisposition() >> "dispo4"
+						getHeader("Content-ID") >> (["cid4"] as String[])
+					}
+					getCount() >> 2
+					getBodyPart(0) >> attachment3
+					getBodyPart(1) >> attachment4
+				}
+				getContent() >> multipart2
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
 		when:
 			def failures = collectFailures { 
@@ -596,25 +936,198 @@ class FluentEmailAssertionsSpec extends Specification {
 						]
 	}
 	
+	def "every().attachment(#attachmentIndex | #attachmentName).filename(#nameMatcher) & every().attachment().description(#descriptionMatcher) & every().attachment().disposition(#dispositionMatcher) & every().attachment.header('Content-ID', #headerMatcher) #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					BodyPart attachment1 = Mock {
+						getContentType() >> "application/pdf"
+						getFileName() >> "foo1.pdf"
+						getDescription() >> "desc1"
+						getDisposition() >> "dispo1"
+						getHeader("Content-ID") >> (["cid1"] as String[])
+					}
+					BodyPart attachment2 = Mock {
+						getContentType() >> "application/pdf"
+						getFileName() >> "foo2.pdf"
+						getDescription() >> "desc2"
+						getDisposition() >> "dispo2"
+						getHeader("Content-ID") >> (["cid2"] as String[])
+					}
+					getCount() >> 2
+					getBodyPart(0) >> attachment1
+					getBodyPart(1) >> attachment2
+				}
+				getContent() >> multipart1
+			}
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					BodyPart attachment3 = Mock {
+						getContentType() >> "application/x-pdf"
+						getFileName() >> "foo1.pdf"
+						getDescription() >> "desc3"
+						getDisposition() >> "dispo3"
+						getHeader("Content-ID") >> (["cid3"] as String[])
+					}
+					BodyPart attachment4 = Mock {
+						getContentType() >> "application/x-pdf"
+						getFileName() >> "foo2.pdf"
+						getDescription() >> "desc4"
+						getDisposition() >> "dispo4"
+						getHeader("Content-ID") >> (["cid4"] as String[])
+					}
+					getCount() >> 2
+					getBodyPart(0) >> attachment3
+					getBodyPart(1) >> attachment4
+				}
+				getContent() >> multipart2
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+			
+		when:
+			def failures = collectFailures {
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().every().attachment(attachmentIndex)
+							.filename(nameMatcher)
+							.description(descriptionMatcher)
+							.disposition(dispositionMatcher)
+							.header("Content-ID", headerMatcher) },
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().every().attachment(attachmentName)
+							.description(descriptionMatcher)
+							.disposition(dispositionMatcher)
+							.header("Content-ID", headerMatcher) },
+				)
+			}
+		
+		then:
+			failures == expected
+		
+		where:
+			desc											| attachmentIndex	| attachmentName	| nameMatcher				| descriptionMatcher	| dispositionMatcher	| headerMatcher					|| expected
+			"should pass"									| 0					| "foo1.pdf"		| containsString("foo")		| startsWith("desc")	| startsWith("dispo")	| contains(startsWith("cid"))	||  []
+			"should detect all"								| 1					| "foo2.pdf"		| is("foo")					| is("desc")			| is("dispo")			| contains(is("cid"))			||  [
+						 [klass: AssertionError, message: 'filename of attachment with index 1 of message 0 Expected: is "foo" but: was "foo2.pdf"'],
+						 [klass: AssertionError, message: 'filename of attachment with index 1 of message 1 Expected: is "foo" but: was "foo2.pdf"'],
+						 [klass: AssertionError, message: 'description of attachment with index 1 of message 0 Expected: is "desc" but: was "desc2"'],
+						 [klass: AssertionError, message: 'description of attachment with index 1 of message 1 Expected: is "desc" but: was "desc4"'],
+						 [klass: AssertionError, message: 'disposition of attachment with index 1 of message 0 Expected: is "dispo" but: was "dispo2"'],
+						 [klass: AssertionError, message: 'disposition of attachment with index 1 of message 1 Expected: is "dispo" but: was "dispo4"'],
+						 [klass: AssertionError, message: 'header Content-ID of attachment with index 1 of message 0 Expected: iterable containing [is "cid"] but: was <[cid2]>'],
+						 [klass: AssertionError, message: 'header Content-ID of attachment with index 1 of message 1 Expected: iterable containing [is "cid"] but: was <[cid4]>'],
+						 [klass: AssertionError, message: 'description of attachment named \'foo2.pdf\' (matching index: 0) of message 0 Expected: is "desc" but: was "desc2"'],
+						 [klass: AssertionError, message: 'description of attachment named \'foo2.pdf\' (matching index: 0) of message 1 Expected: is "desc" but: was "desc4"'],
+						 [klass: AssertionError, message: 'disposition of attachment named \'foo2.pdf\' (matching index: 0) of message 0 Expected: is "dispo" but: was "dispo2"'],
+						 [klass: AssertionError, message: 'disposition of attachment named \'foo2.pdf\' (matching index: 0) of message 1 Expected: is "dispo" but: was "dispo4"'],
+						 [klass: AssertionError, message: 'header Content-ID of attachment named \'foo2.pdf\' (matching index: 0) of message 0 Expected: iterable containing [is "cid"] but: was <[cid2]>'],
+						 [klass: AssertionError, message: 'header Content-ID of attachment named \'foo2.pdf\' (matching index: 0) of message 1 Expected: iterable containing [is "cid"] but: was <[cid4]>'],
+						]
+			"should indicate attachment by index not found"	| 2					| "foo2.pdf"		| containsString("foo")		| startsWith("desc")	| startsWith("dispo")	| contains(startsWith("cid"))	||  [
+						 [klass: AssertionError, message: 'filename of attachment with index 2 (/!\\ not found) of message 0 Expected: a string containing "foo" but: was null'],
+						 [klass: AssertionError, message: 'filename of attachment with index 2 (/!\\ not found) of message 1 Expected: a string containing "foo" but: was null'],
+						 [klass: AssertionError, message: 'description of attachment with index 2 (/!\\ not found) of message 0 Expected: a string starting with "desc" but: was null'],
+						 [klass: AssertionError, message: 'description of attachment with index 2 (/!\\ not found) of message 1 Expected: a string starting with "desc" but: was null'],
+						 [klass: AssertionError, message: 'disposition of attachment with index 2 (/!\\ not found) of message 0 Expected: a string starting with "dispo" but: was null'],
+						 [klass: AssertionError, message: 'disposition of attachment with index 2 (/!\\ not found) of message 1 Expected: a string starting with "dispo" but: was null'],
+						 [klass: AssertionError, message: 'header Content-ID of attachment with index 2 (/!\\ not found) of message 0 Expected: iterable containing [a string starting with "cid"] but: was null'],
+						 [klass: AssertionError, message: 'header Content-ID of attachment with index 2 (/!\\ not found) of message 1 Expected: iterable containing [a string starting with "cid"] but: was null'],
+						]
+			 "should indicate attachment by name not found"	| 0					| "bar.pdf"			| containsString("foo")		| startsWith("desc")	| startsWith("dispo")	| contains(startsWith("cid"))	||  [
+						 [klass: AssertionError, message: 'description of attachment named \'bar.pdf\' (/!\\ not found) of message 0 Expected: a string starting with "desc" but: was null'],
+						 [klass: AssertionError, message: 'description of attachment named \'bar.pdf\' (/!\\ not found) of message 1 Expected: a string starting with "desc" but: was null'],
+						 [klass: AssertionError, message: 'disposition of attachment named \'bar.pdf\' (/!\\ not found) of message 0 Expected: a string starting with "dispo" but: was null'],
+						 [klass: AssertionError, message: 'disposition of attachment named \'bar.pdf\' (/!\\ not found) of message 1 Expected: a string starting with "dispo" but: was null'],
+						 [klass: AssertionError, message: 'header Content-ID of attachment named \'bar.pdf\' (/!\\ not found) of message 0 Expected: iterable containing [a string starting with "cid"] but: was null'],
+						 [klass: AssertionError, message: 'header Content-ID of attachment named \'bar.pdf\' (/!\\ not found) of message 1 Expected: iterable containing [a string starting with "cid"] but: was null'],
+						]
+	}
+	
+	def "every().attachment(#predicateName).filename(#nameMatcher) #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					BodyPart attachment1 = Mock {
+						getFileName() >> "foo1.pdf"
+					}
+					BodyPart attachment2 = Mock {
+						getFileName() >> "foo2.pdf"
+					}
+					getCount() >> 2
+					getBodyPart(0) >> attachment1
+					getBodyPart(1) >> attachment2
+				}
+				getContent() >> multipart1
+			}
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					BodyPart attachment3 = Mock {
+						getFileName() >> "foo3.pdf"
+					}
+					BodyPart attachment4 = Mock {
+						getFileName() >> "foo4.pdf"
+					}
+					getCount() >> 2
+					getBodyPart(0) >> attachment3
+					getBodyPart(1) >> attachment4
+				}
+				getContent() >> multipart2
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+			
+			Predicate predicate = Mock()
+			predicate.test(_) >> predicateClosure
+			predicate.toString() >> predicateName
+			
+		when:
+			def failures = collectFailures {
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages()
+						.every().attachments(predicate)
+							.filename(nameMatcher) },
+				)
+			}
+		
+		then:
+			failures == expected
+		
+		where:
+			desc													| predicateClosure	| predicateName	| nameMatcher				|| expected
+			"should pass"											| { true }			| "any"			| startsWith("foo")			|| []
+			"should indicate which matching attachment is wrong"	| { true }			| "any"			| startsWith("bar")			|| [
+					 [klass: AssertionError, message: 'filename of attachment any (matching index: 0) of message 0 Expected: a string starting with "bar" but: was "foo1.pdf"'], 
+					 [klass: AssertionError, message: 'filename of attachment any (matching index: 1) of message 0 Expected: a string starting with "bar" but: was "foo2.pdf"'], 
+					 [klass: AssertionError, message: 'filename of attachment any (matching index: 0) of message 1 Expected: a string starting with "bar" but: was "foo3.pdf"'], 
+					 [klass: AssertionError, message: 'filename of attachment any (matching index: 1) of message 1 Expected: a string starting with "bar" but: was "foo4.pdf"']
+					]
+	}
+	
 	def "attachments(#matcher) & #attachments.size() #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
 			
-			MimeMessage message1 = Mock()
-			Multipart multipart1 = Mock()
-			message1.getContent() >> multipart1
-			multipart1.getCount() >> attachments.size()
-			multipart1.getBodyPart(0) >> attachments[0]
-			multipart1.getBodyPart(1) >> attachments[1]
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					getCount() >> attachments.size()
+					getBodyPart(0) >> attachments[0]
+					getBodyPart(1) >> attachments[1]
+				}
+				getContent() >> multipart1
+			}
 
-			MimeMessage message2 = Mock()
-			Multipart multipart2 = Mock()
-			message2.getContent() >> multipart2
-			multipart2.getCount() >> attachments.size()
-			multipart2.getBodyPart(0) >> attachments[0]
-			multipart2.getBodyPart(1) >> attachments[1]
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					getCount() >> attachments.size()
+					getBodyPart(0) >> attachments[0]
+					getBodyPart(1) >> attachments[1]
+				}
+				getContent() >> multipart2
+			}
 
-			greenMail.getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
 			
 		when:
 			def failures = collectFailures { 
@@ -644,11 +1157,101 @@ class FluentEmailAssertionsSpec extends Specification {
 						 [klass: AssertionError, message: 'attachments of message 1 Expected: (a collection containing null) but: was <[Mock for type \'BodyPart\' named \'attachment\']>']
 						]
 	}
+	
+	def "every().attachments(#matcher) & #attachments.size() #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				Multipart multipart1 = Mock {
+					getCount() >> attachments.size()
+					getBodyPart(0) >> attachments[0]
+					getBodyPart(1) >> attachments[1]
+				}
+				getContent() >> multipart1
+			}
 
+			MimeMessage message2 = Mock {
+				Multipart multipart2 = Mock {
+					getCount() >> attachments.size()
+					getBodyPart(0) >> attachments[0]
+					getBodyPart(1) >> attachments[1]
+				}
+				getContent() >> multipart2
+			}
+
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+			
+		when:
+			def failures = collectFailures {
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages().every().attachments(matcher) },
+				)
+			}
+		
+		then:
+			failures == expected
+		
+		where:
+			desc															| attachments				| matcher					|| expected
+			"should pass"													| []						| hasSize(0)				||  []
+			"should pass"													| [attachment1()]			| hasSize(1)				||  []
+			"should indicate that received attachments count is wrong"		| []						| hasSize(1)				||  [
+						 [klass: AssertionError, message: 'attachments of message 0 Expected: a collection with size <1> but: was <[]>'],
+						 [klass: AssertionError, message: 'attachments of message 1 Expected: a collection with size <1> but: was <[]>']
+						]
+			"should indicate that received attachments are wrong"			| [attachment1()]			| hasItems(nullValue())		||  [
+						 [klass: AssertionError, message: 'attachments of message 0 Expected: (a collection containing null) but: was <[Mock for type \'BodyPart\' named \'attachment\']>'],
+						 [klass: AssertionError, message: 'attachments of message 1 Expected: (a collection containing null) but: was <[Mock for type \'BodyPart\' named \'attachment\']>']
+						]
+	}
+
+	def "attachments() on non multipart message should fail"() {
+		given:
+			MimeMessage message1 = Mock {
+				getContent() >> "foo"
+			}
+			MimeMessage message2 = Mock {
+				getContent() >> "foo"
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+			
+
+		when:
+			def failures = collectFailures {
+				assertAll(
+					(Consumer) { reg -> assertThat(greenMail, reg).receivedMessages()
+						.message(0).attachment(8).and().and()
+						.message(1).attachment(8).and().and()
+						.message(0).attachment("foo").and().and()
+						.message(1).attachment("foo").and().and()
+						.message(0).attachments((Predicate) { true }).and().and()
+						.message(1).attachments((Predicate) { true }).and().and()
+						.message(0).attachments(hasSize(9)).and()
+						.message(1).attachments(hasSize(9)) },
+				)
+			}
+		
+		then:
+			failures == ([[klass: AssertionError, message: 'should be multipart message']] * 6
+						+ [
+							[klass: AssertionError, message: 'should be multipart message'],
+							[klass: AssertionError, message: 'attachments of message 0 Expected: a collection with size <9> but: was <[]>'], 
+						]
+						+ [
+							[klass: AssertionError, message: 'should be multipart message'],
+							[klass: AssertionError, message: 'attachments of message 1 Expected: a collection with size <9> but: was <[]>']
+						])
+	}
+	
+	
 	def "assertions on message #index but only #messages.size() messages received"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			greenMail.getReceivedMessages() >> (messages as MimeMessage[])
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> (messages as MimeMessage[])
+			}
 		
 		when:
 			def failures = collectFailures { 
@@ -664,27 +1267,28 @@ class FluentEmailAssertionsSpec extends Specification {
 		where:
 			messages				| index			|| expected
 			[]						| 0				||  [
-														 [klass: AssertionError, message: "Assertions on message 0 can't be executed because 0 messages were received"],
-														 [klass: AssertionError, message: "Assertions on message 0 can't be executed because 0 messages were received"],
-														]
+						 [klass: AssertionError, message: "Assertions on message 0 can't be executed because 0 messages were received"],
+						 [klass: AssertionError, message: "Assertions on message 0 can't be executed because 0 messages were received"],
+						]
 			[]						| 1				||  [
-														 [klass: AssertionError, message: "Assertions on message 1 can't be executed because 0 messages were received"],
-														 [klass: AssertionError, message: "Assertions on message 1 can't be executed because 0 messages were received"],
-														]
+						 [klass: AssertionError, message: "Assertions on message 1 can't be executed because 0 messages were received"],
+						 [klass: AssertionError, message: "Assertions on message 1 can't be executed because 0 messages were received"],
+						]
 			[Mock(MimeMessage)]		| 1				||  [
-														 [klass: AssertionError, message: "Assertions on message 1 can't be executed because 1 messages were received"],
-														 [klass: AssertionError, message: "Assertions on message 1 can't be executed because 1 messages were received"],
-														]
+						 [klass: AssertionError, message: "Assertions on message 1 can't be executed because 1 messages were received"],
+						 [klass: AssertionError, message: "Assertions on message 1 can't be executed because 1 messages were received"],
+						]
 			[Mock(MimeMessage)]		| 2				||  [
-														 [klass: AssertionError, message: "Assertions on message 2 can't be executed because 1 messages were received"],
-														 [klass: AssertionError, message: "Assertions on message 2 can't be executed because 1 messages were received"],
-														]
+						 [klass: AssertionError, message: "Assertions on message 2 can't be executed because 1 messages were received"],
+						 [klass: AssertionError, message: "Assertions on message 2 can't be executed because 1 messages were received"],
+						]
 	}
 
 	def "#messages.size() messages received & receivedMessages(#matcher) & count(#countMatcher) #desc"() {
 		given:
-			GreenMailRule greenMail = Mock()
-			greenMail.getReceivedMessages() >> (messages as MimeMessage[])
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> (messages as MimeMessage[])
+			}
 		
 		when:
 			def failures = collectFailures { 
@@ -705,7 +1309,72 @@ class FluentEmailAssertionsSpec extends Specification {
 																						 [klass: AssertionError, message: "Received messages count Expected: is <1> but: was <0>"],
 																						]
 	}
-	
+
+	def "fail immediately | from().address(#addressMatcher) & from().personal(#personalMatcher) #desc"() {
+		given:
+			MimeMessage message1 = Mock {
+				InternetAddress from1 = Mock {
+					getAddress() >> "address1"
+					getPersonal() >> "personal1"
+					getType() >> "type1"
+					toString() >> "personal1 <address1>"
+				}
+				getFrom() >> ([from1] as InternetAddress[])
+			}
+			MimeMessage message2 = Mock {
+				InternetAddress from2 = Mock {
+					getAddress() >> "address2"
+					getPersonal() >> "personal2"
+					getType() >> "type2"
+					toString() >> "personal2 <address2>"
+				}
+				getFrom() >> ([from2] as InternetAddress[])
+			}
+			GreenMailRule greenMail = Mock {
+				getReceivedMessages() >> ([message1, message2] as MimeMessage[])
+			}
+			
+		when:
+			def failures = collectFailures({
+					assertThat(greenMail)
+						.receivedMessages()
+							.message(0)
+								.from()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+									.and()
+								.and()
+							.message(1)
+								.from()
+									.address(addressMatcher)
+									.personal(personalMatcher)
+			}, {
+					assertThat([message1, message2] as MimeMessage[])
+						.message(0)
+							.from()
+								.address(addressMatcher)
+								.personal(personalMatcher)
+								.and()
+							.and()
+						.message(1)
+							.from()
+								.address(addressMatcher)
+								.personal(personalMatcher)
+			})
+		
+		then:
+			failures == expected
+		
+		where:
+			desc					| addressMatcher					| personalMatcher					|| expected
+			"should pass"			| everyItem(startsWith("address"))	| everyItem(startsWith("personal"))	||  []
+			"should detect first"	| everyItem(is("address"))			| everyItem(is("personal"))			||  [
+						 [klass: AssertionError, message: "email addresses of 'from' field of message 0 Expected: every item is is \"address\" but: was <[address1]>"],
+						 [klass: AssertionError, message: "email addresses of 'from' field of message 0 Expected: every item is is \"address\" but: was <[address1]>"],
+						]
+	}
+
+
 	private BodyPart attachment1() {
 		BodyPart attachment = Mock()
 		attachment.getContentType() >> "application/pdf"
@@ -721,19 +1390,29 @@ class FluentEmailAssertionsSpec extends Specification {
 	}
 
 
-	private List collectFailures(Closure cl) {
+	private List collectFailures(Closure<?>... cls) {
+		def assertions = []
+		for (Closure cl : cls) {
+			assertions += collect(cl)
+		}
+		return assertions
+	}
+	
+	private List collect(Closure cl) {
 		try {
 			cl()
 			return []
 		} catch(MultipleAssertionError e) {
 			return failures(e)
+		} catch(Throwable e) {
+			return [[klass: e.getClass(), message: e.getMessage().replaceAll("\\s+", " ")]]
 		}
 	}
 	
 	private List failures(MultipleAssertionError e) {
 		def assertions = []
 		for (Throwable t : e.getFailures()) {
-			assertions += [klass: t.getClass(), message: t.getMessage().replaceAll("\\s+", " ")];
+			assertions += [klass: t.getClass(), message: t.getMessage().replaceAll("\\s+", " ")]
 		}
 		return assertions
 	}

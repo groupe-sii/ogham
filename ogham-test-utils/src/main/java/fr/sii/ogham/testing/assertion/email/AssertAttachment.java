@@ -38,7 +38,7 @@ public final class AssertAttachment {
 	public static void assertEquals(ExpectedAttachment expected, Message[] actual) throws Exception {
 		AssertionRegistry registry = new FailAtEndRegistry();
 		registry.register(() -> Assert.assertEquals("should have only one message", 1, actual.length));
-		assertEquals(expected, actual[0], registry);
+		assertEquals(expected, actual.length==1 ? actual[0] : null, registry);
 		registry.execute();
 	}
 

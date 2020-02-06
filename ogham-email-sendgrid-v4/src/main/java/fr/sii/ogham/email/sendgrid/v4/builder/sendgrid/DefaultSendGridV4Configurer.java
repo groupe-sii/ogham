@@ -72,7 +72,7 @@ public final class DefaultSendGridV4Configurer {
 	}
 
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_SENDGRID_CONFIGURER_PRIORITY)
-	public static class SendGridV2Configurer implements MessagingConfigurer {
+	public static class SendGridV4Configurer implements MessagingConfigurer {
 		@Override
 		public void configure(MessagingBuilder msgBuilder) {
 			if (!canUseSendGrid()) {

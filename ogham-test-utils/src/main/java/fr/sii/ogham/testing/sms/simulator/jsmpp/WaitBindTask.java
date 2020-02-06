@@ -57,7 +57,7 @@ class WaitBindTask implements Runnable {
 
 	private boolean checkPassword(BindRequest bindRequest) {
 		// no credentials registered => allow requests
-		if (serverCredentials.isEmpty()) {
+		if (serverCredentials == null || serverCredentials.isEmpty()) {
 			return true;
 		}
 		for (Credentials creds : serverCredentials) {

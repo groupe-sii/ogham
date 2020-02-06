@@ -1,6 +1,6 @@
-package oghamtesting.ut.helper.html
+package oghamtesting.ut.assertion.html
 
-import static fr.sii.ogham.testing.assertion.html.AssertHtml.assertIdentical
+import static fr.sii.ogham.testing.assertion.html.AssertHtml.assertEquals
 
 import org.junit.ComparisonFailure
 
@@ -15,7 +15,7 @@ import spock.lang.Unroll
 class AssertIdenticalSpec extends Specification {
 	def "#desc should be considered as identical"() {
 		when:
-			assertIdentical("<html><head></head><body>${expectedString}</body></html>", "<html><head></head><body>${actualString}</body></html>")
+			assertEquals("<html><head></head><body>${expectedString}</body></html>", "<html><head></head><body>${actualString}</body></html>")
 		
 		then:
 			noExceptionThrown()
@@ -29,7 +29,7 @@ class AssertIdenticalSpec extends Specification {
 	
 	def "#desc should be considered as different"() {
 		when:
-			assertIdentical("<html><head></head><body>${expectedString}</body></html>", "<html><head></head><body>${actualString}</body></html>")
+			assertEquals("<html><head></head><body>${expectedString}</body></html>", "<html><head></head><body>${actualString}</body></html>")
 		
 		then:
 			thrown(ComparisonFailure);

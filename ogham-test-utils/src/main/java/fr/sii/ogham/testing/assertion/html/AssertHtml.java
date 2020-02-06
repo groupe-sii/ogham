@@ -1,23 +1,15 @@
 package fr.sii.ogham.testing.assertion.html;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Difference;
-import org.custommonkey.xmlunit.HTMLDocumentBuilder;
-import org.custommonkey.xmlunit.TolerantSaxDocumentBuilder;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.exceptions.ConfigurationException;
 import org.junit.ComparisonFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import fr.sii.ogham.testing.assertion.exception.ComparisonException;
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
 
 /**
  * Utility class for checking HTML content.
@@ -45,18 +37,11 @@ public final class AssertHtml {
 	 * @param actual
 	 *            the HTML content to check
 	 */
-	public static void assertIdentical(String expected, String actual) {
-		try {
-			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));
-			Document expectedDoc = builder.parse(expected);
-			Document actualDoc = builder.parse(actual==null ? "" : actual);
-			DetailedDiff diff = new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));
-			if (!diff.identical()) {
-				logDifferences(diff);
-				throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
-			}
-		} catch (SAXException | IOException | ConfigurationException | ParserConfigurationException e) {
-			throw new ComparisonException("Failed to compare HTML", e);
+	public static void assertEquals(String expected, String actual) {
+		DetailedDiff diff = HtmlUtils.compare(expected, actual);
+		if (!diff.identical()) {
+			logDifferences(diff);
+			throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
 		}
 	}
 
@@ -77,25 +62,17 @@ public final class AssertHtml {
 	 *            the HTML content to check
 	 */
 	public static void assertSimilar(String expected, String actual) {
-		try {
-			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));
-			Document expectedDoc = builder.parse(expected);
-			Document actualDoc = builder.parse(actual);
-			DetailedDiff diff = new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));
-			if (!diff.similar()) {
-				logUnrecoverableDifferences(diff);
-				throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
-			}
-		} catch (SAXException | IOException | ConfigurationException | ParserConfigurationException e) {
-			throw new ComparisonException("Failed to compare HTML", e);
+		DetailedDiff diff = HtmlUtils.compare(expected, actual);
+		if (!diff.similar()) {
+			logUnrecoverableDifferences(diff);
+			throw new ComparisonFailure("HTML element different to expected one. See logs for details about found differences.\n", expected, actual);
 		}
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	private static void logDifferences(DetailedDiff diff) {
 		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
-			LOG.error(difference.toString());	// NOSONAR
+			LOG.error(difference.toString()); // NOSONAR
 		}
 	}
 
@@ -103,7 +80,7 @@ public final class AssertHtml {
 	private static void logUnrecoverableDifferences(DetailedDiff diff) {
 		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
 			if (!difference.isRecoverable()) {
-				LOG.error(difference.toString());	// NOSONAR
+				LOG.error(difference.toString()); // NOSONAR
 			}
 		}
 	}

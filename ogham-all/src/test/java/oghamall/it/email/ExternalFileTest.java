@@ -1,7 +1,7 @@
 package oghamall.it.email;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resource;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
@@ -74,10 +74,10 @@ public class ExternalFileTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/mixed/expected/simple_foo_42.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/mixed/expected/simple_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/mixed/expected/simple_foo_42.txt")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/mixed/expected/simple_foo_42.txt")))
 					.contentType(startsWith("text/plain")).and()
 				.attachments(emptyIterable());
 		// @formatter:on					

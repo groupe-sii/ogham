@@ -1,7 +1,7 @@
 package oghamall.it.email;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
@@ -60,7 +60,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(is("text"))
@@ -85,7 +85,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(is("text"))
@@ -111,7 +111,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(is("text"))
@@ -135,7 +135,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head><title>html title</title></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head><title>html title</title></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(is("text"))
@@ -160,7 +160,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head><title>html title</title></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head><title>html title</title></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(is("text"))
@@ -186,7 +186,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head><title>html title</title></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head><title>html title</title></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(is("text"))
@@ -210,7 +210,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(is("text"))
@@ -235,7 +235,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(is("text"))
@@ -261,7 +261,7 @@ public class EmailExtractSubjectTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml("<html><head></head><body>html</body></html>"))
+					.contentAsString(isIdenticalHtml("<html><head></head><body>html</body></html>"))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
 					.contentAsString(matchesRegex("Subject: from text content\r?\ntext"))

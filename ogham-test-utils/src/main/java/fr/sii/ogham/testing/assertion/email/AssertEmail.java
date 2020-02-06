@@ -47,7 +47,7 @@ public final class AssertEmail {
 	 * <li>Each received part body equals the expected one (order is important).
 	 * See {@link #assertBody(String, String, boolean)}</li>
 	 * <li>Each received part Mime Type equals the expected one (order is
-	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * important).</li>
 	 * </ul>
 	 * <p>
 	 * The checking of the body is done strictly (totally equal).
@@ -84,7 +84,7 @@ public final class AssertEmail {
 	 * <li>Each received part body equals the expected one (order is important).
 	 * See {@link #assertBody(String, String, boolean)}</li>
 	 * <li>Each received part Mime Type equals the expected one (order is
-	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * important).</li>
 	 * </ul>
 	 * <p>
 	 * The checking of the body is done strictly (totally equal).
@@ -120,7 +120,7 @@ public final class AssertEmail {
 	 */
 	public static void assertEquals(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessagingException, IOException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertions.register(() -> Assert.assertEquals("should have " + expectedEmails.length + " email", expectedEmails.length, actualEmails.length));
+		assertions.register(() -> Assert.assertEquals("should have received " + expectedEmails.length + " email", expectedEmails.length, actualEmails.length));
 		for (int i = 0; i < expectedEmails.length; i++) {
 			assertEquals(expectedEmails[i], i < actualEmails.length ? actualEmails[i] : null, true, assertions);
 		}
@@ -140,8 +140,7 @@ public final class AssertEmail {
 	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
 	 * <li>The body equals the expected one (order is important). See
 	 * {@link #assertBody(String, String, boolean)}</li>
-	 * <li>The Mime Type equals the expected one (order is important). See
-	 * {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * <li>The Mime Type equals the expected one (order is important).</li>
 	 * </ul>
 	 * <p>
 	 * The checking of the body is done strictly (totally equal).
@@ -174,7 +173,7 @@ public final class AssertEmail {
 	 */
 	public static void assertEquals(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertions.register(() -> Assert.assertEquals("should have " + expectedEmail.length + " email", expectedEmail.length, actualEmails.length));
+		assertions.register(() -> Assert.assertEquals("should have received " + expectedEmail.length + " email", expectedEmail.length, actualEmails.length));
 		for (int i = 0; i < expectedEmail.length; i++) {
 			assertEquals(expectedEmail[i], i < actualEmails.length ? actualEmails[i] : null, true, assertions);
 		}
@@ -190,8 +189,7 @@ public final class AssertEmail {
 	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
 	 * <li>The body equals the expected one (order is important). See
 	 * {@link #assertBody(String, String, boolean)}</li>
-	 * <li>The Mime Type equals the expected one (order is important). See
-	 * {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * <li>The Mime Type equals the expected one (order is important).</li>
 	 * </ul>
 	 * <p>
 	 * The checking of the body is done strictly (totally equal).
@@ -222,7 +220,7 @@ public final class AssertEmail {
 	 * <li>Each received part body equals the expected one (order is important).
 	 * See {@link #assertBody(String, String, boolean)}</li>
 	 * <li>Each received part Mime Type equals the expected one (order is
-	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * important).</li>
 	 * </ul>
 	 * <p>
 	 * The checking of the body ignores the new line characters.
@@ -259,7 +257,7 @@ public final class AssertEmail {
 	 * <li>Each received part body equals the expected one (order is important).
 	 * See {@link #assertBody(String, String, boolean)}</li>
 	 * <li>Each received part Mime Type equals the expected one (order is
-	 * important). See {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * important).</li>
 	 * </ul>
 	 * <p>
 	 * The checking of the body ignores the new line characters.
@@ -295,7 +293,7 @@ public final class AssertEmail {
 	 */
 	public static void assertSimilar(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessagingException, IOException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertions.register(() -> Assert.assertEquals("should have " + expectedEmails.length + " email", expectedEmails.length, actualEmails.length));
+		assertions.register(() -> Assert.assertEquals("should have received " + expectedEmails.length + " email", expectedEmails.length, actualEmails.length));
 		for (int i = 0; i < expectedEmails.length; i++) {
 			assertEquals(expectedEmails[i], i < actualEmails.length ? actualEmails[i] : null, false, assertions);
 		}
@@ -315,8 +313,7 @@ public final class AssertEmail {
 	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
 	 * <li>The body equals the expected one (order is important). See
 	 * {@link #assertBody(String, String, boolean)}</li>
-	 * <li>The Mime Type equals the expected one (order is important). See
-	 * {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * <li>The Mime Type equals the expected one (order is important).</li>
 	 * </ul>
 	 * <p>
 	 * The checking of the body ignores the new line characters.
@@ -349,7 +346,7 @@ public final class AssertEmail {
 	 */
 	public static void assertSimilar(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException {
 		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertions.register(() -> Assert.assertEquals("should have " + expectedEmail.length + " email", expectedEmail.length, actualEmails.length));
+		assertions.register(() -> Assert.assertEquals("should have received " + expectedEmail.length + " email", expectedEmail.length, actualEmails.length));
 		for (int i = 0; i < expectedEmail.length; i++) {
 			assertEquals(expectedEmail[i], i < actualEmails.length ? actualEmails[i] : null, false, assertions);
 		}
@@ -365,8 +362,7 @@ public final class AssertEmail {
 	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})</li>
 	 * <li>The body equals the expected one (order is important). See
 	 * {@link #assertBody(String, String, boolean)}</li>
-	 * <li>The Mime Type equals the expected one (order is important). See
-	 * {@link #assertMimetype(ExpectedContent, String)}</li>
+	 * <li>The Mime Type equals the expected one (order is important).</li>
 	 * </ul>
 	 * <p>
 	 * The checking of the body ignores the new line characters.
@@ -385,39 +381,6 @@ public final class AssertEmail {
 		assertions.execute();
 	}
 
-	/**
-	 * Checks that the received Mime Type for the message is like the expected
-	 * Mime Type. The expected Mime Type is a regular expression.
-	 * 
-	 * @param expectedContent
-	 *            the expected email content that contains the expected Mime
-	 *            Type as regular expression
-	 * @param actualEmail
-	 *            the received email to check
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 */
-	public static void assertMimetype(ExpectedContent expectedContent, Message actualEmail) throws MessagingException {
-		assertMimetype(expectedContent, actualEmail.getContentType());
-	}
-
-	/**
-	 * Checks that the received Mime Type for the message is like the expected
-	 * Mime Type. The expected Mime Type is a regular expression.
-	 * 
-	 * @param expectedContent
-	 *            the expected email content that contains the expected Mime
-	 *            Type as regular expression
-	 * @param contentType
-	 *            the received email Mime Type
-	 * @throws MessagingException
-	 *             when accessing the received email fails
-	 */
-	public static void assertMimetype(ExpectedContent expectedContent, String contentType) throws MessagingException {
-		AssertionRegistry assertions = new FailAtEndRegistry();
-		assertMimetype(expectedContent, contentType, assertions);
-		assertions.execute();
-	}
 
 	/**
 	 * Checks if the received body equals the expected body. It handles HTML
@@ -530,9 +493,9 @@ public final class AssertEmail {
 	private static void assertBody(String name, String expectedBody, String actualBody, boolean strict, AssertionRegistry assertions) {
 		if (isHtml(expectedBody)) {
 			if (strict) {
-				assertions.register(() -> AssertHtml.assertIdentical(expectedBody, actualBody));
+				assertions.register(() -> AssertHtml.assertEquals(expectedBody, actualBody));
 			} else {
-				assertions.register(() -> AssertHtml.assertSimilar(expectedBody, actualBody));
+				assertions.register(() -> AssertHtml.assertSimilar(expectedBody,  actualBody));
 			}
 		} else {
 			assertions.register(() -> {
@@ -549,7 +512,7 @@ public final class AssertEmail {
 		assertions.register(() -> Assert.assertEquals("should have only one from", (Integer) 1, from==null ? null : from.length));
 		assertions.register(() -> Assert.assertEquals("from should be '" + expectedEmail.getFrom() + "'", expectedEmail.getFrom(), from==null ? null : from[0].toString()));
 		int recipients = expectedEmail.getTo().size() + expectedEmail.getBcc().size() + expectedEmail.getCc().size();
-		assertions.register(() -> Assert.assertEquals("should have " + recipients + " recipients", (Integer) recipients, actualEmail==null || actualEmail.getAllRecipients()==null ? null : actualEmail.getAllRecipients().length));
+		assertions.register(() -> Assert.assertEquals("should be received by " + recipients + " recipients", (Integer) recipients, actualEmail==null || actualEmail.getAllRecipients()==null ? null : actualEmail.getAllRecipients().length));
 		assertRecipients(expectedEmail.getTo(), actualEmail, RecipientType.TO, assertions);
 		assertRecipients(expectedEmail.getCc(), actualEmail, RecipientType.CC, assertions);
 		assertRecipients(expectedEmail.getBcc(), actualEmail, RecipientType.BCC, assertions);
@@ -558,12 +521,12 @@ public final class AssertEmail {
 	private static void assertRecipients(List<String> expectedRecipients, Message actualEmail, RecipientType recipientType, AssertionRegistry assertions) throws MessagingException {
 		Address[] actualRecipients = actualEmail==null ? null : actualEmail.getRecipients(recipientType);
 		if (expectedRecipients.isEmpty()) {
-			assertions.register(() -> Assert.assertTrue("should have no recipients " + recipientType, actualRecipients == null || actualRecipients.length == 0));
+			assertions.register(() -> Assert.assertTrue("should be received by no recipients (of type RecipientType." + recipientType + ")", actualRecipients == null || actualRecipients.length == 0));
 		} else {
-			assertions.register(() -> Assert.assertEquals("should have " + expectedRecipients.size() + " " + recipientType, (Integer) expectedRecipients.size(), actualRecipients==null ? null : actualRecipients.length));
+			assertions.register(() -> Assert.assertEquals("should be received by " + expectedRecipients.size() + " recipients (of type RecipientType." + recipientType + ")", (Integer) expectedRecipients.size(), actualRecipients==null ? null : actualRecipients.length));
 			for (int i = 0; i < expectedRecipients.size(); i++) {
 				final int idx = i;
-				assertions.register(() -> Assert.assertEquals(recipientType + "[" + idx + "] should be '" + expectedRecipients.get(idx) + "'", expectedRecipients.get(idx),
+				assertions.register(() -> Assert.assertEquals("recipient " + recipientType + "[" + idx + "] should be '" + expectedRecipients.get(idx) + "'", expectedRecipients.get(idx),
 						actualRecipients != null && idx < actualRecipients.length ? actualRecipients[idx].toString() : null));
 			}
 		}
@@ -577,6 +540,9 @@ public final class AssertEmail {
 	 * @return the sanitized string
 	 */
 	private static String sanitize(String str) {
+		if (str == null) {
+			return null;
+		}
 		return str.replaceAll("\r|\n", "");
 	}
 

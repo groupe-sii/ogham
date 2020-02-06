@@ -1,4 +1,4 @@
-package fr.sii.ogham.testing.assertion.sms;
+package fr.sii.ogham.testing.assertion.email;
 
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.overrideDescription;
@@ -6,38 +6,25 @@ import static org.hamcrest.Matchers.lessThan;
 
 import java.util.List;
 
+import javax.mail.Message;
+
 import org.hamcrest.Matcher;
 
 import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
-import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.util.HasParent;
 
-/**
- * Make assertions on received messages
- * 
- * @author Aurélien Baudet
- *
- * @param <P>
- *            the parent type
- * @param <S>
- *            the type of {@link SubmitSm}
- */
-public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
+public class FluentEmailsAssert<P> extends HasParent<P> {
 	/**
 	 * The list of messages that will be used for assertions
 	 */
-	private final List<S> actual;
+	private final List<? extends Message> actual;
+	/**
+	 * Registry to register assertions
+	 */
 	private final AssertionRegistry registry;
 
-	/**
-	 * @param actual
-	 *            the received messages
-	 * @param parent
-	 *            the parent
-	 * @param registry
-	 *            used to register assertions
-	 */
-	public SmsListAssert(List<S> actual, P parent, AssertionRegistry registry) {
+
+	public FluentEmailsAssert(List<? extends Message> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
 		this.registry = registry;
@@ -54,8 +41,8 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the assertion applied on the number of received messages
 	 * @return the fluent API for chaining assertions on received messages
 	 */
-	public SmsListAssert<P, S> count(Matcher<Integer> matcher) {
-		registry.register(() -> assertThat(actual.size(), matcher));
+	public FluentEmailsAssert<P> count(Matcher<Integer> matcher) {
+		registry.register(() -> assertThat("Received messages count", actual.size(), matcher));
 		return this;
 	}
 
@@ -63,16 +50,16 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * Access a particular message to write assertions for it:
 	 * 
 	 * <pre>
-	 * .message(0).content(is("foobar"))
+	 * .message(0).subject(is("foobar"))
 	 * </pre>
 	 * 
 	 * You can use this method to chain several assertions on different
 	 * messages:
 	 * 
 	 * <pre>
-	 * .message(0).content(is("foobar"))
+	 * .message(0).subject(is("foobar"))
 	 * .and()
-	 * .message(1).content(is("toto"))
+	 * .message(1).subject(is("toto"))
 	 * </pre>
 	 * 
 	 * 
@@ -80,9 +67,9 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 *            the index of the message in the received list
 	 * @return the fluent API for chaining assertions on received messages
 	 */
-	public SmsAssert<SmsListAssert<P, S>, S> message(int index) {
+	public FluentEmailAssert<FluentEmailsAssert<P>> message(int index) {
 		registry.register(() -> assertThat(index, overrideDescription("Assertions on message "+index+" can't be executed because "+actual.size()+" messages were received", lessThan(actual.size()))));
-		return new SmsAssert<>(index<actual.size() ? actual.get(index) : null, index, this, registry);
+		return new FluentEmailAssert<>(index<actual.size() ? actual.get(index) : null, index, this, registry);
 	}
 
 	/**
@@ -90,30 +77,28 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * assertion will be applied on every message:
 	 * 
 	 * <pre>
-	 * .receivedMessages().every().content(is("foobar"))
+	 * .receivedMessages().every().subject(is("foobar"))
 	 * </pre>
 	 * 
-	 * Will check that content of every message is "foobar".
+	 * Will check that subject of every message is "foobar".
 	 * 
 	 * <p>
 	 * You can use this method to factorize several assertions on a message and
 	 * then make dedicated assertions on some messages:
 	 * 
 	 * <pre>
-	 * .receivedMessages().every()
-	 *                       .content(is("foobar"))
+	 * .receivedMessages().every().subject(is("foobar"))
 	 *                    .and()
-	 *                    .message(0)
-	 *                       .from().number(is("+33102030405"))
+	 *                    .message(0).body().contentAsString(is("toto"))
 	 * </pre>
 	 * 
-	 * Will check that content of every message is "foobar" and that body of
-	 * first received message is "+33102030405".
+	 * Will check that subject of every message is "foobar" and that body of
+	 * first received message is "toto".
 	 * 
 	 * @return the fluent API for chaining assertions on received messages
 	 */
-	public SmsAssert<SmsListAssert<P, S>, S> every() {
-		return new SmsAssert<>(actual, this, registry);
+	public FluentEmailAssert<FluentEmailsAssert<P>> every() {
+		return new FluentEmailAssert<>(actual, this, registry);
 	}
 
 	/**
@@ -121,32 +106,29 @@ public class SmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	 * assertion will be applied on every message:
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach().content(is("foobar"))
+	 * .receivedMessages().forEach().subject(is("foobar"))
 	 * </pre>
 	 * 
-	 * Will check that content of every message is "foobar".
+	 * Will check that subject of every message is "foobar".
 	 * 
 	 * <p>
 	 * You can use this method to factorize several assertions on a message and
 	 * then make dedicated assertions on some messages:
 	 * 
 	 * <pre>
-	 * .receivedMessages().forEach()
-	 *                       .content(is("foobar"))
+	 * .receivedMessages().forEach().subject(is("foobar"))
 	 *                    .and()
-	 *                    .message(0)
-	 *                       .from().number(is("+33102030405"))
+	 *                    .message(0).body().contentAsString(is("toto"))
 	 * </pre>
 	 * 
-	 * Will check that content of every message is "foobar" and that body of
-	 * first received message is "+33102030405".
+	 * Will check that subject of every message is "foobar" and that body of
+	 * first received message is "toto".
 	 * 
 	 * @return the fluent API for chaining assertions on received messages
 	 * @deprecated use {@link #every()} instead
 	 */
 	@Deprecated
-	public SmsAssert<SmsListAssert<P, S>, S> forEach() {
-		return new SmsAssert<>(actual, this, registry);
+	public FluentEmailAssert<FluentEmailsAssert<P>> forEach() {
+		return every();
 	}
-
 }

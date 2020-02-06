@@ -65,6 +65,7 @@ public class ConfigurableSMPPServerSessionListener extends SMPPServerSessionList
 		return new SMPPServerSession(conn, getSessionStateListener(), getMessageReceiverListener(), responseDeliveryListener, getPduProcessorDegree(), createPduSender(), createPduReader());
 	}
 
+	@Override
 	public void setResponseDeliveryListener(ServerResponseDeliveryListener responseDeliveryListener) {
 		super.setResponseDeliveryListener(responseDeliveryListener);
 		this.responseDeliveryListener = responseDeliveryListener;

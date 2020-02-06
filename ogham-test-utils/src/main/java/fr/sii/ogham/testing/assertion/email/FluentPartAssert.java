@@ -21,7 +21,7 @@ import org.hamcrest.Matcher;
 import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.util.HasParent;
 
-public class PartAssert<P> extends HasParent<P> {
+public class FluentPartAssert<P> extends HasParent<P> {
 	/**
 	 * The list of messages that will be used for assertions
 	 */
@@ -31,11 +31,11 @@ public class PartAssert<P> extends HasParent<P> {
 	 */
 	private final AssertionRegistry registry;
 
-	public PartAssert(PartWithContext actual, P parent, AssertionRegistry registry) {
+	public FluentPartAssert(PartWithContext actual, P parent, AssertionRegistry registry) {
 		this(Arrays.asList(actual), parent, registry);
 	}
 
-	public PartAssert(List<PartWithContext> actual, P parent, AssertionRegistry registry) {
+	public FluentPartAssert(List<PartWithContext> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
 		this.registry = registry;
@@ -66,7 +66,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on string content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> contentAsString(Matcher<? super String> matcher) {
+	public FluentPartAssert<P> contentAsString(Matcher<? super String> matcher) {
 		return contentAsString(matcher, StandardCharsets.UTF_8);
 	}
 
@@ -96,7 +96,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the charset used to decode the content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> contentAsString(Matcher<? super String> matcher, Charset charset) {
+	public FluentPartAssert<P> contentAsString(Matcher<? super String> matcher, Charset charset) {
 		try {
 			String message = charset.name() + " content of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -133,7 +133,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on raw content
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> content(Matcher<byte[]> matcher) {
+	public FluentPartAssert<P> content(Matcher<byte[]> matcher) {
 		try {
 			String message = "raw content of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -170,7 +170,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on content-type
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> contentType(Matcher<? super String> matcher) {
+	public FluentPartAssert<P> contentType(Matcher<? super String> matcher) {
 		try {
 			String message = "content-type of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -207,7 +207,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on description
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> description(Matcher<? super String> matcher) {
+	public FluentPartAssert<P> description(Matcher<? super String> matcher) {
 		try {
 			String message = "description of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -244,7 +244,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on disposition
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> disposition(Matcher<? super String> matcher) {
+	public FluentPartAssert<P> disposition(Matcher<? super String> matcher) {
 		try {
 			String message = "disposition of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -281,7 +281,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on filename
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> filename(Matcher<? super String> matcher) {
+	public FluentPartAssert<P> filename(Matcher<? super String> matcher) {
 		try {
 			String message = "filename of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -318,7 +318,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on headers
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> headers(Matcher<? super Iterable<Header>> matcher) {
+	public FluentPartAssert<P> headers(Matcher<? super Iterable<Header>> matcher) {
 		try {
 			String message = "headers of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
@@ -357,7 +357,7 @@ public class PartAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the header header
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<P> header(String headerName, Matcher<? super Iterable<String>> matcher) {
+	public FluentPartAssert<P> header(String headerName, Matcher<? super Iterable<String>> matcher) {
 		try {
 			String message = "header " + headerName + " of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {

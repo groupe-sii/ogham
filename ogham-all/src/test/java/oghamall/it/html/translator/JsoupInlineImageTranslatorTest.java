@@ -103,7 +103,7 @@ public class JsoupInlineImageTranslatorTest {
 		// assertions
 		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
 		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
-		AssertHtml.assertSimilar(expected, contentWithAttachments.getContent().toString());
+		AssertHtml.assertEquals(expected, contentWithAttachments.getContent().toString());
 		Assert.assertEquals("should have 5 attachments", 5, contentWithAttachments.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
 	}
@@ -121,7 +121,7 @@ public class JsoupInlineImageTranslatorTest {
 		// assertions
 		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
 		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
-		AssertHtml.assertSimilar(expected, contentWithAttachments.getContent().toString());
+		AssertHtml.assertEquals(expected, contentWithAttachments.getContent().toString());
 		Assert.assertEquals("should have 4 attachments", 4, contentWithAttachments.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
 	}
@@ -139,7 +139,7 @@ public class JsoupInlineImageTranslatorTest {
 		// assertions
 		Assert.assertTrue("should be ContentWithAttachments", result instanceof ContentWithAttachments);
 		ContentWithAttachments contentWithAttachments = (ContentWithAttachments) result;
-		AssertHtml.assertSimilar(expected, contentWithAttachments.getContent().toString());
+		AssertHtml.assertEquals(expected, contentWithAttachments.getContent().toString());
 		Assert.assertEquals("should have 2 attachments", 2, contentWithAttachments.getAttachments().size());
 		Assert.assertEquals("should have valid attachments", new HashSet<>(expectedAttachments), new HashSet<>(contentWithAttachments.getAttachments()));
 	}

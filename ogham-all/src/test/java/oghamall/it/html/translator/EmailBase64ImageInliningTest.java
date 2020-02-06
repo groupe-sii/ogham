@@ -1,7 +1,7 @@
 package oghamall.it.html.translator;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.is;
@@ -58,7 +58,7 @@ public class EmailBase64ImageInliningTest {
 			.count(is(1))
 			.message(0)
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/inliner/images/jsoup/expected/differentImageFormatsBase64.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/inliner/images/jsoup/expected/differentImageFormatsBase64.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(emptyIterable());

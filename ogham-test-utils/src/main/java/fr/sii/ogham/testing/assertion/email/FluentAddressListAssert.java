@@ -13,7 +13,7 @@ import org.hamcrest.Matcher;
 import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.util.HasParent;
 
-public class AddressListAssert<P> extends HasParent<P> {
+public class FluentAddressListAssert<P> extends HasParent<P> {
 	/**
 	 * The list of addresses that will be used for assertions
 	 */
@@ -23,7 +23,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 */
 	private final AssertionRegistry registry;
 
-	public AddressListAssert(List<AddressesWithContext> actual, P parent, AssertionRegistry registry) {
+	public FluentAddressListAssert(List<AddressesWithContext> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
 		this.registry = registry;
@@ -60,7 +60,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the email addresses
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public AddressListAssert<P> address(Matcher<? super Iterable<String>> matcher) {
+	public FluentAddressListAssert<P> address(Matcher<? super Iterable<String>> matcher) {
 		String desc = "email addresses of '${fieldName}' field of message ${messageIndex}";
 		for (AddressesWithContext addresses : actual) {
 			List<String> addressesStr = new ArrayList<>();
@@ -105,7 +105,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the email addresses
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public AddressListAssert<P> textual(Matcher<? super Iterable<String>> matcher) {
+	public FluentAddressListAssert<P> textual(Matcher<? super Iterable<String>> matcher) {
 		String desc = "textual addresses of '${fieldName}' field of message ${messageIndex}";
 		for (AddressesWithContext addresses : actual) {
 			List<String> addressesStr = new ArrayList<>();
@@ -140,7 +140,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the email addresses
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public AddressListAssert<P> type(Matcher<? super Iterable<String>> matcher) {
+	public FluentAddressListAssert<P> type(Matcher<? super Iterable<String>> matcher) {
 		String desc = "address types of '${fieldName}' field of message ${messageIndex}";
 		for (AddressesWithContext addresses : actual) {
 			List<String> addressesStr = new ArrayList<>();
@@ -183,7 +183,7 @@ public class AddressListAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on the email addresses
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public AddressListAssert<P> personal(Matcher<? super Iterable<String>> matcher) {
+	public FluentAddressListAssert<P> personal(Matcher<? super Iterable<String>> matcher) {
 		String desc = "personal of '${fieldName}' field of message ${messageIndex}";
 		for (AddressesWithContext addresses : actual) {
 			List<String> addressesStr = new ArrayList<>();

@@ -45,7 +45,7 @@ public class JsoupBase64ImageInlinerTest {
 		String inlinedHtml = removeOghamAttributes(inlined.getContent());
 		// prepare expected result for the html
 		String expected = getExpectedHtml("withImagesBase64.html");
-		AssertHtml.assertSimilar(expected, inlinedHtml);
+		AssertHtml.assertEquals(expected, inlinedHtml);
 	}
 	
 	@Test
@@ -59,7 +59,7 @@ public class JsoupBase64ImageInlinerTest {
 		String inlinedHtml = removeOghamAttributes(inlined.getContent());
 		// prepare expected result for the html
 		String expected = getExpectedHtml("skipInlineBase64.html");
-		AssertHtml.assertSimilar(expected, inlinedHtml);
+		AssertHtml.assertEquals(expected, inlinedHtml);
 	}
 	
 	
@@ -74,7 +74,7 @@ public class JsoupBase64ImageInlinerTest {
 		String inlinedHtml = removeOghamAttributes(inlined.getContent());
 		// prepare expected result for the html
 		String expected = getExpectedHtml("differentImageFormatsBase64.html");
-		AssertHtml.assertSimilar(expected, inlinedHtml);
+		AssertHtml.assertEquals(expected, inlinedHtml);
 	}
 
 	

@@ -2,7 +2,7 @@ package oghamall.it.email;
 
 import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.assertion.util.EmailUtils.ATTACHMENT_DISPOSITION;
 import static fr.sii.ogham.testing.util.ResourceUtils.resource;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
@@ -107,7 +107,7 @@ public class EmailSMTPDefaultsTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(emptyIterable());
@@ -128,7 +128,7 @@ public class EmailSMTPDefaultsTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(hasSize(5))
@@ -174,7 +174,7 @@ public class EmailSMTPDefaultsTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.xhtml")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/resources_foo_42.xhtml")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(hasSize(5))
@@ -219,7 +219,7 @@ public class EmailSMTPDefaultsTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(emptyIterable());
@@ -239,7 +239,7 @@ public class EmailSMTPDefaultsTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.txt")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_foo_42.txt")))
 					.contentType(startsWith("text/plain")).and()
 				.alternative(nullValue())
 				.attachments(emptyIterable());
@@ -262,10 +262,10 @@ public class EmailSMTPDefaultsTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.alternative()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.html")))
 					.contentType(startsWith("text/html")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.txt")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.txt")))
 					.contentType(startsWith("text/plain")).and()
 				.attachments(emptyIterable());
 		// @formatter:on
@@ -285,10 +285,10 @@ public class EmailSMTPDefaultsTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.html")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.html")))
 					.contentType(startsWith("text/html")).and()
 				.alternative()
-					.contentAsString(isSimilarHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.txt")))
+					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.txt")))
 					.contentType(startsWith("text/plain")).and()
 				.attachments(emptyIterable());
 		// @formatter:on

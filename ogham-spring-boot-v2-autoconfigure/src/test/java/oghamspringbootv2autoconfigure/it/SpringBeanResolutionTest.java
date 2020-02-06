@@ -1,6 +1,6 @@
 package oghamspringbootv2autoconfigure.it;
 
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
@@ -73,7 +73,7 @@ public class SpringBeanResolutionTest {
 					.count(is(1))
 					.message(0)
 						.body()
-							.contentAsString(isSimilarHtml(resourceAsString("/thymeleaf/expected/bean-resolution.html")));
+							.contentAsString(isIdenticalHtml(resourceAsString("/thymeleaf/expected/bean-resolution.html")));
 		});
 	}
 
@@ -120,7 +120,7 @@ public class SpringBeanResolutionTest {
 					.count(is(1))
 					.message(0)
 						.body()
-							.contentAsString(isSimilarHtml(resourceAsString("/freemarker/expected/bean-resolution.html")));
+							.contentAsString(isIdenticalHtml(resourceAsString("/freemarker/expected/bean-resolution.html")));
 		});
 	}
 

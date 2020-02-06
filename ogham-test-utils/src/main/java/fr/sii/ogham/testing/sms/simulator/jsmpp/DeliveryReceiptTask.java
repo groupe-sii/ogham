@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 class DeliveryReceiptTask implements Runnable {
 	private static final int TWO_BYTES = 16;
-	private static final int WAIT_DURATION = 1000;
 
 	private static final Logger LOG = LoggerFactory.getLogger(DeliveryReceiptTask.class);
 
@@ -82,12 +81,6 @@ class DeliveryReceiptTask implements Runnable {
 	}
 
 	public void run() {
-		try {
-			Thread.sleep(WAIT_DURATION);
-		} catch (InterruptedException e1) {
-			Thread.currentThread().interrupt();
-			LOG.error("Sleep interrupted", e1);
-		}
 		SessionState state = session.getSessionState();
 		if (!state.isReceivable()) {
 			LOG.debug("Not sending delivery receipt for message id {} since session state is {}", messageId, state);

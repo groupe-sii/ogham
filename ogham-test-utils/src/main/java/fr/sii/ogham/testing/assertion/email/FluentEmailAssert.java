@@ -33,7 +33,7 @@ import fr.sii.ogham.testing.assertion.util.EmailUtils;
 import fr.sii.ogham.testing.util.HasParent;
 
 @SuppressWarnings("squid:S1192")
-public class EmailAssert<P> extends HasParent<P> {
+public class FluentEmailAssert<P> extends HasParent<P> {
 	/**
 	 * The list of messages that will be used for assertions
 	 */
@@ -44,12 +44,12 @@ public class EmailAssert<P> extends HasParent<P> {
 	 */
 	private final AssertionRegistry registry;
 
-	public EmailAssert(Message actual, int index, P parent, AssertionRegistry registry) {
+	public FluentEmailAssert(Message actual, int index, P parent, AssertionRegistry registry) {
 		this(Arrays.asList(actual), parent, registry);
 		this.index = index;
 	}
 
-	public EmailAssert(List<? extends Message> actual, P parent, AssertionRegistry registry) {
+	public FluentEmailAssert(List<? extends Message> actual, P parent, AssertionRegistry registry) {
 		super(parent);
 		this.actual = actual;
 		this.registry = registry;
@@ -76,7 +76,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the assertion to apply on subject
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public EmailAssert<P> subject(Matcher<? super String> matcher) {
+	public FluentEmailAssert<P> subject(Matcher<? super String> matcher) {
 		try {
 			String desc = "subject of message ${messageIndex}";
 			int msgIdx = this.index;
@@ -122,7 +122,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<EmailAssert<P>> body() {
+	public FluentPartAssert<FluentEmailAssert<P>> body() {
 		try {
 			int msgIdx = this.index;
 			List<PartWithContext> bodies = new ArrayList<>();
@@ -130,7 +130,7 @@ public class EmailAssert<P> extends HasParent<P> {
 				bodies.add(new PartWithContext(getBodyPart(message), "body", new SingleMessageContext(msgIdx)));
 				msgIdx++;
 			}
-			return new PartAssert<>(bodies, this, registry);
+			return new FluentPartAssert<>(bodies, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get body of messsage", e);
 		}
@@ -173,7 +173,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<EmailAssert<P>> alternative() {
+	public FluentPartAssert<FluentEmailAssert<P>> alternative() {
 		try {
 			int msgIdx = this.index;
 			List<PartWithContext> bodies = new ArrayList<>();
@@ -181,7 +181,7 @@ public class EmailAssert<P> extends HasParent<P> {
 				bodies.add(new PartWithContext(getAlternativePart(message), "alternative", new SingleMessageContext(msgIdx)));
 				msgIdx++;
 			}
-			return new PartAssert<>(bodies, this, registry);
+			return new FluentPartAssert<>(bodies, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get body of messsage", e);
 		}
@@ -223,7 +223,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Part> EmailAssert<P> body(Matcher<? super Part> matcher) {	// NOSONAR
+	public <T extends Part> FluentEmailAssert<P> body(Matcher<? super Part> matcher) {	// NOSONAR
 		try {
 			String desc = "body of message ${messageIndex}";
 			int msgIdx = this.index;
@@ -281,7 +281,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Part> EmailAssert<P> alternative(Matcher<? super Part> matcher) {	// NOSONAR
+	public <T extends Part> FluentEmailAssert<P> alternative(Matcher<? super Part> matcher) {	// NOSONAR
 		try {
 			String desc = "alternative of message ${messageIndex}";
 			int msgIdx = this.index;
@@ -321,7 +321,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public AddressListAssert<EmailAssert<P>> from() {
+	public FluentAddressListAssert<FluentEmailAssert<P>> from() {
 		try {
 			int msgIdx = this.index;
 			List<AddressesWithContext> addresses = new ArrayList<>();
@@ -329,7 +329,7 @@ public class EmailAssert<P> extends HasParent<P> {
 				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getFrom()), "from", new SingleMessageContext(msgIdx)));
 				msgIdx++;
 			}
-			return new AddressListAssert<>(addresses, this, registry);
+			return new FluentAddressListAssert<>(addresses, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get from field of messsage", e);
 		}
@@ -362,7 +362,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public AddressListAssert<EmailAssert<P>> to() {
+	public FluentAddressListAssert<FluentEmailAssert<P>> to() {
 		try {
 			int msgIdx = this.index;
 			List<AddressesWithContext> addresses = new ArrayList<>();
@@ -370,7 +370,7 @@ public class EmailAssert<P> extends HasParent<P> {
 				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(TO)), "to", new SingleMessageContext(msgIdx)));
 				msgIdx++;
 			}
-			return new AddressListAssert<>(addresses, this, registry);
+			return new FluentAddressListAssert<>(addresses, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get to field of messsage", e);
 		}
@@ -403,7 +403,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 * 
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public AddressListAssert<EmailAssert<P>> cc() {
+	public FluentAddressListAssert<FluentEmailAssert<P>> cc() {
 		try {
 			int msgIdx = this.index;
 			List<AddressesWithContext> addresses = new ArrayList<>();
@@ -411,7 +411,7 @@ public class EmailAssert<P> extends HasParent<P> {
 				addresses.add(new AddressesWithContext(asList((InternetAddress[]) message.getRecipients(CC)), "cc", new SingleMessageContext(msgIdx)));
 				msgIdx++;
 			}
-			return new AddressListAssert<>(addresses, this, registry);
+			return new FluentAddressListAssert<>(addresses, this, registry);
 		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get cc field of messsage", e);
 		}
@@ -446,7 +446,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Collection<? extends BodyPart>> EmailAssert<P> attachments(Matcher<? super Collection<? extends BodyPart>> matcher) {	// NOSONAR
+	public <T extends Collection<? extends BodyPart>> FluentEmailAssert<P> attachments(Matcher<? super Collection<? extends BodyPart>> matcher) {	// NOSONAR
 		try {
 			String desc = "attachments of message ${messageIndex}";
 			int msgIdx = this.index;
@@ -491,7 +491,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the name of the attachment to make assertions on it
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<EmailAssert<P>> attachment(String filename) {
+	public FluentPartAssert<FluentEmailAssert<P>> attachment(String filename) {
 		return attachments(new FileNamePredicate(filename));
 	}
 
@@ -518,7 +518,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the index of the attachment
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<EmailAssert<P>> attachment(int index) {
+	public FluentPartAssert<FluentEmailAssert<P>> attachment(int index) {
 		try {
 			int msgIndex = this.index;
 			List<PartWithContext> attachments = new ArrayList<>();
@@ -527,9 +527,10 @@ public class EmailAssert<P> extends HasParent<P> {
 				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 				List<BodyPart> found = getAttachments(message);
 				BodyPart attachment = index >= found.size() ? null : found.get(index);
-				attachments.add(new PartWithContext(attachment, "attachment with index " + index + (attachment == null ? " (/!\\ not found)" : ""), new SingleMessageContext(msgIndex++)));
+				attachments.add(new PartWithContext(attachment, "attachment with index " + index + (attachment == null ? " (/!\\ not found)" : ""), new SingleMessageContext(msgIndex)));
+				msgIndex++;
 			}
-			return new PartAssert<>(attachments, this, registry);
+			return new FluentPartAssert<>(attachments, this, registry);
 		} catch (MessagingException | IOException e) {
 			throw new AssertionError("Failed to get attachment with index " + index + " of messsage", e);
 		}
@@ -560,7 +561,7 @@ public class EmailAssert<P> extends HasParent<P> {
 	 *            the filter used to find attachments
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public PartAssert<EmailAssert<P>> attachments(Predicate<Part> filter) {
+	public FluentPartAssert<FluentEmailAssert<P>> attachments(Predicate<Part> filter) {
 		try {
 			int msgIdx = this.index;
 			List<PartWithContext> attachments = new ArrayList<>();
@@ -568,16 +569,18 @@ public class EmailAssert<P> extends HasParent<P> {
 				Object content = message.getContent();
 				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 				int matchingIdx = 0;
+				boolean noneFound = true;
 				for (BodyPart attachment : EmailUtils.<BodyPart>getAttachments(message, filter)) {
+					noneFound = false;
 					attachments.add(new PartWithContext(attachment, "attachment " + filter + " (matching index: " + matchingIdx + ")", new SingleMessageContext(msgIdx)));
 					matchingIdx++;
 				}
-				if (attachments.isEmpty()) {
+				if (noneFound) {
 					attachments.add(new PartWithContext(null, "attachment " + filter + " (/!\\ not found)", new SingleMessageContext(msgIdx)));
 				}
 				msgIdx++;
 			}
-			return new PartAssert<>(attachments, this, registry);
+			return new FluentPartAssert<>(attachments, this, registry);
 		} catch (MessagingException | IOException e) {
 			throw new AssertionError("Failed to get attachment " + filter + " of messsage", e);
 		}
