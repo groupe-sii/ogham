@@ -1,30 +1,68 @@
 spring-matrix:
-  java:
-    - 1.8
-    - 11
-    - 12
-    - 13
-  build:
-    - maven
-  spring-boot-version:
-    - 1.5.21.RELEASE
-    - 2.1.5.RELEASE
-    - 2.1.12.RELEASE
-    - 2.2.4.RELEASE
-    - 2.3.0.M1
-  spring-boot-dependencies:
-    -
-    - web
-    - thymeleaf
-    - freemarker
-    - mail
-    - web+thymeleaf
-    - web+freemarker
-  ogham-dependencies:
-    - spring-boot-autoconfigure
-    - spring-boot-starter-email
-    - spring-boot-starter-sms
-    - spring-boot-starter-all
+  matrix:
+  - java:
+      - 1.8
+    build:
+      - maven
+    spring-boot-version:
+      - 1.5.21.RELEASE
+    spring-boot-dependencies:
+      -
+      - web
+      - thymeleaf
+      - freemarker
+      - mail
+      - web+thymeleaf
+      - web+freemarker
+    ogham-dependencies:
+      - spring-boot-autoconfigure
+      - spring-boot-starter-email
+      - spring-boot-starter-sms
+      - spring-boot-starter-all
+  - java:
+      - 1.8
+      - 11
+      - 12
+    build:
+      - maven
+    spring-boot-version:
+      - 2.1.12.RELEASE
+    spring-boot-dependencies:
+      -
+      - web
+      - thymeleaf
+      - freemarker
+      - mail
+      - web+thymeleaf
+      - web+freemarker
+    ogham-dependencies:
+      - spring-boot-autoconfigure
+      - spring-boot-starter-email
+      - spring-boot-starter-sms
+      - spring-boot-starter-all
+  - java:
+      - 1.8
+      - 11
+      - 12
+      - 13
+    build:
+      - maven
+    spring-boot-version:
+      - 2.2.4.RELEASE
+      - 2.3.0.M1
+    spring-boot-dependencies:
+      -
+      - web
+      - thymeleaf
+      - freemarker
+      - mail
+      - web+thymeleaf
+      - web+freemarker
+    ogham-dependencies:
+      - spring-boot-autoconfigure
+      - spring-boot-starter-email
+      - spring-boot-starter-sms
+      - spring-boot-starter-all
         
 standalone-matrix:
   java:

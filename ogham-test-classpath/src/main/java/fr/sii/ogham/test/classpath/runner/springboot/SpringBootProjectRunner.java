@@ -57,19 +57,22 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		log.info("Generating Spring Boot projects...");
 		Path parentFolder = Paths.get(parentFolderPath);
 		List<String> modules = projectsCreator.createProjects(parentFolder, override, generateSringBootMatrix(), STANDARD_BOOT_DEPS);
-		addModules(parentFolder, springMatrixProperties.getJavaVersions(), modules);
-		addMavenWrapper(parentFolder, springMatrixProperties.getJavaVersions());
+		List<JavaVersion> javaVersions = springMatrixProperties.getDistinctJavaVersions();
+		addModules(parentFolder, javaVersions, modules);
+		addMavenWrapper(parentFolder, javaVersions);
 		log.info("{} Spring Boot projects created", modules.size());
 	}
 
 	private List<SpringBootProjectParams> generateSringBootMatrix() {
 		List<SpringBootProjectParams> expanded = new ArrayList<>();
-		for (JavaVersion javaVersion : springMatrixProperties.getJavaVersions()) {
-			for (BuildTool buildTool : springMatrixProperties.getBuild()) {
-				for (String bootVersion : springMatrixProperties.getSpringBootVersion()) {
-					for (List<SpringBootDependency> springDeps : springMatrixProperties.getExpandedSpringBootDependencies()) {
-						for (Dependency oghamDeps : getOghamDependencies(springMatrixProperties.getOghamDependencies())) {
-							expanded.add(new SpringBootProjectParams(javaVersion, buildTool, bootVersion, getDependencies(springDeps), asList(oghamDeps)));
+		for (SingleMatrixProperties matrix : springMatrixProperties.getMatrix()) {
+			for (JavaVersion javaVersion : matrix.getJavaVersions()) {
+				for (BuildTool buildTool : matrix.getBuild()) {
+					for (String bootVersion : matrix.getSpringBootVersion()) {
+						for (List<SpringBootDependency> springDeps : matrix.getExpandedSpringBootDependencies()) {
+							for (Dependency oghamDeps : getOghamDependencies(matrix.getOghamDependencies())) {
+								expanded.add(new SpringBootProjectParams(javaVersion, buildTool, bootVersion, getDependencies(springDeps), asList(oghamDeps)));
+							}
 						}
 					}
 				}
