@@ -7,8 +7,19 @@ initializr:
       default: false
     - id: 2.1.5.RELEASE
       name: 2.1.5
+      default: false
+    - id: 2.1.12.RELEASE
+      name: 2.1.12
       default: true
+    - id: 2.2.4.RELEASE
+      name: 2.1.4
+      default: false
+    - id: 2.3.0.M1
+      name: 2.3.0 M1
+      default: false
   javaVersions:
+    - id: 13
+      default: false
     - id: 12
       default: false
     - id: 11

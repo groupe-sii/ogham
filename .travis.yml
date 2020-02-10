@@ -120,51 +120,51 @@ jobs:
       name: "Classpath Tests (oraclejdk8)"
       jdk: oraclejdk8
       script:
-        - TEST_FOLDER=JAVA_8 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
-        - TEST_FOLDER=JAVA_8 INITIALIZER_NAME=spring-initializr-older-versions INITIALIZER_PORT=8052 INITIALIZER_ARGS='-Dspring-boot.version=1.5.21.RELEASE -Dspring-initializr.version=0.4.0.RELEASE -Drun.jvmArguments="-Dspring.profiles.active=older-versions"' GENERATION_ARGS="-Dspring.profiles.active=older-versions" ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8052 ci/./generate-classpath-tests.sh older-versions
         - TEST_FOLDER=JAVA_8 travis_retry ci/./run-classpath-tests.sh
     - stage: test
       name: "Classpath Tests (openjdk8)"
       jdk: openjdk8
       script:
-        - TEST_FOLDER=JAVA_8 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
-        - TEST_FOLDER=JAVA_8 INITIALIZER_NAME=spring-initializr-older-versions INITIALIZER_PORT=8052 INITIALIZER_ARGS='-Dspring-boot.version=1.5.21.RELEASE -Dspring-initializr.version=0.4.0.RELEASE -Drun.jvmArguments="-Dspring.profiles.active=older-versions"' GENERATION_ARGS="-Dspring.profiles.active=older-versions" ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8052 ci/./generate-classpath-tests.sh older-versions
         - TEST_FOLDER=JAVA_8 travis_retry ci/./run-classpath-tests.sh
     - stage: test
       name: "Classpath Tests (oraclejdk9)"
       jdk: oraclejdk9
       script: 
-        - TEST_FOLDER=JAVA_9 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_9 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
         - TEST_FOLDER=JAVA_9 travis_retry ci/./run-classpath-tests.sh
     - stage: test
       name: "Classpath Tests (openjdk9)"
       jdk: openjdk9
       script: 
-        - TEST_FOLDER=JAVA_9 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_9 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
         - TEST_FOLDER=JAVA_9 travis_retry ci/./run-classpath-tests.sh
     - stage: test
       name: "Classpath Tests (openjdk10)"
       jdk: openjdk10
       script: 
-        - TEST_FOLDER=JAVA_10 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_10 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
         - TEST_FOLDER=JAVA_10 travis_retry ci/./run-classpath-tests.sh
     - stage: test
       name: "Classpath Tests (oraclejdk11)"
       jdk: oraclejdk11
       script:
-        - TEST_FOLDER=JAVA_11 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
         - TEST_FOLDER=JAVA_11 travis_retry ci/./run-classpath-tests.sh
     - stage: test
       name: "Classpath Tests (openjdk11)"
       jdk: openjdk11
       script:
-        - TEST_FOLDER=JAVA_11 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
         - TEST_FOLDER=JAVA_11 travis_retry ci/./run-classpath-tests.sh
     - stage: test
       name: "Classpath Tests (openjdk12)"
       jdk: openjdk12
       script: 
-        - TEST_FOLDER=JAVA_12 INITIALIZER_NAME=spring-initializr INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
+        - TEST_FOLDER=JAVA_12 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh
         - TEST_FOLDER=JAVA_12 travis_retry ci/./run-classpath-tests.sh
 
     - stage: "Analyze"
