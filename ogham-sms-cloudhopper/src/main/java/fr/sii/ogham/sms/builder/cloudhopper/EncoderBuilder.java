@@ -50,7 +50,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  * enabled (using {@link #ucs2(Integer)}).</li>
  * </ul>
  * 
- * <h3>Automatic guessing enabled</h3>
+ * <strong>Automatic guessing enabled</strong>
  * <p>
  * Standard encodings are registered with a priority. The priority is used when
  * auto-guessing is enabled. Each registered encoding is tested against the text
@@ -68,7 +68,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  * {@link DefaultCloudhopperConfigurer}.
  * </p>
  * 
- * <h3>Automatic guessing disabled</h3>
+ * <strong>Automatic guessing disabled</strong>
  * <p>
  * Standard encodings are not registered at all.
  * </p>

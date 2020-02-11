@@ -23,7 +23,7 @@ public final class SmsConstants {
 		 * 6 octets for header) / 2).
 		 * 
 		 * <hr>
-		 * <h1>Explanation:</h1>
+		 * <strong>Explanation:</strong>
 		 * <p>
 		 * UCS-2 Encoding This encoding allows use of a greater range of
 		 * characters and languages. UCS-2 can represent the most commonly used
@@ -77,7 +77,7 @@ public final class SmsConstants {
 		 * characters ((140 octets - 6 octets for header) * 8 / 7).
 		 * 
 		 * <hr>
-		 * <h1>Explanation:</h1>
+		 * <strong>Explanation:</strong>
 		 * <p>
 		 * The standard encoding for GSM messages is the 7-bit default alphabet
 		 * as defined in the 23.038 recommendation.

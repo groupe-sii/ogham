@@ -166,17 +166,17 @@ public interface SubmitSm {
 	byte getPriorityFlag();
 
 	/**
-	 * <h3>GSM</h3>
+	 * <strong>GSM</strong>
 	 * 
 	 * Set according to GSM 03.40 [GSM 03.40]
 	 * 
-	 * <h3>ANSI-136 (TDMA)</h3>
+	 * <strong>ANSI-136 (TDMA)</strong>
 	 * 
 	 * For mobile terminated messages, this field is not used and is therefore
 	 * ignored by the SMSC. For ANSI-136 mobile originated messages, the SMSC
 	 * should set this value to NULL.
 	 * 
-	 * <h3>IS-95 (CDMA)</h3>
+	 * <strong>IS-95 (CDMA)</strong>
 	 * 
 	 * For mobile terminated messages, this field is not used and is therefore
 	 * ignored by the SMSC. For IS-95 mobile originated messages, the SMSC

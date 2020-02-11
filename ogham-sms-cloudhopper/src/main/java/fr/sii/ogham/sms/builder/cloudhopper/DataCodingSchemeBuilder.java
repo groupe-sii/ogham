@@ -103,7 +103,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * body</a>).
 	 * </p>
 	 * 
-	 * <h3>SMPP v3.3</h3>
+	 * <strong>SMPP v3.3</strong>
 	 * <p>
 	 * The text message is encoded using {@link Charset}. According to that
 	 * charset, the Data Coding Scheme is determined using the <strong>General
@@ -122,7 +122,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * </ul>
 	 * 
 	 * 
-	 * <h3>SMPP v3.4+</h3>
+	 * <strong>SMPP v3.4+</strong>
 	 * <p>
 	 * The text message is encoded using {@link Charset}. According to that
 	 * charset, the Data Coding Scheme is determined using only the
@@ -193,7 +193,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * body</a>).
 	 * </p>
 	 * 
-	 * <h3>SMPP v3.3</h3>
+	 * <strong>SMPP v3.3</strong>
 	 * <p>
 	 * The text message is encoded using {@link Charset}. According to that
 	 * charset, the Data Coding Scheme is determined using the <strong>General
@@ -212,7 +212,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * </ul>
 	 * 
 	 * 
-	 * <h3>SMPP v3.4+</h3>
+	 * <strong>SMPP v3.4+</strong>
 	 * <p>
 	 * The text message is encoded using {@link Charset}. According to that
 	 * charset, the Data Coding Scheme is determined using only the
@@ -233,14 +233,14 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * </ul>
 	 * 
 	 * 
-	 * <h3>Custom {@link DataCodingProvider} also configured</h3>
+	 * <strong>Custom {@link DataCodingProvider} also configured</strong>
 	 * <p>
 	 * If a custom {@link DataCodingProvider} instance is registered, this
 	 * instance is tried first (see {@link #custom(DataCodingProvider)} for more
 	 * information). The automatic behavior is applied after if returned value
 	 * of custom {@link DataCodingProvider} is {@code null}.
 	 * 
-	 * <h3>Fixed value also configured</h3>
+	 * <strong>Fixed value also configured</strong>
 	 * <p>
 	 * If a fixed value is configured then it preempts any other configuration (
 	 * {@link #auto(Boolean)} and {@link #custom(DataCodingProvider)} are not

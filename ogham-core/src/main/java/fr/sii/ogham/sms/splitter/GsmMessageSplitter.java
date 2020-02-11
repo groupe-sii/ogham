@@ -49,11 +49,12 @@ import fr.sii.ogham.sms.exception.message.SplitMessageException;
  * numbers encoded on one or two octets.
  * 
  * 
+ * <hr>
+ * <strong><u>Explanation</u></strong>
  * 
- * <h1>Explanation</h1>
  * 
- * <h2>One-octet encoding</h2>
  * <p>
+ * <strong>One-octet encoding</strong><br>
  * If every character of the original string is encoded on one octet and the
  * maximum size for segments is 12 octets. Then the maximum unencoded characters
  * that can fit in a single segment is also 12.
@@ -107,8 +108,8 @@ import fr.sii.ogham.sms.exception.message.SplitMessageException;
  * </pre>
  * 
  * 
- * <h2>Two-octet encoding</h2>
  * <p>
+ * <strong>Two-octet encoding</strong><br>
  * If every character of the original string is encoded on two octets and the
  * maximum size for segments is 12 octets. Then the maximum unencoded characters
  * that can fit in a single segment is 6 (12 / 2).
@@ -159,8 +160,8 @@ import fr.sii.ogham.sms.exception.message.SplitMessageException;
  * }
  * </pre>
  * 
- * <h2>7-bits encoding</h2>
  * <p>
+ * <strong>7-bits encoding</strong><br>
  * If every character of the original string is encoded on 7 bits and the
  * maximum size for segments is 14 octets. Then the maximum unencoded characters
  * that can fit in a single segment is 16.
