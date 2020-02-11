@@ -1,9 +1,9 @@
 package oghamspringbootautoconfigure.it;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -28,6 +28,7 @@ import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import mock.MockApplication;
+import utils.SendGridUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = MockApplication.class, webEnvironment = NONE, 
@@ -65,9 +66,10 @@ public class OghamPropertiesPrecedenceTest {
 		SendGridV4Sender sender = builder.email().sender(SendGridV4Builder.class).build();
 		DelegateSendGridClient delegate = (DelegateSendGridClient) sender.getDelegate();
 		SendGrid sendGrid = (SendGrid) FieldUtils.readField(delegate, "delegate", true);
-		assertThat(FieldUtils.readField(sendGrid, "apiKey", true), equalTo("spring"));
+		assertThat(SendGridUtils.getApiKey(sendGrid), equalTo("spring"));
 		assertThat(springSendGridClient, notNullValue());
 		assertThat(sendGrid, sameInstance(springSendGridClient));
 	}
+
 
 }

@@ -547,11 +547,11 @@ class FluentEmailAssertionsSpec extends Specification {
 			"should pass"			| notNullValue()	| notNullValue()	| containsString("body")	| startsWith("text/")		||  []
 			"should detect all"		| nullValue()		| arrayWithSize(0)	| is("foo")					| is("application/html")	||  [
 						 [klass: AssertionError, message: "body of message 0 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart1'>"],
-						 [klass: AssertionError, message: "raw content of body of message 0 Expected: an array with size <0> but: was [<98>, <111>, <100>, <121>, <32>, <49>]"],
+						 [klass: AssertionError, message: "raw content of body of message 0 Expected: an array with size <0> but: was [<98b>, <111b>, <100b>, <121b>, <32b>, <49b>]"],
 						 [klass: AssertionError, message: 'UTF-8 content of body of message 0 Expected: is "foo" but: was "body 1"'],
 						 [klass: AssertionError, message: 'content-type of body of message 0 Expected: is "application/html" but: was "text/plain"'],
 						 [klass: AssertionError, message: "body of message 1 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart2'>"],
-						 [klass: AssertionError, message: "raw content of body of message 1 Expected: an array with size <0> but: was [<98>, <111>, <100>, <121>, <32>, <50>]"],
+						 [klass: AssertionError, message: "raw content of body of message 1 Expected: an array with size <0> but: was [<98b>, <111b>, <100b>, <121b>, <32b>, <50b>]"],
 						 [klass: AssertionError, message: 'UTF-8 content of body of message 1 Expected: is "foo" but: was "body 2"'],
 						 [klass: AssertionError, message: 'content-type of body of message 1 Expected: is "application/html" but: was "text/html"']
 						]
@@ -608,8 +608,8 @@ class FluentEmailAssertionsSpec extends Specification {
 			"should detect all"		| nullValue()		| arrayWithSize(0)	| is("foo")					| is("application/html")	||  [
 						 [klass: AssertionError, message: "body of message 0 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart1'>"],
 						 [klass: AssertionError, message: "body of message 1 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart2'>"],
-						 [klass: AssertionError, message: "raw content of body of message 0 Expected: an array with size <0> but: was [<98>, <111>, <100>, <121>, <32>, <49>]"],
-						 [klass: AssertionError, message: "raw content of body of message 1 Expected: an array with size <0> but: was [<98>, <111>, <100>, <121>, <32>, <50>]"],
+						 [klass: AssertionError, message: "raw content of body of message 0 Expected: an array with size <0> but: was [<98b>, <111b>, <100b>, <121b>, <32b>, <49b>]"],
+						 [klass: AssertionError, message: "raw content of body of message 1 Expected: an array with size <0> but: was [<98b>, <111b>, <100b>, <121b>, <32b>, <50b>]"],
 						 [klass: AssertionError, message: 'UTF-8 content of body of message 0 Expected: is "foo" but: was "body 1"'],
 						 [klass: AssertionError, message: 'UTF-8 content of body of message 1 Expected: is "foo" but: was "body 2"'],
 						 [klass: AssertionError, message: 'content-type of body of message 0 Expected: is "application/html" but: was "text/plain"'],
@@ -691,11 +691,11 @@ class FluentEmailAssertionsSpec extends Specification {
 			"should pass"			| notNullValue()	| notNullValue()	| containsString("alt")		| startsWith("text/")		||  []
 			"should detect all"		| nullValue()		| arrayWithSize(0)	| is("foo")					| is("application/html")	||  [
 					 [klass: AssertionError, message: "alternative of message 0 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart1'>"],
-					 [klass: AssertionError, message: "raw content of alternative of message 0 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <49>]"],
+					 [klass: AssertionError, message: "raw content of alternative of message 0 Expected: an array with size <0> but: was [<97b>, <108b>, <116b>, <32b>, <49b>]"],
 					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 0 Expected: is "foo" but: was "alt 1"'],
 					 [klass: AssertionError, message: 'content-type of alternative of message 0 Expected: is "application/html" but: was "text/plain"'],
 					 [klass: AssertionError, message: "alternative of message 1 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart3'>"],
-					 [klass: AssertionError, message: "raw content of alternative of message 1 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <50>]"],
+					 [klass: AssertionError, message: "raw content of alternative of message 1 Expected: an array with size <0> but: was [<97b>, <108b>, <116b>, <32b>, <50b>]"],
 					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 1 Expected: is "foo" but: was "alt 2"'],
 					 [klass: AssertionError, message: 'content-type of alternative of message 1 Expected: is "application/html" but: was "text/plain"']
 					]
@@ -762,8 +762,8 @@ class FluentEmailAssertionsSpec extends Specification {
 			"should detect all"		| nullValue()		| arrayWithSize(0)	| is("foo")					| is("application/html")	||  [
 					 [klass: AssertionError, message: "alternative of message 0 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart1'>"],
 					 [klass: AssertionError, message: "alternative of message 1 Expected: null but: was <Mock for type 'BodyPart' named 'bodyPart3'>"],
-					 [klass: AssertionError, message: "raw content of alternative of message 0 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <49>]"], 
-					 [klass: AssertionError, message: "raw content of alternative of message 1 Expected: an array with size <0> but: was [<97>, <108>, <116>, <32>, <50>]"], 
+					 [klass: AssertionError, message: "raw content of alternative of message 0 Expected: an array with size <0> but: was [<97b>, <108b>, <116b>, <32b>, <49b>]"], 
+					 [klass: AssertionError, message: "raw content of alternative of message 1 Expected: an array with size <0> but: was [<97b>, <108b>, <116b>, <32b>, <50b>]"], 
 					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 0 Expected: is "foo" but: was "alt 1"'], 
 					 [klass: AssertionError, message: 'UTF-8 content of alternative of message 1 Expected: is "foo" but: was "alt 2"'], 
 					 [klass: AssertionError, message: 'content-type of alternative of message 0 Expected: is "application/html" but: was "text/plain"'], 

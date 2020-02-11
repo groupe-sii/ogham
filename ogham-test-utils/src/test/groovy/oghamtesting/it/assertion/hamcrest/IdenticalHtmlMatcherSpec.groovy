@@ -1,7 +1,7 @@
 package oghamtesting.it.assertion.hamcrest
 
 import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml
-import static org.junit.Assert.assertThat
+import static org.hamcrest.MatcherAssert.assertThat
 
 import java.util.function.Consumer
 

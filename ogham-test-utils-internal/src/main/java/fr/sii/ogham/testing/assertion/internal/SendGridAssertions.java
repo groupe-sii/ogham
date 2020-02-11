@@ -4,6 +4,8 @@ import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinde
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 
+import java.util.Map;
+
 import org.hamcrest.Matcher;
 
 import com.sendgrid.SendGrid;
@@ -101,9 +103,28 @@ public class SendGridAssertions extends HasParent<MessagingServiceAssertions> {
 			if (sendGridSender instanceof SendGridV2Sender) {
 				return (String) readField(client, "password", true);
 			}
-			return (String) readField(client, "apiKey", true);
+			return getApiKeyFromFieldOrHeaders(client);
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException("Failed to read 'apiKey' of SendGrid", e);
+		}
+	}
+
+	@SuppressWarnings({ "squid:S1166", "unchecked" })
+	private static String getApiKeyFromFieldOrHeaders(SendGrid client) throws IllegalAccessException {
+		try {
+			return (String) readField(client, "apiKey", true);
+		} catch (IllegalArgumentException e) {
+			Map<String, String> requestHeaders = (Map<String, String>) readField(client, "requestHeaders", true);
+			String authHeader = requestHeaders.get("Authorization");
+			if (authHeader == null) {
+				return null;
+			}
+			String apiKey = authHeader.substring(7);
+			// special case to be compatible with previous versions
+			if ("null".equals(apiKey)) {
+				return null;
+			}
+			return apiKey;
 		}
 	}
 

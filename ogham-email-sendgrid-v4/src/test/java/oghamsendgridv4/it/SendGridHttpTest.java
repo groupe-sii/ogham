@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -218,7 +218,7 @@ public class SendGridHttpTest {
 		
 		assertThat("cause", e.getCause(), allOf(notNullValue(), instanceOf(SendGridException.class)));
 		assertThat("sub cause", e.getCause().getCause(), allOf(notNullValue(), instanceOf(IOException.class)));
-		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Request returned status Code 401Body:{\n" + 
+		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Sending to SendGrid failed: (401) {\n" + 
 				"  \"errors\": [\n" + 
 				"    {\n" + 
 				"      \"message\": \"The provided authorization grant is invalid, expired, or revoked\",\n" + 
@@ -257,7 +257,7 @@ public class SendGridHttpTest {
 		
 		assertThat("cause", e.getCause(), allOf(notNullValue(), instanceOf(SendGridException.class)));
 		assertThat("sub cause", e.getCause().getCause(), allOf(notNullValue(), instanceOf(IOException.class)));
-		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Request returned status Code 400Body:{\n" + 
+		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Sending to SendGrid failed: (400) {\n" + 
 				"  \"errors\": [\n" + 
 				"    {\n" + 
 				"      \"message\": \"The disposition of your attachment can be either 'inline' or 'attachment'.\",\n" + 
@@ -289,7 +289,7 @@ public class SendGridHttpTest {
 		}, "root exception");
 		assertThat("cause", e.getCause(), allOf(notNullValue(), instanceOf(SendGridException.class)));
 		assertThat("sub cause", e.getCause().getCause(), allOf(notNullValue(), instanceOf(IOException.class)));
-		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Request returned status Code 429Body:{\n" + 
+		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Sending to SendGrid failed: (429) {\n" + 
 				"  \"errors\": [\n" + 
 				"    {\n" + 
 				"      \"field\": null,\n" + 

@@ -7,6 +7,7 @@ import javax.mail.Multipart
 import javax.mail.internet.MimeMessage
 
 import org.junit.ComparisonFailure
+import org.junit.internal.ArrayComparisonFailure
 
 import fr.sii.ogham.testing.assertion.email.AssertAttachment
 import fr.sii.ogham.testing.assertion.email.ExpectedAttachment
@@ -67,7 +68,7 @@ class AssertAttachmentSpec extends Specification {
 					 [klass: AssertionError, message: 'attachment named \'attachment.pdf\' mimetype should match \'application/pdf\' but was \'bar\''], 
 					 [klass: ComparisonFailure, message: 'attachment named \'attachment.pdf\' description should be \'description\' expected:<[description]> but was:<[baz]>'], 
 					 [klass: ComparisonFailure, message: 'attachment named \'attachment.pdf\' disposition should be \'disposition\' expected:<[disposition]> but was:<[foobar]>'], 
-					 [klass: AssertionError, message: 'attachment named \'attachment.pdf\' has invalid content: array lengths differed, expected.length=7 actual.length=3']
+					 [klass: ArrayComparisonFailure, message: 'attachment named \'attachment.pdf\' has invalid content: array lengths differed, expected.length=7 actual.length=3; arrays first differed at element [0]; expected:<99> but was:<102>']
 					]
 	}
 
@@ -181,7 +182,7 @@ class AssertAttachmentSpec extends Specification {
 					 [klass: AssertionError, message: 'attachment named \'attachment.pdf\' mimetype should match \'application/pdf\' but was \'bar\''],
 					 [klass: ComparisonFailure, message: 'attachment named \'attachment.pdf\' description should be \'description\' expected:<[description]> but was:<[baz]>'],
 					 [klass: ComparisonFailure, message: 'attachment named \'attachment.pdf\' disposition should be \'disposition\' expected:<[disposition]> but was:<[foobar]>'],
-					 [klass: AssertionError, message: 'attachment named \'attachment.pdf\' has invalid content: array lengths differed, expected.length=7 actual.length=3']
+					 [klass: ArrayComparisonFailure, message: 'attachment named \'attachment.pdf\' has invalid content: array lengths differed, expected.length=7 actual.length=3; arrays first differed at element [0]; expected:<99> but was:<102>']
 					]
 	}
 

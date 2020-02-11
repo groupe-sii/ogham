@@ -1,6 +1,6 @@
 package fr.sii.ogham.testing.assertion.internal;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hamcrest.Matcher;

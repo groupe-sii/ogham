@@ -371,18 +371,18 @@ class FluentSmsAssertionsSpec extends Specification {
 			desc					| matcher				| headerMatcher		| payloadMatcher	|| expected
 			"should pass"			| arrayWithSize(4)		| nullValue()		| arrayWithSize(4)	|| []
 			"should detect all"		| arrayWithSize(2)		| arrayWithSize(1)	| arrayWithSize(1)	|| [
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<115>, <109>, <115>, <49>]'], 
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<115b>, <109b>, <115b>, <49b>]'], 
 					 [klass: AssertionError, message: 'header of raw request of message 0 Expected: an array with size <1> but: was null'], 
-					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115>, <109>, <115>, <49>]'], 
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<115>, <109>, <115>, <49>]'], 
+					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <49b>]'], 
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<115b>, <109b>, <115b>, <49b>]'], 
 					 [klass: AssertionError, message: 'header of raw request of message 0 Expected: an array with size <1> but: was null'], 
-					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115>, <109>, <115>, <49>]'], 
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<115>, <109>, <115>, <50>]'], 
+					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <49b>]'], 
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<115b>, <109b>, <115b>, <50b>]'], 
 					 [klass: AssertionError, message: 'header of raw request of message 1 Expected: an array with size <1> but: was null'], 
-					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115>, <109>, <115>, <50>]'], 
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<115>, <109>, <115>, <50>]'], 
+					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <50b>]'], 
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<115b>, <109b>, <115b>, <50b>]'], 
 					 [klass: AssertionError, message: 'header of raw request of message 1 Expected: an array with size <1> but: was null'], 
-					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115>, <109>, <115>, <50>]']
+					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <50b>]']
 					]
 	}
 
@@ -444,18 +444,18 @@ class FluentSmsAssertionsSpec extends Specification {
 			desc					| matcher				| headerMatcher		| payloadMatcher	|| expected
 			"should pass"			| arrayWithSize(6 + 4)	| arrayWithSize(6)	| arrayWithSize(4)	|| []
 			"should detect all"		| arrayWithSize(2)		| arrayWithSize(1)	| arrayWithSize(1)	|| [
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<5>, <0>, <0>, <0>, <0>, <0>, <115>, <109>, <115>, <49>]'],
-					 [klass: AssertionError, message: 'header of raw request of message 0 Expected: an array with size <1> but: was [<5>, <0>, <0>, <0>, <0>, <0>]'],
-					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115>, <109>, <115>, <49>]'],
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<5>, <0>, <0>, <0>, <0>, <0>, <115>, <109>, <115>, <49>]'],
-					 [klass: AssertionError, message: 'header of raw request of message 0 Expected: an array with size <1> but: was [<5>, <0>, <0>, <0>, <0>, <0>]'],
-					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115>, <109>, <115>, <49>]'],
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<5>, <0>, <0>, <0>, <0>, <0>, <115>, <109>, <115>, <50>]'],
-					 [klass: AssertionError, message: 'header of raw request of message 1 Expected: an array with size <1> but: was [<5>, <0>, <0>, <0>, <0>, <0>]'],
-					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115>, <109>, <115>, <50>]'],
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<5>, <0>, <0>, <0>, <0>, <0>, <115>, <109>, <115>, <50>]'],
-					 [klass: AssertionError, message: 'header of raw request of message 1 Expected: an array with size <1> but: was [<5>, <0>, <0>, <0>, <0>, <0>]'],
-					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115>, <109>, <115>, <50>]']
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<5b>, <0b>, <0b>, <0b>, <0b>, <0b>, <115b>, <109b>, <115b>, <49b>]'],
+					 [klass: AssertionError, message: 'header of raw request of message 0 Expected: an array with size <1> but: was [<5b>, <0b>, <0b>, <0b>, <0b>, <0b>]'],
+					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <49b>]'],
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<5b>, <0b>, <0b>, <0b>, <0b>, <0b>, <115b>, <109b>, <115b>, <49b>]'],
+					 [klass: AssertionError, message: 'header of raw request of message 0 Expected: an array with size <1> but: was [<5b>, <0b>, <0b>, <0b>, <0b>, <0b>]'],
+					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <49b>]'],
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<5b>, <0b>, <0b>, <0b>, <0b>, <0b>, <115b>, <109b>, <115b>, <50b>]'],
+					 [klass: AssertionError, message: 'header of raw request of message 1 Expected: an array with size <1> but: was [<5b>, <0b>, <0b>, <0b>, <0b>, <0b>]'],
+					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <50b>]'],
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<5b>, <0b>, <0b>, <0b>, <0b>, <0b>, <115b>, <109b>, <115b>, <50b>]'],
+					 [klass: AssertionError, message: 'header of raw request of message 1 Expected: an array with size <1> but: was [<5b>, <0b>, <0b>, <0b>, <0b>, <0b>]'],
+					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <50b>]']
 					]
 	}
 
@@ -497,9 +497,9 @@ class FluentSmsAssertionsSpec extends Specification {
 			desc					| encodingMatcher						| alphabetMatcher			|| expected
 			"should pass"			| is(Alphabet.ALPHA_8_BIT.value())		| is(Alphabet.ALPHA_8_BIT)	|| []
 			"should detect all"		| is(Alphabet.ALPHA_DEFAULT.value())	| is(Alphabet.ALPHA_LATIN1)	|| [
-					 [klass: AssertionError, message: 'encoding of raw request of message 0 Expected: is <0> but: was <4>'], 
+					 [klass: AssertionError, message: 'encoding of raw request of message 0 Expected: is <0b> but: was <4b>'], 
 					 [klass: AssertionError, message: 'alphabet of raw request of message 0 Expected: is <ALPHA_LATIN1> but: was <ALPHA_8_BIT>'], 
-					 [klass: AssertionError, message: 'encoding of raw request of message 1 Expected: is <0> but: was <4>'], 
+					 [klass: AssertionError, message: 'encoding of raw request of message 1 Expected: is <0b> but: was <4b>'], 
 					 [klass: AssertionError, message: 'alphabet of raw request of message 1 Expected: is <ALPHA_LATIN1> but: was <ALPHA_8_BIT>']
 					]
 	}
@@ -547,10 +547,10 @@ class FluentSmsAssertionsSpec extends Specification {
 			"should pass"			| NUMBER_OF_MESSAGES	| hasProperty("tag", is(NUMBER_OF_MESSAGES.getCode()))	| array(greaterThan((Byte)1))	| is(1)				|| []
 			"should detect all"		| NUMBER_OF_MESSAGES	| hasProperty("tag", is(0))								| array(lessThan((Byte) 1))		| is(2)				|| [
 					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' of raw request of message 0 Expected: hasProperty("tag", is <0>) but: was <[772|1|02]>'], 
-					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' value of raw request of message 0 Expected: [a value less than <1>] but: was [<2>]'], 
+					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' value of raw request of message 0 Expected: [a value less than <1b>] but: was [<2b>]'], 
 					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' length of raw request of message 0 Expected: is <2> but: was <1>'], 
 					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' of raw request of message 1 Expected: hasProperty("tag", is <0>) but: was <[772|1|03]>'], 
-					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' value of raw request of message 1 Expected: [a value less than <1>] but: was [<3>]'], 
+					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' value of raw request of message 1 Expected: [a value less than <1b>] but: was [<3b>]'], 
 					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' length of raw request of message 1 Expected: is <2> but: was <1>']
 					]
 			"missing tag"			| CALLBACK_NUM			| hasProperty("tag", is(0))								| lessThan(1)		| is(2)				|| [
@@ -766,12 +766,12 @@ class FluentSmsAssertionsSpec extends Specification {
 			desc					| matcher				| headerMatcher		| payloadMatcher	|| expected
 			"should pass"			| arrayWithSize(4)		| nullValue()		| arrayWithSize(4)	|| []
 			"should detect all"		| arrayWithSize(2)		| arrayWithSize(1)	| arrayWithSize(1)	|| [
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<115>, <109>, <115>, <49>]'],
-					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<115>, <109>, <115>, <50>]'],
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 0 Expected: an array with size <2> but: was [<115b>, <109b>, <115b>, <49b>]'],
+					 [klass: AssertionError, message: 'shortMessage of raw request of message 1 Expected: an array with size <2> but: was [<115b>, <109b>, <115b>, <50b>]'],
 					 [klass: AssertionError, message: 'header of raw request of message 0 Expected: an array with size <1> but: was null'],
 					 [klass: AssertionError, message: 'header of raw request of message 1 Expected: an array with size <1> but: was null'],
-					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115>, <109>, <115>, <49>]'],
-					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115>, <109>, <115>, <50>]']
+					 [klass: AssertionError, message: 'payload of raw request of message 0 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <49b>]'],
+					 [klass: AssertionError, message: 'payload of raw request of message 1 Expected: an array with size <1> but: was [<115b>, <109b>, <115b>, <50b>]']
 					]
 	}
 
@@ -807,8 +807,8 @@ class FluentSmsAssertionsSpec extends Specification {
 			desc					| encodingMatcher						| alphabetMatcher			|| expected
 			"should pass"			| is(Alphabet.ALPHA_8_BIT.value())		| is(Alphabet.ALPHA_8_BIT)	|| []
 			"should detect all"		| is(Alphabet.ALPHA_DEFAULT.value())	| is(Alphabet.ALPHA_LATIN1)	|| [
-					 [klass: AssertionError, message: 'encoding of raw request of message 0 Expected: is <0> but: was <4>'],
-					 [klass: AssertionError, message: 'encoding of raw request of message 1 Expected: is <0> but: was <4>'],
+					 [klass: AssertionError, message: 'encoding of raw request of message 0 Expected: is <0b> but: was <4b>'],
+					 [klass: AssertionError, message: 'encoding of raw request of message 1 Expected: is <0b> but: was <4b>'],
 					 [klass: AssertionError, message: 'alphabet of raw request of message 0 Expected: is <ALPHA_LATIN1> but: was <ALPHA_8_BIT>'],
 					 [klass: AssertionError, message: 'alphabet of raw request of message 1 Expected: is <ALPHA_LATIN1> but: was <ALPHA_8_BIT>']
 					]
@@ -849,8 +849,8 @@ class FluentSmsAssertionsSpec extends Specification {
 			"should detect all"		| NUMBER_OF_MESSAGES	| hasProperty("tag", is(0))								| array(lessThan((Byte) 1))		| is(2)				|| [
 					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' of raw request of message 0 Expected: hasProperty("tag", is <0>) but: was <[772|1|02]>'],
 					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' of raw request of message 1 Expected: hasProperty("tag", is <0>) but: was <[772|1|03]>'],
-					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' value of raw request of message 0 Expected: [a value less than <1>] but: was [<2>]'],
-					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' value of raw request of message 1 Expected: [a value less than <1>] but: was [<3>]'],
+					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' value of raw request of message 0 Expected: [a value less than <1b>] but: was [<2b>]'],
+					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' value of raw request of message 1 Expected: [a value less than <1b>] but: was [<3b>]'],
 					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' length of raw request of message 0 Expected: is <2> but: was <1>'],
 					 [klass: AssertionError, message: 'optional parameter \'number_of_messages\' length of raw request of message 1 Expected: is <2> but: was <1>']
 					]

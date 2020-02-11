@@ -23,12 +23,12 @@
 		<!-- Dependencies -->
 		<ogham.version>${project.version}</ogham.version>
 		<commons-io.version>2.6</commons-io.version>
-		<commons-beanutils.version>1.9.3</commons-beanutils.version>
+		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<thymeleaf-v2.version>2.1.6.RELEASE</thymeleaf-v2.version>
 		<thymeleaf-v3.version>3.0.11.RELEASE</thymeleaf-v3.version>
 		<thymeleaf.version>${thymeleaf-v3.version}</thymeleaf.version>
-		<ognl.version>3.1.24</ognl.version>
-		<freemarker.version>2.3.28</freemarker.version>
+		<ognl.version>3.1.26</ognl.version>		<!-- TODO: ognl 3.2.x not supported by Thymeleaf (https://github.com/thymeleaf/thymeleaf/issues/727) -->
+		<freemarker.version>2.3.29</freemarker.version>
 		<javamail.version>1.6.2</javamail.version>
 		<slf4j.version>1.7.26</slf4j.version>
 		<logback.version>1.2.3</logback.version>
@@ -37,46 +37,49 @@
 		<cloudhopper-fizzed.version>5.0.9</cloudhopper-fizzed.version>
 		<cloudhopper-gsm.version>3.0.0</cloudhopper-gsm.version>
 		<jsoup.version>1.12.1</jsoup.version>
-		<commons-codec.version>1.10</commons-codec.version>
-		<sendgrid-java-v4.version>4.4.1</sendgrid-java-v4.version>
+		<commons-codec.version>1.14</commons-codec.version>
+		<sendgrid-java-v4.version>4.4.4</sendgrid-java-v4.version>
 		<sendgrid-java-v2.version>2.2.2</sendgrid-java-v2.version>
 		<sendgrid-java.version>${sendgrid-java-v4.version}</sendgrid-java.version>
 		<commons-logging.version>1.2</commons-logging.version>
 		<libphonenumber.version>8.3.2</libphonenumber.version>
-		<tika.version>1.21</tika.version>
+		<tika.version>1.23</tika.version>
 		<javax-activation.version>1.2.0</javax-activation.version>
-		<jackson.version>2.9.9</jackson.version>
-		<reflections.version>0.9.11</reflections.version>
+		<jackson.version>2.10.2</jackson.version>
+		<reflections.version>0.9.12</reflections.version>
 		<guava.version>27.1-jre</guava.version>
 		<httpclient.version>4.5.8</httpclient.version>
 		<spring-boot-v1.version>1.5.21.RELEASE</spring-boot-v1.version>
-		<spring-boot-v2.version>2.1.5.RELEASE</spring-boot-v2.version>
+		<spring-boot-v2.version>2.2.4.RELEASE</spring-boot-v2.version>
 		<spring-boot.version>${spring-boot-v2.version}</spring-boot.version>
 		<!-- Dependencies - tests -->
-		<junit.version>4.12</junit.version>
-		<junit-jupiter.version>5.5.2</junit-jupiter.version>
+		<junit.version>4.13</junit.version>
+		<junit-jupiter.version>5.6.0</junit-jupiter.version>
 		<xmlunit.version>1.6</xmlunit.version>
 		<mockito-junit-jupiter.version>3.2.4</mockito-junit-jupiter.version>
 		<mockito.version>${mockito-junit-jupiter.version}</mockito.version>
-		<byte-buddy.version>1.10.6</byte-buddy.version>
+		<byte-buddy.version>1.10.7</byte-buddy.version>
 		<objenesis.version>3.1</objenesis.version>
 		<cloning.version>1.9.12</cloning.version>
 		<greenmail.version>1.5.11</greenmail.version>
-		<jsmpp.version>2.3.7</jsmpp.version>
+		<jsmpp.version>2.3.8</jsmpp.version>
 		<opensmpp.version>3.0.2</opensmpp.version>
-		<equalsverifier.version>3.1.9</equalsverifier.version>
+		<equalsverifier.version>3.1.12</equalsverifier.version>
 		<wiremock.version>2.23.2</wiremock.version>
-		<hamcrest.version>2.1</hamcrest.version>
+		<hamcrest.version>2.2</hamcrest.version>
 		<spock.version>1.3-groovy-2.5</spock.version>
 		<groovy-eclipse-compiler.version>3.6.0-03</groovy-eclipse-compiler.version>
 		<groovy-eclipse-batch.version>2.5.8-03</groovy-eclipse-batch.version>
-		<awaitility.version>3.0.0</awaitility.version>
+		<awaitility.version>4.0.2</awaitility.version>
 		<!-- Dependencies - documentation -->
 		<asciidoctorj-diagram.version>1.5.16</asciidoctorj-diagram.version>
 		<asciidoctorj.version>1.5.6</asciidoctorj.version>
 		<asciidoctorj-monotree.version>0.0.1</asciidoctorj-monotree.version>
 		<bootstrap.version>4.3.1</bootstrap.version>
 		<bootswatch.version>4.2.1</bootswatch.version>
+		<!-- Fix dependency convergence -->
+		<asm.version>7.0</asm.version>
+		<javassist.version>3.26.0-GA</javassist.version>
 
 		<!-- Tests -->
 		<skip.integration.tests>false</skip.integration.tests>
@@ -138,7 +141,7 @@
 		<!-- Plugins - documentation -->
 		<maven-site-plugin.version>3.7</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
-		<reflow-skin.version>2.0.2</reflow-skin.version>
+		<reflow-skin.version>2.2.0</reflow-skin.version>
 		<velocity.version>1.7</velocity.version>
 		<asciidoctor-plugin.version>1.5.6</asciidoctor-plugin.version>
 		<sass-maven-plugin.version>3.7.2</sass-maven-plugin.version>
@@ -157,6 +160,8 @@
 		<maven-scm-manager-plexus.version>1.11.2</maven-scm-manager-plexus.version>
 		<wagon-gitsite.version>0.5</wagon-gitsite.version>
 		<maven-replacer-plugin.version>1.5.2</maven-replacer-plugin.version>
+		<!-- Plugins - others -->
+		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 	</properties>
 
 
@@ -576,6 +581,17 @@
 				<groupId>org.awaitility</groupId>
 				<artifactId>awaitility</artifactId>
 				<version>${awaitility.version}</version>
+			</dependency>
+			<!-- Fix dependency convergence -->
+			<dependency>
+				<groupId>org.ow2.asm</groupId>
+				<artifactId>asm</artifactId>
+				<version>${asm.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>${javassist.version}</version>
 			</dependency>
 			<!-- Must be at the end to avoid overriding versions explicitly set -->
 			<dependency>
@@ -1063,6 +1079,26 @@
 					<completionGoals>com.google.code.maven-replacer-plugin:replacer:replace
 						-N</completionGoals>
 				</configuration>
+			</plugin>
+
+			<!-- Others -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>${maven-enforcer-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>enforce</id>
+						<configuration>
+							<rules>
+								<dependencyConvergence />
+							</rules>
+						</configuration>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<extensions>

@@ -4,7 +4,7 @@ import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISD
 import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.isNull;

@@ -1,9 +1,9 @@
 package oghamtesting.it.sms.simulator
 
+import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean
 
 import org.awaitility.Awaitility
-import org.awaitility.Duration
 import org.jsmpp.bean.AlertNotification
 import org.jsmpp.bean.Alphabet
 import org.jsmpp.bean.BindType
@@ -125,7 +125,7 @@ class JsmppSimulatorSpec extends Specification {
 			
 		then:
 			def e = thrown(IOException)
-			e.message.contains("Waiting bind response take time too long: No response after waiting for 200 millis when executing bind")
+			e.message.contains("Wait for bind response timed out: No response after waiting for 200 millis when executing bind")
 	
 		cleanup:
 			close(session)
@@ -177,7 +177,7 @@ class JsmppSimulatorSpec extends Specification {
 
 		when:
 			sendSms(session, "test sms")
-			Awaitility.await().atMost(Duration.FIVE_SECONDS).untilTrue(receiptReceived)
+			Awaitility.await().atMost(Duration.ofSeconds(5)).untilTrue(receiptReceived)
 			
 		then:
 			interaction {
