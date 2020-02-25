@@ -2,8 +2,8 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 
 import java.util.Random;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.splitter.RandomReferenceNumberGenerator;
 import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
 

@@ -10,7 +10,6 @@ import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_UCS2
 
 import java.util.Random;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
@@ -18,6 +17,7 @@ import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.util.PriorizedList;
 import fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SegmentSizes;
 import fr.sii.ogham.sms.encoder.Encoder;

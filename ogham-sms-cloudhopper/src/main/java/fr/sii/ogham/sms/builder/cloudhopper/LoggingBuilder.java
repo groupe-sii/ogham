@@ -3,8 +3,8 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 import com.cloudhopper.smpp.pdu.Pdu;
 import com.cloudhopper.smpp.type.LoggingOptions;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
  * * Configure logs:

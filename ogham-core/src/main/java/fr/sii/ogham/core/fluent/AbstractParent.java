@@ -1,4 +1,4 @@
-package fr.sii.ogham.core.builder;
+package fr.sii.ogham.core.fluent;
 
 /**
  * Base implementation that handles the parent and the {@link #and()} method.
@@ -6,8 +6,7 @@ package fr.sii.ogham.core.builder;
  * @author Aurélien Baudet
  *
  * @param <P>
- *            the type of the parent builder (when calling {@link #and()}
- *            method)
+ *            the type of the parent (when calling {@link #and()} method)
  */
 public abstract class AbstractParent<P> implements Parent<P> {
 	/**

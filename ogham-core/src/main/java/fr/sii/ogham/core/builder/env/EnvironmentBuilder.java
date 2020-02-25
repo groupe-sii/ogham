@@ -3,8 +3,8 @@ package fr.sii.ogham.core.builder.env;
 import java.util.Properties;
 
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.Parent;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.fluent.Parent;
 
 /**
  * Builder that configures how configuration properties are handled.

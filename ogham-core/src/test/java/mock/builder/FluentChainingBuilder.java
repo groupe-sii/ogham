@@ -1,6 +1,6 @@
 package mock.builder;
 
-import fr.sii.ogham.core.builder.Parent;
+import fr.sii.ogham.core.fluent.Parent;
 
 public class FluentChainingBuilder<P, T> extends MockBuilder<T> implements Parent<P> {
 	private final P parent;

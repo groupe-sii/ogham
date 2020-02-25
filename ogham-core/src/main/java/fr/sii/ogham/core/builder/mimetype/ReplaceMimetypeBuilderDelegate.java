@@ -2,7 +2,7 @@ package fr.sii.ogham.core.builder.mimetype;
 
 import java.util.regex.Pattern;
 
-import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
 
 /**

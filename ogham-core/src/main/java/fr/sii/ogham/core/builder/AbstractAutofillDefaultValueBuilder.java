@@ -3,6 +3,7 @@ package fr.sii.ogham.core.builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
  * Base class to configure a property key that will be used to automatically

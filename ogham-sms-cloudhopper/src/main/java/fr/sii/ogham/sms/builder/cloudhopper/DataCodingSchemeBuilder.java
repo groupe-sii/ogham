@@ -7,13 +7,13 @@ import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.commons.gsm.DataCoding;
 import com.cloudhopper.smpp.SmppConstants;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToCharacterEncodingGroupDataCodingProvider;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToGeneralGroupDataCodingProvider;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.DataCodingProvider;

@@ -2,13 +2,13 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 
 import com.cloudhopper.smpp.ssl.SslConfiguration;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
  * Enable or disable SSL configuration and configure how SSL is handled.

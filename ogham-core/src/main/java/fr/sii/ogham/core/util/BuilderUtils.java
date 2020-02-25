@@ -5,15 +5,15 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringJoiner;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.Parent;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.JavaPropertiesResolver;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.fluent.Parent;
 import fr.sii.ogham.email.builder.EmailBuilder;
 
 /**

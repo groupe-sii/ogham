@@ -15,13 +15,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.FirstExistingPropertiesResolver;
 import fr.sii.ogham.core.env.JavaPropertiesResolver;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.util.BuilderUtils;
 
 /**

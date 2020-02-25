@@ -2,7 +2,7 @@ package fr.sii.ogham.core.builder.configuration;
 
 import java.util.Optional;
 
-import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
  * Implementation that just delegates all operations to another builder.

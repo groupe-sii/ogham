@@ -102,10 +102,35 @@ public final class StringUtils {
 	 *            the character to pad with
 	 * @return left padded String or original String if no padding is necessary,
 	 *         {@code null} if null String input
-	 * @since 2.0
 	 */
 	public static String leftPad(String str, int size, char padChar) {
 		return org.apache.commons.lang3.StringUtils.leftPad(str, size, padChar);
+	}
+
+	/**
+	 * <p>
+	 * Capitalizes a String changing the first character to title case. No other
+	 * characters are changed.
+	 * </p>
+	 *
+	 * <p>
+	 * A {@code null} input String returns {@code null}.
+	 * </p>
+	 *
+	 * <pre>
+	 * StringUtils.capitalize(null)  = null
+	 * StringUtils.capitalize("")    = ""
+	 * StringUtils.capitalize("cat") = "Cat"
+	 * StringUtils.capitalize("cAt") = "CAt"
+	 * StringUtils.capitalize("'cat'") = "'cat'"
+	 * </pre>
+	 *
+	 * @param str
+	 *            the String to capitalize, may be null
+	 * @return the capitalized String, {@code null} if null String input
+	 */
+	public static String capitalize(String str) {
+		return org.apache.commons.lang3.StringUtils.capitalize(str);
 	}
 
 	private StringUtils() {

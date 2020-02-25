@@ -1,8 +1,8 @@
 package fr.sii.ogham.email.builder;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.html.inliner.ImageInliner;

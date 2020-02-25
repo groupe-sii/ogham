@@ -27,6 +27,18 @@ public class ByteResource implements NamedResource {
 	 */
 	private String name;
 
+	/**
+	 * Initialize the resource with the provided name and bytes that are
+	 * immediately read from the stream. The bytes are copied into a new array
+	 * to prevent security leaks.
+	 * 
+	 * @param name
+	 *            the name of the resource
+	 * @param stream
+	 *            the stream that is read
+	 * @throws IOException
+	 *             when the input stream can't be read
+	 */
 	public ByteResource(String name, InputStream stream) throws IOException {
 		this(name, IOUtils.toByteArray(stream));
 	}

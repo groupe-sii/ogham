@@ -1,8 +1,8 @@
 package fr.sii.ogham.core.builder.mimetype;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**

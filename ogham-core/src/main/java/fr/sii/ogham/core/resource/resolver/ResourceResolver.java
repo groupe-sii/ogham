@@ -3,7 +3,6 @@ package fr.sii.ogham.core.resource.resolver;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.resource.path.ResolvedPath;
-import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
 import fr.sii.ogham.core.resource.path.ResourcePath;
 
 /**
@@ -45,7 +44,7 @@ public interface ResourceResolver {
 	boolean supports(ResourcePath path);
 
 	/**
-	 * Resolves an unresolved/string path into a {@link ResolvedResourcePath}.
+	 * Resolves an unresolved/string path into a {@link ResolvedPath}.
 	 * 
 	 * @param path
 	 *            the path to the resource

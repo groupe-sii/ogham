@@ -51,6 +51,11 @@ public class Attachment {
 	private String contentId;
 
 	/**
+	 * The content-type of the attachment (automatically guessed by default)
+	 */
+	private String contentType;
+
+	/**
 	 * Initialize the attachment with the provided resource (content and name),
 	 * the description of the attachment and the disposition (how to include the
 	 * attachment into the mail).
@@ -492,27 +497,38 @@ public class Attachment {
 		this.contentId = contentId;
 	}
 
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("<").append(resource.getName());
+		if (contentType != null) {
+			builder.append(" [").append(contentType).append("]");
+		}
 		if (description != null) {
-			builder.append(" )").append(description).append(")");
+			builder.append("(").append(description).append(")");
 		}
 		if (contentId != null) {
 			builder.append("{").append(contentId).append("}>");
 		}
-		builder.append("[").append(disposition).append("]>");
+		builder.append("|").append(disposition).append("|>");
 		return builder.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(resource, description, disposition, contentId).hashCode();
+		return new HashCodeBuilder().append(resource, description, disposition, contentId, contentType).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return new EqualsBuilder(this, obj).appendFields("resource", "description", "disposition", "contentId").isEqual();
+		return new EqualsBuilder(this, obj).appendFields("resource", "description", "disposition", "contentId", "contentType").isEqual();
 	}
 }

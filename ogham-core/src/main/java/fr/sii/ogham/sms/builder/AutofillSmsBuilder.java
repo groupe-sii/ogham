@@ -3,13 +3,13 @@ package fr.sii.ogham.sms.builder;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.filler.EveryFillerDecorator;
 import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.filler.SmsFiller;
 import fr.sii.ogham.sms.message.Sms;
 

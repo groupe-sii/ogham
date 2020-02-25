@@ -3,10 +3,10 @@ package fr.sii.ogham.core.builder.charset;
 import java.nio.charset.Charset;
 
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.Parent;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.charset.CharsetDetector;
+import fr.sii.ogham.core.fluent.Parent;
 
 /**
  * Configures NIO charset detection. A charset detector tries to detect the NIO

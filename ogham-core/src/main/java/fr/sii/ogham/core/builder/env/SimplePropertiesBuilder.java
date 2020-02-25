@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
  * A {@link PropertiesBuilder} that registers properties (key/value pairs) that

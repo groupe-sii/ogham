@@ -9,9 +9,9 @@ import org.apache.tika.Tika;
 import org.apache.tika.config.TikaConfig;
 
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.Parent;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.fluent.Parent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 
 /**

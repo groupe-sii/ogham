@@ -1,8 +1,8 @@
 package fr.sii.ogham.core.builder.resolution;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 
 /**

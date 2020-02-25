@@ -7,13 +7,13 @@ import javax.activation.MimeTypeParseException;
 
 import org.apache.tika.Tika;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.FixedMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;

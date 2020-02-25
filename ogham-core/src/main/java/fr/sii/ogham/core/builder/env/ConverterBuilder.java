@@ -1,13 +1,13 @@
 package fr.sii.ogham.core.builder.env;
 
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.Parent;
 import fr.sii.ogham.core.builder.configuration.MayOverride;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.ConverterRegistry;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.convert.SupportingConverter;
+import fr.sii.ogham.core.fluent.Parent;
 
 /**
  * Builder that configures how conversions are applied.

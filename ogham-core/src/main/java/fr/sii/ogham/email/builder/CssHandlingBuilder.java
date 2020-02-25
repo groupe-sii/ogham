@@ -1,8 +1,8 @@
 package fr.sii.ogham.email.builder;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 
 /**

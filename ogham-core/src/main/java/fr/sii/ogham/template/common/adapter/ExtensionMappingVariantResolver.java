@@ -10,6 +10,7 @@ import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.message.capability.HasVariant;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
 import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -40,14 +41,15 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 
 	@Override
 	public ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
+		String originalPath = template.getPath().getOriginalPath();
 		if (!(template instanceof HasVariant)) {
-			return resourceResolver.resolve(new UnresolvedPath(template.getPath().getOriginalPath()));
+			return resourceResolver.resolve(new UnresolvedPath(originalPath));
 		}
 		String extension = mapping.get(((HasVariant) template).getVariant());
 		if (extension == null) {
 			throw new UnknownVariantException("Failed to resolve template due to unknown variant/extension", template.getPath(), template.getContext(), ((HasVariant) template).getVariant());
 		}
-		return resourceResolver.resolve(new UnresolvedPath(template.getPath().getOriginalPath() + extension));
+		return resolveVariantPath(originalPath, extension);
 	}
 
 	public ExtensionMappingVariantResolver register(Variant variant, String extension) {
@@ -68,12 +70,29 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 
 		ResourcePath templatePath = template.getPath();
 		try {
-			resourceResolver.getResource(new UnresolvedPath(templatePath.getOriginalPath() + extension));
+			resourceResolver.getResource(resolveVariantPath(template.getPath().getOriginalPath(), extension));
 			return true;
 		} catch (ResourceResolutionException e) {
 			LOG.trace("template {}.{} not found", templatePath, extension, e);
 			return false;
 		}
 	}
+
+	private ResourcePath resolveVariantPath(String originalPath, String extension) {
+		// if extension already explicitly set, try without adding the extension provided by variant
+		ResolvedPath path = useExplicitExtensionIfSameAsVariant(originalPath, extension);
+		if (path != null) {
+			return path;
+		}
+		return resourceResolver.resolve(new UnresolvedPath(originalPath + extension));
+	}
+	
+	private ResolvedPath useExplicitExtensionIfSameAsVariant(String originalPath, String extension) {
+		if (originalPath.endsWith(extension)) {
+			return resourceResolver.resolve(new UnresolvedPath(originalPath));
+		}
+		return null;
+	}
+
 
 }

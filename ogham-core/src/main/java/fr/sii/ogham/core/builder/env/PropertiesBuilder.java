@@ -3,7 +3,7 @@ package fr.sii.ogham.core.builder.env;
 import java.util.Properties;
 
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.Parent;
+import fr.sii.ogham.core.fluent.Parent;
 
 /**
  * Registers custom properties (see {@link Properties}).

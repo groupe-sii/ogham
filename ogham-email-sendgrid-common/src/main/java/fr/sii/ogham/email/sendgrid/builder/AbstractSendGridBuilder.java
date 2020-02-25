@@ -13,7 +13,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 import com.sendgrid.SendGrid;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
@@ -24,6 +23,7 @@ import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
 
 @SuppressWarnings("squid:S00119")

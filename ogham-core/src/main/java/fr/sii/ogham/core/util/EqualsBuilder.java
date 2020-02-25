@@ -1,6 +1,11 @@
 package fr.sii.ogham.core.util;
 
+import static fr.sii.ogham.core.util.StringUtils.capitalize;
+
+import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import fr.sii.ogham.core.exception.util.FieldAccessException;
 
@@ -35,14 +40,14 @@ import fr.sii.ogham.core.exception.util.FieldAccessException;
  * Typical use for the code is as follows:
  * </p>
  * 
- * <pre>
+ * <pre><code>
  * public boolean equals(Object obj) {
  * 	return new EqualsBuilder(this, obj)
- * 						.appendSuper(super.equals(obj))
- * 						.appendFields(&quot;field1&quot;, &quot;field2&quot;, &quot;field3&quot;)
- * 						.equals();
+ * 			.appendSuper(super.equals(obj))
+ * 			.appendFields(&quot;field1&quot;, &quot;field2&quot;, &quot;field3&quot;)
+ * 			.equals();
  * }
- * 
+ * </code>
  * </pre>
  * <p>
  * Alternatively, there is a method that uses reflection to determine the fields
@@ -116,7 +121,8 @@ public class EqualsBuilder {
 	 * </ul>
 	 * 
 	 * <p>
-	 * Using this version lets you use the shortcut {@link #appendFields(String...)}
+	 * Using this version lets you use the shortcut
+	 * {@link #appendFields(String...)}
 	 * </p>
 	 * 
 	 * @param object
@@ -181,7 +187,7 @@ public class EqualsBuilder {
 			for (String field : fields) {
 				try {
 					delegate.append(getFieldValue(object, field), getFieldValue(other, field));
-				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | IntrospectionException | InvocationTargetException e) {
 					throw new FieldAccessException("Failed to access field " + field, e);
 				}
 			}
@@ -218,11 +224,12 @@ public class EqualsBuilder {
 	 * </p>
 	 * 
 	 * <p>
-	 * It uses AccessibleObject.setAccessible to gain access to private fields.
-	 * This means that it will throw a security exception if run under a
-	 * security manager, if the permissions are not set up correctly. It is also
-	 * not as efficient as testing explicitly. Non-primitive fields are compared
-	 * using equals().
+	 * If a getter exists, it uses the getter otherwise direct access to the
+	 * field is used. It uses AccessibleObject.setAccessible to gain access to
+	 * private fields. This means that it will throw a security exception if run
+	 * under a security manager, if the permissions are not set up correctly. It
+	 * is also not as efficient as testing explicitly. Non-primitive fields are
+	 * compared using equals().
 	 * </p>
 	 * 
 	 * <p>
@@ -246,23 +253,38 @@ public class EqualsBuilder {
 		return org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals(object, other, excludeFields);
 	}
 
-	private static Object getFieldValue(Object object, String fieldName) throws IllegalAccessException, NoSuchFieldException {
+	private static Object getFieldValue(Object object, String fieldName) throws IllegalAccessException, NoSuchFieldException, IntrospectionException, IllegalArgumentException, InvocationTargetException {
+		Method getter = findMethod(object, "is" + capitalize(fieldName));
+		if (getter == null) {
+			getter = findMethod(object, "get" + capitalize(fieldName));
+		}
+		if (getter != null) {
+			return getter.invoke(object);
+		}
 		Field field = getField(object, fieldName);
 		field.setAccessible(true);
 		return field.get(object);
 	}
 
+	private static Method findMethod(Object object, String methodName) {
+		try {
+			return object.getClass().getMethod(methodName);
+		} catch (NoSuchMethodException e) {
+			return null;
+		}
+	}
+
 	private static Field getField(Object object, String fieldName) throws NoSuchFieldException {
 		Class<?> clazz = object.getClass();
-		while(clazz!=null) {
+		while (clazz != null) {
 			Field[] fields = clazz.getDeclaredFields();
-			for(Field f : fields) {
-				if(fieldName.equals(f.getName())) {
+			for (Field f : fields) {
+				if (fieldName.equals(f.getName())) {
 					return f;
 				}
 			}
 			clazz = clazz.getSuperclass();
 		}
-		throw new NoSuchFieldException("Field "+fieldName+" not found on object "+object.getClass());
+		throw new NoSuchFieldException("Field " + fieldName + " not found on object " + object.getClass());
 	}
 }

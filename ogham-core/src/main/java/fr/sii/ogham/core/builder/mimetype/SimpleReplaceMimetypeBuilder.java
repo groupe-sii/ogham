@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.mimetype.replace.ContainsMimetypeReplacer;
 import fr.sii.ogham.core.mimetype.replace.FirstMatchingMimetypeReplacer;
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;

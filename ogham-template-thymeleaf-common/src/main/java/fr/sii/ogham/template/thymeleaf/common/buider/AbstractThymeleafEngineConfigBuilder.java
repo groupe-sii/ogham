@@ -11,8 +11,8 @@ import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.messageresolver.IMessageResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 public abstract class AbstractThymeleafEngineConfigBuilder<MYSELF extends AbstractThymeleafEngineConfigBuilder<MYSELF, P>, P> extends AbstractParent<P> implements Builder<TemplateEngine> {
 	protected final MYSELF myself;

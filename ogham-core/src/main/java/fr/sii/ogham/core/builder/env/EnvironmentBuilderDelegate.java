@@ -2,8 +2,8 @@ package fr.sii.ogham.core.builder.env;
 
 import java.util.Properties;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
  * Implementation that just delegates all operations to another builder.

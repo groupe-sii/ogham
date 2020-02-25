@@ -3,9 +3,9 @@ package fr.sii.ogham.core.builder.configuration;
 import java.util.Optional;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.Parent;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.Parent;
 
 /**
  * Builder useful for automatic configuration (see {@link Configurer}).

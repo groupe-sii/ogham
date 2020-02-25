@@ -3,12 +3,12 @@ package fr.sii.ogham.core.builder.env;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.configuration.MayOverride;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.ConverterRegistry;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.convert.SupportingConverter;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
  * A {@link ConverterBuilder} that builds the converter:

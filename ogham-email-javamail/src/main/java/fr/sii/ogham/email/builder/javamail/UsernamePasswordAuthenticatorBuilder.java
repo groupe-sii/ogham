@@ -2,12 +2,12 @@ package fr.sii.ogham.email.builder.javamail;
 
 import javax.mail.Authenticator;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.email.sender.impl.javamail.UpdatableUsernamePasswordAuthenticator;
 import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
 
