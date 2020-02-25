@@ -40,7 +40,7 @@ public class LongSmsTestSample {
 	public void longMessageUsingGsm8bit() throws MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Sms()
-							.content("sms content with a very very very loooooooooo"
+							.message().string("sms content with a very very very loooooooooo"
 									+ "oooooooooonnnnnnnnnnnnnnnnng message that is"
 									+ " over 140 characters in order to test the be"
 									+ "havior of the sender when message has to be split")

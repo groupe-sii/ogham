@@ -22,6 +22,7 @@ public class PropertiesSample {
 					.systemProperties()										// <5>
 					.and()
 				.build();
+		service.send(/*your message here*/null);
 	}
 
 }

@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -18,16 +17,16 @@ public class HtmlTemplateSample {
 		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = MessagingBuilder.standard()											// <1>
+		MessagingService service = MessagingBuilder.standard()									// <1>
 				.environment()
-					.properties(properties)																// <2>
+					.properties(properties)														// <2>
 					.and()
-				.build();																				// <3>
+				.build();																		// <3>
 		// send the email using fluent API
-		service.send(new Email()																		// <4>
+		service.send(new Email()																// <4>
 						.subject("subject")
-						.content(new TemplateContent("classpath:/template/thymeleaf/simple.html", 		// <5>
-													new SimpleBean("foo", 42)))							// <6>
+						.body().template("classpath:/template/thymeleaf/simple.html", 			// <5>
+													new SimpleBean("foo", 42))					// <6>
 						.to("ogham-test@yopmail.com"));
 	}
 

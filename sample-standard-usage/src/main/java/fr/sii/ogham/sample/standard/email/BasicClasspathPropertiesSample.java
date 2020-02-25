@@ -19,7 +19,7 @@ public class BasicClasspathPropertiesSample {
 		// send the email using fluent API
 		service.send(new Email()
 						.subject("subject")
-						.content("email content")
+						.body().string("email content")
 						.to("ogham-test@yopmail.com"));
 	}
 

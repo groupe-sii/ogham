@@ -2,7 +2,6 @@ package fr.sii.ogham.core.util;
 
 import static fr.sii.ogham.core.util.StringUtils.capitalize;
 
-import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -187,7 +186,7 @@ public class EqualsBuilder {
 			for (String field : fields) {
 				try {
 					delegate.append(getFieldValue(object, field), getFieldValue(other, field));
-				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | IntrospectionException | InvocationTargetException e) {
+				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 					throw new FieldAccessException("Failed to access field " + field, e);
 				}
 			}
@@ -253,7 +252,7 @@ public class EqualsBuilder {
 		return org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals(object, other, excludeFields);
 	}
 
-	private static Object getFieldValue(Object object, String fieldName) throws IllegalAccessException, NoSuchFieldException, IntrospectionException, IllegalArgumentException, InvocationTargetException {
+	private static Object getFieldValue(Object object, String fieldName) throws IllegalAccessException, NoSuchFieldException, InvocationTargetException {
 		Method getter = findMethod(object, "is" + capitalize(fieldName));
 		if (getter == null) {
 			getter = findMethod(object, "get" + capitalize(fieldName));

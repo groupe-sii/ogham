@@ -1,6 +1,8 @@
 package fr.sii.ogham.template.common.adapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -27,13 +29,13 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(ExtensionMappingVariantResolver.class);
 
 	private final ResourceResolver resourceResolver;
-	private final Map<Variant, String> mapping;
+	private final Map<Variant, List<String>> mapping;
 
 	public ExtensionMappingVariantResolver(ResourceResolver resourceResolver) {
-		this(resourceResolver, new HashMap<Variant, String>());
+		this(resourceResolver, new HashMap<Variant, List<String>>());
 	}
 
-	public ExtensionMappingVariantResolver(ResourceResolver resourceResolver, Map<Variant, String> mapping) {
+	public ExtensionMappingVariantResolver(ResourceResolver resourceResolver, Map<Variant, List<String>> mapping) {
 		super();
 		this.resourceResolver = resourceResolver;
 		this.mapping = mapping;
@@ -45,15 +47,31 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 		if (!(template instanceof HasVariant)) {
 			return resourceResolver.resolve(new UnresolvedPath(originalPath));
 		}
-		String extension = mapping.get(((HasVariant) template).getVariant());
-		if (extension == null) {
+		List<String> extensions = mapping.get(((HasVariant) template).getVariant());
+		if (extensions == null) {
 			throw new UnknownVariantException("Failed to resolve template due to unknown variant/extension", template.getPath(), template.getContext(), ((HasVariant) template).getVariant());
 		}
-		return resolveVariantPath(originalPath, extension);
+		// first try to resolve with explicit extension provided in the path
+		for (String extension : extensions) {
+			ResourcePath path = useExplicitExtensionIfSameAsVariant(originalPath, extension);
+			if (path != null) {
+				return path;
+			}
+		}
+		// then try by appending extension to path
+		for (String extension : extensions) {
+			ResourcePath path = resolveVariantPath(originalPath, extension);
+			if (path != null) {
+				return path;
+			}
+		}
+		return null;
 	}
 
 	public ExtensionMappingVariantResolver register(Variant variant, String extension) {
-		mapping.put(variant, extension.startsWith(".") ? extension : ("." + extension));
+		List<String> extensions = mapping.computeIfAbsent(variant, (k) -> new ArrayList<>());
+		String normalized = extension.startsWith(".") ? extension : ("." + extension);
+		extensions.add(normalized);
 		return this;
 	}
 
@@ -63,19 +81,21 @@ public class ExtensionMappingVariantResolver implements VariantResolver {
 			return false;
 		}
 
-		String extension = mapping.get(((HasVariant) template).getVariant());
-		if (extension == null) {
+		List<String> extensions = mapping.get(((HasVariant) template).getVariant());
+		if (extensions == null) {
 			return false;
 		}
 
 		ResourcePath templatePath = template.getPath();
-		try {
-			resourceResolver.getResource(resolveVariantPath(template.getPath().getOriginalPath(), extension));
-			return true;
-		} catch (ResourceResolutionException e) {
-			LOG.trace("template {}.{} not found", templatePath, extension, e);
-			return false;
+		for (String extension : extensions) {
+			try {
+				resourceResolver.getResource(resolveVariantPath(template.getPath().getOriginalPath(), extension));
+				return true;
+			} catch (ResourceResolutionException e) {
+				LOG.trace("template {}.{} not found", templatePath, extension, e);
+			}
 		}
+		return false;
 	}
 
 	private ResourcePath resolveVariantPath(String originalPath, String extension) {

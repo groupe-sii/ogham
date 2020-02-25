@@ -40,7 +40,7 @@ public class SmsTestSample {
 	public void simple() throws MessagingException {
 		// @formatter:off
 		oghamService.send(new Sms()
-							.content("sms content")
+							.message().string("sms content")
 							.to("0601020304"));
 		assertThat(smppServer).receivedMessages()												// <4>
 			.count(is(1))																		// <5>

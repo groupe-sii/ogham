@@ -12,11 +12,17 @@ import fr.sii.ogham.core.message.capability.HasSubject;
 import fr.sii.ogham.core.message.capability.HasSubjectFluent;
 import fr.sii.ogham.core.message.capability.HasToFluent;
 import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.fluent.SingleContentBuilder;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 import fr.sii.ogham.core.util.StringUtils;
 import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.attachment.ContentDisposition;
+import fr.sii.ogham.email.message.fluent.AttachBuilder;
+import fr.sii.ogham.email.message.fluent.BodyBuilder;
+import fr.sii.ogham.email.message.fluent.EmbedBuilder;
 
 /**
  * Email message that contains the following information:
@@ -58,6 +64,12 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 */
 	private List<Attachment> attachments;
 
+	private final SingleContentBuilder<Email> htmlBuilder;
+	private final SingleContentBuilder<Email> textBuilder;
+	private final BodyBuilder bodyBuilder;
+	private final AttachBuilder attachBuilder;
+	private final EmbedBuilder embedBuilder;
+
 	/**
 	 * Instantiates an empty email
 	 */
@@ -65,13 +77,21 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		super();
 		recipients = new ArrayList<>();
 		attachments = new ArrayList<>();
+		htmlBuilder = new SingleContentBuilder<>(this);
+		textBuilder = new SingleContentBuilder<>(this);
+		bodyBuilder = new BodyBuilder(this);
+		attachBuilder = new AttachBuilder(this);
+		embedBuilder = new EmbedBuilder(this);
 	}
 
 	// ----------------------- Getter/Setters -----------------------//
 
 	@Override
 	public Content getContent() {
-		return content;
+		if (content != null) {
+			return content;
+		}
+		return buildContent();
 	}
 
 	@Override
@@ -157,7 +177,23 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	 * @return the list of attachments
 	 */
 	public List<Attachment> getAttachments() {
-		return attachments;
+		List<Attachment> merged = new ArrayList<>();
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+		if (attachments != null) {
+			merged.addAll(attachments);
+		}
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+		if (attachBuilder != null) {
+			merged.addAll(attachBuilder.build());
+		}
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+		if (embedBuilder != null) {
+			merged.addAll(embedBuilder.build());
+		}
+		return merged;
 	}
 
 	/**
@@ -187,9 +223,32 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	/**
 	 * Set the content (body) of the message.
 	 * 
+	 * <p>
+	 * You can use this method to explicitly set a particular {@link Content}
+	 * instance. For example:
+	 * 
+	 * <pre>
+	 * {@code
+	 * .content(new TemplateContent("path/to/template", obj));
+	 * }
+	 * </pre>
+	 * 
+	 * <p>
+	 * If you prefer, you can instead use the fluent API to set the email
+	 * content (body):
+	 * 
+	 * <pre>
+	 * {@code
+	 * .body().template("path/to/template", obj)
+	 * }
+	 * </pre>
+	 * 
 	 * @param content
 	 *            the content of the message
 	 * @return this instance for fluent chaining
+	 * @see #body()
+	 * @see #html()
+	 * @see #text()
 	 */
 	public Email content(Content content) {
 		setContent(content);
@@ -197,14 +256,185 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 	}
 
 	/**
-	 * Set the content (body) of the message.
+	 * Set the content (body) of the message. This is a shortcut to
+	 * 
+	 * <pre>
+	 * {@code .content(new StringContent(content))}
+	 * </pre>
+	 * 
+	 * <p>
+	 * If you prefer, you can instead use the fluent API to set the email
+	 * content (body):
+	 * 
+	 * <pre>
+	 * {@code
+	 * .body().string(content)
+	 * }
+	 * </pre>
+	 * 
 	 * 
 	 * @param content
 	 *            the content of the message
 	 * @return this instance for fluent chaining
+	 * @see #body()
+	 * @see #html()
+	 * @see #text()
 	 */
 	public Email content(String content) {
 		return content(new StringContent(content));
+	}
+
+	/**
+	 * Set the content (body) of the message (HTML part).
+	 * 
+	 * <p>
+	 * You can use this method in addition to {@link #text()} to provide both a
+	 * main body and an alternative textual body (that is used when HTML format
+	 * is not supported by the email client).
+	 * 
+	 * <p>
+	 * This method provides fluent chaining to guide developer. It has the same
+	 * effect has using {@link #content(Content)}.
+	 * 
+	 * <p>
+	 * If you also call either {@link #content(Content)},
+	 * {@link #content(String)} or {@link #setContent(Content)} then this method
+	 * has no effect.
+	 * 
+	 * @return the builder for building HTML part
+	 * @since 3.0.0
+	 */
+	public SingleContentBuilder<Email> html() {
+		return htmlBuilder;
+	}
+
+	/**
+	 * Set the content (body) of the message (text part).
+	 * 
+	 * <p>
+	 * You can use this method in addition to {@link #html()} to provide both a
+	 * main body and an alternative textual body (that is used when HTML format
+	 * is not supported by the email client). If you only call {@link #text()},
+	 * then the textual content is used as the main body.
+	 * 
+	 * <p>
+	 * This method provides fluent chaining to guide developer. It has the same
+	 * effect has using {@link #content(Content)}.
+	 * 
+	 * <p>
+	 * If you also call either {@link #content(Content)},
+	 * {@link #content(String)} or {@link #setContent(Content)} then this method
+	 * has no effect.
+	 * 
+	 * @return the builder for building text part
+	 * @since 3.0.0
+	 */
+	public SingleContentBuilder<Email> text() {
+		return textBuilder;
+	}
+
+	/**
+	 * Set the content (body) of the message.
+	 * 
+	 * <p>
+	 * This is the method that you can use in main circumstances to set the
+	 * body:
+	 * <ul>
+	 * <li>When you want to set a single textual body (no alternative):
+	 * 
+	 * <pre>
+	 * {@code .body().string("text")}
+	 * </pre>
+	 * 
+	 * </li>
+	 * <li>When you want to set a single HTML body (no alternative):
+	 * 
+	 * <pre>
+	 * {@code .body().string("<html><body>Hello world</body></html>")}
+	 * </pre>
+	 * 
+	 * </li>
+	 * <li>When you want to set a single text body (no alternative) based on a
+	 * template (extension depends on template parser):
+	 * 
+	 * <pre>
+	 * {@code .body().template("path/to/text/template.txt", obj)}
+	 * </pre>
+	 * 
+	 * </li>
+	 * <li>When you want to set a single HTML body (no alternative) based on a
+	 * template (extension depends on template parser):
+	 * 
+	 * <pre>
+	 * {@code .body().template("path/to/text/template.html", obj)}
+	 * </pre>
+	 * 
+	 * </li>
+	 * <li>When you want to set both HTML and textual alternative based on two
+	 * different templates (same path but without extension):
+	 * 
+	 * <pre>
+	 * {@code .body().template("path/to/text/template", obj)}
+	 * </pre>
+	 * 
+	 * </li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * This method provides fluent chaining to guide developer. It has the same
+	 * effect has using {@link #content(Content)}.
+	 * 
+	 * <p>
+	 * If you also call either {@link #content(Content)},
+	 * {@link #content(String)}, {@link #setContent(Content)}, {@link #html()}
+	 * or {@link #text()} then this method has no effect because they are more
+	 * specific.
+	 * 
+	 * @return the builder for building the body
+	 * @since 3.0.0
+	 */
+	public BodyBuilder body() {
+		return bodyBuilder;
+	}
+
+	/**
+	 * Attach a file to the email. The attachment must have a name.
+	 * 
+	 * <p>
+	 * The file is attached with the {@link ContentDisposition#ATTACHMENT}
+	 * disposition.
+	 * 
+	 * <p>
+	 * This method provides fluent chaining to guide the developer. This method
+	 * has the same effect has using {@link #attach(Attachment)},
+	 * {@link #attach(Attachment...)} or {@link #attach(List)}.
+	 * 
+	 * @return the builder for building the attachments
+	 * @since 3.0.0
+	 */
+	public AttachBuilder attach() {
+		return attachBuilder;
+	}
+
+	/**
+	 * Embed a file in the email. This is mainly used for images. The embedded
+	 * file must be referenced in the body of the email using a
+	 * <a href="https://tools.ietf.org/html/rfc4021#section-2.2.2">Content-ID
+	 * (or CID)</a>.
+	 * 
+	 * <p>
+	 * The file is attached {@link ContentDisposition#INLINE} disposition.
+	 * 
+	 * <p>
+	 * This method provides fluent chaining to guide the developer. This method
+	 * has the same effect has using {@link #attach(Attachment)},
+	 * {@link #attach(Attachment...)} or {@link #attach(List)}.
+	 * 
+	 * @return the builder for building the attachments
+	 * @since 3.0.0
+	 */
+	public EmbedBuilder embed() {
+		return embedBuilder;
 	}
 
 	/**
@@ -416,7 +646,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		Recipient[] addresses = new Recipient[to.size()];
 		int i = 0;
 		for (String t : to) {
-			addresses[i++] = new Recipient(t);
+			addresses[i] = new Recipient(t);
+			i++;
 		}
 		return addresses;
 	}
@@ -433,7 +664,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		Recipient[] addresses = new Recipient[to.length];
 		int i = 0;
 		for (EmailAddress t : to) {
-			addresses[i++] = new Recipient(t);
+			addresses[i] = new Recipient(t);
+			i++;
 		}
 		return addresses;
 	}
@@ -452,7 +684,8 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		Recipient[] addresses = new Recipient[to.length];
 		int i = 0;
 		for (String t : to) {
-			addresses[i++] = new Recipient(t);
+			addresses[i] = new Recipient(t);
+			i++;
 		}
 		return addresses;
 	}
@@ -468,7 +701,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(subject, content, from, recipients, attachments).hashCode();
+		return new HashCodeBuilder().append(subject, getContent(), from, recipients, getAttachments()).hashCode();
 	}
 
 	@Override
@@ -493,12 +726,37 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 			}
 		}
 		builder.append("\r\nSubject: ").append(subject);
-		builder.append("\r\n----------------------------------\r\n").append(includeContent ? content : "<Content skipped>");
+		builder.append("\r\n----------------------------------\r\n").append(includeContent ? getContent() : "<Content skipped>");
 		if (attachments != null && !attachments.isEmpty()) {
-			builder.append("\r\n----------------------------------").append("\r\nAttachments: ").append(attachments);
+			builder.append("\r\n----------------------------------").append("\r\nAttachments: ").append(getAttachments());
 		}
 		builder.append("\r\n==================================\r\n");
 		return builder.toString();
 	}
-	
+
+	private Content buildContent() {
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+		Content html = htmlBuilder == null ? null : htmlBuilder.build();
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+		Content text = textBuilder == null ? null : textBuilder.build();
+		if (html != null && text != null) {
+			return new MultiContent(html, text);
+		}
+		if (html != null) {
+			return html;
+		}
+		if (text != null) {
+			return text;
+		}
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+		Content body = bodyBuilder == null ? null : bodyBuilder.build();
+		if (body != null) {
+			return body;
+		}
+		return null;
+	}
+
 }

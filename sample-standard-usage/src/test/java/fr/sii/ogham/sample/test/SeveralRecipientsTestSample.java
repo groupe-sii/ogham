@@ -46,7 +46,7 @@ public class SeveralRecipientsTestSample {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")
-								.content("string body")
+								.body().string("string body")
 								.to("recipient1@sii.fr", "recipient2@sii.fr", "recipient3@sii.fr")
 								.cc("recipient4@sii.fr", "recipient5@sii.fr")
 								.bcc("recipient6@sii.fr"));

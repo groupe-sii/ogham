@@ -1,7 +1,7 @@
 package fr.sii.ogham.email.sender.impl.javamail;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.mail.BodyPart;
 
@@ -12,57 +12,74 @@ import fr.sii.ogham.email.exception.javamail.NoAttachmentResourceHandlerExceptio
 
 /**
  * Provides a handler for the attachment resource based on the class of the
- * attachment resource.
+ * attachment resource. The registration order is important.
  * 
  * @author Aurélien Baudet
  *
  */
 public class MapAttachmentResourceHandler implements JavaMailAttachmentResourceHandler {
 	/**
-	 * The map of attachment resource handlers indexed by the attachment resource
-	 * class
+	 * The mapping of attachment resource handlers indexed by the attachment
+	 * resource class
 	 */
-	private Map<Class<? extends NamedResource>, JavaMailAttachmentResourceHandler> map;
+	private final List<Mapping> mappings;
 
 	/**
-	 * Initialize with the map of attachment resource handlers indexed by the
-	 * attachment resource class.
-	 * 
-	 * @param map
-	 *            the map of attachment resource handlers indexed by the
-	 *            attachment resource class
-	 */
-	public MapAttachmentResourceHandler(Map<Class<? extends NamedResource>, JavaMailAttachmentResourceHandler> map) {
-		super();
-		this.map = map;
-	}
-
-	/**
-	 * Initialize an empty map
+	 * Initialize an empty mapping
 	 */
 	public MapAttachmentResourceHandler() {
-		this(new HashMap<Class<? extends NamedResource>, JavaMailAttachmentResourceHandler>());
+		super();
+		this.mappings = new ArrayList<>();
 	}
 
 	@Override
 	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
-		JavaMailAttachmentResourceHandler attachmentHandler = map.get(resource.getClass());
+		JavaMailAttachmentResourceHandler attachmentHandler = find(resource.getClass());
 		if (attachmentHandler == null) {
-			throw new NoAttachmentResourceHandlerException("there is no attachment resource handler defined for managing " + resource.getClass().getSimpleName() + " attachment resource class", attachment);
+			throw new NoAttachmentResourceHandlerException("there is no attachment resource handler defined for managing " + resource.getClass().getSimpleName() + " attachment resource class",
+					attachment);
 		}
 		attachmentHandler.setData(part, resource, attachment);
 	}
 
 	/**
-	 * Register a new attachment resource handler.
+	 * Register a new attachment resource handler. The registration order is
+	 * important.
 	 * 
 	 * @param clazz
 	 *            the class of the attachment resource
 	 * @param handler
 	 *            the attachment resource handler
 	 */
-	public void addResourceHandler(Class<? extends NamedResource> clazz, JavaMailAttachmentResourceHandler handler) {
-		map.put(clazz, handler);
+	public void registerResourceHandler(Class<? extends NamedResource> clazz, JavaMailAttachmentResourceHandler handler) {
+		mappings.add(new Mapping(clazz, handler));
 	}
 
+	private JavaMailAttachmentResourceHandler find(Class<? extends NamedResource> clazz) {
+		for (Mapping mapping : mappings) {
+			if (mapping.getClazz().isAssignableFrom(clazz)) {
+				return mapping.getHandler();
+			}
+		}
+		return null;
+	}
+
+	private static class Mapping {
+		private final Class<? extends NamedResource> clazz;
+		private final JavaMailAttachmentResourceHandler handler;
+
+		public Mapping(Class<? extends NamedResource> clazz, JavaMailAttachmentResourceHandler handler) {
+			super();
+			this.clazz = clazz;
+			this.handler = handler;
+		}
+
+		public Class<? extends NamedResource> getClazz() {
+			return clazz;
+		}
+
+		public JavaMailAttachmentResourceHandler getHandler() {
+			return handler;
+		}
+	}
 }

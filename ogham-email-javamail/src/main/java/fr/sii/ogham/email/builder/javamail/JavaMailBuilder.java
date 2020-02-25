@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Properties;
+import java.util.function.BiFunction;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.mail.Authenticator;
@@ -39,20 +40,26 @@ import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
+import fr.sii.ogham.core.resource.LookupResource;
+import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.core.resource.OverrideNameWrapper;
 import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.javamail.UnresolvableAttachmentResourceHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
 import fr.sii.ogham.email.sender.impl.PropertiesBridge;
 import fr.sii.ogham.email.sender.impl.javamail.ContentWithAttachmentsHandler;
+import fr.sii.ogham.email.sender.impl.javamail.FailResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.FileResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.JavaMailInterceptor;
 import fr.sii.ogham.email.sender.impl.javamail.MapAttachmentResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.MultiContentHandler;
+import fr.sii.ogham.email.sender.impl.javamail.OverrideNameWrapperResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.PriorizedContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StreamResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
@@ -743,9 +750,15 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 
 	private static MapAttachmentResourceHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
 		MapAttachmentResourceHandler attachmentHandler = new MapAttachmentResourceHandler();
-		attachmentHandler.addResourceHandler(ByteResource.class, new StreamResourceHandler(mimetypeProvider));
-		attachmentHandler.addResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));
+		attachmentHandler.registerResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));
+		attachmentHandler.registerResourceHandler(OverrideNameWrapper.class, new OverrideNameWrapperResourceHandler(attachmentHandler));
+		attachmentHandler.registerResourceHandler(LookupResource.class, new FailResourceHandler(noResourceResolverConfigured()));
+		attachmentHandler.registerResourceHandler(NamedResource.class, new StreamResourceHandler(mimetypeProvider));
 		return attachmentHandler;
+	}
+
+	private static BiFunction<NamedResource, Attachment, AttachmentResourceHandlerException> noResourceResolverConfigured() {; 
+		return (resource, attachment) -> new UnresolvableAttachmentResourceHandlerException("Failed to attach "+resource.getName()+" because it points to a path but no resource resolver has been configured.", attachment);
 	}
 
 }

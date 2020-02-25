@@ -45,7 +45,7 @@ public class EmailTestSample {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")
-								.content("string body")
+								.body().string("string body")
 								.to("Recipient Name <recipient@sii.fr>"));
 		assertThat(greenMail).receivedMessages()										// <4>
 			.count(is(1))																// <5>

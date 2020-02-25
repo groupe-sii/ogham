@@ -11,6 +11,7 @@ import fr.sii.ogham.core.message.capability.HasRecipientsFluent;
 import fr.sii.ogham.core.message.capability.HasToFluent;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.fluent.SingleContentBuilder;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 import fr.sii.ogham.core.util.StringUtils;
@@ -42,12 +43,14 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	 * The content of the SMS
 	 */
 	private Content content;
-	
+
+	private final SingleContentBuilder<Sms> messageBuilder;
+
 	public Sms() {
 		super();
 		recipients = new ArrayList<>();
+		messageBuilder = new SingleContentBuilder<>(this);
 	}
-
 
 	// ----------------------- Getter/Setters -----------------------//
 
@@ -101,7 +104,15 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 
 	@Override
 	public Content getContent() {
-		return content;
+		if (content != null) {
+			return content;
+		}
+		// NOTE: normally it can't be null but EqualsVerifier uses reflection to
+		// set it to null
+		if (messageBuilder != null) {
+			return messageBuilder.build();
+		}
+		return null;
 	}
 
 	@Override
@@ -114,9 +125,30 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	/**
 	 * Set the content of the message.
 	 * 
+	 * <p>
+	 * You can use this method to explicitly set a particular {@link Content}
+	 * instance. For example:
+	 * 
+	 * <pre>
+	 * {@code
+	 * .content(new TemplateContent("path/to/template", obj));
+	 * }
+	 * </pre>
+	 * 
+	 * <p>
+	 * If you prefer, you can instead use the fluent API to set the message of
+	 * the SMS:
+	 * 
+	 * <pre>
+	 * {@code
+	 * .message().template("path/to/template", obj)
+	 * }
+	 * </pre>
+	 * 
 	 * @param content
 	 *            the content of the message
 	 * @return this instance for fluent chaining
+	 * @see #message()
 	 */
 	public Sms content(Content content) {
 		setContent(content);
@@ -124,14 +156,49 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 	}
 
 	/**
-	 * Set the content of the message.
+	 * Set the content of the message. This is a shortcut to
+	 * 
+	 * <pre>
+	 * {@code .content(new StringContent(content))}
+	 * </pre>
+	 * 
+	 * <p>
+	 * If you prefer, you can instead use the fluent API to set the message of
+	 * the SMS:
+	 * 
+	 * <pre>
+	 * {@code
+	 * .message().string(content)
+	 * }
+	 * </pre>
+	 * 
 	 * 
 	 * @param content
 	 *            the content of the message
 	 * @return this instance for fluent chaining
+	 * @see #message()
 	 */
 	public Sms content(String content) {
 		return content(new StringContent(content));
+	}
+
+	/**
+	 * Set the message of the SMS.
+	 * 
+	 * <p>
+	 * This method provides fluent chaining to guide developer. It has the same
+	 * effect has using {@link #content(Content)}.
+	 * 
+	 * <p>
+	 * If you also call either {@link #content(Content)},
+	 * {@link #content(String)} or {@link #setContent(Content)} then this method
+	 * has no effect.
+	 * 
+	 * @return the builder for building text part
+	 * @since 3.0.0
+	 */
+	public SingleContentBuilder<Sms> message() {
+		return messageBuilder;
 	}
 
 	/**
@@ -287,7 +354,8 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 		Recipient[] addresses = new Recipient[to.length];
 		int i = 0;
 		for (PhoneNumber t : to) {
-			addresses[i++] = new Recipient(t);
+			addresses[i] = new Recipient(t);
+			i++;
 		}
 		return addresses;
 	}
@@ -303,7 +371,8 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 		Recipient[] addresses = new Recipient[to.length];
 		int i = 0;
 		for (String t : to) {
-			addresses[i++] = new Recipient(t);
+			addresses[i] = new Recipient(t);
+			i++;
 		}
 		return addresses;
 	}
@@ -319,7 +388,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(from, recipients, content).hashCode();
+		return new HashCodeBuilder().append(from, recipients, getContent()).hashCode();
 	}
 
 	@Override
@@ -331,7 +400,7 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 		StringBuilder builder = new StringBuilder();
 		builder.append("Sms message\r\nFrom: ").append(from);
 		builder.append("\r\nTo: ").append(StringUtils.join(recipients, ", "));
-		builder.append("\r\n----------------------------------\r\n").append(includeContent ? content : "<Content skipped>");
+		builder.append("\r\n----------------------------------\r\n").append(includeContent ? getContent() : "<Content skipped>");
 		builder.append("\r\n==================================\r\n");
 		return builder.toString();
 	}

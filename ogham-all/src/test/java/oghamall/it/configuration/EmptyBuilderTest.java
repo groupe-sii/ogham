@@ -38,8 +38,8 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.builder.javamail.DefaultJavaMailConfigurer;
 import fr.sii.ogham.email.builder.javamail.JavaMailBuilder;
-import fr.sii.ogham.email.exception.javamail.NoAttachmentResourceHandlerException;
 import fr.sii.ogham.email.exception.javamail.NoContentHandlerException;
+import fr.sii.ogham.email.exception.javamail.UnresolvableAttachmentResourceHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
@@ -147,7 +147,7 @@ public class EmptyBuilderTest {
 				.attach(new Attachment("attachment/04-Java-OOP-Basics.pdf"));
 		
 		thrown.expect(MessageException.class);
-		thrown.expectCause(instanceOf(NoAttachmentResourceHandlerException.class));
+		thrown.expectCause(instanceOf(UnresolvableAttachmentResourceHandlerException.class));
 		
 		service.send(message);
 	}

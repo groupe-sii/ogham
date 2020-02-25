@@ -45,15 +45,15 @@ public class SeveralEmailsTestSample {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Simple")
-								.content("string body 1")
+								.body().string("string body 1")
 								.to("recipient1@sii.fr"));
 		oghamService.send(new Email()
 								.subject("Simple")
-								.content("string body 2")
+								.body().string("string body 2")
 								.to("recipient2@sii.fr"));
 		oghamService.send(new Email()
 								.subject("Simple")
-								.content("string body 3")
+								.body().string("string body 3")
 								.to("recipient3@sii.fr"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(3))

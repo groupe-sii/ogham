@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -37,7 +36,8 @@ public class HtmlAndTextSample {
 		// send the email using the fluent API
 		service.send(new Email()
 						.subject("subject")
-						.content(new MultiContent(text, html))		// <1>
+						.text().string(text)			// <1>
+						.html().string(html)			// <2>
 						.to("ogham-test@yopmail.com"));
 	}
 }

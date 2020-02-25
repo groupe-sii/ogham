@@ -26,7 +26,7 @@ public class BasicSample {
 				.build();																			// <8>
 		// send the sms using fluent API
 		service.send(new Sms()																		// <9>
-						.content("sms content")
+						.message().string("sms content")
 						.to("+33752962193"));
 	}
 

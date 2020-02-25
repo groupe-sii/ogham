@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.StringTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -28,7 +27,7 @@ public class HtmlStringTemplateSample {
 		// send the email using fluent API
 		service.send(new Email()
 						.subject("subject")
-						.content(new StringTemplateContent(template, new SimpleBean("foo", 42)))
+						.body().templateString(template, new SimpleBean("foo", 42))
 						.to("ogham-test@yopmail.com"));
 	}
 

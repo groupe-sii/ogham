@@ -7,7 +7,6 @@ import java.util.Properties;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
 public class WithAttachmentSample {
@@ -28,10 +27,10 @@ public class WithAttachmentSample {
 		// send the email using fluent API
 		service.send(new Email()
 						.subject("subject")
-						.content("content of the email")
+						.body().string("content of the email")
 						.to("ogham-test@yopmail.com")
-						.attach(new Attachment("classpath:/attachment/test.pdf"))			// <1>
-						.attach(new Attachment("from-stream.pdf", loadInputStream())));		// <2>
+						.attach().resource("classpath:/attachment/test.pdf")			// <1>
+						.attach().stream("from-stream.pdf", loadInputStream()));		// <2>
 	}
 
 	private static InputStream loadInputStream() {

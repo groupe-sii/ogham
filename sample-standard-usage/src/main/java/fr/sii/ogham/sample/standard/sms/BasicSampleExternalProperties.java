@@ -23,7 +23,7 @@ public class BasicSampleExternalProperties {
 				.build();
 		// send the sms using fluent API
 		service.send(new Sms()
-						.content("sms content")
+						.message().string("sms content")
 						.to("+33752962193"));
 	}
 

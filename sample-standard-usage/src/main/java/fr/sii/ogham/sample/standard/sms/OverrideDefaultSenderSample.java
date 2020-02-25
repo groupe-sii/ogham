@@ -26,12 +26,12 @@ public class OverrideDefaultSenderSample {
 				.build();
 		// send the sms using fluent API
 		service.send(new Sms()												// <2>
-				.content("sms content")
+				.message().string("sms content")
 				.to("+33752962193"));
 		// => the sender phone number is +33699999999
 
 		service.send(new Sms()
-				.content("sms content")
+				.message().string("sms content")
 				.from("+33700000000")										// <3>
 				.to("+33752962193"));
 		// => the sender phone number is now +33700000000

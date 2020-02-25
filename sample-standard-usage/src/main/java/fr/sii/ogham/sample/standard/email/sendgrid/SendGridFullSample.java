@@ -4,9 +4,7 @@ import java.io.IOException;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
 /**
@@ -46,17 +44,17 @@ public class SendGridFullSample {
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
 				.environment()
-					.properties("/sendgrid-template.properties")									// <1>
+					.properties("/sendgrid-template.properties")								// <1>
 					.properties()
-						.set("ogham.email.sengrid.api-key", "<your sendgrid API key>")				// <2>
+						.set("ogham.email.sengrid.api-key", "<your sendgrid API key>")			// <2>
 						.and()
 					.and()
 				.build();
 		// send the email using fluent API
 		service.send(new Email()
-						.content(new MultiTemplateContent("full", new SimpleBean("foo", 42)))		// <3>
+						.body().template("full", new SimpleBean("foo", 42))						// <3>
 						.to("ogham-test@yopmail.com")
-						.attach(new Attachment("/attachment/test.pdf")));
+						.attach().resource("/attachment/test.pdf"));
 	}
 
 	public static class SimpleBean {

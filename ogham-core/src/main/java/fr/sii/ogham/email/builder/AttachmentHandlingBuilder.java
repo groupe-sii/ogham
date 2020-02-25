@@ -18,6 +18,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
 import fr.sii.ogham.core.translator.resource.EveryResourceTranslator;
 import fr.sii.ogham.core.translator.resource.LookupResourceTranslator;
+import fr.sii.ogham.core.translator.resource.OverrideNameWrapperResourceTranslator;
 import fr.sii.ogham.email.attachment.Attachment;
 
 /**
@@ -78,6 +79,7 @@ public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> impl
 	public AttachmentResourceTranslator build() {
 		EveryResourceTranslator translator = new EveryResourceTranslator();
 		LOG.info("Using translator that calls all registered translators");
+		translator.addTranslator(new OverrideNameWrapperResourceTranslator(translator));
 		translator.addTranslator(new LookupResourceTranslator(buildResolver()));
 		LOG.debug("Registered translators: {}", translator.getTranslators());
 		return translator;

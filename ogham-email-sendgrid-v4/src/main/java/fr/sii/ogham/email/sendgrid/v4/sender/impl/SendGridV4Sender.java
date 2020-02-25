@@ -168,13 +168,20 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 			sendGridAttachment.setContentId(toCid(attachment.getContentId()));
 			sendGridAttachment.setDisposition(attachment.getDisposition());
 			sendGridAttachment.setFilename(attachment.getResource().getName());
-			sendGridAttachment.setType(mimetypeProvider.detect(new ByteArrayInputStream(bytes)).toString());
+			sendGridAttachment.setType(getMimetype(attachment, bytes));
 			sendGridMail.addAttachments(sendGridAttachment);
 		} catch (IOException e) {
 			throw new AttachmentReadException("Failed to attach email attachment named " + attachment.getResource().getName(), attachment, e);
 		} catch (MimeTypeDetectionException e) {
 			throw new AttachmentReadException("Failed to determine mimetype for email attachment named " + attachment.getResource().getName(), attachment, e);
 		}
+	}
+
+	private String getMimetype(Attachment attachment, byte[] bytes) throws MimeTypeDetectionException {
+		if (attachment.getContentType() != null) {
+			return attachment.getContentType();
+		}
+		return mimetypeProvider.detect(new ByteArrayInputStream(bytes)).toString();
 	}
 
 	private static String toCid(final String contentId) {

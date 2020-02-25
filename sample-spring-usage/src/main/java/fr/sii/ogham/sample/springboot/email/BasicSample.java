@@ -5,8 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,13 +30,13 @@ public class BasicSample {
 		@Autowired
 		MessagingService messagingService;
 		
-		@RequestMapping(value="api/email/basic", method=RequestMethod.POST)
+		@PostMapping(value="api/email/basic")
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendMail(@RequestParam("subject") String subject, @RequestParam("content") String content, @RequestParam("to") String to) throws MessagingException {
 			// send the email using fluent API
 			messagingService.send(new Email()
 									.subject(subject)
-									.content(content)
+									.body().string(content)
 									.to(to));
 		}
 	}

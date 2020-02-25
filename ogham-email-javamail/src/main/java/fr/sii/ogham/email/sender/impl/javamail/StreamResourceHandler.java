@@ -11,14 +11,14 @@ import javax.mail.util.ByteArrayDataSource;
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
 
 /**
- * Implementation that is able to handle {@link ByteResource}.
+ * Implementation that is able to handle any {@link Resource}.
  * 
  * @author Aurélien Baudet
  *
@@ -37,8 +37,7 @@ public class StreamResourceHandler implements JavaMailAttachmentResourceHandler 
 	@Override
 	@SuppressWarnings("squid:S1192")
 	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
-		ByteResource streamResource = (ByteResource) resource;
-		try (InputStream stream = streamResource.getInputStream()) {
+		try (InputStream stream = resource.getInputStream()) {
 			InputStream s = stream;
 			// stream is read twice, if stream can't handle reset => create a
 			// stream that is able to do it
@@ -48,7 +47,7 @@ public class StreamResourceHandler implements JavaMailAttachmentResourceHandler 
 			// mark to reset at the start of the stream
 			s.mark(Integer.MAX_VALUE);
 			// detect the mimetype
-			String mimetype = mimetypeProvider.detect(s).toString();
+			String mimetype = getMimetype(attachment, s);
 			// reset the stream
 			s.reset();
 			// set the content
@@ -60,6 +59,13 @@ public class StreamResourceHandler implements JavaMailAttachmentResourceHandler 
 		} catch (IOException e) {
 			throw new AttachmentResourceHandlerException("Failed to attach " + resource.getName() + ". Stream can't be read", attachment, e);
 		}
+	}
+
+	private String getMimetype(Attachment attachment, InputStream stream) throws MimeTypeDetectionException {
+		if (attachment.getContentType() != null) {
+			return attachment.getContentType();
+		}
+		return mimetypeProvider.detect(stream).toString();
 	}
 
 }

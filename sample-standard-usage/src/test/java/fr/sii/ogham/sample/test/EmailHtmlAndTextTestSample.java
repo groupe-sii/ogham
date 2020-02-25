@@ -20,7 +20,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -48,8 +47,7 @@ public class EmailHtmlAndTextTestSample {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Multi")
-								.content(new MultiTemplateContent("template/mixed/simple", 
-																	new SimpleBean("bar", 42)))
+								.body().template("template/mixed/simple", new SimpleBean("bar", 42))
 								.to("recipient@sii.fr"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(1))

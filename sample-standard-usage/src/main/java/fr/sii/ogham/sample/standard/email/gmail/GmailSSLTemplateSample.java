@@ -2,9 +2,7 @@ package fr.sii.ogham.sample.standard.email.gmail;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
 public class GmailSSLTemplateSample {
@@ -29,9 +27,9 @@ public class GmailSSLTemplateSample {
 										.build();
 		// send the email
 		service.send(new Email()
-						.content(new MultiTemplateContent("withImagesAndCss/resources", new SimpleBean("foo", 42)))
+						.body().template("withImagesAndCss/resources", new SimpleBean("foo", 42))
 						.to("ogham-test@yopmail.com")
-						.attach(new Attachment("/attachment/test.pdf")));
+						.attach().resource("/attachment/test.pdf"));
 	}
 
 	public static class SimpleBean {

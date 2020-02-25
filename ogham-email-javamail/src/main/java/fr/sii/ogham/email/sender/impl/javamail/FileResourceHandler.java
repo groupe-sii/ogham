@@ -16,9 +16,16 @@ import fr.sii.ogham.core.resource.NamedResource;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
 
+/**
+ * Specific implementation for files so that mimetype detection may also use the
+ * file name to guess the mimetype.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class FileResourceHandler implements JavaMailAttachmentResourceHandler {
 	private static final String ERROR_MESSAGE_PREFIX = "Failed to attach '";
-	
+
 	/**
 	 * The Mime Type detector
 	 */
@@ -33,7 +40,7 @@ public class FileResourceHandler implements JavaMailAttachmentResourceHandler {
 	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
 		FileResource fileResource = (FileResource) resource;
 		try (FileInputStream fis = new FileInputStream(fileResource.getFile())) {
-			part.setDataHandler(new DataHandler(new ByteArrayDataSource(fis, mimetypeProvider.getMimeType(fileResource.getFile()).toString())));
+			part.setDataHandler(new DataHandler(new ByteArrayDataSource(fis, getMimetype(attachment, fileResource))));
 		} catch (MimeTypeDetectionException e) {
 			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + "'. Mime type can't be detected", attachment, e);
 		} catch (FileNotFoundException e) {
@@ -43,6 +50,13 @@ public class FileResourceHandler implements JavaMailAttachmentResourceHandler {
 		} catch (IOException e) {
 			throw new AttachmentResourceHandlerException(ERROR_MESSAGE_PREFIX + resource.getName() + "'. File can't be read", attachment, e);
 		}
+	}
+
+	private String getMimetype(Attachment attachment, FileResource fileResource) throws MimeTypeDetectionException {
+		if (attachment.getContentType() != null) {
+			return attachment.getContentType();
+		}
+		return mimetypeProvider.getMimeType(fileResource.getFile()).toString();
 	}
 
 }

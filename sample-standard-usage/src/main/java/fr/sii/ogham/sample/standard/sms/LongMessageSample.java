@@ -30,7 +30,7 @@ public class LongMessageSample {
 							+ "fficia deserunt mollit anim id est laborum.";
 		// send the sms using fluent API
 		service.send(new Sms()
-						.content(longMessage)
+						.message().string(longMessage)
 						.to("+33752962193"));
 	}
 

@@ -21,7 +21,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
 public class EmailAttachmentTestSample {
@@ -48,9 +47,9 @@ public class EmailAttachmentTestSample {
 		// @formatter:off
 		oghamService.send(new Email()
 								.subject("Test")
-								.content("body")
+								.body().string("body")
 								.to("recipient@sii.fr")
-								.attach(new Attachment("/attachment/test.pdf")));
+								.attach().resource("/attachment/test.pdf"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(1))
 			.message(0)

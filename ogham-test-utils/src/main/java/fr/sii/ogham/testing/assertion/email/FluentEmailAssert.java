@@ -8,6 +8,8 @@ import static fr.sii.ogham.testing.assertion.util.EmailUtils.getBodyPart;
 import static java.util.Arrays.asList;
 import static javax.mail.Message.RecipientType.CC;
 import static javax.mail.Message.RecipientType.TO;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -223,7 +225,7 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Part> FluentEmailAssert<P> body(Matcher<? super Part> matcher) {	// NOSONAR
+	public <T extends Part> FluentEmailAssert<P> body(Matcher<? super Part> matcher) { // NOSONAR
 		try {
 			String desc = "body of message ${messageIndex}";
 			int msgIdx = this.index;
@@ -281,7 +283,7 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Part> FluentEmailAssert<P> alternative(Matcher<? super Part> matcher) {	// NOSONAR
+	public <T extends Part> FluentEmailAssert<P> alternative(Matcher<? super Part> matcher) { // NOSONAR
 		try {
 			String desc = "alternative of message ${messageIndex}";
 			int msgIdx = this.index;
@@ -446,7 +448,7 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 	 *            the type used for the matcher
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
-	public <T extends Collection<? extends BodyPart>> FluentEmailAssert<P> attachments(Matcher<? super Collection<? extends BodyPart>> matcher) {	// NOSONAR
+	public <T extends Collection<? extends BodyPart>> FluentEmailAssert<P> attachments(Matcher<? super Collection<? extends BodyPart>> matcher) { // NOSONAR
 		try {
 			String desc = "attachments of message ${messageIndex}";
 			int msgIdx = this.index;
@@ -492,7 +494,7 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public FluentPartAssert<FluentEmailAssert<P>> attachment(String filename) {
-		return attachments(new FileNamePredicate(filename));
+		return attachment(By.filename(filename));
 	}
 
 	/**
@@ -537,6 +539,72 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 	}
 
 	/**
+	 * Make assertions on a particular attachment of the message(s) using fluent
+	 * API. The attachment is identified using the provided finder method.
+	 * 
+	 * <p>
+	 * If several attachments are found, it fails. If you want to make the same
+	 * assertions on several attachments at once, use {@link #attachments(By)}
+	 * instead.
+	 * 
+	 * <pre>
+	 * .receivedMessages().message(0).attachment(By.filename("foo.pdf"))
+	 *    .contentType(is("application/pdf"))
+	 * </pre>
+	 * 
+	 * Will check if the content-type of the attachment named "foo.pdf" of the
+	 * first message is exactly "application/pdf".
+	 * 
+	 * <pre>
+	 * .receivedMessages().every().attachment(By.filename("foo.pdf"))
+	 *    .contentType(is("application/pdf"))
+	 * </pre>
+	 * 
+	 * Will check that the content-type of attachment named "foo.pdf" of every
+	 * message is exactly "application/pdf".
+	 * 
+	 * <p>
+	 * This is a shortcut to {@link #attachments(Predicate)} with
+	 * {@link FileNamePredicate};
+	 * 
+	 * @param by
+	 *            the finder method
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert<FluentEmailAssert<P>> attachment(By by) {
+		return attachments(by.toPredicate(), hasSize(lessThanOrEqualTo(1)));
+	}
+
+	/**
+	 * Make assertions on a one or several attachments of the message(s) using
+	 * fluent API. The attachments are identified using provided finder method.
+	 * 
+	 * <pre>
+	 * .receivedMessages().message(0)
+	 *    .attachments(By.contentId("cid2")).filename(endsWith(".pdf"))
+	 * </pre>
+	 * 
+	 * Will check if every attachment that have the Content-ID header set to
+	 * "cid2" of first message has a name ending with ".pdf".
+	 * 
+	 * <pre>
+	 * .receivedMessages().every()
+	 *    .attachments(By.contentId("cid2")).filename(endsWith(".pdf"))
+	 * </pre>
+	 * 
+	 * Will check if every attachment that have the Content-ID header set to
+	 * "cid2" of every messages has a name ending with ".pdf".
+	 * 
+	 * 
+	 * @param by
+	 *            the finder method
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert<FluentEmailAssert<P>> attachments(By by) {
+		return attachments(by.toPredicate());
+	}
+
+	/**
 	 * Make assertions on a one or several attachments of the message(s) using
 	 * fluent API. The attachments are identified using provided predicate.
 	 * 
@@ -562,6 +630,10 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 	 * @return the fluent API for chaining assertions on received message(s)
 	 */
 	public FluentPartAssert<FluentEmailAssert<P>> attachments(Predicate<Part> filter) {
+		return attachments(filter, null);
+	}
+	
+	private FluentPartAssert<FluentEmailAssert<P>> attachments(Predicate<Part> filter, Matcher<? super Collection<? extends Part>> singleMessageAttachmentsMatcher) {
 		try {
 			int msgIdx = this.index;
 			List<PartWithContext> attachments = new ArrayList<>();
@@ -570,14 +642,9 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 				int matchingIdx = 0;
 				boolean noneFound = true;
-				for (BodyPart attachment : EmailUtils.<BodyPart>getAttachments(message, filter)) {
-					noneFound = false;
-					attachments.add(new PartWithContext(attachment, "attachment " + filter + " (matching index: " + matchingIdx + ")", new SingleMessageContext(msgIdx)));
-					matchingIdx++;
-				}
-				if (noneFound) {
-					attachments.add(new PartWithContext(null, "attachment " + filter + " (/!\\ not found)", new SingleMessageContext(msgIdx)));
-				}
+				List<BodyPart> matchingAttachmentsForMessage = EmailUtils.<BodyPart> getAttachments(message, filter);
+				checkFoundAttachmentPerMessage(filter, singleMessageAttachmentsMatcher, msgIdx, matchingAttachmentsForMessage);
+				contextualize(filter, msgIdx, attachments, matchingIdx, noneFound, matchingAttachmentsForMessage);
 				msgIdx++;
 			}
 			return new FluentPartAssert<>(attachments, this, registry);
@@ -586,4 +653,21 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 		}
 	}
 
+	private void contextualize(Predicate<Part> filter, int msgIdx, List<PartWithContext> attachments, int matchingIdx, boolean noneFound, List<BodyPart> matchingAttachmentsForMessage) {
+		for (BodyPart attachment : matchingAttachmentsForMessage) {
+			noneFound = false;
+			attachments.add(new PartWithContext(attachment, "attachment " + filter + " (matching index: " + matchingIdx + ")", new SingleMessageContext(msgIdx)));
+			matchingIdx++;
+		}
+		if (noneFound) {
+			attachments.add(new PartWithContext(null, "attachment " + filter + " (/!\\ not found)", new SingleMessageContext(msgIdx)));
+		}
+	}
+
+	private void checkFoundAttachmentPerMessage(Predicate<Part> filter, Matcher<? super Collection<? extends Part>> singleMessageAttachmentsMatcher, int msgIdx,
+			List<BodyPart> matchingAttachmentsForMessage) {
+		if (singleMessageAttachmentsMatcher != null) {
+			registry.register(() -> assertThat("message "+msgIdx+" should have only one attachment "+filter, matchingAttachmentsForMessage, singleMessageAttachmentsMatcher));
+		}
+	}
 }

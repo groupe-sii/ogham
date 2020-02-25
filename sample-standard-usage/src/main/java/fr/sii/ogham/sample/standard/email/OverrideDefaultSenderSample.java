@@ -25,13 +25,13 @@ public class OverrideDefaultSenderSample {
 		// send the email using fluent API
 		service.send(new Email()											// <2>
 						.subject("subject")
-						.content("email content")
+						.body().string("email content")
 						.to("ogham-test@yopmail.com"));
 		// => the sender address is foo.bar@test.com
 
 		service.send(new Email()
 				.subject("subject")
-				.content("email content")
+				.body().string("email content")
 				.from("override@test.com")									// <3>
 				.to("ogham-test@yopmail.com"));
 		// => the sender address is now override@test.com

@@ -65,6 +65,7 @@ public final class PriorizedContentHandler implements SendGridContentHandler {
 	 */
 	public void register(Predicate<Content> contentMatcher, SendGridContentHandler handler, int priority) {
 		matchingHandlers.add(new PriorizedMatchingHandler<>(contentMatcher, handler, priority));
+		matchingHandlers.sort(new PriorityComparator<>(PriorizedMatchingHandler::getPriority));
 	}
 
 	/**
@@ -144,7 +145,6 @@ public final class PriorizedContentHandler implements SendGridContentHandler {
 	}
 
 	private SendGridContentHandler findHandler(final Content content) {
-		matchingHandlers.sort(new PriorityComparator<>(PriorizedMatchingHandler::getPriority));
 		for (PriorizedMatchingHandler<SendGridContentHandler> entry : matchingHandlers) {
 			if (entry.matches(content)) {
 				return entry.getHandler();

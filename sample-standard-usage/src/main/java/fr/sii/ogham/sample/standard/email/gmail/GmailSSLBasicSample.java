@@ -26,7 +26,7 @@ public class GmailSSLBasicSample {
 		// send the mail using fluent API
 		service.send(new Email()																	// <10>
 						.subject("subject")
-						.content("email content")
+						.body().string("email content")
 						.to("ogham-test@yopmail.com"));
 	}
 }

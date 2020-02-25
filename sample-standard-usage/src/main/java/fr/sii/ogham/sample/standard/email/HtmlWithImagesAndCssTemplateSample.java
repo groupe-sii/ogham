@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -28,8 +27,8 @@ public class HtmlWithImagesAndCssTemplateSample {
 		// automatically takes the provided path and adds the '.html' extension
 		// for the HTML template and '.txt.ftl' for text template
 		service.send(new Email()
-						.content(new MultiTemplateContent("classpath:/template/withImagesAndCss/resources",		// <1>
-															new SimpleBean("foo", 42)))							// <2>
+						.body().template("classpath:/template/withImagesAndCss/resources",		// <1>
+															new SimpleBean("foo", 42))			// <2>
 						.to("ogham-test@yopmail.com"));
 	}
 

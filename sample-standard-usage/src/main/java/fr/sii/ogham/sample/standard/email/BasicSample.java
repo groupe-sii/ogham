@@ -26,7 +26,7 @@ public class BasicSample {
 		// send the email using fluent API
 		service.send(new Email()									// <4>
 						.subject("subject")
-						.content("email content")
+						.body().string("email content")
 						.to("ogham-test@yopmail.com"));
 	}
 

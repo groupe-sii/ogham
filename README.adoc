@@ -299,7 +299,7 @@ public class BasicSample {
         // send the email using fluent API
         service.send(new Email()                                    // <4>
                         .subject("subject")
-                        .content("email content")
+                        .body().string("email content")
                         .to("ogham-test@yopmail.com"));
     }
 
@@ -341,7 +341,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -355,16 +354,16 @@ public class HtmlTemplateSample {
         properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
         // Instantiate the messaging service using default behavior and
         // provided properties
-        MessagingService service = MessagingBuilder.standard()                                            // <1>
+        MessagingService service = MessagingBuilder.standard()                                    // <1>
                 .environment()
-                    .properties(properties)                                                                // <2>
+                    .properties(properties)                                                        // <2>
                     .and()
-                .build();                                                                                // <3>
+                .build();                                                                        // <3>
         // send the email using fluent API
-        service.send(new Email()                                                                        // <4>
+        service.send(new Email()                                                                // <4>
                         .subject("subject")
-                        .content(new TemplateContent("classpath:/template/thymeleaf/simple.html",         // <5>
-                                                    new SimpleBean("foo", 42)))                            // <6>
+                        .body().template("classpath:/template/thymeleaf/simple.html",             // <5>
+                                                    new SimpleBean("foo", 42))                    // <6>
                         .to("ogham-test@yopmail.com"));
     }
 
@@ -451,7 +450,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -474,8 +472,8 @@ public class HtmlTemplateWithSubjectSample {
         // subject is set to null to let automatic mechanism to read the title
         // of the HTML and use it as subject of your email
         service.send(new Email()                                                                                // <1>
-                        .content(new TemplateContent("classpath:/template/thymeleaf/simpleWithSubject.html", 
-                                                    new SimpleBean("foo", 42)))
+                        .body().template("classpath:/template/thymeleaf/simpleWithSubject.html", 
+                                                    new SimpleBean("foo", 42))
                         .to("ogham-test@yopmail.com"));
     }
     
@@ -543,7 +541,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -566,8 +563,8 @@ public class TextTemplateWithSubjectSample {
         // subject is set to null to let automatic mechanism to read the title
         // of the first line if prefixed by "Subject:" and use it as subject of your email
         service.send(new Email()                                                                                // <1>
-                        .content(new TemplateContent("classpath:/template/freemarker/simpleWithSubject.txt.ftl", 
-                                                    new SimpleBean("foo", 42)))
+                        .body().template("classpath:/template/freemarker/simpleWithSubject.txt.ftl", 
+                                                    new SimpleBean("foo", 42))
                         .to("ogham-test@yopmail.com"));
     }
     
@@ -647,7 +644,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -671,8 +667,8 @@ public class HtmlWithImagesAndCssTemplateSample {
         // automatically takes the provided path and adds the '.html' extension
         // for the HTML template and '.txt.ftl' for text template
         service.send(new Email()
-                        .content(new MultiTemplateContent("classpath:/template/withImagesAndCss/resources",        // <1>
-                                                            new SimpleBean("foo", 42)))                            // <2>
+                        .body().template("classpath:/template/withImagesAndCss/resources",        // <1>
+                                                            new SimpleBean("foo", 42))            // <2>
                         .to("ogham-test@yopmail.com"));
     }
 
@@ -940,7 +936,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -973,7 +968,8 @@ public class HtmlAndTextSample {
         // send the email using the fluent API
         service.send(new Email()
                         .subject("subject")
-                        .content(new MultiContent(text, html))        // <1>
+                        .text().string(text)            // <1>
+                        .html().string(html)            // <2>
                         .to("ogham-test@yopmail.com"));
     }
 }
@@ -1004,7 +1000,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -1029,8 +1024,8 @@ public class HtmlAndTextTemplateSample {
         // for the HTML template and '.txt' for text template
         service.send(new Email()
                         .subject("subject")
-                        .content(new MultiTemplateContent("classpath:/template/thymeleaf/simple",         // <1>
-                                                            new SimpleBean("foo", 42)))                    // <2>
+                        .body().template("classpath:/template/thymeleaf/simple",             // <1>
+                                                            new SimpleBean("foo", 42))        // <2>
                         .to("ogham-test@yopmail.com"));
     }
     
@@ -1120,7 +1115,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -1145,8 +1139,8 @@ public class HtmlAndTextMixedTemplateEnginesSample {
         // for the HTML template and '.txt.ftl' for text template
         service.send(new Email()
                         .subject("subject")
-                        .content(new MultiTemplateContent("classpath:/template/mixed/simple",         // <1>
-                                                            new SimpleBean("foo", 42)))                // <2>
+                        .body().template("classpath:/template/mixed/simple",                 // <1>
+                                                            new SimpleBean("foo", 42))        // <2>
                         .to("ogham-test@yopmail.com"));
     }
     
@@ -1229,7 +1223,6 @@ import java.util.Properties;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
 public class WithAttachmentSample {
@@ -1250,10 +1243,10 @@ public class WithAttachmentSample {
         // send the email using fluent API
         service.send(new Email()
                         .subject("subject")
-                        .content("content of the email")
+                        .body().string("content of the email")
                         .to("ogham-test@yopmail.com")
-                        .attach(new Attachment("classpath:/attachment/test.pdf"))            // <1>
-                        .attach(new Attachment("from-stream.pdf", loadInputStream())));        // <2>
+                        .attach().resource("classpath:/attachment/test.pdf")            // <1>
+                        .attach().stream("from-stream.pdf", loadInputStream()));        // <2>
     }
 
     private static InputStream loadInputStream() {
@@ -1326,13 +1319,13 @@ public class OverrideDefaultSenderSample {
         // send the email using fluent API
         service.send(new Email()                                            // <2>
                         .subject("subject")
-                        .content("email content")
+                        .body().string("email content")
                         .to("ogham-test@yopmail.com"));
         // => the sender address is foo.bar@test.com
 
         service.send(new Email()
                 .subject("subject")
-                .content("email content")
+                .body().string("email content")
                 .from("override@test.com")                                    // <3>
                 .to("ogham-test@yopmail.com"));
         // => the sender address is now override@test.com
@@ -1547,7 +1540,7 @@ public class GmailSSLBasicSample {
         // send the mail using fluent API
         service.send(new Email()                                                                    // <10>
                         .subject("subject")
-                        .content("email content")
+                        .body().string("email content")
                         .to("ogham-test@yopmail.com"));
     }
 }
@@ -1602,9 +1595,7 @@ import java.io.IOException;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
 /**
@@ -1644,17 +1635,17 @@ public class SendGridFullSample {
         // provided properties
         MessagingService service = MessagingBuilder.standard()
                 .environment()
-                    .properties("/sendgrid-template.properties")                                    // <1>
+                    .properties("/sendgrid-template.properties")                                // <1>
                     .properties()
-                        .set("ogham.email.sengrid.api-key", "<your sendgrid API key>")                // <2>
+                        .set("ogham.email.sengrid.api-key", "<your sendgrid API key>")            // <2>
                         .and()
                     .and()
                 .build();
         // send the email using fluent API
         service.send(new Email()
-                        .content(new MultiTemplateContent("full", new SimpleBean("foo", 42)))        // <3>
+                        .body().template("full", new SimpleBean("foo", 42))                        // <3>
                         .to("ogham-test@yopmail.com")
-                        .attach(new Attachment("/attachment/test.pdf")));
+                        .attach().resource("/attachment/test.pdf"));
     }
 
     public static class SimpleBean {
@@ -1754,7 +1745,7 @@ public class BasicSample {
                 .build();                                                                            // <8>
         // send the sms using fluent API
         service.send(new Sms()                                                                        // <9>
-                        .content("sms content")
+                        .message().string("sms content")
                         .to("+33752962193"));
     }
 
@@ -1799,7 +1790,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
@@ -1815,15 +1805,15 @@ public class TemplateSample {
         properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
         // Instantiate the messaging service using default behavior and
         // provided properties
-        MessagingService service = MessagingBuilder.standard()                                        // <1>
+        MessagingService service = MessagingBuilder.standard()                                // <1>
                 .environment()
-                    .properties(properties)                                                            // <2>
+                    .properties(properties)                                                    // <2>
                     .and()
-                .build();                                                                            // <3>
+                .build();                                                                    // <3>
         // send the sms using fluent API
-        service.send(new Sms()                                                                        // <4>
-                        .content(new TemplateContent("classpath:/template/thymeleaf/simple.txt",     // <5>
-                                                    new SimpleBean("foo", 42)))                        // <6>
+        service.send(new Sms()                                                                // <4>
+                        .message().template("classpath:/template/thymeleaf/simple.txt",     // <5>
+                                                    new SimpleBean("foo", 42))                // <6>
                         .to("+33752962193"));
     }
 
@@ -1925,7 +1915,7 @@ public class LongMessageSample {
                             + "fficia deserunt mollit anim id est laborum.";
         // send the sms using fluent API
         service.send(new Sms()
-                        .content(longMessage)
+                        .message().string(longMessage)
                         .to("+33752962193"));
     }
 
@@ -1990,7 +1980,7 @@ public class BasicSmsglobalSmppSample {
                 .build();                                                                                        // <7>
         // send the sms using fluent API
         service.send(new Sms()                                                                                    // <8>
-                .content("sms content")
+                .message().string("sms content")
                 .to("+262693493696"));
     }
 }
@@ -2073,12 +2063,12 @@ public class OverrideDefaultSenderSample {
                 .build();
         // send the sms using fluent API
         service.send(new Sms()                                                // <2>
-                .content("sms content")
+                .message().string("sms content")
                 .to("+33752962193"));
         // => the sender phone number is +33699999999
 
         service.send(new Sms()
-                .content("sms content")
+                .message().string("sms content")
                 .from("+33700000000")                                        // <3>
                 .to("+33752962193"));
         // => the sender phone number is now +33700000000
@@ -2282,6 +2272,7 @@ public class PropertiesSample {
                     .systemProperties()                                        // <5>
                     .and()
                 .build();
+        service.send(/*your message here*/null);
     }
 
 }
@@ -2354,6 +2345,7 @@ public class PropertiesSample {
                     .systemProperties()                                        // <5>
                     .and()
                 .build();
+        service.send(/*your message here*/null);
     }
 
 }
@@ -2691,14 +2683,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -2719,14 +2709,14 @@ public class ThymeleafHtmlAndFreemarkerTextSample {
         @Autowired
         MessagingService messagingService;                                                            // <1>
         
-        @RequestMapping(value="api/email/multitemplate/mixed", method=RequestMethod.POST)
+        @PostMapping(value="api/email/multitemplate/mixed")
         @ResponseStatus(HttpStatus.CREATED)
         public void sendEmail(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
             // using fluent API
-            messagingService.send(new Email()                                                        // <2>
-                                    .content(new MultiTemplateContent("mixed",                         // <3>
-                                                                    new SimpleBean(name, value)))    // <4>
-                                    .to(to));                                                        // <5>
+            messagingService.send(new Email()                                            // <2>
+                                    .body().template("mixed",                             // <3>
+                                                        new SimpleBean(name, value))    // <4>
+                                    .to(to));                                            // <5>
         }
     }
 
@@ -2842,14 +2832,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 
@@ -2867,16 +2855,16 @@ public class TemplateSample {
         // The configuration can be set into application-sms-template.properties
         // The configuration files are stored into src/main/resources
         @Autowired
-        MessagingService messagingService;                                                        // <1>
+        MessagingService messagingService;                                                // <1>
         
-        @RequestMapping(value="api/sms/template", method=RequestMethod.POST)
+        @PostMapping(value="api/sms/template")
         @ResponseStatus(HttpStatus.CREATED)
         public void sendSms(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
             // send the SMS using fluent API
-            messagingService.send(new Sms()                                                        // <2>
-                                    .content(new TemplateContent("register",                     // <3>
-                                                                new SimpleBean(name, value)))    // <4>
-                                    .to(to));                                                    // <5>
+            messagingService.send(new Sms()                                                // <2>
+                                    .message().template("register",                         // <3>
+                                                        new SimpleBean(name, value))    // <4>
+                                    .to(to));                                            // <5>
         }
     }
 
@@ -3118,7 +3106,7 @@ public class EmailTestSample {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Simple")
-                                .content("string body")
+                                .body().string("string body")
                                 .to("Recipient Name <recipient@sii.fr>"));
         assertThat(greenMail).receivedMessages()                                        // <4>
             .count(is(1))                                                                // <5>
@@ -3203,7 +3191,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -3230,8 +3217,8 @@ public class EmailHtmlTestSample {
     public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
         // @formatter:off
         oghamService.send(new Email()
-                                .content(new TemplateContent("/template/register.html",             // <1>
-                                                            new SimpleBean("foo", 42)))                // <2>
+                                .body().template("/template/register.html",                         // <1>
+                                                            new SimpleBean("foo", 42))                // <2>
                                 .to("Recipient Name <recipient@sii.fr>"));
         assertThat(greenMail).receivedMessages()
             .count(is(1))
@@ -3361,7 +3348,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -3388,8 +3374,8 @@ public class EmailHtmlTestSample {
     public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
         // @formatter:off
         oghamService.send(new Email()
-                                .content(new TemplateContent("/template/register.html",             // <1>
-                                                            new SimpleBean("foo", 42)))                // <2>
+                                .body().template("/template/register.html",                         // <1>
+                                                            new SimpleBean("foo", 42))                // <2>
                                 .to("Recipient Name <recipient@sii.fr>"));
         assertThat(greenMail).receivedMessages()
             .count(is(1))
@@ -3542,7 +3528,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -3570,8 +3555,7 @@ public class EmailHtmlAndTextTestSample {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Multi")
-                                .content(new MultiTemplateContent("template/mixed/simple", 
-                                                                    new SimpleBean("bar", 42)))
+                                .body().template("template/mixed/simple", new SimpleBean("bar", 42))
                                 .to("recipient@sii.fr"));
         assertThat(greenMail).receivedMessages()
             .count(is(1))
@@ -3725,7 +3709,6 @@ import com.icegreen.greenmail.junit.GreenMailRule;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
-import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.message.Email;
 
 public class EmailAttachmentTestSample {
@@ -3752,9 +3735,9 @@ public class EmailAttachmentTestSample {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Test")
-                                .content("body")
+                                .body().string("body")
                                 .to("recipient@sii.fr")
-                                .attach(new Attachment("/attachment/test.pdf")));
+                                .attach().resource("/attachment/test.pdf"));
         assertThat(greenMail).receivedMessages()
             .count(is(1))
             .message(0)
@@ -3852,7 +3835,7 @@ public class SeveralRecipientsTestSample {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Simple")
-                                .content("string body")
+                                .body().string("string body")
                                 .to("recipient1@sii.fr", "recipient2@sii.fr", "recipient3@sii.fr")
                                 .cc("recipient4@sii.fr", "recipient5@sii.fr")
                                 .bcc("recipient6@sii.fr"));
@@ -3955,15 +3938,15 @@ public class SeveralEmailsTestSample {
         // @formatter:off
         oghamService.send(new Email()
                                 .subject("Simple")
-                                .content("string body 1")
+                                .body().string("string body 1")
                                 .to("recipient1@sii.fr"));
         oghamService.send(new Email()
                                 .subject("Simple")
-                                .content("string body 2")
+                                .body().string("string body 2")
                                 .to("recipient2@sii.fr"));
         oghamService.send(new Email()
                                 .subject("Simple")
-                                .content("string body 3")
+                                .body().string("string body 3")
                                 .to("recipient3@sii.fr"));
         assertThat(greenMail).receivedMessages()
             .count(is(3))
@@ -4179,7 +4162,7 @@ public class SmsTestSample {
     public void simple() throws MessagingException {
         // @formatter:off
         oghamService.send(new Sms()
-                            .content("sms content")
+                            .message().string("sms content")
                             .to("0601020304"));
         assertThat(smppServer).receivedMessages()                                                // <4>
             .count(is(1))                                                                        // <5>
@@ -4266,7 +4249,7 @@ public class LongSmsTestSample {
     public void longMessageUsingGsm8bit() throws MessagingException, IOException {
         // @formatter:off
         oghamService.send(new Sms()
-                            .content("sms content with a very very very loooooooooo"
+                            .message().string("sms content with a very very very loooooooooo"
                                     + "oooooooooonnnnnnnnnnnnnnnnng message that is"
                                     + " over 140 characters in order to test the be"
                                     + "havior of the sender when message has to be split")

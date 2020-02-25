@@ -135,6 +135,7 @@ public final class SendGridV2Sender extends AbstractSpecializedSender<Email> imp
 	private static void addAttachment(final SendGrid.Email ret, final Attachment attachment) throws AttachmentReadException {
 		try {
 			ret.addAttachment(attachment.getResource().getName(), attachment.getResource().getInputStream());
+			// TODO: how to set Content-Type per attachment with SendGrid v2 API ?
 			if (attachment.getContentId() != null) {
 				String id = CID.matcher(attachment.getContentId()).replaceAll("$1");
 				ret.addContentId(attachment.getResource().getName(), id);

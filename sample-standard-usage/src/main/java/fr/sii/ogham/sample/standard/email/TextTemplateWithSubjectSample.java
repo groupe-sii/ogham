@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
-import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 
@@ -27,8 +26,8 @@ public class TextTemplateWithSubjectSample {
 		// subject is set to null to let automatic mechanism to read the title
 		// of the first line if prefixed by "Subject:" and use it as subject of your email
 		service.send(new Email()																				// <1>
-						.content(new TemplateContent("classpath:/template/freemarker/simpleWithSubject.txt.ftl", 
-													new SimpleBean("foo", 42)))
+						.body().template("classpath:/template/freemarker/simpleWithSubject.txt.ftl", 
+													new SimpleBean("foo", 42))
 						.to("ogham-test@yopmail.com"));
 	}
 	

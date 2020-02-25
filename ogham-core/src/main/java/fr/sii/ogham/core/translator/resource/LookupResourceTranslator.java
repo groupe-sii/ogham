@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.resource.LookupResource;
 import fr.sii.ogham.core.resource.Resource;
-import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.email.exception.attachment.translator.ResourceTranslatorException;
 
@@ -16,7 +15,7 @@ import fr.sii.ogham.email.exception.attachment.translator.ResourceTranslatorExce
  * real resource implementation.
  * </p>
  * <p>
- * This translator uses a {@link FirstSupportingResourceResolver} to get the real
+ * This translator uses a {@link ResourceResolver} to get the real
  * resource implementation.
  * </p>
  * 
@@ -26,10 +25,7 @@ import fr.sii.ogham.email.exception.attachment.translator.ResourceTranslatorExce
 public class LookupResourceTranslator implements AttachmentResourceTranslator {
 	private static final Logger LOG = LoggerFactory.getLogger(LookupResourceTranslator.class);
 
-	/**
-	 * The parser to use for finding, loading and evaluating the template
-	 */
-	private ResourceResolver resolver;
+	private final ResourceResolver resolver;
 
 	public LookupResourceTranslator(ResourceResolver resolver) {
 		super();
