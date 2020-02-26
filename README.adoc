@@ -333,7 +333,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,35-47 irrelevant-lines:1-10,13-20 highlight-lines:29-30"]
+[source, java, role="collapse-lines:1-9,34-46 irrelevant-lines:1-9,12-19 highlight-lines:28-29"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -387,7 +387,7 @@ public class HtmlTemplateSample {
 <1> Use the standard builder (predefined behavior)
 <2> Register the custom properties
 <3> Create a MessagingService instance
-<4> Send an email with a subject and a simple body that comes from the evaluated template. The sender address is automatically set using `ogham.email.from` property
+<4> Send an email with an explicit subject. The sender address is automatically set using `ogham.email.from` property
 <5> Indicate the path to the HTML template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
@@ -419,15 +419,20 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 _____
 
 
-Using a template is straightforward. Instead of providing a string content, you provide a `TemplateContent`.
-The `TemplateContent` requires two information:
+Using a template is straightforward. Instead of providing a string as body (using `body().string(...)`), 
+you change to `body().template(..., ...)`.
+The `template` method requires two pieces of information:
 
 * The path to the template
 * The variables to evaluate in the template
 
-The path to the template is a string with a *lookup* prefix. The lookup prefix is used to indicate where to search the template (from file system, from classpath or anywhere else). Here we explicitly ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
+The path to the template is a string that may contain a *lookup* prefix. The lookup prefix is used to indicate 
+where to search the template (from file system, from classpath or anywhere else). Here we explicitly 
+ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, 
+classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
 
-The variables are any object you are using in your application. No need to convert your object to a particular format. Directly use what you want.
+The variables are any object you are using in your application. No need to convert your object to a 
+particular format. Directly use what you want.
 
 [[html-title-subject]]
 ==== Use HTML title as email subject
@@ -442,7 +447,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-11,36-48 irrelevant-lines:1-11,13-20"]
+[source, java, role="collapse-lines:1-10,35-47 irrelevant-lines:1-10,12-19"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -524,7 +529,8 @@ _____
 
 
 
-For text templates, the subject is automatically used (like for HTML title) if the first line starts with `Subject:` (spaces can be added after colon). Other lines are used as content of the email.
+For text templates, the subject is automatically used (like for HTML title) if the first line starts 
+with `Subject:` (spaces can be added after colon). Other lines are used as content of the email.
 
 
 [role="tab-container no-max-height"]
@@ -533,7 +539,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-20"]
+[source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-19"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -626,6 +632,7 @@ However, writing an HTML email is totally different. Indeed, email clients are n
 * Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
 * Background images on body should be moved on another node
 * CSS3 properties are not supported
+* Images must have `alt` attribute
 * ...
 
 There are many other rules but the developer should not be constrained and should be able to write its HTML and CSS like as usual in Web browsers. Ogham simplifies image and CSS integration and is able to partially rewrite the HTML.  
@@ -636,7 +643,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,37-49 irrelevant-lines:1-10,13-20 highlight-lines:31,32"]
+[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -689,7 +696,8 @@ public class HtmlWithImagesAndCssTemplateSample {
     }
 }
 ----
-<1> The path to the templates
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
 <2> The template context
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
@@ -699,131 +707,128 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 [role=tab]
 image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
 
-[source, html, role="highlight-lines:4"]
+[source, html, role="highlight-lines:7-8,13,19,26,44,47"]
 ----
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Demystifying Email Design</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link href="classpath:/template/withImagesAndCss/css/external1.css" rel="stylesheet" />
-<link href="classpath:/template/withImagesAndCss/css/external2.css" rel="stylesheet" />
+<title>Demystifying Email Design</title>                                                                    <!--1-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="css/layout.css" rel="stylesheet" />                                                                <!--2-->
+<link href="css/custom.css" rel="stylesheet" />                                                                <!--3-->
 </head>
-<body id="body_2a02_0">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">    
-        <tr>
-            <td id="td_2a02_0">
-                <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" id="table_2a02_0">
-                    <tr>
-                        <td align="center" bgcolor="#70bbd9" id="td_2a02_1">
-                            <img src="classpath:/template/withImagesAndCss/images/h1.gif" alt="Creating Email Magic" width="300" height="230" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor="#ffffff" id="td_2a02_2">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                <tr>
-                                    <td id="td_2a02_3">
-                                        <b th:text="${name}">${name}</b>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td id="td_2a02_4" class="paragraph" th:text="${value}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                            <tr>
-                                                <td width="260" valign="top">
-                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                                        <tr>
-                                                            <td>
-                                                                <img src="classpath:/template/withImagesAndCss/images/left.gif" alt="" width="100%" height="140" />
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="paragraph">
-                                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
-                                                <td id="td_2a02_6" width="20">
-                                                    &nbsp;
-                                                </td>
-                                                <td width="260" valign="top">
-                                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                                        <tr>
-                                                            <td>
-                                                                <img src="classpath:/template/withImagesAndCss/images/right.gif" alt="" width="100%" height="140" />
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="paragraph">
-                                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor="#ee4c50" id="td_2a02_8">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                <tr>
-                                    <td id="td_2a02_9" class="white" width="75%">
-                                        &reg; Someone, somewhere 2013<br/>
-                                        <a href="#" id="a_2a02_0" class="white"><font color="#ffffff">Unsubscribe</font></a> to this newsletter instantly
-                                    </td>
-                                    <td align="right" width="25%">
-                                        <table border="0" cellpadding="0" cellspacing="0">
-                                            <tr>
-                                                <td class="link">
-                                                    <a href="http://www.twitter.com/" class="white">
-                                                        <img src="classpath:/template/withImagesAndCss/images/tw.gif" alt="Twitter" width="38" height="38" border="0" />
-                                                    </a>
-                                                </td>
-                                                <td id="td_2a02_11" width="20">&nbsp;</td>
-                                                <td class="link">
-                                                    <a href="http://www.twitter.com/" class="white">
-                                                        <img src="classpath:/template/withImagesAndCss/images/fb.gif" alt="Facebook" width="38" height="38" border="0" />
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+<body>
+    <div class="main-content">
+        <div class="header">
+            <img src="images/h1.gif" alt="Creating Email Magic" />                                            <!--4-->
+        </div>
+        <div class="content">
+            <span th:text="${name}">name</span>
+            <p th:text="${value}">value</p>
+            <div class="left">
+                <img src="images/left.gif" data-inline="base64" />                                            <!--5-->
+                <p class="text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                    tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                    porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                    posuere mauris neque at erat.
+                </p>
+            </div>
+            <div class="right">
+                <img src="images/right.gif" />                                                                <!--6-->
+                <p class="text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                    tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                    porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                    posuere mauris neque at erat.
+                </p>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="sender-info">
+                &reg; Someone, somewhere 2013<br />
+                <a href="#" class="white">Unsubscribe</a> to this newsletter instantly
+            </div>
+            <div class="social">
+                <a href="http://www.twitter.com/" class="white">
+                    <img src="images/tw.gif" alt="Twitter" />                                                <!--7-->
+                </a>
+                <a href="http://www.twitter.com/" class="white">
+                    <img src="images/fb.gif" alt="Facebook" data-inline="skip" />                            <!--8-->
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 ----
+<1> The title is used as subject of the email
+<2> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute)
+<3> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute). The CSS may
+contain rules that override some rules of other CSS files (like in a browser)
+<4> The image is automatically embedded (the path is replaced by a 
+https://tools.ietf.org/html/rfc4021#section-2.2.2[Content-ID (or CID)] and the image is attached
+to the email using `ContentDisposition.INLINE` with the Content-ID header). The content type is
+automatically determined
+<5> The image is converted to a base64 string. The `src` attribute of the image is updated using
+https://en.wikipedia.org/wiki/Data_URI_scheme[data URI scheme]. The content type is automatically
+determined
+<6> Same as <4>
+<7> Same as <4>
+<8> The image is not inlined by Ogham. This can be useful to embed it manually.
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
 
 
 [role=tab]
-image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS and images
+image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS
 
-[source, html, role="highlight-lines:4"]
+.layout.css
+[source, html]
 ----
-TODO: add CSS file
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.main-content {
+    margin: 10px auto 30px auto;
+    width: 600px;
+    border: 1px solid #ccc;
+}
+
+
+.content {
+    padding: 40px 30px;
+}
+
+.left,
+.right {
+    width: 250px;
+    display: inline-block;
+}
+
+.left {
+    margin-right: 36px;
+}
+
+.footer {
+    padding: 30px;
+    color:#ffffff;
+    font-family:Arial, sans-serif;
+    font-size:14px;
+    background: #ee4c50;
+}
 ----
 
-Images
-
+.custom.css
+[source, html]
+----
+.white {
+    color:#ffffff;
+}
+----
 
 
 
@@ -831,9 +836,9 @@ Images
 [role=tab]
 image:src/docs/resources/images/icons/html.png[width=37,height=30] Sent HTML
 
-[source, html, role="highlight-lines:4"]
+[source, html]
 ----
-TODO: sent HTML
+TODO: code of the generated HTML
 ----
 
 
@@ -899,16 +904,18 @@ The library will apply those workarounds to your HTML.
 
 ////
 
+Here is the list of supported transformations:
 
 * [x] `<img>` tags that use local images are embedded (using `cid` reference)
 * [x] `<img>` tags that use local images are embedded (using base64 data URI)
 * [ ] Use XHTML instead of HTML
-* [x] Tables used for layout explicitly set default values
+* [ ] Tables used for layout explicitly set default values
 * [ ] Remove HTML comments (except conditional comments used to target Outlook)
 * [ ] Add border=0 on all images to avoid an ugly border
 * [ ] Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of `padding: 4px`)
 * [ ] Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
 * [ ] Background images on body should be moved on another node
+* [ ] Images must have `alt` attribute
 
 ////
 TODO: other rules
@@ -919,7 +926,10 @@ TODO: other rules
 
 
 
-Sending an email with HTML content **and** text content might be really important, at least for smartphones. When a smartphone receives an email, it displays the sender, the subject and also a preview of the message, using the text alternative. If the message is only HTML, the preview might be unreadable.
+Sending an email with HTML content **and** text content might be really important, at least for 
+smartphones. When a smartphone receives an email, it displays the sender, the subject and also a 
+preview of the message, using the text alternative. If the message is only HTML, the preview might 
+be unreadable.
 
 
 [role="tab-container no-max-height"]
@@ -928,7 +938,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10 irrelevant-lines:1-10,12-21,24-31 highlight-lines:40"]
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,11-20,23-30 highlight-lines:39-40"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -974,17 +984,30 @@ public class HtmlAndTextSample {
     }
 }
 ----
-<1> The content is using the type `MultiContent` with a text and HTML content
+<1> Explicitly set the textual content (used as alternative body). The alternative body is used when 
+the email client doesn't support HTML or as a preview of the email.
+<2> Explicitly set the HTML content (used as main body)
+
+[NOTE]
+====
+The call order between `text()` and `html()` doesn't matter.
+====
+
+[NOTE]
+====
+The underlying `Content` is a `MultiContent`.
+====
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab-container-end]
 _____
 
-Just switching to a `MultiContent` let you provide a main content and an alternative content.
 
 
-Obviously, you can use templates too. Even better, the following sample shows the shorthand version that avoids specifying twice the path to the templates (a single path without extension for both HTML and text template files).
+Obviously, you can use templates too. Even better, the following sample shows the shorthand version 
+that avoids specifying twice the path to the templates (a single path without extension for both HTML 
+and text template files).
 
 [role="tab-container no-max-height"]
 _____
@@ -992,7 +1015,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,38-50 irrelevant-lines:1-10,13-20 highlight-lines:32-33"]
+[source, java, role="collapse-lines:1-9,37-49 irrelevant-lines:1-9,12-19 highlight-lines:31-32"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -1046,8 +1069,16 @@ public class HtmlAndTextTemplateSample {
     }
 }
 ----
-<1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
+<1> The body contains two parts (main body and alternative body) because there are two templates (one 
+for HTML located at `/template/thymeleaf/simple.html` and one for text located at 
+`/template/thymeleaf/simple.txt`). Only a single path is specified for both template files (without 
+extension).
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
+
+[NOTE]
+====
+The underlying `Content` is a `MultiTemplateContent`.
+====
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts={tabsize}[Source code of the sample]
 
@@ -1088,17 +1119,23 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 [role=tab-container-end]
 _____
 
-Ogham will automatically determine file extensions to append according to the kind of message you are sending. For email, Ogham will search a HTML and a text file by default:
+Ogham will automatically determine file extensions to append according to the kind of message you 
+are sending. For email, Ogham will search a HTML and a text file by default:
 
 * Using ThymeLeaf, the file extensions are `.html` and `.txt` (configurable).
 * Using FreeMarker, Ogham will search files with extensions `.html.ftl` and `.txt.ftl` (configurable).
 
 
-If you are using a `MultiTemplateContent` and you only provide one template (only `HTML` for example). Ogham will not fail by default (configurable). Therefore, you can start your code with only a HTML template and add the text template later when you need it. That way, your Java code doesn't require any change.
+If you are using `body()` (or explicitly using `content(new MultiTemplateContent(...))`) and you only 
+provide one template (only `HTML` for example). Ogham will not fail by default (configurable). 
+Therefore, you can start your code with only a HTML template and add the text template later when you 
+need it. That way, your Java code doesn't require any change.
 
 
 
-It is possible to mix templates in the same application. Even better, you can use a template engine that is better suited for HTML like Thymeleaf and FreeMarker that is better for textual version for the same email. Just write your templates with the engine you want.
+It is possible to mix templates in the same application. Even better, you can use a template engine 
+that is better suited for HTML like Thymeleaf and FreeMarker that is better for textual version for 
+the same email. Just write your templates with the engine you want.
 
 
 [role="tab-container no-max-height"]
@@ -1107,7 +1144,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,38-50 irrelevant-lines:1-10,13-20 highlight-lines:32-33"]
+[source, java, role="collapse-lines:1-9,37-49 irrelevant-lines:1-9,12-19 highlight-lines:31-32"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -1161,7 +1198,10 @@ public class HtmlAndTextMixedTemplateEnginesSample {
     }
 }
 ----
-<1> The content is using the type `MultiTemplateContent` with only a path to the template files (without extension)
+<1> The body contains two parts (main body and alternative body) because there are two templates (one 
+for HTML located at `/template/thymeleaf/simple.html` and one for text located at 
+`/template/thymeleaf/simple.txt.ftl`). Only a single path is specified for both template files (without 
+extension). The HTML template uses Thymeleaf while the text template uses FreeMarker.
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts={tabsize}[Source code of the sample]
@@ -1201,7 +1241,8 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 [role=tab-container-end]
 _____
 
-You can notice that the Java code has not changed at all (only the path for the sample). The aim is to use the template engine that best suits your needs.
+You can notice that the Java code has not changed at all (only the path for the sample). The aim is 
+to use the template engine that best suits your needs.
 
 ==== Attach files to the email
 
@@ -1212,7 +1253,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-12 irrelevant-lines:1-12,15-22 highlight-lines:33-34"]
+[source, java, role="collapse-lines:1-12 irrelevant-lines:1-12,14-21 highlight-lines:32-33"]
 ----
 package fr.sii.ogham.sample.standard.email;
 
@@ -1254,7 +1295,7 @@ public class WithAttachmentSample {
     }
 }
 ----
-<1> Attach a PDF file that exists in the classpath to the email
+<1> Attach a PDF file that exists in the classpath to the email. The name of the attachment uses the name of the file
 <2> Use an `InputStream` and name the attachment
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts={tabsize}[Source code of the sample]
@@ -1262,27 +1303,47 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 [role=tab-container-end]
 _____
 
-Attaching a file the the email is quite simple. You just need to provide the path to the file. The file is loaded from classpath but could also be loaded from file system or anywhere else (see <<resource-resolution, resource resolution section>>). In case you are using a file, the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
+Attaching a file to the email is quite simple. You just need to provide the path to the file. 
+The file is loaded from classpath but could also be loaded from file system or anywhere else 
+(see <<resource-resolution, resource resolution section>>). In case you are using a file, 
+the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
 
-It is often not possible to handle files directly. In that case you will use `InputStream` or `byte[]`. In that case, you need to name the attachment explicitly.
+It is often not possible to handle files directly. In that case you will use `InputStream` or 
+`byte[]`. In that case, you need to name the attachment explicitly.
 
-In both cases, the mimetype is automatically determined (`application/pdf` in this case). Mimetype is really important to ensure that the recipient(s) will be able to download or view the files correctly.
+In both cases, the mimetype is automatically determined (`application/pdf` in this case). 
+Mimetype is really important to ensure that the recipient(s) will be able to download or view 
+the files correctly. It is possible to explicitly set the content type of the attachment if the
+automatic behavior doesn't fit your needs.
 
-The file content is link to the email using `ContentDisposition.ATTACHMENT`.
+The file content is linked to the email using `ContentDisposition.ATTACHMENT`.
 
 
-NOTE: If you are using `InputStream`, you need to close the stream after sending the email.
+IMPORTANT: If you are using `InputStream`, you need to close the stream after sending the email.
 
-TIP: You can also add a custom description for any attachment and link the file content to the email using `ContentDisposition.INLINE`
+TIP: You can also add a custom description for any attachment but in this case use `Attachment` class.
+
+[TIP]
+====
+You can link a file to the email body using `embed()` instead of `attach()`. To make the link,
+the email body must contain an explicit reference using a 
+https://tools.ietf.org/html/rfc4021#section-2.2.2[Content-ID (or CID)]. The linked attachment
+must provide the Content-ID header with the same CID (automatically set by Ogham). The embedded attachment 
+disposition is automatically set to `ContentDisposition.INLINE`.
+====
 
 ==== Globally configure default email fields
 
 
 ===== Globally configure default sender
 
-You can configure sender address for all sent email by setting the property `ogham.email.from`. The value can either be an email address (`user@domain.host`) or an address with personal information (`User Name <user@domain.host>`). This property is used for every implementation (through SMTP, through SendGrid, ...).
+You can configure sender address for all sent email by setting the property `ogham.email.from`. 
+The value can either be an email address (`user@domain.host`) or an address with personal 
+information (`User Name <user@domain.host>`). This property is used for every implementation (through 
+SMTP, through SendGrid, ...).
 
-This global address is used only if nothing is specified in the email. If you explicitly set the sender address in the email constructor or using the setter, this value is used instead of the global one.
+This global address is used only if nothing is specified in the email. If you explicitly set the sender 
+address in the email constructor or using the setter, this value is used instead of the global one.
 
 [role=tab-container no-max-height]
 _____
@@ -1346,7 +1407,9 @@ TIP: `mail.from` and `mail.smtp.from` also work
 
 ===== Globally configure default subject
 
-As for sender address, you can define globally a default subject for emails if none is explicitly provided (neither using `.subject(String)` method nor defining a subject directly in the template). The property is `ogham.email.subject`.
+As for sender address, you can define globally a default subject for emails if none is explicitly 
+provided (neither using `.subject(String)` method nor defining a subject directly in the template). 
+The property is `ogham.email.subject`.
 
 
 ===== Globally configure default recipients
@@ -1357,7 +1420,8 @@ You can also use properties to define default recipients if none are provided:
 * `ogham.email.cc`: set one or several recipient addresses (`cc` field)
 * `ogham.email.bcc`: set one or several recipient addresses (`bcc` field)
 
-This can be convenient to set a `bcc` address for all sent messages for example (the `bcc` address will never be seen in received emails).
+This can be convenient to set a `bcc` address for all sent messages for example (the `bcc` address 
+will never be seen in received emails).
 
 To define several recipient addresses, you can provide a string separated by `,`.
 
@@ -1579,15 +1643,16 @@ TODO: configuration de l'authent pour application
 ==== Sending email through SendGrid
 
 
-Sending an email using SendGrid HTTP API is exactly the same in term of code. The only difference is the configuration of Ogham.
+Sending an email using SendGrid HTTP API is exactly the same in term of code. The only 
+difference is the configuration of Ogham.
 
 [role="tab-container no-max-height"]
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java (SendGrid)
 
-[source, java, role="collapse-lines:1-42,63-75 irrelevant-lines:1-42 highlight-lines:51"]
+[source, java, role="collapse-lines:1-40,60-72 irrelevant-lines:1-40"]
 ----
 package fr.sii.ogham.sample.standard.email.sendgrid;
 
@@ -1635,17 +1700,16 @@ public class SendGridFullSample {
         // provided properties
         MessagingService service = MessagingBuilder.standard()
                 .environment()
-                    .properties("/sendgrid-template.properties")                                // <1>
-                    .properties()
-                        .set("ogham.email.sengrid.api-key", "<your sendgrid API key>")            // <2>
-                        .and()
+                    .properties("/sendgrid-template.properties")                // <1>
                     .and()
                 .build();
         // send the email using fluent API
+        // @formatter:off
         service.send(new Email()
-                        .body().template("full", new SimpleBean("foo", 42))                        // <3>
+                        .body().template("full", new SimpleBean("foo", 42))        // <2>
                         .to("ogham-test@yopmail.com")
                         .attach().resource("/attachment/test.pdf"));
+        // @formatter:on
     }
 
     public static class SimpleBean {
@@ -1666,25 +1730,144 @@ public class SendGridFullSample {
 }
 ----
 <1> Load properties from a file that is in the classpath.
-<2> Use an `InputStream` and name the attachment
+<2> Use a resource present in the classpath.
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/SendGridFullSample.java?ts={tabsize}[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/sendgrid/SendGridFullSample.java?ts={tabsize}[Source code of the sample]
 
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] Properties
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] Properties (SendGrid)
 
 [source, python]
 ----
 # ogham additional properties
-ogham.email.from=<sender email address>                                # <1>
-ogham.email.template.path-prefix=/template/thymeleaf/email/            # <2>
+ogham.email.sengrid.api-key=<your sendgrid API key>                    # <1>
+ogham.email.from=<sender email address>                                # <2>
+ogham.email.template.path-prefix=/template/thymeleaf/email/            # <3>
 ----
-<1> The sender email address
-<2> A prefix for all template paths. In this example, the template paths are `/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt`.
+<1> The SendGrid API key instead of SMTP configuration
+<2> The sender email address (same as JavaMail)
+<3> A prefix for all template paths. In this example, the template paths are 
+`/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt` (same as JavaMail).
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/sendgrid-template.properties?ts={tabsize}[Source code of the configuration file]
 
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java (JavaMail)
+
+[source, java, role="collapse-lines:1-40,60-72 irrelevant-lines:1-40"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.io.IOException;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * This sample shows how to send email with following characteristics:
+ * <ul>
+ * <li>Use templates</li>
+ * <li>Use template prefix</li>
+ * <li>The HTML template uses external CSS and images</li>
+ * <li>The HTML template loads page fragments</li>
+ * <li>The subject is extracted from templates</li>
+ * <li>Send HTML email with text fallback</li>
+ * <li>Add attachments to the email</li>
+ * <li>Properties are loaded from external file</li>
+ * </ul>
+ * 
+ * <p>
+ * The templates are available in src/main/resources/template/thymeleaf/email:
+ * <ul>
+ * <li>full.html</li>
+ * <li>full.txt</li>
+ * </ul>
+ * 
+ * <p>
+ * The HTML template uses a page fragment that is available in
+ * src/main/resources/template/thymeleaf/email/fragments/header.html.
+ * 
+ * <p>
+ * The HTML template also references external CSS and images that are available
+ * in src/main/resources/resources.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FullSample {
+    public static void main(String[] args) throws MessagingException, IOException {
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties("/email-template.properties")                    // <1>
+                    .and()
+                .build();
+        // send the email using fluent API
+        // @formatter:off
+        service.send(new Email()
+                        .body().template("full", new SimpleBean("foo", 42))        // <2>
+                        .to("ogham-test@yopmail.com")
+                        .attach().resource("/attachment/test.pdf"));
+        // @formatter:on
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> Load properties from a file that is in the classpath.
+<2> Use a resource present in the classpath.
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/FullSample.java?ts={tabsize}[Source code of the sample]
+
+
+[role=tab]
+image:src/docs/resources/images/icons/properties.png[width=37,height=30] Properties (JavaMail)
+
+[source, python]
+----
+# general SMTP server
+mail.smtp.host=<your server host>                                        # <1>
+mail.smtp.port=<your server port>                                        # <2>
+# using with Gmail
+#mail.smtp.auth=true
+#mail.smtp.host=smtp.gmail.com
+#mail.smtp.port=465
+#mail.smtp.socketFactory.port=465
+#mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory
+#ogham.email.javamail.authenticator.username=<your gmail username>
+#ogham.email.javamail.authenticator.password=<your gmail password>
+
+
+# ogham additional properties
+ogham.email.from=<sender email address>                                    # <3>
+ogham.email.template.path-prefix=/template/thymeleaf/email/                # <4>
+----
+<1> The SMTP host used by JavaMail
+<2> The SMTP port used by JavaMail
+<3> The sender email address
+<4> A prefix for all template paths. In this example, the template paths are 
+`/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt`.
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/email-template.properties?ts={tabsize}[Source code of the configuration file]
 [role=tab-container-end]
 _____
 
@@ -1782,7 +1965,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-22 highlight-lines:30,31"]
+[source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-21 highlight-lines:29,30"]
 ----
 package fr.sii.ogham.sample.standard.sms;
 
@@ -1859,21 +2042,30 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 _____
 
 
-Using a template is straightforward. Instead of providing a string content, you provide a `TemplateContent`.
-The `TemplateContent` requires two information:
+Using a template is straightforward. Instead of providing a string content (using `.message().string(...)`),
+you call `.message().template(..., ...)`.
+The `template` method requires two pieces of information:
 
 * The path to the template
 * The variables to evaluate in the template
 
-The path to the template is a string with a *lookup* prefix. The lookup prefix is used to indicate where to search the template (from file system, from classpath or anywhere else). Here we explicitly ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
+The path to the template is a string with a *lookup* prefix. The lookup prefix is used to indicate 
+where to search the template (from file system, from classpath or anywhere else). Here we explicitly 
+ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, 
+classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
 
-The variables are any object you are using in your application. No need to convert your object to a particular format. Directly use what you want.
+The variables are any object you are using in your application. No need to convert your object to 
+a particular format. Directly use what you want.
 
 [[auto-split-sms]]
 ==== Send a long SMS
 
 
-As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum of 160 characters if character encoding is using 7bits. Using a 8-bit character encoding decreases the limit to 140 characters and 70 characters for a 16-bit encoding. If needed, the library will split your messages into several parts the right way to be recomposed by clients later (according to the message encoding). Therefore, you don't need to handle the split of messages in your code:
+As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum 
+of 160 characters if character encoding is using 7bits. Using a 8-bit character encoding decreases 
+the limit to 140 characters and 70 characters for a 16-bit encoding. If needed, the library will 
+split your messages into several parts the right way to be recomposed by clients later (according 
+to the message encoding). Therefore, you don't need to handle the split of messages in your code:
 
 [role="tab-container no-max-height"]
 _____
@@ -1931,7 +2123,13 @@ _____
 
 [NOTE]
 ====
-Larger content (concatenated SMS, multipart or segmented SMS, or "long SMS") can be sent using multiple messages, in which case each message will start with a User Data Header (UDH) containing segmentation information. Since UDH is part of the payload, the number of available characters per segment is lower: 153 for 7-bit encoding, 134 for 8-bit encoding and 67 for 16-bit encoding. The receiving handset is then responsible for reassembling the message and presenting it to the user as one long message. While the standard theoretically permits up to 255 segments, 6 to 8 segment messages are the practical maximum.
+Larger content (concatenated SMS, multipart or segmented SMS, or "long SMS") can be sent using 
+multiple messages, in which case each message will start with a User Data Header (UDH) containing 
+segmentation information. Since UDH is part of the payload, the number of available characters per 
+segment is lower: 153 for 7-bit encoding, 134 for 8-bit encoding and 67 for 16-bit encoding. The 
+receiving handset is then responsible for reassembling the message and presenting it to the user 
+as one long message. While the standard theoretically permits up to 255 segments, 6 to 8 segment 
+messages are the practical maximum.
 ====
 
 NOTE: By default, Ogham sends the SMS using 8-bit encoding.
@@ -2246,7 +2444,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+[source, java, role="collapse-lines:1-9,25 irrelevant-lines:1-9,25"]
 ----
 package fr.sii.ogham.sample.standard;
 
@@ -2274,7 +2472,6 @@ public class PropertiesSample {
                 .build();
         service.send(/*your message here*/null);
     }
-
 }
 ----
 <1> Use standard `java.util.Properties`
@@ -2319,7 +2516,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+[source, java, role="collapse-lines:1-9,25 irrelevant-lines:1-9,25"]
 ----
 package fr.sii.ogham.sample.standard;
 
@@ -2347,7 +2544,6 @@ public class PropertiesSample {
                 .build();
         service.send(/*your message here*/null);
     }
-
 }
 ----
 <1> Use standard `java.util.Properties`
@@ -2674,7 +2870,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-18,48-60 irrelevant-lines:1-18 highlight-lines:33,34,40-43"]
+[source, java, role="collapse-lines:1-16,46-58 irrelevant-lines:1-16 highlight-lines:31,32,38-41"]
 ----
 package fr.sii.ogham.sample.springboot.email;
 
@@ -2823,7 +3019,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-18,47-59 irrelevant-lines:1-18 highlight-lines:32,33,39-42"]
+[source, java, role="collapse-lines:1-16,45-57 irrelevant-lines:1-16 highlight-lines:30,31,37-40"]
 ----
 package fr.sii.ogham.sample.springboot.sms;
 
@@ -3049,7 +3245,9 @@ TIP: Eclipse can rewrite a call to a static method prefixed by class. For exampl
 
 ==== First test
 
-To test your application emails, you can start a local SMTP server. You can then use Ogham to make assertions on your email (right recipients, right sender, right body...). Ogham uses http://www.icegreen.com/greenmail/[GreenMail] as local SMTP server.
+To test your application emails, you can start a local SMTP server. You can then use Ogham to make 
+assertions on your email (right recipients, right sender, right body...). Ogham uses 
+http://www.icegreen.com/greenmail/[GreenMail] as local SMTP server.
 
 [role="tab-container no-max-height"]
 _____
@@ -3151,14 +3349,20 @@ _____
 
 ==== Testing HTML message
 
-Comparing two HTML documents can be tricky. Indeed, the HTML attributes can be declared in a different order, number of spaces/tabs can be different, some attributes may be declared differently but corresponding to the same behavior (for example `disabled` attribute can be declared only `disabled` with no value, `disabled="true"` or `disabled="disabled"`).
+Comparing two HTML documents can be tricky. Indeed, the HTML attributes can be declared in a 
+different order, number of spaces/tabs can be different, some attributes may be declared differently 
+but corresponding to the same behavior (for example `disabled` attribute can be declared only 
+`disabled` with no value, `disabled="true"` or `disabled="disabled"`).
 
 Ogham provides two distinct matchers to check if:
 
-* HTML is identical (exactly the same nodes at same position and same attributes at same position and same value)
-* HTML is similar (exactly the same nodes at same position, same attributes with same values declared in any order)  
+* HTML is identical (exactly the same nodes at same position and same attributes with same values)
+* HTML is similar (nodes may be at different positions, same attributes with same values)  
 
-In addition to comparison helpers, Ogham provides an helper to load files from classpath in tests. This is useful to avoid writing expected HTML content as string in your code and also avoid writing the same utility function every time.
+In addition to comparison helpers, Ogham provides helpers to load files from classpath in tests 
+(`ResourceUtils.resource` and `ResourceUtils.resourceAsString`). 
+This is useful to avoid writing expected HTML content as string in your code and also avoid writing 
+the same utility function every time.
 
 
 [role="tab-container no-max-height"]
@@ -3167,13 +3371,13 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-26,28-45,72-84 irrelevant-lines:1-26 highlight-lines:64"]
+[source, java, role="collapse-lines:1-26,27-44,71-83 irrelevant-lines:1-26 highlight-lines:63"]
 ----
 package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
@@ -3231,7 +3435,7 @@ public class EmailHtmlTestSample {
                     .address(hasItems("recipient@sii.fr"))
                     .personal(hasItems("Recipient Name")).and()
                 .body()
-                    .contentAsString(isSimilarHtml(resourceAsString("/expected/register.html")))    // <3>
+                    .contentAsString(isIdenticalHtml(resourceAsString("/expected/register.html")))    // <3>
                     .contentType(startsWith("text/html")).and()
                 .alternative(nullValue())
                 .attachments(emptyIterable());
@@ -3324,13 +3528,13 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-26,28-45,72-84 irrelevant-lines:1-22 highlight-lines:64"]
+[source, java, role="collapse-lines:1-25,27-44,71-83 irrelevant-lines:1-25"]
 ----
 package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
@@ -3388,7 +3592,7 @@ public class EmailHtmlTestSample {
                     .address(hasItems("recipient@sii.fr"))
                     .personal(hasItems("Recipient Name")).and()
                 .body()
-                    .contentAsString(isSimilarHtml(resourceAsString("/expected/register.html")))    // <3>
+                    .contentAsString(isIdenticalHtml(resourceAsString("/expected/register.html")))    // <3>
                     .contentType(startsWith("text/html")).and()
                 .alternative(nullValue())
                 .attachments(emptyIterable());
@@ -3414,7 +3618,7 @@ public class EmailHtmlTestSample {
 ----
 <1> Use an HTML template
 <2> Object used to evaluate variables in the template
-<3> Assert that HTML is similar as an expected HTML content
+<3> Assert that HTML is identical as an expected HTML content
 
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
@@ -3496,7 +3700,7 @@ image::src/docs/resources/images/eclipse/tests-junit-error-useful-part.png[role=
 
 ==== Testing email with an HTML body and text alternative
 
-Tesing an email sent with two main parts (HTML and text fallback) is straightforward.
+Testing an email sent with two main parts (HTML and text fallback) is straightforward.
 
 [role="tab-container no-max-height"]
 _____
@@ -3504,13 +3708,13 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-26,28-45,71-83 irrelevant-lines:1-26 highlight-lines:60-65"]
+[source, java, role="collapse-lines:1-25,27-44,69-81 irrelevant-lines:1-25 highlight-lines:58-63"]
 ----
 package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
@@ -3564,7 +3768,7 @@ public class EmailHtmlAndTextTestSample {
                 .from().address(hasItems("test.sender@sii.fr")).and()
                 .to().address(hasItems("recipient@sii.fr")).and()
                 .body()                                                                                                // <1>
-                    .contentAsString(isSimilarHtml(resourceAsString("/expected/simple_bar_42.html")))                // <2>
+                    .contentAsString(isIdenticalHtml(resourceAsString("/expected/simple_bar_42.html")))                // <2>
                     .contentType(startsWith("text/html")).and()                                                        // <3>
                 .alternative()                                                                                        // <4>
                     .contentAsString(equalToCompressingWhiteSpace(resourceAsString("/expected/simple_bar_42.txt")))    // <5>
@@ -3684,7 +3888,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-26,28-45 irrelevant-lines:1-26 highlight-lines:64-69"]
+[source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:63-68"]
 ----
 package fr.sii.ogham.sample.test;
 
@@ -4008,7 +4212,7 @@ _____
 [role=tab]
 image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,52-75 highlight-lines:37,41-43"]
+[source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,51-74 highlight-lines:36,43-45"]
 ----
 package oghamall.it.email;
 
@@ -4020,7 +4224,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -4046,17 +4249,17 @@ public class EmailSMTPAuthenticationTest {
 
     @Before
     public void setUp() throws IOException {
-        greenMail.setUser("test.sender@sii.fr", "test.sender", "password");                                // <1>
-        Properties additionalProps = new Properties();
-        additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-        additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-        additionalProps.setProperty("mail.smtp.auth", "true");                                            // <2>
-        additionalProps.setProperty("ogham.email.javamail.authenticator.username", "test.sender");        // <3>
-        additionalProps.setProperty("ogham.email.javamail.authenticator.password", "password");            // <4>
+        greenMail.setUser("test.sender@sii.fr", "test.sender", "password");                            // <1>
         oghamService = MessagingBuilder.standard()
                 .environment()
                     .properties("/application.properties")
-                    .properties(additionalProps)
+                    .properties()
+                        .set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
+                        .set("mail.smtp.port", ServerSetupTest.SMTP.getPort())
+                        .set("mail.smtp.auth", "true")                                                // <2>
+                        .set("ogham.email.javamail.authenticator.username", "test.sender")            // <3>
+                        .set("ogham.email.javamail.authenticator.password", "password")                // <4>
+                        .and()
                     .and()
                 .build();
     }
@@ -4152,7 +4355,7 @@ public class SmsTestSample {
                     .properties()
                         .set("ogham.sms.from", "+33603040506")
                         .set("ogham.sms.smpp.host", "localhost")                                // <2>
-                        .set("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()))        // <3>
+                        .set("ogham.sms.smpp.port", smppServer.getPort())                        // <3>
                         .and()
                     .and()
                 .build();

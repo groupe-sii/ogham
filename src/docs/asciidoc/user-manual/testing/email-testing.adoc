@@ -4,7 +4,9 @@ include::{docdir}/variables.adoc[]
 
 == First test
 
-To test your application emails, you can start a local SMTP server. You can then use Ogham to make assertions on your email (right recipients, right sender, right body...). Ogham uses http://www.icegreen.com/greenmail/[GreenMail] as local SMTP server.
+To test your application emails, you can start a local SMTP server. You can then use Ogham to make 
+assertions on your email (right recipients, right sender, right body...). Ogham uses 
+http://www.icegreen.com/greenmail/[GreenMail] as local SMTP server.
 
 [role="tab-container no-max-height"]
 Sample
@@ -40,14 +42,20 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailTestSamp
 
 == Testing HTML message
 
-Comparing two HTML documents can be tricky. Indeed, the HTML attributes can be declared in a different order, number of spaces/tabs can be different, some attributes may be declared differently but corresponding to the same behavior (for example `disabled` attribute can be declared only `disabled` with no value, `disabled="true"` or `disabled="disabled"`).
+Comparing two HTML documents can be tricky. Indeed, the HTML attributes can be declared in a 
+different order, number of spaces/tabs can be different, some attributes may be declared differently 
+but corresponding to the same behavior (for example `disabled` attribute can be declared only 
+`disabled` with no value, `disabled="true"` or `disabled="disabled"`).
 
 Ogham provides two distinct matchers to check if:
 
-* HTML is identical (exactly the same nodes at same position and same attributes at same position and same value)
-* HTML is similar (exactly the same nodes at same position, same attributes with same values declared in any order)  
+* HTML is identical (exactly the same nodes at same position and same attributes with same values)
+* HTML is similar (nodes may be at different positions, same attributes with same values)  
 
-In addition to comparison helpers, Ogham provides an helper to load files from classpath in tests. This is useful to avoid writing expected HTML content as string in your code and also avoid writing the same utility function every time.
+In addition to comparison helpers, Ogham provides helpers to load files from classpath in tests 
+(`ResourceUtils.resource` and `ResourceUtils.resourceAsString`). 
+This is useful to avoid writing expected HTML content as string in your code and also avoid writing 
+the same utility function every time.
 
 
 [role="tab-container no-max-height"]
@@ -56,7 +64,7 @@ Sample
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-26,28-45,72-84 irrelevant-lines:1-26 highlight-lines:64"]
+[source, java, role="collapse-lines:1-26,27-44,71-83 irrelevant-lines:1-26 highlight-lines:63"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java[]
 ----
@@ -107,13 +115,13 @@ Sample
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-26,28-45,72-84 irrelevant-lines:1-22 highlight-lines:64"]
+[source, java, role="collapse-lines:1-25,27-44,71-83 irrelevant-lines:1-25"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java[]
 ----
 <1> Use an HTML template
 <2> Object used to evaluate variables in the template
-<3> Assert that HTML is similar as an expected HTML content
+<3> Assert that HTML is identical as an expected HTML content
 
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
@@ -183,7 +191,7 @@ image::{images-dir}/eclipse/tests-junit-error-useful-part.png[role="text-center"
 
 == Testing email with an HTML body and text alternative
 
-Tesing an email sent with two main parts (HTML and text fallback) is straightforward.
+Testing an email sent with two main parts (HTML and text fallback) is straightforward.
 
 [role="tab-container no-max-height"]
 Sample
@@ -191,7 +199,7 @@ Sample
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-26,28-45,71-83 irrelevant-lines:1-26 highlight-lines:60-65"]
+[source, java, role="collapse-lines:1-25,27-44,69-81 irrelevant-lines:1-25 highlight-lines:58-63"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java[]
 ----
@@ -270,7 +278,7 @@ Sample
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-26,28-45 irrelevant-lines:1-26 highlight-lines:64-69"]
+[source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:63-68"]
 ----
 include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java[]
 ----
@@ -358,7 +366,7 @@ Sample
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,52-75 highlight-lines:37,41-43"]
+[source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,51-74 highlight-lines:36,43-45"]
 ----
 include::{ogham-all-testsourcedir}/oghamall/it/email/EmailSMTPAuthenticationTest.java[]
 ----

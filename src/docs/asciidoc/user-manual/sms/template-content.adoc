@@ -9,7 +9,7 @@ Sample with template
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-22 highlight-lines:30,31"]
+[source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-21 highlight-lines:29,30"]
 ----
 include::{standard-sms-samples-sourcedir}/TemplateSample.java[]
 ----
@@ -36,12 +36,17 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simple.txt[]
 -
 
 
-Using a template is straightforward. Instead of providing a string content, you provide a `TemplateContent`.
-The `TemplateContent` requires two information:
+Using a template is straightforward. Instead of providing a string content (using `.message().string(...)`),
+you call `.message().template(..., ...)`.
+The `template` method requires two pieces of information:
 
 * The path to the template
 * The variables to evaluate in the template
 
-The path to the template is a string with a *lookup* prefix. The lookup prefix is used to indicate where to search the template (from file system, from classpath or anywhere else). Here we explicitly ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
+The path to the template is a string with a *lookup* prefix. The lookup prefix is used to indicate 
+where to search the template (from file system, from classpath or anywhere else). Here we explicitly 
+ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, 
+classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
 
-The variables are any object you are using in your application. No need to convert your object to a particular format. Directly use what you want.
+The variables are any object you are using in your application. No need to convert your object to 
+a particular format. Directly use what you want.

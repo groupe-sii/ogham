@@ -30,7 +30,7 @@ public class SmsTestSample {
 					.properties()
 						.set("ogham.sms.from", "+33603040506")
 						.set("ogham.sms.smpp.host", "localhost")								// <2>
-						.set("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()))		// <3>
+						.set("ogham.sms.smpp.port", smppServer.getPort())						// <3>
 						.and()
 					.and()
 				.build();

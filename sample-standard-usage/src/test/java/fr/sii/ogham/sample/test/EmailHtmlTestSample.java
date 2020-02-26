@@ -2,7 +2,7 @@ package fr.sii.ogham.sample.test;
 
 import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasItems;
@@ -60,7 +60,7 @@ public class EmailHtmlTestSample {
 					.address(hasItems("recipient@sii.fr"))
 					.personal(hasItems("Recipient Name")).and()
 				.body()
-					.contentAsString(isSimilarHtml(resourceAsString("/expected/register.html")))	// <3>
+					.contentAsString(isIdenticalHtml(resourceAsString("/expected/register.html")))	// <3>
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(emptyIterable());

@@ -15,6 +15,7 @@ However, writing an HTML email is totally different. Indeed, email clients are n
 * Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
 * Background images on body should be moved on another node
 * CSS3 properties are not supported
+* Images must have `alt` attribute
 * ...
 
 There are many other rules but the developer should not be constrained and should be able to write its HTML and CSS like as usual in Web browsers. Ogham simplifies image and CSS integration and is able to partially rewrite the HTML.  
@@ -25,11 +26,12 @@ Sample with template
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,37-49 irrelevant-lines:1-10,13-20 highlight-lines:31,32"]
+[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
 include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.java[]
 ----
-<1> The path to the templates
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
 <2> The template context
 
 {standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
@@ -39,24 +41,42 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 [role=tab]
 image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
 
-[source, html, role="highlight-lines:4"]
+[source, html, role="highlight-lines:7-8,13,19,26,44,47"]
 ----
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
 ----
+<1> The title is used as subject of the email
+<2> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute)
+<3> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute). The CSS may
+contain rules that override some rules of other CSS files (like in a browser)
+<4> The image is automatically embedded (the path is replaced by a 
+https://tools.ietf.org/html/rfc4021#section-2.2.2[Content-ID (or CID)] and the image is attached
+to the email using `ContentDisposition.INLINE` with the Content-ID header). The content type is
+automatically determined
+<5> The image is converted to a base64 string. The `src` attribute of the image is updated using
+https://en.wikipedia.org/wiki/Data_URI_scheme[data URI scheme]. The content type is automatically
+determined
+<6> Same as <4>
+<7> Same as <4>
+<8> The image is not inlined by Ogham. This can be useful to embed it manually.
 
 {standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
 
 
 [role=tab]
-image:{images-dir}/icons/css.png[width=37,height=30] CSS and images
+image:{images-dir}/icons/css.png[width=37,height=30] CSS
 
-[source, html, role="highlight-lines:4"]
+.layout.css
+[source, html]
 ----
-TODO: add CSS file
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/layout.css[]
 ----
 
-Images
-
+.custom.css
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/custom.css[]
+----
 
 
 
@@ -64,9 +84,9 @@ Images
 [role=tab]
 image:{images-dir}/icons/html.png[width=37,height=30] Sent HTML
 
-[source, html, role="highlight-lines:4"]
+[source, html]
 ----
-TODO: sent HTML
+TODO: code of the generated HTML
 ----
 
 
@@ -132,16 +152,18 @@ The library will apply those workarounds to your HTML.
 
 ////
 
+Here is the list of supported transformations:
 
 * [x] `<img>` tags that use local images are embedded (using `cid` reference)
 * [x] `<img>` tags that use local images are embedded (using base64 data URI)
 * [ ] Use XHTML instead of HTML
-* [x] Tables used for layout explicitly set default values
+* [ ] Tables used for layout explicitly set default values
 * [ ] Remove HTML comments (except conditional comments used to target Outlook)
 * [ ] Add border=0 on all images to avoid an ugly border
 * [ ] Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of `padding: 4px`)
 * [ ] Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
 * [ ] Background images on body should be moved on another node
+* [ ] Images must have `alt` attribute
 
 ////
 TODO: other rules

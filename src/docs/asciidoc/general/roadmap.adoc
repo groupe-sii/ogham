@@ -12,6 +12,7 @@ TODO: link to github issues (use filters)
 ====
 [.progress:100]*Send email via SMTP*
 [.progress:90]*Send email via SendGrid HTTP API*
+[.progress:0]*Send email via Mailjet*
 [.progress:90]*Automatic inlining of images and CSS*
 [.progress:10]*Make HTML compatible with many email clients*
 ====
@@ -21,7 +22,7 @@ TODO: link to github issues (use filters)
 
 [role=roadmap]
 ====
-[.progress:90]*Send SMS via SMPP*
+[.progress:100]*Send SMS via SMPP*
 [.progress:90]*Send SMS via OVH HTTP API*
 ====
 
@@ -31,7 +32,10 @@ TODO: link to github issues (use filters)
 [role=roadmap]
 ====
 [.progress:50]*Internationalization*
-[.progress:90]*Template engine integration*
+[.progress:100]*Thymeleaf integration*
+[.progress:100]*FreeMarker integration*
+[.progress:0]*Groovy template integration*
+[.progress:0]*Mustache integration*
 ====
 
 
@@ -46,7 +50,13 @@ TODO: link to github issues (use filters)
 ====
 
 
-== image:{images-dir}/icons/javaee.png[Java EE,width=30,height=30] Java EE
+== image:{images-dir}/icons/javaee.png[Java EE,width=30,height=30] Java EE (postponed)
+
+[NOTE]
+====
+Even if integration is not simplified like it is for Spring Boot, Ogham can be easily
+included in Java EE application. 
+====
 
 [role=roadmap]
 ====

@@ -17,7 +17,7 @@ SMS Sample with Spring Boot
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-18,47-59 irrelevant-lines:1-18 highlight-lines:32,33,39-42"]
+[source, java, role="collapse-lines:1-16,45-57 irrelevant-lines:1-16 highlight-lines:30,31,37-40"]
 ----
 include::{spring-sms-samples-sourcedir}/TemplateSample.java[]
 ----

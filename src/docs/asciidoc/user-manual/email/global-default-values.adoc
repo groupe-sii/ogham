@@ -3,9 +3,13 @@ include::{docdir}/variables.adoc[]
 
 == Globally configure default sender
 
-You can configure sender address for all sent email by setting the property `ogham.email.from`. The value can either be an email address (`user@domain.host`) or an address with personal information (`User Name <user@domain.host>`). This property is used for every implementation (through SMTP, through SendGrid, ...).
+You can configure sender address for all sent email by setting the property `ogham.email.from`. 
+The value can either be an email address (`user@domain.host`) or an address with personal 
+information (`User Name <user@domain.host>`). This property is used for every implementation (through 
+SMTP, through SendGrid, ...).
 
-This global address is used only if nothing is specified in the email. If you explicitly set the sender address in the email constructor or using the setter, this value is used instead of the global one.
+This global address is used only if nothing is specified in the email. If you explicitly set the sender 
+address in the email constructor or using the setter, this value is used instead of the global one.
 
 [role=tab-container no-max-height]
 Basic sample
@@ -31,7 +35,9 @@ TIP: `mail.from` and `mail.smtp.from` also work
 
 == Globally configure default subject
 
-As for sender address, you can define globally a default subject for emails if none is explicitly provided (neither using `.subject(String)` method nor defining a subject directly in the template). The property is `ogham.email.subject`.
+As for sender address, you can define globally a default subject for emails if none is explicitly 
+provided (neither using `.subject(String)` method nor defining a subject directly in the template). 
+The property is `ogham.email.subject`.
 
 
 == Globally configure default recipients
@@ -42,7 +48,8 @@ You can also use properties to define default recipients if none are provided:
 * `ogham.email.cc`: set one or several recipient addresses (`cc` field)
 * `ogham.email.bcc`: set one or several recipient addresses (`bcc` field)
 
-This can be convenient to set a `bcc` address for all sent messages for example (the `bcc` address will never be seen in received emails).
+This can be convenient to set a `bcc` address for all sent messages for example (the `bcc` address 
+will never be seen in received emails).
 
 To define several recipient addresses, you can provide a string separated by `,`.
 

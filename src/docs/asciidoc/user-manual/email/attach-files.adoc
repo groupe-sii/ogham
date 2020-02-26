@@ -7,11 +7,11 @@ Sample with attachment
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-12 irrelevant-lines:1-12,15-22 highlight-lines:33-34"]
+[source, java, role="collapse-lines:1-12 irrelevant-lines:1-12,14-21 highlight-lines:32-33"]
 ----
 include::{standard-email-samples-sourcedir}/WithAttachmentSample.java[]
 ----
-<1> Attach a PDF file that exists in the classpath to the email
+<1> Attach a PDF file that exists in the classpath to the email. The name of the attachment uses the name of the file
 <2> Use an `InputStream` and name the attachment
 
 {standard-email-samples-sourcedir-url}/WithAttachmentSample.java?ts={tabsize}[Source code of the sample]
@@ -19,15 +19,31 @@ include::{standard-email-samples-sourcedir}/WithAttachmentSample.java[]
 [role=tab-container-end]
 -
 
-Attaching a file the the email is quite simple. You just need to provide the path to the file. The file is loaded from classpath but could also be loaded from file system or anywhere else (see <<resource-resolution, resource resolution section>>). In case you are using a file, the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
+Attaching a file to the email is quite simple. You just need to provide the path to the file. 
+The file is loaded from classpath but could also be loaded from file system or anywhere else 
+(see <<resource-resolution, resource resolution section>>). In case you are using a file, 
+the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
 
-It is often not possible to handle files directly. In that case you will use `InputStream` or `byte[]`. In that case, you need to name the attachment explicitly.
+It is often not possible to handle files directly. In that case you will use `InputStream` or 
+`byte[]`. In that case, you need to name the attachment explicitly.
 
-In both cases, the mimetype is automatically determined (`application/pdf` in this case). Mimetype is really important to ensure that the recipient(s) will be able to download or view the files correctly.
+In both cases, the mimetype is automatically determined (`application/pdf` in this case). 
+Mimetype is really important to ensure that the recipient(s) will be able to download or view 
+the files correctly. It is possible to explicitly set the content type of the attachment if the
+automatic behavior doesn't fit your needs.
 
-The file content is link to the email using `ContentDisposition.ATTACHMENT`.
+The file content is linked to the email using `ContentDisposition.ATTACHMENT`.
 
 
-NOTE: If you are using `InputStream`, you need to close the stream after sending the email.
+IMPORTANT: If you are using `InputStream`, you need to close the stream after sending the email.
 
-TIP: You can also add a custom description for any attachment and link the file content to the email using `ContentDisposition.INLINE`
+TIP: You can also add a custom description for any attachment but in this case use `Attachment` class.
+
+[TIP]
+====
+You can link a file to the email body using `embed()` instead of `attach()`. To make the link,
+the email body must contain an explicit reference using a 
+https://tools.ietf.org/html/rfc4021#section-2.2.2[Content-ID (or CID)]. The linked attachment
+must provide the Content-ID header with the same CID (automatically set by Ogham). The embedded attachment 
+disposition is automatically set to `ContentDisposition.INLINE`.
+====

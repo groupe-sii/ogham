@@ -2,7 +2,8 @@
 include::{docdir}/variables.adoc[]
 
 
-For text templates, the subject is automatically used (like for HTML title) if the first line starts with `Subject:` (spaces can be added after colon). Other lines are used as content of the email.
+For text templates, the subject is automatically used (like for HTML title) if the first line starts 
+with `Subject:` (spaces can be added after colon). Other lines are used as content of the email.
 
 
 [role="tab-container no-max-height"]
@@ -11,7 +12,7 @@ Sample with template
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,13-20"]
+[source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-19"]
 ----
 include::{standard-email-samples-sourcedir}/TextTemplateWithSubjectSample.java[]
 ----

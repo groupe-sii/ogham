@@ -1,36 +1,67 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
-Sending an email using SendGrid HTTP API is exactly the same in term of code. The only difference is the configuration of Ogham.
+Sending an email using SendGrid HTTP API is exactly the same in term of code. The only 
+difference is the configuration of Ogham.
 
 [role="tab-container no-max-height"]
 Sample using SendGrid
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java (SendGrid)
 
-[source, java, role="collapse-lines:1-42,63-75 irrelevant-lines:1-42 highlight-lines:51"]
+[source, java, role="collapse-lines:1-40,60-72 irrelevant-lines:1-40"]
 ----
 include::{standard-email-samples-sourcedir}/sendgrid/SendGridFullSample.java[]
 ----
 <1> Load properties from a file that is in the classpath.
-<2> Use an `InputStream` and name the attachment
+<2> Use a resource present in the classpath.
 
-{standard-email-samples-sourcedir-url}/SendGridFullSample.java?ts={tabsize}[Source code of the sample]
+{standard-email-samples-sourcedir-url}/sendgrid/SendGridFullSample.java?ts={tabsize}[Source code of the sample]
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Properties
+image:{images-dir}/icons/properties.png[width=37,height=30] Properties (SendGrid)
 
 [source, python]
 ----
 include::{standard-samples-resourcesdir}/sendgrid-template.properties[]
 ----
-<1> The sender email address
-<2> A prefix for all template paths. In this example, the template paths are `/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt`.
+<1> The SendGrid API key instead of SMTP configuration
+<2> The sender email address (same as JavaMail)
+<3> A prefix for all template paths. In this example, the template paths are 
+`/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt` (same as JavaMail).
 
 {standard-samples-resourcesdir-url}/sendgrid-template.properties?ts={tabsize}[Source code of the configuration file]
 
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java (JavaMail)
+
+[source, java, role="collapse-lines:1-40,60-72 irrelevant-lines:1-40"]
+----
+include::{standard-email-samples-sourcedir}/FullSample.java[]
+----
+<1> Load properties from a file that is in the classpath.
+<2> Use a resource present in the classpath.
+
+{standard-email-samples-sourcedir-url}/FullSample.java?ts={tabsize}[Source code of the sample]
+
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] Properties (JavaMail)
+
+[source, python]
+----
+include::{standard-samples-resourcesdir}/email-template.properties[]
+----
+<1> The SMTP host used by JavaMail
+<2> The SMTP port used by JavaMail
+<3> The sender email address
+<4> A prefix for all template paths. In this example, the template paths are 
+`/template/thymeleaf/email/full.html` and `/template/thymeleaf/email/full.txt`.
+
+{standard-samples-resourcesdir-url}/email-template.properties?ts={tabsize}[Source code of the configuration file]
 [role=tab-container-end]
 -
 

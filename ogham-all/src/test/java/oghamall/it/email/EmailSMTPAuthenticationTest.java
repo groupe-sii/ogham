@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -34,17 +33,17 @@ public class EmailSMTPAuthenticationTest {
 
 	@Before
 	public void setUp() throws IOException {
-		greenMail.setUser("test.sender@sii.fr", "test.sender", "password");								// <1>
-		Properties additionalProps = new Properties();
-		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
-		additionalProps.setProperty("mail.smtp.auth", "true");											// <2>
-		additionalProps.setProperty("ogham.email.javamail.authenticator.username", "test.sender");		// <3>
-		additionalProps.setProperty("ogham.email.javamail.authenticator.password", "password");			// <4>
+		greenMail.setUser("test.sender@sii.fr", "test.sender", "password");							// <1>
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties("/application.properties")
-					.properties(additionalProps)
+					.properties()
+						.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
+						.set("mail.smtp.port", ServerSetupTest.SMTP.getPort())
+						.set("mail.smtp.auth", "true")												// <2>
+						.set("ogham.email.javamail.authenticator.username", "test.sender")			// <3>
+						.set("ogham.email.javamail.authenticator.password", "password")				// <4>
+						.and()
 					.and()
 				.build();
 	}

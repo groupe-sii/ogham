@@ -17,7 +17,7 @@ Email sample with Spring Boot
 [role=tab]
 image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 
-[source, java, role="collapse-lines:1-18,48-60 irrelevant-lines:1-18 highlight-lines:33,34,40-43"]
+[source, java, role="collapse-lines:1-16,46-58 irrelevant-lines:1-16 highlight-lines:31,32,38-41"]
 ----
 include::{spring-email-samples-sourcedir}/ThymeleafHtmlAndFreemarkerTextSample.java[]
 ----

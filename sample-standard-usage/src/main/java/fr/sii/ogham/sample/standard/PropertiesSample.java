@@ -24,5 +24,4 @@ public class PropertiesSample {
 				.build();
 		service.send(/*your message here*/null);
 	}
-
 }

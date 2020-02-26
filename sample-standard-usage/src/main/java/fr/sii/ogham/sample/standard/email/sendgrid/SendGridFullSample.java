@@ -44,17 +44,16 @@ public class SendGridFullSample {
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
 				.environment()
-					.properties("/sendgrid-template.properties")								// <1>
-					.properties()
-						.set("ogham.email.sengrid.api-key", "<your sendgrid API key>")			// <2>
-						.and()
+					.properties("/sendgrid-template.properties")				// <1>
 					.and()
 				.build();
 		// send the email using fluent API
+		// @formatter:off
 		service.send(new Email()
-						.body().template("full", new SimpleBean("foo", 42))						// <3>
+						.body().template("full", new SimpleBean("foo", 42))		// <2>
 						.to("ogham-test@yopmail.com")
 						.attach().resource("/attachment/test.pdf"));
+		// @formatter:on
 	}
 
 	public static class SimpleBean {
