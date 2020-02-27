@@ -511,7 +511,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Subject of the email - ${name}</title>                <!--1-->
+        <title>Subject of the email - [[${name}]]</title>                <!--1-->
         <meta charset="utf-8" />
     </head>
     <body>

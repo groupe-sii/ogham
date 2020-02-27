@@ -52,7 +52,7 @@ public class OghamAutoConfigurationSpringPropertiesOnlyTest {
 	int port;
 
 	@Test
-	public void simple() throws MessagingException {
+	public void simple() throws MessagingException, IOException {
 		RestTemplate rt = new RestTemplate();
 		// @formatter:off
 		UriComponentsBuilder builder = UriComponentsBuilder.fromPath(SIMPLE_URL)

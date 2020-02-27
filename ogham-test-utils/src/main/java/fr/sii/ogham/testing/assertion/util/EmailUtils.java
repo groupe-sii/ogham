@@ -3,15 +3,17 @@ package fr.sii.ogham.testing.assertion.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import javax.mail.BodyPart;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -22,18 +24,34 @@ import fr.sii.ogham.testing.assertion.filter.FileNamePredicate;
 
 public final class EmailUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(EmailUtils.class);
-	private static final Pattern TEXT_OR_HTML_MIMETYPES = Pattern.compile("^((text/)|(application/x?html)).*", Pattern.CASE_INSENSITIVE);
 	public static final String ATTACHMENT_DISPOSITION = "attachment";
 	public static final String INLINE_DISPOSITION = "inline";
+	
+	/**
+	 * Retrieve the body parts of the message (recursively):
+	 * <ul>
+	 * <li>The part of the message when it contains only one part</li>
+	 * <li>The parts with text/* mimetype</li>
+	 * </ul>
+	 * 
+	 * @param actualEmail
+	 *            the message
+	 * @return the body of the message
+	 * @throws MessagingException
+	 *             when message can't be read
+	 */
+	public static List<Part> getBodyParts(Part actualEmail) throws MessagingException {
+		return getTextualParts(actualEmail);
+	}
 
 	/**
 	 * Retrieve the main part of the message (recursively):
 	 * <ul>
 	 * <li>The part of the message when it contains only one part</li>
-	 * <li>The part with text or HTML mimetype if only one part with one of that
+	 * <li>The part with text/* mimetype if only one part with one of that
 	 * mimetype</li>
-	 * <li>The second part with text or HTML mimetype if there are two text or
-	 * HTML parts</li>
+	 * <li>The last part with text or HTML mimetype if there are several text/*
+	 * parts</li>
 	 * </ul>
 	 * 
 	 * @param actualEmail
@@ -43,17 +61,7 @@ public final class EmailUtils {
 	 *             when message can't be read
 	 */
 	public static Part getBodyPart(Part actualEmail) throws MessagingException {
-		List<Part> bodyParts = getTextualParts(actualEmail);
-		// if no textual part, it may mean that the body is not textual
-		if (bodyParts.isEmpty()) {
-			List<Part> all = getBodyParts(actualEmail, bp -> true);
-			return all.size() == 1 ? all.get(0) : all.get(1);
-		}
-		// if only one part matching => not Multipart with alternative => take
-		// the first one
-		// if several matching parts => alternative + main content => the second
-		// is the main
-		return bodyParts.size() == 1 ? bodyParts.get(0) : bodyParts.get(1);
+		return getBestAlternative(getBodyParts(actualEmail));
 	}
 
 	/**
@@ -103,6 +111,10 @@ public final class EmailUtils {
 	/**
 	 * Get the content as byte array of a particular part.
 	 * 
+	 * <p>
+	 * If the part is null or the content stream is null, then
+	 * null is returned.
+	 * 
 	 * @param part
 	 *            the part
 	 * @return the content
@@ -112,10 +124,55 @@ public final class EmailUtils {
 	 *             when message can't be read
 	 */
 	public static byte[] getContent(Part part) throws IOException, MessagingException {
+		if (part == null) {
+			return null;
+		}
 		InputStream stream = part.getInputStream();
+		if (stream == null) {
+			return null;
+		}
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		IOUtils.copy(stream, baos);
 		return baos.toByteArray();
+	}
+
+	/**
+	 * Get the content as {@link String} of a particular part.
+	 * 
+	 * <p>
+	 * <strong>NOTE: This method handles a special case due to how Java Mail
+	 * sends textual content (adds CRLF)</strong> If the content is a textual
+	 * content ("text/*" mimetype) and the part has no parent and it ends with
+	 * CRLF, remove the last CRLF.
+	 * 
+	 * <strong>If your original text had the CRLF, this method can't know that
+	 * it was already part of the original text because Java Mail only adds CRLF
+	 * if there not already has CRLF at the end of the text.</strong>
+	 * 
+	 * <p>
+	 * If the part is null or the content stream is null, then
+	 * null is returned.
+	 * 
+	 * @param part
+	 *            the part
+	 * @param charset
+	 *            the charset used to decode the part content
+	 * @return the part content
+	 * @throws MessagingException
+	 *             when the part can't be accessed
+	 * @throws IOException
+	 *             when the part content can't be read
+	 */
+	public static String getContent(Part part, Charset charset) throws IOException, MessagingException {
+		byte[] bytes = getContent(part);
+		if (bytes == null) {
+			return null;
+		}
+		String content = IOUtils.toString(bytes, charset.name());
+		if (isTextualContent(part) && !hasParent(part) && content.endsWith("\r\n")) {
+			return content.substring(0, content.length() - 2);
+		}
+		return content;
 	}
 
 	/**
@@ -185,17 +242,25 @@ public final class EmailUtils {
 	 *             when message can't be read
 	 */
 	public static List<BodyPart> getAttachments(Part message) throws MessagingException {
-		return getAttachments(message, new DefaultAttachmentPredicate());
+		return getAttachments(message, p -> true);
 	}
 
 	/**
 	 * Get the whole list of attachments.
 	 * 
+	 * <p>
+	 * <strong>WARNING:</strong> As there is no way to ensure that a part is an
+	 * attachment, every part is testing against the filter (event multipart
+	 * containers). So the filter that you provide is combined with
+	 * {@link DefaultAttachmentPredicate}. This way, only the list of parts that
+	 * may be potential attachments (downloadable or embeddable) are provided to
+	 * your filter.
+	 * 
 	 * @param message
 	 *            the email that contains several parts
 	 * @param filter
 	 *            filter the parts to keep only some attachments. If filter
-	 *            returns true then the attachment is added to the list.
+	 *            returns true then the part is added to the list.
 	 * @param <T>
 	 *            type of part
 	 * @return the found attachments or empty list
@@ -204,7 +269,7 @@ public final class EmailUtils {
 	 */
 	public static <T extends Part> List<T> getAttachments(Part message, Predicate<Part> filter) throws MessagingException {
 		List<T> attachments = new ArrayList<>();
-		findBodyParts(message, filter, attachments);
+		findBodyParts(message, new DefaultAttachmentPredicate().and(filter), attachments);
 		return attachments;
 	}
 
@@ -235,10 +300,64 @@ public final class EmailUtils {
 	 */
 	public static boolean isTextualContent(Part part) {
 		try {
-			return TEXT_OR_HTML_MIMETYPES.matcher(part.getContentType()).matches();
+			return part.isMimeType("text/*") || part.isMimeType("application/html") || part.isMimeType("application/xhtml");
 		} catch (MessagingException e) {
 			throw new MessagingRuntimeException("Failed to retrieve Content-Type of part", e);
 		}
+	}
+
+	/**
+	 * Get the whole structure of the email. This is mainly used for debugging
+	 * purpose.
+	 * 
+	 * @param mimeMessage
+	 *            the email
+	 * @return the structure of the email
+	 * @throws IOException
+	 *             when email can't be read
+	 * @throws MessagingException
+	 *             when email can't be read
+	 */
+	public static String getStructure(MimeMessage mimeMessage) throws IOException, MessagingException {
+		StringBuilder structure = new StringBuilder();
+		findParts(mimeMessage, structure, "");
+		return structure.toString();
+	}
+
+	/**
+	 * Get the partial structure of the email from the provided container. This
+	 * is mainly used for debugging purpose.
+	 * 
+	 * @param multipart
+	 *            the container
+	 * @return the structure of the email
+	 * @throws IOException
+	 *             when email can't be read
+	 * @throws MessagingException
+	 *             when email can't be read
+	 */
+	public static String getStructure(Multipart multipart) throws IOException, MessagingException {
+		StringBuilder structure = new StringBuilder();
+		findParts(multipart, structure, "");
+		return structure.toString();
+	}
+
+	/**
+	 * Get the partial structure of the email from the provided part. This is
+	 * mainly used for debugging purpose.
+	 * 
+	 * @param part
+	 *            the part
+	 * @return the structure of the email
+	 * @throws IOException
+	 *             when email can't be read
+	 * @throws MessagingException
+	 *             when email can't be read
+	 */
+	public static String getStructure(BodyPart part) throws IOException, MessagingException {
+		StringBuilder structure = new StringBuilder();
+		findParts(part, structure, "");
+		return structure.toString();
 	}
 
 	private static <T extends Part> List<T> getBodyParts(Part actualEmail, Predicate<Part> filter) throws MessagingException {
@@ -252,15 +371,15 @@ public final class EmailUtils {
 		findBodyParts(actualEmail, filter, founds, "");
 	}
 
-	private static <T extends Part> void findBodyParts(Part actualEmail, Predicate<Part> filter, List<T> founds, String indent) throws MessagingException {
+	private static <T extends Part> void findBodyParts(Part part, Predicate<Part> filter, List<T> founds, String indent) throws MessagingException {
 		try {
-			Object content = actualEmail.getContent();
+			addPart(filter, founds, indent, part);
+			Object content = part.getContent();
 			if (content instanceof Multipart) {
 				Multipart mp = (Multipart) content;
 				LOG.trace("{}find {}", indent, mp.getContentType());
 				for (int i = 0; i < mp.getCount(); i++) {
-					BodyPart part = mp.getBodyPart(i);
-					addPart(filter, founds, indent, part);
+					findBodyParts(mp.getBodyPart(i), filter, founds, indent + "   ");
 				}
 			}
 		} catch (IOException e) {
@@ -269,13 +388,57 @@ public final class EmailUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T extends Part> void addPart(Predicate<Part> filter, List<T> founds, String indent, BodyPart part) throws MessagingException {
-		if (isMultipart(part)) {
-			findBodyParts(part, filter, founds, indent + "   ");
-		} else if (filter.test(part)) {
+	private static <T extends Part> void addPart(Predicate<Part> filter, List<T> founds, String indent, Part part) throws MessagingException {
+		if (filter.test(part)) {
 			LOG.trace("{}{}add {}", indent, "   ", part.getContentType());
 			founds.add((T) part);
 		}
+	}
+
+	private static void findParts(Part part, StringBuilder structure, String indent) throws IOException, MessagingException {
+		addPart(part, structure, indent);
+		Object content = part.getContent();
+		if (content instanceof Multipart) {
+			findParts((Multipart) content, structure, indent);
+		}
+	}
+
+	private static void findParts(Multipart mp, StringBuilder structure, String indent) throws MessagingException, IOException {
+		for (int i = 0; i < mp.getCount(); i++) {
+			BodyPart subpart = mp.getBodyPart(i);
+			findParts(subpart, structure, indent + "  ");
+		}
+	}
+
+	private static void addPart(Part part, StringBuilder structure, String indent) throws MessagingException {
+		structure.append(indent).append("[").append(part.getDataHandler().getContentType().split(";")[0]).append("]\n");
+	}
+
+	/**
+	 * According to
+	 * <a href="https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html">rfc1341
+	 * §7.2.3 The Multipart/alternative subtype</a>, the best alternative is the
+	 * last that can be displayed.
+	 * 
+	 * @param bodyParts
+	 *            the possible body parts
+	 * @return
+	 */
+	private static Part getBestAlternative(List<Part> bodyParts) {
+		if (bodyParts.isEmpty()) {
+			return null;
+		}
+		return bodyParts.get(bodyParts.size() - 1);
+	}
+
+	private static boolean hasParent(Part part) {
+		if (part instanceof Message) {
+			return false;
+		}
+		if (part instanceof BodyPart) {
+			return ((BodyPart) part).getParent() != null;
+		}
+		return false;
 	}
 
 	private EmailUtils() {

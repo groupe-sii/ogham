@@ -2,7 +2,10 @@ package fr.sii.ogham.testing.assertion.filter;
 
 import java.util.function.Predicate;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Part;
+import javax.mail.internet.MimePart;
 
 import fr.sii.ogham.testing.assertion.util.EmailUtils;
 
@@ -18,7 +21,37 @@ public class DefaultAttachmentPredicate implements Predicate<Part> {
 
 	@Override
 	public boolean test(Part p) {
-		return !EmailUtils.isTextualContent(p) && !EmailUtils.isMultipart(p);
+		if (p instanceof Message) {
+			return false;
+		}
+		return !EmailUtils.isMultipart(p) && (isDownloadableAttachment(p) || isEmbeddableAttachment(p)); 
+	}
+
+	private boolean isDownloadableAttachment(Part p) {
+		try {
+			return Part.ATTACHMENT.equalsIgnoreCase(p.getDisposition()) || p.getFileName() != null;
+		} catch(MessagingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private boolean isEmbeddableAttachment(Part p) {
+		try {
+			return Part.INLINE.equalsIgnoreCase(p.getDisposition()) || hasContentID(p);
+		} catch(MessagingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private boolean hasContentID(Part p) {
+		try {
+			if (p instanceof MimePart) {
+				return ((MimePart) p).getContentID() != null;
+			}
+			return false;
+		} catch(MessagingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

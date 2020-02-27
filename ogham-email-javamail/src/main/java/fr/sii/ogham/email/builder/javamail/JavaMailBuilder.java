@@ -56,6 +56,7 @@ import fr.sii.ogham.email.sender.impl.PropertiesBridge;
 import fr.sii.ogham.email.sender.impl.javamail.ContentWithAttachmentsHandler;
 import fr.sii.ogham.email.sender.impl.javamail.FailResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.FileResourceHandler;
+import fr.sii.ogham.email.sender.impl.javamail.JavaMailAttachmentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.JavaMailInterceptor;
 import fr.sii.ogham.email.sender.impl.javamail.MapAttachmentResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.MultiContentHandler;
@@ -688,7 +689,8 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		MimeTypeProvider mimetypeProvider = mimetype().build();
 		LOG.info("Sending email using JavaMail API is registered");
 		LOG.debug("SMTP server address: {}:{}", props.getProperty("mail.host"), props.getProperty("mail.port"));
-		return new JavaMailSender(props, buildContentHandler(mimetypeProvider), buildAttachmentHandler(mimetypeProvider), buildAuthenticator(), interceptor);
+		JavaMailAttachmentHandler attachmentHandler = buildAttachmentHandler(mimetypeProvider);
+		return new JavaMailSender(props, buildContentHandler(mimetypeProvider, attachmentHandler), attachmentHandler, buildAuthenticator(), interceptor);
 	}
 
 	@Override
@@ -722,10 +724,10 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		return null;
 	}
 
-	private PriorizedContentHandler buildContentHandler(MimeTypeProvider mimetypeProvider) {
+	private PriorizedContentHandler buildContentHandler(MimeTypeProvider mimetypeProvider, JavaMailAttachmentHandler attachmentHandler) {
 		PriorizedContentHandler contentHandler = new PriorizedContentHandler();
 		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
-		contentHandler.register(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler));
+		contentHandler.register(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler, attachmentHandler));
 		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider, buildCharset()));
 		return contentHandler;
 	}
@@ -748,13 +750,17 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		return BuilderUtils.getDefaultPropertyResolver(BuilderUtils.getDefaultProperties());
 	}
 
-	private static MapAttachmentResourceHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
-		MapAttachmentResourceHandler attachmentHandler = new MapAttachmentResourceHandler();
-		attachmentHandler.registerResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));
-		attachmentHandler.registerResourceHandler(OverrideNameWrapper.class, new OverrideNameWrapperResourceHandler(attachmentHandler));
-		attachmentHandler.registerResourceHandler(LookupResource.class, new FailResourceHandler(noResourceResolverConfigured()));
-		attachmentHandler.registerResourceHandler(NamedResource.class, new StreamResourceHandler(mimetypeProvider));
-		return attachmentHandler;
+	private static JavaMailAttachmentHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
+		return new JavaMailAttachmentHandler(buildAttachmentResourceHandler(mimetypeProvider));
+	}
+
+	private static MapAttachmentResourceHandler buildAttachmentResourceHandler(MimeTypeProvider mimetypeProvider) {
+		MapAttachmentResourceHandler resourceHandler = new MapAttachmentResourceHandler();
+		resourceHandler.registerResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));
+		resourceHandler.registerResourceHandler(OverrideNameWrapper.class, new OverrideNameWrapperResourceHandler(resourceHandler));
+		resourceHandler.registerResourceHandler(LookupResource.class, new FailResourceHandler(noResourceResolverConfigured()));
+		resourceHandler.registerResourceHandler(NamedResource.class, new StreamResourceHandler(mimetypeProvider));
+		return resourceHandler;
 	}
 
 	private static BiFunction<NamedResource, Attachment, AttachmentResourceHandlerException> noResourceResolverConfigured() {; 

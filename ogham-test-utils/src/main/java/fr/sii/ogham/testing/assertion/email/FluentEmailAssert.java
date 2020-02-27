@@ -11,7 +11,6 @@ import static javax.mail.Message.RecipientType.TO;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,12 +20,10 @@ import java.util.function.Predicate;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.InternetAddress;
 
 import org.hamcrest.Matcher;
-import org.junit.Assert;
 
 import fr.sii.ogham.testing.assertion.context.SingleMessageContext;
 import fr.sii.ogham.testing.assertion.filter.FileNamePredicate;
@@ -453,14 +450,12 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 			String desc = "attachments of message ${messageIndex}";
 			int msgIdx = this.index;
 			for (Message message : actual) {
-				Object content = message.getContent();
-				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 				final int idx = msgIdx;
 				registry.register(() -> assertThat(getAttachments(message), usingContext(desc, new SingleMessageContext(idx), matcher)));
 				msgIdx++;
 			}
 			return this;
-		} catch (MessagingException | IOException e) {
+		} catch (MessagingException e) {
 			throw new AssertionError("Failed to access attachments of messsage", e);
 		}
 	}
@@ -525,15 +520,13 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 			int msgIndex = this.index;
 			List<PartWithContext> attachments = new ArrayList<>();
 			for (Message message : actual) {
-				Object content = message.getContent();
-				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 				List<BodyPart> found = getAttachments(message);
 				BodyPart attachment = index >= found.size() ? null : found.get(index);
 				attachments.add(new PartWithContext(attachment, "attachment with index " + index + (attachment == null ? " (/!\\ not found)" : ""), new SingleMessageContext(msgIndex)));
 				msgIndex++;
 			}
 			return new FluentPartAssert<>(attachments, this, registry);
-		} catch (MessagingException | IOException e) {
+		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get attachment with index " + index + " of messsage", e);
 		}
 	}
@@ -638,23 +631,21 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 			int msgIdx = this.index;
 			List<PartWithContext> attachments = new ArrayList<>();
 			for (Message message : actual) {
-				Object content = message.getContent();
-				registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 				int matchingIdx = 0;
 				boolean noneFound = true;
-				List<BodyPart> matchingAttachmentsForMessage = EmailUtils.<BodyPart> getAttachments(message, filter);
+				List<Part> matchingAttachmentsForMessage = EmailUtils.<Part> getAttachments(message, filter);
 				checkFoundAttachmentPerMessage(filter, singleMessageAttachmentsMatcher, msgIdx, matchingAttachmentsForMessage);
 				contextualize(filter, msgIdx, attachments, matchingIdx, noneFound, matchingAttachmentsForMessage);
 				msgIdx++;
 			}
 			return new FluentPartAssert<>(attachments, this, registry);
-		} catch (MessagingException | IOException e) {
+		} catch (MessagingException e) {
 			throw new AssertionError("Failed to get attachment " + filter + " of messsage", e);
 		}
 	}
 
-	private void contextualize(Predicate<Part> filter, int msgIdx, List<PartWithContext> attachments, int matchingIdx, boolean noneFound, List<BodyPart> matchingAttachmentsForMessage) {
-		for (BodyPart attachment : matchingAttachmentsForMessage) {
+	private static void contextualize(Predicate<Part> filter, int msgIdx, List<PartWithContext> attachments, int matchingIdx, boolean noneFound, List<Part> matchingAttachmentsForMessage) {
+		for (Part attachment : matchingAttachmentsForMessage) {
 			noneFound = false;
 			attachments.add(new PartWithContext(attachment, "attachment " + filter + " (matching index: " + matchingIdx + ")", new SingleMessageContext(msgIdx)));
 			matchingIdx++;
@@ -665,7 +656,7 @@ public class FluentEmailAssert<P> extends HasParent<P> {
 	}
 
 	private void checkFoundAttachmentPerMessage(Predicate<Part> filter, Matcher<? super Collection<? extends Part>> singleMessageAttachmentsMatcher, int msgIdx,
-			List<BodyPart> matchingAttachmentsForMessage) {
+			List<Part> matchingAttachmentsForMessage) {
 		if (singleMessageAttachmentsMatcher != null) {
 			registry.register(() -> assertThat("message "+msgIdx+" should have only one attachment "+filter, matchingAttachmentsForMessage, singleMessageAttachmentsMatcher));
 		}

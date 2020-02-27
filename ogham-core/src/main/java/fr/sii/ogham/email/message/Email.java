@@ -742,7 +742,7 @@ public class Email implements Message, HasContentFluent<Email>, HasSubject, HasS
 		// set it to null
 		Content text = textBuilder == null ? null : textBuilder.build();
 		if (html != null && text != null) {
-			return new MultiContent(html, text);
+			return new MultiContent(text, html);
 		}
 		if (html != null) {
 			return html;

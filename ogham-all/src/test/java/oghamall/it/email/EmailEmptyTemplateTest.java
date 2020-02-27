@@ -1,7 +1,6 @@
 package oghamall.it.email;
 
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
-import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -76,8 +75,7 @@ public class EmailEmptyTemplateTest {
 				.subject(is("Template"))
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
-				.body()
-					.contentAsString(emptyString()).and()
+				.body(nullValue())
 				.alternative(nullValue());
 		// @formatter:on
 	}
@@ -115,8 +113,7 @@ public class EmailEmptyTemplateTest {
 				.subject(is("Template"))
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
-				.body()
-					.contentAsString(emptyString()).and()
+				.body(nullValue())
 				.alternative(nullValue());
 		// @formatter:on
 	}
@@ -134,8 +131,7 @@ public class EmailEmptyTemplateTest {
 				.subject(is("Template"))
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
-				.body()
-					.contentAsString(emptyString()).and()
+				.body(nullValue())
 				.alternative(nullValue());
 		// @formatter:on
 	}
@@ -153,8 +149,7 @@ public class EmailEmptyTemplateTest {
 				.subject(is("Template"))
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
-				.body()
-					.contentAsString(emptyString()).and()
+				.body(nullValue())
 				.alternative(nullValue());
 		// @formatter:on
 	}

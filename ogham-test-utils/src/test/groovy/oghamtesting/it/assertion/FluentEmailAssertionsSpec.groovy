@@ -489,9 +489,12 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart1 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("body 1".getBytes("UTF-8")) }
 						getContentType() >> "text/plain"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 1
 					getBodyPart(0) >> bodyPart1
+					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart1
 			}
@@ -501,9 +504,12 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart2 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("body 2".getBytes("UTF-8")) }
 						getContentType() >> "text/html"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 1
 					getBodyPart(0) >> bodyPart2
+					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart2
 			}			
@@ -564,9 +570,12 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart1 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("body 1".getBytes("UTF-8")) }
 						getContentType() >> "text/plain"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 1
 					getBodyPart(0) >> bodyPart1
+					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart1
 			}
@@ -575,9 +584,12 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart2 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("body 2".getBytes("UTF-8")) }
 						getContentType() >> "text/html"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 1
 					getBodyPart(0) >> bodyPart2
+					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart2
 			}
@@ -624,14 +636,18 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart1 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("alt 1".getBytes("UTF-8")) }
 						getContentType() >> "text/plain"
+						isMimeType("text/*") >> true
 					}
 					BodyPart bodyPart2 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("<html><body>alt 1</body></html>".getBytes("UTF-8")) }
 						getContentType() >> "text/html"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 2
 					getBodyPart(0) >> bodyPart1
 					getBodyPart(1) >> bodyPart2
+					getContentType() >> "multipart/alternative"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart1
 			}
@@ -640,14 +656,18 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart3 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("alt 2".getBytes("UTF-8")) }
 						getContentType() >> "text/plain"
+						isMimeType("text/*") >> true
 					}
 					BodyPart bodyPart4 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("<html><body>alt 2</body></html>".getBytes("UTF-8")) }
 						getContentType() >> "text/html"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 2
 					getBodyPart(0) >> bodyPart3
 					getBodyPart(1) >> bodyPart4
+					getContentType() >> "multipart/alternative"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart2
 			}
@@ -708,14 +728,18 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart1 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("alt 1".getBytes("UTF-8")) }
 						getContentType() >> "text/plain"
+						isMimeType("text/*") >> true
 					}
 					BodyPart bodyPart2 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("<html><body>alt 1</body></html>".getBytes("UTF-8")) }
 						getContentType() >> "text/html"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 2
 					getBodyPart(0) >> bodyPart1
 					getBodyPart(1) >> bodyPart2
+					getContentType() >> "multipart/alternative"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart1
 			}
@@ -724,14 +748,18 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart3 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("alt 2".getBytes("UTF-8")) }
 						getContentType() >> "text/plain"
+						isMimeType("text/*") >> true
 					}
 					BodyPart bodyPart4 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("<html><body>alt 2</body></html>".getBytes("UTF-8")) }
 						getContentType() >> "text/html"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 2
 					getBodyPart(0) >> bodyPart3
 					getBodyPart(1) >> bodyPart4
+					getContentType() >> "multipart/alternative"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart2
 			}
@@ -778,9 +806,12 @@ class FluentEmailAssertionsSpec extends Specification {
 					BodyPart bodyPart1 = Mock {
 						getInputStream() >> { new ByteArrayInputStream("alt 1".getBytes("UTF-8")) }
 						getContentType() >> "text/plain"
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 1
 					getBodyPart(0) >> bodyPart1
+					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart1
 			}
@@ -843,6 +874,8 @@ class FluentEmailAssertionsSpec extends Specification {
 					getBodyPart(1) >> attachment2
 				}
 				getContent() >> multipart1
+				getContentType() >> "multipart/mixed"
+				isMimeType("text/*") >> false
 			}
 			MimeMessage message2 = Mock {
 				Multipart multipart2 = Mock {
@@ -1056,6 +1089,8 @@ class FluentEmailAssertionsSpec extends Specification {
 					getCount() >> 2
 					getBodyPart(0) >> attachment1
 					getBodyPart(1) >> attachment2
+					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart1
 			}
@@ -1070,6 +1105,8 @@ class FluentEmailAssertionsSpec extends Specification {
 					getCount() >> 2
 					getBodyPart(0) >> attachment3
 					getBodyPart(1) >> attachment4
+					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart2
 			}
@@ -1165,6 +1202,8 @@ class FluentEmailAssertionsSpec extends Specification {
 					getCount() >> attachments.size()
 					getBodyPart(0) >> attachments[0]
 					getBodyPart(1) >> attachments[1]
+					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> multipart1
 			}
@@ -1235,15 +1274,10 @@ class FluentEmailAssertionsSpec extends Specification {
 			}
 		
 		then:
-			failures == ([[klass: AssertionError, message: 'should be multipart message']] * 6
-						+ [
-							[klass: AssertionError, message: 'should be multipart message'],
+			failures == [
 							[klass: AssertionError, message: 'attachments of message 0 Expected: a collection with size <9> but: was <[]>'], 
-						]
-						+ [
-							[klass: AssertionError, message: 'should be multipart message'],
 							[klass: AssertionError, message: 'attachments of message 1 Expected: a collection with size <9> but: was <[]>']
-						])
+						]
 	}
 	
 	
@@ -1405,7 +1439,7 @@ class FluentEmailAssertionsSpec extends Specification {
 		} catch(MultipleAssertionError e) {
 			return failures(e)
 		} catch(Throwable e) {
-			return [[klass: e.getClass(), message: e.getMessage().replaceAll("\\s+", " ")]]
+			return [[klass: e.getClass(), message: e.getMessage() == null ? "null" : e.getMessage().replaceAll("\\s+", " ")]]
 		}
 	}
 	

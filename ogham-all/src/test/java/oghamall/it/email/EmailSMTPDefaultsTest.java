@@ -252,8 +252,8 @@ public class EmailSMTPDefaultsTest {
 		oghamService.send(new Email()
 								.subject("Multi")
 								.content(new MultiContent(
-										new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("bar", 12)),
-										new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("bar", 12))))
+										new TemplateContent("classpath:/template/thymeleaf/source/simple.txt", new SimpleBean("bar", 12)),
+										new TemplateContent("classpath:/template/thymeleaf/source/simple.html", new SimpleBean("bar", 12))))
 								.to("recipient@sii.fr"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(1))
@@ -261,10 +261,10 @@ public class EmailSMTPDefaultsTest {
 				.subject(is("Multi"))
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
-				.alternative()
+				.body()
 					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.html")))
 					.contentType(startsWith("text/html")).and()
-				.body()
+				.alternative()
 					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.txt")))
 					.contentType(startsWith("text/plain")).and()
 				.attachments(emptyIterable());

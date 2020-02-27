@@ -242,11 +242,11 @@ public class FluentEmailTest {
 				.from().address(hasItems("test.sender@sii.fr")).and()
 				.to().address(hasItems("recipient@sii.fr")).and()
 				.alternative()
+					.contentAsString(is(resourceAsString("/template/thymeleaf/expected/simple_bar_12.txt")))
+					.contentType(startsWith("text/plain")).and()
+				.body()
 					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.html")))
 					.contentType(startsWith("text/html")).and()
-				.body()
-					.contentAsString(isIdenticalHtml(resourceAsString("/template/thymeleaf/expected/simple_bar_12.txt")))
-					.contentType(startsWith("text/plain")).and()
 				.attachments(emptyIterable());
 		// @formatter:on
 	}

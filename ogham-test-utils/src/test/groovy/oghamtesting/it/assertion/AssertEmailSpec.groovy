@@ -1,5 +1,6 @@
 package oghamtesting.it.assertion
 
+import static java.nio.charset.StandardCharsets.UTF_8
 import static java.util.Arrays.asList
 import static javax.mail.Message.RecipientType.BCC
 import static javax.mail.Message.RecipientType.CC
@@ -39,8 +40,9 @@ class AssertEmailSpec extends Specification {
 			MimeMessage actualEmail = Mock {
 				Multipart content = Mock {
 					BodyPart part = Mock {
-						getContent() >> body
+						getInputStream() >> { new ByteArrayInputStream(body.getBytes(UTF_8)) }
 						getContentType() >> contentType
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 1
 					getBodyPart(0) >> part
@@ -115,9 +117,8 @@ class AssertEmailSpec extends Specification {
 					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'], 
 					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
 					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'], 
-					 [klass: IllegalStateException, message: 'Expected at least one body part but none found'], 
+					 [klass: AssertionError, message: 'Expected at least one body part but none found'], 
 					 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<body> but was:<null>'], 
-					 [klass: IllegalStateException, message: 'Expected at least one body part but none found'], 
 					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null']
 					] * 2
 			"empty mock"		| { [Mock(Message)] }					|| [
@@ -131,9 +132,8 @@ class AssertEmailSpec extends Specification {
 					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'], 
 					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
 					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'], 
-					 [klass: IllegalStateException, message: 'Expected at least one body part but none found'], 
+					 [klass: AssertionError, message: 'Expected at least one body part but none found'], 
 					 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<body> but was:<null>'], 
-					 [klass: IllegalStateException, message: 'Expected at least one body part but none found'], 
 					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null']
 					] * 2
 			"no message"		| { [] }								|| [
@@ -148,9 +148,8 @@ class AssertEmailSpec extends Specification {
 					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'], 
 					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
 					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'], 
-					 [klass: IllegalStateException, message: 'Expected at least one body part but none found'], 
+					 [klass: AssertionError, message: 'Expected at least one body part but none found'], 
 					 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<body> but was:<null>'], 
-					 [klass: IllegalStateException, message: 'Expected at least one body part but none found'], 
 					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null']
 					] * 2
 			"several messages"	| { [Mock(Message), Mock(Message)] }	|| [
@@ -165,9 +164,8 @@ class AssertEmailSpec extends Specification {
 					 [klass: AssertionError, message: 'should be received by 2 recipients (of type RecipientType.Cc) expected:<2> but was:<null>'], 
 					 [klass: AssertionError, message: 'recipient Cc[0] should be \'cc1@yopmail.com\' expected:<cc1@yopmail.com> but was:<null>'], 
 					 [klass: AssertionError, message: 'recipient Cc[1] should be \'cc2@yopmail.com\' expected:<cc2@yopmail.com> but was:<null>'], 
-					 [klass: IllegalStateException, message: 'Expected at least one body part but none found'], 
+					 [klass: AssertionError, message: 'Expected at least one body part but none found'], 
 					 [klass: ComparisonFailure, message: 'body should be \'body\' expected:<body> but was:<null>'], 
-					 [klass: IllegalStateException, message: 'Expected at least one body part but none found'], 
 					 [klass: AssertionError, message: 'mimetype should match text/plain instead of null']
 					] * 2
 	}
@@ -177,12 +175,14 @@ class AssertEmailSpec extends Specification {
 			MimeMessage actualEmail = Mock {
 				Multipart content = Mock {
 					BodyPart part = Mock {
-						getContent() >> "<html><head></head><body>${body}</body></html>"
+						getInputStream() >> { new ByteArrayInputStream("<html><head></head><body>${body}</body></html>".getBytes(UTF_8)) }
 						getContentType() >> contentType
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 1
 					getBodyPart(0) >> part
 					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getContent() >> content
 				getSubject() >> subject
@@ -229,15 +229,18 @@ class AssertEmailSpec extends Specification {
 					BodyPart part1 = Mock {
 						getContent() >> alternative
 						getContentType() >> altContentType
+						isMimeType("text/*") >> true
 					}
 					BodyPart part2 = Mock {
 						getContent() >> "<html><head></head><body>${body}</body></html>"
 						getContentType() >> bodyContentType
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 2
 					getBodyPart(0) >> part1
 					getBodyPart(1) >> part2
 					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getSubject() >> subject
 				getFrom() >> [new InternetAddress(from)]
@@ -287,15 +290,18 @@ class AssertEmailSpec extends Specification {
 					BodyPart part1 = Mock {
 						getContent() >> alternative
 						getContentType() >> altContentType
+						isMimeType("text/*") >> true
 					}
 					BodyPart part2 = Mock {
 						getContent() >> "<html><head></head><body>${body}</body></html>"
 						getContentType() >> bodyContentType
+						isMimeType("text/*") >> true
 					}
 					getCount() >> 2
 					getBodyPart(0) >> part1
 					getBodyPart(1) >> part2
 					getContentType() >> "multipart/mixed"
+					isMimeType("text/*") >> false
 				}
 				getSubject() >> subject
 				getFrom() >> [new InternetAddress(from)]

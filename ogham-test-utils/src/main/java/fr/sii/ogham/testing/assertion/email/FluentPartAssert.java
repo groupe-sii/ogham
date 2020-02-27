@@ -15,7 +15,6 @@ import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 
-import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matcher;
 
 import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
@@ -101,7 +100,7 @@ public class FluentPartAssert<P> extends HasParent<P> {
 			String message = charset.name() + " content of ${partName} of message ${messageIndex}";
 			for (PartWithContext partWithContext : actual) {
 				Part part = partWithContext.getPart();
-				registry.register(() -> assertThat(part == null ? null : IOUtils.toString(getContent(part), charset.name()), usingContext(message, partWithContext, matcher)));
+				registry.register(() -> assertThat(part == null ? null : getContent(part, charset), usingContext(message, partWithContext, matcher)));
 			}
 			return this;
 		} catch (Exception e) {

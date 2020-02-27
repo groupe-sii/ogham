@@ -42,11 +42,14 @@ public class StringContentHandler implements JavaMailContentHandler {
 	@Override
 	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
 		try {
-			MimeBodyPart part = new MimeBodyPart();
 			String strContent = ((MayHaveStringContent) content).asString();
 			Charset charset = charsetProvider.detect(strContent);
 			String charsetParam = charset == null ? "" : (";charset=" + charset.name());
-			part.setContent(strContent, mimetypeProvider.detect(strContent).toString() + charsetParam);
+			String contentType = mimetypeProvider.detect(strContent).toString() + charsetParam;
+			// add the part
+			MimeBodyPart part = new MimeBodyPart();
+			part.setContent(strContent, contentType);
+			part.setHeader("Content-Type", contentType);
 			multipart.addBodyPart(part);
 		} catch (MessagingException e) {
 			throw new ContentHandlerException("failed to set content on mime message", content, e);

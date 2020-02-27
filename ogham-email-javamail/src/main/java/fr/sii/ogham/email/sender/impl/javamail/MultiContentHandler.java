@@ -38,6 +38,7 @@ public class MultiContentHandler implements JavaMailContentHandler {
 			for (Content c : multiContent.getContents()) {
 				delegate.setContent(message, mp, email, c);
 			}
+			// add the part
 			MimeBodyPart part = new MimeBodyPart();
 			part.setContent(mp);
 			multipart.addBodyPart(part);
