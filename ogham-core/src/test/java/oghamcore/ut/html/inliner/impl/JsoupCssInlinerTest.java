@@ -65,6 +65,15 @@ public class JsoupCssInlinerTest {
 	}
 	
 	@Test
+	public void skipSomeStyles() throws IOException {
+		String source = resourceAsString(SOURCE_FOLDER+"skipSomeStyles.html");
+		String css1 = resourceAsString(SOURCE_FOLDER+"css/external1.css");
+		String css2 = resourceAsString(SOURCE_FOLDER+"css/external2.css");
+		String expected = resourceAsString(EXPECTED_FOLDER+"skipSomeStyles.html");
+		AssertHtml.assertEquals(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/external1.css"), css1), new ExternalCss(new UnresolvedPath("css/external2.css"), css2))));
+	}
+	
+	@Test
 	@Ignore("Not yet implemented")
 	public void overrideStyles() throws IOException {
 		String source = resourceAsString(SOURCE_FOLDER+"overrideStyles.html");

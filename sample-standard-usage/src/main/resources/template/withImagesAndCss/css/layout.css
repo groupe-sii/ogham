@@ -1,12 +1,15 @@
 body {
-	margin: 0;
-	padding: 0;
-}
-
-.main-content {
 	margin: 10px auto 30px auto;
 	width: 600px;
-	border: 1px solid #ccc;
+}
+
+header {
+	padding: 40px 30px;
+}
+
+header img {
+	display: block;
+	margin: auto;
 }
 
 
@@ -24,10 +27,17 @@ body {
 	margin-right: 36px;
 }
 
-.footer {
+footer {
 	padding: 30px;
-	color:#ffffff;
-	font-family:Arial, sans-serif;
-	font-size:14px;
-	background: #ee4c50;
+}
+
+footer .sender-info,
+footer .social {
+	text-align: center;
+}
+footer .social a {
+	display: inline-block;
+}
+footer .sender-info {
+	margin-top: 20px;
 }

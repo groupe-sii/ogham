@@ -10,6 +10,9 @@ endif::[]
 ifndef::general-dir[]
 :general-dir: {docdir}/general/
 endif::[]
+ifndef::resourcesdir[]
+:resourcesdir: {docdir}/../resources/
+endif::[]
 
 :github-url: https://github.com/groupe-sii/ogham
 :github-branch-url: {github-url}/tree

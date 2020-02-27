@@ -36,7 +36,7 @@ public final class ImageInlineUtils {
 			return false;
 		}
 		// if inline mode defined but not the wanted mode => reject
-		if (!img.attr(INLINE_MODE_ATTR).isEmpty() && !img.attr(INLINE_MODE_ATTR).equals(mode.mode())) {
+		if (!img.attr(INLINE_MODE_ATTR).isEmpty() && !mode.is(img.attr(INLINE_MODE_ATTR))) {
 			return false;
 		}
 		// if inline mode defined and matches the wanted mode => allow

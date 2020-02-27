@@ -1,0 +1,277 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+Images can be referenced externally but there are many constraints to do so. 
+You have to provide the URL of the image. However, while you are coding or testing
+the feature that sends an email with images (for example testing account creation
+with confirmation email), the URL must point to an existing and accessible image.
+And even then, the email client might block those images for safety purpose (prevent
+tracking). Not mentioning offline issues.
+
+That's why Ogham provides automatic inlining on local images. Therefore, no
+need to use a server to serve the images and no need to configure the URLs
+to point to those images. The images are:
+
+* Either attached with the email and referenced in the HTML using a 
+https://tools.ietf.org/html/rfc2392[Content-ID].
+* Or images are converted to a base64 string and embedded in the HTML using the
+https://tools.ietf.org/html/rfc2397[data URL scheme]
+* Or not inlined at all (if the image points to an external URL or it is explicitly
+skipped)
+
+
+.More explanation
+[TIP]
+====
+https://blog.mailtrap.io/embedding-images-in-html-email-have-the-rules-changed/[Additional information about image inlining].
+====
+
+.Sender implementation independent
+[TIP]
+====
+Inlining of images not only work when sending an email using Java Mail but also 
+works for any other email sender (like SendGrid).
+====
+
+
+
+== Attach and reference images
+
+By default, if the HTML contains `<img>` tag with `src` attribute that points
+to a local image, the image is automatically attached and referenced using a
+https://tools.ietf.org/html/rfc2392[Content-ID] that is automatically generated.
+
+.Default choice explanation
+[NOTE]
+====
+The attach strategy has been chosen by default as it is handled by more email
+clients than base64 strategy.
+====
+
+.Customize CID generation
+[TIP]
+====
+Default Content-ID generation simply uses a incremental number. It is possible to
+use <<custom-cid-generation, custom Content-ID generation>>.
+====
+
+As Ogham is fully configurable, the default strategy can be changed. Therefore
+if you want to use this strategy for a particular image, you need to explicitly 
+indicate it. You can do so by setting the `data-inline-image` attribute with
+the `"attach"` value directly on the `<img>` tag.
+
+.Change default strategy
+[TIP]
+====
+It is possible to configure Ogham to use a 
+<<custom-image-inlining-strategy, different inlining strategy by default>>.
+====
+
+
+[role="tab-container  no-max-height"]
+Attach images
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.java[]
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="collapse-lines:1-10,14-16,19-24,28-36,41-49 highlight-lines:12,27,39"]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
+----
+<1> _
+<2> _
+<3> As nothing is specified and `src` points to a local image, the image will
+be inlined (using `attach` strategy)
+<4> _
+<5> Same as <3> but strategy is explicitly indicated
+<6> Same as <3>
+
+{standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+
+[role=tab]
+image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:1-8,12-73,76-83,88-96 highlight-lines:10,75,86"]
+----
+include::{resourcesdir}/samples/email/inlining-result.html[]
+----
+<1> _
+<2> _
+<3> The image is attached and the generated Content-ID is `0`.
+<4> _
+<5> _
+<6> The image is attached and the generated Content-ID is `1`.
+<7> _
+<8> The image is attached and the generated Content-ID is `2`.
+
+[role=tab-container-end]
+-
+
+
+== Embed using data URL scheme
+
+As stated before, by default images are attached. So if you want to embed
+an image directly as a base64 string, you need to set the `data-inline-image` 
+attribute with the `"base64"` value directly on the `<img>` tag.
+
+.Mimetype detection
+[NOTE]
+====
+The data URL scheme needs the mediatype information. Ogham automatically provides
+this information for you thanks to <<mimetype-detection, automatic mimetype detection>>.
+====
+
+
+
+[role="tab-container  no-max-height"]
+Embed images as base64
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.java[]
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="collapse-lines:1-16,19-24,26-49 highlight-lines:18"]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
+----
+<1> _
+<2> _
+<3> _
+<4> Indicate to Ogham to inline using `base64` strategy
+
+{standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+
+[role=tab]
+image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:1-14,68-72,74-96 highlight-lines:16-67"]
+----
+include::{resourcesdir}/samples/email/inlining-result.html[]
+----
+<1> _
+<2> _
+<3> _
+<4> _
+<5> The data URL starts with `data:` followed by the mimetype (`image/gif`) and 
+the image converted to a base64 string.
+
+[role=tab-container-end]
+-
+
+
+== Skip some images
+
+In the case you need to inline an image manually, you can tell Ogham to skip
+the image by placing the `data-inline-image` attribute with the `"skip"` value
+on the `<img>` tag.
+
+[role="tab-container  no-max-height"]
+Skip embedding
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.java[]
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="collapse-lines:1-40,44-49 highlight-lines:42"]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
+----
+<1> _
+<2> _
+<3> _
+<4> _
+<5> _
+<6> _
+<7> Indicate to Ogham to skip inlining using `skip` value
+
+{standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+
+[role=tab]
+image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:1-87,91-96 highlight-lines:89"]
+----
+include::{resourcesdir}/samples/email/inlining-result.html[]
+----
+<1> _
+<2> _
+<3> _
+<4> _
+<5> _
+<6> _
+<7> _
+<8> _
+<9> _
+<10> The image is not inlined at all (the original `src` attribute is unchanged)
+
+[role=tab-container-end]
+-
+
+
+
+.Future thoughts
+[NOTE]
+====
+In future version of Ogham, a new strategy may be added in order to automatically
+serve local images and fill the HTML with the associated URL.
+
+The images may be automatically served by:
+
+* first uploading them somewhere before sending the email
+* automatically registering endpoints into your web application (adding Spring
+controller for example) that uses Ogham
+* starting a local server (by running a command or a docker image for example)
+* using tools like ngrok to expose local files/http server
+* ...
+====
+

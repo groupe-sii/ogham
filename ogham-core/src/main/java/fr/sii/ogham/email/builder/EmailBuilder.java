@@ -544,7 +544,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 * 
 	 * Enables both inlining modes (attaching images and encoding in base64). By
 	 * default, attaching is used if nothing is specified in the HTML. You can
-	 * also explicitly specify which mode to using the {@code ogham-inline-mode}
+	 * also explicitly specify which mode to using the {@code data-inline-image}
 	 * attribute (see {@link ImageHandlingBuilder#inline()} for more
 	 * information).
 	 * 

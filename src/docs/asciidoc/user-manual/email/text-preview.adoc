@@ -24,7 +24,7 @@ the email client doesn't support HTML or as a preview of the email.
 
 [NOTE]
 ====
-The call order between `text()` and `html()` doesn't matter.
+The call order between `text()` and `html()` doesn't matter (unlike using `.content(new MultiContent(...))`).
 ====
 
 [NOTE]

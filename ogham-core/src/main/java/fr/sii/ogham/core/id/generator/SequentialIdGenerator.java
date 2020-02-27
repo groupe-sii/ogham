@@ -2,7 +2,7 @@ package fr.sii.ogham.core.id.generator;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +15,20 @@ import org.slf4j.LoggerFactory;
  * {@code <name>}n</li>
  * </ul>
  * 
- * NOTE: name is URL encoded
+ * <p>
+ * Name is URL encoded
  * 
+ * <p>
+ * If the generated id is greater than {@link Long#MAX_VALUE}, then it restarts
+ * from 0.
  * 
  * @author Aurélien Baudet
  *
  */
 public class SequentialIdGenerator implements IdGenerator {
 	private static final Logger LOG = LoggerFactory.getLogger(SequentialIdGenerator.class);
-	
-	private final AtomicInteger idx;
+
+	private final AtomicLong idx;
 	private final boolean useNamePrefix;
 
 	/**
@@ -56,13 +60,17 @@ public class SequentialIdGenerator implements IdGenerator {
 	 */
 	public SequentialIdGenerator(boolean useNamePrefix, int initial) {
 		super();
-		this.idx = new AtomicInteger(initial);
+		this.idx = new AtomicLong(initial);
 		this.useNamePrefix = useNamePrefix;
 	}
 
 	@Override
 	public String generate(String name) {
-		return namePrefix(name) + idx.getAndIncrement();
+		long id = idx.getAndIncrement();
+		if (id < 0) {
+			id = id + Long.MIN_VALUE;
+		}
+		return namePrefix(name) + id;
 	}
 
 	private String namePrefix(String name) {
@@ -72,7 +80,7 @@ public class SequentialIdGenerator implements IdGenerator {
 		try {
 			return URLEncoder.encode(name, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			LOG.warn("Failed to use "+name+" as id prefix => no prefix used", e);
+			LOG.warn("Failed to use " + name + " as id prefix => no prefix used", e);
 			return "";
 		}
 	}

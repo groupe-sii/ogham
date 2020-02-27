@@ -618,26 +618,33 @@ _____
 ==== HTML body with CSS and images
 
 
+When you develop a Web application, you can use HTML for the content and CSS for 
+layout and theming. HTML and CSS can use images to make a beautiful Web page. 
+Each concern is separated in a different file. This is a good practice.
 
-
-When you develop a Web application, you can use HTML for the content and CSS for layout and theming. HTML and CSS can use images to make a beautiful Web page. Each concern is separated in a different file. This is a good practice.
-
-However, writing an HTML email is totally different. Indeed, email clients are not as evolved as Web browsers. Even worse, some clients disable some features on purpose (like Inbox that prevents using `style` tag). To make an email work on several clients, you should follow these rules:
+However, writing an HTML email is totally different. Indeed, email clients are 
+not as evolved as Web browsers. Even worse, some clients disable some features 
+on purpose (like GMail that prevents using `style` tag). To make an email work 
+on several clients, you should follow these rules:
 
 * `<img>` tags that use local images must be embedded
 * Use XHTML instead of HTML
 * Remove HTML comments (except conditional comments used to target Outlook)
 * Add border=0 on all images to avoid an ugly border
-* Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of `padding: 4px`)
-* Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
+* Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of 
+`padding: 4px`)
+* Padding is not supported on some clients so you must use margins instead 
+(adding a parent just for the layout)
 * Background images on body should be moved on another node
 * CSS3 properties are not supported
 * Images must have `alt` attribute
 * ...
 
-There are many other rules but the developer should not be constrained and should be able to write its HTML and CSS like as usual in Web browsers. Ogham simplifies image and CSS integration and is able to partially rewrite the HTML.  
+There are many other rules but the developer should not be constrained and 
+should be able to write its HTML and CSS like as usual in Web browsers. Ogham 
+simplifies image and CSS integration and is able to partially rewrite the HTML.  
 
-[role="tab-container"]
+[role="tab-container  no-max-height"]
 _____
 
 [role=tab]
@@ -707,76 +714,73 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 [role=tab]
 image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
 
-[source, html, role="highlight-lines:7-8,13,19,26,44,47"]
+[source, html, role="highlight-lines:7-8,12,18,27,39,42"]
 ----
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Demystifying Email Design</title>                                                                    <!--1-->
+<title>Demystifying Email Design</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link href="css/layout.css" rel="stylesheet" />                                                                <!--2-->
-<link href="css/custom.css" rel="stylesheet" />                                                                <!--3-->
+<link href="css/layout.css" rel="stylesheet" />                                                            <!--1-->
+<link href="css/theme.css" rel="stylesheet" />                                                            <!--2-->
 </head>
 <body>
-    <div class="main-content">
-        <div class="header">
-            <img src="images/h1.gif" alt="Creating Email Magic" />                                            <!--4-->
+    <header>
+        <img src="images/h1.gif" alt="Creating Email Magic" />                                            <!--3-->
+    </header>
+    <div class="content">
+        <span th:text="${name}">name</span>
+        <p th:text="${value}">value</p>
+        <div class="left">
+            <img src="images/left.gif" data-inline-image="base64" />                                    <!--4-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
         </div>
-        <div class="content">
-            <span th:text="${name}">name</span>
-            <p th:text="${value}">value</p>
-            <div class="left">
-                <img src="images/left.gif" data-inline="base64" />                                            <!--5-->
-                <p class="text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                    tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
-                    porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
-                    posuere mauris neque at erat.
-                </p>
-            </div>
-            <div class="right">
-                <img src="images/right.gif" />                                                                <!--6-->
-                <p class="text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-                    tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
-                    porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
-                    posuere mauris neque at erat.
-                </p>
-            </div>
-        </div>
-        <div class="footer">
-            <div class="sender-info">
-                &reg; Someone, somewhere 2013<br />
-                <a href="#" class="white">Unsubscribe</a> to this newsletter instantly
-            </div>
-            <div class="social">
-                <a href="http://www.twitter.com/" class="white">
-                    <img src="images/tw.gif" alt="Twitter" />                                                <!--7-->
-                </a>
-                <a href="http://www.twitter.com/" class="white">
-                    <img src="images/fb.gif" alt="Facebook" data-inline="skip" />                            <!--8-->
-                </a>
-            </div>
+        <div class="right">
+            <img src="images/right.gif" data-inline-image="attach" />                                    <!--5-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
         </div>
     </div>
+    <footer>
+        <div class="social">
+            <a href="http://www.twitter.com/">
+                <img src="images/tw.gif" alt="Twitter" />                                                <!--6-->
+            </a>
+            <a href="http://www.facebook.com/">
+                <img src="images/fb.gif" alt="Facebook" data-inline-image="skip" />                        <!--7-->
+            </a>
+        </div>
+        <div class="sender-info">
+            &reg; Someone, somewhere 2013<br />
+            <a href="#" class="white" data-inline-styles="skip">Unsubscribe</a> to this newsletter instantly    <!--8-->
+        </div>
+    </footer>
 </body>
 </html>
 ----
-<1> The title is used as subject of the email
-<2> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute)
-<3> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute). The CSS may
+<1> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute)
+<2> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute). The CSS may
 contain rules that override some rules of other CSS files (like in a browser)
-<4> The image is automatically embedded (the path is replaced by a 
+<3> The image is automatically embedded (the path is replaced by a 
 https://tools.ietf.org/html/rfc4021#section-2.2.2[Content-ID (or CID)] and the image is attached
 to the email using `ContentDisposition.INLINE` with the Content-ID header). The content type is
 automatically determined
-<5> The image is converted to a base64 string. The `src` attribute of the image is updated using
+<4> The image is converted to a base64 string. The `src` attribute of the image is updated using
 https://en.wikipedia.org/wiki/Data_URI_scheme[data URI scheme]. The content type is automatically
 determined
-<6> Same as <4>
-<7> Same as <4>
-<8> The image is not inlined by Ogham. This can be useful to embed it manually.
+<5> Same as <3>
+<6> Same as <3>
+<7> The image is not inlined by Ogham. This can be useful to embed it manually.
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
 
@@ -785,17 +789,20 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS
 
 .layout.css
-[source, html]
+[source, css]
 ----
 body {
-    margin: 0;
-    padding: 0;
-}
-
-.main-content {
     margin: 10px auto 30px auto;
     width: 600px;
-    border: 1px solid #ccc;
+}
+
+header {
+    padding: 40px 30px;
+}
+
+header img {
+    display: block;
+    margin: auto;
 }
 
 
@@ -813,20 +820,50 @@ body {
     margin-right: 36px;
 }
 
-.footer {
+footer {
     padding: 30px;
+}
+
+footer .sender-info,
+footer .social {
+    text-align: center;
+}
+footer .social a {
+    display: inline-block;
+}
+footer .sender-info {
+    margin-top: 20px;
+}
+----
+
+.theme.css
+[source, css]
+----
+body {
+    border: 1px solid #ccc;
+}
+
+header {
+    background: #70bbd9;
+}
+
+.content {
+    text-align: justify;
+}
+
+footer {
     color:#ffffff;
     font-family:Arial, sans-serif;
     font-size:14px;
     background: #ee4c50;
 }
-----
 
-.custom.css
-[source, html]
-----
-.white {
+footer .social a {
     color:#ffffff;
+}
+
+.white {
+    color: #fff;
 }
 ----
 
@@ -838,7 +875,7 @@ image:src/docs/resources/images/icons/html.png[width=37,height=30] Sent HTML
 
 [source, html]
 ----
-TODO: code of the generated HTML
+TODO: code of the generated HTML with all transformations
 ----
 
 
@@ -908,6 +945,7 @@ Here is the list of supported transformations:
 
 * [x] `<img>` tags that use local images are embedded (using `cid` reference)
 * [x] `<img>` tags that use local images are embedded (using base64 data URI)
+* [x] Inline CSS rules using `style` attribute
 * [ ] Use XHTML instead of HTML
 * [ ] Tables used for layout explicitly set default values
 * [ ] Remove HTML comments (except conditional comments used to target Outlook)
@@ -920,6 +958,1636 @@ Here is the list of supported transformations:
 ////
 TODO: other rules
 ////
+
+===== Inline images
+
+
+
+Images can be referenced externally but there are many constraints to do so. 
+You have to provide the URL of the image. However, while you are coding or testing
+the feature that sends an email with images (for example testing account creation
+with confirmation email), the URL must point to an existing and accessible image.
+And even then, the email client might block those images for safety purpose (prevent
+tracking). Not mentioning offline issues.
+
+That's why Ogham provides automatic inlining on local images. Therefore, no
+need to use a server to serve the images and no need to configure the URLs
+to point to those images. The images are:
+
+* Either attached with the email and referenced in the HTML using a 
+https://tools.ietf.org/html/rfc2392[Content-ID].
+* Or images are converted to a base64 string and embedded in the HTML using the
+https://tools.ietf.org/html/rfc2397[data URL scheme]
+* Or not inlined at all (if the image points to an external URL or it is explicitly
+skipped)
+
+
+.More explanation
+[TIP]
+====
+https://blog.mailtrap.io/embedding-images-in-html-email-have-the-rules-changed/[Additional information about image inlining].
+====
+
+.Sender implementation independent
+[TIP]
+====
+Inlining of images not only work when sending an email using Java Mail but also 
+works for any other email sender (like SendGrid).
+====
+
+
+
+====== Attach and reference images
+
+By default, if the HTML contains `<img>` tag with `src` attribute that points
+to a local image, the image is automatically attached and referenced using a
+https://tools.ietf.org/html/rfc2392[Content-ID] that is automatically generated.
+
+.Default choice explanation
+[NOTE]
+====
+The attach strategy has been chosen by default as it is handled by more email
+clients than base64 strategy.
+====
+
+.Customize CID generation
+[TIP]
+====
+Default Content-ID generation simply uses a incremental number. It is possible to
+use <<custom-cid-generation, custom Content-ID generation>>.
+====
+
+As Ogham is fully configurable, the default strategy can be changed. Therefore
+if you want to use this strategy for a particular image, you need to explicitly 
+indicate it. You can do so by setting the `data-inline-image` attribute with
+the `"attach"` value directly on the `<img>` tag.
+
+.Change default strategy
+[TIP]
+====
+It is possible to configure Ogham to use a 
+<<custom-image-inlining-strategy, different inlining strategy by default>>.
+====
+
+
+[role="tab-container  no-max-height"]
+_____
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlWithImagesAndCssTemplateSample {
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template
+        service.send(new Email()
+                        .body().template("classpath:/template/withImagesAndCss/resources",        // <1>
+                                                            new SimpleBean("foo", 42))            // <2>
+                        .to("ogham-test@yopmail.com"));
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="collapse-lines:1-10,14-16,19-24,28-36,41-49 highlight-lines:12,27,39"]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="css/layout.css" rel="stylesheet" />                                                            <!--1-->
+<link href="css/theme.css" rel="stylesheet" />                                                            <!--2-->
+</head>
+<body>
+    <header>
+        <img src="images/h1.gif" alt="Creating Email Magic" />                                            <!--3-->
+    </header>
+    <div class="content">
+        <span th:text="${name}">name</span>
+        <p th:text="${value}">value</p>
+        <div class="left">
+            <img src="images/left.gif" data-inline-image="base64" />                                    <!--4-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right">
+            <img src="images/right.gif" data-inline-image="attach" />                                    <!--5-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer>
+        <div class="social">
+            <a href="http://www.twitter.com/">
+                <img src="images/tw.gif" alt="Twitter" />                                                <!--6-->
+            </a>
+            <a href="http://www.facebook.com/">
+                <img src="images/fb.gif" alt="Facebook" data-inline-image="skip" />                        <!--7-->
+            </a>
+        </div>
+        <div class="sender-info">
+            &reg; Someone, somewhere 2013<br />
+            <a href="#" class="white" data-inline-styles="skip">Unsubscribe</a> to this newsletter instantly    <!--8-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> _
+<2> _
+<3> As nothing is specified and `src` points to a local image, the image will
+be inlined (using `attach` strategy)
+<4> _
+<5> Same as <3> but strategy is explicitly indicated
+<6> Same as <3>
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:1-8,12-73,76-83,88-96 highlight-lines:10,75,86"]
+----
+<!doctype html>
+<html>
+<head>                                                                                                <!--1-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 10px auto 30px auto; width: 600px; border: 1px solid #ccc;">                    <!--2-->
+    <header style="padding: 40px 30px; background: #70bbd9;">
+        <img src="cid:0" alt="Creating Email Magic" style="display: block; margin: auto;">            <!--3-->
+    </header>
+    <div class="content" style="padding: 40px 30px; text-align: justify;">                            <!--4-->
+        <span>foo</span>
+        <p>42</p>
+        <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
+            <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
+vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
+RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
+ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
+pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
+WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
+eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
+3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
+E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
+iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
+dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
+kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
+9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
+Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
+ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
+zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
+YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
+DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
+YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
+X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
++enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
+2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
+Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
+sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
+xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
+K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
+5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
+U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
+gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
+1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
+zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
+hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
+H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
+lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
+3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
+lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
+WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
+MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
+J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
+00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
+sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
+Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
+4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
+v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
+CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
+LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
+S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
+T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
+UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
+/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
+ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
+K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right" style="width: 250px; display: inline-block;">
+            <img src="cid:1">                                                                        <!--6-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer style="padding: 30px; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; background: #ee4c50;">
+        <div class="social" style="text-align: center;">
+            <a href="http://www.twitter.com/" style="display: inline-block; color: #ffffff;">        <!--7-->
+                <img src="cid:2" alt="Twitter">                                                        <!--8-->
+            </a> 
+            <a href="http://www.facebook.com/" style="display: inline-block; color: #ffffff;">        <!--9-->
+                <img src="images/fb.gif" alt="Facebook">                                            <!--10-->
+            </a>
+        </div>
+        <div class="sender-info" style="text-align: center; margin-top: 20px;">
+            &reg; Someone, somewhere 2013 <br>
+            <a href="#" class="white">Unsubscribe</a>to this newsletter instantly                    <!--11-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> _
+<2> _
+<3> The image is attached and the generated Content-ID is `0`.
+<4> _
+<5> _
+<6> The image is attached and the generated Content-ID is `1`.
+<7> _
+<8> The image is attached and the generated Content-ID is `2`.
+
+[role=tab-container-end]
+_____
+
+
+====== Embed using data URL scheme
+
+As stated before, by default images are attached. So if you want to embed
+an image directly as a base64 string, you need to set the `data-inline-image` 
+attribute with the `"base64"` value directly on the `<img>` tag.
+
+.Mimetype detection
+[NOTE]
+====
+The data URL scheme needs the mediatype information. Ogham automatically provides
+this information for you thanks to <<mimetype-detection, automatic mimetype detection>>.
+====
+
+
+
+[role="tab-container  no-max-height"]
+_____
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlWithImagesAndCssTemplateSample {
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template
+        service.send(new Email()
+                        .body().template("classpath:/template/withImagesAndCss/resources",        // <1>
+                                                            new SimpleBean("foo", 42))            // <2>
+                        .to("ogham-test@yopmail.com"));
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="collapse-lines:1-16,19-24,26-49 highlight-lines:18"]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="css/layout.css" rel="stylesheet" />                                                            <!--1-->
+<link href="css/theme.css" rel="stylesheet" />                                                            <!--2-->
+</head>
+<body>
+    <header>
+        <img src="images/h1.gif" alt="Creating Email Magic" />                                            <!--3-->
+    </header>
+    <div class="content">
+        <span th:text="${name}">name</span>
+        <p th:text="${value}">value</p>
+        <div class="left">
+            <img src="images/left.gif" data-inline-image="base64" />                                    <!--4-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right">
+            <img src="images/right.gif" data-inline-image="attach" />                                    <!--5-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer>
+        <div class="social">
+            <a href="http://www.twitter.com/">
+                <img src="images/tw.gif" alt="Twitter" />                                                <!--6-->
+            </a>
+            <a href="http://www.facebook.com/">
+                <img src="images/fb.gif" alt="Facebook" data-inline-image="skip" />                        <!--7-->
+            </a>
+        </div>
+        <div class="sender-info">
+            &reg; Someone, somewhere 2013<br />
+            <a href="#" class="white" data-inline-styles="skip">Unsubscribe</a> to this newsletter instantly    <!--8-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> _
+<2> _
+<3> _
+<4> Indicate to Ogham to inline using `base64` strategy
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:1-14,68-72,74-96 highlight-lines:16-67"]
+----
+<!doctype html>
+<html>
+<head>                                                                                                <!--1-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 10px auto 30px auto; width: 600px; border: 1px solid #ccc;">                    <!--2-->
+    <header style="padding: 40px 30px; background: #70bbd9;">
+        <img src="cid:0" alt="Creating Email Magic" style="display: block; margin: auto;">            <!--3-->
+    </header>
+    <div class="content" style="padding: 40px 30px; text-align: justify;">                            <!--4-->
+        <span>foo</span>
+        <p>42</p>
+        <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
+            <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
+vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
+RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
+ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
+pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
+WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
+eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
+3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
+E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
+iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
+dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
+kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
+9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
+Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
+ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
+zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
+YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
+DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
+YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
+X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
++enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
+2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
+Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
+sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
+xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
+K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
+5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
+U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
+gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
+1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
+zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
+hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
+H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
+lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
+3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
+lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
+WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
+MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
+J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
+00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
+sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
+Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
+4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
+v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
+CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
+LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
+S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
+T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
+UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
+/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
+ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
+K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right" style="width: 250px; display: inline-block;">
+            <img src="cid:1">                                                                        <!--6-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer style="padding: 30px; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; background: #ee4c50;">
+        <div class="social" style="text-align: center;">
+            <a href="http://www.twitter.com/" style="display: inline-block; color: #ffffff;">        <!--7-->
+                <img src="cid:2" alt="Twitter">                                                        <!--8-->
+            </a> 
+            <a href="http://www.facebook.com/" style="display: inline-block; color: #ffffff;">        <!--9-->
+                <img src="images/fb.gif" alt="Facebook">                                            <!--10-->
+            </a>
+        </div>
+        <div class="sender-info" style="text-align: center; margin-top: 20px;">
+            &reg; Someone, somewhere 2013 <br>
+            <a href="#" class="white">Unsubscribe</a>to this newsletter instantly                    <!--11-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> _
+<2> _
+<3> _
+<4> _
+<5> The data URL starts with `data:` followed by the mimetype (`image/gif`) and 
+the image converted to a base64 string.
+
+[role=tab-container-end]
+_____
+
+
+====== Skip some images
+
+In the case you need to inline an image manually, you can tell Ogham to skip
+the image by placing the `data-inline-image` attribute with the `"skip"` value
+on the `<img>` tag.
+
+[role="tab-container  no-max-height"]
+_____
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlWithImagesAndCssTemplateSample {
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template
+        service.send(new Email()
+                        .body().template("classpath:/template/withImagesAndCss/resources",        // <1>
+                                                            new SimpleBean("foo", 42))            // <2>
+                        .to("ogham-test@yopmail.com"));
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="collapse-lines:1-40,44-49 highlight-lines:42"]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="css/layout.css" rel="stylesheet" />                                                            <!--1-->
+<link href="css/theme.css" rel="stylesheet" />                                                            <!--2-->
+</head>
+<body>
+    <header>
+        <img src="images/h1.gif" alt="Creating Email Magic" />                                            <!--3-->
+    </header>
+    <div class="content">
+        <span th:text="${name}">name</span>
+        <p th:text="${value}">value</p>
+        <div class="left">
+            <img src="images/left.gif" data-inline-image="base64" />                                    <!--4-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right">
+            <img src="images/right.gif" data-inline-image="attach" />                                    <!--5-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer>
+        <div class="social">
+            <a href="http://www.twitter.com/">
+                <img src="images/tw.gif" alt="Twitter" />                                                <!--6-->
+            </a>
+            <a href="http://www.facebook.com/">
+                <img src="images/fb.gif" alt="Facebook" data-inline-image="skip" />                        <!--7-->
+            </a>
+        </div>
+        <div class="sender-info">
+            &reg; Someone, somewhere 2013<br />
+            <a href="#" class="white" data-inline-styles="skip">Unsubscribe</a> to this newsletter instantly    <!--8-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> _
+<2> _
+<3> _
+<4> _
+<5> _
+<6> _
+<7> Indicate to Ogham to skip inlining using `skip` value
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:1-87,91-96 highlight-lines:89"]
+----
+<!doctype html>
+<html>
+<head>                                                                                                <!--1-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 10px auto 30px auto; width: 600px; border: 1px solid #ccc;">                    <!--2-->
+    <header style="padding: 40px 30px; background: #70bbd9;">
+        <img src="cid:0" alt="Creating Email Magic" style="display: block; margin: auto;">            <!--3-->
+    </header>
+    <div class="content" style="padding: 40px 30px; text-align: justify;">                            <!--4-->
+        <span>foo</span>
+        <p>42</p>
+        <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
+            <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
+vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
+RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
+ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
+pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
+WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
+eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
+3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
+E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
+iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
+dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
+kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
+9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
+Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
+ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
+zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
+YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
+DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
+YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
+X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
++enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
+2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
+Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
+sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
+xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
+K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
+5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
+U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
+gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
+1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
+zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
+hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
+H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
+lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
+3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
+lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
+WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
+MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
+J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
+00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
+sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
+Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
+4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
+v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
+CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
+LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
+S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
+T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
+UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
+/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
+ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
+K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right" style="width: 250px; display: inline-block;">
+            <img src="cid:1">                                                                        <!--6-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer style="padding: 30px; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; background: #ee4c50;">
+        <div class="social" style="text-align: center;">
+            <a href="http://www.twitter.com/" style="display: inline-block; color: #ffffff;">        <!--7-->
+                <img src="cid:2" alt="Twitter">                                                        <!--8-->
+            </a> 
+            <a href="http://www.facebook.com/" style="display: inline-block; color: #ffffff;">        <!--9-->
+                <img src="images/fb.gif" alt="Facebook">                                            <!--10-->
+            </a>
+        </div>
+        <div class="sender-info" style="text-align: center; margin-top: 20px;">
+            &reg; Someone, somewhere 2013 <br>
+            <a href="#" class="white">Unsubscribe</a>to this newsletter instantly                    <!--11-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> _
+<2> _
+<3> _
+<4> _
+<5> _
+<6> _
+<7> _
+<8> _
+<9> _
+<10> The image is not inlined at all (the original `src` attribute is unchanged)
+
+[role=tab-container-end]
+_____
+
+
+
+.Future thoughts
+[NOTE]
+====
+In future version of Ogham, a new strategy may be added in order to automatically
+serve local images and fill the HTML with the associated URL.
+
+The images may be automatically served by:
+
+* first uploading them somewhere before sending the email
+* automatically registering endpoints into your web application (adding Spring
+controller for example) that uses Ogham
+* starting a local server (by running a command or a docker image for example)
+* using tools like ngrok to expose local files/http server
+* ...
+====
+
+
+===== Inline CSS
+
+
+Email clients doesn't handle external CSS files at all. Styles can be included in 
+a `style` tag but some email clients like Gmail doesn't support it. So all rules 
+provided in the CSS *MUST* be inlined directly in the HTML. Writing code like this 
+is really bad practice:
+
+* code is difficult to read
+* it is error prone as updating for example the base color need to ensure that
+styles are updated everywhere
+* code can't be mutualized between several HTML files
+* ...
+
+HTML files are then hard to maintain.
+
+That's why Ogham will automatically inline CSS rules directly on the HTML.
+
+
+.Sender implementation independent
+[TIP]
+====
+CSS inlining not only work when sending an email using Java Mail but also 
+works for any other email sender (like SendGrid).
+====
+
+
+
+====== Inline styles on HTML nodes
+
+By default, the CSS rules contained in CSS files referenced in the HTML are inlined. 
+Each node has their `style` attribute updated to add the CSS rules that match that node. 
+
+.Default choice explanation
+[NOTE]
+====
+Most of email clients only support theming using `style` attribute.
+Even modern email clients doesn't support other strategies such as using 
+`<style>` tags.
+====
+
+.Inlining of `<style>` nodes
+[TIP]
+====
+As `<style>` may not be supported, the styles contained in `<style>` nodes 
+in the HTML are also inlined using `style` attribute.
+====
+
+////
+TODO: explain how to change default CSS inlining strategy
+As Ogham is fully configurable, the default strategy can be changed. Therefore
+if you want to use this strategy for a particular image, you need to explicitly 
+indicate it. You can do so by setting the `data-inline-image` attribute with
+the `"attach"` value directly on the `<img>` tag.
+
+.Change default strategy
+[TIP]
+====
+It is possible to configure Ogham to use a 
+<<custom-image-inlining-strategy, different inlining strategy by default>>.
+====
+////
+
+
+[role="tab-container  no-max-height"]
+_____
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlWithImagesAndCssTemplateSample {
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template
+        service.send(new Email()
+                        .body().template("classpath:/template/withImagesAndCss/resources",        // <1>
+                                                            new SimpleBean("foo", 42))            // <2>
+                        .to("ogham-test@yopmail.com"));
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="highlight-lines:7-8"]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="css/layout.css" rel="stylesheet" />                                                            <!--1-->
+<link href="css/theme.css" rel="stylesheet" />                                                            <!--2-->
+</head>
+<body>
+    <header>
+        <img src="images/h1.gif" alt="Creating Email Magic" />                                            <!--3-->
+    </header>
+    <div class="content">
+        <span th:text="${name}">name</span>
+        <p th:text="${value}">value</p>
+        <div class="left">
+            <img src="images/left.gif" data-inline-image="base64" />                                    <!--4-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right">
+            <img src="images/right.gif" data-inline-image="attach" />                                    <!--5-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer>
+        <div class="social">
+            <a href="http://www.twitter.com/">
+                <img src="images/tw.gif" alt="Twitter" />                                                <!--6-->
+            </a>
+            <a href="http://www.facebook.com/">
+                <img src="images/fb.gif" alt="Facebook" data-inline-image="skip" />                        <!--7-->
+            </a>
+        </div>
+        <div class="sender-info">
+            &reg; Someone, somewhere 2013<br />
+            <a href="#" class="white" data-inline-styles="skip">Unsubscribe</a> to this newsletter instantly    <!--8-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> Reference a CSS file that contains general layout rules
+<2> Reference a CSS file that contains theming (like colors) rules
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS files
+
+.layout.css
+[source, css]
+----
+body {
+    margin: 10px auto 30px auto;
+    width: 600px;
+}
+
+header {
+    padding: 40px 30px;
+}
+
+header img {
+    display: block;
+    margin: auto;
+}
+
+
+.content {
+    padding: 40px 30px;
+}
+
+.left,
+.right {
+    width: 250px;
+    display: inline-block;
+}
+
+.left {
+    margin-right: 36px;
+}
+
+footer {
+    padding: 30px;
+}
+
+footer .sender-info,
+footer .social {
+    text-align: center;
+}
+footer .social a {
+    display: inline-block;
+}
+footer .sender-info {
+    margin-top: 20px;
+}
+----
+
+.theme.css
+[source, css]
+----
+body {
+    border: 1px solid #ccc;
+}
+
+header {
+    background: #70bbd9;
+}
+
+.content {
+    text-align: justify;
+}
+
+footer {
+    color:#ffffff;
+    font-family:Arial, sans-serif;
+    font-size:14px;
+    background: #ee4c50;
+}
+
+footer .social a {
+    color:#ffffff;
+}
+
+.white {
+    color: #fff;
+}
+----
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:16-72 highlight-lines:8,9,10,12,15,74,83,84,85,88,92"]
+----
+<!doctype html>
+<html>
+<head>                                                                                                <!--1-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 10px auto 30px auto; width: 600px; border: 1px solid #ccc;">                    <!--2-->
+    <header style="padding: 40px 30px; background: #70bbd9;">
+        <img src="cid:0" alt="Creating Email Magic" style="display: block; margin: auto;">            <!--3-->
+    </header>
+    <div class="content" style="padding: 40px 30px; text-align: justify;">                            <!--4-->
+        <span>foo</span>
+        <p>42</p>
+        <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
+            <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
+vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
+RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
+ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
+pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
+WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
+eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
+3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
+E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
+iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
+dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
+kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
+9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
+Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
+ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
+zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
+YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
+DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
+YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
+X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
++enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
+2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
+Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
+sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
+xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
+K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
+5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
+U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
+gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
+1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
+zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
+hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
+H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
+lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
+3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
+lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
+WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
+MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
+J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
+00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
+sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
+Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
+4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
+v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
+CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
+LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
+S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
+T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
+UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
+/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
+ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
+K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right" style="width: 250px; display: inline-block;">
+            <img src="cid:1">                                                                        <!--6-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer style="padding: 30px; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; background: #ee4c50;">
+        <div class="social" style="text-align: center;">
+            <a href="http://www.twitter.com/" style="display: inline-block; color: #ffffff;">        <!--7-->
+                <img src="cid:2" alt="Twitter">                                                        <!--8-->
+            </a> 
+            <a href="http://www.facebook.com/" style="display: inline-block; color: #ffffff;">        <!--9-->
+                <img src="images/fb.gif" alt="Facebook">                                            <!--10-->
+            </a>
+        </div>
+        <div class="sender-info" style="text-align: center; margin-top: 20px;">
+            &reg; Someone, somewhere 2013 <br>
+            <a href="#" class="white">Unsubscribe</a>to this newsletter instantly                    <!--11-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> The `<style>` tags are removed from the head
+<2> Apply `body` rules using `style` attribute. The rules
+from both files are merged.
+<3> _
+<4> Apply `.content` rules using `style` attribute. The rules
+from both files are merged.
+<5> _
+<6> _
+<7> Apply `footer .social a` rules using `style` attribute. The rules
+from both files are merged.
+<8> _
+<9> As `footer .social a` also matches this node, the same rules as <7> are applied.
+
+[role=tab-container-end]
+_____
+
+
+====== Skip some styles
+
+If you don't want to apply styles on a particular node, you can set the
+attribute `data-inline-styles` to `"skip"` value.
+
+.Skip some rules
+[TIP]
+====
+If you set `data-inline-styles` attribute to `"skip"` value on `<link>` or `<style>`
+nodes, the whole contained rules are not applied at all.
+====
+
+[role="tab-container  no-max-height"]
+_____
+
+[role=tab]
+image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlWithImagesAndCssTemplateSample {
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template
+        service.send(new Email()
+                        .body().template("classpath:/template/withImagesAndCss/resources",        // <1>
+                                                            new SimpleBean("foo", 42))            // <2>
+                        .to("ogham-test@yopmail.com"));
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="highlight-lines:47"]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="css/layout.css" rel="stylesheet" />                                                            <!--1-->
+<link href="css/theme.css" rel="stylesheet" />                                                            <!--2-->
+</head>
+<body>
+    <header>
+        <img src="images/h1.gif" alt="Creating Email Magic" />                                            <!--3-->
+    </header>
+    <div class="content">
+        <span th:text="${name}">name</span>
+        <p th:text="${value}">value</p>
+        <div class="left">
+            <img src="images/left.gif" data-inline-image="base64" />                                    <!--4-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right">
+            <img src="images/right.gif" data-inline-image="attach" />                                    <!--5-->
+            <p class="text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+                tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+                porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+                posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer>
+        <div class="social">
+            <a href="http://www.twitter.com/">
+                <img src="images/tw.gif" alt="Twitter" />                                                <!--6-->
+            </a>
+            <a href="http://www.facebook.com/">
+                <img src="images/fb.gif" alt="Facebook" data-inline-image="skip" />                        <!--7-->
+            </a>
+        </div>
+        <div class="sender-info">
+            &reg; Someone, somewhere 2013<br />
+            <a href="#" class="white" data-inline-styles="skip">Unsubscribe</a> to this newsletter instantly    <!--8-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> Reference a CSS file that contains general layout rules
+<2> Reference a CSS file that contains theming (like colors) rules
+<3> _
+<4> _
+<5> _
+<6> _
+<7> _
+<8> Indicate Ogham to not apply styles on this node
+
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS files
+
+.layout.css
+[source, css]
+----
+body {
+    margin: 10px auto 30px auto;
+    width: 600px;
+}
+
+header {
+    padding: 40px 30px;
+}
+
+header img {
+    display: block;
+    margin: auto;
+}
+
+
+.content {
+    padding: 40px 30px;
+}
+
+.left,
+.right {
+    width: 250px;
+    display: inline-block;
+}
+
+.left {
+    margin-right: 36px;
+}
+
+footer {
+    padding: 30px;
+}
+
+footer .sender-info,
+footer .social {
+    text-align: center;
+}
+footer .social a {
+    display: inline-block;
+}
+footer .sender-info {
+    margin-top: 20px;
+}
+----
+
+.theme.css
+[source, css]
+----
+body {
+    border: 1px solid #ccc;
+}
+
+header {
+    background: #70bbd9;
+}
+
+.content {
+    text-align: justify;
+}
+
+footer {
+    color:#ffffff;
+    font-family:Arial, sans-serif;
+    font-size:14px;
+    background: #ee4c50;
+}
+
+footer .social a {
+    color:#ffffff;
+}
+
+.white {
+    color: #fff;
+}
+----
+
+
+
+[role=tab]
+image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:9-82,84-91 highlight-lines:94"]
+----
+<!doctype html>
+<html>
+<head>                                                                                                <!--1-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 10px auto 30px auto; width: 600px; border: 1px solid #ccc;">                    <!--2-->
+    <header style="padding: 40px 30px; background: #70bbd9;">
+        <img src="cid:0" alt="Creating Email Magic" style="display: block; margin: auto;">            <!--3-->
+    </header>
+    <div class="content" style="padding: 40px 30px; text-align: justify;">                            <!--4-->
+        <span>foo</span>
+        <p>42</p>
+        <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
+            <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
+vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
+RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
+ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
+pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
+WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
+eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
+3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
+E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
+iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
+dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
+kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
+9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
+Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
+ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
+zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
+YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
+DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
+YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
+X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
++enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
+2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
+Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
+sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
+xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
+K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
+5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
+U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
+gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
+1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
+zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
+hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
+H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
+lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
+3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
+lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
+WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
+MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
+J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
+00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
+sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
+Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
+4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
+v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
+CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
+LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
+S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
+T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
+UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
+/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
+ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
+K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+        <div class="right" style="width: 250px; display: inline-block;">
+            <img src="cid:1">                                                                        <!--6-->
+            <p class="text">Lorem ipsum dolor sit amet, consectetur
+                adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
+                volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
+                ultricies ipsum, in posuere mauris neque at erat.
+            </p>
+        </div>
+    </div>
+    <footer style="padding: 30px; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; background: #ee4c50;">
+        <div class="social" style="text-align: center;">
+            <a href="http://www.twitter.com/" style="display: inline-block; color: #ffffff;">        <!--7-->
+                <img src="cid:2" alt="Twitter">                                                        <!--8-->
+            </a> 
+            <a href="http://www.facebook.com/" style="display: inline-block; color: #ffffff;">        <!--9-->
+                <img src="images/fb.gif" alt="Facebook">                                            <!--10-->
+            </a>
+        </div>
+        <div class="sender-info" style="text-align: center; margin-top: 20px;">
+            &reg; Someone, somewhere 2013 <br>
+            <a href="#" class="white">Unsubscribe</a>to this newsletter instantly                    <!--11-->
+        </div>
+    </footer>
+</body>
+</html>
+----
+<1> _
+<2> _
+<3> _
+<4> _
+<5> _
+<6> _
+<7> _
+<8> _
+<9> _
+<9> _
+<11> `.white` rule defined in `theming.css` matches this node however, you can
+notice that no `style` attribute has been added
+
+[role=tab-container-end]
+_____
+
+
+
+
+.Future thoughts
+[NOTE]
+====
+In future version of Ogham, a new strategy may be added in order to include
+styles using `<style>` tags.
+====
+
+
 
 [[text-alternative]]
 ==== A working preview of the HTML body (text alternative)
@@ -990,7 +2658,7 @@ the email client doesn't support HTML or as a preview of the email.
 
 [NOTE]
 ====
-The call order between `text()` and `html()` doesn't matter.
+The call order between `text()` and `html()` doesn't matter (unlike using `.content(new MultiContent(...))`).
 ====
 
 [NOTE]

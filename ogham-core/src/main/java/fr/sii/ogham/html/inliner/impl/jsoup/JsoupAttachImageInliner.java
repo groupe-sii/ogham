@@ -1,8 +1,10 @@
 package fr.sii.ogham.html.inliner.impl.jsoup;
 
+import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
 import static fr.sii.ogham.html.inliner.ImageInlinerConstants.INLINED_ATTR;
 import static fr.sii.ogham.html.inliner.ImageInlinerConstants.InlineModes.ATTACH;
 import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.isInlineModeAllowed;
+import static java.text.MessageFormat.format;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -60,11 +62,11 @@ public class JsoupAttachImageInliner implements ImageInliner {
 			if (!imgs.isEmpty()) {
 				String contentId = idGenerator.generate(image.getName());
 				// generate attachment
-				Attachment attachment = new Attachment(new ByteResource(image.getName(), image.getContent()), null, ContentDisposition.INLINE, MessageFormat.format(CONTENT_ID, contentId));
+				Attachment attachment = new Attachment(new ByteResource(image.getName(), image.getContent()), null, INLINE, format(CONTENT_ID, contentId));
 				// update the HTML to use the generated content id instead of
 				// the path or URL
 				for (Element img : imgs) {
-					img.attr(SRC_ATTR, MessageFormat.format(SRC_VALUE, contentId));
+					img.attr(SRC_ATTR, format(SRC_VALUE, contentId));
 					img.attr(INLINED_ATTR, true);
 				}
 				attachments.add(attachment);
@@ -74,7 +76,7 @@ public class JsoupAttachImageInliner implements ImageInliner {
 	}
 
 	private static Elements getImagesToAttach(Document doc, ImageResource image) {
-		Elements imgs = doc.select(MessageFormat.format(IMG_SELECTOR, image.getSrcUrl()));
+		Elements imgs = doc.select(format(IMG_SELECTOR, image.getSrcUrl()));
 		Elements found = new Elements();
 		for (Element img : imgs) {
 			// skip images that have skip-attach attribute

@@ -1,48 +1,49 @@
 package fr.sii.ogham.html.inliner;
 
 /**
- * Common constants for image inlining.
+ * Common constants for CSS inlining.
  * 
  * 
  * @author Aurélien Baudet
  *
  */
-public final class ImageInlinerConstants {
+public final class CssInlinerConstants {
 	/**
 	 * <p>
 	 * The attribute name to indicate which strategy for inlining to apply if
 	 * the default one is not appropriated.
 	 * </p>
 	 * 
-	 * For example:
-	 * 
-	 * <pre>
-	 * {@code
-	 * 		<img src="..." data-inline-image="base64" />
-	 * }
-	 * </pre>
-	 * 
-	 * It forces to use <code>base64</code> inlining for this image.
-	 * 
+	 * <p>
+	 * <strong>NOTE:</strong> Currently there only one available strategy but
+	 * later, there could be several ways to inline styles.
 	 * 
 	 * <p>
-	 * You can also skip inlining by using "skip" value:
+	 * For example:
+	 * 
+	 * CSS rules:
 	 * 
 	 * <pre>
 	 * {@code
-	 * 		<img src="..." data-inline-image="skip" />
+	 * .white {
+	 *   color: #fff;
+	 * }
 	 * }
 	 * </pre>
+	 * 
+	 * <p>
+	 * You can skip inlining by using "skip" value:
+	 * 
+	 * <pre>
+	 * {@code
+	 * 		<span class="white" data-inline-styles="skip"></span>
+	 * }
+	 * </pre>
+	 * 
 	 * 
 	 * @see InlineModes
 	 */
-	public static final String INLINE_MODE_ATTR = "data-inline-image";
-
-	/**
-	 * Attribute to mark an image as already inlined in order to not process it
-	 * again
-	 */
-	public static final String INLINED_ATTR = "data-image-inlined";
+	public static final String INLINE_MODE_ATTR = "data-inline-styles";
 
 	/**
 	 * Interface for defining an inline mode
@@ -76,16 +77,6 @@ public final class ImageInlinerConstants {
 	 */
 	public enum InlineModes implements InlineMode {
 		/**
-		 * Attach the image to the email and references it in the HTML using a
-		 * Content-ID (CID).
-		 */
-		ATTACH("attach"),
-		/**
-		 * Encode the image content to a base64 string that is directly used by
-		 * image {@code src} attribute
-		 */
-		BASE64("base64"),
-		/**
 		 * Do not inline the image
 		 */
 		SKIP("skip");
@@ -107,7 +98,7 @@ public final class ImageInlinerConstants {
 		}
 	}
 
-	private ImageInlinerConstants() {
+	private CssInlinerConstants() {
 		super();
 	}
 }

@@ -1,26 +1,33 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+When you develop a Web application, you can use HTML for the content and CSS for 
+layout and theming. HTML and CSS can use images to make a beautiful Web page. 
+Each concern is separated in a different file. This is a good practice.
 
-
-When you develop a Web application, you can use HTML for the content and CSS for layout and theming. HTML and CSS can use images to make a beautiful Web page. Each concern is separated in a different file. This is a good practice.
-
-However, writing an HTML email is totally different. Indeed, email clients are not as evolved as Web browsers. Even worse, some clients disable some features on purpose (like Inbox that prevents using `style` tag). To make an email work on several clients, you should follow these rules:
+However, writing an HTML email is totally different. Indeed, email clients are 
+not as evolved as Web browsers. Even worse, some clients disable some features 
+on purpose (like GMail that prevents using `style` tag). To make an email work 
+on several clients, you should follow these rules:
 
 * `<img>` tags that use local images must be embedded
 * Use XHTML instead of HTML
 * Remove HTML comments (except conditional comments used to target Outlook)
 * Add border=0 on all images to avoid an ugly border
-* Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of `padding: 4px`)
-* Padding is not supported on some clients so you must use margins instead (adding a parent just for the layout)
+* Do not write shortcut CSS values (`padding: 4px 4px 4px 4px;` instead of 
+`padding: 4px`)
+* Padding is not supported on some clients so you must use margins instead 
+(adding a parent just for the layout)
 * Background images on body should be moved on another node
 * CSS3 properties are not supported
 * Images must have `alt` attribute
 * ...
 
-There are many other rules but the developer should not be constrained and should be able to write its HTML and CSS like as usual in Web browsers. Ogham simplifies image and CSS integration and is able to partially rewrite the HTML.  
+There are many other rules but the developer should not be constrained and 
+should be able to write its HTML and CSS like as usual in Web browsers. Ogham 
+simplifies image and CSS integration and is able to partially rewrite the HTML.  
 
-[role="tab-container"]
+[role="tab-container  no-max-height"]
 Sample with template
 
 [role=tab]
@@ -41,24 +48,23 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 [role=tab]
 image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
 
-[source, html, role="highlight-lines:7-8,13,19,26,44,47"]
+[source, html, role="highlight-lines:7-8,12,18,27,39,42"]
 ----
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
 ----
-<1> The title is used as subject of the email
-<2> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute)
-<3> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute). The CSS may
+<1> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute)
+<2> The CSS is parsed by Ogham and applied directly on the HTML (using `style` attribute). The CSS may
 contain rules that override some rules of other CSS files (like in a browser)
-<4> The image is automatically embedded (the path is replaced by a 
+<3> The image is automatically embedded (the path is replaced by a 
 https://tools.ietf.org/html/rfc4021#section-2.2.2[Content-ID (or CID)] and the image is attached
 to the email using `ContentDisposition.INLINE` with the Content-ID header). The content type is
 automatically determined
-<5> The image is converted to a base64 string. The `src` attribute of the image is updated using
+<4> The image is converted to a base64 string. The `src` attribute of the image is updated using
 https://en.wikipedia.org/wiki/Data_URI_scheme[data URI scheme]. The content type is automatically
 determined
-<6> Same as <4>
-<7> Same as <4>
-<8> The image is not inlined by Ogham. This can be useful to embed it manually.
+<5> Same as <3>
+<6> Same as <3>
+<7> The image is not inlined by Ogham. This can be useful to embed it manually.
 
 {standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
 
@@ -67,15 +73,15 @@ determined
 image:{images-dir}/icons/css.png[width=37,height=30] CSS
 
 .layout.css
-[source, html]
+[source, css]
 ----
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/layout.css[]
 ----
 
-.custom.css
-[source, html]
+.theme.css
+[source, css]
 ----
-include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/custom.css[]
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css[]
 ----
 
 
@@ -86,7 +92,7 @@ image:{images-dir}/icons/html.png[width=37,height=30] Sent HTML
 
 [source, html]
 ----
-TODO: code of the generated HTML
+TODO: code of the generated HTML with all transformations
 ----
 
 
@@ -156,6 +162,7 @@ Here is the list of supported transformations:
 
 * [x] `<img>` tags that use local images are embedded (using `cid` reference)
 * [x] `<img>` tags that use local images are embedded (using base64 data URI)
+* [x] Inline CSS rules using `style` attribute
 * [ ] Use XHTML instead of HTML
 * [ ] Tables used for layout explicitly set default values
 * [ ] Remove HTML comments (except conditional comments used to target Outlook)

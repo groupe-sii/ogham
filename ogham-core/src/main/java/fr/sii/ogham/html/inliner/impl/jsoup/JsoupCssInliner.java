@@ -1,7 +1,11 @@
 package fr.sii.ogham.html.inliner.impl.jsoup;
 
+import static fr.sii.ogham.html.inliner.CssInlinerConstants.INLINE_MODE_ATTR;
+import static fr.sii.ogham.html.inliner.CssInlinerConstants.InlineModes.SKIP;
+
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -15,12 +19,13 @@ import fr.sii.ogham.html.inliner.ExternalCss;
 
 public class JsoupCssInliner implements CssInliner {
 	private static final String HREF_ATTR = "href";
-	private static final String TRUE_VALUE = "true";
-	private static final String SKIP_INLINE = "data-skip-inline";
 	private static final String TEMP_STYLE_ATTR = "data-cssstyle";
 	private static final String STYLE_ATTR = "style";
 	private static final String STYLE_TAG = "style";
 	private static final String CSS_LINKS_SELECTOR = "link[rel*=\"stylesheet\"], link[type=\"text/css\"], link[href$=\".css\"]";
+	private static final Pattern NEW_LINES = Pattern.compile("\n");
+	private static final Pattern COMMENTS = Pattern.compile("/\\*.*?\\*/");
+	private static final Pattern SPACES = Pattern.compile(" +");
 
 	@Override
 	public String inline(String htmlContent, List<ExternalCss> cssContents) {
@@ -43,7 +48,9 @@ public class JsoupCssInliner implements CssInliner {
 	 *            the html document
 	 */
 	private static void extractStyles(Document doc, String stylesheet) {
-		String trimmedStylesheet = stylesheet.replaceAll("\n", "").replaceAll("/\\*.*?\\*/", "").replaceAll(" +", " ");
+		String trimmedStylesheet = NEW_LINES.matcher(stylesheet).replaceAll("");
+		trimmedStylesheet = COMMENTS.matcher(trimmedStylesheet).replaceAll("");
+		trimmedStylesheet = SPACES.matcher(trimmedStylesheet).replaceAll(" ");
 		String styleRules = trimmedStylesheet.trim();
 		String delims = "{}";
 		StringTokenizer st = new StringTokenizer(styleRules, delims);
@@ -57,7 +64,7 @@ public class JsoupCssInliner implements CssInliner {
 			}
 		}
 	}
-
+	
 	/**
 	 * Replace link tags with style tags in order to keep the same inclusion
 	 * order
@@ -70,7 +77,7 @@ public class JsoupCssInliner implements CssInliner {
 	private static void internStyles(Document doc, List<ExternalCss> cssContents) {
 		Elements els = doc.select(CSS_LINKS_SELECTOR);
 		for (Element e : els) {
-			if (!TRUE_VALUE.equals(e.attr(SKIP_INLINE))) {
+			if (!isSkipped(e)) {
 				String path = e.attr(HREF_ATTR);
 				Element style = new Element(Tag.valueOf(STYLE_TAG), "");
 				style.appendChild(new DataNode(getCss(cssContents, path)));
@@ -99,7 +106,7 @@ public class JsoupCssInliner implements CssInliner {
 		Elements els = doc.select(STYLE_TAG);
 		StringBuilder styles = new StringBuilder();
 		for (Element e : els) {
-			if (!TRUE_VALUE.equals(e.attr(SKIP_INLINE))) {
+			if (!isSkipped(e)) {
 				styles.append(e.data());
 				e.remove();
 			}
@@ -118,9 +125,11 @@ public class JsoupCssInliner implements CssInliner {
 		Elements allStyledElements = doc.getElementsByAttribute(TEMP_STYLE_ATTR);
 
 		for (Element e : allStyledElements) {
-			String newStyle = e.attr(TEMP_STYLE_ATTR);
-			String oldStyle = e.attr(STYLE_ATTR);
-			e.attr(STYLE_ATTR, (newStyle + "; " + oldStyle).replaceAll(";+", ";").trim());
+			if (!isSkipped(e)) {
+				String newStyle = e.attr(TEMP_STYLE_ATTR);
+				String oldStyle = e.attr(STYLE_ATTR);
+				e.attr(STYLE_ATTR, (newStyle + "; " + oldStyle).replaceAll(";+", ";").trim());
+			}
 			e.removeAttr(TEMP_STYLE_ATTR);
 		}
 	}
@@ -132,4 +141,9 @@ public class JsoupCssInliner implements CssInliner {
 		}
 		return prop.trim() + " " + newProp.trim() + ";";
 	}
+	
+	private static boolean isSkipped(Element e) {
+		return SKIP.is(e.attr(INLINE_MODE_ATTR));
+	}
+
 }

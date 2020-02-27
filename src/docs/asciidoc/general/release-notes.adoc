@@ -10,10 +10,27 @@ The history of Ogham releases is documented below. For details of changes refer 
 
 === 3.0.0
 
+
+==== Updates
+
 Upgrade minimum Java version to Java 8 i.e. drop support of Java 7.
 
+==== API changes
 
-=== 2.0.0
+- Rename attribute for image inlining (`ogham-inline-mode` -> `data-inline-image`)
+- Change attributes for CSS inlining to align with image inlining behavior:
+  - remove `data-skip-inline` attribute
+  - use `data-inline-styles` attribute and use value to select strategy. Currently
+    only `skip` exists but in future versions other may come.
+
+==== Features
+
+
+==== Internal
+
+
+
+=== 2.0.0 / 2018-01-03
 
 ==== Features
 

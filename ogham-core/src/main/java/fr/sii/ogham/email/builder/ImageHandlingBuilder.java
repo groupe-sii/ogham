@@ -66,7 +66,7 @@ public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * <pre>
 	 * {@code
-	 *    <img src="classpath:/foo.png" ogham-inline-mode="attach" />
+	 *    <img src="classpath:/foo.png" data-inline-image="attach" />
 	 * }
 	 * </pre>
 	 * 
@@ -83,7 +83,7 @@ public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * <pre>
 	 * {@code
-	 *    <img src="classpath:/foo.png" ogham-inline-mode="base64" />
+	 *    <img src="classpath:/foo.png" data-inline-image="base64" />
 	 * }
 	 * </pre>
 	 * 
@@ -93,11 +93,11 @@ public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * <p>
 	 * If you don't want to inline a particular image, you can set the
-	 * "ogham-inline-mode" attribute to "skip":
+	 * "data-inline-image" attribute to "skip":
 	 * 
 	 * <pre>
 	 * {@code
-	 *    <img src="classpath:/foo.png" ogham-inline-mode="skip" />
+	 *    <img src="classpath:/foo.png" data-inline-image="skip" />
 	 * }
 	 * </pre>
 	 * 

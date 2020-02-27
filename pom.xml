@@ -119,6 +119,8 @@
 		<site.output.dir>${site.staging.dir}/${site.output.version-dir}</site.output.dir>
 		<doc-theme>cerulean</doc-theme>
 		<asciidoctor.skip>${maven.site.skip}</asciidoctor.skip>
+		<asciidoctor.resources.skip>${asciidoctor.skip}</asciidoctor.resources.skip>
+		<site.resources.skip>${maven.site.skip}</site.resources.skip>
 		<sass.skip>${maven.site.skip}</sass.skip>
 		<asciidoctor.resources.output-directory>target/generated-docs</asciidoctor.resources.output-directory>
 
@@ -807,6 +809,7 @@
 								<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 								<sourcedir-url>${github.code.url}</sourcedir-url>
 								<sourcedir>${basedir}</sourcedir>
+								<resourcesdir>${basedir}/src/docs/resources</resourcesdir>
 								<site-url>${site.url}</site-url>
 							</attributes>
 						</configuration>
@@ -827,7 +830,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<skip>${asciidoctor.skip}</skip>
+							<skip>${asciidoctor.resources.skip}</skip>
 							<resources>
 								<resource>
 									<directory>src/docs/resources</directory>
@@ -843,7 +846,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<skip>${asciidoctor.skip}</skip>
+							<skip>${site.resources.skip}</skip>
 							<resources>
 								<resource>
 									<directory>target/generated-docs</directory>
@@ -909,6 +912,7 @@
 							<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 							<sourcedir-url>${github.code.url}</sourcedir-url>
 							<sourcedir>${basedir}</sourcedir>
+							<resourcesdir>${basedir}/src/docs/resources</resourcesdir>
 							<site-url>${site.url}</site-url>
 						</attributes>
 					</asciidoc>

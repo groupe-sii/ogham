@@ -1,0 +1,26 @@
+body {
+	border: 1px solid #ccc;
+}
+
+header {
+	background: #70bbd9;
+}
+
+.content {
+	text-align: justify;
+}
+
+footer {
+	color:#ffffff;
+	font-family:Arial, sans-serif;
+	font-size:14px;
+	background: #ee4c50;
+}
+
+footer .social a {
+	color:#ffffff;
+}
+
+.white {
+	color: #fff;
+}

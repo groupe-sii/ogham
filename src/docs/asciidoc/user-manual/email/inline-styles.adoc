@@ -1,0 +1,236 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+Email clients doesn't handle external CSS files at all. Styles can be included in 
+a `style` tag but some email clients like Gmail doesn't support it. So all rules 
+provided in the CSS *MUST* be inlined directly in the HTML. Writing code like this 
+is really bad practice:
+
+* code is difficult to read
+* it is error prone as updating for example the base color need to ensure that
+styles are updated everywhere
+* code can't be mutualized between several HTML files
+* ...
+
+HTML files are then hard to maintain.
+
+That's why Ogham will automatically inline CSS rules directly on the HTML.
+
+
+.Sender implementation independent
+[TIP]
+====
+CSS inlining not only work when sending an email using Java Mail but also 
+works for any other email sender (like SendGrid).
+====
+
+
+
+== Inline styles on HTML nodes
+
+By default, the CSS rules contained in CSS files referenced in the HTML are inlined. 
+Each node has their `style` attribute updated to add the CSS rules that match that node. 
+
+.Default choice explanation
+[NOTE]
+====
+Most of email clients only support theming using `style` attribute.
+Even modern email clients doesn't support other strategies such as using 
+`<style>` tags.
+====
+
+.Inlining of `<style>` nodes
+[TIP]
+====
+As `<style>` may not be supported, the styles contained in `<style>` nodes 
+in the HTML are also inlined using `style` attribute.
+====
+
+////
+TODO: explain how to change default CSS inlining strategy
+As Ogham is fully configurable, the default strategy can be changed. Therefore
+if you want to use this strategy for a particular image, you need to explicitly 
+indicate it. You can do so by setting the `data-inline-image` attribute with
+the `"attach"` value directly on the `<img>` tag.
+
+.Change default strategy
+[TIP]
+====
+It is possible to configure Ogham to use a 
+<<custom-image-inlining-strategy, different inlining strategy by default>>.
+====
+////
+
+
+[role="tab-container  no-max-height"]
+Inline CSS using style attribute
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.java[]
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="highlight-lines:7-8"]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
+----
+<1> Reference a CSS file that contains general layout rules
+<2> Reference a CSS file that contains theming (like colors) rules
+
+{standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{images-dir}/icons/css.png[width=37,height=30] CSS files
+
+.layout.css
+[source, css]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/layout.css[]
+----
+
+.theme.css
+[source, css]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css[]
+----
+
+
+
+[role=tab]
+image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:16-72 highlight-lines:8,9,10,12,15,74,83,84,85,88,92"]
+----
+include::{resourcesdir}/samples/email/inlining-result.html[]
+----
+<1> The `<style>` tags are removed from the head
+<2> Apply `body` rules using `style` attribute. The rules
+from both files are merged.
+<3> _
+<4> Apply `.content` rules using `style` attribute. The rules
+from both files are merged.
+<5> _
+<6> _
+<7> Apply `footer .social a` rules using `style` attribute. The rules
+from both files are merged.
+<8> _
+<9> As `footer .social a` also matches this node, the same rules as <7> are applied.
+
+[role=tab-container-end]
+-
+
+
+== Skip some styles
+
+If you don't want to apply styles on a particular node, you can set the
+attribute `data-inline-styles` to `"skip"` value.
+
+.Skip some rules
+[TIP]
+====
+If you set `data-inline-styles` attribute to `"skip"` value on `<link>` or `<style>`
+nodes, the whole contained rules are not applied at all.
+====
+
+[role="tab-container  no-max-height"]
+Skip CSS inlining on node
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.java[]
+----
+<1> The path to the templates (`/template/withImagesAndCss/resources.html` for the main body, 
+`/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="highlight-lines:47"]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
+----
+<1> Reference a CSS file that contains general layout rules
+<2> Reference a CSS file that contains theming (like colors) rules
+<3> _
+<4> _
+<5> _
+<6> _
+<7> _
+<8> Indicate Ogham to not apply styles on this node
+
+
+{standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{images-dir}/icons/css.png[width=37,height=30] CSS files
+
+.layout.css
+[source, css]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/layout.css[]
+----
+
+.theme.css
+[source, css]
+----
+include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css[]
+----
+
+
+
+[role=tab]
+image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+
+[source, html, role="collapse-lines:9-82,84-91 highlight-lines:94"]
+----
+include::{resourcesdir}/samples/email/inlining-result.html[]
+----
+<1> _
+<2> _
+<3> _
+<4> _
+<5> _
+<6> _
+<7> _
+<8> _
+<9> _
+<9> _
+<11> `.white` rule defined in `theming.css` matches this node however, you can
+notice that no `style` attribute has been added
+
+[role=tab-container-end]
+-
+
+
+
+
+.Future thoughts
+[NOTE]
+====
+In future version of Ogham, a new strategy may be added in order to include
+styles using `<style>` tags.
+====
+

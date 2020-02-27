@@ -2,52 +2,50 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Demystifying Email Design</title>																	<!--1-->
+<title>Demystifying Email Design</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link href="css/layout.css" rel="stylesheet" />																<!--2-->
-<link href="css/custom.css" rel="stylesheet" />																<!--3-->
+<link href="css/layout.css" rel="stylesheet" />															<!--1-->
+<link href="css/theme.css" rel="stylesheet" />															<!--2-->
 </head>
 <body>
-	<div class="main-content">
-		<div class="header">
-			<img src="images/h1.gif" alt="Creating Email Magic" />											<!--4-->
+	<header>
+		<img src="images/h1.gif" alt="Creating Email Magic" />											<!--3-->
+	</header>
+	<div class="content">
+		<span th:text="${name}">name</span>
+		<p th:text="${value}">value</p>
+		<div class="left">
+			<img src="images/left.gif" data-inline-image="base64" />									<!--4-->
+			<p class="text">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+				tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+				porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+				posuere mauris neque at erat.
+			</p>
 		</div>
-		<div class="content">
-			<span th:text="${name}">name</span>
-			<p th:text="${value}">value</p>
-			<div class="left">
-				<img src="images/left.gif" data-inline="base64" />											<!--5-->
-				<p class="text">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-					tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
-					porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
-					posuere mauris neque at erat.
-				</p>
-			</div>
-			<div class="right">
-				<img src="images/right.gif" />																<!--6-->
-				<p class="text">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
-					tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
-					porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
-					posuere mauris neque at erat.
-				</p>
-			</div>
-		</div>
-		<div class="footer">
-			<div class="sender-info">
-				&reg; Someone, somewhere 2013<br />
-				<a href="#" class="white">Unsubscribe</a> to this newsletter instantly
-			</div>
-			<div class="social">
-				<a href="http://www.twitter.com/" class="white">
-					<img src="images/tw.gif" alt="Twitter" />												<!--7-->
-				</a>
-				<a href="http://www.twitter.com/" class="white">
-					<img src="images/fb.gif" alt="Facebook" data-inline="skip" />							<!--8-->
-				</a>
-			</div>
+		<div class="right">
+			<img src="images/right.gif" data-inline-image="attach" />									<!--5-->
+			<p class="text">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. In
+				tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi
+				porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in
+				posuere mauris neque at erat.
+			</p>
 		</div>
 	</div>
+	<footer>
+		<div class="social">
+			<a href="http://www.twitter.com/">
+				<img src="images/tw.gif" alt="Twitter" />												<!--6-->
+			</a>
+			<a href="http://www.facebook.com/">
+				<img src="images/fb.gif" alt="Facebook" data-inline-image="skip" />						<!--7-->
+			</a>
+		</div>
+		<div class="sender-info">
+			&reg; Someone, somewhere 2013<br />
+			<a href="#" class="white" data-inline-styles="skip">Unsubscribe</a> to this newsletter instantly	<!--8-->
+		</div>
+	</footer>
 </body>
 </html>

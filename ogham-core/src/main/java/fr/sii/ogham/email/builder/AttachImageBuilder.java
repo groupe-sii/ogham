@@ -19,7 +19,7 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
  * 
  * <pre>
  * {@code
- *    <img src="classpath:/foo.png" ogham-inline-mode="attach" />
+ *    <img src="classpath:/foo.png" data-inline-image="attach" />
  * }
  * </pre>
  * 

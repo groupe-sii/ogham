@@ -13,7 +13,7 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
  * 
  * <pre>
  * {@code
- *    <img src="classpath:/foo.png" ogham-inline-mode="base64" />
+ *    <img src="classpath:/foo.png" data-inline-image="base64" />
  * }
  * </pre>
  * 

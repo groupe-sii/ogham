@@ -1,6 +1,11 @@
 :relative-path: ../
 include::{docdir}/variables.adoc[]
 
+[[mimetype-detection]]
+== Automatic MimeType detection
+
+include::{user-manual-dir}/mimetype/mimetype-detection.adoc[leveloffset=+1]
+
 
 [[service-providers]]
 == Automatic configuration for well-known service providers

@@ -18,10 +18,6 @@
 			var tabTitleNode = $(tab).find('p');
 			var tabTitle = tabTitleNode.html();
 			var contentNodes = $(tab).nextUntil(tabs[i+1] || end);
-			var contentHeight = computeHeight($(contentNodes));
-			if(contentHeight>height) {
-				height = contentHeight;
-			}
 			$(tab).prepend('<input type="radio" id="tab-'+group+'-'+i+'" name="tab-group-'+group+'" '+(i==0 ? 'checked' : '')+'>');
 			$(tab).append('<div class="tab-content">');
 			var tabContentNode = $(tab).find('.tab-content');
@@ -29,19 +25,43 @@
 			$(tab).append(tabContentNode);
 			$(start).append(tab);
 			tabTitleNode.replaceWith('<label class="tab-label" for="tab-'+group+'-'+i+'">'+tabTitle+'</label>');
+			var contentHeight = computeHeight($(tabContentNode));
+			if(contentHeight>height) {
+				height = contentHeight;
+			}
 		}
-		$(start).css('height', (height+45+42)+'px');			// TODO: height of tab... This is really bad :(
+		var tabBarHeight = 0;
+		for(var i=0 ; i<tabs.length ; i++) {
+			var tabTitleNode = $(tabs[i]);
+			var tabHeight = computeHeight(tabTitleNode);
+			if (tabHeight > tabBarHeight) {
+				tabBarHeight = tabHeight;
+			}
+		}
+		$(start).css('height', (height+tabBarHeight+computeContainerHeight(start))+'px');
 		$(end).remove();
 	}
 	
 	var computeHeight = function(/*Node[]*/nodes) {
 		var totalHeight = 0;
 		for(var i=0 ; i<nodes.length ; i++) {
-			var overflow = $(nodes[i]).css('overflow', 'hidden');
+			$(nodes[i]).css('position', 'relative');
 			totalHeight += $(nodes[i]).outerHeight(true);
-			$(nodes[i]).css('overflow', overflow);
+			$(nodes[i]).css('position', '');
 		}
 		return totalHeight;
+	}
+	
+	var computeContainerHeight = function(/*Node*/ container) {
+		var children = $('> *', container);
+		for (var i=0 ; i<children.length ; i++) {
+			$(children[i]).css('display', 'none');
+		}
+		var height = $(container).outerHeight();
+		for (var i=0 ; i<children.length ; i++) {
+			$(children[i]).css('display', '');
+		}
+		return height;
 	}
 	
 	$(document).ready(process);
