@@ -53,3 +53,13 @@ h1[id]:before, h2[id]:before, h3[id]:before, h4[id]:before, h5[id]:before, h6[id
 	height: 370px;
 }
 */
+
+.exampleblock.prevent-overflow > .content {
+	overflow: auto;
+	background: none;
+	border: none;
+	box-shadow: none;
+	maring: 0;
+	padding: 0;
+	border-radius: none;
+}

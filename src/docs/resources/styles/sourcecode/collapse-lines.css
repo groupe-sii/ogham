@@ -8,6 +8,7 @@
 	height: 24px;
 	background: white url('../../images/sourcecode/collapsed-bg.png') repeat-x;
 	cursor: pointer;
+	line-height: 24px;
 }
 
 .collapsed.closed:before {
@@ -25,9 +26,20 @@
 	display: inline-block;
 	height: 24px;
 	margin-left: 24px;
+	font-size: 0.85em;
+	vertical-align: middle;
+	padding-left: 50px;
 }
 
 .collapsed.closed .collapsed-lines {
 	display: none;
 }
+
+.collapsed.closed:hover {
+	font-weight: bold;
+}
+.collapsed.closed:hover:before {
+	background-size: 17px 17px;
+}
+
 

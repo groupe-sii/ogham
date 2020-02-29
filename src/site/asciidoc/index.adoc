@@ -2,7 +2,7 @@
 include::{docdir}/variables.adoc[]
 
 
-== Hero
+= Hero
 
 [.hero]
 ====
@@ -164,7 +164,7 @@ In the sample, Thymeleaf template engine is used but it could be any template en
 [.code-example]
 =====
 
-[source, java, role="collapse-lines:1-10,35-47 irrelevant-lines:1-10,13-20 no-callout"]
+[source, java, role="collapse-lines:1-9,34-46 irrelevant-lines:1-9,12-19 no-callout"]
 ----
 include::{standard-email-samples-sourcedir}/HtmlTemplateSample.java[]
 ----
@@ -184,9 +184,11 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simple.html[]
 <3> Use the `value` attribute value in the template
 =====
 
+[.more]
+<<user-manual.adoc#email-template, Read more about email templating &raquo;>>
+<<user-manual.adoc#templating, Read more about general templating &raquo;>>
 ====
 
----
 
 
 == Get it now

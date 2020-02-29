@@ -53,3 +53,12 @@ h5 {
 h6 {
 	@include doc-title-adjacent-margin(6);
 }
+
+.main-body {
+	h2[id], h3[id], h4[id] {
+		&,
+		& > a.anchor {
+			pointer-events: auto;
+		}
+	}
+}

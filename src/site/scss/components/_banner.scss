@@ -1,0 +1,85 @@
+@mixin banner-logo-size($size) {
+	width: $size;
+	height: $size;
+	background-size: $size;
+	bottom: (- $size * 0.2);
+}
+
+.main-body {
+	& {
+		margin-top: 0 !important;
+	}
+	& > .row:first-child {
+		overflow-x: hidden;
+	}
+}
+
+.navbar.border-bottom {
+	border-bottom-color: darken($primary, 4%) !important;
+}
+
+
+.header {
+	height: $banner-height;
+	text-align: center;
+	margin-bottom: $banner-margin-bottom;
+	
+	.bannerLeft.float-left {
+		float: none !important;
+	}
+	
+	.jumbotron {
+		position: absolute;
+		top: -1px;
+		left: -50vw;
+		right: -50vw;
+		padding-left: 50vw;
+		padding-right: 50vw;
+		height: $banner-height;
+		background: $banner-bg-color;
+		color: $banner-text-color;
+		overflow: hidden;
+		
+		&::after {
+			content: "";
+			display: block;
+			opacity: 0.1;
+			background: url(../img/ogham-grey-900x900.png) no-repeat center center;
+			position: absolute;
+			left: 50%;
+			margin-left: 200px;
+			transform: rotate(35deg);
+			@include banner-logo-size($banner-bg-size * 0.75);
+		}
+		
+		h1 {
+			color: $banner-brand-color;
+		}
+		
+		.lead {
+			font-size: $banner-lead-font-size;
+		}
+	}
+}
+
+
+@media only screen and (max-width: 991px) {
+	.header .jumbotron::after {
+		margin-left: 100px;
+	}
+}
+
+@media only screen and (max-width: 675px) {
+	.header .jumbotron::after {
+		left: auto;
+		margin-left: 0;
+		right: 50vw;
+		@include banner-logo-size($banner-bg-size * 0.5);
+	}
+}
+
+@media only screen and (max-width: 455px) {
+	.header .jumbotron::after {
+		@include banner-logo-size($banner-bg-size * 0.37);
+	}
+}

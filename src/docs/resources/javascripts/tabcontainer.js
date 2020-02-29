@@ -38,7 +38,7 @@
 				tabBarHeight = tabHeight;
 			}
 		}
-		$(start).css('height', (height+tabBarHeight+computeContainerHeight(start))+'px');
+		$(start).css('height', (height+tabBarHeight+computeContainerHeight(start)+10)+'px');		// add 10px for possible vertical scrollbar that may appear
 		$(end).remove();
 	}
 	

@@ -1,3 +1,7 @@
 .admonitionblock td.icon .icon-tip:before {
 	font-weight: 300;
 }
+
+.admonitionblock > table {
+	table-layout:fixed;
+}

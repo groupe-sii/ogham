@@ -38,6 +38,7 @@
 				cssClass="border-bottom">
 			</navbar>
 			<navside-menu cssClass="" />
+			<breadcrumbs>false</breadcrumbs>
 			<footer />
 			<!-- Split menus in the bottom navigation -->
 			<bottomNav maxSpan="9">
@@ -48,8 +49,8 @@
 			</bottomNav>
 			<bottomDescription>
 				<![CDATA[
-				Email, SMS, mobile notification or whatever made simple without knowing RFCs.<br />
-				The content of the message can comes from any templating engine (Thymeleaf, FreeMarker, ...).<br />
+				Email, SMS, RCS or whatever made simple without knowing RFCs.<br />
+				The content of the message can come from any templating engine (Thymeleaf, FreeMarker, ...).<br />
 				It also provides integration with frameworks (Spring, JSF, ...).<br />
 				It is designed to be easily extended.
 				]]>
@@ -58,48 +59,32 @@
 				<index>
 					<!-- Override the title -->
 					<titleTemplate>Ogham</titleTemplate>
-					<!-- no breadcrumbs on the main index page -->
-					<breadcrumbs>false</breadcrumbs>
 					<!-- no ToC on the main index page -->
 					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 					<highlightJs>false</highlightJs>
-					<sections>
-						<!-- columns>1</columns>
-						<columns>1</columns>
-						<columns>1</columns>
-						<columns>1</columns>
-						<columns>1</columns>
-						<columns>1</columns>
-						<columns>1</columns-->
-					</sections>
 				</index>
 				<user-manual>
 					<highlightJs>false</highlightJs>
-					<breadcrumbs>false</breadcrumbs>
 					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</user-manual>
 				<features>
 					<highlightJs>false</highlightJs>
-					<breadcrumbs>false</breadcrumbs>
 					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</features>
 				<roadmap>
 					<highlightJs>false</highlightJs>
-					<breadcrumbs>false</breadcrumbs>
 					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</roadmap>
 				<release-notes>
 					<highlightJs>false</highlightJs>
-					<breadcrumbs>false</breadcrumbs>
 					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</release-notes>
 				<contribute>
-					<breadcrumbs>false</breadcrumbs>
 					<toc>false</toc>
 				</contribute>
 				<!-- Disable source highlighting for Maven reports -->
@@ -127,6 +112,7 @@
 			</pages>
 			<endContent>
 				<script src="$resourcePath/js/site.js"></script>
+				<script src="$resourcePath/js/fix-headings.js"></script>	<!-- TODO: remove when https://github.com/devacfr/reflow-maven-skin/issues/63 is fixed -->
 				<script src="$resourcePath/javascripts/progress.js"></script>
 				<script
 					src="$resourcePath/javascripts/sourcecode/source-utils.js"></script>

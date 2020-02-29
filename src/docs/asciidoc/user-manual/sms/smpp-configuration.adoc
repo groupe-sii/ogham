@@ -4,6 +4,8 @@ include::{docdir}/variables.adoc[]
 
 http://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] is the standard protocol to send SMS. SMPP is quite complex and has many configurable properties:
 
+[.prevent-overflow]
+====
 [cols="2,4,1,1"]
 |===
 | Property | Description | Required | Default value
@@ -63,3 +65,4 @@ http://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] is the standard pr
 | No
 | 1 minute
 |===
+====
