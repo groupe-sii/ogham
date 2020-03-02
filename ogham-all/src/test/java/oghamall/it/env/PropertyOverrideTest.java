@@ -50,8 +50,8 @@ public class PropertyOverrideTest {
 	 * <tbody>
 	 * <tr><td>ogham.sms.smpp.host</td><td></td><td></td><td></td><td><strong>127.0.0.1</strong></td></tr>
 	 * <tr><td>ogham.sms.smpp.port</td><td></td><td></td><td><strong>smppServer.getPort()</strong></td><td>port-from-properties</td></tr>
-	 * <tr><td>ogham.sms.to</td><td></td><td><strong>0605040302</strong></td><td>recipient-from-code</td><td>recipient-from-properties</td></tr>
-	 * <tr><td>ogham.sms.from</td><td><strong>0706050403</strong></td><td>sender-from-ext-file</td><td>sender-from-code</td><td>sender-from-properties</td></tr>
+	 * <tr><td>ogham.sms.to.default-value</td><td></td><td><strong>0605040302</strong></td><td>recipient-from-code</td><td>recipient-from-properties</td></tr>
+	 * <tr><td>ogham.sms.from.default-value</td><td><strong>0706050403</strong></td><td>sender-from-ext-file</td><td>sender-from-code</td><td>sender-from-properties</td></tr>
 	 * </tbody>
 	 * </table>
 	 * 
@@ -60,8 +60,8 @@ public class PropertyOverrideTest {
 	 * <ul>
 	 * <li>ogham.sms.smpp.host=127.0.0.1</li>
 	 * <li>ogham.sms.smpp.port=smppServer.getPort()</li>
-	 * <li>ogham.sms.from=0706050403</li>
-	 * <li>ogham.sms.to=0605040302</li>
+	 * <li>ogham.sms.from.default-value=0706050403</li>
+	 * <li>ogham.sms.to.default-value=0605040302</li>
 	 * </ul>
 	 * 
 	 * @throws MessagingException
@@ -74,17 +74,17 @@ public class PropertyOverrideTest {
 	public void externalThenPropertiesInCodeThenFile() throws MessagingException, IOException {
 		File extProps = temp.newFile("ext.properties");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(extProps))) {
-			writer.write("ogham.sms.from=sender-from-ext-file\n");
-			writer.write("ogham.sms.to=0605040302");
+			writer.write("ogham.sms.from.default-value=sender-from-ext-file\n");
+			writer.write("ogham.sms.to.default-value=0605040302");
 		}
 		// @formatter:off
-		System.getProperties().setProperty("ogham.sms.from", "0706050403");
+		System.getProperties().setProperty("ogham.sms.from.default-value", "0706050403");
 		MessagingService service = MessagingBuilder.standard()
 				.environment()
 					.properties()
 						.set("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()))
-						.set("ogham.sms.from", "sender-from-code")
-						.set("ogham.sms.to", "recipient-from-code")
+						.set("ogham.sms.from.default-value", "sender-from-code")
+						.set("ogham.sms.to.default-value", "recipient-from-code")
 						.and()
 					.properties("props/sms.properties")
 					.properties("file:"+extProps.getAbsolutePath())
@@ -106,7 +106,7 @@ public class PropertyOverrideTest {
 
 	@After
 	public void clearProperties() {
-		System.getProperties().remove("ogham.sms.from");
+		System.getProperties().remove("ogham.sms.from.default-value");
 	}
 
 }

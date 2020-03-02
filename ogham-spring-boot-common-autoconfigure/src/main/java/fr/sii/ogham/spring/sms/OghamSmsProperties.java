@@ -10,96 +10,33 @@ import fr.sii.ogham.spring.common.OghamTemplateProperties;
 
 @ConfigurationProperties("ogham.sms")
 public class OghamSmsProperties implements OghamTemplateProperties {
-	/**
-	 * If no sender phone number is explicitly defined on the message, Ogham
-	 * will use this phone number as default sender number.
-	 */
-	private String from;
-	/**
-	 * If no recipient phone number is explicitly defined on the message, Ogham
-	 * will use this phone number as default recipient number.
-	 */
-	private String to;
-	/**
-	 * Enable/disable alphanumeric code format conversion for sender phone
-	 * number: if the sender address is alphanumeric (contains both letters and
-	 * numbers) or non-numeric, TON is set to 5 and NPI to 0.
-	 */
-	private boolean fromFormatEnableAlphanumeric = true;
-	/**
-	 * Enable/disable short code format conversion for sender phone number: if
-	 * the sender address is a short code, TON is set to 3, and NPI is set to 0.
-	 * A number is considered to be a short code if the length of the number is
-	 * 5 digits or less.
-	 */
-	private boolean fromFormatEnableShortcode = true;
-	/**
-	 * Enable/disable international number format conversion for sender phone
-	 * number: if the sender starts with a "+", TON is set to 1, and NPI is set
-	 * to 1.
-	 * 
-	 */
-	private boolean fromFormatEnableInternational = true;
-	/**
-	 * Enable/disable international number format conversion for recipient phone
-	 * number: if the sender starts with a "+", TON is set to 1, and NPI is set
-	 * to 1.
-	 * 
-	 */
-	private boolean toFormatEnableInternational = true;
+	@NestedConfigurationProperty
+	private FromProperties from = new FromProperties();
+	@NestedConfigurationProperty
+	private ToProperties to = new ToProperties();
 	@NestedConfigurationProperty
 	private MessageSpecificFreemarkerProperties freemarker = new MessageSpecificFreemarkerProperties();
 	@NestedConfigurationProperty
 	private MessageSpecificThymeleafProperties thymeleaf = new MessageSpecificThymeleafProperties();
 	@NestedConfigurationProperty
 	private MessageSpecificTemplateProperties template = new MessageSpecificTemplateProperties();
+	@NestedConfigurationProperty
+	private SplitProperties split = new SplitProperties();
 
-	public String getFrom() {
+	public FromProperties getFrom() {
 		return from;
 	}
 
-	public void setFrom(String from) {
+	public void setFrom(FromProperties from) {
 		this.from = from;
 	}
 
-	public String getTo() {
+	public ToProperties getTo() {
 		return to;
 	}
 
-	public void setTo(String to) {
+	public void setTo(ToProperties to) {
 		this.to = to;
-	}
-
-	public boolean isFromFormatEnableAlphanumeric() {
-		return fromFormatEnableAlphanumeric;
-	}
-
-	public void setFromFormatEnableAlphanumeric(boolean fromFormatEnableAlphanumeric) {
-		this.fromFormatEnableAlphanumeric = fromFormatEnableAlphanumeric;
-	}
-
-	public boolean isFromFormatEnableShortcode() {
-		return fromFormatEnableShortcode;
-	}
-
-	public void setFromFormatEnableShortcode(boolean fromFormatEnableShortcode) {
-		this.fromFormatEnableShortcode = fromFormatEnableShortcode;
-	}
-
-	public boolean isFromFormatEnableInternational() {
-		return fromFormatEnableInternational;
-	}
-
-	public void setFromFormatEnableInternational(boolean fromFormatEnableInternational) {
-		this.fromFormatEnableInternational = fromFormatEnableInternational;
-	}
-
-	public boolean isToFormatEnableInternational() {
-		return toFormatEnableInternational;
-	}
-
-	public void setToFormatEnableInternational(boolean toFormatEnableInternational) {
-		this.toFormatEnableInternational = toFormatEnableInternational;
 	}
 
 	public MessageSpecificFreemarkerProperties getFreemarker() {
@@ -124,5 +61,157 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 
 	public void setTemplate(MessageSpecificTemplateProperties template) {
 		this.template = template;
+	}
+
+	public SplitProperties getSplit() {
+		return split;
+	}
+
+	public void setSplit(SplitProperties split) {
+		this.split = split;
+	}
+
+	public static class FromProperties {
+		/**
+		 * If no sender phone number is explicitly defined on the message, Ogham
+		 * will use this phone number as default sender number.
+		 */
+		private String defaultValue;
+		@NestedConfigurationProperty
+		private FromAlphanumericCodeProperties alphanumericCodeFormat = new FromAlphanumericCodeProperties();
+		@NestedConfigurationProperty
+		private FromShortCodeProperties shortCodeFormat = new FromShortCodeProperties();
+		@NestedConfigurationProperty
+		private FromInternationalFormatProperties internationalFormat = new FromInternationalFormatProperties();
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+
+		public FromAlphanumericCodeProperties getAlphanumericCodeFormat() {
+			return alphanumericCodeFormat;
+		}
+
+		public void setAlphanumericCode(FromAlphanumericCodeProperties alphanumericCode) {
+			this.alphanumericCodeFormat = alphanumericCode;
+		}
+
+		public FromShortCodeProperties getShortCodeFormat() {
+			return shortCodeFormat;
+		}
+
+		public void setShortcode(FromShortCodeProperties shortcode) {
+			this.shortCodeFormat = shortcode;
+		}
+
+		public FromInternationalFormatProperties getInternationalFormat() {
+			return internationalFormat;
+		}
+
+		public void setInternationalFormat(FromInternationalFormatProperties internationalFormat) {
+			this.internationalFormat = internationalFormat;
+		}
+	}
+
+	public static class FromAlphanumericCodeProperties {
+		/**
+		 * Enable/disable alphanumeric code format conversion for sender phone
+		 * number: if the sender address is alphanumeric (contains both letters
+		 * and numbers) or non-numeric, TON is set to 5 and NPI to 0.
+		 */
+		private boolean enable;
+
+		public boolean isEnable() {
+			return enable;
+		}
+
+		public void setEnable(boolean enable) {
+			this.enable = enable;
+		}
+	}
+
+	public static class FromShortCodeProperties {
+		/**
+		 * Enable/disable short code format conversion for sender phone number:
+		 * if the sender address is a short code, TON is set to 3, and NPI is
+		 * set to 0. A number is considered to be a short code if the length of
+		 * the number is 5 digits or less.
+		 */
+		private boolean enable;
+
+		public boolean isEnable() {
+			return enable;
+		}
+
+		public void setEnable(boolean enable) {
+			this.enable = enable;
+		}
+	}
+
+	public static class FromInternationalFormatProperties {
+		/**
+		 * Enable/disable international number format conversion for sender
+		 * phone number: if the sender starts with a "+", TON is set to 1, and
+		 * NPI is set to 1.
+		 * 
+		 */
+		private boolean enable;
+
+		public boolean isEnable() {
+			return enable;
+		}
+
+		public void setEnable(boolean enable) {
+			this.enable = enable;
+		}
+	}
+
+	public static class ToProperties {
+		/**
+		 * If no recipient phone number is explicitly defined on the message,
+		 * Ogham will use this phone number as default recipient number.
+		 */
+		private String defaultValue;
+		@NestedConfigurationProperty
+		private ToInternationalFormatProperties internationalFormat = new ToInternationalFormatProperties();
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+
+		public ToInternationalFormatProperties getInternationalFormat() {
+			return internationalFormat;
+		}
+
+		public void setInternationalFormat(ToInternationalFormatProperties internationalFormat) {
+			this.internationalFormat = internationalFormat;
+		}
+	}
+
+	public static class ToInternationalFormatProperties {
+		/**
+		 * Enable/disable international number format conversion for recipient
+		 * phone number: if the recipient starts with a "+", TON is set to 1,
+		 * and NPI is set to 1.
+		 * 
+		 */
+		private boolean enable;
+
+		public boolean isEnable() {
+			return enable;
+		}
+
+		public void setEnable(boolean enable) {
+			this.enable = enable;
+		}
+
 	}
 }

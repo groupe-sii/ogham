@@ -43,11 +43,11 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  * <ul>
  * <li>Configures authentication by providing an <a href=
  * "https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html">API
- * key</a>: using the property "ogham.email.sengrid.api-key".<strong>WARNING:
+ * key</a>: using the property "ogham.email.sendgrid.api-key".<strong>WARNING:
  * SendGrid v4 doesn't allow username/password anymore. You must use API
  * keys</strong></li>
  * <li>Configures unit testing mode using the property
- * "ogham.email.sengrid.unit-testing".
+ * "ogham.email.sendgrid.unit-testing".
  * </ul>
  * 
  * 

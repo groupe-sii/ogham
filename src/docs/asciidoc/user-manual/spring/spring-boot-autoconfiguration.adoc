@@ -26,12 +26,12 @@ The property `ogham.email.javamail.port` takes precedence over `spring.mail.port
 ====
 If you provide any of:
 
-* `ogham.email.template.path`
+* `ogham.email.template.path-prefix`
 * `ogham.email.thymeleaf.classpath.path-prefix`
 * `ogham.email.template.classpath.path-prefix`
 * `ogham.email.thymeleaf.path-prefix`
 * `ogham.email.template.path-prefix`
-* `ogham.sms.template.path`
+* `ogham.sms.template.path-prefix`
 * `ogham.sms.thymeleaf.classpath.path-prefix`
 * `ogham.sms.template.classpath.path-prefix`
 * `ogham.sms.thymeleaf.path-prefix`
@@ -52,12 +52,12 @@ The last reason is that Ogham properties are more specific:
 
 If you provide any of:
 
-* `ogham.email.template.path`
+* `ogham.email.template.path-prefix`
 * `ogham.email.freemarker.classpath.path-prefix`
 * `ogham.email.template.classpath.path-prefix`
 * `ogham.email.freemarker.path-prefix`
 * `ogham.email.template.path-prefix`
-* `ogham.sms.template.path`
+* `ogham.sms.template.path-prefix`
 * `ogham.sms.freemarker.classpath.path-prefix`
 * `ogham.sms.template.classpath.path-prefix`
 * `ogham.sms.freemarker.path-prefix`

@@ -76,16 +76,16 @@ import fr.sii.ogham.sms.message.Sms;
  * template or using {@code ogham.email.subject} property if defined (see
  * {@link AutofillSubjectBuilder})</li>
  * <li>Autofill {@link Email} messages with sender address if one of the
- * property {@code ogham.email.from} or {@code mail.smtp.from} is defined (see
- * {@link AutofillDefaultEmailAddressBuilder})</li>
+ * property {@code ogham.email.from.default-value} or {@code mail.smtp.from} is
+ * defined (see {@link AutofillDefaultEmailAddressBuilder})</li>
  * <li>Autofill {@link Email} messages with recipient address (to) if the
- * property {@code ogham.email.to} is defined (see
+ * property {@code ogham.email.to.default-value} is defined (see
  * {@link AutofillDefaultEmailAddressBuilder})</li>
  * <li>Autofill {@link Email} messages with recipient address (cc) if the
- * property {@code ogham.email.cc} is defined (see
+ * property {@code ogham.email.cc.default-value} is defined (see
  * {@link AutofillDefaultEmailAddressBuilder})</li>
  * <li>Autofill {@link Email} messages with recipient address (bcc) if the
- * property {@code ogham.email.bcc} is defined (see
+ * property {@code ogham.email.bcc.default-value} is defined (see
  * {@link AutofillDefaultEmailAddressBuilder})</li>
  * <li>Automatically inline CSS styles in the HTML templates (see
  * {@link CssInliningBuilder})</li>
@@ -96,9 +96,11 @@ import fr.sii.ogham.sms.message.Sms;
  * <li>Configure common SMS behaviors:
  * <ul>
  * <li>Autofill {@link Sms} messages with sender phone number if the property
- * {@code ogham.sms.from} is defined (see {@link AutofillSmsBuilder})</li>
+ * {@code ogham.sms.from.default-value} is defined (see
+ * {@link AutofillSmsBuilder})</li>
  * <li>Autofill {@link Sms} messages with recipient phone number if the property
- * {@code ogham.sms.to} is defined (see {@link AutofillSmsBuilder})</li>
+ * {@code ogham.sms.to.default-value} is defined (see
+ * {@link AutofillSmsBuilder})</li>
  * <li>Configure phone number formats (see {@link SenderNumberFormatBuilder} and
  * {@link RecipientNumberFormatBuilder})</li>
  * </ul>
@@ -165,21 +167,21 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		builder
 			.autofill()
 				.subject()
-					.defaultValue().properties("${ogham.email.subject}").and()
-					.htmlTitle().properties("${ogham.email.subject.extract-html-title.enable").defaultValue(overrideIfNotSet(true)).and()
-					.text().properties("${ogham.email.subject.text.first-line-prefix}").defaultValue(overrideIfNotSet("Subject:")).and()
+					.defaultValue().properties("${ogham.email.subject.default-value}").and()
+					.htmlTitle().properties("${ogham.email.subject.extract-html-title.enable}").defaultValue(overrideIfNotSet(true)).and()
+					.text().properties("${ogham.email.subject.extract-from-text.first-line-prefix}").defaultValue(overrideIfNotSet("Subject:")).and()
 					.and()
 				.from()
-					.defaultValue().properties("${ogham.email.from}", "${mail.smtp.from}", "${mail.from}").and()
+					.defaultValue().properties("${ogham.email.from.default-value}", "${mail.smtp.from}", "${mail.from}").and()
 					.and()
 				.to()
-					.defaultValue().properties("${ogham.email.to}").and()
+					.defaultValue().properties("${ogham.email.to.default-value}").and()
 					.and()
 				.cc()
-					.defaultValue().properties("${ogham.email.cc}").and()
+					.defaultValue().properties("${ogham.email.cc.default-value}").and()
 					.and()
 				.bcc()
-					.defaultValue().properties("${ogham.email.bcc}").and()
+					.defaultValue().properties("${ogham.email.bcc.default-value}").and()
 					.and()
 				.and()
 			.css()
@@ -208,23 +210,23 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		builder
 			.autofill()
 				.from()
-					.defaultValue().properties("${ogham.sms.from}").and()
+					.defaultValue().properties("${ogham.sms.from.default-value}").and()
 					.and()
 				.to()
-					.defaultValue().properties("${ogham.sms.to}").and()
+					.defaultValue().properties("${ogham.sms.to.default-value}").and()
 					.and()
 				.and()
 			.numbers()
 				.from()
 					.format()
-						.alphanumericCode().properties("${ogham.sms.from-format-enable-alphanumeric}").defaultValue(overrideIfNotSet(true)).and()
-						.shortCode().properties("${ogham.sms.from-format-enable-shortcode}").defaultValue(overrideIfNotSet(true)).and()
-						.internationalNumber().properties("${ogham.sms.from-format-enable-international}").defaultValue(overrideIfNotSet(true)).and()
+						.alphanumericCode().properties("${ogham.sms.from.alphanumeric-code-format.enable}").defaultValue(overrideIfNotSet(true)).and()
+						.shortCode().properties("${ogham.sms.from.short-code-format.enable}").defaultValue(overrideIfNotSet(true)).and()
+						.internationalNumber().properties("${ogham.sms.from.international-format.enable}").defaultValue(overrideIfNotSet(true)).and()
 						.and()
 					.and()
 				.to()
 					.format()
-						.internationalNumber().properties("${ogham.sms.to-format-enable-international}").defaultValue(overrideIfNotSet(true));
+						.internationalNumber().properties("${ogham.sms.to.international-format.enable}").defaultValue(overrideIfNotSet(true));
 		// @formatter:on
 	}
 

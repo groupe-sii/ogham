@@ -1,5 +1,9 @@
 package fr.sii.ogham.template.freemarker;
 
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,24 +25,22 @@ import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 public class FreeMarkerTemplateDetector implements TemplateEngineDetector {
 	private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerTemplateDetector.class);
 
-	private static final String FREEMARKER_TEMPLATE_EXTENSION = ".ftl";
-
 	/**
 	 * The template resolver used to find the template
 	 */
 	private final ResourceResolver resolver;
 
 	/** Recognized FTL extensions. */
-	private String[] extensions;
+	private List<String> extensions;
 
 	public FreeMarkerTemplateDetector(ResourceResolver resolver) {
-		this(resolver, FREEMARKER_TEMPLATE_EXTENSION);
+		this(resolver, ".ftl", ".ftlh");
 	}
 
 	public FreeMarkerTemplateDetector(ResourceResolver resolver, String... extensions) {
 		super();
 		this.resolver = resolver;
-		this.extensions = extensions;
+		this.extensions = asList(extensions);
 	}
 
 	@Override

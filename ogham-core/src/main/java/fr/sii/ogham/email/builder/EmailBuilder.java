@@ -177,7 +177,7 @@ import fr.sii.ogham.template.common.adapter.VariantResolver;
  *       .and()
  *     .autofill()    // enables and configures autofilling
  *       .from()
- *         .defaultValue("${email.sender.address}")
+ *         .defaultValue().properties("${email.sender.address}")
  *         .and()
  *     .and()
  *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
@@ -294,7 +294,7 @@ import fr.sii.ogham.template.common.adapter.VariantResolver;
  * <pre>
  * mail.host=your STMP server host
  * mail.port=your STMP server port
- * ogham.email.from=sender email address
+ * ogham.email.from.default-value=sender email address
  * </pre>
  * 
  * <p>
@@ -466,21 +466,21 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 * builder
 	 *  .autofill()
 	 *    .subject()
-	 *      .defaultValue().properties("${ogham.email.subject}").and()
+	 *      .defaultValue().properties("${ogham.email.subject.default-value}").and()
 	 *      .htmlTitle(true)
-	 *      .text().properties("${ogham.email.subject-first-line-prefix}").defaultValue("Subject:").and()
+	 *      .text().properties("${ogham.email.subject.extract-from-text.first-line-prefix}").defaultValue("Subject:").and()
 	 *	    .and()
 	 *    .from()
-	 *	    .defaultValue().properties("${ogham.email.from}", "${mail.smtp.from}").and()
+	 *	    .defaultValue().properties("${ogham.email.from.default-value}", "${mail.smtp.from}", "${mail.from}").and()
 	 *	    .and()
 	 *    .to()
-	 *	    .defaultValue().properties("${ogham.email.to}").and()
+	 *	    .defaultValue().properties("${ogham.email.to.default-value}").and()
 	 *	    .and()
 	 *    .cc()
-	 *	    .defaultValue().properties("${ogham.email.cc}").and()
+	 *	    .defaultValue().properties("${ogham.email.cc.default-value}").and()
 	 *	    .and()
 	 *    .bcc()
-	 *	    .defaultValue().properties("${ogham.email.bcc}")
+	 *	    .defaultValue().properties("${ogham.email.bcc.default-value}")
 	 * </code>
 	 * </pre>
 	 * 

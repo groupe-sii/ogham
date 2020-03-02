@@ -42,7 +42,7 @@ public class StaticMethodAccessCustomVariableNameTest {
 		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
 		additionalProps.setProperty("ogham.sms.smpp.host", "127.0.0.1");
 		additionalProps.setProperty("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()));
-		additionalProps.setProperty("ogham.freemarker.static-method-access-variable-name", "global");
+		additionalProps.setProperty("ogham.freemarker.static-method-access.variable-name", "global");
 		messagingService = MessagingBuilder.standard()
 				.environment()
 					.properties(additionalProps)

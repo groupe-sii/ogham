@@ -3,7 +3,7 @@ include::{docdir}/variables.adoc[]
 
 == Globally configure default sender
 
-You can configure sender address for all sent email by setting the property `ogham.email.from`. 
+You can configure sender address for all sent email by setting the property `ogham.email.from.default-value`. 
 The value can either be an email address (`user@domain.host`) or an address with personal 
 information (`User Name <user@domain.host>`). This property is used for every implementation (through 
 SMTP, through SendGrid, ...).
@@ -37,16 +37,16 @@ TIP: `mail.from` and `mail.smtp.from` also work
 
 As for sender address, you can define globally a default subject for emails if none is explicitly 
 provided (neither using `.subject(String)` method nor defining a subject directly in the template). 
-The property is `ogham.email.subject`.
+The property is `ogham.email.subject.default-value`.
 
 
 == Globally configure default recipients
 
 You can also use properties to define default recipients if none are provided:
 
-* `ogham.email.to`: set one or several recipient addresses (`to` field)
-* `ogham.email.cc`: set one or several recipient addresses (`cc` field)
-* `ogham.email.bcc`: set one or several recipient addresses (`bcc` field)
+* `ogham.email.to.default-value`: set one or several recipient addresses (`to` field)
+* `ogham.email.cc.default-value`: set one or several recipient addresses (`cc` field)
+* `ogham.email.bcc.default-value`: set one or several recipient addresses (`bcc` field)
 
 This can be convenient to set a `bcc` address for all sent messages for example (the `bcc` address 
 will never be seen in received emails).
@@ -80,7 +80,7 @@ The email addresses are trimmed:
 
 [source, java]
 ----
-additional.setProperty("ogham.email.to", "  foo@example.com  ,    John Doe <bar@example.com>,   abc@example.com");
+additional.setProperty("ogham.email.to.default-value", "  foo@example.com  ,    John Doe <bar@example.com>,   abc@example.com");
 ----
 
 The email addresses will be:

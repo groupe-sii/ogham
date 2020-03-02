@@ -16,18 +16,18 @@ public class TemplateSample {
 		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
 		properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");
 		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
-		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+		properties.setProperty("ogham.sms.from.default-value", "<phone number to display for the sender>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = MessagingBuilder.standard()								// <1>
+		MessagingService service = MessagingBuilder.standard()                              // <1>
 				.environment()
-					.properties(properties)													// <2>
+					.properties(properties)                                                 // <2>
 					.and()
-				.build();																	// <3>
+				.build();                                                                   // <3>
 		// send the sms using fluent API
-		service.send(new Sms()																// <4>
-						.message().template("classpath:/template/thymeleaf/simple.txt", 	// <5>
-													new SimpleBean("foo", 42))				// <6>
+		service.send(new Sms()                                                              // <4>
+						.message().template("classpath:/template/thymeleaf/simple.txt",     // <5>
+													new SimpleBean("foo", 42))              // <6>
 						.to("+33752962193"));
 	}
 

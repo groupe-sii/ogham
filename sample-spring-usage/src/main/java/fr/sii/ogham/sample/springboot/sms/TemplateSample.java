@@ -28,16 +28,16 @@ public class TemplateSample {
 		// The configuration can be set into application-sms-template.properties
 		// The configuration files are stored into src/main/resources
 		@Autowired
-		MessagingService messagingService;												// <1>
+		MessagingService messagingService;                                              // <1>
 		
 		@PostMapping(value="api/sms/template")
 		@ResponseStatus(HttpStatus.CREATED)
 		public void sendSms(@RequestParam("to") String to, @RequestParam("name") String name, @RequestParam("value") int value) throws MessagingException {
 			// send the SMS using fluent API
-			messagingService.send(new Sms()												// <2>
-									.message().template("register",	 					// <3>
-														new SimpleBean(name, value))	// <4>
-									.to(to));											// <5>
+			messagingService.send(new Sms()                                             // <2>
+									.message().template("register",                     // <3>
+														new SimpleBean(name, value))    // <4>
+									.to(to));                                           // <5>
 		}
 	}
 

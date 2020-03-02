@@ -53,15 +53,15 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  * </li>
  * <li>Configures extra options:
  * <ul>
- * <li>It uses "ogham.sms.ovh.no-stop" property value to enable/disable "STOP"
+ * <li>It uses "ogham.sms.ovh.options.no-stop" property value to enable/disable "STOP"
  * indication at the end of the message (useful to disable for non-commercial
  * SMS). Default to true (disabled)</li>
- * <li>It uses "ogham.sms.ovh.sms-coding" property value to define message
+ * <li>It uses "ogham.sms.ovh.options.sms-coding" property value to define message
  * encoding (see {@link SmsCoding}): 1 for 7bit encoding, 2 for 16bit encoding
  * (Unicode). If you use Unicode, your SMS will have a maximum size of 70
  * characters instead of 160. If nothing specified, auto-detection is used. Set
  * this property if you want to force {@link SmsCoding} value.</li>
- * <li>It uses "ogham.sms.ovh.tag" to mark sent messages with a 20 maximum
+ * <li>It uses "ogham.sms.ovh.options.tag" to mark sent messages with a 20 maximum
  * character string</li>
  * </ul>
  * </li>
@@ -96,9 +96,9 @@ public final class DefaultOvhSmsConfigurer {
 				.login().properties("${ogham.sms.ovh.login}").and()
 				.password().properties("${ogham.sms.ovh.password}").and()
 				.options()
-					.noStop().properties("${ogham.sms.ovh.no-stop}").defaultValue(overrideIfNotSet(true)).and()
-					.smsCoding().properties("${ogham.sms.ovh.sms-coding}").and()
-					.tag().properties("${ogham.sms.ovh.tag}");
+					.noStop().properties("${ogham.sms.ovh.options.no-stop}").defaultValue(overrideIfNotSet(true)).and()
+					.smsCoding().properties("${ogham.sms.ovh.options.sms-coding}").and()
+					.tag().properties("${ogham.sms.ovh.options.tag}");
 			// @formatter:on
 		}
 	

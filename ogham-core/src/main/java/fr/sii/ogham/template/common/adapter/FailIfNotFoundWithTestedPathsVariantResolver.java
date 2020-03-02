@@ -1,5 +1,8 @@
 package fr.sii.ogham.template.common.adapter;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,13 +41,32 @@ public class FailIfNotFoundWithTestedPathsVariantResolver implements VariantReso
 		if (!(template instanceof HasVariant)) {
 			return template.getPath();
 		}
+		List<ResourcePath> testedPaths = getTestedPaths(template);
+		Variant variant = ((HasVariant) template).getVariant();
+		throw new TemplateVariantNotFoundException("Failed to resolve variant (" + variant + ") for template " + template.getPath().getOriginalPath(), template, testedPaths);
+	}
+
+	private List<ResourcePath> getTestedPaths(TemplateContent template) {
 		List<ResourcePath> testedPaths = new ArrayList<>();
 		for (VariantResolver delegate : delegates) {
-			testedPaths.add(delegate.getRealPath(template));
+			testedPaths.addAll(getTestedPaths(template, delegate));
 		}
-		Variant variant = ((HasVariant) template).getVariant();
-		throw new TemplateVariantNotFoundException("Failed to resolve variant (" + variant + ") for template " + template.getPath().getOriginalPath(), template.getPath(), template.getContext(),
-				variant, testedPaths);
+		return testedPaths;
+	}
+
+	private List<ResourcePath> getTestedPaths(TemplateContent template, VariantResolver delegate) {
+		// if information an be provided, use that information
+		if (delegate instanceof CanProvidePossiblePaths) {
+			return ((CanProvidePossiblePaths) delegate).getPossiblePaths(template);
+		}
+		// otherwise call again to give a path if possible
+		ResourcePath testedPath = null;
+		try {
+			testedPath = delegate.getRealPath(template);
+		} catch (VariantResolutionException e) {
+			// skip because there is no useful information
+		}
+		return testedPath==null ? emptyList() : asList(testedPath);
 	}
 
 	/**

@@ -25,7 +25,10 @@ image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
 ----
 include::{standard-samples-resourcesdir}/template/thymeleaf/simpleWithSubject.html[]
 ----
-<1> The subject is defined in the template and can use same evaluation context (`SimpleBean`)
+<1> The subject is defined in the template and can use same evaluation context (`SimpleBean`).
+
+
+NOTE: The subject of the email will be `Subject of the email - Welcome foo !`
 
 {standard-samples-resourcesdir-url}/template/thymeleaf/simpleWithSubject.html?ts={tabsize}[Source code of the HTML template]
 

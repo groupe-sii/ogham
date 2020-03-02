@@ -1,6 +1,9 @@
 package fr.sii.ogham.spring.sms;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import com.cloudhopper.smpp.SmppBindType;
 
 @ConfigurationProperties("ogham.sms.smpp")
 public class OghamSmppProperties {
@@ -41,6 +44,36 @@ public class OghamSmppProperties {
 	 * defined, the value of the property ogham.sms.cloudhopper.port is used.
 	 */
 	private Integer port;
+	/**
+	 * The bind command type. Default to "TRANSMITTER".
+	 */
+	private SmppBindType bindType = SmppBindType.TRANSMITTER;
+	/**
+	 * The system_type parameter is used to categorize the type of ESME that is
+	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
+	 * (over-the-air activation system). Specification of the system_type is
+	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
+	 * this case, the ESME can set the system_type to NULL. The system_type
+	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
+	 * etc.
+	 */
+	private String systemType;
+	@NestedConfigurationProperty
+	private EncoderProperties encoder = new EncoderProperties();
+	@NestedConfigurationProperty
+	private UserDataProperties userData = new UserDataProperties();
+	@NestedConfigurationProperty
+	private SplitProperties split = new SplitProperties();
+	@NestedConfigurationProperty
+	private DataCodingSchemeProperties dataCodingScheme = new DataCodingSchemeProperties();
+
+	public String getSystemType() {
+		return systemType;
+	}
+
+	public void setSystemType(String systemType) {
+		this.systemType = systemType;
+	}
 
 	public String getSystemId() {
 		return systemId;
@@ -72,6 +105,46 @@ public class OghamSmppProperties {
 
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+
+	public SmppBindType getBindType() {
+		return bindType;
+	}
+
+	public void setBindType(SmppBindType bindType) {
+		this.bindType = bindType;
+	}
+
+	public EncoderProperties getEncoder() {
+		return encoder;
+	}
+
+	public void setEncoder(EncoderProperties encoder) {
+		this.encoder = encoder;
+	}
+
+	public UserDataProperties getUserData() {
+		return userData;
+	}
+
+	public void setUserData(UserDataProperties userData) {
+		this.userData = userData;
+	}
+
+	public SplitProperties getSplit() {
+		return split;
+	}
+
+	public void setSplit(SplitProperties split) {
+		this.split = split;
+	}
+
+	public DataCodingSchemeProperties getDataCodingScheme() {
+		return dataCodingScheme;
+	}
+
+	public void setDataCodingScheme(DataCodingSchemeProperties dataCodingScheme) {
+		this.dataCodingScheme = dataCodingScheme;
 	}
 
 }

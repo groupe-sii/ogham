@@ -1,3 +1,1 @@
-<html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">
 [[${name}]] [[${value}]]
-</html>

@@ -1,4 +1,4 @@
-<html xmlns:th="http://www.thymeleaf.org" th:inline="text" th:remove="tag">Subject: Subject of the email
+Subject: Subject of the email
 [[${name}]] [[${value}]]
 
-Spring</html>
+Spring

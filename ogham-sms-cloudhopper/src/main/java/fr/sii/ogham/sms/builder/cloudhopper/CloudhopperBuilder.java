@@ -309,8 +309,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		systemIdValueBuilder.setValue(systemId);
 		return this;
 	}
-	
-	
+
 	/**
 	 * The system_id parameter is used to identify an ESME ( External Short
 	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
@@ -318,9 +317,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * system_id provides an identification of the SMSC to the ESME.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .systemId()
@@ -329,8 +330,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #systemId(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #systemId(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .systemId("my-system-id")
@@ -339,8 +340,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *   .defaultValue("default-system-id")
 	 * </pre>
 	 * 
-	 * The value {@code "my-system-id"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "my-system-id"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -397,7 +398,6 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return this;
 	}
 
-	
 	/**
 	 * The system_type parameter is used to categorize the type of ESME that is
 	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
@@ -408,9 +408,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * etc.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .systemType()
@@ -419,8 +421,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #systemType(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #systemType(String)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .systemType("my-system-type")
@@ -429,8 +431,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *   .defaultValue("defaut-system-type")
 	 * </pre>
 	 * 
-	 * The value {@code "my-system-type"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "my-system-type"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -441,7 +443,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	public ConfigurationValueBuilder<CloudhopperBuilder, String> systemType() {
 		return systemTypeValueBuilder;
 	}
-	
+
 	/**
 	 * The password parameter is used by the SMSC to authenticate the identity
 	 * of the binding ESME. The Service Provider may require ESME’s to provide a
@@ -486,7 +488,6 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return this;
 	}
 
-	
 	/**
 	 * The password parameter is used by the SMSC to authenticate the identity
 	 * of the binding ESME. The Service Provider may require ESME’s to provide a
@@ -496,9 +497,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * case of the outbind operation).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .password()
@@ -507,8 +510,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #password(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #password(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .password("my-password")
@@ -517,8 +520,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *   .defaultValue("default-password")
 	 * </pre>
 	 * 
-	 * The value {@code "my-password"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "my-password"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -529,7 +532,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	public ConfigurationValueBuilder<CloudhopperBuilder, String> password() {
 		return passwordValueBuilder;
 	}
-	
+
 	/**
 	 * The SMPP server host (IP or address).
 	 * 
@@ -569,14 +572,15 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return this;
 	}
 
-	
 	/**
 	 * The SMPP server host (IP or address).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .host()
@@ -585,8 +589,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #host(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #host(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .host("localhost")
@@ -595,8 +599,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *   .defaultValue("default-host")
 	 * </pre>
 	 * 
-	 * The value {@code "localhost"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "localhost"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -607,7 +611,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	public ConfigurationValueBuilder<CloudhopperBuilder, String> host() {
 		return hostValueBuilder;
 	}
-	
+
 	/**
 	 * Set the SMPP server port.
 	 * 
@@ -647,14 +651,15 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return this;
 	}
 
-	
 	/**
 	 * Set the SMPP server port.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .port()
@@ -663,8 +668,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #port(Integer)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #port(Integer)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .port(2775)
@@ -685,10 +690,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	public ConfigurationValueBuilder<CloudhopperBuilder, Integer> port() {
 		return portValueBuilder;
 	}
-	
+
 	/**
 	 * The SMPP protocol version (one of {@link InterfaceVersion#VERSION_3_3},
-	 * {@link InterfaceVersion#VERSION_3_4}, {@link InterfaceVersion#VERSION_5_0}).
+	 * {@link InterfaceVersion#VERSION_3_4},
+	 * {@link InterfaceVersion#VERSION_5_0}).
 	 * 
 	 * <p>
 	 * The value set using this method takes precedence over any property and
@@ -708,7 +714,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
 	 * </pre>
 	 * 
-	 * In both cases, {@code interfaceVersion(InterfaceVersion.VERSION_5_0)} is used.
+	 * In both cases, {@code interfaceVersion(InterfaceVersion.VERSION_5_0)} is
+	 * used.
 	 * 
 	 * <p>
 	 * If this method is called several times, only the last value is used.
@@ -725,7 +732,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		interfaceVersionValueBuilder.setValue(version);
 		return this;
 	}
-	
+
 	/**
 	 * The SMPP protocol version (one of {@link SmppConstants#VERSION_3_3},
 	 * {@link SmppConstants#VERSION_3_4}, {@link SmppConstants#VERSION_5_0}).
@@ -748,7 +755,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *   .defaultValue(SmppConstants.VERSION_3_4)
 	 * </pre>
 	 * 
-	 * In both cases, {@code interfaceVersion(SmppConstants.VERSION_5_0)} is used.
+	 * In both cases, {@code interfaceVersion(SmppConstants.VERSION_5_0)} is
+	 * used.
 	 * 
 	 * <p>
 	 * If this method is called several times, only the last value is used.
@@ -765,16 +773,19 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		interfaceVersionValueBuilder.setValue(InterfaceVersion.fromValue(version));
 		return this;
 	}
-	
-	/**
-	 * 	 * The SMPP protocol version (one of {@link InterfaceVersion#VERSION_3_3},
-	 * {@link InterfaceVersion#VERSION_3_4}, {@link InterfaceVersion#VERSION_5_0}).
 
+	/**
+	 * The SMPP protocol version (one of {@link InterfaceVersion#VERSION_3_3},
+	 * {@link InterfaceVersion#VERSION_3_4},
+	 * {@link InterfaceVersion#VERSION_5_0}).
+	 * 
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .interfaceVersion()
@@ -783,8 +794,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #interfaceVersion(InterfaceVersion)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #interfaceVersion(InterfaceVersion)}
+	 * takes precedence over property values and default value.
 	 * 
 	 * <pre>
 	 * .interfaceVersion(InterfaceVersion.VERSION_5_0)
@@ -793,8 +804,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
 	 * </pre>
 	 * 
-	 * The value {@code InterfaceVersion.VERSION_5_0} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code InterfaceVersion.VERSION_5_0} is used regardless of the
+	 * value of the properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -805,7 +816,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	public ConfigurationValueBuilder<CloudhopperBuilder, InterfaceVersion> interfaceVersion() {
 		return interfaceVersionValueBuilder;
 	}
-	
+
 	/**
 	 * The bind command type (see {@link SmppBindType}).
 	 * 
@@ -845,14 +856,15 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return this;
 	}
 
-	
 	/**
 	 * The bind command type (see {@link SmppBindType}).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .bindType()
@@ -861,8 +873,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #bindType(SmppBindType)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #bindType(SmppBindType)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .bindType(SmppBindType.TRANSCEIVER)
@@ -871,8 +883,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *   .defaultValue(SmppBindType.RECEIVER)
 	 * </pre>
 	 * 
-	 * The value {@code SmppBindType.TRANSCEIVER} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code SmppBindType.TRANSCEIVER} is used regardless of the
+	 * value of the properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -913,23 +925,23 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * {@code
 	 * .encoder()
 	 *    .gsm7()
-	 *      .properties("${ogham.sms.cloudhopper.encoder.gsm-7bit.priority}", "${ogham.sms.encoder.gsm-7bit.priority}")
+	 *      .properties("${ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority}", "${ogham.sms.smpp.encoder.gsm7bit-packed.priority}")
 	 *      .defaultValue(100000)
 	 *      .and()
 	 *    .gsm8()
-	 *      .properties("${ogham.sms.cloudhopper.encoder.gsm-8bit.priority}", "${ogham.sms.encoder.gsm-8bit.priority}")
+	 *      .properties("${ogham.sms.cloudhopper.encoder.gsm8bit.priority}", "${ogham.sms.smpp.encoder.gsm8bit.priority}")
 	 *      .defaultValue(99000)
 	 *      .and()
 	 *    .ucs2()
-	 *      .properties("${ogham.sms.cloudhopper.encoder.ucs-2.priority}", "${ogham.sms.encoder.ucs-2.priority}")
+	 *      .properties("${ogham.sms.cloudhopper.encoder.ucs2.priority}", "${ogham.sms.smpp.encoder.ucs2.priority}")
 	 *      .defaultValue(98000)
 	 *      .and()
 	 *    .autoGuess()
-	 *      .properties("${ogham.sms.cloudhopper.encoder.auto-guess}", "${ogham.sms.encoder.auto-guess}")
+	 *      .properties("${ogham.sms.cloudhopper.encoder.auto-guess.enable}", "${ogham.sms.smpp.encoder.auto-guess.enable}")
 	 *      .defaultValue(true)
 	 *      .and()
 	 *    .fallback()
-	 *      .properties("${ogham.sms.cloudhopper.encoder.default-charset}")
+	 *      .properties("${ogham.sms.cloudhopper.encoder.default-charset}", "${ogham.sms.smpp.encoder.default-charset}")
 	 *      .defaultValue(CharsetUtil.NAME_GSM)
 	 *      .and()
 	 *    .customEncoder(new MyCustomEncoder(), 50000)
@@ -1004,7 +1016,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * {@code
 	 * .splitter()
 	 *   .enable()
-	 *     .properties("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.split.enable}")
+	 *     .properties("${ogham.sms.cloudhopper.split.enable}", "${ogham.sms.smpp.split.enable}", "${ogham.sms.split.enable}")
 	 *     .defaultValue(true)
 	 *     .and()
 	 *   .customSplitter(new MyCustomSplitter(), 100000)
@@ -1023,7 +1035,6 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		}
 		return messageSplitterBuilder;
 	}
-
 
 	/**
 	 * Configures Cloudhopper session management (timeouts, retry, session
@@ -1207,11 +1218,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * {@code
 	 * .userData()
 	 *   .useShortMessage()
-	 *     .properties("${ogham.sms.cloudhopper.user-data.use-short-message}", "${ogham.sms.user-data.use-short-message}")
+	 *     .properties("${ogham.sms.cloudhopper.user-data.use-short-message}", "${ogham.sms.smpp.user-data.use-short-message}")
 	 *     .defaultValue(true)
 	 *     .and()
 	 *   .useTlvMessagePayload()
-	 *     .properties("${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}", "${ogham.sms.user-data.use-tlv-message-payload}")
+	 *     .properties("${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}", "${ogham.sms.smpp.user-data.use-tlv-message-payload}")
 	 *     .defaultValue(false)
 	 * }
 	 * </pre>
@@ -1272,9 +1283,9 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * determined:
 	 * <ul>
 	 * <li>Use automatic mode base on interface version (see
-	 * {@link #interfaceVersion(InterfaceVersion)} and {@link #interfaceVersion(Byte)})
-	 * and charset encoding (see {@link #encoder()}) used to encode the message
-	 * ("User Data")</li>
+	 * {@link #interfaceVersion(InterfaceVersion)} and
+	 * {@link #interfaceVersion(Byte)}) and charset encoding (see
+	 * {@link #encoder()}) used to encode the message ("User Data")</li>
 	 * <li>Use a fixed value used for every message</li>
 	 * <li>Use a custom implementation</li>
 	 * </ul>
@@ -1285,8 +1296,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * <pre>
 	 * {@code
 	 * .dataCodingScheme()
-	 *   .auto("${ogham.sms.cloudhopper.data-coding-scheme.auto.enable}")
-	 *   .value("${ogham.sms.cloudhopper.data-coding-scheme.value}")
+	 *   .auto("${ogham.sms.cloudhopper.data-coding-scheme.auto.enable}", "${ogham.sms.smpp.data-coding-scheme.auto.enable}")
+	 *   .value("${ogham.sms.cloudhopper.data-coding-scheme.value}", "${ogham.sms.smpp.data-coding-scheme.value}")
 	 *   .custom(new MyCustomDataCodingProvider())
 	 * }
 	 * </pre>
@@ -1410,7 +1421,8 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		if (sessionConfiguration != null) {
 			return sessionConfiguration;
 		}
-		SmppSessionConfiguration session = new SmppSessionConfiguration(buildBindType(propertyResolver), systemIdValueBuilder.getValue(propertyResolver), passwordValueBuilder.getValue(propertyResolver));
+		SmppSessionConfiguration session = new SmppSessionConfiguration(buildBindType(propertyResolver), systemIdValueBuilder.getValue(propertyResolver),
+				passwordValueBuilder.getValue(propertyResolver));
 		session.setHost(getHost(propertyResolver));
 		session.setPort(getPort(propertyResolver));
 		session.setSystemType(systemTypeValueBuilder.getValue(propertyResolver));

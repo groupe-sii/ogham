@@ -84,7 +84,7 @@ include::{standard-email-samples-sourcedir}/BasicSample.java[]
 <1> Use the standard builder (predefined behavior)
 <2> Register the custom properties
 <3> Create a MessagingService instance
-<4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from` property
+<4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from.default-value` property
 =====
 
 
@@ -127,7 +127,7 @@ include::{standard-sms-samples-sourcedir}/BasicSample.java[]
 <6> Use the standard builder (predefined behavior)
 <7> Register the custom properties
 <8> Create a MessagingService instance
-<9> Send a SMS with a simple message. The sender phone number is automatically set using `ogham.sms.from` property
+<9> Send a SMS with a simple message. The sender phone number is automatically set using `ogham.sms.from.default-value` property
 =====
 
 [.more]
@@ -171,7 +171,7 @@ include::{standard-email-samples-sourcedir}/HtmlTemplateSample.java[]
 <1> Use the standard builder (predefined behavior)
 <2> Register the custom properties
 <3> Create a MessagingService instance
-<4> Send an email with a subject and a simple body that comes from the evaluated template. The sender address is automatically set using `ogham.email.from` property
+<4> Send an email with a subject and a simple body that comes from the evaluated template. The sender address is automatically set using `ogham.email.from.default-value` property
 <5> Indicate the path to the HTML template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 

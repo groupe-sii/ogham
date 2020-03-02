@@ -45,9 +45,9 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  * <ul>
  * <li>Either by providing an <a href=
  * "https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html">API
- * key</a>: using the property "ogham.email.sengrid.api-key"</li>
+ * key</a>: using the property "ogham.email.sendgrid.api-key"</li>
  * <li>Or using username/password: using the properties
- * "ogham.email.sengrid.username" and "ogham.email.sengrid.password"</li>
+ * "ogham.email.sendgrid.username" and "ogham.email.sendgrid.password"</li>
  * </ul>
  * </li>
  * </ul>
@@ -83,7 +83,7 @@ public final class DefaultSendGridV2Configurer {
 			// @formatter:off
 			SendGridV2Builder builder = msgBuilder.email().sender(SendGridV2Builder.class);
 			builder
-				.apiKey().properties("${ogham.email.sengrid.api-key}").and()
+				.apiKey().properties("${ogham.email.sendgrid.api-key}").and()
 				.username().properties("${ogham.email.sendgrid.username}").and()
 				.password().properties("${ogham.email.sendgrid.password}");
 			// @formatter:on

@@ -16,7 +16,7 @@ public class OverrideDefaultSenderSample {
 		properties.put("ogham.sms.smpp.port", "<your server port>");
 		properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");
 		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
-		properties.put("ogham.sms.from", "+33699999999");					// <1>
+		properties.put("ogham.sms.from.default-value", "+33699999999");     // <1>
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
@@ -25,14 +25,14 @@ public class OverrideDefaultSenderSample {
 					.and()
 				.build();
 		// send the sms using fluent API
-		service.send(new Sms()												// <2>
+		service.send(new Sms()                                              // <2>
 				.message().string("sms content")
 				.to("+33752962193"));
 		// => the sender phone number is +33699999999
 
 		service.send(new Sms()
 				.message().string("sms content")
-				.from("+33700000000")										// <3>
+				.from("+33700000000")                                       // <3>
 				.to("+33752962193"));
 		// => the sender phone number is now +33700000000
 	}

@@ -26,8 +26,8 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	 * 
 	 * <pre>
 	 * Map&lt;String, List&lt;String&gt;&gt; keys = new HashMap&lt;&gt;();
-	 * keys.put("to", valueBuilder.properties("ogham.email.to"));
-	 * keys.put("from", valueBuilder.properties("ogham.email.from", "mail.smtp.from"));
+	 * keys.put("to", valueBuilder.properties("ogham.email.to.default-value"));
+	 * keys.put("from", valueBuilder.properties("ogham.email.from.default-value", "mail.smtp.from"));
 	 * </pre>
 	 * 
 	 * The implementation can then retrieve real property value using map key
@@ -35,7 +35,8 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	 * 
 	 * <pre>
 	 * getProperty("from");
-	 * // will return either the value of "ogham.email.from" or "mail.smtp.from"
+	 * // will return either the value of "ogham.email.from.default-value" or
+	 * // "mail.smtp.from"
 	 * </pre>
 	 * 
 	 * @param resolver

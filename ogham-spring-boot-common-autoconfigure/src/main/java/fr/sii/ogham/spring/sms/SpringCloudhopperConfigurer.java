@@ -66,7 +66,7 @@ public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
 				.port().value(ofNullable(cloudhopperProperties.getPort())).and()
 				.interfaceVersion().value(ofNullable(InterfaceVersion.of(cloudhopperProperties.getInterfaceVersion()))).and()
 				.session()
-					.sessionName().value(ofNullable(cloudhopperProperties.getSession().getSessionName())).and()
+					.sessionName().value(ofNullable(cloudhopperProperties.getSession().getName())).and()
 					.bindTimeout().value(ofNullable(cloudhopperProperties.getSession().getBindTimeout())).and()
 					.connectTimeout().value(ofNullable(cloudhopperProperties.getSession().getConnectTimeout())).and()
 					.requestExpiryTimeout().value(ofNullable(cloudhopperProperties.getSession().getRequestExpiryTimeout())).and()
@@ -78,8 +78,8 @@ public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
 					.unbindTimeout().value(ofNullable(cloudhopperProperties.getSession().getUnbindTimeout())).and()
 					.connectRetry()
 						.fixedDelay()
-							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getConnectMaxRetry())).and()
-							.delay().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getConnectRetryDelay()));
+							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()
+							.delay().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getDelayBetweenAttempts()));
 		// @formatter:on
 	}
 

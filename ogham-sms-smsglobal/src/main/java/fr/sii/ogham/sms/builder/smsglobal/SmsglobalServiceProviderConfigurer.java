@@ -58,12 +58,12 @@ import fr.sii.ogham.sms.builder.cloudhopper.DefaultCloudhopperConfigurer;
  * </li>
  * <li>Configures encoding:
  * <ul>
- * <li>Set "ogham.sms.cloudhopper.encoder.gsm-7bit.priority" property to 0 to
+ * <li>Set "ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority" property to 0 to
  * disable GSM 7-bit encoding (not supported by SMSGlobal)</li>
- * <li>Let default value for "ogham.sms.cloudhopper.encoder.gsm-8bit.priority"
+ * <li>Let default value for "ogham.sms.cloudhopper.encoder.gsm8bit.priority"
  * to enable GSM 8-bit data encoding if the message contains only characters
  * that can be encoded on one octet.</li>
- * <li>Let default value for "ogham.sms.cloudhopper.encoder.ucs-2.priority" to
+ * <li>Let default value for "ogham.sms.cloudhopper.encoder.ucs2.priority" to
  * enable UCS-2 encoding if the message contains special characters that can't
  * be encoded on one octet. Each character is encoded on two octets.</li>
  * </ul>
@@ -135,7 +135,7 @@ public final class SmsglobalServiceProviderConfigurer {
 			if ("smsglobal.com".equals(host)) {
 				return true;
 			}
-			Boolean force = evaluate("${ogham.sms.smsglobal.service-provider-auto-conf.force}", propertyResolver, Boolean.class);
+			Boolean force = evaluate("${ogham.sms.smsglobal.service-provider.auto-conf.force}", propertyResolver, Boolean.class);
 			return force != null && force;
 		}
 	}

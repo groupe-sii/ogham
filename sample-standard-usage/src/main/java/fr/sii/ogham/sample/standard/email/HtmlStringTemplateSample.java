@@ -15,7 +15,7 @@ public class HtmlStringTemplateSample {
 		Properties properties = new Properties();
 		properties.put("mail.smtp.host", "<your server host>");
 		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("ogham.email.from", "<email address to display for the sender user>");
+		properties.put("ogham.email.from.default-value", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
@@ -26,7 +26,7 @@ public class HtmlStringTemplateSample {
 		String template = "<!DOCTYPE html><html xmlns:th=\"http://www.thymeleaf.org\"><head><title>Thymeleaf simple</title><meta charset=\"utf-8\" /></head><body><h1 class=\"title\" th:text=\"${name}\"></h1><p class=\"text\" th:text=\"${value}\"></p></body></html>";
 		// send the email using fluent API
 		service.send(new Email()
-						.subject("subject")
+						.subject("HtmlStringTemplateSample")
 						.body().templateString(template, new SimpleBean("foo", 42))
 						.to("ogham-test@yopmail.com"));
 	}

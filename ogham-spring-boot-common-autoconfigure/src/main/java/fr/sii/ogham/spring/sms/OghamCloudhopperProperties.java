@@ -3,6 +3,8 @@ package fr.sii.ogham.spring.sms;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import com.cloudhopper.smpp.SmppBindType;
+
 @ConfigurationProperties("ogham.sms.cloudhopper")
 public class OghamCloudhopperProperties {
 	/**
@@ -58,14 +60,148 @@ public class OghamCloudhopperProperties {
 	 * Cloudhopper charset.
 	 */
 	private String smppCharset = "GSM";
+	/**
+	 * The bind command type. Default to "TRANSMITTER".
+	 */
+	private SmppBindType bindType = SmppBindType.TRANSMITTER;
+	/**
+	 * The system_type parameter is used to categorize the type of ESME that is
+	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
+	 * (over-the-air activation system). Specification of the system_type is
+	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
+	 * this case, the ESME can set the system_type to NULL. The system_type
+	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
+	 * etc.
+	 */
+	private String systemType;
 	@NestedConfigurationProperty
 	private SessionProperties session = new SessionProperties();
+	@NestedConfigurationProperty
+	private DataCodingSchemeProperties dataCodingScheme = new DataCodingSchemeProperties();
+	@NestedConfigurationProperty
+	private EncoderProperties encoder = new EncoderProperties();
+	@NestedConfigurationProperty
+	private UserDataProperties userData = new UserDataProperties();
+	@NestedConfigurationProperty
+	private SplitProperties split = new SplitProperties();
+
+	public String getSystemId() {
+		return systemId;
+	}
+
+	public void setSystemId(String systemId) {
+		this.systemId = systemId;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public Integer getPort() {
+		return port;
+	}
+
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+
+	public String getDefaultAppCharset() {
+		return defaultAppCharset;
+	}
+
+	public void setDefaultAppCharset(String defaultAppCharset) {
+		this.defaultAppCharset = defaultAppCharset;
+	}
+
+	public String getSmppCharset() {
+		return smppCharset;
+	}
+
+	public void setSmppCharset(String smppCharset) {
+		this.smppCharset = smppCharset;
+	}
+
+	public SessionProperties getSession() {
+		return session;
+	}
+
+	public void setSession(SessionProperties session) {
+		this.session = session;
+	}
+
+	public String getInterfaceVersion() {
+		return interfaceVersion;
+	}
+
+	public SmppBindType getBindType() {
+		return bindType;
+	}
+
+	public void setBindType(SmppBindType bindType) {
+		this.bindType = bindType;
+	}
+
+	public String getSystemType() {
+		return systemType;
+	}
+
+	public void setSystemType(String systemType) {
+		this.systemType = systemType;
+	}
+
+	public DataCodingSchemeProperties getDataCodingScheme() {
+		return dataCodingScheme;
+	}
+
+	public void setDataCodingScheme(DataCodingSchemeProperties dataCodingScheme) {
+		this.dataCodingScheme = dataCodingScheme;
+	}
+
+	public EncoderProperties getEncoder() {
+		return encoder;
+	}
+
+	public void setEncoder(EncoderProperties encoder) {
+		this.encoder = encoder;
+	}
+
+	public UserDataProperties getUserData() {
+		return userData;
+	}
+
+	public void setUserData(UserDataProperties userData) {
+		this.userData = userData;
+	}
+
+	public void setInterfaceVersion(String interfaceVersion) {
+		this.interfaceVersion = interfaceVersion;
+	}
+
+	public SplitProperties getSplit() {
+		return split;
+	}
+
+	public void setSplit(SplitProperties split) {
+		this.split = split;
+	}
 
 	public static class SessionProperties {
 		/**
 		 * A name for the session (used to name threads used by Cloudhopper).
 		 */
-		private String sessionName;
+		private String name;
 		/**
 		 * Set the maximum amount of time (in milliseconds) to wait for the
 		 * success of a bind attempt to the SMSC. Defaults to 5000.
@@ -134,12 +270,12 @@ public class OghamCloudhopperProperties {
 		@NestedConfigurationProperty
 		private ConnectRetryProperties connectRetry = new ConnectRetryProperties();
 
-		public String getSessionName() {
-			return sessionName;
+		public String getName() {
+			return name;
 		}
 
-		public void setSessionName(String sessionName) {
-			this.sessionName = sessionName;
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		public Long getBindTimeout() {
@@ -228,93 +364,28 @@ public class OghamCloudhopperProperties {
 		/**
 		 * Set the maximum number of attempts for establishing a connection.
 		 */
-		private Integer connectMaxRetry = 10;
+		private Integer maxAttempts = 5;
 		/**
 		 * Set the delay between two attemps for establishing a connection (in
 		 * milliseconds).
 		 */
-		private Long connectRetryDelay = 500L;
+		private Long delayBetweenAttempts = 500L;
 
-		public Integer getConnectMaxRetry() {
-			return connectMaxRetry;
+		public Integer getMaxAttempts() {
+			return maxAttempts;
 		}
 
-		public void setConnectMaxRetry(Integer connectMaxRetry) {
-			this.connectMaxRetry = connectMaxRetry;
+		public void setMaxAttempts(Integer maxAttempts) {
+			this.maxAttempts = maxAttempts;
 		}
 
-		public Long getConnectRetryDelay() {
-			return connectRetryDelay;
+		public Long getDelayBetweenAttempts() {
+			return delayBetweenAttempts;
 		}
 
-		public void setConnectRetryDelay(Long connectRetryDelay) {
-			this.connectRetryDelay = connectRetryDelay;
+		public void setDelayBetweenAttempts(Long delayBetweenAttempts) {
+			this.delayBetweenAttempts = delayBetweenAttempts;
 		}
-
-	}
-
-	public String getSystemId() {
-		return systemId;
-	}
-
-	public void setSystemId(String systemId) {
-		this.systemId = systemId;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public Integer getPort() {
-		return port;
-	}
-
-	public void setPort(Integer port) {
-		this.port = port;
-	}
-
-	public String getInterfaceVersion() {
-		return interfaceVersion;
-	}
-
-	public void setInterfaceVersion(String interfaceVersion) {
-		this.interfaceVersion = interfaceVersion;
-	}
-
-	public SessionProperties getSession() {
-		return session;
-	}
-
-	public void setSession(SessionProperties session) {
-		this.session = session;
-	}
-
-	public String getDefaultAppCharset() {
-		return defaultAppCharset;
-	}
-
-	public void setDefaultAppCharset(String appEncoding) {
-		this.defaultAppCharset = appEncoding;
-	}
-
-	public String getSmppCharset() {
-		return smppCharset;
-	}
-
-	public void setSmppCharset(String smppEncoding) {
-		this.smppCharset = smppEncoding;
 	}
 
 }

@@ -59,8 +59,8 @@ public class TemplateErrorTest {
 	@Test
 	public void multiTemplateNotFound() throws MessagingException {
 		thrown.expect(MessageNotSentException.class);
-		thrown.expect(hasAnyCause(NoContentException.class, hasMessage(containsString("Template not found for INVALID_PATH after trying to load from [INVALID_PATH.txt, INVALID_PATH.txt.ftl]"))));
-		thrown.expect(hasAnyCause(NoContentException.class, hasMessage(containsString("Template not found for INVALID_PATH after trying to load from [INVALID_PATH.html, INVALID_PATH.html.ftl]"))));
+		thrown.expect(hasAnyCause(NoContentException.class, hasMessage(containsString("Template not found for INVALID_PATH after trying to load from [INVALID_PATH.txt, INVALID_PATH.txt.ftl, INVALID_PATH.txt.ftlh]"))));
+		thrown.expect(hasAnyCause(NoContentException.class, hasMessage(containsString("Template not found for INVALID_PATH after trying to load from [INVALID_PATH.html, INVALID_PATH.xhtml, INVALID_PATH.html.ftl, INVALID_PATH.html.ftlh]"))));
 
 		service.send(new Email()
 				.from("sender@yopmail.com")

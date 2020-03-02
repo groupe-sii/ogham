@@ -230,7 +230,7 @@ import fr.sii.ogham.sms.sender.SmsSender;
  * ogham.sms.smpp.port=your SMPP server port
  * ogham.sms.smpp.system-id=your SMPP system_id
  * ogham.sms.smpp.password=an optional password
- * ogham.sms.from=the sender phone number
+ * ogham.sms.from.default-value=the sender phone number
  * </pre>
  * 
  * <p>
@@ -313,10 +313,10 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	 *	builder
 	 *	  .autofill()
 	 *	    .from()
-	 *	      .defaultValue().properties("${ogham.sms.from}").and()
+	 *	      .defaultValue().properties("${ogham.sms.from.default-value}").and()
 	 *	        .and()
 	 *	    .to()
-	 *	      .defaultValue().properties("${ogham.sms.to}").and()
+	 *	      .defaultValue().properties("${ogham.sms.to.default-value}").and()
 	 *	        .and()
 	 *	    .and()
 	 * </code>
@@ -349,14 +349,14 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	 *	  .numbers()
 	 *	    .from()
 	 *	      .format()
-	 *	        .alphanumericCode().properties("${ogham.sms.from-format-enable-alphanumeric}").defaultValue(true).and()
-	 *	        .shortCode().properties("${ogham.sms.from-format-enable-shortcode}").defaultValue(true).and()
-	 *	        .internationalNumber().properties("${ogham.sms.from-format-enable-international}").defaultValue(true).and()
+	 *	        .alphanumericCode().properties("${ogham.sms.from.alphanumeric-code-format.enable}").defaultValue(true).and()
+	 *	        .shortCode().properties("${ogham.sms.from.short-code-format.enable}").defaultValue(true).and()
+	 *	        .internationalNumber().properties("${ogham.sms.from.international-format.enable}").defaultValue(true).and()
 	 *	        .and()
 	 *	      .and()
 	 *	    .to()
 	 *	      .format()
-	 *	        .internationalNumber().properties("${ogham.sms.to-format-enable-international}").defaultValue(true);
+	 *	        .internationalNumber().properties("${ogham.sms.to.international-format.enable}").defaultValue(true);
 	 * </code>
 	 * </pre>
 	 * 

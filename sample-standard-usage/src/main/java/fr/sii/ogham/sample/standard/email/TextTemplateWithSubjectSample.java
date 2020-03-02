@@ -14,7 +14,7 @@ public class TextTemplateWithSubjectSample {
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		properties.setProperty("ogham.email.from.default-value", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
@@ -25,7 +25,7 @@ public class TextTemplateWithSubjectSample {
 		// send the email using fluent API (do not specify subject)
 		// subject is set to null to let automatic mechanism to read the title
 		// of the first line if prefixed by "Subject:" and use it as subject of your email
-		service.send(new Email()																				// <1>
+		service.send(new Email()                                                                       // <1>
 						.body().template("classpath:/template/freemarker/simpleWithSubject.txt.ftl", 
 													new SimpleBean("foo", 42))
 						.to("ogham-test@yopmail.com"));

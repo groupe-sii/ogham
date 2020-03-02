@@ -1,6 +1,7 @@
 package fr.sii.ogham.spring.template;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 @ConfigurationProperties("ogham.freemarker")
 public class OghamFreemarkerProperties {
@@ -8,27 +9,10 @@ public class OghamFreemarkerProperties {
 	 * Default charset encoding for Freemarker templates
 	 */
 	private String defaultEncoding;
-
-	/**
-	 * Access Spring beans from templates using
-	 * {@code @beanName.methodName(args)}
-	 */
-	private boolean enableSpringBeans = true;
-
-	/**
-	 * Access static methods from templates using
-	 * {@code ${statics['full.package.name.ClassName'].method(args)}}<br />
-	 * <br />
-	 * You can change the name of the variable used to access static methods by
-	 * setting the property ogham.freemarker.static-method-access-variable-name
-	 */
-	private boolean enableStaticMethodAccess = true;
-
-	/**
-	 * Change the name of the variable name used in templates to access static
-	 * methods
-	 */
-	private String staticMethodAccessVariableName = "statics";
+	@NestedConfigurationProperty
+	private SpringBeansProperties springBeans = new SpringBeansProperties();
+	@NestedConfigurationProperty
+	private StaticMethodAccess staticMethodAccess = new StaticMethodAccess();
 
 	public String getDefaultEncoding() {
 		return defaultEncoding;
@@ -38,27 +22,68 @@ public class OghamFreemarkerProperties {
 		this.defaultEncoding = defaultEncoding;
 	}
 
-	public boolean isEnableSpringBeans() {
-		return enableSpringBeans;
+	public SpringBeansProperties getSpringBeans() {
+		return springBeans;
 	}
 
-	public void setEnableSpringBeans(boolean enableSpringBeans) {
-		this.enableSpringBeans = enableSpringBeans;
+	public void setSpringBeans(SpringBeansProperties springBeans) {
+		this.springBeans = springBeans;
 	}
 
-	public boolean isEnableStaticMethodAccess() {
-		return enableStaticMethodAccess;
+	public StaticMethodAccess getStaticMethodAccess() {
+		return staticMethodAccess;
 	}
 
-	public void setEnableStaticMethodAccess(boolean enableStaticMethodAccess) {
-		this.enableStaticMethodAccess = enableStaticMethodAccess;
+	public void setStaticMethodAccess(StaticMethodAccess staticMethodAccess) {
+		this.staticMethodAccess = staticMethodAccess;
 	}
 
-	public String getStaticMethodAccessVariableName() {
-		return staticMethodAccessVariableName;
+	public static class SpringBeansProperties {
+		/**
+		 * Access Spring beans from templates using
+		 * {@code @beanName.methodName(args)}
+		 */
+		private boolean enable = true;
+
+		public boolean isEnable() {
+			return enable;
+		}
+
+		public void setEnable(boolean enable) {
+			this.enable = enable;
+		}
 	}
 
-	public void setStaticMethodAccessVariableName(String staticMethodAccessVariableName) {
-		this.staticMethodAccessVariableName = staticMethodAccessVariableName;
+	public static class StaticMethodAccess {
+		/**
+		 * Access static methods from templates using
+		 * {@code ${statics['full.package.name.ClassName'].method(args)}}<br />
+		 * <br />
+		 * You can change the name of the variable used to access static methods
+		 * by setting the property
+		 * ogham.freemarker.static-method-access.variable-name
+		 */
+		private boolean enable = true;
+		/**
+		 * Change the name of the variable name used in templates to access
+		 * static methods
+		 */
+		private String variableName = "statics";
+
+		public boolean isEnable() {
+			return enable;
+		}
+
+		public void setEnable(boolean enable) {
+			this.enable = enable;
+		}
+
+		public String getVariableName() {
+			return variableName;
+		}
+
+		public void setVariableName(String variableName) {
+			this.variableName = variableName;
+		}
 	}
 }

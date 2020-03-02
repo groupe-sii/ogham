@@ -34,7 +34,7 @@ public class EmailAttachmentTestSample {
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+						.set("ogham.email.from.default-value", "Sender Name <test.sender@sii.fr>")
 						.set("mail.smtp.host", SMTP.getBindAddress())
 						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
 						.and()
@@ -60,12 +60,12 @@ public class EmailAttachmentTestSample {
 					.contentAsString(is("body"))
 					.contentType(startsWith("text/plain")).and()
 				.alternative(nullValue())
-				.attachments(hasSize(1))									// <1>
-				.attachment(0)												// <2>
-					.content(is(resource("/attachment/test.pdf")))			// <3>
-					.contentType(startsWith("application/pdf"))				// <4>
-					.filename(is("test.pdf"))								// <5>
-					.disposition(is(ATTACHMENT_DISPOSITION));				// <6>
+				.attachments(hasSize(1))                              // <1>
+				.attachment(0)                                        // <2>
+					.content(is(resource("/attachment/test.pdf")))    // <3>
+					.contentType(startsWith("application/pdf"))       // <4>
+					.filename(is("test.pdf"))                         // <5>
+					.disposition(is(ATTACHMENT_DISPOSITION));         // <6>
 		// @formatter:on
 	}
 }

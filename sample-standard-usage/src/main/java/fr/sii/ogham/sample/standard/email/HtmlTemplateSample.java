@@ -14,19 +14,19 @@ public class HtmlTemplateSample {
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		properties.setProperty("ogham.email.from.default-value", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
-		MessagingService service = MessagingBuilder.standard()									// <1>
+		MessagingService service = MessagingBuilder.standard()                           // <1>
 				.environment()
-					.properties(properties)														// <2>
+					.properties(properties)                                              // <2>
 					.and()
-				.build();																		// <3>
+				.build();                                                                // <3>
 		// send the email using fluent API
-		service.send(new Email()																// <4>
-						.subject("subject")
-						.body().template("classpath:/template/thymeleaf/simple.html", 			// <5>
-													new SimpleBean("foo", 42))					// <6>
+		service.send(new Email()                                                         // <4>
+						.subject("HtmlTemplateSample")
+						.body().template("classpath:/template/thymeleaf/simple.html",    // <5>
+													new SimpleBean("foo", 42))           // <6>
 						.to("ogham-test@yopmail.com"));
 	}
 

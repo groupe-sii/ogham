@@ -32,7 +32,7 @@ public class SeveralEmailsTestSample {
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+						.set("ogham.email.from.default-value", "Sender Name <test.sender@sii.fr>")
 						.set("mail.smtp.host", SMTP.getBindAddress())
 						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
 						.and()
@@ -57,7 +57,7 @@ public class SeveralEmailsTestSample {
 								.to("recipient3@sii.fr"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(3))
-			.every()													// <1>
+			.every()                                                   // <1>
 				.subject(is("Simple"))
 				.from()
 					.address(hasItems("test.sender@sii.fr"))
@@ -67,7 +67,7 @@ public class SeveralEmailsTestSample {
 				.alternative(nullValue())
 				.attachments(emptyIterable())
 				.and()
-			.message(0)													// <2>
+			.message(0)                                                // <2>
 				.body()
 					.contentAsString(is("string body 1"))
 					.and()
@@ -75,7 +75,7 @@ public class SeveralEmailsTestSample {
 					.address(hasItems("recipient1@sii.fr"))
 					.and()
 				.and()
-			.message(1)													// <3>
+			.message(1)                                                // <3>
 				.body()
 					.contentAsString(is("string body 2"))
 					.and()
@@ -83,7 +83,7 @@ public class SeveralEmailsTestSample {
 					.address(hasItems("recipient2@sii.fr"))
 					.and()
 				.and()
-			.message(2)													// <4>
+			.message(2)                                                // <4>
 				.body()
 					.contentAsString(is("string body 3"))
 					.and()

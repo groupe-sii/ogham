@@ -110,11 +110,11 @@ import freemarker.template.TemplateExceptionHandler;
  * </li>
  * <li>Configures static method access from templates:
  * <ul>
- * <li>Uses property value of ${ogham.freemarker.enable-static-method-access} if
+ * <li>Uses property value of ${ogham.freemarker.static-method-access.enable} if
  * provided to enable/disable static method access from templates (default is
  * enabled is nothing is configured)</li>
  * <li>Uses property value of
- * ${ogham.freemarker.static-method-access-variable-name} if provided to set the
+ * ${ogham.freemarker.static-method-access.variable-name} if provided to set the
  * name used to access static methods from templates (default is 'statics')</li>
  * </ul>
  * </li>
@@ -200,12 +200,14 @@ public final class DefaultFreemarkerEmailConfigurer {
 				.string()
 					.and()
 				.variant(EmailVariant.HTML, "html.ftl")
+				.variant(EmailVariant.HTML, "html.ftlh")
 				.variant(EmailVariant.TEXT, "txt.ftl")
+				.variant(EmailVariant.TEXT, "txt.ftlh")
 				.configuration()
 					.defaultEncoding().properties("${ogham.freemarker.default-encoding}").defaultValue(overrideIfNotSet("UTF-8")).and()
 					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)
-					.enableStaticMethodAccess().properties("${ogham.freemarker.enable-static-method-access}").defaultValue(overrideIfNotSet(true)).and()
-					.staticMethodAccessVariableName().properties("${ogham.freemarker.static-method-access-variable-name}").defaultValue(overrideIfNotSet("statics"));
+					.enableStaticMethodAccess().properties("${ogham.freemarker.static-method-access.enable}").defaultValue(overrideIfNotSet(true)).and()
+					.staticMethodAccessVariableName().properties("${ogham.freemarker.static-method-access.variable-name}").defaultValue(overrideIfNotSet("statics"));
 			// @formatter:on
 		}
 	}

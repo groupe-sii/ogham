@@ -47,7 +47,7 @@ public class SmsSMPPGsm7bitTest {
 					.properties()
 						.set("ogham.sms.smpp.host", "127.0.0.1")
 						.set("ogham.sms.smpp.port", smppServer.getPort())
-						.set("ogham.sms.cloudhopper.encoder.gsm-7bit-packed.priority", 100000)
+						.set("ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority", 100000)
 						.and()
 					.and()
 				.build();

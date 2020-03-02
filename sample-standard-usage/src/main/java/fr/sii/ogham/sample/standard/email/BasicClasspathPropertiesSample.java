@@ -13,12 +13,12 @@ public class BasicClasspathPropertiesSample {
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
 				.environment()
-					.properties("classpath:email.properties")		// <1>
+					.properties("classpath:email.properties")      // <1>
 					.and()
 				.build();
 		// send the email using fluent API
 		service.send(new Email()
-						.subject("subject")
+						.subject("BasicClasspathPropertiesSample")
 						.body().string("email content")
 						.to("ogham-test@yopmail.com"));
 	}

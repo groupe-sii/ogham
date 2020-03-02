@@ -17,7 +17,7 @@ include::{standard-email-samples-sourcedir}/HtmlTemplateSample.java[]
 <1> Use the standard builder (predefined behavior)
 <2> Register the custom properties
 <3> Create a MessagingService instance
-<4> Send an email with an explicit subject. The sender address is automatically set using `ogham.email.from` property
+<4> Send an email with an explicit subject. The sender address is automatically set using `ogham.email.from.default-value` property
 <5> Indicate the path to the HTML template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 

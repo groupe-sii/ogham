@@ -33,21 +33,21 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  * <li>It encodes using GSM 7-bit default alphabet if the message contains only
  * characters defined in the table. Message is packed so the message can have a
  * maximum length of 160 characters. This is enable only if automatic guessing
- * is enabled (using {@link #autoGuess(Boolean)}) and GSM 7-bit is enabled (using
- * {@link #gsm7bitPacked(Integer)}).</li>
+ * is enabled (using {@link #autoGuess(Boolean)}) and GSM 7-bit is enabled
+ * (using {@link #gsm7bitPacked(Integer)}).</li>
  * <li>It encodes using GSM 8-bit data encoding if the message contains only
  * characters that can be encoded on one octet. This is enable only if automatic
- * guessing is enabled (using {@link #autoGuess(Boolean)}) and GSM 8-bit is enabled (using
- * {@link #gsm8bit(Integer)}).</li>
+ * guessing is enabled (using {@link #autoGuess(Boolean)}) and GSM 8-bit is
+ * enabled (using {@link #gsm8bit(Integer)}).</li>
  * <li>It encodes using Latin 1 (ISO-8859-1) data encoding if the message
  * contains only characters that can be encoded on one octet. This is enable
- * only if automatic guessing is enabled (using {@link #autoGuess(Boolean)}) and Latin-1 is enabled (using
- * {@link #latin1(Integer)}).</li>
+ * only if automatic guessing is enabled (using {@link #autoGuess(Boolean)}) and
+ * Latin-1 is enabled (using {@link #latin1(Integer)}).</li>
  * <li>It encodes using UCS-2 encoding if the message contains special
  * characters that can't be encoded on one octet. Each character is encoded on
  * two octets. This is enable only if automatic guessing is enabled (using
- * {@link #autoGuess(Boolean)}) and UCS-2 is
- * enabled (using {@link #ucs2(Integer)}).</li>
+ * {@link #autoGuess(Boolean)}) and UCS-2 is enabled (using
+ * {@link #ucs2(Integer)}).</li>
  * </ul>
  * 
  * <strong>Automatic guessing enabled</strong>
@@ -584,25 +584,26 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * Enable/disable automatic guessing of message encoding.
 	 * 
 	 * <p>
-	 * If enables, it automatically guess the best supported encoding in order
+	 * If enabled, it automatically guess the best supported encoding in order
 	 * to use the minimum octets:
 	 * <ul>
 	 * <li>It encodes using GSM 7-bit default alphabet if the message contains
 	 * only characters defined in the table. Message is packed so the message
-	 * can have a maximum length of 160 characters. This is enable only if
+	 * can have a maximum length of 160 characters. This is enabled only if
 	 * automatic guessing is enabled (using {@link #autoGuess(Boolean)}) and GSM
 	 * 7-bit is enabled (using {@link #gsm7bitPacked(Integer)}).</li>
 	 * <li>It encodes using GSM 8-bit data encoding if the message contains only
-	 * characters that can be encoded on one octet. This is enable only if
+	 * characters that can be encoded on one octet. This is enabled only if
 	 * automatic guessing is enabled (using {@link #autoGuess(Boolean)} and GSM
 	 * 8-bit is enabled (using {@link #gsm8bit(Integer)}).</li>
 	 * <li>It encodes using Latin 1 (ISO-8859-1) data encoding if the message
-	 * contains only characters that can be encoded on one octet. This is enable
-	 * only if automatic guessing is enabled (using {@link #autoGuess(Boolean)}
-	 * and GSM 8-bit is enabled (using {@link #latin1(Integer)}).</li>
+	 * contains only characters that can be encoded on one octet. This is
+	 * enabled only if automatic guessing is enabled (using
+	 * {@link #autoGuess(Boolean)} and Latin-1 is enabled (using
+	 * {@link #latin1(Integer)}).</li>
 	 * <li>It encodes using UCS-2 encoding if the message contains special
 	 * characters that can't be encoded on one octet. Each character is encoded
-	 * on two octets. This is enable only if automatic guessing is enabled
+	 * on two octets. This is enabled only if automatic guessing is enabled
 	 * (using {@link #autoGuess(Boolean)}) and UCS-2 is enabled (using
 	 * {@link #ucs2(Integer)}).</li>
 	 * </ul>

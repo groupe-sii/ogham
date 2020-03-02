@@ -58,17 +58,17 @@ import freemarker.template.ObjectWrapper;
  * {@code @beanName.method(args)}.
  * 
  * <p>
- * If {@code ogham.freemarker.enable-static-method-access} is true (default
+ * If {@code ogham.freemarker.static-method-access.enable} is true (default
  * value), then static methods can be called from templates using
  * 
  * <pre>
  * {@code statics['full.package.name.ClassName'].method(args)}
  * </pre>
  * 
- * If {@code ogham.freemarker.static-method-access-variable-name} value is
+ * If {@code ogham.freemarker.static-method-access.variable-name} value is
  * changed (default value is 'statics'), then static methods can be called from
  * templates using another variable name. For example, configuring
- * {@code ogham.freemarker.static-method-access-variable-name=global} gives
+ * {@code ogham.freemarker.static-method-access.variable-name=global} gives
  * access to static methods using name global:
  * 
  * <pre>
@@ -127,10 +127,10 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		if (emailProperties != null) {
 			applyOghamConfiguration(builder, emailProperties);
 		}
-		if (oghamFreemarkerProperties.isEnableSpringBeans()) {
+		if (oghamFreemarkerProperties.getSpringBeans().isEnable()) {
 			registerSpringBeans(builder, emailConfiguration);
 		}
-		if (oghamFreemarkerProperties.isEnableStaticMethodAccess()) {
+		if (oghamFreemarkerProperties.getStaticMethodAccess().isEnable()) {
 			registerStatics(builder, emailConfiguration);
 		}
 	}
@@ -147,10 +147,10 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		if (smsProperties != null) {
 			applyOghamConfiguration(builder, smsProperties);
 		}
-		if (oghamFreemarkerProperties.isEnableSpringBeans()) {
+		if (oghamFreemarkerProperties.getSpringBeans().isEnable()) {
 			registerSpringBeans(builder, smsConfiguration);
 		}
-		if (oghamFreemarkerProperties.isEnableStaticMethodAccess()) {
+		if (oghamFreemarkerProperties.getStaticMethodAccess().isEnable()) {
 			registerStatics(builder, smsConfiguration);
 		}
 	}
@@ -230,6 +230,6 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 	}
 
 	private void registerStatics(AbstractFreemarkerBuilder<?, ?> builder, Configuration configuration) {
-		builder.configuration().addSharedVariable(oghamFreemarkerProperties.getStaticMethodAccessVariableName(), getBeansWrapper(configuration).getStaticModels());
+		builder.configuration().addSharedVariable(oghamFreemarkerProperties.getStaticMethodAccess().getVariableName(), getBeansWrapper(configuration).getStaticModels());
 	}
 }

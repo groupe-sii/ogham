@@ -71,7 +71,7 @@ public class EmailExtractSubjectTest {
 	
 	@Test
 	public void noSubjectInContentsWithDefaultSubjectShouldSendWithDefaultSubject() throws MessagingException, javax.mail.MessagingException, IOException {
-		builder.environment().properties().set("ogham.email.subject", "foo");
+		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -96,7 +96,7 @@ public class EmailExtractSubjectTest {
 	
 	@Test
 	public void noSubjectInContentsWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, javax.mail.MessagingException, IOException {
-		builder.environment().properties().set("ogham.email.subject", "foo");
+		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -146,7 +146,7 @@ public class EmailExtractSubjectTest {
 	
 	@Test
 	public void subjectExtractedFromHtmlWithDefaultSubjectShouldSendWithHtmlTitle() throws MessagingException, javax.mail.MessagingException, IOException {
-		builder.environment().properties().set("ogham.email.subject", "foo");
+		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -171,7 +171,7 @@ public class EmailExtractSubjectTest {
 	
 	@Test
 	public void subjectExtractedFromHtmlWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, javax.mail.MessagingException, IOException {
-		builder.environment().properties().set("ogham.email.subject", "foo");
+		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -221,7 +221,7 @@ public class EmailExtractSubjectTest {
 	
 	@Test
 	public void subjectExtractedFromTextWithDefaultSubjectShouldSendWithSubjectExtractedFromText() throws MessagingException, javax.mail.MessagingException, IOException {
-		builder.environment().properties().set("ogham.email.subject", "foo");
+		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()
@@ -246,7 +246,7 @@ public class EmailExtractSubjectTest {
 	
 	@Test
 	public void subjectExtractedFromTextWithDefaultSubjectAndCustomSubjectShouldSendWithCustomSubject() throws MessagingException, javax.mail.MessagingException, IOException {
-		builder.environment().properties().set("ogham.email.subject", "foo");
+		builder.environment().properties().set("ogham.email.subject.default-value", "foo");
 		MessagingService oghamService = builder.build();
 		// @formatter:off
 		oghamService.send(new Email()

@@ -1,0 +1,41 @@
+# in comments
+${custom.high-priority}
+${custom.low-priority}
+${email.sender.address}
+${sms.sender.number}
+${smpp.host}
+${smpp.port}
+${smpp.system-id}
+${smpp.password}
+# in code
+${property.key}
+# in html code
+${value}
+# in Spring tests
+${local.server.port}
+# in tests utils
+${fieldName}
+${messageIndex}
+${name}
+${found}
+${partName}
+${tagName}
+${numberName}
+# in tests
+${nested.name}
+${nested.value}
+${configurer.after-init.high-priority}
+${configurer.after-init.low-priority}
+${configurer.before-build.default.high-priority}
+${configurer.before-build.default.low-priority}
+${configurer.before-build.service-provider.high-priority}
+${configurer.before-build.service-provider.low-priority}
+${custom.property}
+${custom.property.for.api-key}
+${custom.property.for.host}
+${custom.property.for.url}
+${custom.property.high-priority}
+${custom.property.key}
+${custom.property.low-priority}
+# internal property
+${ogham.sms.smsglobal.service-provider.auto-conf.force}

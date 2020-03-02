@@ -2,67 +2,464 @@
 include::{docdir}/variables.adoc[]
 
 
-http://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] is the standard protocol to send SMS. SMPP is quite complex and has many configurable properties:
+http://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] is the standard protocol to send SMS. 
+SMPP is quite complex and has many configurable properties.
+
+There are configuration properties that are dependent of the sender implementation (for example Cloudhopper)
+and configuration properties that are shared between all implementations.
+
 
 [.prevent-overflow]
 ====
+.Common SMPP properties
 [cols="2,4,1,1"]
 |===
 | Property | Description | Required | Default value
 
-| ogham.sms.smpp.host
-| The host of the SMPP or SMSC server
+| `ogham.sms.smpp.host`
+| The host of the SMPP or SMSC server (IP or address).
 | Yes
 |
 
-| ogham.sms.smpp.port
+| `ogham.sms.smpp.port`
 | The port of the SMPP or SMSC server
 | Yes
 |
 
-| ogham.sms.smpp.systemId
-| The system identifier used for authenticating
+| `ogham.sms.smpp.system-id`
+| The system_id parameter is used to identify an ESME ( External Short Message Entity) or 
+  an SMSC (Short Message Service Centre) at bind time. An ESME system_id identifies the ESME 
+  or ESME agent to the SMSC. The SMSC system_id provides an identification of the SMSC to the ESME.
 | Yes
 |
 
-| ogham.sms.smpp.password
-| The password for the system identifier
+| `ogham.sms.smpp.password`
+| The password parameter is used by the SMSC to authenticate the identity of the binding ESME. 
+  The Service Provider may require ESME’s to provide a password when binding to the SMSC. This 
+  password is normally issued by the SMSC system administrator. The password parameter may also 
+  be used by the ESME to authenticate the identity of the binding SMSC (e.g. in the case of the 
+  outbind operation).
 | Yes
 |
 
-| ogham.sms.smpp.window.size
-| Message exchange may be synchronous, where each peer waits for a response for each PDU being sent, or asynchronous, where multiple requests can be issued 7 without waiting and acknowledged in a skew order by the other peer; the number of unacknowledged requests is called a window
+| `ogham.sms.smpp.bind-type`
+| The bind command type: can be `TRANSMITTER` (send only), `RECEIVER` (to send messages only, not
+  useful in Ogham context) or `TRANSCEIVER` (send and receive, may be used for acks).
 | No
-| 1
+| `TRANSMITTER`
 
-| ogham.sms.smpp.window.monitor.interval
-| Time to wait between two window checks
+| `ogham.sms.smpp.system-type`
+| The system_type parameter is used to categorize the type of ESME that is binding to the SMSC. 
+  Examples include “VMS” (voice mail system) and “OTA” (over-the-air activation system). Specification 
+  of the system_type is optional - some SMSC’s may not require ESME’s to provide this detail. In this 
+  case, the ESME can set the system_type to NULL. The system_type (optional) may be used to categorize 
+  the system, e.g., “EMAIL”, “WWW”, etc.
 | No
-| disabled
+|
 
-| ogham.sms.smpp.timeout.connection
-| The timeout TCP/IP connection for SMPP session
+| `ogham.sms.smpp.user-data.use-short-message`
+| Enable/disable use of `short_message` field to carry text message (named User Data).
 | No
-| 10 seconds
+| `true`
 
-| ogham.sms.smpp.timeout.bind
-| The maximum time to wait for the bind response
+| `ogham.sms.smpp.user-data.use-tlv-message-payload`
+| Enable/disable use of `message_payload` optional TLV (Tag-Value-Length) parameter to carry 
+  text message (named User Data).
 | No
-| 5 seconds
+| `false`
 
-| ogham.sms.smpp.timeout.unbind
-| The maximum time to wait for unbind response
-| No
-| 5 seconds
+| `ogham.sms.smpp.split.enable`
+| Enable/disable message splitting. 
 
-| ogham.sms.smpp.timeout.request
-| The maximum time to wait for an endpoint to respond to a request
+  SMPP message (`short_message`) size is limited to 140 octets. Therefore long text messages has to be split
+  into several segments and sent separately. The number of effective characters sent per segment
+  depends on the character encoding (see <<user-manual.adoc#auto-split-sms, how message split is handled>>).
 | No
-| disabled
+| `true`
 
-| ogham.sms.smpp.timeout.window
-| The maximum time to wait for window response
+| `ogham.sms.smpp.encoder.gsm7bit-packed.priority`
+| Set priority for encoding text messages using GSM 7-bit encoding. GSM 7-bit encoding and 
+  GSM 8-bit encoding use the same character tables. Only 7 bits are necessary to represents 
+  characters. In GSM 8-bit encoding a leading 0 is added. However, GSM 7-bit encoding is packed. 
+  Every character is "merged" with the next one in order to use more characters for the same number 
+  of octets.
+
+  If priority value is 0 or negative, it disables GSM 7-bit encoding.
+
+  This encoding is disabled by default since it is not supported by many providers and leads to
+  unexpected characters received by the end-user. 
 | No
-| 1 minute
+| `0` (disabled)
+
+| `ogham.sms.smpp.encoder.gsm8bit.priority`
+| Set priority for encoding text messages using GSM 8-bit encoding. GSM 7-bit encoding and 
+  GSM 8-bit encoding use the same character tables. Only 7 bits are necessary to represents 
+  characters. In GSM 8-bit encoding a leading 0 is added.
+
+  If priority value is 0 or negative, it disables GSM 8-bit encoding.
+| No
+| `99000`
+
+| `ogham.sms.smpp.encoder.latin1.priority`
+| Set priority for encoding text messages using Latin-1 (ISO-8859-1)
+
+  If priority value is 0 or negative, it disables Latin-1 encoding.
+| No
+| `98000`
+
+| `ogham.sms.smpp.encoder.ucs2.priority`
+| Set priority for encoding text messages using UCS-2. UCS-2 uses two octets per character.
+
+  If priority value is 0 or negative, it disables UCS-2 encoding.
+| No
+| `90000`
+
+| `ogham.sms.smpp.encoder.auto-guess.enable`
+a| Enable/disable automatic guessing of message encoding.
+
+If enabled, it automatically guess the best supported encoding in order to use the minimum octets:
+
+  * It encodes using GSM 7-bit default alphabet if the message contains only characters defined in the 
+    table. Message is packed so the message can have a maximum length of 160 characters.
+  * It encodes using GSM 8-bit data encoding if the message contains only characters that can be 
+    encoded on one octet and each character is present in the GSM 8-bit table.
+  * It encodes using Latin 1 (ISO-8859-1) data encoding if the message contains only characters 
+    that can be encoded on one octet.
+  * It encodes using UCS-2 encoding if the message contains special characters that can't be encoded 
+    on one octet. Each character is encoded on two octets.
+| No
+| `true`
+
+| `ogham.sms.smpp.encoder.default-charset`
+| Set which Charset should be used if nothing else is configured.
+| No
+| `GSM`
+
+| `ogham.sms.smpp.data-coding-scheme.auto.enable`
+a| Enable/disable automatic detection of Data Coding Scheme value according to
+the SMPP interface version.
+
+Data Coding Scheme is a one-octet field in Short Messages (SM) and Cell Broadcast Messages (CB) 
+which carries a basic information how the recipient handset should process the received message. 
+The information includes:
+
+* the character set or message coding which determines the encoding of the message user data
+* the message class which determines to which component of the Mobile
+  Station (MS) or User Equipment (UE) should be the message delivered
+* the request to automatically delete the message after reading
+* the state of flags indicating presence of unread voicemail, fax,
+  e-mail or other messages
+* the indication that the message content is compressed
+* the language of the cell broadcast message
+
+The field is described in 3GPP 23.040 and 3GPP 23.038 under the name TP-DCS (see 
+https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme[SMS Data Coding Scheme]).
+  
+SMPP 3.4 introduced a new list of `data_coding` values (see
+https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer"[Short Message Peer to Peer]).
+
+Implementation that determines the Data Coding value is selected based on SMPP interface version if 
+enabled. 
+| No
+| `true`
+
+| `ogham.sms.smpp.data-coding-scheme.value`
+| Use the same Data Coding Scheme value for all messages. If set, disables automatic detection
+(see `ogham.sms.smpp.data-coding-scheme.auto.enable`)
+| No
+|
+|===
+====
+
+[.prevent-overflow]
+====
+.Cloudhopper specific SMPP properties
+[cols="2,4,1,1"]
+|===
+
+| `ogham.sms.cloudhopper.host`
+| The host of the SMPP or SMSC server (IP or address).
+  
+  This is an alias of `ogham.sms.smpp.host` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| Yes
+|
+
+| `ogham.sms.cloudhopper.port`
+| The port of the SMPP or SMSC server
+  
+  This is an alias of `ogham.sms.smpp.port` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| Yes
+|
+
+| `ogham.sms.cloudhopper.system-id`
+| The system_id parameter is used to identify an ESME ( External Short Message Entity) or 
+  an SMSC (Short Message Service Centre) at bind time. An ESME system_id identifies the ESME 
+  or ESME agent to the SMSC. The SMSC system_id provides an identification of the SMSC to the ESME.
+
+  This is an alias of `ogham.sms.smpp.system-id` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| Yes
+|
+
+| `ogham.sms.cloudhopper.password`
+| The password parameter is used by the SMSC to authenticate the identity of the binding ESME. 
+  The Service Provider may require ESME’s to provide a password when binding to the SMSC. This 
+  password is normally issued by the SMSC system administrator. The password parameter may also 
+  be used by the ESME to authenticate the identity of the binding SMSC (e.g. in the case of the 
+  outbind operation).
+
+  This is an alias of `ogham.sms.smpp.password` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| Yes
+|
+
+| `ogham.sms.cloudhopper.bind-type`
+| The bind command type: can be `TRANSMITTER` (send only), `RECEIVER` (to send messages only, not
+  useful in Ogham context) or `TRANSCEIVER` (send and receive, may be used for acks).
+  
+  This is an alias of `ogham.sms.smpp.bind-type` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| Yes
+| `TRANSMITTER`
+
+| `ogham.sms.cloudhopper.system-type`
+| The system_type parameter is used to categorize the type of ESME that is binding to the SMSC. 
+  Examples include “VMS” (voice mail system) and “OTA” (over-the-air activation system). Specification 
+  of the system_type is optional - some SMSC’s may not require ESME’s to provide this detail. In this 
+  case, the ESME can set the system_type to NULL. The system_type (optional) may be used to categorize 
+  the system, e.g., “EMAIL”, “WWW”, etc.
+
+  This is an alias of `ogham.sms.smpp.system-type` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| Yes
+| 
+
+| `ogham.sms.cloudhopper.interface-version`
+| The SMPP protocol version (either `3.3`, `3.4` or `5.0`)
+| No
+| `3.4` (supported by most providers)
+
+| `ogham.sms.cloudhopper.user-data.use-short-message`
+| Enable/disable use of `short_message` field to carry text message (named User Data).
+
+  This is an alias of `ogham.sms.smpp.user-data.use-short-message` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| No
+| `true`
+
+| `ogham.sms.cloudhopper.user-data.use-tlv-message-payload`
+| Enable/disable use of `message_payload` optional TLV (Tag-Value-Length) parameter to carry 
+  text message (named User Data).
+| No
+| `false`
+
+| `ogham.sms.cloudhopper.split.enable`
+| Enable/disable message splitting. 
+
+  SMPP message (`short_message`) size is limited to 140 octets. Therefore long text messages has to be split
+  into several segments and sent separately. The number of effective characters sent per segment
+  depends on the character encoding (see <<user-manual.adoc#auto-split-sms, how message split is handled>>).
+
+  This is an alias of `ogham.sms.smpp.split.enable` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| No
+| `true`
+
+| `ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority`
+| Set priority for encoding text messages using GSM 7-bit encoding. GSM 7-bit encoding and 
+  GSM 8-bit encoding use the same character tables. Only 7 bits are necessary to represents 
+  characters. In GSM 8-bit encoding a leading 0 is added. However, GSM 7-bit encoding is packed. 
+  Every character is "merged" with the next one in order to use more characters for the same number 
+  of octets.
+
+  If priority value is 0 or negative, it disables GSM 7-bit encoding.
+
+  This encoding is disabled by default since it is not supported by many providers and leads to
+  unexpected characters received by the end-user. 
+
+  This is an alias of `ogham.sms.smpp.encoder.gsm7bit-packed.priority` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| No
+| `0` (disabled)
+
+| `ogham.sms.cloudhopper.encoder.gsm8bit.priority`
+| Set priority for encoding text messages using GSM 8-bit encoding. GSM 7-bit encoding and 
+  GSM 8-bit encoding use the same character tables. Only 7 bits are necessary to represents 
+  characters. In GSM 8-bit encoding a leading 0 is added.
+
+  If priority value is 0 or negative, it disables GSM 8-bit encoding.
+
+  This is an alias of `ogham.sms.smpp.encoder.gsm8bit.priority` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| No
+| `99000`
+
+| `ogham.sms.cloudhopper.encoder.latin1.priority`
+| Set priority for encoding text messages using Latin-1 (ISO-8859-1)
+
+  If priority value is 0 or negative, it disables Latin-1 encoding.
+
+  This is an alias of `ogham.sms.smpp.encoder.latin1.priority` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| No
+| `98000`
+
+| `ogham.sms.cloudhopper.encoder.ucs2.priority`
+| Set priority for encoding text messages using UCS-2. UCS-2 uses two octets per character.
+
+  If priority value is 0 or negative, it disables UCS-2 encoding.
+
+  This is an alias of `ogham.sms.smpp.encoder.ucs2.priority` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| No
+| `90000`
+
+| `ogham.sms.cloudhopper.encoder.auto-guess.enable`
+a| Enable/disable automatic guessing of message encoding.
+
+If enabled, it automatically guess the best supported encoding in order to use the minimum octets:
+
+  * It encodes using GSM 7-bit default alphabet if the message contains only characters defined in the 
+    table. Message is packed so the message can have a maximum length of 160 characters.
+  * It encodes using GSM 8-bit data encoding if the message contains only characters that can be 
+    encoded on one octet and each character is present in the GSM 8-bit table.
+  * It encodes using Latin 1 (ISO-8859-1) data encoding if the message contains only characters 
+    that can be encoded on one octet.
+  * It encodes using UCS-2 encoding if the message contains special characters that can't be encoded 
+    on one octet. Each character is encoded on two octets.
+
+This is an alias of `ogham.sms.smpp.encoder.auto-guess.enable` but only used by Cloudhopper. 
+If both are defined, this property takes precedence.
+| No
+| `true`
+
+| `ogham.sms.cloudhopper.encoder.default-charset`
+| Set which Charset should be used if nothing else is configured.
+
+  This is an alias of `ogham.sms.smpp.encoder.default-charset` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| No
+| `GSM`
+
+| `ogham.sms.cloudhopper.data-coding-scheme.auto.enable`
+a| Enable/disable automatic detection of Data Coding Scheme value according to
+the SMPP interface version.
+
+Data Coding Scheme is a one-octet field in Short Messages (SM) and Cell Broadcast Messages (CB) 
+which carries a basic information how the recipient handset should process the received message. 
+The information includes:
+
+* the character set or message coding which determines the encoding of the message user data
+* the message class which determines to which component of the Mobile
+  Station (MS) or User Equipment (UE) should be the message delivered
+* the request to automatically delete the message after reading
+* the state of flags indicating presence of unread voicemail, fax,
+  e-mail or other messages
+* the indication that the message content is compressed
+* the language of the cell broadcast message
+
+The field is described in 3GPP 23.040 and 3GPP 23.038 under the name TP-DCS (see 
+https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme[SMS Data Coding Scheme]).
+  
+SMPP 3.4 introduced a new list of `data_coding` values (see
+https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer"[Short Message Peer to Peer]).
+
+Implementation that determines the Data Coding value is selected based on SMPP interface version if 
+enabled. 
+
+This is an alias of `ogham.sms.smpp.data-coding-scheme.auto.enable` but only used by Cloudhopper. 
+If both are defined, this property takes precedence.
+| No
+| `true`
+
+| `ogham.sms.cloudhopper.data-coding-scheme.value`
+| Use the same Data Coding Scheme value for all messages. If set, disables automatic detection
+  (see `ogham.sms.smpp.data-coding-scheme.auto.enable`).
+
+  This is an alias of `ogham.sms.smpp.data-coding-scheme.value` but only used by Cloudhopper. 
+  If both are defined, this property takes precedence.
+| No
+|
+
+| `ogham.sms.cloudhopper.session.name`
+| A name for the session (used to name threads).
+| No
+|
+
+| `ogham.sms.cloudhopper.session.bind-timeout`
+| Set the maximum amount of time (in milliseconds) to wait for the success of a bind attempt to the SMSC.
+| No
+| `5000` (5 seconds)
+
+| `ogham.sms.cloudhopper.session.connect-timeout`
+| Set the maximum amount of time (in milliseconds) to wait for a establishing the connection.
+| No
+| `10000` (10 seconds)
+
+| `ogham.sms.cloudhopper.session.request-expiry-timeout`
+| Set the amount of time (milliseconds) to wait for an endpoint to respond to a request before 
+it expires.
+| No
+| `-1` (disabled)
+
+| `ogham.sms.cloudhopper.session.window-monitor-interval`
+| Sets the amount of time (milliseconds) between executions of monitoring the window for requests 
+  that expire. It's recommended that this generally either matches or is half the value of 
+  `ogham.sms.cloudhopper.session.request-expiry-timeout`. Therefore, at worst a request would could 
+  take up 1.5X the `ogham.sms.cloudhopper.session.request-expiry-timeout` to clear out.
+| No
+| `-1` (disabled)
+
+| `ogham.sms.cloudhopper.session.window-size`
+| Message exchange may be synchronous, where each peer waits for a response for each PDU being sent, 
+  or asynchronous, where multiple requests can be issued 7 without waiting and acknowledged in a 
+  skew order by the other peer; the number of unacknowledged requests is called a window
+  
+  Sets the maximum number of requests permitted to be outstanding (unacknowledged) at a given time.
+| No
+| `1`
+
+| `ogham.sms.cloudhopper.session.window-wait-timeout`
+| Set the amount of time (milliseconds) to wait until a slot opens up in the send window.
+| No
+| `60000` (1 minute)
+
+| `ogham.sms.cloudhopper.session.write-timeout`
+| Set the maximum amount of time (in milliseconds) to wait for bytes to be written when 
+  creating a new SMPP session
+| No
+| `0` (no timeout, for backwards compatibility)
+
+| `ogham.sms.cloudhopper.session.response-timeout`
+| Set the maximum amount of time (in milliseconds) to wait until a valid response is received when 
+  a "submit" request is synchronously sends to the remote endpoint. The timeout value includes both 
+  waiting for a "window" slot, the time it takes to transmit the actual bytes on the socket, and for 
+  the remote endpoint to send a response back.
+| No
+| `5000` (5 seconds)
+
+| `ogham.sms.cloudhopper.session.unbind-timeout`
+| Set the maximum amount of time (in milliseconds) to wait until the session is unbounded, waiting 
+  up to a specified period of milliseconds for an unbind response from the remote endpoint. Regardless 
+  of whether a proper unbind response was received, the socket/channel is closed.
+| No
+| `5000` (5 seconds)
+
+
+| `ogham.sms.cloudhopper.session.connect-retry.max-attempts`
+| If the connection can't be established then Ogham can retry several times until it reaches a
+  maximum number of attempts.
+  
+  Set this value to `0` to disable retry.
+| No
+| `5` attempts
+
+| `ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts`
+| Time to wait (in milliseconds) before retrying reconnection. The time to wait is a fixed
+  value.
+| No
+| `500`
 |===
 ====

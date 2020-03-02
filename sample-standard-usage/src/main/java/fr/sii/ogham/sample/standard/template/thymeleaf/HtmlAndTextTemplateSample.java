@@ -15,7 +15,7 @@ public class HtmlAndTextTemplateSample {
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		properties.setProperty("ogham.email.from.default-value", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
@@ -28,7 +28,7 @@ public class HtmlAndTextTemplateSample {
 		// automatically takes the provided path and adds the '.html' extension
 		// for the HTML template and '.txt' for text template
 		service.send(new Email()
-						.subject("subject")
+						.subject("HtmlAndTextTemplateSample")
 						.body().template("classpath:/template/thymeleaf/simple", new SimpleBean("foo", 42))
 						.to("<recipient address>"));
 	}

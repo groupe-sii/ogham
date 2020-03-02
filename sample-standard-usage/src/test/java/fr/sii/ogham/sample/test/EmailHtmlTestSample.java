@@ -34,7 +34,7 @@ public class EmailHtmlTestSample {
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
+						.set("ogham.email.from.default-value", "Sender Name <test.sender@sii.fr>")
 						.set("mail.smtp.host", SMTP.getBindAddress())
 						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))
 						.and()
@@ -46,8 +46,8 @@ public class EmailHtmlTestSample {
 	public void registerMessage() throws MessagingException, javax.mail.MessagingException, IOException {
 		// @formatter:off
 		oghamService.send(new Email()
-								.body().template("/template/register.html", 						// <1>
-															new SimpleBean("foo", 42))				// <2>
+								.body().template("/template/register.html",                         // <1>
+															new SimpleBean("foo", 42))              // <2>
 								.to("Recipient Name <recipient@sii.fr>"));
 		assertThat(greenMail).receivedMessages()
 			.count(is(1))
@@ -60,7 +60,7 @@ public class EmailHtmlTestSample {
 					.address(hasItems("recipient@sii.fr"))
 					.personal(hasItems("Recipient Name")).and()
 				.body()
-					.contentAsString(isIdenticalHtml(resourceAsString("/expected/register.html")))	// <3>
+					.contentAsString(isIdenticalHtml(resourceAsString("/expected/register.html")))  // <3>
 					.contentType(startsWith("text/html")).and()
 				.alternative(nullValue())
 				.attachments(emptyIterable());

@@ -14,7 +14,7 @@ public class HtmlWithImagesAndCssTemplateSample {
 		Properties properties = new Properties();
 		properties.setProperty("mail.smtp.host", "<your server host>");
 		properties.setProperty("mail.smtp.port", "<your server port>");
-		properties.setProperty("ogham.email.from", "<email address to display for the sender user>");
+		properties.setProperty("ogham.email.from.default-value", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
@@ -27,8 +27,8 @@ public class HtmlWithImagesAndCssTemplateSample {
 		// automatically takes the provided path and adds the '.html' extension
 		// for the HTML template and '.txt.ftl' for text template
 		service.send(new Email()
-						.body().template("classpath:/template/withImagesAndCss/resources",		// <1>
-															new SimpleBean("foo", 42))			// <2>
+						.body().template("classpath:/template/withImagesAndCss/resources",    // <1>
+															new SimpleBean("foo", 42))        // <2>
 						.to("ogham-test@yopmail.com"));
 	}
 

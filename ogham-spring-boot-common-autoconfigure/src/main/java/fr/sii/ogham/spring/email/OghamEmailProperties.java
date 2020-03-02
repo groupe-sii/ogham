@@ -10,88 +10,60 @@ import fr.sii.ogham.spring.common.OghamTemplateProperties;
 
 @ConfigurationProperties("ogham.email")
 public class OghamEmailProperties implements OghamTemplateProperties {
-	/**
-	 * Configures how to handle missing email sender address: if no sender
-	 * address is explicitly defined on the email, Ogham will use this value.
-	 */
-	private String from;
-	/**
-	 * Configures how to handle missing email subject: if no subject is
-	 * explicitly defined on the email, Ogham will use this value.
-	 */
-	private String subject;
-	/**
-	 * Subject can be determined using the first line of text template if
-	 * prefixed by this value
-	 */
-	private String subjectFirstLinePrefix = "Subject:";
-	/**
-	 * Configures how to handle missing email recipient address: if no "to"
-	 * address is explicitly defined on the email, Ogham will use this value.
-	 */
-	private String to;
-	/**
-	 * Configures how to handle missing email recipient address: if no "cc"
-	 * address is explicitly defined on the email, Ogham will use this value.
-	 */
-	private String cc;
-	/**
-	 * Configures how to handle missing email recipient address: if no "bcc"
-	 * address is explicitly defined on the email, Ogham will use this value.
-	 */
-	private String bcc;
+	@NestedConfigurationProperty
+	private FromProperties from = new FromProperties();
+	@NestedConfigurationProperty
+	private SubjectProperties subject = new SubjectProperties();
+	@NestedConfigurationProperty
+	private ToProperties to = new ToProperties();
+	@NestedConfigurationProperty
+	private CcProperties cc = new CcProperties();
+	@NestedConfigurationProperty
+	private BccProperties bcc = new BccProperties();
 	@NestedConfigurationProperty
 	private MessageSpecificFreemarkerProperties freemarker = new MessageSpecificFreemarkerProperties();
 	@NestedConfigurationProperty
 	private MessageSpecificThymeleafProperties thymeleaf = new MessageSpecificThymeleafProperties();
 	@NestedConfigurationProperty
 	private MessageSpecificTemplateProperties template = new MessageSpecificTemplateProperties();
-	
-	public String getFrom() {
+
+	public FromProperties getFrom() {
 		return from;
 	}
 
-	public void setFrom(String from) {
+	public void setFrom(FromProperties from) {
 		this.from = from;
 	}
 
-	public String getSubject() {
+	public SubjectProperties getSubject() {
 		return subject;
 	}
 
-	public void setSubject(String subject) {
+	public void setSubject(SubjectProperties subject) {
 		this.subject = subject;
 	}
 
-	public String getSubjectFirstLinePrefix() {
-		return subjectFirstLinePrefix;
-	}
-
-	public void setSubjectFirstLinePrefix(String subjectFirstLinePrefix) {
-		this.subjectFirstLinePrefix = subjectFirstLinePrefix;
-	}
-
-	public String getTo() {
+	public ToProperties getTo() {
 		return to;
 	}
 
-	public void setTo(String to) {
+	public void setTo(ToProperties to) {
 		this.to = to;
 	}
 
-	public String getCc() {
+	public CcProperties getCc() {
 		return cc;
 	}
 
-	public void setCc(String cc) {
+	public void setCc(CcProperties cc) {
 		this.cc = cc;
 	}
 
-	public String getBcc() {
+	public BccProperties getBcc() {
 		return bcc;
 	}
 
-	public void setBcc(String bcc) {
+	public void setBcc(BccProperties bcc) {
 		this.bcc = bcc;
 	}
 
@@ -119,4 +91,140 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 		this.template = template;
 	}
 
+	public static class SubjectProperties {
+		/**
+		 * Configures how to handle missing email subject: if no subject is
+		 * explicitly defined on the email, Ogham will use this value.
+		 */
+		private String defaultValue;
+		@NestedConfigurationProperty
+		private ExtractFromTextProperties extractFromText = new ExtractFromTextProperties();
+		@NestedConfigurationProperty
+		private ExtractHtmlTitleProperties extractHtmlTitle = new ExtractHtmlTitleProperties();
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+
+		public ExtractFromTextProperties getExtractFromText() {
+			return extractFromText;
+		}
+
+		public void setExtractFromText(ExtractFromTextProperties extractFromText) {
+			this.extractFromText = extractFromText;
+		}
+
+		public ExtractHtmlTitleProperties getExtractHtmlTitle() {
+			return extractHtmlTitle;
+		}
+
+		public void setExtractHtmlTitle(ExtractHtmlTitleProperties extractHtmlTitle) {
+			this.extractHtmlTitle = extractHtmlTitle;
+		}
+
+	}
+
+	public static class ExtractHtmlTitleProperties {
+		/**
+		 * Subject can be determined by extracting the text declared in
+		 * &gt;title&lt; node of the HTML. Enabled by default
+		 */
+		private boolean enable = true;
+
+		public boolean isEnable() {
+			return enable;
+		}
+
+		public void setEnable(boolean enable) {
+			this.enable = enable;
+		}
+	}
+
+	public static class ExtractFromTextProperties {
+		/**
+		 * Subject can be determined using the first line of text template if
+		 * prefixed by this value. Set to empty string to disable
+		 */
+		private String firstLinePrefix = "Subject:";
+
+		public String getFirstLinePrefix() {
+			return firstLinePrefix;
+		}
+
+		public void setFirstLinePrefix(String firstLinePrefix) {
+			this.firstLinePrefix = firstLinePrefix;
+		}
+	}
+	
+	public static class FromProperties {
+		/**
+		 * Configures how to handle missing email sender address: if no sender
+		 * address is explicitly defined on the email, Ogham will use this
+		 * value.
+		 */
+		private String defaultValue;
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+	}
+
+	public static class ToProperties {
+		/**
+		 * Configures how to handle missing email recipient address: if no "to"
+		 * address is explicitly defined on the email, Ogham will use this
+		 * value.
+		 */
+		private String defaultValue;
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+	}
+
+	public static class CcProperties {
+		/**
+		 * Configures how to handle missing email recipient address: if no "cc"
+		 * address is explicitly defined on the email, Ogham will use this
+		 * value.
+		 */
+		private String defaultValue;
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+	}
+
+	public static class BccProperties {
+		/**
+		 * Configures how to handle missing email recipient address: if no "bcc"
+		 * address is explicitly defined on the email, Ogham will use this
+		 * value.
+		 */
+		private String defaultValue;
+
+		public String getDefaultValue() {
+			return defaultValue;
+		}
+
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+	}
 }

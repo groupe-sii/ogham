@@ -21,16 +21,16 @@ public class SmsTestSample {
 	private MessagingService oghamService;
 	
 	@Rule
-	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();					// <1>
+	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();    // <1>
 	
 	@Before
 	public void setUp() throws IOException {
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties()
-						.set("ogham.sms.from", "+33603040506")
-						.set("ogham.sms.smpp.host", "localhost")								// <2>
-						.set("ogham.sms.smpp.port", smppServer.getPort())						// <3>
+						.set("ogham.sms.from.default-value", "+33603040506")
+						.set("ogham.sms.smpp.host", "localhost")                 // <2>
+						.set("ogham.sms.smpp.port", smppServer.getPort())        // <3>
 						.and()
 					.and()
 				.build();
@@ -42,15 +42,15 @@ public class SmsTestSample {
 		oghamService.send(new Sms()
 							.message().string("sms content")
 							.to("0601020304"));
-		assertThat(smppServer).receivedMessages()												// <4>
-			.count(is(1))																		// <5>
-			.message(0)																			// <6>
-				.content(is("sms content"))														// <7>
+		assertThat(smppServer).receivedMessages()                                // <4>
+			.count(is(1))                                                        // <5>
+			.message(0)                                                          // <6>
+				.content(is("sms content"))                                      // <7>
 				.from()
-					.number(is("+33603040506"))													// <8>
+					.number(is("+33603040506"))                                  // <8>
 					.and()
 				.to()
-					.number(is("0601020304"));													// <9>
+					.number(is("0601020304"));                                   // <9>
 		// @formatter:on
 	}
 }

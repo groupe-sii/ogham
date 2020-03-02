@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Subject of the email</title>
+        <title>Subject of the email - Welcome [[${name}]] !</title>
         <meta charset="utf-8" />
     </head>
     <body>

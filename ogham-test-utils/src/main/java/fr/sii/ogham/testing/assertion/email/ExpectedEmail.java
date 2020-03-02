@@ -22,7 +22,7 @@ public class ExpectedEmail extends ExpectedEmailHeader {
 
 	/**
 	 * Initialize the expected email with string values. The body is used as-is
-	 * and is expected to provide a "plain/text" Mime Type.
+	 * and is expected to provide a "text/plain" Mime Type.
 	 * 
 	 * @param subject
 	 *            the expected subject of the email

@@ -6,7 +6,6 @@ import static fr.sii.ogham.html.inliner.ImageInlinerConstants.InlineModes.ATTACH
 import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.isInlineModeAllowed;
 import static java.text.MessageFormat.format;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,6 @@ import org.jsoup.select.Elements;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.attachment.ContentDisposition;
 import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.inliner.ImageInlinerConstants;

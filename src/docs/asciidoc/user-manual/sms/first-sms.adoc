@@ -21,13 +21,15 @@ include::{standard-sms-samples-sourcedir}/BasicSample.java[]
 <6> Use the standard builder (predefined behavior)
 <7> Register the custom properties
 <8> Create a MessagingService instance
-<9> Send a SMS with a simple message. The sender phone number is automatically set using `ogham.sms.from` property
+<9> Send a SMS with a simple message. The sender phone number is automatically set using 
+`ogham.sms.from.default-value` property
 
 {standard-sms-samples-sourcedir-url}/BasicSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab-container-end]
 -
 
-The construction of the SMS is done using a fluent API in order to chain calls and to have a more readable code.
+The construction of the SMS is done using a fluent API in order to chain calls and to have a more 
+readable code.
 
 Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.

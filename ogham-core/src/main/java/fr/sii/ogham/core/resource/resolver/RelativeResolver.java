@@ -82,10 +82,14 @@ public class RelativeResolver implements DelegateResourceResolver {
 		if (delegate.isAbsolute(path)) {
 			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
 			return delegate.getResource(path);
-		} else {
-			LOG.debug("Adding parentPath '{}' and extension '{}' to the resource path {}", parentPath, extension, path);
-			return delegate.getResource(delegate.resolve(path, parentPath, extension));
 		}
+		// special case when extension is already set
+		if (!extension.isEmpty() && path.getOriginalPath().endsWith(extension)) {
+			LOG.debug("Adding parentPath '{}' and skipping extension '{}' to the resource path {}", parentPath, extension, path);
+			return delegate.getResource(delegate.resolve(path, parentPath, ""));
+		}
+		LOG.debug("Adding parentPath '{}' and extension '{}' to the resource path {}", parentPath, extension, path);
+		return delegate.getResource(delegate.resolve(path, parentPath, extension));
 	}
 
 	@Override
@@ -100,6 +104,11 @@ public class RelativeResolver implements DelegateResourceResolver {
 		if (absolute) {
 			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
 			return resourcePath;
+		}
+		// special case when extension is already set
+		if (!extension.isEmpty() && resourcePath.getResolvedPath().endsWith(extension)) {
+			LOG.debug("Adding parentPath ({}) and skipping extension ({}) to the resource path {}", parentPath, extension, path);
+			return new ResolvedResourcePath(path, resourcePath.getLookup(), parentPath + resourcePath.getResolvedPath());
 		}
 		LOG.debug("Adding parentPath ({}) and extension ({}) to the resource path {}", parentPath, extension, path);
 		return new ResolvedResourcePath(path, resourcePath.getLookup(), parentPath + resourcePath.getResolvedPath() + extension);

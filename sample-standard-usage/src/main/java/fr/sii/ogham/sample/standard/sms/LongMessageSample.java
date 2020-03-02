@@ -16,7 +16,7 @@ public class LongMessageSample {
 		properties.setProperty("ogham.sms.smpp.port", "<your server port>");
 		properties.setProperty("ogham.sms.smpp.system-id", "<your server system ID>");
 		properties.setProperty("ogham.sms.smpp.password", "<your server password>");
-		properties.setProperty("ogham.sms.from", "<phone number to display for the sender>");
+		properties.setProperty("ogham.sms.from.default-value", "<phone number to display for the sender>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()

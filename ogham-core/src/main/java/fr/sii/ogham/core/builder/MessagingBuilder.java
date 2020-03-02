@@ -126,7 +126,7 @@ import fr.sii.ogham.sms.message.Sms;
  * has been automatically detected and indicated to the sent message</li>
  * <li>The subject is provided by the &lt;title&gt; tag of the HTML</li>
  * <li>The sender email address is provided by the system property
- * "ogham.email.from"</li>
+ * "ogham.email.from.default-value"</li>
  * </ul>
  * 
  * <p>
@@ -911,7 +911,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * <pre>
 	 * mail.host=your STMP server host
 	 * mail.port=your STMP server port
-	 * ogham.email.from=sender email address
+	 * ogham.email.from.default-value=sender email address
 	 * </pre>
 	 * 
 	 * <p>
@@ -1154,7 +1154,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * ogham.sms.smpp.port=your SMPP server port
 	 * ogham.sms.smpp.system-id=your SMPP system_id
 	 * ogham.sms.smpp.password=an optional password
-	 * ogham.sms.from=the sender phone number
+	 * ogham.sms.from.default-value=the sender phone number
 	 * </pre>
 	 * 
 	 * <p>

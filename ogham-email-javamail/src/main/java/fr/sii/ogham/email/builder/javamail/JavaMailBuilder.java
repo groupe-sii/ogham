@@ -763,7 +763,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		return resourceHandler;
 	}
 
-	private static BiFunction<NamedResource, Attachment, AttachmentResourceHandlerException> noResourceResolverConfigured() {; 
+	private static BiFunction<NamedResource, Attachment, AttachmentResourceHandlerException> noResourceResolverConfigured() {
 		return (resource, attachment) -> new UnresolvableAttachmentResourceHandlerException("Failed to attach "+resource.getName()+" because it points to a path but no resource resolver has been configured.", attachment);
 	}
 

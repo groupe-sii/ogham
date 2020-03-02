@@ -46,7 +46,7 @@ public class StaticMethodAccessDisabledTest {
 		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
 		additionalProps.setProperty("ogham.sms.smpp.host", "127.0.0.1");
 		additionalProps.setProperty("ogham.sms.smpp.port", String.valueOf(smppServer.getPort()));
-		additionalProps.setProperty("ogham.freemarker.enable-static-method-access", "false");
+		additionalProps.setProperty("ogham.freemarker.static-method-access.enable", "false");
 		messagingService = MessagingBuilder.standard()
 				.environment()
 					.properties(additionalProps)

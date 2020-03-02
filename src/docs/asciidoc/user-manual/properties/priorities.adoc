@@ -48,7 +48,7 @@ image:{images-dir}/icons/properties.png[width=37,height=30] classpath:email.prop
 ----
 mail.smtp.host=localhost
 mail.smtp.port=25
-ogham.email.from=foo@test.com
+ogham.email.from.default-value=foo@test.com
 ----
 
 [role=tab]
@@ -66,7 +66,7 @@ Running this sample with the following command line:
 
 [source]
 ----
-$ java -Dogham.email.from="bar@domain.com" fr.sii.ogham.sample.standard.PropertiesSample
+$ java -Dogham.email.from.default-value="bar@domain.com" fr.sii.ogham.sample.standard.PropertiesSample
 ----
 
 Gives the following property values:
@@ -82,7 +82,7 @@ Gives the following property values:
 |mail.smtp.port
 |*10*
 
-|ogham.email.from
+|ogham.email.from.default-value
 |*bar@domain.com*
 
 |===

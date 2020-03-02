@@ -282,7 +282,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	private TemplateEngineDetector buildDefaultDetector() {
 		FirstSupportingResourceResolver resolver = buildResolver();
 		OrTemplateDetector or = new OrTemplateDetector();
-		or.addDetector(new FreeMarkerTemplateDetector(resolver, ".ftl"));
+		or.addDetector(new FreeMarkerTemplateDetector(resolver, ".ftl", ".ftlh"));
 		or.addDetector(new SimpleResourceEngineDetector(resolver, new FixedEngineDetector(true)));
 		return or;
 	}

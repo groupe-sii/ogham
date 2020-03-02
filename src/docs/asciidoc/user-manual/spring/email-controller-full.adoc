@@ -48,10 +48,10 @@ image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
 
 [source, txt]
 ----
-include::{spring-samples-resourcesdir}/email/mixed.txt.ftl[]
+include::{spring-samples-resourcesdir}/email/mixed.txt.ftlh[]
 ----
 
-{spring-samples-resourcesdir-url}/email/mixed.txt.ftl?ts={tabsize}[Source code of the text template]
+{spring-samples-resourcesdir-url}/email/mixed.txt.ftlh?ts={tabsize}[Source code of the text template]
 
 
 [role=tab]

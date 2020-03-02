@@ -48,7 +48,7 @@ public class SendTimeoutTest {
 				.properties()
 					.set("ogham.sms.smpp.host", "localhost")
 					.set("ogham.sms.smpp.port", smppServer.getPort())
-					.set("ogham.sms.cloudhopper.bind-timeout", 200);
+					.set("ogham.sms.cloudhopper.session.bind-timeout", 200);
 		MessagingService service = builder.build();
 		service.send(new Sms().content("foo").from("605040302010").to("010203040506"));
 	}
@@ -65,7 +65,7 @@ public class SendTimeoutTest {
 				.properties()
 					.set("ogham.sms.smpp.host", "localhost")
 					.set("ogham.sms.smpp.port", smppServer.getPort())
-					.set("ogham.sms.cloudhopper.response-timeout", 200);
+					.set("ogham.sms.cloudhopper.session.response-timeout", 200);
 		MessagingService service = builder.build();
 		service.send(new Sms().content("foo").from("605040302010").to("010203040506"));
 	}

@@ -81,7 +81,7 @@ public class LookupResource implements NamedResource {
 	private static String extractName(ResourcePath resolvedPath) {
 		String path = resolvedPath.getOriginalPath();
 		String name = new File(path).getName();
-		int colonIdx = path.indexOf(':');
+		int colonIdx = name.indexOf(':');
 		name = colonIdx >= 0 ? name.substring(colonIdx + 1) : name;
 		return name;
 	}

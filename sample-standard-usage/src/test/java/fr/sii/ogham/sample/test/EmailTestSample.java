@@ -25,16 +25,16 @@ public class EmailTestSample {
 	private MessagingService oghamService;
 	
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(SMTP);						// <1>
+	public final GreenMailRule greenMail = new GreenMailRule(SMTP);              // <1>
 
 	@Before
 	public void setUp() throws IOException {
 		oghamService = MessagingBuilder.standard()
 				.environment()
 					.properties()
-						.set("ogham.email.from", "Sender Name <test.sender@sii.fr>")
-						.set("mail.smtp.host", SMTP.getBindAddress())					// <2>
-						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))			// <3>
+						.set("ogham.email.from.default-value", "Sender Name <test.sender@sii.fr>")
+						.set("mail.smtp.host", SMTP.getBindAddress())            // <2>
+						.set("mail.smtp.port", String.valueOf(SMTP.getPort()))   // <3>
 						.and()
 					.and()
 				.build();
@@ -47,21 +47,21 @@ public class EmailTestSample {
 								.subject("Simple")
 								.body().string("string body")
 								.to("Recipient Name <recipient@sii.fr>"));
-		assertThat(greenMail).receivedMessages()										// <4>
-			.count(is(1))																// <5>
-			.message(0)																	// <6>
-				.subject(is("Simple"))													// <7>
+		assertThat(greenMail).receivedMessages()                                 // <4>
+			.count(is(1))                                                        // <5>
+			.message(0)                                                          // <6>
+				.subject(is("Simple"))                                           // <7>
 				.from()
-					.address(hasItems("test.sender@sii.fr"))							// <8>
-					.personal(hasItems("Sender Name")).and()							// <9>
+					.address(hasItems("test.sender@sii.fr"))                     // <8>
+					.personal(hasItems("Sender Name")).and()                     // <9>
 				.to()
-					.address(hasItems("recipient@sii.fr"))								// <10>
-					.personal(hasItems("Recipient Name")).and()							// <11>
+					.address(hasItems("recipient@sii.fr"))                       // <10>
+					.personal(hasItems("Recipient Name")).and()                  // <11>
 				.body()
-					.contentAsString(is("string body"))									// <12>
-					.contentType(startsWith("text/plain")).and()						// <13>
-				.alternative(nullValue())												// <14>
-				.attachments(emptyIterable());											// <15>
+					.contentAsString(is("string body"))                          // <12>
+					.contentType(startsWith("text/plain")).and()                 // <13>
+				.alternative(nullValue())                                        // <14>
+				.attachments(emptyIterable());                                   // <15>
 		// @formatter:on
 	}
 }

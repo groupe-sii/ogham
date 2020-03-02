@@ -25,7 +25,7 @@ public class HtmlAndTextSample {
 		Properties properties = new Properties();
 		properties.put("mail.smtp.host", "<your server host>");
 		properties.put("mail.smtp.port", "<your server port>");
-		properties.put("ogham.email.from", "<email address to display for the sender user>");
+		properties.put("ogham.email.from.default-value", "<email address to display for the sender user>");
 		// Instantiate the messaging service using default behavior and
 		// provided properties
 		MessagingService service = MessagingBuilder.standard()
@@ -35,9 +35,9 @@ public class HtmlAndTextSample {
 				.build();
 		// send the email using the fluent API
 		service.send(new Email()
-						.subject("subject")
-						.text().string(text)			// <1>
-						.html().string(html)			// <2>
+						.subject("HtmlAndTextSample")
+						.text().string(text)              // <1>
+						.html().string(html)              // <2>
 						.to("ogham-test@yopmail.com"));
 	}
 }

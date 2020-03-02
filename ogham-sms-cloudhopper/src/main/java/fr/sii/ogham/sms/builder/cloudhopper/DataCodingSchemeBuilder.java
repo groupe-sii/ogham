@@ -180,7 +180,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	}
 
 	/**
-	 * * Enable/disable automatic mode based on SMPP interface version.
+	 * Enable/disable automatic mode based on SMPP interface version.
 	 * 
 	 * <p>
 	 * {@link DataCodingProvider} implementation is selected based on SMPP
