@@ -9,9 +9,14 @@
 	max-height: none;
 }
 
-.tab-container>p:first-child {
+.tab-container>p:nth-of-type(1) {
 	display: none;
 }
+
+.tab-container > .title ~ .tab .tab-content {
+	margin-top: 27px;
+}
+
 
 .tab {
 	float: left;

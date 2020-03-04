@@ -1,0 +1,271 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+This is a major release that drops support of Java 7, upgrade all dependencies
+to be up-to-date with latest library, tools and Spring versions.
+
+There are also API and internal improvements.
+
+This version introduces breaking changes.
+See detailed migration guide to <<migration-guide.adoc#v2.0.0-v3.0.0, upgrade from 2.0.0 to 3.0.0>>.
+
+== Updates
+
+Upgrade minimum Java version to Java 8 i.e. drop support of Java 7.
+
+////
+TODO
+Update all dependencies => list all updates
+
+Supported Spring boot versions 
+////
+
+== API changes
+
+=== Fluent builder consistency for property configuration
+
+////
+TODO
+
+Use same API for every property configuration:
+.properties()
+.defaultValue()
+...
+////
+
+=== Rename inlining attributes
+
+* Rename attribute for image inlining (`ogham-inline-mode` -> `data-inline-image`)
+* Change attributes for CSS inlining to align with image inlining behavior:
+** remove `data-skip-inline` attribute
+** use `data-inline-styles` attribute and use the value to select strategy. Currently
+   only `skip` exists but in future versions other may come.
+
+=== Properties consistency
+
+* `ogham.email.bcc` renamed to `ogham.email.bcc.default-value`
+* `ogham.email.cc` renamed to `ogham.email.cc.default-value`
+* `ogham.email.from` renamed to `ogham.email.from.default-value`
+* `ogham.email.sengrid.api-key` renamed to `ogham.email.sendgrid.api-key` (fix misspelling)
+* `ogham.email.subject` renamed to `ogham.email.subject.default-value`
+* `ogham.email.subject.text.first-line-prefix` renamed to `ogham.email.subject.extract-from-text.first-line-prefix`
+* `ogham.email.to` renamed to `ogham.email.to.default-value`
+* `ogham.sms.cloudhopper.bind-timeout` renamed to `ogham.sms.cloudhopper.session.bind-timeout`
+* `ogham.sms.cloudhopper.connect-max-retry` renamed to `ogham.sms.cloudhopper.session.connect-retry.max-attempts`
+* `ogham.sms.cloudhopper.connect-retry-delay` renamed to `ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts`
+* `ogham.sms.cloudhopper.connect-timeout` renamed to `ogham.sms.cloudhopper.session.connect-timeout`
+* `ogham.sms.cloudhopper.request-expiry-timeout` renamed to `ogham.sms.cloudhopper.session.request-expiry-timeout`
+* `ogham.sms.cloudhopper.response-timeout` renamed to `ogham.sms.cloudhopper.session.response-timeout`
+* `ogham.sms.cloudhopper.session-name` renamed to `ogham.sms.cloudhopper.session.name`
+* `ogham.sms.cloudhopper.unbind-timeout` renamed to `ogham.sms.cloudhopper.session.unbind-timeout`
+* `ogham.sms.cloudhopper.window-monitor-interval` renamed to `ogham.sms.cloudhopper.session.window-monitor-interval`
+* `ogham.sms.cloudhopper.window-size` renamed to `ogham.sms.cloudhopper.session.window-size`
+* `ogham.sms.cloudhopper.window-wait-timeout` renamed to `ogham.sms.cloudhopper.session.window-wait-timeout`
+* `ogham.sms.cloudhopper.write-timeout` renamed to `ogham.sms.cloudhopper.session.write-timeout`
+* `ogham.sms.freemarker.prefix` renamed to `ogham.sms.freemarker.path-prefix`
+* `ogham.sms.freemarker.suffix` renamed to `ogham.sms.freemarker.path-suffix`
+* `ogham.sms.from-format-enable-alphanumeric` renamed to `ogham.sms.from.alphanumeric-code-format.enable`
+* `ogham.sms.from-format-enable-international` renamed to `ogham.sms.from.international-format.enable`
+* `ogham.sms.from-format-enable-shortcode` renamed to `ogham.sms.from.short-code-format.enable`
+* `ogham.sms.from` renamed to `ogham.sms.from.default-value`
+* `ogham.sms.ovh.no-stop` renamed to `ogham.sms.ovh.options.no-stop`
+* `ogham.sms.ovh.sms-coding` renamed to `ogham.sms.ovh.options.sms-coding`
+* `ogham.sms.ovh.tag` renamed to `ogham.sms.ovh.options.tag`
+* `ogham.sms.to-format-enable-international` renamed to `ogham.sms.to.international-format.enable`
+* `ogham.sms.to` renamed to `ogham.sms.to.default-value`
+ 
+
+Align Spring property names to Ogham property names.
+
+Samples, tests and documentation are updated.
+
+=== SMS
+
+In previous version, a conversion from a Java charset into a Cloudhopper charset was configured
+using a static mapping using `ogham.sms.cloudhopper.default-app-charset` and 
+`ogham.sms.cloudhopper.smpp-charset` properties.
+
+This behavior has been removed in favor to a better auto-detection mechanism. Therefore the
+`ogham.sms.cloudhopper.default-app-charset` and `ogham.sms.cloudhopper.smpp-charset` properties
+have been removed.
+
+////
+TODO
+
+Link to new behavior
+////
+
+
+== New features
+
+
+=== Fluent API for message construction
+
+////
+TODO
+
+Show new Fluent API and explain advantages
+////
+
+
+=== Auto-configuration lifecycle
+
+////
+TODO
+
+Explain phases
+Explain property evaluation
+Service providers configuration
+////
+
+
+
+=== Relative resources
+
+////
+TODO
+////
+
+=== Templating
+
+////
+TODO
+
+* `ogham.email.thymeleaf.cache`
+* `ogham.email.template.cache`
+* `ogham.template.cache`
+* `ogham.sms.thymeleaf.cache`
+* `ogham.sms.template.cache`
+////
+
+
+
+=== SMS
+
+////
+TODO
+
+Encoding + auto-guess
+Split
+keep session
+Short message vs TLV
+
+
+
+ogham.sms.cloudhopper.split.enable
+ogham.sms.smpp.split.enable
+ogham.sms.split.enable
+ogham.sms.cloudhopper.data-coding-scheme.auto.enable
+ogham.sms.smpp.data-coding-scheme.auto.enable
+ogham.sms.cloudhopper.user-data.use-short-message
+ogham.sms.cloudhopper.user-data.use-tlv-message-payload
+ogham.sms.smpp.user-data.use-short-message
+ogham.sms.smpp.user-data.use-tlv-message-payload
+
+
+* `ogham.sms.smpp.encoder.auto-guess.enable`
+* `ogham.sms.smpp.encoder.gsm7bit-packed.priority`
+* `ogham.sms.smpp.encoder.gsm8bit.priority`
+* `ogham.sms.smpp.encoder.ucs2.priority`
+* `ogham.sms.smpp.encoder.default-charset`
+
+* `ogham.sms.cloudhopper.encoder.auto-guess.enable`
+* `ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority`
+* `ogham.sms.cloudhopper.encoder.gsm8bit.priority`
+* `ogham.sms.cloudhopper.encoder.ucs2.priority`
+* `ogham.sms.cloudhopper.encoder.default-charset`
+
+////
+
+
+=== SmsGlobal
+
+////
+TODO
+
+Add automatic configuration
+////
+
+
+=== Spring integration
+
+////
+TODO
+
+Access to Spring beans
+////
+
+=== FreeMarker integration
+
+////
+TODO
+
+
+* added `ogham.freemarker.static-method-access.enable`
+* added `ogham.freemarker.static-method-access.variable-name`
+
+Both properties refers to same feature so use the same "group". This is also more consistent with
+Spring `ConfigurationProperties` (only a single object that carries both pieces of information).
+
+https://freemarker.apache.org/docs/pgui_misc_beanwrapper.html#autoid_60[FreeMarker documentation - Accessing static methods]
+* `ogham.freemarker.static-method-access.enable` `true` by default
+* `ogham.freemarker.static-method-access.variable-name` `statics` by default
+
+.ftlh
+see https://github.com/spring-projects/spring-boot/issues/15131
+////
+
+
+=== SendGrid
+
+////
+TODO
+
+* `ogham.email.sendgrid.unit-testing` (since SendGrid v3)
+* `ogham.email.sendgrid.username` (deprecated since SendGrid v3)
+* `ogham.email.sendgrid.password` (deprecated since SendGrid v3)
+
+Attachments support
+////
+
+
+=== Miscellaneous
+
+////
+TODO
+
+* `ogham.mimetype.tika.fail-if-octet-stream` `true` by default
+* `ogham.wrap-uncaught-exceptions.enable` `true` by default
+
+////
+
+=== Test utilities
+
+////
+TODO
+
+Remove opensmpp (not used)
+
+Delays for SMPP simulator
+Reorganize test utils.
+Rules/extensions 
+assertAll
+////
+
+
+== Internal improvements
+
+=== Java Mail structure
+
+////
+TODO
+
+Explain new structure and tests
+////
+
+=== CI
+
+////
+TODO
+////

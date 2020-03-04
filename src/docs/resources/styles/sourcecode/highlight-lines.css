@@ -25,10 +25,11 @@
 	background-repeat: repeat-x;
 }
 .highlight-line-diff-add .wrapped-line {
-	background-color: #7BBF6A;
+	background-color: #acf2bd;
 }
 .highlight-line-diff-remove .wrapped-line {
-	text-decoration: line-through;
+	/*text-decoration: line-through  rgba(255, 0, 0, 0.5);*/
+	background-color: #fdb8c0;
 }
 .highlight-line-info .wrapped-line {
 	background-image: url('../../images/sourcecode/waveline-blue.gif');

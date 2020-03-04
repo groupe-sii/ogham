@@ -84,6 +84,11 @@
 					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</release-notes>
+				<migration-guide>
+					<highlightJs>false</highlightJs>
+					<toc>false</toc>
+					<markPageHeader>false</markPageHeader>
+				</migration-guide>
 				<contribute>
 					<toc>false</toc>
 				</contribute>
@@ -112,7 +117,8 @@
 			</pages>
 			<endContent>
 				<script src="$resourcePath/js/site.js"></script>
-				<script src="$resourcePath/js/fix-headings.js"></script>	<!-- TODO: remove when https://github.com/devacfr/reflow-maven-skin/issues/63 is fixed -->
+				<script src="$resourcePath/js/fix-headings.js"></script>	<!-- TODO: remove when https://github.com/devacfr/reflow-maven-skin/issues/63 
+					is fixed -->
 				<script src="$resourcePath/javascripts/progress.js"></script>
 				<script
 					src="$resourcePath/javascripts/sourcecode/source-utils.js"></script>
@@ -189,8 +195,10 @@
 			<item name="Fork on GitHub" href="${this.github.url}" />
 		</menu>
 		<menu name="Reports" inherit="bottom">
-			<item name="Sonar Analysis" href="https://sonarcloud.io/organizations/aurelien-baudet-github/projects" />
-			<item name="Codecov" href="https://codecov.io/gh/groupe-sii/ogham" />
+			<item name="Sonar Analysis"
+				href="https://sonarcloud.io/organizations/aurelien-baudet-github/projects" />
+			<item name="Codecov"
+				href="https://codecov.io/gh/groupe-sii/ogham" />
 			<item name="PIT" href="pit-reports/index.html" />
 		</menu>
 		<menu name="Maven Reports" ref="reports" inherit="bottom" />

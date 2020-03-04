@@ -1,0 +1,14 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+== Features
+
+- [Add Spring integration with Spring Boot](usage/integration.html#integrate-with-spring-boot)
+- [Add Spring integration using Java config or XML config](usage/integration.html#manual-integration-with-spring)
+- Add fluent API
+- Service now wrap all exceptions (even runtime exceptions) into checked exception
+- Add OVH implementation for sending SMS
+- Add basic i18n support
+- Allow to configure different template prefixes/suffixes for each kind of message 
+

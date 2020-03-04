@@ -1,0 +1,20 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+== Features
+
+////
+TODO: ajouter des liens pour chaque fonctionnalité
+////
+
+- New builder API
+- Only fluent API (remove all Email/SMS constructors)
+- Follow Spring Boot starter conventions
+- Better Spring Boot integration with existing module (spring-boot-start-mail, spring-boot-starter-thymeleaf, spring-boot-starter-freemarker, spring-boot-starter-sendgrid)
+- Add possibility to create its own configurer
+
+== Internal
+
+- Split projects to separate core from implementations
+- Creating a new implementation is easier
+- Add annotations to indicate that an implementation needs some preconditions in order to work

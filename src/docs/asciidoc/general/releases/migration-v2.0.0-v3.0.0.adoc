@@ -1,0 +1,271 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+== Fluent builder consistency for property configuration
+
+
+////
+TODO
+
+Explain how to update code
+////
+
+
+== Fluent API for message construction
+
+////
+TODO
+
+Explain how to update code
+////
+
+
+== Images and CSS inlining HTML attributes consistency
+
+As described in <<user-manual.adoc#css-images-inlining, HTML body with CSS and images>> section,
+images and CSS rules can be inlined into the email. Ogham uses HTML attributes to indicate how
+inlining should behave. Those attributes have been renamed to be more consistent:
+
+The attribute `ogham-inline-mode` was used for image inlining. It has been renamed to `data-inline-image`. 
+The `data-` prefix is used to comply with HTML standards. The new attribute name also indicates 
+which kind of inlining is targeted. The `data-inline-image` still uses the same values:
+
+* `attach` (default) to attach the images with the email (with `Content-Disposition` header set to `inline`)
+* `base64` to convert to a https://tools.ietf.org/html/rfc2397[data URL scheme] and inlined directly in
+the HTML using `src` attribute
+* `skip` to prevent inlining of the image
+
+
+.Update your code
+[role="tab-container"]
+Attach images
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="diff-remove-lines:2 diff-add-lines:3"]
+----
+<div class="left">
+	<img src="images/left.gif" ogham-inline-mode="base64" />      <!--1-->
+	<img src="images/left.gif" data-inline-image="base64" />      <!--2-->
+	<p class="text">
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit
+	</p>
+</div>
+----
+<1> The old attribute name
+<2> The new attribute name
+
+
+[role=tab-container-end]
+-
+
+
+CSS inlining was using the attribute `data-skip-inline` attribute. The name of this attribute was not
+clear on its purpose (was it for CSS or for images ?). This attribute has been removed and
+the new attribute `data-inine-styles` is used instead. The value is the name of the strategy to
+use for handling inline (as for images). Currently, only one inlining strategy is
+available but in future versions, other may come. For now the only possible value is:
+
+* `skip` to prevent inlining of CSS rules on the node
+
+
+.Update your code
+[role="tab-container"]
+Inline CSS rules
+
+
+[role=tab]
+image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+
+[source, html, role="diff-remove-lines:3 diff-add-lines:4"]
+----
+<div class="sender-info">
+	&reg; Someone, somewhere 2013<br />
+	<a href="#" class="white" data-skip-inline="true">Unsubscribe</a> to this newsletter instantly      <!--1-->
+	<a href="#" class="white" data-inline-styles="skip">Unsubscribe</a> to this newsletter instantly    <!--2-->
+</div>
+----
+<1> The old attribute name
+<2> The new attribute name
+
+
+[role=tab-container-end]
+-
+
+== Properties consistency
+
+Ogham heavily uses configuration properties to make it fully and easily customizable.
+
+Some properties were using different keys between standalone usage (without framework) and Spring usage.
+Now the keys are aligned to be consistent.
+
+Other properties were using a key that may be misinterpreted (on what they do and the scope of the 
+property). Their name didn't follow same convention (for example some were missing the protocol to indicate
+that the property is only handled by that protocol and not common to all protocols).
+These properties are renamed.
+
+
+
+.Properties for default values
+====
+* `ogham.email.bcc` renamed to `ogham.email.bcc.default-value`
+* `ogham.email.cc` renamed to `ogham.email.cc.default-value`
+* `ogham.email.from` renamed to `ogham.email.from.default-value`
+* `ogham.email.to` renamed to `ogham.email.to.default-value`
+* `ogham.email.subject` renamed to `ogham.email.subject.default-value`
+* `ogham.sms.from` renamed to `ogham.sms.from.default-value`
+* `ogham.sms.to` renamed to `ogham.sms.to.default-value`
+  
+The new property names clearly indicate now that the value is used only if nothing else is defined.
+There is another benefit: we can use other property names for configuring other parts (such as
+`ogham.email.subject.extract-from-text.first-line-prefix`). This is consistent with Spring behavior.
+
+
+.Update your code
+[role="tab-container"]
+Update code
+
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class BasicSample {
+
+	public static void main(String[] args) throws MessagingException {
+		// configure properties (could be stored in a properties file or defined
+		// in System properties)
+		Properties properties = new Properties();
+		properties.put("mail.smtp.host", "<your server host>");
+		properties.put("mail.smtp.port", "<your server port>");
+		properties.put("ogham.email.from", "<email address to display for the sender user>");                 // <1>
+		properties.put("ogham.email.from.default-value", "<email address to display for the sender user>");   // <2>
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.properties()
+						.set("ogham.email.subject", "Default subject")                                        // <3>
+						.set("ogham.email.subject.default-value", "Default subject")                          // <4>
+						.and()
+					.and()
+				.build();
+		// send the email using fluent API
+		service.send(new Email()
+						.body().string("email content")
+						.to("ogham-test@yopmail.com"));
+	}
+
+}
+----
+<1> The old property for default sender address
+<2> The new property for default sender address
+<3> The old property for default subject (defined using fluent API)
+<4> The new property for default subject (defined using fluent API)
+
+
+[role=tab-container-end]
+-
+====
+
+
+
+.Properties for subject extraction
+====   
+`ogham.email.subject.text.first-line-prefix` renamed to `ogham.email.subject.extract-from-text.first-line-prefix`:
+
+This property is used to extract the first line of the text part (if first line starts with with the 
+value of this property) of an email and use it as the subject of the email. The new name of the
+property is consistent with `ogham.email.subject.extract-html-title.enable`. Moreover, in future
+versions we could add more properties to control the subject extraction from text part using additional
+properties (`ogham.email.subject.extract-from-text.something-else` for example).
+The new name also complies with Spring property handling.
+====
+
+
+
+.SendGrid properties
+====
+`ogham.email.sengrid.api-key` renamed to `ogham.email.sendgrid.api-key`
+
+Fix misspelling (missing 'd' character).
+====
+
+
+
+.FreeMarker properties
+====
+* `ogham.sms.freemarker.prefix` renamed to `ogham.sms.freemarker.path-prefix`
+* `ogham.sms.freemarker.suffix` renamed to `ogham.sms.freemarker.path-suffix`
+
+Fix missing `path-`.
+====
+
+
+
+.Cloudhopper session properties
+====
+* `ogham.sms.cloudhopper.bind-timeout` renamed to `ogham.sms.cloudhopper.session.bind-timeout`,
+* `ogham.sms.cloudhopper.connect-timeout` renamed to `ogham.sms.cloudhopper.session.connect-timeout`
+* `ogham.sms.cloudhopper.response-timeout` renamed to `ogham.sms.cloudhopper.session.response-timeout`
+* `ogham.sms.cloudhopper.request-expiry-timeout` renamed to `ogham.sms.cloudhopper.session.request-expiry-timeout`
+* `ogham.sms.cloudhopper.session-name` renamed to `ogham.sms.cloudhopper.session.name`
+* `ogham.sms.cloudhopper.unbind-timeout` renamed to `ogham.sms.cloudhopper.session.unbind-timeout`
+* `ogham.sms.cloudhopper.window-monitor-interval` renamed to `ogham.sms.cloudhopper.session.window-monitor-interval`
+* `ogham.sms.cloudhopper.window-size` renamed to `ogham.sms.cloudhopper.session.window-size`
+* `ogham.sms.cloudhopper.window-wait-timeout` renamed to `ogham.sms.cloudhopper.session.window-wait-timeout`
+* `ogham.sms.cloudhopper.write-timeout` renamed to `ogham.sms.cloudhopper.session.write-timeout`
+  
+Rename all the properties that configures Cloudhopper session for clarity. 
+
+* `ogham.sms.cloudhopper.connect-max-retry` renamed to `ogham.sms.cloudhopper.session.connect-retry.max-attempts`
+* `ogham.sms.cloudhopper.connect-retry-delay` renamed to `ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts`
+
+Rename properties used for reconnection of session for clarity.
+====
+
+
+.General SMS properties
+====
+* `ogham.sms.from-format-enable-alphanumeric` renamed to `ogham.sms.from.alphanumeric-code-format.enable`
+* `ogham.sms.from-format-enable-international` renamed to `ogham.sms.from.international-format.enable`
+* `ogham.sms.from-format-enable-shortcode` renamed to `ogham.sms.from.short-code-format.enable`
+* `ogham.sms.to-format-enable-international` renamed to `ogham.sms.to.international-format.enable`
+
+Follows same convention as all other "enable" properties.
+====
+
+
+
+.OVH SMS properties
+====
+* `ogham.sms.ovh.no-stop` renamed to `ogham.sms.ovh.options.no-stop`
+* `ogham.sms.ovh.sms-coding` renamed to `ogham.sms.ovh.options.sms-coding`
+* `ogham.sms.ovh.tag` renamed to `ogham.sms.ovh.options.tag`
+
+Distinguish mandatory/important properties from options.
+====
+
+
+
+== SMS
+
+
+////
+TODO
+
+Explain how to update code/configuration for new auto-detection
+////
+

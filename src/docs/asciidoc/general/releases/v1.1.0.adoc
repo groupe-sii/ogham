@@ -1,0 +1,8 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+== Features
+
+- Support FreeMarker templates
+- It is possible to mix Thymeleaf and FreeMarker templates
+- Tested with Spring Boot 1.3.8+ latest releases (1.3.8, 1.4.5 and 1.5.2)
