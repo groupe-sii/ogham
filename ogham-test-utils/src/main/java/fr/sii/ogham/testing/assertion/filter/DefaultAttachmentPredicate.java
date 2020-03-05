@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 import javax.mail.Part;
 import javax.mail.internet.MimePart;
 
+import fr.sii.ogham.testing.assertion.exception.FilterException;
 import fr.sii.ogham.testing.assertion.util.EmailUtils;
 
 /**
@@ -31,7 +32,7 @@ public class DefaultAttachmentPredicate implements Predicate<Part> {
 		try {
 			return Part.ATTACHMENT.equalsIgnoreCase(p.getDisposition()) || p.getFileName() != null;
 		} catch(MessagingException e) {
-			throw new RuntimeException(e);
+			throw new FilterException("Failed to check if attachment is downloadable", e);
 		}
 	}
 
@@ -39,19 +40,15 @@ public class DefaultAttachmentPredicate implements Predicate<Part> {
 		try {
 			return Part.INLINE.equalsIgnoreCase(p.getDisposition()) || hasContentID(p);
 		} catch(MessagingException e) {
-			throw new RuntimeException(e);
+			throw new FilterException("Failed to check if attachment is embeddable", e);
 		}
 	}
 
-	private boolean hasContentID(Part p) {
-		try {
-			if (p instanceof MimePart) {
-				return ((MimePart) p).getContentID() != null;
-			}
-			return false;
-		} catch(MessagingException e) {
-			throw new RuntimeException(e);
+	private boolean hasContentID(Part p) throws MessagingException {
+		if (p instanceof MimePart) {
+			return ((MimePart) p).getContentID() != null;
 		}
+		return false;
 	}
 
 }

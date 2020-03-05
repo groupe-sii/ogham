@@ -68,12 +68,15 @@ public class FailAtEndRegistry implements AssertionRegistry {
 		assertions.add(executable);
 	}
 
+	@SuppressWarnings("squid:S2221") // we can't know which exception may be
+										// thrown so we have to catch all
+										// exceptions
 	public void execute() {
 		List<Throwable> failures = new ArrayList<>();
 		for (Executable<?> executable : assertions) {
 			try {
 				executable.run();
-			} catch (Throwable e) {
+			} catch (Exception | AssertionError e) {
 				failures.add(e);
 			}
 		}

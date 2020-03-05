@@ -31,13 +31,11 @@ public class ThymeleafParserAssertions extends HasParent<ThymeleafAssertions> {
 	/**
 	 * Ensures that {@link TemplateEngine} is configured as expected.
 	 * 
-	 * @param <T>
-	 *            the type of expected object
 	 * @param matcher
 	 *            the matcher to ensure that engine is configured as expected.
 	 * @return this instance for fluent chaining
 	 */
-	public <T extends TemplateEngine> ThymeleafParserAssertions engine(Matcher<? super TemplateEngine> matcher) {
+	public ThymeleafParserAssertions engine(Matcher<? super TemplateEngine> matcher) {
 		for (ThymeleafParser thymeleafParser : parsers) {
 			assertThat(getEngine(thymeleafParser), matcher);
 		}

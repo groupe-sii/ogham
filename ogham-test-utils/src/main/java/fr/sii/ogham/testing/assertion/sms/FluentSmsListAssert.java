@@ -115,38 +115,4 @@ public class FluentSmsListAssert<P, S extends SubmitSm> extends HasParent<P> {
 	public FluentSmsAssert<FluentSmsListAssert<P, S>, S> every() {
 		return new FluentSmsAssert<>(actual, this, registry);
 	}
-
-	/**
-	 * Fluent API to write assertions on every received messages. Any defined
-	 * assertion will be applied on every message:
-	 * 
-	 * <pre>
-	 * .receivedMessages().forEach().content(is("foobar"))
-	 * </pre>
-	 * 
-	 * Will check that content of every message is "foobar".
-	 * 
-	 * <p>
-	 * You can use this method to factorize several assertions on a message and
-	 * then make dedicated assertions on some messages:
-	 * 
-	 * <pre>
-	 * .receivedMessages().forEach()
-	 *                       .content(is("foobar"))
-	 *                    .and()
-	 *                    .message(0)
-	 *                       .from().number(is("+33102030405"))
-	 * </pre>
-	 * 
-	 * Will check that content of every message is "foobar" and that body of
-	 * first received message is "+33102030405".
-	 * 
-	 * @return the fluent API for chaining assertions on received messages
-	 * @deprecated use {@link #every()} instead
-	 */
-	@Deprecated
-	public FluentSmsAssert<FluentSmsListAssert<P, S>, S> forEach() {
-		return every();
-	}
-
 }

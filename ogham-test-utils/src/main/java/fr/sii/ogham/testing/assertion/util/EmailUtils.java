@@ -117,12 +117,13 @@ public final class EmailUtils {
 	 * 
 	 * @param part
 	 *            the part
-	 * @return the content
+	 * @return the content as byte array or null
 	 * @throws IOException
 	 *             when part can't be read
 	 * @throws MessagingException
 	 *             when message can't be read
 	 */
+	@SuppressWarnings("squid:S1168")	// return null on purpose (to be able to distinguish empty content from no content at all in tests)
 	public static byte[] getContent(Part part) throws IOException, MessagingException {
 		if (part == null) {
 			return null;

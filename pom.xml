@@ -63,7 +63,6 @@
 		<cloning.version>1.9.12</cloning.version>
 		<greenmail.version>1.5.11</greenmail.version>
 		<jsmpp.version>2.3.8</jsmpp.version>
-		<opensmpp.version>3.0.2</opensmpp.version>
 		<equalsverifier.version>3.1.12</equalsverifier.version>
 		<wiremock.version>2.23.2</wiremock.version>
 		<hamcrest.version>2.2</hamcrest.version>
@@ -369,11 +368,6 @@
 				<artifactId>jsmpp</artifactId>
 				<version>${jsmpp.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.opensmpp</groupId>
-				<artifactId>opensmpp-client</artifactId>
-				<version>${opensmpp.version}</version>
-			</dependency>
 
 
 			<!-- Utility -->
@@ -573,11 +567,6 @@
 				<groupId>org.spockframework</groupId>
 				<artifactId>spock-core</artifactId>
 				<version>${spock.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.opensmpp</groupId>
-				<artifactId>opensmpp-sim</artifactId>
-				<version>${opensmpp.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.awaitility</groupId>

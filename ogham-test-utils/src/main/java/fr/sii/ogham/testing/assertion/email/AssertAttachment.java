@@ -38,7 +38,7 @@ public final class AssertAttachment {
 	public static void assertEquals(ExpectedAttachment expected, Message[] actual) throws Exception {
 		AssertionRegistry registry = new FailAtEndRegistry();
 		registry.register(() -> Assert.assertEquals("should have only one message", 1, actual.length));
-		assertEquals(expected, actual.length==1 ? actual[0] : null, registry);
+		assertEquals(expected, actual.length == 1 ? actual[0] : null, registry);
 		registry.execute();
 	}
 
@@ -91,7 +91,7 @@ public final class AssertAttachment {
 	}
 
 	private static void assertEquals(ExpectedAttachment expected, Message actual, AssertionRegistry registry) throws Exception {
-		Object content = actual==null ? null : actual.getContent();
+		Object content = actual == null ? null : actual.getContent();
 		registry.register(() -> Assert.assertTrue("should be multipart message", content instanceof Multipart));
 		BodyPart part = getAttachmentOrNull((Multipart) content, expected.getName(), registry);
 		assertEquals(expected, part, registry);
@@ -114,25 +114,26 @@ public final class AssertAttachment {
 				attachment == null ? null : getContent(attachment)));
 		// @formatter:on
 	}
-	
+
+	@SuppressWarnings("squid:S2147") // false positive: merging exception
+										// doesn't compile in that case or we
+										// are force to throw Exception instead
+										// of MessagingException
 	private static BodyPart getAttachmentOrNull(Multipart multipart, final String filename, AssertionRegistry registry) throws MessagingException {
 		try {
 			return getAttachment(multipart, filename);
-		} catch(MessagingException e) {
+		} catch (MessagingException e) {
 			registry.register(failure(e));
 			return null;
-		} catch(IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			registry.register(failure(e));
 			return null;
 		}
 	}
 
 	private static <E extends Exception> Executable<E> failure(E exception) {
-		return new Executable<E>() {
-			@Override
-			public void run() throws E {
-				throw exception;
-			}
+		return () -> {
+			throw exception;
 		};
 	}
 

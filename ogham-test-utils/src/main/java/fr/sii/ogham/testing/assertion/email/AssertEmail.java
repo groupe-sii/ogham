@@ -33,6 +33,7 @@ import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
 @SuppressWarnings("squid:S1192")
 public final class AssertEmail {
 	private static final Pattern HTML_PATTERN = Pattern.compile("<html", Pattern.CASE_INSENSITIVE);
+	private static final Pattern NEW_LINES = Pattern.compile("\r|\n");
 
 	/**
 	 * Assert that the fields of the received email are equal to the expected
@@ -511,10 +512,14 @@ public final class AssertEmail {
 			}
 		} else {
 			assertions.register(() -> {
-				if (strict ? !expectedBody.equals(actualBody) : !sanitize(expectedBody).equals(sanitize(actualBody))) {
-					throw new ComparisonFailure(name + " should be '" + expectedBody + "'", expectedBody, actualBody);
-				}
+				compareText(name, expectedBody, actualBody, strict);
 			});
+		}
+	}
+
+	private static void compareText(String name, String expectedBody, String actualBody, boolean strict) throws ComparisonFailure {
+		if (strict ? !expectedBody.equals(actualBody) : !sanitize(expectedBody).equals(sanitize(actualBody))) {
+			throw new ComparisonFailure(name + " should be '" + expectedBody + "'", expectedBody, actualBody);
 		}
 	}
 
@@ -557,9 +562,13 @@ public final class AssertEmail {
 		if (str == null) {
 			return null;
 		}
-		return str.replaceAll("\r|\n", "");
+		return NEW_LINES.matcher(str).replaceAll("");
 	}
 
+	@SuppressWarnings("squid:S2147") // false positive: merging exception
+										// doesn't compile in that case or we
+										// are force to throw Exception instead
+										// of MessagingException
 	private static Part getBodyOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException {
 		try {
 			if (actualEmail == null) {
@@ -575,6 +584,10 @@ public final class AssertEmail {
 		}
 	}
 
+	@SuppressWarnings("squid:S2147") // false positive: merging exception
+										// doesn't compile in that case or we
+										// are force to throw Exception instead
+										// of MessagingException
 	private static String getBodyContentOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException, IOException {
 		try {
 			Part bodyPart = getBodyOrNull(actualEmail, registry);
@@ -595,14 +608,15 @@ public final class AssertEmail {
 	}
 
 	private static <E extends Exception> Executable<E> failure(E exception) {
-		return new Executable<E>() {
-			@Override
-			public void run() throws E {
-				throw exception;
-			}
+		return () -> {
+			throw exception;
 		};
 	}
 
+	@SuppressWarnings("squid:S2147") // false positive: merging exception
+										// doesn't compile in that case or we
+										// are force to throw Exception instead
+										// of MessagingException
 	private static String getBodyMimetypeOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException {
 		try {
 			Part bodyPart = getBodyOrNull(actualEmail, registry);

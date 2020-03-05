@@ -33,28 +33,28 @@ public class StringPrinter implements Printer {
 
 	@Override
 	public void printHeader(String marker, String header) {
-		if (writeMarker) {
-			writer.append("[marker:" + marker + "]\n");
-		}
+		printMarker(marker);
 		writer.append(header + "\n\n");
 	}
 
 	@Override
 	public void printSucess(String marker, String success) {
-		if (writeMarker) {
-			writer.append("[marker:" + marker + "]\n");
-		}
+		printMarker(marker);
 		writer.append(success + "\n\n");
 	}
 
 	@Override
 	public void printFailure(String marker, String failure, Throwable e) {
-		if (writeMarker) {
-			writer.append("[marker:" + marker + "]\n");
-		}
+		printMarker(marker);
 		writer.append("Test failure:" + e + "\n");
 		e.printStackTrace(new PrintWriter(writer));
 		writer.append(failure + "\n\n");
 	}
 
+
+	private void printMarker(String marker) {
+		if (writeMarker) {
+			writer.append("[marker:" + marker + "]\n");
+		}
+	}
 }

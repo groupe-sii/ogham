@@ -81,7 +81,7 @@ public class ResourceResolverAssertions<P> extends HasParent<P> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Set<T> findResolvers(ResourceResolver resolver, Class<T> resolverClass) {
+	private static <T> Set<T> findResolvers(ResourceResolver resolver, Class<T> resolverClass) {
 		Set<T> found = new HashSet<>();
 		if (resolverClass.isAssignableFrom(resolver.getClass())) {
 			found.add((T) resolver);
@@ -96,11 +96,11 @@ public class ResourceResolverAssertions<P> extends HasParent<P> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Set<T> findResolvers(FirstSupportingResourceResolver resolver, Class<T> resolverClass) {
+	private static <T> Set<T> findResolvers(FirstSupportingResourceResolver resolver, Class<T> resolverClass) {
 		try {
 			Set<T> found = new HashSet<>();
-			List<ResourceResolver> resolvers = (List<ResourceResolver>) FieldUtils.readField(resolver, "resolvers", true);
-			for (ResourceResolver r : resolvers) {
+			List<ResourceResolver> subresolvers = (List<ResourceResolver>) FieldUtils.readField(resolver, "resolvers", true);
+			for (ResourceResolver r : subresolvers) {
 				found.addAll(findResolvers(r, resolverClass));
 			}
 			return found;
@@ -110,7 +110,7 @@ public class ResourceResolverAssertions<P> extends HasParent<P> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Set<T> findResolvers(RelativeResolver resolver, Class<T> resolverClass) {
+	private static <T> Set<T> findResolvers(RelativeResolver resolver, Class<T> resolverClass) {
 		try {
 			Set<T> found = new HashSet<>();
 			if (resolverClass.isAssignableFrom(resolver.getClass())) {

@@ -51,11 +51,9 @@ public class SendGridAssertions extends HasParent<MessagingServiceAssertions> {
 	 * @param matcher
 	 *            the matcher used to ensure that instance is correctly
 	 *            configured.
-	 * @param <T>
-	 *            the assertion type for chaining
 	 * @return this instance for fluent chaining
 	 */
-	public <T> SendGridAssertions client(Matcher<? super SendGrid> matcher) {
+	public SendGridAssertions client(Matcher<? super SendGrid> matcher) {
 		assertThat(getClient(sendGridSender), matcher);
 		return this;
 	}

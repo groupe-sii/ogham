@@ -100,35 +100,4 @@ public class FluentEmailsAssert<P> extends HasParent<P> {
 	public FluentEmailAssert<FluentEmailsAssert<P>> every() {
 		return new FluentEmailAssert<>(actual, this, registry);
 	}
-
-	/**
-	 * Fluent API to write assertions on every received messages. Any defined
-	 * assertion will be applied on every message:
-	 * 
-	 * <pre>
-	 * .receivedMessages().forEach().subject(is("foobar"))
-	 * </pre>
-	 * 
-	 * Will check that subject of every message is "foobar".
-	 * 
-	 * <p>
-	 * You can use this method to factorize several assertions on a message and
-	 * then make dedicated assertions on some messages:
-	 * 
-	 * <pre>
-	 * .receivedMessages().forEach().subject(is("foobar"))
-	 *                    .and()
-	 *                    .message(0).body().contentAsString(is("toto"))
-	 * </pre>
-	 * 
-	 * Will check that subject of every message is "foobar" and that body of
-	 * first received message is "toto".
-	 * 
-	 * @return the fluent API for chaining assertions on received messages
-	 * @deprecated use {@link #every()} instead
-	 */
-	@Deprecated
-	public FluentEmailAssert<FluentEmailsAssert<P>> forEach() {
-		return every();
-	}
 }
