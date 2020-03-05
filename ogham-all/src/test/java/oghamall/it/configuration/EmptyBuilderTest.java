@@ -6,20 +6,19 @@ import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.BEFORE_BUI
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThrows;
 
 import org.jsmpp.bean.SubmitSm;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -52,10 +51,7 @@ import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 import mock.context.SimpleBean;
 
 public class EmptyBuilderTest {
-	ExpectedException thrown = ExpectedException.none();
-	@Rule public final RuleChain ruleChain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
 	
@@ -84,11 +80,11 @@ public class EmptyBuilderTest {
 
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content("body");
 		
-		thrown.expect(MessageNotSentException.class);
-		thrown.expectMessage(is("No sender available to send the message"));
-		thrown.expect(hasProperty("oghamMessage", is(message)));
-		
-		service.send(message);
+		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+			service.send(message);
+		});
+		assertThat("should indicate that there is no sender", e.getMessage(), is("No sender available to send the message"));
+		assertThat("should provide original message", e.getOghamMessage(), is(message));
 	}
 
 	@Test
@@ -97,11 +93,11 @@ public class EmptyBuilderTest {
 		
 		Sms message = new Sms().from("010203040506").to("060504030201").content("sms");
 		
-		thrown.expect(MessageNotSentException.class);
-		thrown.expectMessage(is("No sender available to send the message"));
-		thrown.expect(hasProperty("oghamMessage", is(message)));
-		
-		service.send(message);
+		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+			service.send(message);
+		});
+		assertThat("should indicate that there is no sender", e.getMessage(), is("No sender available to send the message"));
+		assertThat("should provide original message", e.getOghamMessage(), is(message));
 	}
 
 
@@ -109,10 +105,10 @@ public class EmptyBuilderTest {
 	public void noMimetypeConfigurationCantSendEmail() throws MessagingException {
 		builder.email().sender(JavaMailBuilder.class);
 		
-		thrown.expect(BuildException.class);
-		thrown.expectMessage("No mimetype detector configured");
-
-		builder.build();
+		BuildException e = assertThrows("should throw", BuildException.class, () -> {
+			builder.build();
+		});
+		assertThat("should indicate that there is no mimetype detector", e.getMessage(), is("No mimetype detector configured"));
 	}
 	
 
@@ -146,10 +142,10 @@ public class EmptyBuilderTest {
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content("body")
 				.attach(new Attachment("attachment/04-Java-OOP-Basics.pdf"));
 		
-		thrown.expect(MessageException.class);
-		thrown.expectCause(instanceOf(UnresolvableAttachmentResourceHandlerException.class));
-		
-		service.send(message);
+		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+			service.send(message);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(UnresolvableAttachmentResourceHandlerException.class));
 	}
 
 	@Test
@@ -165,12 +161,12 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content("<html><head></head><body><img src='template/freemarker/source/images/h1.gif' /></body></html>");
 		
-		thrown.expect(MessageNotSentException.class);
-		thrown.expectCause(instanceOf(ImageInliningException.class));
-		thrown.expectCause(hasMessage(containsString("Failed to inline image file 'template/freemarker/source/images/h1.gif'")));
-		thrown.expect(hasAnyCause(NoResolverException.class, hasMessage(containsString("No resource resolver available to find resource template/freemarker/source/images/h1.gif"))));
-		
-		service.send(message);
+		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+			service.send(message);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(ImageInliningException.class));
+		assertThat("should indicate failing path", e.getCause(), hasMessage(containsString("Failed to inline image file 'template/freemarker/source/images/h1.gif'")));
+		assertThat("should indicate no resolver configured", e, hasAnyCause(NoResolverException.class, hasMessage(containsString("No resource resolver available to find resource template/freemarker/source/images/h1.gif"))));
 	}
 
 
@@ -184,10 +180,10 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new TemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
-		thrown.expect(MessageException.class);
-		thrown.expectCause(instanceOf(NoContentHandlerException.class));
-		
-		service.send(message);
+		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+			service.send(message);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(NoContentHandlerException.class));
 	}
 
 	
@@ -202,10 +198,10 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new TemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
-		thrown.expect(ResolverAdapterNotFoundException.class);
-		thrown.expectCause(instanceOf(NoResolverAdapterException.class));
-		
-		service.send(message);
+		ResolverAdapterNotFoundException e = assertThrows("should throw", ResolverAdapterNotFoundException.class, () -> {
+			service.send(message);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(NoResolverAdapterException.class));
 	}
 	
 	@Test
@@ -218,10 +214,10 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new MultiTemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
-		thrown.expect(MessageException.class);
-		thrown.expectCause(instanceOf(NoContentHandlerException.class));
-		
-		service.send(message);
+		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+			service.send(message);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(NoContentHandlerException.class));
 	}
 	
 	@Test
@@ -236,9 +232,9 @@ public class EmptyBuilderTest {
 		
 		Email message = new Email().from("sender@yopmail.com").to("recipient@yopmail.com").subject("subject").content(new MultiTemplateContent("simple.txt.ftl", new SimpleBean("foo", 42)));
 		
-		thrown.expect(MessageNotSentException.class);
-		thrown.expectCause(allOf(instanceOf(NoContentException.class), hasMessage(containsString("Template not found for simple.txt.ftl"))));
-		
-		service.send(message);
+		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+			service.send(message);
+		});
+		assertThat("should indicate cause", e.getCause(), allOf(instanceOf(NoContentException.class), hasMessage(containsString("Template not found for simple.txt.ftl"))));
 	}
 }

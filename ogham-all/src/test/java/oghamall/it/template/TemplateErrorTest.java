@@ -2,13 +2,13 @@ package oghamall.it.template;
 
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -25,11 +25,7 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class TemplateErrorTest {
-	ExpectedException thrown = ExpectedException.none();
-	
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 
 	
@@ -47,24 +43,25 @@ public class TemplateErrorTest {
 	
 	@Test
 	public void singleTemplateNotFound() throws MessagingException {
-		thrown.expect(MessageNotSentException.class);
-		thrown.expect(hasAnyCause(NoEngineDetectionException.class, hasMessage(containsString("INVALID_PATH"))));
-		
-		service.send(new Email()
-				.from("sender@yopmail.com")
-				.to("recipient@yopmail.com")
-				.content(new TemplateContent("INVALID_PATH", null)));
+		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+			service.send(new Email()
+					.from("sender@yopmail.com")
+					.to("recipient@yopmail.com")
+					.content(new TemplateContent("INVALID_PATH", null)));
+		});
+		assertThat("should indicate path", e, hasAnyCause(NoEngineDetectionException.class, hasMessage(containsString("INVALID_PATH"))));
 	}
 	
 	@Test
 	public void multiTemplateNotFound() throws MessagingException {
-		thrown.expect(MessageNotSentException.class);
-		thrown.expect(hasAnyCause(NoContentException.class, hasMessage(containsString("Template not found for INVALID_PATH after trying to load from [INVALID_PATH.txt, INVALID_PATH.txt.ftl, INVALID_PATH.txt.ftlh]"))));
-		thrown.expect(hasAnyCause(NoContentException.class, hasMessage(containsString("Template not found for INVALID_PATH after trying to load from [INVALID_PATH.html, INVALID_PATH.xhtml, INVALID_PATH.html.ftl, INVALID_PATH.html.ftlh]"))));
+		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+			service.send(new Email()
+					.from("sender@yopmail.com")
+					.to("recipient@yopmail.com")
+					.content(new MultiTemplateContent("INVALID_PATH", null)));
+		});
+		assertThat("should indicate path for text", e, hasAnyCause(NoContentException.class, hasMessage(containsString("Template not found for INVALID_PATH after trying to load from [INVALID_PATH.txt, INVALID_PATH.txt.ftl, INVALID_PATH.txt.ftlh]"))));
+		assertThat("should indicate path for html", e, hasAnyCause(NoContentException.class, hasMessage(containsString("Template not found for INVALID_PATH after trying to load from [INVALID_PATH.html, INVALID_PATH.xhtml, INVALID_PATH.html.ftl, INVALID_PATH.html.ftlh]"))));
 
-		service.send(new Email()
-				.from("sender@yopmail.com")
-				.to("recipient@yopmail.com")
-				.content(new MultiTemplateContent("INVALID_PATH", null)));
 	}
 }

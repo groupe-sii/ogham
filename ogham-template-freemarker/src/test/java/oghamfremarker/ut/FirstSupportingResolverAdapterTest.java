@@ -1,14 +1,13 @@
 package oghamfremarker.ut;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -23,11 +22,7 @@ import freemarker.cache.TemplateLoader;
 
 public class FirstSupportingResolverAdapterTest {
 	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	ExpectedException thrown = ExpectedException.none();
-	
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	
 	@Mock ResourceResolver resolver;
 	@Mock TemplateLoaderAdapter adapter1;
@@ -67,7 +62,9 @@ public class FirstSupportingResolverAdapterTest {
 	public void noSupportingAdapterShouldFail() throws ResolverAdapterException {
 		when(adapter1.supports(resolver)).thenReturn(false);
 		when(adapter2.supports(resolver)).thenReturn(false);
-		thrown.expect(NoResolverAdapterException.class);
-		adapter.adapt(resolver);
+
+		assertThrows("should throw", NoResolverAdapterException.class, () -> {
+			adapter.adapt(resolver);
+		});
 	}
 }

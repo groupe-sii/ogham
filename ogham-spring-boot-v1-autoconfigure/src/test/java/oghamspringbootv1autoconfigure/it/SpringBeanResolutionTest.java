@@ -4,10 +4,10 @@ import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
-import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 
@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -45,7 +44,6 @@ public class SpringBeanResolutionTest {
 	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
 	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
-	@Rule public final ExpectedException thrown = ExpectedException.none();
 
 	private AnnotationConfigApplicationContext context;
 	private MessagingService messagingService;
@@ -100,13 +98,13 @@ public class SpringBeanResolutionTest {
 
 	@Test
 	public void missingBeanErrorUsingThymeleaf() throws MessagingException, IOException {
-		thrown.expect(allOf(
-				instanceOf(MessagingException.class),
-				hasAnyCause(NoSuchBeanDefinitionException.class, hasMessage("No bean named 'missingService' available"))));
-		messagingService.send(new Email()
-				.from("foo@yopmail.com")
-				.to("bar@yopmail.com")
-				.content(new TemplateContent("/thymeleaf/source/missing-bean.html", new SimpleBean("world", 0))));
+		MessagingException e = assertThrows("should throw", MessagingException.class, () -> {
+			messagingService.send(new Email()
+					.from("foo@yopmail.com")
+					.to("bar@yopmail.com")
+					.content(new TemplateContent("/thymeleaf/source/missing-bean.html", new SimpleBean("world", 0))));
+		});
+		assertThat("should indicate missing bean", e, hasAnyCause(NoSuchBeanDefinitionException.class, hasMessage("No bean named 'missingService' available")));
 	}
 	
 	@Test
@@ -138,13 +136,13 @@ public class SpringBeanResolutionTest {
 
 	@Test
 	public void missingBeanErrorUsingFreemarker() throws MessagingException, IOException {
-		thrown.expect(allOf(
-				instanceOf(MessagingException.class),
-				hasAnyCause(InvalidReferenceException.class, hasMessage(containsString("The following has evaluated to null or missing:\n==> @missingService")))));
-		messagingService.send(new Email()
-				.from("foo@yopmail.com")
-				.to("bar@yopmail.com")
-				.content(new TemplateContent("/freemarker/source/missing-bean.html.ftl", new SimpleBean("world", 0))));
+		MessagingException e = assertThrows("should throw", MessagingException.class, () -> {
+			messagingService.send(new Email()
+					.from("foo@yopmail.com")
+					.to("bar@yopmail.com")
+					.content(new TemplateContent("/freemarker/source/missing-bean.html.ftl", new SimpleBean("world", 0))));
+		});
+		assertThat("should indicate missing bean", e, hasAnyCause(InvalidReferenceException.class, hasMessage(containsString("The following has evaluated to null or missing:\n==> @missingService"))));
 	}
 
 

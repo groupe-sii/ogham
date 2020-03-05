@@ -2,6 +2,7 @@ package oghamall.it.html.translator;
 
 import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 import java.io.IOException;
@@ -16,8 +17,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -55,10 +54,7 @@ public class JsoupInlineImageTranslatorTest {
 	private static String SOURCE_FOLDER = FOLDER + "source/";
 	private static String EXPECTED_FOLDER = FOLDER + "expected/";
 
-	ExpectedException thrown = ExpectedException.none();
-	@Rule public final RuleChain ruleChain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 
 	private InlineImageTranslator translator;
 
@@ -146,10 +142,11 @@ public class JsoupInlineImageTranslatorTest {
 
 	@Test
 	public void unreadableImage() throws ContentTranslatorException {
-		thrown.expect(ImageInliningException.class);
-		thrown.expectMessage(containsString("INVALID_FILE"));
-		StringContent sourceContent = new StringContent("<html><head></head><body><img src='INVALID_FILE' /></body></html>");
-		translator.translate(sourceContent);
+		ImageInliningException e = Assert.assertThrows("should throw", ImageInliningException.class, () -> {
+			StringContent sourceContent = new StringContent("<html><head></head><body><img src='INVALID_FILE' /></body></html>");
+			translator.translate(sourceContent);
+		});
+		assertThat("should indicate file path", e.getMessage(), containsString("INVALID_FILE"));
 	}
 
 	// ---------------------------------------------------------------//

@@ -14,8 +14,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -28,11 +26,8 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class EmailExtractSubjectTest {
-	ExpectedException thrown = ExpectedException.none();
 	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 
 	private MessagingBuilder builder;
 	

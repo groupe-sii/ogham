@@ -1,9 +1,10 @@
 package oghamcore.ut.core.sender;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -13,8 +14,6 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -28,11 +27,7 @@ import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class FallbackSenderTest {
-	ExpectedException thrown = ExpectedException.none();
-	
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
 
 	
@@ -63,16 +58,17 @@ public class FallbackSenderTest {
 	
 	@Test
 	public void allFailsShouldFailWithDetailledInformation() throws MessageException {
-		thrown.expect(MessageNotSentException.class);
-		thrown.expectCause(instanceOf(MultipleCauseExceptionWrapper.class));
-		thrown.expectCause(hasProperty("causes", hasSize(2)));
-		thrown.expectCause(hasProperty("causes", hasItem(instanceOf(IllegalArgumentException.class))));
-		thrown.expectCause(hasProperty("causes", hasItem(instanceOf(MessageException.class))));
-		
 		doThrow(new IllegalArgumentException("invalid message")).when(sender1).send(any());
 		doThrow(new MessageException("failed to send", message)).when(sender2).send(any());
 
-		sender.send(message);
+		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+			sender.send(message);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(MultipleCauseExceptionWrapper.class));
+		MultipleCauseExceptionWrapper cause = (MultipleCauseExceptionWrapper) e.getCause();
+		assertThat("should keep all original causes", cause.getCauses(), hasSize(2));
+		assertThat("should keep all original causes", cause.getCauses(), hasItem(instanceOf(IllegalArgumentException.class)));
+		assertThat("should keep all original causes", cause.getCauses(), hasItem(instanceOf(MessageException.class)));
 	}
 	
 }

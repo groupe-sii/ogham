@@ -90,7 +90,7 @@ public class LoggingRuleTest {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectMethod(FakeTest.class, "success"))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs).contains(SUCCESS_HEADER);
@@ -102,7 +102,7 @@ public class LoggingRuleTest {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectMethod(FakeTest.class, "failure"))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(1).succeeded(0).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs).contains(FAILURE_HEADER);
@@ -114,7 +114,7 @@ public class LoggingRuleTest {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectMethod(FakeTest.class, "caught"))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs).contains(CAUGHT_HEADER);
@@ -126,7 +126,7 @@ public class LoggingRuleTest {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectMethod(FakeTest.class, "caughtByAnnotation"))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs).contains(CAUGHT_ANNOTATION_HEADER);
@@ -136,6 +136,7 @@ public class LoggingRuleTest {
 
 
 		public static class FakeTest {
+			@SuppressWarnings("deprecation")	// need to test JUnit 4 behavior
 			ExpectedException thrown = ExpectedException.none();
 			@Rule public final RuleChain chain = RuleChain
 					.outerRule(new LoggingTestRule(100, "foo", new TestPrinterFactoryAdapter()))
@@ -194,7 +195,7 @@ public class LoggingRuleTest {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectMethod(FakeTest.class, "success"))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs).contains(SUCCESS_HEADER);
@@ -206,7 +207,7 @@ public class LoggingRuleTest {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectMethod(FakeTest.class, "failure"))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(1).succeeded(0).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs).contains(FAILURE_HEADER);
@@ -218,7 +219,7 @@ public class LoggingRuleTest {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectMethod(FakeTest.class, "caught"))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs).contains(CAUGHT_HEADER);
@@ -230,7 +231,7 @@ public class LoggingRuleTest {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectMethod(FakeTest.class, "caughtByAnnotation"))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs).contains(CAUGHT_ANNOTATION_HEADER);
@@ -239,6 +240,7 @@ public class LoggingRuleTest {
 	
 		@LogTestInformation(maxLength = 100, marker = "foo", printer = TestPrinterFactoryAdapter.class)
 		public static class FakeTest {
+			@SuppressWarnings("deprecation")	// need to test JUnit 4 behavior
 			@Rule public final ExpectedException thrown = ExpectedException.none();
 			
 			@Test

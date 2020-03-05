@@ -1,16 +1,15 @@
 package oghamcore.it.core.builder;
 
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -26,12 +25,8 @@ import mock.builder.FluentChainingBuilderWithEnv;
 import mock.builder.MockBuilder;
 
 public class CustomTemplateBuilderTest {
-	ExpectedException thrown = ExpectedException.none();
-	
 	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	
 	@Mock TemplateParser configuredParser;
 	
@@ -57,18 +52,22 @@ public class CustomTemplateBuilderTest {
 	
 	@Test
 	public void asDeveloperICantRegisterANonVisible() {
-		thrown.expect(BuildException.class);
-		thrown.expectCause(instanceOf(IllegalAccessException.class));
 		MessagingBuilder builder = MessagingBuilder.empty();
-		builder.email().template(InvisibleBuilder.class);
+		
+		BuildException e = assertThrows("should throw", BuildException.class, () -> {
+			builder.email().template(InvisibleBuilder.class);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(IllegalAccessException.class));
 	}
 	
 	@Test
 	public void asDeveloperICantRegisterABuilderWithWrongConstructor() {
-		thrown.expect(BuildException.class);
-		thrown.expect(hasMessage(containsString("No matching constructor found")));
 		MessagingBuilder builder = MessagingBuilder.empty();
-		builder.email().template(InvalidBuilder.class);
+
+		BuildException e = assertThrows("should throw", BuildException.class, () -> {
+			builder.email().template(InvalidBuilder.class);
+		});
+		assertThat("should indicate cause", e, hasMessage(containsString("No matching constructor found")));
 	}
 	
 	public static class CustomChainingBuilder extends FluentChainingBuilderWithEnv<EmailBuilder, TemplateParser> {

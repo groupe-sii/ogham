@@ -5,10 +5,12 @@ import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessa
 import static fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator.ISDN;
 import static fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber.UNKNOWN;
 import static java.lang.Math.ceil;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 
@@ -16,8 +18,6 @@ import org.jsmpp.bean.SubmitSm;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.builder.BuildException;
@@ -33,10 +33,7 @@ import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
 
 public class PartialConfigurationTest {
-	ExpectedException thrown = ExpectedException.none();
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
 
 	private static final String NATIONAL_PHONE_NUMBER = "0203040506";
@@ -89,35 +86,33 @@ public class PartialConfigurationTest {
 
 	@Test
 	public void splitterEnabledButAutoGuessNotEnabledAndNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterIsConfigured() throws MessagingException, IOException {
-		thrown.expect(BuildException.class);
-		thrown.expectMessage(is("Split of SMS is enabled but no splitter is configured"));
-		
 		builder.splitter().enable(true);
-		CloudhopperSMPPSender sender = builder.build();
-		// @formatter:off
-		sender.send(new Sms()
-						.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split")
-						.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
-						.to(NATIONAL_PHONE_NUMBER));
-		// @formatter:on
+
+		BuildException e = assertThrows("should throw", BuildException.class, () -> {
+			builder.build();
+		});
+		assertThat("should indicate cause", e.getMessage(), is("Split of SMS is enabled but no splitter is configured"));
 	}
 
 	@Test
 	public void splitterEnabledAndAutoGuessEnabledButNoEncodingConfiguredAndLongMessageShouldFailIndicatingThatNoSplitterCouldSplitTheMessage() throws MessagingException, IOException {
-		thrown.expect(MessagePreparationException.class);
-		thrown.expectCause(instanceOf(NoSplitterAbleToSplitMessageException.class));
-		thrown.expectCause(hasMessage("Failed to split message because no splitter is able to split the message"));
-		
 		// @formatter:off
 		builder
 			.encoder().autoGuess(true).and()
 			.splitter().enable(true);
 		CloudhopperSMPPSender sender = builder.build();
-		sender.send(new Sms()
-						.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split")
-						.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
-						.to(NATIONAL_PHONE_NUMBER));
 		// @formatter:on
+
+		MessagePreparationException e = assertThrows("should throw", MessagePreparationException.class, () -> {
+			// @formatter:off
+			sender.send(new Sms()
+					.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split")
+					.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
+					.to(NATIONAL_PHONE_NUMBER));
+			// @formatter:on
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(NoSplitterAbleToSplitMessageException.class));
+		assertThat("should indicate cause", e.getCause(), hasMessage("Failed to split message because no splitter is able to split the message"));
 	}
 
 	@Test
@@ -173,10 +168,6 @@ public class PartialConfigurationTest {
 
 	@Test
 	public void splitterEnabledAndAutoGuessEnabledAndGsm7bitEncodingConfiguredAndLongMessageWithUnsupportedCharactersShouldFailIndicatingThatMessageCantBeSplit() throws MessagingException, IOException {
-		thrown.expect(MessagePreparationException.class);
-		thrown.expectCause(instanceOf(NoSplitterAbleToSplitMessageException.class));
-		thrown.expectCause(hasMessage("Failed to split message because no splitter is able to split the message"));
-		
 		// @formatter:off
 		builder
 			.encoder()
@@ -185,10 +176,17 @@ public class PartialConfigurationTest {
 				.and()
 			.splitter().enable(true);
 		CloudhopperSMPPSender sender = builder.build();
-		sender.send(new Sms()
-						.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split but there is an unsupported character like ê")
-						.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
-						.to(NATIONAL_PHONE_NUMBER));
 		// @formatter:on
+
+		MessagePreparationException e = assertThrows("should throw", MessagePreparationException.class, () -> {
+			// @formatter:off
+			sender.send(new Sms()
+					.content("sms content with a very very very loooooooooooooooooooonnnnnnnnnnnnnnnnng message that is over 160 characters in order to test the behavior of the sender when message has to be split but there is an unsupported character like ê")
+					.from(new Sender(INTERNATIONAL_PHONE_NUMBER))
+					.to(NATIONAL_PHONE_NUMBER));
+			// @formatter:on
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(NoSplitterAbleToSplitMessageException.class));
+		assertThat("should indicate cause", e.getCause(), hasMessage("Failed to split message because no splitter is able to split the message"));
 	}
 }

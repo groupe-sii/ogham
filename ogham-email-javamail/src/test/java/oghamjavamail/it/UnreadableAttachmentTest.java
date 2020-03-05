@@ -2,8 +2,10 @@ package oghamjavamail.it;
 
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasAnyCause;
 import static fr.sii.ogham.testing.assertion.hamcrest.ExceptionMatchers.hasMessage;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThrows;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,7 +14,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 
@@ -30,14 +31,12 @@ import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class UnreadableAttachmentTest {
 	GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
-	ExpectedException thrown = ExpectedException.none();
 	TemporaryFolder temp = new TemporaryFolder();
 
 	@Rule public final RuleChain chain = RuleChain
 			.outerRule(new LoggingTestRule())
 			.around(temp)
-			.around(greenMail)
-			.around(thrown);
+			.around(greenMail);
 	
 	MessagingService service;
 	File unreadable;
@@ -58,27 +57,29 @@ public class UnreadableAttachmentTest {
 
 	@Test
 	public void attachmentDoesntExist() throws MessagingException {
-		thrown.expect(MessageException.class);
-		thrown.expectCause(instanceOf(AttachmentResourceHandlerException.class));
-		thrown.expect(hasAnyCause(FileNotFoundException.class, hasMessage(containsString("INVALID_FILE"))));
-		service.send(new Email()
-				.attach(new Attachment(new File("INVALID_FILE")))
-				.subject("Subject")
-				.content("Body")
-				.from("sender@gmail.com")
-				.to("recipient@gmail.com"));
+		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+			service.send(new Email()
+					.attach(new Attachment(new File("INVALID_FILE")))
+					.subject("Subject")
+					.content("Body")
+					.from("sender@gmail.com")
+					.to("recipient@gmail.com"));
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(AttachmentResourceHandlerException.class));
+		assertThat("should indicate which file", e, hasAnyCause(FileNotFoundException.class, hasMessage(containsString("INVALID_FILE"))));
 	}
 
 	@Test
 	public void attachmentUnreadable() throws MessagingException {
-		thrown.expect(MessageException.class);
-		thrown.expectCause(instanceOf(AttachmentResourceHandlerException.class));
-		thrown.expect(hasAnyCause(FileNotFoundException.class, hasMessage(containsString(unreadable.getName()))));
-		service.send(new Email()
-				.attach(new Attachment(unreadable))
-				.subject("Subject")
-				.content("Body")
-				.from("sender@gmail.com")
-				.to("recipient@gmail.com"));
+		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+			service.send(new Email()
+					.attach(new Attachment(unreadable))
+					.subject("Subject")
+					.content("Body")
+					.from("sender@gmail.com")
+					.to("recipient@gmail.com"));
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(AttachmentResourceHandlerException.class));
+		assertThat("should indicate which file", e, hasAnyCause(FileNotFoundException.class, hasMessage(containsString(unreadable.getName()))));
 	}
 }

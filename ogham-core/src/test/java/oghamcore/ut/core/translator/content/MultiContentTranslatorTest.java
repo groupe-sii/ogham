@@ -1,15 +1,15 @@
 package oghamcore.ut.core.translator.content;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -27,12 +27,8 @@ import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 
 public class MultiContentTranslatorTest {
-	public final ExpectedException thrown = ExpectedException.none();
-
 	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
-	@Rule public final RuleChain rules = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 			
 	
 	@Mock ContentTranslator templateParser;
@@ -81,18 +77,22 @@ public class MultiContentTranslatorTest {
 	public void bothNullShouldThrowNoContentException() throws ContentTranslatorException {
 		when(templateParser.translate(textTemplate)).thenReturn(null);
 		when(templateParser.translate(htmlTemplate)).thenReturn(null);
-		thrown.expect(NoContentException.class);
-		thrown.expectMessage("The message is empty");
-		translator.translate(content);
+		
+		NoContentException e = assertThrows("should throw", NoContentException.class, () -> {
+			translator.translate(content);
+		});
+		assertThat("should indicate why", e.getMessage(), is("The message is empty"));
 	}
 	
 	@Test
 	public void bothTemplatesNotFoundShouldThrowNoContentExceptionWithDetails() throws ContentTranslatorException {
 		when(templateParser.translate(textTemplate)).thenThrow(new TemplateNotFoundException("text template not found"));
 		when(templateParser.translate(htmlTemplate)).thenThrow(new TemplateNotFoundException("html template not found"));
-		thrown.expect(NoContentException.class);
-		thrown.expectMessage("The message is empty maybe due to some errors:\ntext template not found\nhtml template not found");
-		translator.translate(content);
+		
+		NoContentException e = assertThrows("should throw", NoContentException.class, () -> {
+			translator.translate(content);
+		});
+		assertThat("should indicate why", e.getMessage(), is("The message is empty maybe due to some errors:\ntext template not found\nhtml template not found"));
 	}
 	
 	
@@ -100,8 +100,10 @@ public class MultiContentTranslatorTest {
 	public void parsingTextTemplateFailsShouldThrowAnError() throws ContentTranslatorException {
 		when(templateParser.translate(textTemplate)).thenThrow(new TemplateParsingFailedException("failed to parse text template"));
 		when(templateParser.translate(htmlTemplate)).thenReturn(html);
-		thrown.expect(TemplateParsingFailedException.class);
-		thrown.expectMessage("failed to parse text template");
-		translator.translate(content);
+
+		TemplateParsingFailedException e = assertThrows("should throw", TemplateParsingFailedException.class, () -> {
+			translator.translate(content);
+		});
+		assertThat("should indicate why", e.getMessage(), is("failed to parse text template"));
 	}
 }

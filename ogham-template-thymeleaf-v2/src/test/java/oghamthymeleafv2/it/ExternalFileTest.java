@@ -3,8 +3,10 @@ package oghamthymeleafv2.it;
 import static fr.sii.ogham.core.util.IOUtils.copy;
 import static fr.sii.ogham.testing.assertion.template.AssertTemplate.assertEquals;
 import static fr.sii.ogham.testing.util.ResourceUtils.resource;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -13,8 +15,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 import org.thymeleaf.exceptions.TemplateInputException;
 
@@ -29,10 +29,7 @@ import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import mock.context.SimpleBean;
 
 public class ExternalFileTest {
-	ExpectedException thrown = ExpectedException.none();
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	@Rule public final TemporaryFolder temp = new TemporaryFolder();
 	private File folder;
 	
@@ -74,22 +71,22 @@ public class ExternalFileTest {
 	
 	@Test
 	public void fileNotFound() throws ParseException {
-		thrown.expect(ParseException.class);
-		thrown.expectCause(instanceOf(TemplateInputException.class));
-
 		TemplateParser parser = builder.build();
-		
-		parser.parse(new UnresolvedPath("file:unexisting.html"), new BeanContext(new SimpleBean("foo", 42)));
+
+		ParseException e = assertThrows("should throw", ParseException.class, () -> {
+			parser.parse(new UnresolvedPath("file:unexisting.html"), new BeanContext(new SimpleBean("foo", 42)));
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(TemplateInputException.class));
 	}
 
 	@Test
 	public void fileUnreadable() throws ParseException {
-		thrown.expect(ParseException.class);
-		thrown.expectCause(instanceOf(TemplateInputException.class));
-		
 		TemplateParser parser = builder.build();
-		
-		parser.parse(new UnresolvedPath("file:source/unreadable.html"), new BeanContext(new SimpleBean("foo", 42)));
+
+		ParseException e = assertThrows("should throw", ParseException.class, () -> {
+			parser.parse(new UnresolvedPath("file:source/unreadable.html"), new BeanContext(new SimpleBean("foo", 42)));
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(TemplateInputException.class));
 	}
 	
 	@Test

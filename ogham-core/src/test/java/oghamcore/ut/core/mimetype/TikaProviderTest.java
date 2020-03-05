@@ -1,9 +1,10 @@
 package oghamcore.ut.core.mimetype;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -17,8 +18,6 @@ import javax.activation.MimeTypeParseException;
 import org.apache.tika.Tika;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -28,11 +27,7 @@ import fr.sii.ogham.core.mimetype.TikaProvider;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class TikaProviderTest {
-	ExpectedException thrown = ExpectedException.none();
-	
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
 
 	
@@ -69,32 +64,35 @@ public class TikaProviderTest {
 	
 	@Test
 	public void failIfOctetStream() throws MimeTypeDetectionException, MimeTypeParseException, IOException {
-		thrown.expect(MimeTypeDetectionException.class);
-		thrown.expectCause(nullValue(Throwable.class));
-		
 		when(tikaInstance.detect(any(File.class))).thenReturn("application/octet-stream");
 		tika = new TikaProvider(tikaInstance, true);
-		tika.getMimeType(file);
+
+		MimeTypeDetectionException e = assertThrows("should throw", MimeTypeDetectionException.class, () -> {
+			tika.getMimeType(file);
+		});
+		assertThat("should not have cause", e.getCause(), nullValue(Throwable.class));
 	}
 	
 	@Test
 	public void unreadableStream() throws MimeTypeDetectionException, MimeTypeParseException, IOException {
-		thrown.expect(MimeTypeDetectionException.class);
-		thrown.expectCause(instanceOf(IOException.class));
-		
 		when(tikaInstance.detect(any(InputStream.class))).thenThrow(IOException.class);
 		tika = new TikaProvider(tikaInstance, true);
-		tika.detect(stream);
+
+		MimeTypeDetectionException e = assertThrows("should throw", MimeTypeDetectionException.class, () -> {
+			tika.detect(stream);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(IOException.class));
 	}
 	
 	@Test
 	public void invalidMimetype() throws MimeTypeDetectionException, MimeTypeParseException, IOException {
-		thrown.expect(MimeTypeDetectionException.class);
-		thrown.expectCause(instanceOf(MimeTypeParseException.class));
-		
 		when(tikaInstance.detect(any(InputStream.class))).thenReturn("not a mimetype");
 		tika = new TikaProvider(tikaInstance, true);
-		tika.detect(stream);
+
+		MimeTypeDetectionException e = assertThrows("should throw", MimeTypeDetectionException.class, () -> {
+			tika.detect(stream);
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(MimeTypeParseException.class));
 	}
 	
 }

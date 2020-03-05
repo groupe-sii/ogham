@@ -9,7 +9,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 
@@ -18,8 +20,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.RuleChain;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
@@ -34,10 +34,7 @@ import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class OvhSmsTest {
-	ExpectedException thrown = ExpectedException.none();
-	@Rule public final RuleChain chain = RuleChain
-			.outerRule(new LoggingTestRule())
-			.around(thrown);
+	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 	@Rule public WireMockRule serverRule = new WireMockRule(wireMockConfig().dynamicPort());
 	
 	OvhSmsBuilder builder;
@@ -195,14 +192,15 @@ public class OvhSmsTest {
 
 	@Test
 	public void nationalNumber() throws MessagingException, IOException {
-		thrown.expect(MessageException.class);
-		thrown.expectCause(instanceOf(PhoneNumberException.class));
-		
 		OvhSmsSender sender = builder.build();
-		sender.send(new Sms()
-						.content("sms content")
-						.from(new Sender("02 03 04 05 06"))
-						.to("06 05 04 03 02"));
+		
+		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+			sender.send(new Sms()
+					.content("sms content")
+					.from(new Sender("02 03 04 05 06"))
+					.to("06 05 04 03 02"));
+		});
+		assertThat("should indicate cause", e.getCause(), instanceOf(PhoneNumberException.class));
 	}
 
 	@Test
