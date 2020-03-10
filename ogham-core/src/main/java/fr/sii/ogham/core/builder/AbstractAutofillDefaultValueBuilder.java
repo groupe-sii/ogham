@@ -43,12 +43,14 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P, V> extends 
 	 *            the parent builder
 	 * @param valueClass
 	 *            the type of the value
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
 	@SuppressWarnings("unchecked")
-	public AbstractAutofillDefaultValueBuilder(Class<?> selfType, P parent, Class<V> valueClass) {
+	public AbstractAutofillDefaultValueBuilder(Class<?> selfType, P parent, Class<V> valueClass, BuildContext buildContext) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
-		defaultValueBuilder = new ConfigurationValueBuilderHelper<>(myself, valueClass);
+		defaultValueBuilder = new ConfigurationValueBuilderHelper<>(myself, valueClass, buildContext);
 	}
 
 	/**

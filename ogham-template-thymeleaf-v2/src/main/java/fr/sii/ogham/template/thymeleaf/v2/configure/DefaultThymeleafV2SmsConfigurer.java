@@ -1,22 +1,19 @@
 package fr.sii.ogham.template.thymeleaf.v2.configure;
 
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.template.thymeleaf.common.ThymeleafConstants.DEFAULT_THYMELEAF_SMS_CONFIGURER_PRIORITY;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
-import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
 import fr.sii.ogham.template.thymeleaf.common.configure.AbstractDefaultThymeleafSmsConfigurer;
 import fr.sii.ogham.template.thymeleaf.v2.ThymeleafV2TemplateDetector;
-import fr.sii.ogham.template.thymeleaf.v2.buider.ThymeleafV2EmailBuilder;
 import fr.sii.ogham.template.thymeleaf.v2.buider.ThymeleafV2SmsBuilder;
 
 /**
@@ -35,9 +32,7 @@ import fr.sii.ogham.template.thymeleaf.v2.buider.ThymeleafV2SmsBuilder;
  * 
  * <p>
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder},
- * {@link ThymeleafV2EmailBuilder#environment(EnvironmentBuilder)} and
- * {@link ThymeleafV2SmsBuilder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * </p>
  * <p>
  * It also copies resource resolution configuration of
@@ -102,24 +97,12 @@ import fr.sii.ogham.template.thymeleaf.v2.buider.ThymeleafV2SmsBuilder;
 public final class DefaultThymeleafV2SmsConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultThymeleafV2SmsConfigurer.class);
 
-	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_THYMELEAF_SMS_CONFIGURER_PRIORITY, phase = AFTER_INIT)
-	public static class EnvironmentPropagator implements MessagingConfigurer {
-		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (canUseThymeleafV2()) {
-				AbstractThymeleafBuilder<?, ?, ?> builder = msgBuilder.sms().template(ThymeleafV2SmsBuilder.class);
-				// use same environment as parent builder
-				builder.environment(msgBuilder.environment());
-			}
-		}
-	}
-	
 	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_THYMELEAF_SMS_CONFIGURER_PRIORITY)
 	public static class ThymeleafV2SmsConfigurer extends AbstractDefaultThymeleafSmsConfigurer {
 		public ThymeleafV2SmsConfigurer() {
 			super(LOG);
 		}
-		
+
 		@Override
 		protected boolean canUseThymeleaf() {
 			return canUseThymeleafV2();
@@ -129,10 +112,10 @@ public final class DefaultThymeleafV2SmsConfigurer {
 		protected Class<? extends AbstractThymeleafBuilder<?, ?, ?>> getBuilderClass() {
 			return ThymeleafV2SmsBuilder.class;
 		}
-	}
 
-	private static boolean canUseThymeleafV2() {
-		return ClasspathUtils.exists("org.thymeleaf.TemplateEngine") && !ClasspathUtils.exists("org.thymeleaf.IEngineConfiguration");
+		private static boolean canUseThymeleafV2() {
+			return ClasspathUtils.exists("org.thymeleaf.TemplateEngine") && !ClasspathUtils.exists("org.thymeleaf.IEngineConfiguration");
+		}
 	}
 
 	private DefaultThymeleafV2SmsConfigurer() {

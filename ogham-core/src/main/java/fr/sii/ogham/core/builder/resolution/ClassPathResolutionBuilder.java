@@ -1,5 +1,6 @@
 package fr.sii.ogham.core.builder.resolution;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -53,11 +54,11 @@ public class ClassPathResolutionBuilder<P> extends AbstractSingleResolutionBuild
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            configuration about property resolution
+	 * @param buildContext
+	 *            for property resolution
 	 */
-	public ClassPathResolutionBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(ClassPathResolutionBuilder.class, parent, environmentBuilder);
+	public ClassPathResolutionBuilder(P parent, BuildContext buildContext) {
+		super(ClassPathResolutionBuilder.class, parent, buildContext);
 	}
 
 	@Override

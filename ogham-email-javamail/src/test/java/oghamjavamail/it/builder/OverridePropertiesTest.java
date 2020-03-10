@@ -1,15 +1,18 @@
 package oghamjavamail.it.builder;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.EnvBuilderBasedContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.JavaPropertiesResolver;
@@ -22,10 +25,14 @@ public class OverridePropertiesTest {
 	Converter converter;
 	ConfigurationValueBuilderHelper<?, String> hosts;
 	ConfigurationValueBuilderHelper<?, Integer> ports;
+	SimpleEnvironmentBuilder<Object> environmentBuilder;
+	Properties defaultProps;
+	Properties emptyProps;
 
 	@Before
 	public void setup() {
-		Properties defaultProps = new Properties();
+		converter = new DefaultConverter();
+		defaultProps = new Properties();
 		defaultProps.setProperty("another.prop", "another-prop");
 		defaultProps.setProperty("mail.smtp.host", "smtp-default");
 		defaultProps.setProperty("mail.smtp.port", "1");
@@ -33,17 +40,20 @@ public class OverridePropertiesTest {
 		defaultProps.setProperty("mail.port", "2");
 		defaultProps.setProperty("ogham.email.javamail.host", "override");
 		defaultProps.setProperty("ogham.email.javamail.port", "3");
-		converter = new DefaultConverter();
 		defaultResolver = new JavaPropertiesResolver(defaultProps, converter);
-		emptyResolver = new JavaPropertiesResolver(new Properties(), converter);
-		hosts = new ConfigurationValueBuilderHelper<>(null, String.class);
-		ports = new ConfigurationValueBuilderHelper<>(null, Integer.class);
+		emptyProps = new Properties();
+		emptyResolver = new JavaPropertiesResolver(emptyProps, converter);
+		environmentBuilder = new SimpleEnvironmentBuilder<>(null);
+		BuildContext ctx = new EnvBuilderBasedContext(environmentBuilder);
+		hosts = new ConfigurationValueBuilderHelper<>(null, String.class, ctx);
+		ports = new ConfigurationValueBuilderHelper<>(null, Integer.class, ctx);
 	}
 
 	@Test
 	public void values() {
 		hosts.setValue("localhost");
 		ports.setValue(1000);
+		environmentBuilder.properties(defaultProps);
 		OverrideJavaMailResolver props = new OverrideJavaMailResolver(defaultResolver, converter, hosts, ports);
 		assertThat(props.containsProperty("mail.smtp.host"), is(true));
 		assertThat(props.getProperty("mail.smtp.host"), is("localhost"));
@@ -61,6 +71,7 @@ public class OverridePropertiesTest {
 	public void valuesWithEmptyProps() {
 		hosts.setValue("localhost");
 		ports.setValue(1000);
+		environmentBuilder.properties(emptyProps);
 		OverrideJavaMailResolver props = new OverrideJavaMailResolver(emptyResolver, converter, hosts, ports);
 		assertThat(props.containsProperty("mail.smtp.host"), is(true));
 		assertThat(props.getProperty("mail.smtp.host"), is("localhost"));
@@ -79,6 +90,7 @@ public class OverridePropertiesTest {
 		hosts.properties("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}");
 		ports.properties("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}");
 		ports.setValue(null);
+		environmentBuilder.properties(defaultProps);
 		OverrideJavaMailResolver props = new OverrideJavaMailResolver(defaultResolver, converter, hosts, ports);
 		assertThat(props.containsProperty("mail.smtp.host"), is(true));
 		assertThat(props.getProperty("mail.smtp.host"), is("override"));
@@ -97,6 +109,7 @@ public class OverridePropertiesTest {
 		hosts.properties("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}");
 		ports.properties("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}");
 		ports.setValue(null);
+		environmentBuilder.properties(emptyProps);
 		OverrideJavaMailResolver props = new OverrideJavaMailResolver(emptyResolver, converter, hosts, ports);
 		assertThat(props.containsProperty("mail.smtp.host"), is(false));
 		assertThat(props.getProperty("mail.smtp.host"), nullValue());
@@ -110,6 +123,7 @@ public class OverridePropertiesTest {
 
 	@Test
 	public void noOverride() {
+		environmentBuilder.properties(defaultProps);
 		OverrideJavaMailResolver props = new OverrideJavaMailResolver(defaultResolver, converter, hosts, ports);
 		assertThat(props.containsProperty("mail.smtp.host"), is(true));
 		assertThat(props.getProperty("mail.smtp.host"), is("smtp-default"));
@@ -125,6 +139,7 @@ public class OverridePropertiesTest {
 
 	@Test
 	public void noOverrideWithEmptyProps() {
+		environmentBuilder.properties(emptyProps);
 		OverrideJavaMailResolver props = new OverrideJavaMailResolver(emptyResolver, converter, hosts, ports);
 		assertThat(props.containsProperty("mail.smtp.host"), is(false));
 		assertThat(props.getProperty("mail.smtp.host"), nullValue());

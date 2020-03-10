@@ -15,14 +15,16 @@ import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 /**
  * This configurer is also useful to support property naming variants (see
- * <a href="https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed Binding</a>).
+ * <a href=
+ * "https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed
+ * Binding</a>).
  * 
  * @author Aurélien Baudet
  *
  */
 public class SpringOvhSmsConfigurer implements SpringMessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(SpringOvhSmsConfigurer.class);
-	
+
 	private final OghamOvhSmsProperties properties;
 
 	public SpringOvhSmsConfigurer(OghamOvhSmsProperties properties) {
@@ -33,8 +35,6 @@ public class SpringOvhSmsConfigurer implements SpringMessagingConfigurer {
 	@Override
 	public void configure(MessagingBuilder builder) {
 		LOG.debug("[{}] apply configuration", this);
-		// use same environment as parent builder
-		builder.sms().sender(OvhSmsBuilder.class).environment(builder.environment());
 		if (properties != null) {
 			applyOghamConfiguration(builder);
 		}
@@ -60,7 +60,7 @@ public class SpringOvhSmsConfigurer implements SpringMessagingConfigurer {
 		try {
 			return url == null ? null : new URL(url);
 		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException("Invalid URL "+url, e);
+			throw new IllegalArgumentException("Invalid URL " + url, e);
 		}
 	}
 

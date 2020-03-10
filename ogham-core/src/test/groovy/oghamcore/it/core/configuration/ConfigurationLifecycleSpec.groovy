@@ -4,6 +4,7 @@ import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotS
 import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT
 import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.BEFORE_BUILD
 
+import fr.sii.ogham.core.builder.BuildContext
 import fr.sii.ogham.core.builder.MessagingBuilder
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper
@@ -186,7 +187,7 @@ class ConfigurationLifecycleSpec extends Specification {
 		private final ConfigurationValueBuilderHelper<?, String> confValueBuiler;
 		public TestMessagingBuilder() {
 			super(false);
-			confValueBuiler = new ConfigurationValueBuilderHelper(this, String.class);
+			confValueBuiler = new ConfigurationValueBuilderHelper(this, String.class, buildContext);
 		}
 		public TestMessagingBuilder confValue(String string) {
 			this.confValueBuiler.setValue(string);
@@ -197,8 +198,7 @@ class ConfigurationLifecycleSpec extends Specification {
 		}
 		@Override
 		public MessagingService build() {
-			PropertyResolver propertyResolver = environmentBuilder.build();
-			return new TestMessagingService(confValueBuiler.getValue(propertyResolver));
+			return new TestMessagingService(confValueBuiler.getValue());
 		}
 	}
 	abstract class AbstractTestConfigurer implements MessagingConfigurer {

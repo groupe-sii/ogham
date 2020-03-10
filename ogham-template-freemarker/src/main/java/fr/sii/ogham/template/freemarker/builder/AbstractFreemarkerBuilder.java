@@ -4,15 +4,13 @@ import static freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENT
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
-import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
@@ -37,7 +35,6 @@ import fr.sii.ogham.template.freemarker.adapter.FileResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.FirstSupportingResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.StringResolverAdapter;
 import fr.sii.ogham.template.freemarker.adapter.TemplateLoaderAdapter;
-import fr.sii.ogham.template.freemarker.configurer.DefaultFreemarkerEmailConfigurer;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -47,8 +44,8 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 		implements DetectorBuilder<MYSELF>, ResourceResolutionBuilder<MYSELF>, Builder<TemplateParser> {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractFreemarkerBuilder.class);
 
-	protected MYSELF myself;
-	protected EnvironmentBuilder<MYSELF> environmentBuilder;
+	protected final MYSELF myself;
+	protected final BuildContext buildContext;
 	private TemplateEngineDetector detector;
 	private ResourceResolutionBuilderHelper<MYSELF> resourceResolutionBuilderHelper;
 	private Configuration configuration;
@@ -57,92 +54,15 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	private ClassLoader classLoader;
 
 	protected AbstractFreemarkerBuilder(Class<?> selfType) {
-		this(selfType, null, null);
+		this(selfType, null, new DefaultBuildContext());
 	}
 
 	@SuppressWarnings("unchecked")
-	protected AbstractFreemarkerBuilder(Class<?> selfType, P parent, EnvironmentBuilder<?> environmentBuilder) {
+	protected AbstractFreemarkerBuilder(Class<?> selfType, P parent, BuildContext buildContext) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
-		if (environmentBuilder != null) {
-			environment(environmentBuilder);
-		}
+		this.buildContext = buildContext;
 		customAdapters = new ArrayList<>();
-	}
-
-	/**
-	 * Configures environment for the builder (and sub-builders). Environment
-	 * consists of configuration properties/values that are used to configure
-	 * the system (see {@link EnvironmentBuilder} for more information).
-	 * 
-	 * You can use system properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .systemProperties();
-	 * </pre>
-	 * 
-	 * Or, you can load properties from a file:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties("/path/to/file.properties")
-	 * </pre>
-	 * 
-	 * Or using directly a {@link Properties} object:
-	 * 
-	 * <pre>
-	 * Properties myprops = new Properties();
-	 * myprops.setProperty("foo", "bar");
-	 * .environment()
-	 *    .properties(myprops)
-	 * </pre>
-	 * 
-	 * Or defining directly properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties()
-	 *       .set("foo", "bar")
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * If no environment was previously used, it creates a new one. Then each
-	 * time you call {@link #environment()}, the same instance is used.
-	 * </p>
-	 * 
-	 * @return the builder to configure properties handling
-	 */
-	public EnvironmentBuilder<MYSELF> environment() {
-		if (environmentBuilder == null) {
-			environmentBuilder = new SimpleEnvironmentBuilder<>(myself);
-		}
-		return environmentBuilder;
-	}
-
-	/**
-	 * NOTE: this is mostly for advance usage (when creating a custom module).
-	 * 
-	 * Inherits environment configuration from another builder. This is useful
-	 * for configuring independently different parts of Ogham but keeping a
-	 * whole coherence (see {@link DefaultFreemarkerEmailConfigurer} for an
-	 * example of use).
-	 * 
-	 * The same instance is shared meaning that all changes done here will also
-	 * impact the other builder.
-	 * 
-	 * <p>
-	 * If a previous builder was defined (by calling {@link #environment()} for
-	 * example), the new builder will override it.
-	 * 
-	 * @param builder
-	 *            the builder to inherit
-	 * @return this instance for fluent chaining
-	 */
-	public MYSELF environment(EnvironmentBuilder<?> builder) {
-		environmentBuilder = new EnvironmentBuilderDelegate<>(myself, builder);
-		return myself;
 	}
 
 	@Override
@@ -203,7 +123,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	 */
 	public FreemarkerConfigurationBuilder<MYSELF> configuration() {
 		if (configurationBuilder == null) {
-			configurationBuilder = new FreemarkerConfigurationBuilder<>(myself, environmentBuilder);
+			configurationBuilder = new FreemarkerConfigurationBuilder<>(myself, buildContext);
 		}
 		return configurationBuilder;
 	}
@@ -230,12 +150,13 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	}
 
 	/**
-	 * Merge an existing Freemarker configuration with previously provided configuration.
+	 * Merge an existing Freemarker configuration with previously provided
+	 * configuration.
 	 * 
 	 * <p>
-	 * The provided configuration is used and
-	 * any call to {@link #configuration()} builder methods are applied to the
-	 * provided configuration.
+	 * The provided configuration is used and any call to
+	 * {@link #configuration()} builder methods are applied to the provided
+	 * configuration.
 	 * 
 	 * 
 	 * @param configuration
@@ -333,7 +254,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 
 	private void initResolutionBuilder() {
 		if (resourceResolutionBuilderHelper == null) {
-			resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(myself, environmentBuilder);
+			resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(myself, buildContext);
 		}
 	}
 }

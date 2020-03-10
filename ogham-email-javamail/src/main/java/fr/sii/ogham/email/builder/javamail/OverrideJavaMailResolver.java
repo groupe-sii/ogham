@@ -109,7 +109,7 @@ public class OverrideJavaMailResolver implements PropertyResolver {
 	}
 
 	private String getPortValue() {
-		Integer value = port.getValue(delegate);
+		Integer value = port.getValue();
 		if (value == null) {
 			return null;
 		}
@@ -125,6 +125,6 @@ public class OverrideJavaMailResolver implements PropertyResolver {
 	}
 
 	private String getHostValue() {
-		return host.getValue(delegate);
+		return host.getValue();
 	}
 }

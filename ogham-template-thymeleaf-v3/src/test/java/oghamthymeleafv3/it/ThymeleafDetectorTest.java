@@ -21,9 +21,6 @@ public class ThymeleafDetectorTest {
 	@Before
 	public void setUp() {
 		detector = new ThymeleafV3SmsBuilder()
-					.environment()
-						.systemProperties()
-						.and()
 					.classpath()
 						.lookup("classpath:", "")
 						.pathPrefix("/template/thymeleaf/source/")

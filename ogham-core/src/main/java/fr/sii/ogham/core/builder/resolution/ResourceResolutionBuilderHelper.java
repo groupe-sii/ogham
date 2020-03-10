@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -23,12 +24,12 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
  */
 @SuppressWarnings("squid:S00119")
 public class ResourceResolutionBuilderHelper<FLUENT extends ResourceResolutionBuilder<FLUENT>> implements ResourceResolutionBuilder<FLUENT> {
+	private final BuildContext buildContext;
 	private ClassPathResolutionBuilder<FLUENT> classPath;
 	private FileResolutionBuilder<FLUENT> file;
 	private StringResolutionBuilder<FLUENT> string;
 	private List<ResourceResolver> customResolvers;
 	private FLUENT fluent;
-	private EnvironmentBuilder<?> environmentBuilder;
 
 	/**
 	 * Initializes the helper with the fluent instance and the
@@ -40,20 +41,20 @@ public class ResourceResolutionBuilderHelper<FLUENT extends ResourceResolutionBu
 	 * 
 	 * @param fluent
 	 *            the instance used for chaining calls
-	 * @param environmentBuilder
-	 *            the configuration for property resolution
+	 * @param buildContext
+	 *            for property resolution
 	 */
-	public ResourceResolutionBuilderHelper(FLUENT fluent, EnvironmentBuilder<?> environmentBuilder) {
+	public ResourceResolutionBuilderHelper(FLUENT fluent, BuildContext buildContext) {
 		super();
 		this.fluent = fluent;
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 		customResolvers = new ArrayList<>();
 	}
 
 	@Override
 	public ClassPathResolutionBuilder<FLUENT> classpath() {
 		if (classPath == null) {
-			classPath = new ClassPathResolutionBuilder<>(fluent, environmentBuilder);
+			classPath = new ClassPathResolutionBuilder<>(fluent, buildContext);
 		}
 		return classPath;
 	}
@@ -61,7 +62,7 @@ public class ResourceResolutionBuilderHelper<FLUENT extends ResourceResolutionBu
 	@Override
 	public FileResolutionBuilder<FLUENT> file() {
 		if (file == null) {
-			file = new FileResolutionBuilder<>(fluent, environmentBuilder);
+			file = new FileResolutionBuilder<>(fluent, buildContext);
 		}
 		return file;
 	}
@@ -69,7 +70,7 @@ public class ResourceResolutionBuilderHelper<FLUENT extends ResourceResolutionBu
 	@Override
 	public StringResolutionBuilder<FLUENT> string() {
 		if (string == null) {
-			string = new StringResolutionBuilder<>(fluent);
+			string = new StringResolutionBuilder<>(fluent, buildContext);
 		}
 		return string;
 	}

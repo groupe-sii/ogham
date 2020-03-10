@@ -36,13 +36,8 @@ public class JavaMailStructureTest {
 	@Before
 	public void setUp() throws IOException {
 		sender = new JavaMailBuilder()
-				.environment()
-					.systemProperties()
-					.properties()
-						.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-						.set("mail.smtp.port", ServerSetupTest.SMTP.getPort())
-						.and()
-					.and()
+				.host(ServerSetupTest.SMTP.getBindAddress())
+				.port(ServerSetupTest.SMTP.getPort())
 				.mimetype()
 					.tika()
 						.failIfOctetStream(false)

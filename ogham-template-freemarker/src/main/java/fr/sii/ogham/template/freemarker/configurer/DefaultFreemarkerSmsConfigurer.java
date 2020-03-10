@@ -1,22 +1,20 @@
 package fr.sii.ogham.template.freemarker.configurer;
 
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
-import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
 import freemarker.template.TemplateExceptionHandler;
 
@@ -36,9 +34,7 @@ import freemarker.template.TemplateExceptionHandler;
  * 
  * <p>
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder},
- * {@link FreemarkerEmailBuilder#environment(EnvironmentBuilder)} and
- * {@link FreemarkerSmsBuilder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * </p>
  * <p>
  * It also copies resource resolution configuration of
@@ -119,31 +115,19 @@ import freemarker.template.TemplateExceptionHandler;
 public final class DefaultFreemarkerSmsConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultFreemarkerSmsConfigurer.class);
 
-	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY, phase = AFTER_INIT)
-	public static class EnvironmentPropagator implements MessagingConfigurer {
-		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (canUseFreemaker()) {
-				FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);
-				// use same environment as parent builder
-				builder.environment(msgBuilder.environment());
-			}
-		}
-	}
-	
 	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
 	public static class FreemakerConfigurer implements MessagingConfigurer {
 		private final MessagingConfigurerAdapter delegate;
-	
+
 		public FreemakerConfigurer() {
 			this(new DefaultMessagingConfigurer());
 		}
-	
+
 		public FreemakerConfigurer(MessagingConfigurerAdapter delegate) {
 			super();
 			this.delegate = delegate;
 		}
-	
+
 		@Override
 		public void configure(MessagingBuilder msgBuilder) {
 			if (!canUseFreemaker()) {
@@ -197,10 +181,10 @@ public final class DefaultFreemarkerSmsConfigurer {
 					.staticMethodAccessVariableName().properties("${ogham.freemarker.static-method-access.variable-name}").defaultValue(overrideIfNotSet("statics"));
 			// @formatter:on
 		}
-	}
-	
-	private static boolean canUseFreemaker() {
-		return ClasspathUtils.exists("freemarker.template.Configuration") && ClasspathUtils.exists("freemarker.template.Template");
+
+		private static boolean canUseFreemaker() {
+			return ClasspathUtils.exists("freemarker.template.Configuration") && ClasspathUtils.exists("freemarker.template.Template");
+		}
 	}
 
 	private DefaultFreemarkerSmsConfigurer() {

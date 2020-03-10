@@ -1,6 +1,7 @@
 package fr.sii.ogham.email.sendgrid.v4.sender.impl;
 
 import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.email.sendgrid.SendGridConstants.DEFAULT_SENDGRID_IMPLEMENTATION_PRIORITY;
 import static fr.sii.ogham.email.sendgrid.sender.EmailValidator.validate;
 
 import java.io.ByteArrayInputStream;
@@ -14,6 +15,7 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Attachments;
 import com.sendgrid.helpers.mail.objects.Personalization;
 
+import fr.sii.ogham.core.builder.priority.Priority;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
@@ -35,6 +37,7 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridConte
 /**
  * SendGrid-backed implementation of the email sender.
  */
+@Priority(properties = "${ogham.email.implementation-priority.sendgrid}", defaultValue = DEFAULT_SENDGRID_IMPLEMENTATION_PRIORITY)
 public final class SendGridV4Sender extends AbstractSpecializedSender<Email> implements SendGridSender {
 	private static final Logger LOG = LoggerFactory.getLogger(SendGridV4Sender.class);
 	private static final Pattern CID = Pattern.compile("^<(.+)>$");

@@ -3,6 +3,8 @@ package fr.sii.ogham.template.thymeleaf.v2.buider;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.email.builder.EmailBuilder;
@@ -100,9 +102,9 @@ public class ThymeleafV2EmailBuilder extends AbstractThymeleafMultiContentBuilde
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public ThymeleafV2EmailBuilder() {
-		super(ThymeleafV2EmailBuilder.class, null, null);
+		super(ThymeleafV2EmailBuilder.class, null, new DefaultBuildContext());
 	}
-	
+
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
 	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
@@ -110,13 +112,12 @@ public class ThymeleafV2EmailBuilder extends AbstractThymeleafMultiContentBuilde
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public ThymeleafV2EmailBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(ThymeleafV2EmailBuilder.class, parent, environmentBuilder);
+	public ThymeleafV2EmailBuilder(EmailBuilder parent, BuildContext buildContext) {
+		super(ThymeleafV2EmailBuilder.class, parent, buildContext);
 	}
-
 
 	@Override
 	protected ITemplateResolver buildTemplateResolver(TemplateEngine builtEngine) {
@@ -127,7 +128,6 @@ public class ThymeleafV2EmailBuilder extends AbstractThymeleafMultiContentBuilde
 	protected TemplateEngineDetector createTemplateDetector() {
 		return new ThymeleafV2TemplateDetector(buildResolver());
 	}
-
 
 	@Override
 	protected ThymeleafV2EngineConfigBuilder<ThymeleafV2EmailBuilder> getThymeleafEngineConfigBuilder() {

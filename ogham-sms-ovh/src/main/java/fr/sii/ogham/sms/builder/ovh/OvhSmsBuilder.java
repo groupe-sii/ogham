@@ -2,20 +2,17 @@ package fr.sii.ogham.sms.builder.ovh;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
-import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import fr.sii.ogham.sms.message.Sms;
@@ -75,7 +72,7 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
 public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder<OvhSmsSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(OvhSmsBuilder.class);
 
-	private EnvironmentBuilder<OvhSmsBuilder> environmentBuilder;
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<OvhSmsBuilder, URL> urlValueBuilder;
 	private final ConfigurationValueBuilderHelper<OvhSmsBuilder, String> accountValueBuilder;
 	private final ConfigurationValueBuilderHelper<OvhSmsBuilder, String> loginValueBuilder;
@@ -88,8 +85,7 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public OvhSmsBuilder() {
-		this(null);
-		environmentBuilder = new SimpleEnvironmentBuilder<>(this);
+		this(null, new DefaultBuildContext());
 	}
 
 	/**
@@ -104,88 +100,16 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 * 
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public OvhSmsBuilder(SmsBuilder parent) {
+	public OvhSmsBuilder(SmsBuilder parent, BuildContext buildContext) {
 		super(parent);
-		urlValueBuilder = new ConfigurationValueBuilderHelper<>(this, URL.class);
-		accountValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		loginValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-	}
-
-	/**
-	 * Configures environment for the builder (and sub-builders). Environment
-	 * consists of configuration properties/values that are used to configure
-	 * the system (see {@link EnvironmentBuilder} for more information).
-	 * 
-	 * You can use system properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .systemProperties();
-	 * </pre>
-	 * 
-	 * Or, you can load properties from a file:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties("/path/to/file.properties")
-	 * </pre>
-	 * 
-	 * Or using directly a {@link Properties} object:
-	 * 
-	 * <pre>
-	 * Properties myprops = new Properties();
-	 * myprops.setProperty("foo", "bar");
-	 * .environment()
-	 *    .properties(myprops)
-	 * </pre>
-	 * 
-	 * Or defining directly properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties()
-	 *       .set("foo", "bar")
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * If no environment was previously used, it creates a new one. Then each
-	 * time you call {@link #environment()}, the same instance is used.
-	 * </p>
-	 * 
-	 * @return the builder to configure properties handling
-	 */
-	public EnvironmentBuilder<OvhSmsBuilder> environment() {
-		if (environmentBuilder == null) {
-			environmentBuilder = new SimpleEnvironmentBuilder<>(this);
-		}
-		return environmentBuilder;
-	}
-
-	/**
-	 * NOTE: this is mostly for advance usage (when creating a custom module).
-	 * 
-	 * Inherits environment configuration from another builder. This is useful
-	 * for configuring independently different parts of Ogham but keeping a
-	 * whole coherence (see {@link DefaultOvhSmsConfigurer} for an example of
-	 * use).
-	 * 
-	 * The same instance is shared meaning that all changes done here will also
-	 * impact the other builder.
-	 * 
-	 * <p>
-	 * If a previous builder was defined (by calling {@link #environment()} for
-	 * example), the new builder will override it.
-	 * 
-	 * @param builder
-	 *            the builder to inherit
-	 * @return this instance for fluent chaining
-	 */
-	public OvhSmsBuilder environment(EnvironmentBuilder<?> builder) {
-		environmentBuilder = new EnvironmentBuilderDelegate<>(this, builder);
-		return this;
+		this.buildContext = buildContext;
+		urlValueBuilder = new ConfigurationValueBuilderHelper<>(this, URL.class, buildContext);
+		accountValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		loginValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 	}
 
 	/**
@@ -564,16 +488,15 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 */
 	public OvhOptionsBuilder options() {
 		if (ovhOptionsBuilder == null) {
-			ovhOptionsBuilder = new OvhOptionsBuilder(this, environmentBuilder);
+			ovhOptionsBuilder = new OvhOptionsBuilder(this, buildContext);
 		}
 		return ovhOptionsBuilder;
 	}
 
 	@Override
 	public OvhSmsSender build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		URL url = buildUrl(propertyResolver);
-		OvhAuthParams authParams = buildAuth(propertyResolver);
+		URL url = buildUrl();
+		OvhAuthParams authParams = buildAuth();
 		if (url == null || authParams.getAccount() == null || authParams.getLogin() == null || authParams.getPassword() == null) {
 			return null;
 		}
@@ -582,14 +505,14 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 		return new OvhSmsSender(url, authParams, buildOptions(), new DefaultSmsCodingDetector());
 	}
 
-	private URL buildUrl(PropertyResolver propertyResolver) {
-		return urlValueBuilder.getValue(propertyResolver);
+	private URL buildUrl() {
+		return urlValueBuilder.getValue();
 	}
 
-	private OvhAuthParams buildAuth(PropertyResolver propertyResolver) {
-		String accountValue = accountValueBuilder.getValue(propertyResolver);
-		String loginValue = loginValueBuilder.getValue(propertyResolver);
-		String passwordValue = passwordValueBuilder.getValue(propertyResolver);
+	private OvhAuthParams buildAuth() {
+		String accountValue = accountValueBuilder.getValue();
+		String loginValue = loginValueBuilder.getValue();
+		String passwordValue = passwordValueBuilder.getValue();
 		return new OvhAuthParams(accountValue, loginValue, passwordValue);
 	}
 

@@ -1,5 +1,6 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
 
@@ -13,8 +14,8 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
 class StandardEncodingHelper extends ConfigurationValueBuilderHelper<EncoderBuilder, Integer> {
 	private final String charsetName;
 
-	public StandardEncodingHelper(EncoderBuilder parent, String charsetName) {
-		super(parent, Integer.class);
+	public StandardEncodingHelper(EncoderBuilder parent, String charsetName, BuildContext buildContext) {
+		super(parent, Integer.class, buildContext);
 		this.charsetName = charsetName;
 	}
 

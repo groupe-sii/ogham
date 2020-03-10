@@ -13,6 +13,7 @@ import fr.sii.ogham.sms.message.Sms;
  * 
  * @author Aurélien Baudet
  */
+//@Priority(properties="${ogham.sms.implementation-priority.smsglobal-rest}", defaultValue = SmsGlobalConstants.)
 public class SmsglobalRestSender extends AbstractSpecializedSender<Sms> {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsglobalRestSender.class);
 

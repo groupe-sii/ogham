@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -13,13 +12,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 
 import com.sendgrid.SendGrid;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
-import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
@@ -29,33 +26,26 @@ import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
 @SuppressWarnings("squid:S00119")
 public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBuilder<MYSELF, EmailBuilder>, EmailBuilder> extends AbstractParent<EmailBuilder> implements Builder<SendGridSender> {
 	protected final MYSELF myself;
-	protected EnvironmentBuilder<MYSELF> environmentBuilder;
+	protected final BuildContext buildContext;
 	protected MimetypeDetectionBuilder<MYSELF> mimetypeBuilder;
 	protected final ConfigurationValueBuilderHelper<MYSELF, String> apiKeyValueBuilder;
 	protected final ConfigurationValueBuilderHelper<MYSELF, URL> urlValueBuilder;
 	protected CloseableHttpClient httpClient;
 
-	public AbstractSendGridBuilder(Class<?> selfType) {
-		this(selfType, null, null, null);
-	}
-
 	@SuppressWarnings("unchecked")
-	protected AbstractSendGridBuilder(Class<?> selfType, EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder, MimetypeDetectionBuilder<?> mimetypeBuilder) {
+	protected AbstractSendGridBuilder(Class<?> selfType, EmailBuilder parent, BuildContext buildContext, MimetypeDetectionBuilder<?> mimetypeBuilder) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
-		apiKeyValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
-		urlValueBuilder = new ConfigurationValueBuilderHelper<>(myself, URL.class);
-		if (environmentBuilder != null) {
-			environment(environmentBuilder);
-		}
+		this.buildContext = buildContext;
+		apiKeyValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
+		urlValueBuilder = new ConfigurationValueBuilderHelper<>(myself, URL.class, buildContext);
 		if (mimetypeBuilder != null) {
 			mimetype(mimetypeBuilder);
 		}
 	}
 
-	public AbstractSendGridBuilder(Class<?> selfType, EmailBuilder parent) {
-		this(selfType, parent, null, null);
-		environment();
+	public AbstractSendGridBuilder(Class<?> selfType, EmailBuilder parent, BuildContext buildContext) {
+		this(selfType, parent, buildContext, null);
 		mimetype();
 	}
 
@@ -500,7 +490,7 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	 */
 	public MimetypeDetectionBuilder<MYSELF> mimetype() {
 		if (mimetypeBuilder == null) {
-			mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(myself, environmentBuilder);
+			mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(myself, buildContext);
 		}
 		return mimetypeBuilder;
 	}
@@ -525,80 +515,6 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 	 */
 	public MYSELF mimetype(MimetypeDetectionBuilder<?> builder) {
 		mimetypeBuilder = new MimetypeDetectionBuilderDelegate<>(myself, builder);
-		return myself;
-	}
-
-	/**
-	 * Configures environment for the builder (and sub-builders). Environment
-	 * consists of configuration properties/values that are used to configure
-	 * the system (see {@link EnvironmentBuilder} for more information).
-	 * 
-	 * You can use system properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .systemProperties();
-	 * </pre>
-	 * 
-	 * Or, you can load properties from a file:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties("/path/to/file.properties")
-	 * </pre>
-	 * 
-	 * Or using directly a {@link Properties} object:
-	 * 
-	 * <pre>
-	 * Properties myprops = new Properties();
-	 * myprops.setProperty("foo", "bar");
-	 * .environment()
-	 *    .properties(myprops)
-	 * </pre>
-	 * 
-	 * Or defining directly properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties()
-	 *       .set("foo", "bar")
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * If no environment was previously used, it creates a new one. Then each
-	 * time you call {@link #environment()}, the same instance is used.
-	 * </p>
-	 * 
-	 * @return the builder to configure properties handling
-	 */
-	public EnvironmentBuilder<MYSELF> environment() {
-		if (environmentBuilder == null) {
-			environmentBuilder = new SimpleEnvironmentBuilder<>(myself);
-		}
-		return environmentBuilder;
-	}
-
-	/**
-	 * NOTE: this is mostly for advance usage (when creating a custom module).
-	 * 
-	 * Inherits environment configuration from another builder. This is useful
-	 * for configuring independently different parts of Ogham but keeping a
-	 * whole coherence.
-	 * 
-	 * The same instance is shared meaning that all changes done here will also
-	 * impact the other builder.
-	 * 
-	 * <p>
-	 * If a previous builder was defined (by calling {@link #environment()} for
-	 * example), the new builder will override it.
-	 * 
-	 * @param builder
-	 *            the builder to inherit
-	 * @return this instance for fluent chaining
-	 */
-	public MYSELF environment(EnvironmentBuilder<?> builder) {
-		environmentBuilder = new EnvironmentBuilderDelegate<>(myself, builder);
 		return myself;
 	}
 

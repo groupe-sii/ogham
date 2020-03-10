@@ -1,11 +1,14 @@
 package fr.sii.ogham.template.freemarker;
 
+import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_IMPLEMENTATION_PRIORITY;
+
 import java.io.IOException;
 import java.io.StringWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.priority.Priority;
 import fr.sii.ogham.core.exception.template.ContextException;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
@@ -25,6 +28,7 @@ import freemarker.template.TemplateException;
  * @author Cyril Dejonghe
  *
  */
+@Priority(properties = "${ogham.template.implementation-priority.freemarker}", defaultValue = DEFAULT_FREEMARKER_IMPLEMENTATION_PRIORITY)
 public class FreeMarkerParser implements TemplateParser {
 	private static final Logger LOG = LoggerFactory.getLogger(FreeMarkerParser.class);
 

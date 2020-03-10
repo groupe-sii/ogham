@@ -1,10 +1,13 @@
 package fr.sii.ogham.template.thymeleaf.common;
 
+import static fr.sii.ogham.template.thymeleaf.common.ThymeleafConstants.DEFAULT_THYMELEAF_IMPLEMENTATION_PRIORITY;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.exceptions.TemplateEngineException;
 
+import fr.sii.ogham.core.builder.priority.Priority;
 import fr.sii.ogham.core.exception.template.ContextException;
 import fr.sii.ogham.core.exception.template.ParseException;
 import fr.sii.ogham.core.message.content.Content;
@@ -21,6 +24,7 @@ import fr.sii.ogham.template.exception.TemplateRuntimeException;
  * @author Aurélien Baudet
  *
  */
+@Priority(properties="${ogham.template.implementation-priority.thymeleaf}", defaultValue = DEFAULT_THYMELEAF_IMPLEMENTATION_PRIORITY)
 public class ThymeleafParser implements TemplateParser {
 	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafParser.class);
 

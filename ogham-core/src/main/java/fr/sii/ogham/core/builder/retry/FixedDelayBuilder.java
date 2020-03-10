@@ -1,11 +1,11 @@
 package fr.sii.ogham.core.builder.retry;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
 import fr.sii.ogham.core.retry.RetryStrategy;
@@ -51,7 +51,6 @@ import fr.sii.ogham.core.retry.RetryStrategy;
  *            method)
  */
 public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<RetryStrategy> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Integer> maxRetriesValueBuilder;
 	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Long> delayValueBuilder;
 
@@ -62,16 +61,15 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public FixedDelayBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
+	public FixedDelayBuilder(P parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class);
-		delayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
+		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
+		delayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
 	}
-	
+
 	/**
 	 * Set the maximum number of attempts.
 	 * 
@@ -111,14 +109,15 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 		return this;
 	}
 
-	
 	/**
 	 * Set the maximum number of attempts.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .maxRetries()
@@ -127,8 +126,8 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #maxRetries(Integer)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #maxRetries(Integer)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .maxRetries(10)
@@ -149,7 +148,7 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	public ConfigurationValueBuilder<FixedDelayBuilder<P>, Integer> maxRetries() {
 		return maxRetriesValueBuilder;
 	}
-	
+
 	/**
 	 * Set the delay between two executions (in milliseconds).
 	 * 
@@ -189,14 +188,15 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 		return this;
 	}
 
-	
 	/**
 	 * Set the delay between two executions (in milliseconds).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .delay()
@@ -205,8 +205,8 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #delay(Long)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #delay(Long)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .delay(5000L)
@@ -230,17 +230,16 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 
 	@Override
 	public RetryStrategy build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		int evaluatedMaxRetries = buildMaxRetries(propertyResolver);
-		long evaluatedDelay = buildDelay(propertyResolver);
+		int evaluatedMaxRetries = buildMaxRetries();
+		long evaluatedDelay = buildDelay();
 		return new FixedDelayRetry(evaluatedMaxRetries, evaluatedDelay);
 	}
 
-	private int buildMaxRetries(PropertyResolver propertyResolver) {
-		return maxRetriesValueBuilder.getValue(propertyResolver, 0);
+	private int buildMaxRetries() {
+		return maxRetriesValueBuilder.getValue(0);
 	}
 
-	private long buildDelay(PropertyResolver propertyResolver) {
-		return delayValueBuilder.getValue(propertyResolver, 0L);
+	private long buildDelay() {
+		return delayValueBuilder.getValue(0L);
 	}
 }

@@ -2,17 +2,16 @@ package fr.sii.ogham.core.builder.charset;
 
 import java.nio.charset.Charset;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.charset.FixedCharsetDetector;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 
 public class SimpleCharsetDetectorBuilder<P> extends AbstractParent<P> implements CharsetDetectorBuilder<P> {
-	private EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<SimpleCharsetDetectorBuilder<P>, String> charsetValueBuilder;
 
 	/**
@@ -22,13 +21,12 @@ public class SimpleCharsetDetectorBuilder<P> extends AbstractParent<P> implement
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public SimpleCharsetDetectorBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
+	public SimpleCharsetDetectorBuilder(P parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		charsetValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		charsetValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 	}
 
 	@Override
@@ -44,12 +42,11 @@ public class SimpleCharsetDetectorBuilder<P> extends AbstractParent<P> implement
 
 	@Override
 	public CharsetDetector build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		return new FixedCharsetDetector(getDefaultCharset(propertyResolver, charsetValueBuilder));
+		return new FixedCharsetDetector(getDefaultCharset(charsetValueBuilder));
 	}
 
-	private static Charset getDefaultCharset(PropertyResolver propertyResolver, ConfigurationValueBuilderHelper<?, String> valueBuilder) {
-		String charset = valueBuilder.getValue(propertyResolver);
+	private static Charset getDefaultCharset(ConfigurationValueBuilderHelper<?, String> valueBuilder) {
+		String charset = valueBuilder.getValue();
 		if (charset != null) {
 			return Charset.forName(charset);
 		}

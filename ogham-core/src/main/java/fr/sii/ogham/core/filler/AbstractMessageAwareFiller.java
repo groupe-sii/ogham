@@ -3,7 +3,6 @@ package fr.sii.ogham.core.filler;
 import java.util.Map;
 
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.filler.FillMessageException;
 import fr.sii.ogham.core.message.Message;
 
@@ -16,7 +15,6 @@ import fr.sii.ogham.core.message.Message;
  *            the type of the message that the filler is able to handle
  */
 public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
-	protected final PropertyResolver resolver;
 	protected final Map<String, ConfigurationValueBuilderHelper<?, ?>> defaultValues;
 	private final Class<M> messageType;
 
@@ -39,17 +37,13 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	 * // "mail.smtp.from"
 	 * </pre>
 	 * 
-	 * @param resolver
-	 *            the property resolver used to check property existence and get
-	 *            property values
 	 * @param defaultValues
 	 *            a list of property keys indexed by an alias
 	 * @param messageType
 	 *            the class of the message that this implementation can handle
 	 */
-	protected AbstractMessageAwareFiller(PropertyResolver resolver, Map<String, ConfigurationValueBuilderHelper<?, ?>> defaultValues, Class<M> messageType) {
+	protected AbstractMessageAwareFiller(Map<String, ConfigurationValueBuilderHelper<?, ?>> defaultValues, Class<M> messageType) {
 		super();
-		this.resolver = resolver;
 		this.defaultValues = defaultValues;
 		this.messageType = messageType;
 	}
@@ -75,7 +69,7 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	 */
 	protected boolean containsProperty(String alias) {
 		ConfigurationValueBuilderHelper<?, ?> valueBuilder = defaultValues.get(alias);
-		return valueBuilder != null && valueBuilder.getValue(resolver) != null;
+		return valueBuilder != null && valueBuilder.getValue() != null;
 	}
 
 	/**
@@ -93,6 +87,6 @@ public abstract class AbstractMessageAwareFiller<M> implements MessageFiller {
 	@SuppressWarnings("unchecked")
 	protected <T> T getProperty(String alias, Class<T> valueClass) {
 		ConfigurationValueBuilderHelper<?, T> valueBuilder = (ConfigurationValueBuilderHelper<?, T>) defaultValues.get(alias);
-		return valueBuilder == null ? null : valueBuilder.getValue(resolver);
+		return valueBuilder == null ? null : valueBuilder.getValue();
 	}
 }

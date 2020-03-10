@@ -36,9 +36,6 @@ public class ThymeleafParserTest {
 	@Before
 	public void setUp() {
 		parser = new ThymeleafV2SmsBuilder()
-					.environment()
-						.systemProperties()
-						.and()
 					.classpath()
 						.lookup("classpath:", "")
 						.pathPrefix("/template/thymeleaf/source/")

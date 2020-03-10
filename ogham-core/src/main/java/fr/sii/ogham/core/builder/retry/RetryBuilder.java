@@ -2,6 +2,7 @@ package fr.sii.ogham.core.builder.retry;
 
 import fr.sii.ogham.core.async.Awaiter;
 import fr.sii.ogham.core.async.ThreadSleepAwaiter;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -29,7 +30,7 @@ import fr.sii.ogham.core.retry.SimpleRetryExecutor;
  *            method)
  */
 public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryExecutor> {
-	private EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private FixedDelayBuilder<RetryBuilder<P>> fixedDelay;
 	private Awaiter awaiter;
 
@@ -40,12 +41,12 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public RetryBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
+	public RetryBuilder(P parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -85,7 +86,7 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 	 */
 	public FixedDelayBuilder<RetryBuilder<P>> fixedDelay() {
 		if (fixedDelay == null) {
-			fixedDelay = new FixedDelayBuilder<>(this, environmentBuilder);
+			fixedDelay = new FixedDelayBuilder<>(this, buildContext);
 		}
 		return fixedDelay;
 	}

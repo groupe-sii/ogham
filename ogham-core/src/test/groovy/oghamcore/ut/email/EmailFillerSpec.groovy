@@ -20,14 +20,13 @@ class EmailFillerSpec extends Specification {
 	def "Email subject=#original | default subject=#defaultValue => #desc subject"() {
 		given:
 			Email email = Mock()
-			PropertyResolver resolver = Mock()
 			Map defaultValues = Mock()
 			ConfigurationValueBuilderHelper valueBuilder = Mock()
 			email.getSubject() >> original
 			email.getRecipients() >> []
 			defaultValues.get("subject") >> valueBuilder
-			valueBuilder.getValue(_) >> defaultValue
-			def filler = new EmailFiller(resolver, defaultValues)
+			valueBuilder.getValue() >> defaultValue
+			def filler = new EmailFiller(defaultValues)
 		
 		when:
 			filler.fill(email)
@@ -46,14 +45,13 @@ class EmailFillerSpec extends Specification {
 	def "Email from=#original | default from=#defaultValue => #desc from"() {
 		given:
 			Email email = Mock()
-			PropertyResolver resolver = Mock()
 			Map defaultValues = Mock()
 			ConfigurationValueBuilderHelper valueBuilder = Mock()
 			email.getFrom() >> original
 			email.getRecipients() >> []
 			defaultValues.get("from") >> valueBuilder
-			valueBuilder.getValue(_) >> defaultValue
-			def filler = new EmailFiller(resolver, defaultValues)
+			valueBuilder.getValue() >> defaultValue
+			def filler = new EmailFiller(defaultValues)
 		
 		when:
 			filler.fill(email)
@@ -72,14 +70,13 @@ class EmailFillerSpec extends Specification {
 	def "Email to=#original | default to=#defaultValue => #desc to"() {
 		given:
 			Email email = Mock()
-			PropertyResolver resolver = Mock()
 			Map defaultValues = Mock()
 			ConfigurationValueBuilderHelper valueBuilder = Mock()
 			email.getRecipients() >> original
 			defaultValues.get("to") >> valueBuilder
 			defaultValues.get(_) >> null
-			valueBuilder.getValue(_) >> (defaultValue as String[])
-			def filler = new EmailFiller(resolver, defaultValues)
+			valueBuilder.getValue() >> (defaultValue as String[])
+			def filler = new EmailFiller(defaultValues)
 		
 		when:
 			filler.fill(email)
@@ -104,13 +101,12 @@ class EmailFillerSpec extends Specification {
 	def "Email cc=#original | default cc=#defaultValue => #desc cc"() {
 		given:
 			Email email = Mock()
-			PropertyResolver resolver = Mock()
 			Map defaultValues = Mock()
 			ConfigurationValueBuilderHelper valueBuilder = Mock()
 			email.getRecipients() >> original
 			defaultValues.get("cc") >> valueBuilder
-			valueBuilder.getValue(_) >> (defaultValue as String[])
-			def filler = new EmailFiller(resolver, defaultValues)
+			valueBuilder.getValue() >> (defaultValue as String[])
+			def filler = new EmailFiller(defaultValues)
 		
 		when:
 			filler.fill(email)
@@ -134,13 +130,12 @@ class EmailFillerSpec extends Specification {
 	def "Email bcc=#original | default bcc=#defaultValue => #desc bcc"() {
 		given:
 			Email email = Mock()
-			PropertyResolver resolver = Mock()
 			Map defaultValues = Mock()
 			ConfigurationValueBuilderHelper valueBuilder = Mock()
 			email.getRecipients() >> original
 			defaultValues.get("bcc") >> valueBuilder
-			valueBuilder.getValue(_) >> (defaultValue as String[])
-			def filler = new EmailFiller(resolver, defaultValues)
+			valueBuilder.getValue() >> (defaultValue as String[])
+			def filler = new EmailFiller(defaultValues)
 		
 		when:
 			filler.fill(email)
@@ -164,12 +159,11 @@ class EmailFillerSpec extends Specification {
 	def "no value builder set should not fill"() {
 		given:
 			Email email = Mock()
-			PropertyResolver resolver = Mock()
 			Map defaultValues = Mock()
 			defaultValues.get(_) >> null
 			email.getFrom() >> from
 			email.getRecipients() >> to
-			def filler = new EmailFiller(resolver, defaultValues)
+			def filler = new EmailFiller(defaultValues)
 			
 		when:
 			filler.fill(email)

@@ -1,5 +1,6 @@
 package fr.sii.ogham.sms.builder;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -19,7 +20,7 @@ import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
  *
  */
 public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements Builder<PhoneNumberTranslatorPair> {
-	private EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private SenderNumberBuilder senderNumberBuilder;
 	private RecipientNumberBuilder recipientNumberBuilder;
 
@@ -30,12 +31,12 @@ public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements B
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public PhoneNumbersBuilder(SmsBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public PhoneNumbersBuilder(SmsBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements B
 	 */
 	public SenderNumberBuilder from() {
 		if (senderNumberBuilder == null) {
-			senderNumberBuilder = new SenderNumberBuilder(this, environmentBuilder);
+			senderNumberBuilder = new SenderNumberBuilder(this, buildContext);
 		}
 		return senderNumberBuilder;
 	}
@@ -71,7 +72,7 @@ public class PhoneNumbersBuilder extends AbstractParent<SmsBuilder> implements B
 	 */
 	public RecipientNumberBuilder to() {
 		if (recipientNumberBuilder == null) {
-			recipientNumberBuilder = new RecipientNumberBuilder(this, environmentBuilder);
+			recipientNumberBuilder = new RecipientNumberBuilder(this, buildContext);
 		}
 		return recipientNumberBuilder;
 	}

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
 import org.springframework.context.ApplicationContext;
 
-import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
@@ -104,15 +103,6 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		this.springProperties = springProperties;
 		this.oghamFreemarkerProperties = oghamFreemarkerProperties;
 		this.applicationContext = applicationContext;
-	}
-
-	@Override
-	public void configure(MessagingBuilder builder) {
-		LOG.debug("[{}] apply configuration", this);
-		// use same environment as parent builder
-		builder.email().template(FreemarkerEmailBuilder.class).environment(builder.environment());
-		builder.sms().template(FreemarkerSmsBuilder.class).environment(builder.environment());
-		super.configure(builder);
 	}
 
 	@Override

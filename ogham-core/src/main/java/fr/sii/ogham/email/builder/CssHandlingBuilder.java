@@ -1,5 +1,6 @@
 package fr.sii.ogham.email.builder;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -14,8 +15,8 @@ import fr.sii.ogham.core.translator.content.ContentTranslator;
  *
  */
 public class CssHandlingBuilder extends AbstractParent<EmailBuilder> implements Builder<ContentTranslator> {
+	private final BuildContext buildContext;
 	private CssInliningBuilder cssInliningBuilder;
-	private EnvironmentBuilder<?> environmentBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -24,12 +25,12 @@ public class CssHandlingBuilder extends AbstractParent<EmailBuilder> implements 
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public CssHandlingBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public CssHandlingBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -42,7 +43,7 @@ public class CssHandlingBuilder extends AbstractParent<EmailBuilder> implements 
 	 */
 	public CssInliningBuilder inline() {
 		if (cssInliningBuilder == null) {
-			cssInliningBuilder = new CssInliningBuilder(this, environmentBuilder);
+			cssInliningBuilder = new CssInliningBuilder(this, buildContext);
 		}
 		return cssInliningBuilder;
 	}

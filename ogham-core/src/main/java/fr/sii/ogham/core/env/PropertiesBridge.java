@@ -1,6 +1,7 @@
-package fr.sii.ogham.email.sender.impl;
+package fr.sii.ogham.core.env;
 
-import static fr.sii.ogham.email.JavaMailConstants.SERIAL_VERSION_UID;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -8,8 +9,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
-
-import fr.sii.ogham.core.env.PropertyResolver;
 
 /**
  * Extends {@link Properties} and wraps a {@link PropertyResolver}. The aim is

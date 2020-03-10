@@ -1,6 +1,5 @@
 package fr.sii.ogham.sms.builder.smsglobal;
 
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_GSM8_ENCODING_PRIORITY;
@@ -11,10 +10,10 @@ import static java.util.Arrays.asList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
@@ -42,8 +41,7 @@ import fr.sii.ogham.sms.builder.cloudhopper.DefaultCloudhopperConfigurer;
  * 
  * <p>
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder} and
- * {@link CloudhopperBuilder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * </p>
  * 
  * <p>
@@ -58,11 +56,11 @@ import fr.sii.ogham.sms.builder.cloudhopper.DefaultCloudhopperConfigurer;
  * </li>
  * <li>Configures encoding:
  * <ul>
- * <li>Set "ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority" property to 0 to
- * disable GSM 7-bit encoding (not supported by SMSGlobal)</li>
- * <li>Let default value for "ogham.sms.cloudhopper.encoder.gsm8bit.priority"
- * to enable GSM 8-bit data encoding if the message contains only characters
- * that can be encoded on one octet.</li>
+ * <li>Set "ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority" property to 0
+ * to disable GSM 7-bit encoding (not supported by SMSGlobal)</li>
+ * <li>Let default value for "ogham.sms.cloudhopper.encoder.gsm8bit.priority" to
+ * enable GSM 8-bit data encoding if the message contains only characters that
+ * can be encoded on one octet.</li>
  * <li>Let default value for "ogham.sms.cloudhopper.encoder.ucs2.priority" to
  * enable UCS-2 encoding if the message contains special characters that can't
  * be encoded on one octet. Each character is encoded on two octets.</li>
@@ -83,18 +81,6 @@ public final class SmsglobalServiceProviderConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsglobalServiceProviderConfigurer.class);
 	private static final int SMSGLOBAL_PORT = 1775;
 
-	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY + 1, phase = AFTER_INIT)
-	public static class EnvironmentPropagator implements MessagingConfigurer {
-		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (canUseCloudhopper()) {
-				CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);
-				// use same environment as parent builder
-				builder.environment(msgBuilder.environment());
-			}
-		}
-	}
-	
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY + 1)
 	public static class SmsglobalConfigurer implements MessagingConfigurer {
 
@@ -129,8 +115,12 @@ public final class SmsglobalServiceProviderConfigurer {
 				.interfaceVersion().defaultValue(VERSION_3_4);
 			// @formatter:on
 		}
-		
+
 		private static boolean usingSmsGlobal(PropertyResolver propertyResolver) {
+			Boolean skip = evaluate(asList("${ogham.sms.smsglobal.service-provider.auto-conf.skip}"), propertyResolver, Boolean.class);
+			if (skip != null && !skip) {
+				return false;
+			}
 			String host = evaluate(asList("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}"), propertyResolver, String.class);
 			if ("smsglobal.com".equals(host)) {
 				return true;
@@ -138,12 +128,12 @@ public final class SmsglobalServiceProviderConfigurer {
 			Boolean force = evaluate("${ogham.sms.smsglobal.service-provider.auto-conf.force}", propertyResolver, Boolean.class);
 			return force != null && force;
 		}
+
+		private static boolean canUseCloudhopper() {
+			return ClasspathUtils.exists("com.cloudhopper.smpp.SmppClient");
+		}
 	}
 
-	private static boolean canUseCloudhopper() {
-		return ClasspathUtils.exists("com.cloudhopper.smpp.SmppClient");
-	}
-	
 	private SmsglobalServiceProviderConfigurer() {
 		super();
 	}

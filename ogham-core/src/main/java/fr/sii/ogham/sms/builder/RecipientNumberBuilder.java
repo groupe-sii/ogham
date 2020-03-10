@@ -1,8 +1,9 @@
 package fr.sii.ogham.sms.builder;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
@@ -23,7 +24,7 @@ import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
  *
  */
 public class RecipientNumberBuilder extends AbstractParent<PhoneNumbersBuilder> implements Builder<PhoneNumberTranslator> {
-	private EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private RecipientNumberFormatBuilder formatBuilder;
 	private PhoneNumberTranslator customTranslator;
 
@@ -33,7 +34,7 @@ public class RecipientNumberBuilder extends AbstractParent<PhoneNumbersBuilder> 
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public RecipientNumberBuilder() {
-		this(null, new SimpleEnvironmentBuilder<>(null));
+		this(null, new DefaultBuildContext());
 	}
 
 	/**
@@ -43,12 +44,12 @@ public class RecipientNumberBuilder extends AbstractParent<PhoneNumbersBuilder> 
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public RecipientNumberBuilder(PhoneNumbersBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public RecipientNumberBuilder(PhoneNumbersBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -59,7 +60,7 @@ public class RecipientNumberBuilder extends AbstractParent<PhoneNumbersBuilder> 
 	 */
 	public RecipientNumberFormatBuilder format() {
 		if (formatBuilder == null) {
-			formatBuilder = new RecipientNumberFormatBuilder(this, environmentBuilder);
+			formatBuilder = new RecipientNumberFormatBuilder(this, buildContext);
 		}
 		return formatBuilder;
 	}

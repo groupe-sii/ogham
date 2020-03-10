@@ -2,11 +2,11 @@ package fr.sii.ogham.email.builder.javamail;
 
 import javax.mail.Authenticator;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.email.sender.impl.javamail.UpdatableUsernamePasswordAuthenticator;
 import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
@@ -53,15 +53,16 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 * 
 	 * @param parent
 	 *            the parent builder
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public UsernamePasswordAuthenticatorBuilder(JavaMailBuilder parent) {
+	public UsernamePasswordAuthenticatorBuilder(JavaMailBuilder parent, BuildContext buildContext) {
 		super(parent);
-		usernameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		updatableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		usernameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		updatableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
-	
-	
+
 	/**
 	 * Set the username to use for the authentication.
 	 * 
@@ -105,9 +106,11 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 * Set the username to use for the authentication.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .username()
@@ -116,8 +119,8 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #username(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #username(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .username("my-username")
@@ -126,8 +129,8 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 *   .defaultValue("default-username")
 	 * </pre>
 	 * 
-	 * The value {@code "my-username"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "my-username"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -139,7 +142,6 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 		return usernameValueBuilder;
 	}
 
-	
 	/**
 	 * Set the password to use for the authentication.
 	 * 
@@ -183,9 +185,11 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 * Set the password to use for the authentication.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .password()
@@ -194,8 +198,8 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #password(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #password(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .password("my-password")
@@ -204,8 +208,8 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 *   .defaultValue("default-password")
 	 * </pre>
 	 * 
-	 * The value {@code "my-password"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "my-password"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -216,8 +220,7 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	public ConfigurationValueBuilder<UsernamePasswordAuthenticatorBuilder, String> password() {
 		return passwordValueBuilder;
 	}
-	
-	
+
 	/**
 	 * If set to true, it means that properties are not evaluated when calling
 	 * {@link #build()}. Instead, the property keys are kept for later
@@ -267,9 +270,11 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 * to the mail server is started.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .updatable()
@@ -278,8 +283,8 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #updatable(Boolean)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #updatable(Boolean)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .updatable(true)
@@ -303,16 +308,15 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 
 	@Override
 	public Authenticator build() {
-		PropertyResolver propertyResolver = parent.environment().build();
-		boolean isUpdatable = updatableValueBuilder.getValue(propertyResolver, false);
+		boolean isUpdatable = updatableValueBuilder.getValue(false);
 		if (isUpdatable) {
 			if (usernameValueBuilder.hasValueOrProperties() && passwordValueBuilder.hasValueOrProperties()) {
-				return new UpdatableUsernamePasswordAuthenticator(propertyResolver, usernameValueBuilder, passwordValueBuilder);
+				return new UpdatableUsernamePasswordAuthenticator(usernameValueBuilder, passwordValueBuilder);
 			}
 			return null;
 		}
-		String u = usernameValueBuilder.getValue(propertyResolver);
-		String p = passwordValueBuilder.getValue(propertyResolver);
+		String u = usernameValueBuilder.getValue();
+		String p = passwordValueBuilder.getValue();
 		if (u != null && p != null) {
 			return new UsernamePasswordAuthenticator(u, p);
 		}

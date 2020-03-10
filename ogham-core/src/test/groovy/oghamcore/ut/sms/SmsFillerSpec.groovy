@@ -16,15 +16,14 @@ class SmsFillerSpec extends Specification {
 	def "Sms from=#original | default from=#defaultValue => #desc from"() {
 		given:
 			Sms sms = Mock()
-			PropertyResolver resolver = Mock()
 			Map defaultValues = Mock()
 			ConfigurationValueBuilderHelper valueBuilder = Mock()
 			sms.getFrom() >> original
 			sms.getRecipients() >> []
 			defaultValues.get("from") >> valueBuilder
 			defaultValues.get(_) >> null
-			valueBuilder.getValue(_) >> defaultValue
-			def filler = new SmsFiller(resolver, defaultValues)
+			valueBuilder.getValue() >> defaultValue
+			def filler = new SmsFiller(defaultValues)
 		
 		when:
 			filler.fill(sms)
@@ -49,8 +48,8 @@ class SmsFillerSpec extends Specification {
 			sms.getRecipients() >> original
 			defaultValues.get("to") >> valueBuilder
 			defaultValues.get(_) >> null
-			valueBuilder.getValue(_) >> (defaultValue as String[])
-			def filler = new SmsFiller(resolver, defaultValues)
+			valueBuilder.getValue() >> (defaultValue as String[])
+			def filler = new SmsFiller(defaultValues)
 		
 		when:
 			filler.fill(sms)
@@ -74,12 +73,11 @@ class SmsFillerSpec extends Specification {
 	def "no value builder set should not fill"() {
 		given:
 			Sms sms = Mock()
-			PropertyResolver resolver = Mock()
 			Map defaultValues = Mock()
 			defaultValues.get(_) >> null
 			sms.getFrom() >> from
 			sms.getRecipients() >> to
-			def filler = new SmsFiller(resolver, defaultValues)
+			def filler = new SmsFiller(defaultValues)
 			
 		when:
 			filler.fill(sms)

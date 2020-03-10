@@ -133,7 +133,6 @@ public class EmptyBuilderTest {
 	
 	@Test
 	public void emailSenderManuallyRegisteredButUnconfiguredResourceResolutionCantAttachFilesFromPath() throws MessagingException {
-		builder.register(new DefaultJavaMailConfigurer.EnvironmentPropagator(), 1, AFTER_INIT);
 		builder.register(new DefaultJavaMailConfigurer.JavaMailConfigurer(), 1);
 		builder.configure(AFTER_INIT);
 		builder.configure(BEFORE_BUILD);
@@ -150,7 +149,6 @@ public class EmptyBuilderTest {
 
 	@Test
 	public void emailSenderManuallyRegisteredAndImageInliningEnabledButUnconfiguredResourceResolutionCantInlineImages() throws MessagingException {
-		builder.register(new DefaultJavaMailConfigurer.EnvironmentPropagator(), 1, AFTER_INIT);
 		builder.register(new DefaultJavaMailConfigurer.JavaMailConfigurer(), 1);
 		builder.email().images().inline()
 			.attach().cid().sequential().and().and()
@@ -172,7 +170,6 @@ public class EmptyBuilderTest {
 
 	@Test
 	public void emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleTemplateContent() throws MessagingException {
-		builder.register(new DefaultJavaMailConfigurer.EnvironmentPropagator(), 1, AFTER_INIT);
 		builder.register(new DefaultJavaMailConfigurer.JavaMailConfigurer(), 1);
 		builder.configure(AFTER_INIT);
 		builder.configure(BEFORE_BUILD);
@@ -189,7 +186,6 @@ public class EmptyBuilderTest {
 	
 	@Test
 	public void emailSenderManuallyRegisteredAndFreemarkerOnlyRegisteredButResourceResolutionNotConfiguredCantHandleTemplateContent() throws MessagingException {
-		builder.register(new DefaultJavaMailConfigurer.EnvironmentPropagator(), 1, AFTER_INIT);
 		builder.register(new DefaultJavaMailConfigurer.JavaMailConfigurer(), 1);
 		builder.email().template(FreemarkerEmailBuilder.class);
 		builder.configure(AFTER_INIT);
@@ -206,7 +202,6 @@ public class EmptyBuilderTest {
 	
 	@Test
 	public void emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleMultiTemplateContent() throws MessagingException {
-		builder.register(new DefaultJavaMailConfigurer.EnvironmentPropagator(), 1, AFTER_INIT);
 		builder.register(new DefaultJavaMailConfigurer.JavaMailConfigurer(), 1);
 		builder.configure(AFTER_INIT);
 		builder.configure(BEFORE_BUILD);
@@ -222,7 +217,6 @@ public class EmptyBuilderTest {
 	
 	@Test
 	public void emailSenderManuallyRegisteredAndTemplateParsersOnlyRegisteredCantHandleTemplateContentDueToResourceResolutionNotConfigured() throws MessagingException {
-		builder.register(new DefaultJavaMailConfigurer.EnvironmentPropagator(), 1, AFTER_INIT);
 		builder.register(new DefaultJavaMailConfigurer.JavaMailConfigurer(), 1);
 		builder.email().template(FreemarkerEmailBuilder.class);
 		builder.email().template(ThymeleafV3EmailBuilder.class);

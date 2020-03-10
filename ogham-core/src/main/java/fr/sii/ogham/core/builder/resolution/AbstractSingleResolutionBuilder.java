@@ -8,10 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
 import fr.sii.ogham.core.resource.resolver.RelativisableResourceResolver;
@@ -39,17 +38,15 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 	protected final List<String> lookups;
 	protected final ConfigurationValueBuilderHelper<MYSELF, String> pathPrefixValueBuilder;
 	protected final ConfigurationValueBuilderHelper<MYSELF, String> pathSuffixValueBuilder;
-	protected final EnvironmentBuilder<?> environmentBuilder;
 	protected final MYSELF myself;
 
 	@SuppressWarnings("unchecked")
-	protected AbstractSingleResolutionBuilder(Class<?> selfType, P parent, EnvironmentBuilder<?> environmentBuilder) {
+	protected AbstractSingleResolutionBuilder(Class<?> selfType, P parent, BuildContext buildContext) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
-		this.environmentBuilder = environmentBuilder;
 		lookups = new ArrayList<>();
-		pathPrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
-		pathSuffixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
+		pathPrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
+		pathSuffixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
 	}
 
 	/**
@@ -143,16 +140,15 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 		this.lookups.addAll(prefix);
 		return myself;
 	}
-	
+
 	@Override
 	public ResourceResolver build() {
 		ResourceResolver resolver = createResolver();
-		if (!(resolver instanceof RelativisableResourceResolver) || environmentBuilder == null) {
+		if (!(resolver instanceof RelativisableResourceResolver)) {
 			return resolver;
 		}
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		String resolvedPathPrefix = pathPrefixValueBuilder.getValue(propertyResolver, "");
-		String resolvedPathSuffix = pathSuffixValueBuilder.getValue(propertyResolver, "");
+		String resolvedPathPrefix = pathPrefixValueBuilder.getValue("");
+		String resolvedPathSuffix = pathSuffixValueBuilder.getValue("");
 		if (!resolvedPathPrefix.isEmpty() || !resolvedPathSuffix.isEmpty()) {
 			LOG.debug("Using parentPath {} and extension {} for resource resolution", resolvedPathPrefix, resolvedPathSuffix);
 			resolver = new RelativeResolver((RelativisableResourceResolver) resolver, resolvedPathPrefix, resolvedPathSuffix);

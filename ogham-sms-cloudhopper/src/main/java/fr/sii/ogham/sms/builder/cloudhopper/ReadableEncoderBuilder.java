@@ -5,7 +5,7 @@ import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM7;
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_ISO_8859_1;
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
 
-import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.sms.encoder.Encoder;
 import fr.sii.ogham.sms.splitter.MessageSplitter;
 
@@ -29,7 +29,19 @@ import fr.sii.ogham.sms.splitter.MessageSplitter;
  *
  */
 public class ReadableEncoderBuilder {
+	private final BuildContext buildContext;
 	private EncoderBuilder delegate;
+
+	/**
+	 * Initialize with the build context
+	 * 
+	 * @param buildContext
+	 *            for property resolution and evaluation
+	 */
+	public ReadableEncoderBuilder(BuildContext buildContext) {
+		super();
+		this.buildContext = buildContext;
+	}
 
 	/**
 	 * Set the encoder builder that is configured by the developer.
@@ -46,7 +58,7 @@ public class ReadableEncoderBuilder {
 	 */
 	public StandardEncodingHelper getGsm7Priorities() {
 		if (delegate == null) {
-			return new StandardEncodingHelper(delegate, NAME_GSM7);
+			return new StandardEncodingHelper(delegate, NAME_GSM7, buildContext);
 		}
 		return delegate.gsm7PackedValueBuilder;
 	}
@@ -56,7 +68,7 @@ public class ReadableEncoderBuilder {
 	 */
 	public StandardEncodingHelper getGsm8Priorities() {
 		if (delegate == null) {
-			return new StandardEncodingHelper(delegate, NAME_GSM);
+			return new StandardEncodingHelper(delegate, NAME_GSM, buildContext);
 		}
 		return delegate.gsm8ValueBuilder;
 	}
@@ -66,7 +78,7 @@ public class ReadableEncoderBuilder {
 	 */
 	public StandardEncodingHelper getUcs2Priorities() {
 		if (delegate == null) {
-			return new StandardEncodingHelper(delegate, NAME_UCS_2);
+			return new StandardEncodingHelper(delegate, NAME_UCS_2, buildContext);
 		}
 		return delegate.ucs2ValueBuilder;
 	}
@@ -76,20 +88,18 @@ public class ReadableEncoderBuilder {
 	 */
 	public StandardEncodingHelper getLatin1Priorities() {
 		if (delegate == null) {
-			return new StandardEncodingHelper(delegate, NAME_ISO_8859_1);
+			return new StandardEncodingHelper(delegate, NAME_ISO_8859_1, buildContext);
 		}
 		return delegate.latin1ValueBuilder;
 	}
 
 	/**
-	 * @param propertyResolver
-	 *            property resolver used to evaluate property values
 	 * @return true if automatic guessing has been enabled
 	 */
-	public boolean autoGuessEnabled(PropertyResolver propertyResolver) {
+	public boolean autoGuessEnabled() {
 		if (delegate == null) {
 			return false;
 		}
-		return delegate.autoGuessEnabled(propertyResolver);
+		return delegate.autoGuessEnabled();
 	}
 }

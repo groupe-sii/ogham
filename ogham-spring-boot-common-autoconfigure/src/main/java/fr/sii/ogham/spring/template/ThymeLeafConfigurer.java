@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 
-import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
@@ -73,15 +72,6 @@ public class ThymeLeafConfigurer extends MessagingConfigurerAdapter implements S
 		this.springProperties = springProperties;
 		this.emailBuilderClass = emailBuilderClass;
 		this.smsBuilderClass = smsBuilderClass;
-	}
-
-	@Override
-	public void configure(MessagingBuilder builder) {
-		LOG.debug("[{}] apply configuration", this);
-		// use same environment as parent builder
-		builder.email().template(emailBuilderClass).environment(builder.environment());
-		builder.sms().template(smsBuilderClass).environment(builder.environment());
-		super.configure(builder);
 	}
 
 	@Override

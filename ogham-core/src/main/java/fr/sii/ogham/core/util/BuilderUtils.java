@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringJoiner;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
-import fr.sii.ogham.core.env.JavaPropertiesResolver;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -35,17 +34,6 @@ public final class BuilderUtils {
 	 */
 	public static Properties getDefaultProperties() {
 		return System.getProperties();
-	}
-
-	/**
-	 * Create the {@link PropertyResolver} that handles {@link Properties}.
-	 * 
-	 * @param properties
-	 *            the properties
-	 * @return the property resolver
-	 */
-	public static JavaPropertiesResolver getDefaultPropertyResolver(Properties properties) {
-		return new JavaPropertiesResolver(properties, getConverter());
 	}
 
 	/**
@@ -159,16 +147,16 @@ public final class BuilderUtils {
 	 * 
 	 * 
 	 * <p>
-	 * You may need {@link EnvironmentBuilder} in order to be able to evaluate
+	 * You may need {@link BuildContext} in order to be able to evaluate
 	 * properties in your {@link Builder#build()} method. Just declare a
-	 * parameter of type {@link EnvironmentBuilder} either as first parameter if
+	 * parameter of type {@link BuildContext} either as first parameter if
 	 * you don't want fluent chaining:
 	 * 
 	 * <pre>
 	 * {@code
 	 * class MyBuilder implements Builder<Foo> {
-	 *   public MyBuilder(EnvironmentBuilder<?> env) {
-	 *     this.env = env;
+	 *   public MyBuilder(BuildContext buildContext) {
+	 *     this.buildContext = buildContext;
 	 *   }
 	 * }
 	 * }</pre>
@@ -178,9 +166,9 @@ public final class BuilderUtils {
 	 * <pre>
 	 * {@code
 	 * class MyBuilder extends AbstractParent<EmailBuilder> implements Builder<Foo> {
-	 *   public MyBuilder(EmailBuilder parent, EnvironmentBuilder<?> env) {
+	 *   public MyBuilder(EmailBuilder parent, BuildContext buildContext) {
 	 *     super(parent);
-	 *     this.env = env;
+	 *     this.buildContext = buildContext;
 	 *   }
 	 * }
 	 * }</pre>
@@ -194,9 +182,9 @@ public final class BuilderUtils {
 	 * If several constructors exist, the following order is used (first
 	 * matching constructor is used):
 	 * <ul>
-	 * <li>{@code contructor(P parent, EnvironmentBuilder<?> env)}</li>
+	 * <li>{@code contructor(P parent, BuildContext buildContext)}</li>
 	 * <li>{@code contructor(P parent}</li>
-	 * <li>{@code contructor(EnvironmentBuilder<?> env)}</li>
+	 * <li>{@code contructor(BuildContext buildContext)}</li>
 	 * <li>{@code contructor(}</li>
 	 * </ul>
 	 * 
@@ -210,26 +198,26 @@ public final class BuilderUtils {
 	 *            The builder class to instantiate
 	 * @param parent
 	 *            The parent builder for fluent chaining
-	 * @param environmentBuilder
-	 *            The environment builder to inherit if needed
+	 * @param buildContext
+	 *            The current build context
 	 * @return the builder instance
 	 * @throws BuildException
 	 *             when builder can't be instantiated
 	 */
 	// @formatter:on
 	@SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
-	public static <T, B extends Builder<? extends T>, P> B instantiateBuilder(Class<B> builderClass, P parent, EnvironmentBuilder<?> environmentBuilder) throws BuildException {
+	public static <T, B extends Builder<? extends T>, P> B instantiateBuilder(Class<B> builderClass, P parent, BuildContext buildContext) throws BuildException {
 		try {
-			return instantiate(builderClass, parent, environmentBuilder);
+			return instantiate(builderClass, parent, buildContext);
 		} catch (InstantiationException | IllegalAccessException | InvocationTargetException | SecurityException | IllegalArgumentException e) {
 			throw new BuildException("Can't instantiate builder from class " + builderClass.getSimpleName(), e);
 		}
 	}
 
-	private static <T, B extends Builder<? extends T>, P> B instantiate(Class<B> builderClass, P parent, EnvironmentBuilder<?> environmentBuilder)
+	private static <T, B extends Builder<? extends T>, P> B instantiate(Class<B> builderClass, P parent, BuildContext buildContext)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException {
 		try {
-			return builderClass.getConstructor(parent.getClass(), EnvironmentBuilder.class).newInstance(parent, environmentBuilder);
+			return builderClass.getConstructor(parent.getClass(), BuildContext.class).newInstance(parent, buildContext);
 		} catch (NoSuchMethodException e) {
 			// skip
 		}
@@ -239,7 +227,7 @@ public final class BuilderUtils {
 			// skip
 		}
 		try {
-			return builderClass.getConstructor(EnvironmentBuilder.class).newInstance(environmentBuilder);
+			return builderClass.getConstructor(BuildContext.class).newInstance(buildContext);
 		} catch (NoSuchMethodException e) {
 			// skip
 		}
@@ -249,10 +237,10 @@ public final class BuilderUtils {
 			// skip
 		}
 		StringJoiner joiner = new StringJoiner("\n- ", "\n- ", "\n");
-		joiner.add("constructor(" + parent.getClass().getName() + ", " + EnvironmentBuilder.class.getName() + ")\n   if you want fluent chaining and inherit current environment variable evaluation");
+		joiner.add("constructor(" + parent.getClass().getName() + ", " + BuildContext.class.getName() + ")\n   if you want fluent chaining and inherit current build context");
 		joiner.add("constructor(" + parent.getClass().getName() + ")\n   if you want fluent chaining");
-		joiner.add("constructor(" + EnvironmentBuilder.class.getName() + ")\n   if you don't want fluent chaining but inherit current environment variable evaluation");
-		joiner.add("constructor()\n   if you don't want fluent chaining and inherit current environment variable evaluation");
+		joiner.add("constructor(" + BuildContext.class.getName() + ")\n   if you don't want fluent chaining but inherit current build context");
+		joiner.add("constructor()\n   if you don't want fluent chaining and inherit current build context");
 		throw new BuildException("No matching constructor found. The builder implementation must provide one of following constructors:" + joiner.toString());
 	}
 

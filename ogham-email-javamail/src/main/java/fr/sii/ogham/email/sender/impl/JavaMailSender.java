@@ -1,6 +1,7 @@
 package fr.sii.ogham.email.sender.impl;
 
 import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_IMPLEMENTATION_PRIORITY;
 import static fr.sii.ogham.email.attachment.ContentDisposition.ATTACHMENT;
 import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
 
@@ -24,6 +25,8 @@ import javax.mail.internet.MimeMultipart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.priority.Priority;
+import fr.sii.ogham.core.env.PropertiesBridge;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
@@ -43,6 +46,7 @@ import fr.sii.ogham.email.sender.impl.javamail.JavaMailInterceptor;
  * @author Aurélien Baudet
  * @see JavaMailContentHandler
  */
+@Priority(properties = "${ogham.email.implementation-priority.javamail}", defaultValue = DEFAULT_JAVAMAIL_IMPLEMENTATION_PRIORITY)
 public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	private static final Logger LOG = LoggerFactory.getLogger(JavaMailSender.class);
 

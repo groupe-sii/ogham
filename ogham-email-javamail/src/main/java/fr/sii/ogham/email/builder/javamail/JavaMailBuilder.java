@@ -5,7 +5,10 @@ import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredPrope
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -18,14 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
-import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
@@ -33,7 +36,9 @@ import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.charset.FixedCharsetDetector;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.convert.Converter;
-import fr.sii.ogham.core.convert.DefaultConverter;
+import fr.sii.ogham.core.env.FirstExistingPropertiesResolver;
+import fr.sii.ogham.core.env.JavaPropertiesResolver;
+import fr.sii.ogham.core.env.PropertiesBridge;
 import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.message.Message;
@@ -44,7 +49,6 @@ import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.resource.LookupResource;
 import fr.sii.ogham.core.resource.NamedResource;
 import fr.sii.ogham.core.resource.OverrideNameWrapper;
-import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
@@ -52,7 +56,6 @@ import fr.sii.ogham.email.exception.javamail.UnresolvableAttachmentResourceHandl
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
-import fr.sii.ogham.email.sender.impl.PropertiesBridge;
 import fr.sii.ogham.email.sender.impl.javamail.ContentWithAttachmentsHandler;
 import fr.sii.ogham.email.sender.impl.javamail.FailResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.FileResourceHandler;
@@ -160,10 +163,11 @@ import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
 public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Builder<JavaMailSender>, ActivableAtRuntime {
 	private static final Logger LOG = LoggerFactory.getLogger(JavaMailBuilder.class);
 
-	private EnvironmentBuilder<JavaMailBuilder> environmentBuilder;
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<JavaMailBuilder, String> hostValueBuilder;
 	private final ConfigurationValueBuilderHelper<JavaMailBuilder, Integer> portValueBuilder;
 	private final ConfigurationValueBuilderHelper<JavaMailBuilder, Charset> charsetValueBuilder;
+	private final Properties additionalProperties;
 	private Authenticator authenticator;
 	private UsernamePasswordAuthenticatorBuilder authenticatorBuilder;
 	private JavaMailInterceptor interceptor;
@@ -176,8 +180,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public JavaMailBuilder() {
-		this(null, null);
-		environment();
+		this(null, new DefaultBuildContext());
 		mimetype();
 	}
 
@@ -199,17 +202,16 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * 
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
-	 * @param environmentBuilder
+	 * @param buildContext
 	 *            used to evaluate property values
 	 */
-	public JavaMailBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public JavaMailBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(parent);
-		if (environmentBuilder != null) {
-			this.environmentBuilder = new EnvironmentBuilderDelegate<>(this, environmentBuilder);
-		}
-		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class);
-		charsetValueBuilder = new ConfigurationValueBuilderHelper<>(this, Charset.class);
+		this.buildContext = buildContext;
+		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
+		charsetValueBuilder = new ConfigurationValueBuilderHelper<>(this, Charset.class, buildContext);
+		additionalProperties = new Properties();
 	}
 
 	/**
@@ -250,15 +252,16 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		hostValueBuilder.setValue(host);
 		return this;
 	}
-	
-	
+
 	/**
 	 * Set the mail server address host (IP or hostname).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .host()
@@ -267,8 +270,8 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #host(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #host(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .host("smtp.gmail.com")
@@ -277,8 +280,8 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 *   .defaultValue("localhost")
 	 * </pre>
 	 * 
-	 * The value {@code "smtp.gmail.com"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "smtp.gmail.com"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -289,7 +292,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	public ConfigurationValueBuilder<JavaMailBuilder, String> host() {
 		return hostValueBuilder;
 	}
-	
+
 	/**
 	 * Set the mail server port.
 	 * 
@@ -329,14 +332,15 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		return this;
 	}
 
-	
 	/**
 	 * Set the mail server port
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .port()
@@ -345,8 +349,8 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #port(Integer)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #port(Integer)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .port(10025)
@@ -367,7 +371,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	public ConfigurationValueBuilder<JavaMailBuilder, Integer> port() {
 		return portValueBuilder;
 	}
-	
+
 	/**
 	 * Set charset to use for email body.
 	 * 
@@ -406,15 +410,16 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		charsetValueBuilder.setValue(charset);
 		return this;
 	}
-	
-	
+
 	/**
 	 * Set charset to use for email body
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .charset()
@@ -423,8 +428,8 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #charset(Charset)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #charset(Charset)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .charset(StandardCharsets.UTF_16)
@@ -433,8 +438,8 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 *   .defaultValue(StandardCharsets.UTF_8)
 	 * </pre>
 	 * 
-	 * The value {@code StandardCharsets.UTF_16} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code StandardCharsets.UTF_16} is used regardless of the value
+	 * of the properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -480,7 +485,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public UsernamePasswordAuthenticatorBuilder authenticator() {
 		if (authenticatorBuilder == null) {
-			authenticatorBuilder = new UsernamePasswordAuthenticatorBuilder(this);
+			authenticatorBuilder = new UsernamePasswordAuthenticatorBuilder(this, buildContext);
 		}
 		return authenticatorBuilder;
 	}
@@ -502,81 +507,6 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public JavaMailBuilder authenticator(Authenticator authenticator) {
 		this.authenticator = authenticator;
-		return this;
-	}
-
-	/**
-	 * Configures environment for the builder (and sub-builders). Environment
-	 * consists of configuration properties/values that are used to configure
-	 * the system (see {@link EnvironmentBuilder} for more information).
-	 * 
-	 * You can use system properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .systemProperties();
-	 * </pre>
-	 * 
-	 * Or, you can load properties from a file:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties("/path/to/file.properties")
-	 * </pre>
-	 * 
-	 * Or using directly a {@link Properties} object:
-	 * 
-	 * <pre>
-	 * Properties myprops = new Properties();
-	 * myprops.setProperty("foo", "bar");
-	 * .environment()
-	 *    .properties(myprops)
-	 * </pre>
-	 * 
-	 * Or defining directly properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties()
-	 *       .set("foo", "bar")
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * If no environment was previously used, it creates a new one. Then each
-	 * time you call {@link #environment()}, the same instance is used.
-	 * </p>
-	 * 
-	 * @return the builder to configure properties handling
-	 */
-	public EnvironmentBuilder<JavaMailBuilder> environment() {
-		if (environmentBuilder == null) {
-			environmentBuilder = new SimpleEnvironmentBuilder<>(this);
-		}
-		return environmentBuilder;
-	}
-
-	/**
-	 * NOTE: this is mostly for advance usage (when creating a custom module).
-	 * 
-	 * Inherits environment configuration from another builder. This is useful
-	 * for configuring independently different parts of Ogham but keeping a
-	 * whole coherence (see {@link DefaultJavaMailConfigurer} for an example of
-	 * use).
-	 * 
-	 * The same instance is shared meaning that all changes done here will also
-	 * impact the other builder.
-	 * 
-	 * <p>
-	 * If a previous builder was defined (by calling {@link #environment()} for
-	 * example), the new builder will override it.
-	 * 
-	 * @param builder
-	 *            the builder to inherit
-	 * @return this instance for fluent chaining
-	 */
-	public JavaMailBuilder environment(EnvironmentBuilder<?> builder) {
-		environmentBuilder = new EnvironmentBuilderDelegate<>(this, builder);
 		return this;
 	}
 
@@ -655,7 +585,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	 */
 	public MimetypeDetectionBuilder<JavaMailBuilder> mimetype() {
 		if (mimetypeBuilder == null) {
-			mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, environmentBuilder);
+			mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, buildContext);
 		}
 		return mimetypeBuilder;
 	}
@@ -683,6 +613,43 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		return this;
 	}
 
+	/**
+	 * Register additional properties that are used by JavaMail session.
+	 * 
+	 * <p>
+	 * If a key was previously registered, it is replaced by the new value.
+	 * 
+	 * <p>
+	 * If the value is {@code null}, the key is removed.
+	 * 
+	 * @param props
+	 *            the properties to register
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder properties(Properties props) {
+		updateProperties(props.entrySet());
+		return this;
+	}
+
+	/**
+	 * Register additional properties that are used by JavaMail session.
+	 * 
+	 * <p>
+	 * If a key was previously registered, it is replaced by the new value.
+	 * 
+	 * <p>
+	 * If the value is {@code null}, the key is removed.
+	 * 
+	 * 
+	 * @param props
+	 *            the properties to register
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder properties(Map<String, String> props) {
+		updateProperties(props.entrySet());
+		return this;
+	}
+
 	@Override
 	public JavaMailSender build() {
 		Properties props = buildProperties();
@@ -700,7 +667,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	private Properties buildProperties() {
-		return new PropertiesBridge(buildPropertyResolver());
+		return new PropertiesBridge(new FirstExistingPropertiesResolver(buildPropertyResolver(), new JavaPropertiesResolver(additionalProperties, getConverter())));
 	}
 
 	private OverrideJavaMailResolver buildPropertyResolver() {
@@ -708,10 +675,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	private Converter getConverter() {
-		if (environmentBuilder == null) {
-			return new DefaultConverter();
-		}
-		return environmentBuilder.converter().build();
+		return buildContext.getConverter();
 	}
 
 	private Authenticator buildAuthenticator() {
@@ -736,7 +700,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		if (this.charsetDetector != null) {
 			return this.charsetDetector;
 		}
-		Charset charset = this.charsetValueBuilder.getValue(getPropertyResolver());
+		Charset charset = this.charsetValueBuilder.getValue();
 		if (charset != null) {
 			return new FixedCharsetDetector(charset);
 		}
@@ -744,10 +708,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	private PropertyResolver getPropertyResolver() {
-		if (environmentBuilder != null) {
-			return environmentBuilder.build();
-		}
-		return BuilderUtils.getDefaultPropertyResolver(BuilderUtils.getDefaultProperties());
+		return buildContext.getPropertyResolver();
 	}
 
 	private static JavaMailAttachmentHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
@@ -764,7 +725,17 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	private static BiFunction<NamedResource, Attachment, AttachmentResourceHandlerException> noResourceResolverConfigured() {
-		return (resource, attachment) -> new UnresolvableAttachmentResourceHandlerException("Failed to attach "+resource.getName()+" because it points to a path but no resource resolver has been configured.", attachment);
+		return (resource, attachment) -> new UnresolvableAttachmentResourceHandlerException(
+				"Failed to attach " + resource.getName() + " because it points to a path but no resource resolver has been configured.", attachment);
 	}
 
+	private void updateProperties(Set<? extends Entry<?, ?>> entrySet) {
+		for (Entry<?, ?> prop : entrySet) {
+			if (prop.getValue() == null) {
+				additionalProperties.remove(prop.getKey());
+			} else {
+				additionalProperties.setProperty(prop.getKey().toString(), prop.getValue().toString());
+			}
+		}
+	}
 }

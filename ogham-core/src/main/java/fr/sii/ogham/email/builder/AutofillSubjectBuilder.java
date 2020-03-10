@@ -1,12 +1,12 @@
 package fr.sii.ogham.email.builder;
 
 import fr.sii.ogham.core.builder.AbstractAutofillDefaultValueBuilder;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.filler.SubjectFiller;
 import fr.sii.ogham.core.subject.provider.FirstSupportingSubjectProvider;
@@ -35,7 +35,6 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 	private final ConfigurationValueBuilderHelper<AutofillSubjectBuilder, Boolean> enableHtmlTitleValueBuilder;
 	private final ConfigurationValueBuilderHelper<AutofillSubjectBuilder, String> firstLinePrefixValueBuilder;
 	private SubjectProvider customProvider;
-	private EnvironmentBuilder<?> environmentBuilder;
 
 	/**
 	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
@@ -45,14 +44,13 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            configuration about property resolution
+	 * @param buildContext
+	 *            for property resolution
 	 */
-	public AutofillSubjectBuilder(AutofillEmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(AutofillSubjectBuilder.class, parent, String.class);
-		this.environmentBuilder = environmentBuilder;
-		enableHtmlTitleValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class);
-		firstLinePrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class);
+	public AutofillSubjectBuilder(AutofillEmailBuilder parent, BuildContext buildContext) {
+		super(AutofillSubjectBuilder.class, parent, String.class, buildContext);
+		enableHtmlTitleValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class, buildContext);
+		firstLinePrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
 	}
 	
 	/**
@@ -244,12 +242,11 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 			return customProvider;
 		}
 		FirstSupportingSubjectProvider provider = new FirstSupportingSubjectProvider();
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		String prefix = firstLinePrefixValueBuilder.getValue(propertyResolver);
+		String prefix = firstLinePrefixValueBuilder.getValue();
 		if (prefix != null) {
 			provider.addProvider(new TextPrefixSubjectProvider(prefix));
 		}
-		boolean htmlTitle = enableHtmlTitleValueBuilder.getValue(propertyResolver, false);
+		boolean htmlTitle = enableHtmlTitleValueBuilder.getValue(false);
 		if (htmlTitle) {
 			provider.addProvider(new HtmlTitleSubjectProvider());
 		}

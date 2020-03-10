@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
@@ -47,12 +48,12 @@ public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> impl
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public AttachmentHandlingBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public AttachmentHandlingBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(parent);
-		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuilder);
+		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, buildContext);
 	}
 
 	@Override

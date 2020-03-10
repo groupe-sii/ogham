@@ -6,6 +6,10 @@ public final class SendGridConstants {
 	 * templating configurers and JavaMail configurer.
 	 */
 	public static final int DEFAULT_SENDGRID_CONFIGURER_PRIORITY = 30000;
+	/**
+	 * The implementation has a priority of 30000.
+	 */
+	public static final int DEFAULT_SENDGRID_IMPLEMENTATION_PRIORITY = 30000;
 
 	private SendGridConstants() {
 		super();

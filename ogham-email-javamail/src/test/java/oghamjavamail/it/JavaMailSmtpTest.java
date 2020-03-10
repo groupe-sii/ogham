@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.startsWith;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.mail.MessagingException;
 
@@ -34,22 +33,14 @@ import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 public class JavaMailSmtpTest {
 	private JavaMailSender sender;
 	
-	@Rule
-	public final LoggingTestRule loggingRule = new LoggingTestRule();
-	
-	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
+	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
 	
 	@Before
 	public void setUp() throws IOException {
-		Properties additionalProps = new Properties();
-		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
 		sender = new JavaMailBuilder()
-				.environment()
-					.systemProperties()
-					.properties(additionalProps)
-					.and()
+				.host(ServerSetupTest.SMTP.getBindAddress())
+				.port(ServerSetupTest.SMTP.getPort())
 				.mimetype()
 					.tika()
 						.failIfOctetStream(false)

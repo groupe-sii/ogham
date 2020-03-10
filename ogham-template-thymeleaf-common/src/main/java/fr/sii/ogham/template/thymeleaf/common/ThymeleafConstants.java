@@ -13,6 +13,11 @@ public final class ThymeleafConstants {
 	 */
 	public static final int DEFAULT_THYMELEAF_SMS_CONFIGURER_PRIORITY = 70000;
 
+	/**
+	 * The implementation has a priority of 90000.
+	 */
+	public static final int DEFAULT_THYMELEAF_IMPLEMENTATION_PRIORITY = 90000;
+
 	private ThymeleafConstants() {
 		super();
 	}

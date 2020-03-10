@@ -4,7 +4,6 @@ import static fr.sii.ogham.core.util.LogUtils.summarize;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.util.PriorizedList;
 
 /**
  * Decorator sender that is able to handle a particular type of message. And for
@@ -31,38 +31,19 @@ import fr.sii.ogham.core.message.Message;
  *            The type of message that the implementations can handle
  * @see Condition
  */
-public class MultiImplementationSender<M extends Message> implements ConditionalSender {
+public abstract class MultiImplementationSender<M extends Message> implements ConditionalSender {
 	private static final Logger LOG = LoggerFactory.getLogger(MultiImplementationSender.class);
 
 	/**
 	 * The list of possible implementations indexed by the associated condition
 	 */
-	private final List<Implementation> implementations;
-
-	/**
-	 * The selected sender implementation
-	 */
-	private MessageSender sender;
+	private final PriorizedList<Implementation> implementations;
 
 	/**
 	 * Initialize with no registered implementation.
 	 */
 	public MultiImplementationSender() {
-		this(new ArrayList<Implementation>());
-	}
-
-	/**
-	 * Initialize with one implementation.
-	 * 
-	 * @param condition
-	 *            the condition that indicates if the implementation can be used
-	 *            at runtime
-	 * @param implementation
-	 *            the implementation to register
-	 */
-	public MultiImplementationSender(final Condition<Message> condition, final MessageSender implementation) {
-		this();
-		addImplementation(condition, implementation);
+		this(new PriorizedList<>());
 	}
 
 	/**
@@ -72,7 +53,7 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	 *            the list of possible implementations indexed by the condition
 	 *            that indicates if the implementation is eligible at runtime
 	 */
-	public MultiImplementationSender(List<Implementation> implementations) {
+	public MultiImplementationSender(PriorizedList<Implementation> implementations) {
 		super();
 		this.implementations = implementations;
 	}
@@ -87,36 +68,41 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 	 *            at runtime
 	 * @param implementation
 	 *            the implementation to register
+	 * @param priority
+	 *            the registration priority
 	 * @return this instance for fluent chaining
 	 */
-	public final MultiImplementationSender<M> addImplementation(Condition<Message> condition, MessageSender implementation) {
-		implementations.add(new Implementation(condition, implementation));
+	public final MultiImplementationSender<M> addImplementation(Condition<Message> condition, MessageSender implementation, int priority) {
+		implementations.register(new Implementation(condition, implementation), priority);
 		return this;
 	}
 
 	@Override
 	public boolean supports(Message message) {
-		sender = null;
-		boolean supports = message.getClass().isAssignableFrom(getManagedClass());
-		if (supports) {
-			LOG.debug("Can handle the message type {}. Is there any implementation available to send it ?", message.getClass());
-			for (Implementation impl : implementations) {
-				if (impl.getCondition().accept(message)) {
-					sender = impl.getSender();
-					break;
-				}
-			}
-			if (sender != null) {
-				LOG.debug("The implementation {} can handle the message {}", sender, summarize(message));
-			}
-		} else {
-			LOG.debug("Can't handle the message type {}", message.getClass());
+		return getSender(message) != null;
+	}
+
+	@Override
+	public void send(Message message) throws MessageException {
+		MessageSender sender = getSender(message);
+		if (sender == null) {
+			LOG.warn("No implementation is able to send the message {}. Skipping", summarize(message));
+			return;
 		}
-		return supports && sender != null;
+		LOG.debug("Sending message {} using {} implementation", summarize(message), sender);
+		sender.send(message);
+	}
+
+	public List<Implementation> getImplementations() {
+		return implementations.getOrdered();
+	}
+
+	protected boolean supportsMessageType(Message message) {
+		return message.getClass().isAssignableFrom(getManagedClass());
 	}
 
 	@SuppressWarnings("unchecked")
-	private Class<M> getManagedClass() {
+	protected Class<M> getManagedClass() {
 		Type genericSuperclass = getClass().getGenericSuperclass();
 		if (genericSuperclass instanceof ParameterizedType) {
 			return (Class<M>) ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
@@ -124,18 +110,18 @@ public class MultiImplementationSender<M extends Message> implements Conditional
 		return null;
 	}
 
-	@Override
-	public void send(Message message) throws MessageException {
-		LOG.debug("Sending message {} using {} implementation", summarize(message), sender);
-		sender.send(message);
-	}
-
-	public List<Implementation> getImplementations() {
-		return implementations;
-	}
-
-	public MessageSender getSender() {
-		return sender;
+	private MessageSender getSender(Message message) {
+		if (supportsMessageType(message)) {
+			LOG.debug("Can handle the message type {}. Is there any implementation available to send it ?", message.getClass());
+			for (Implementation impl : implementations.getOrdered()) {
+				if (impl.getCondition().accept(message)) {
+					LOG.debug("The implementation {} can handle the message {}", impl.getSender(), summarize(message));
+					return impl.getSender();
+				}
+			}
+		}
+		LOG.debug("Can't handle the message type {}", message.getClass());
+		return null;
 	}
 
 	public static class Implementation {

@@ -3,10 +3,10 @@ package fr.sii.ogham.sms.builder;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.filler.EveryFillerDecorator;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -28,7 +28,7 @@ import fr.sii.ogham.sms.message.Sms;
  *
  */
 public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Builder<MessageFiller> {
-	private EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private AutofillDefaultPhoneNumberBuilder<String> senderNumberBuilder;
 	private AutofillDefaultPhoneNumberBuilder<String[]> recipientNumberBuilder;
 
@@ -40,12 +40,12 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            configuration about property resolution
+	 * @param buildContext
+	 *            for property resolution
 	 */
-	public AutofillSmsBuilder(SmsBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public AutofillSmsBuilder(SmsBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public AutofillDefaultPhoneNumberBuilder<String> from() {
 		if (senderNumberBuilder == null) {
-			senderNumberBuilder = new AutofillDefaultPhoneNumberBuilder<>(this, String.class);
+			senderNumberBuilder = new AutofillDefaultPhoneNumberBuilder<>(this, String.class, buildContext);
 		}
 		return senderNumberBuilder;
 	}
@@ -71,7 +71,7 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public AutofillDefaultPhoneNumberBuilder<String[]> to() {
 		if (recipientNumberBuilder == null) {
-			recipientNumberBuilder = new AutofillDefaultPhoneNumberBuilder<>(this, String[].class);
+			recipientNumberBuilder = new AutofillDefaultPhoneNumberBuilder<>(this, String[].class, buildContext);
 		}
 		return recipientNumberBuilder;
 	}
@@ -82,8 +82,7 @@ public class AutofillSmsBuilder extends AbstractParent<SmsBuilder> implements Bu
 		Map<String, ConfigurationValueBuilderHelper<?, ?>> props = new HashMap<>();
 		props.put("from", (ConfigurationValueBuilderHelper<?, String>) senderNumberBuilder.defaultValue());
 		props.put("to", (ConfigurationValueBuilderHelper<?, String[]>) recipientNumberBuilder.defaultValue());
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		filler.addFiller(new SmsFiller(propertyResolver, props));
+		filler.addFiller(new SmsFiller(props));
 		return filler;
 	}
 }

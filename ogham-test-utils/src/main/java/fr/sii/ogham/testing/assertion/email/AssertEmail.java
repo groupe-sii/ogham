@@ -511,13 +511,17 @@ public final class AssertEmail {
 				assertions.register(() -> AssertHtml.assertSimilar(expectedBody, actualBody));
 			}
 		} else {
-			assertions.register(() -> {
-				compareText(name, expectedBody, actualBody, strict);
-			});
+			assertions.register(() -> compareText(name, expectedBody, actualBody, strict));
 		}
 	}
 
 	private static void compareText(String name, String expectedBody, String actualBody, boolean strict) throws ComparisonFailure {
+		if (expectedBody == null && actualBody != null) {
+			throw new ComparisonFailure(name + " should be null", expectedBody, actualBody);
+		}
+		if (expectedBody == null) {
+			return;
+		}
 		if (strict ? !expectedBody.equals(actualBody) : !sanitize(expectedBody).equals(sanitize(actualBody))) {
 			throw new ComparisonFailure(name + " should be '" + expectedBody + "'", expectedBody, actualBody);
 		}

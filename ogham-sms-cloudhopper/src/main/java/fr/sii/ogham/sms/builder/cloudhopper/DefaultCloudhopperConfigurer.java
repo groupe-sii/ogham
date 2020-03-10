@@ -3,7 +3,6 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
 import static com.cloudhopper.smpp.SmppBindType.TRANSMITTER;
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_GSM8_ENCODING_PRIORITY;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_LATIN1_ENCODING_PRIORITY;
@@ -13,10 +12,10 @@ import static fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion.VERSION_3_4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
 
@@ -36,8 +35,7 @@ import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
  * 
  * <p>
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder} and
- * {@link CloudhopperBuilder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * </p>
  * 
  * <p>
@@ -151,18 +149,6 @@ public final class DefaultCloudhopperConfigurer {
 	private static final int DEFAULT_CONNECT_MAX_RETRIES = 5;
 	private static final long DEFAULT_CONNECT_RETRY_DELAY = 500L;
 
-	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY, phase = AFTER_INIT)
-	public static class EnvironmentPropagator implements MessagingConfigurer {
-		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if(canUseCloudhopper()) {
-				CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);
-				// use same environment as parent builder
-				builder.environment(msgBuilder.environment());
-			}
-		}
-	}
-	
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY)
 	public static class CloudhopperConfigurer implements MessagingConfigurer {
 		@Override
@@ -222,10 +208,10 @@ public final class DefaultCloudhopperConfigurer {
 							.delay().properties("${ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_RETRY_DELAY));
 			// @formatter:on
 		}
-	}
-
-	private static boolean canUseCloudhopper() {
-		return ClasspathUtils.exists("com.cloudhopper.smpp.SmppClient");
+		
+		private static boolean canUseCloudhopper() {
+			return ClasspathUtils.exists("com.cloudhopper.smpp.SmppClient");
+		}
 	}
 
 	private DefaultCloudhopperConfigurer() {

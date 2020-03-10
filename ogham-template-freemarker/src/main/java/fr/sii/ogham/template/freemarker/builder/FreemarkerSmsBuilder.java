@@ -1,5 +1,6 @@
 package fr.sii.ogham.template.freemarker.builder;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import freemarker.template.Configuration;
@@ -59,10 +60,10 @@ public class FreemarkerSmsBuilder extends AbstractFreemarkerBuilder<FreemarkerSm
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public FreemarkerSmsBuilder(SmsBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(FreemarkerSmsBuilder.class, parent, environmentBuilder);
+	public FreemarkerSmsBuilder(SmsBuilder parent, BuildContext buildContext) {
+		super(FreemarkerSmsBuilder.class, parent, buildContext);
 	}
 }

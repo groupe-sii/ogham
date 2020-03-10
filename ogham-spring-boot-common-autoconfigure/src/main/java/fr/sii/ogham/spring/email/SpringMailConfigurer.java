@@ -2,9 +2,6 @@ package fr.sii.ogham.spring.email;
 
 import static java.util.Optional.ofNullable;
 
-import java.util.Map;
-import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -35,14 +32,16 @@ import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
  * 
  * <p>
  * This configurer is also useful to support property naming variants (see
- * <a href="https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed Binding</a>).
+ * <a href=
+ * "https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed
+ * Binding</a>).
  * 
  * @author Aurélien Baudet
  *
  */
 public class SpringMailConfigurer implements SpringMessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(SpringMailConfigurer.class);
-	
+
 	private final OghamJavaMailProperties properties;
 	private final MailProperties springMailProperties;
 
@@ -55,9 +54,8 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 	@Override
 	public void configure(MessagingBuilder builder) {
 		LOG.debug("[{}] apply configuration", this);
-		// use same environment as parent builder
-		builder.email().sender(JavaMailBuilder.class).environment(builder.environment());
-		// Ogham specific properties take precedence over Spring properties if specified
+		// Ogham specific properties take precedence over Spring properties if
+		// specified
 		if (springMailProperties != null) {
 			applySpringMailConfiguration(builder);
 		}
@@ -93,20 +91,14 @@ public class SpringMailConfigurer implements SpringMessagingConfigurer {
 				.charset().value(ofNullable(springMailProperties.getDefaultEncoding())).and()
 				.host().value(ofNullable(springMailProperties.getHost())).and()
 				.port().value(ofNullable(springMailProperties.getPort())).and()
-				.environment()
-					.properties(asProperties(springMailProperties.getProperties()));
+				.properties(springMailProperties.getProperties());
 		// @formatter:on
 	}
+	
 
 	@Override
 	public int getOrder() {
 		return JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY + 1000;
-	}
-
-	private static Properties asProperties(Map<String, String> source) {
-		Properties props = new Properties();
-		props.putAll(source);
-		return props;
 	}
 
 }

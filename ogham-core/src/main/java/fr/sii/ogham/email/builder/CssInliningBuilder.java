@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
@@ -44,12 +45,12 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public CssInliningBuilder(CssHandlingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public CssInliningBuilder(CssHandlingBuilder parent, BuildContext buildContext) {
 		super(parent);
-		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuilder);
+		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, buildContext);
 	}
 
 	/**

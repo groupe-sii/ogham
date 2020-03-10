@@ -45,9 +45,6 @@ public class ExternalFileTest {
 		// prepare parser
 		builder = new ThymeleafV2EmailBuilder();
 		builder
-			.environment()
-				.systemProperties()
-				.and()
 			.classpath()
 				.lookup("classpath:", "")
 				.and()

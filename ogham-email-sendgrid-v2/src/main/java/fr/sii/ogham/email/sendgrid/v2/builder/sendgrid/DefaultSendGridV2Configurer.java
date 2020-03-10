@@ -1,15 +1,14 @@
 package fr.sii.ogham.email.sendgrid.v2.builder.sendgrid;
 
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.email.sendgrid.SendGridConstants.DEFAULT_SENDGRID_CONFIGURER_PRIORITY;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 
@@ -29,8 +28,7 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  * 
  * <p>
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder} and
- * {@link SendGridV2Builder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * </p>
  * <p>
  * This configurer inherits mimetype configuration (see
@@ -57,19 +55,6 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  */
 public final class DefaultSendGridV2Configurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultSendGridV2Configurer.class);
-	
-	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_SENDGRID_CONFIGURER_PRIORITY, phase = AFTER_INIT)
-	public static class EnvironmentPropagator implements MessagingConfigurer {
-		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (canUseSendGrid()) {
-				SendGridV2Builder builder = msgBuilder.email().sender(SendGridV2Builder.class);
-				// use same environment as parent builder
-				builder.environment(msgBuilder.environment());
-				builder.mimetype(msgBuilder.mimetype());
-			}
-		}
-	}
 
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_SENDGRID_CONFIGURER_PRIORITY)
 	public static class SendGridV2Configurer implements MessagingConfigurer {
@@ -82,18 +67,20 @@ public final class DefaultSendGridV2Configurer {
 			LOG.debug("[{}] apply configuration", this);
 			// @formatter:off
 			SendGridV2Builder builder = msgBuilder.email().sender(SendGridV2Builder.class);
+			// inherit mimetype configuration as parent builder
+			builder.mimetype(msgBuilder.mimetype());
 			builder
 				.apiKey().properties("${ogham.email.sendgrid.api-key}").and()
 				.username().properties("${ogham.email.sendgrid.username}").and()
 				.password().properties("${ogham.email.sendgrid.password}");
 			// @formatter:on
 		}
+
+		private static boolean canUseSendGrid() {
+			return ClasspathUtils.exists("com.sendgrid.SendGrid") && ClasspathUtils.exists("com.sendgrid.SendGrid$Email");
+		}
 	}
-	
-	private static boolean canUseSendGrid() {
-		return ClasspathUtils.exists("com.sendgrid.SendGrid") && ClasspathUtils.exists("com.sendgrid.SendGrid$Email");
-	}
-	
+
 	private DefaultSendGridV2Configurer() {
 		super();
 	}

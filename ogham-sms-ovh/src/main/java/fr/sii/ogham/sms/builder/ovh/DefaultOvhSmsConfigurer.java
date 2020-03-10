@@ -1,7 +1,6 @@
 package fr.sii.ogham.sms.builder.ovh;
 
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.sms.OvhSmsConstants.DEFAULT_OVHSMS_CONFIGURER_PRIORITY;
 
 import java.net.MalformedURLException;
@@ -10,10 +9,10 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
 
 /**
@@ -31,8 +30,7 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  * 
  * <p>
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder} and
- * {@link OvhSmsBuilder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * </p>
  * 
  * <p>
@@ -53,16 +51,16 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  * </li>
  * <li>Configures extra options:
  * <ul>
- * <li>It uses "ogham.sms.ovh.options.no-stop" property value to enable/disable "STOP"
- * indication at the end of the message (useful to disable for non-commercial
- * SMS). Default to true (disabled)</li>
- * <li>It uses "ogham.sms.ovh.options.sms-coding" property value to define message
- * encoding (see {@link SmsCoding}): 1 for 7bit encoding, 2 for 16bit encoding
- * (Unicode). If you use Unicode, your SMS will have a maximum size of 70
- * characters instead of 160. If nothing specified, auto-detection is used. Set
- * this property if you want to force {@link SmsCoding} value.</li>
- * <li>It uses "ogham.sms.ovh.options.tag" to mark sent messages with a 20 maximum
- * character string</li>
+ * <li>It uses "ogham.sms.ovh.options.no-stop" property value to enable/disable
+ * "STOP" indication at the end of the message (useful to disable for
+ * non-commercial SMS). Default to true (disabled)</li>
+ * <li>It uses "ogham.sms.ovh.options.sms-coding" property value to define
+ * message encoding (see {@link SmsCoding}): 1 for 7bit encoding, 2 for 16bit
+ * encoding (Unicode). If you use Unicode, your SMS will have a maximum size of
+ * 70 characters instead of 160. If nothing specified, auto-detection is used.
+ * Set this property if you want to force {@link SmsCoding} value.</li>
+ * <li>It uses "ogham.sms.ovh.options.tag" to mark sent messages with a 20
+ * maximum character string</li>
  * </ul>
  * </li>
  * </ul>
@@ -73,16 +71,6 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
 public final class DefaultOvhSmsConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultOvhSmsConfigurer.class);
 
-	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_OVHSMS_CONFIGURER_PRIORITY, phase = AFTER_INIT)
-	public static class EnvironmentPropagator implements MessagingConfigurer {
-		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			OvhSmsBuilder builder = msgBuilder.sms().sender(OvhSmsBuilder.class);
-			// use same environment as parent builder
-			builder.environment(msgBuilder.environment());
-		}
-	}
-	
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_OVHSMS_CONFIGURER_PRIORITY)
 	public static class OvhSmsConfigurer implements MessagingConfigurer {
 		@Override
@@ -101,7 +89,7 @@ public final class DefaultOvhSmsConfigurer {
 					.tag().properties("${ogham.sms.ovh.options.tag}");
 			// @formatter:on
 		}
-	
+
 		private static URL defaultUrl() {
 			try {
 				return new URL("https://www.ovh.com/cgi-bin/sms/http2sms.cgi");
@@ -111,7 +99,7 @@ public final class DefaultOvhSmsConfigurer {
 			}
 		}
 	}
-	
+
 	private DefaultOvhSmsConfigurer() {
 		super();
 	}

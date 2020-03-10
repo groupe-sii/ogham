@@ -1,11 +1,11 @@
 package fr.sii.ogham.sms.builder;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
@@ -22,7 +22,6 @@ import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
  *
  */
 public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumberBuilder> implements Builder<PhoneNumberTranslator> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<RecipientNumberFormatBuilder, Boolean> enableInternationalValueBuilder;
 
 	/**
@@ -32,15 +31,14 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public RecipientNumberFormatBuilder(RecipientNumberBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public RecipientNumberFormatBuilder(RecipientNumberBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
-	
+
 	/**
 	 * Enable/disable international number conversion: if the sender starts with
 	 * a "+", TON is set to 1, and NPI is set to 1.
@@ -81,15 +79,16 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 		return this;
 	}
 
-	
 	/**
 	 * Enable/disable international number conversion: if the sender starts with
 	 * a "+", TON is set to 1, and NPI is set to 1.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .internationalNumber()
@@ -131,8 +130,7 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 		return translator;
 	}
 
-	private boolean enabled(ConfigurationValueBuilderHelper<?, Boolean> enableInternational) {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		return enableInternational.getValue(propertyResolver, false);
+	private static boolean enabled(ConfigurationValueBuilderHelper<?, Boolean> enableInternational) {
+		return enableInternational.getValue(false);
 	}
 }

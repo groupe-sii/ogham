@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.annotation.RequiredClass;
@@ -339,7 +340,7 @@ import fr.sii.ogham.template.common.adapter.VariantResolver;
 public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Builder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(EmailBuilder.class);
 
-	private final EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private final TemplateBuilderHelper<EmailBuilder> templateBuilderHelper;
 	private final SenderImplementationBuilderHelper<EmailBuilder> senderBuilderHelper;
 	private AttachmentHandlingBuilder attachmentBuilder;
@@ -354,14 +355,14 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public EmailBuilder(MessagingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public EmailBuilder(MessagingBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		templateBuilderHelper = new TemplateBuilderHelper<>(this, environmentBuilder);
-		senderBuilderHelper = new SenderImplementationBuilderHelper<>(this, environmentBuilder);
+		this.buildContext = buildContext;
+		templateBuilderHelper = new TemplateBuilderHelper<>(this, buildContext);
+		senderBuilderHelper = new SenderImplementationBuilderHelper<>(this, buildContext);
 	}
 
 	/**
@@ -437,7 +438,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 */
 	public AttachmentHandlingBuilder attachments() {
 		if (attachmentBuilder == null) {
-			attachmentBuilder = new AttachmentHandlingBuilder(this, environmentBuilder);
+			attachmentBuilder = new AttachmentHandlingBuilder(this, buildContext);
 		}
 		return attachmentBuilder;
 	}
@@ -488,7 +489,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 */
 	public AutofillEmailBuilder autofill() {
 		if (autofillBuilder == null) {
-			autofillBuilder = new AutofillEmailBuilder(this, environmentBuilder);
+			autofillBuilder = new AutofillEmailBuilder(this, buildContext);
 		}
 		return autofillBuilder;
 	}
@@ -512,7 +513,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 */
 	public CssHandlingBuilder css() {
 		if (cssBuilder == null) {
-			cssBuilder = new CssHandlingBuilder(this, environmentBuilder);
+			cssBuilder = new CssHandlingBuilder(this, buildContext);
 		}
 		return cssBuilder;
 	}
@@ -552,7 +553,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 */
 	public ImageHandlingBuilder images() {
 		if (imageBuilder == null) {
-			imageBuilder = new ImageHandlingBuilder(this, environmentBuilder);
+			imageBuilder = new ImageHandlingBuilder(this, buildContext);
 		}
 		return imageBuilder;
 	}
@@ -699,7 +700,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	public <T extends Builder<? extends MessageSender>> T sender(Class<T> builderClass) {
 		return senderBuilderHelper.register(builderClass);
 	}
-	
+
 	/**
 	 * If a variant is missing, then force to fail.
 	 * 
@@ -757,9 +758,11 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 * </p>
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .failIfMissingVariant()
@@ -790,10 +793,10 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	public ConfigurationValueBuilder<EmailBuilder, Boolean> failIfMissingVariant() {
 		return new ConfigurationValueBuilderDelegate<>(this, templateBuilderHelper.failIfMissingVariant());
 	}
-	
-	
+
 	/**
-	 * When {@link #failIfMissingVariant()} is enabled, also indicate which paths were tried in order to help debugging why a variant was not found.
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which
+	 * paths were tried in order to help debugging why a variant was not found.
 	 * 
 	 * <p>
 	 * The value set using this method takes precedence over any property and
@@ -823,7 +826,8 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 * property/default value configuration is applied.
 	 * 
 	 * @param enable
-	 *            enable/disable tracking of possible paths for template variants
+	 *            enable/disable tracking of possible paths for template
+	 *            variants
 	 * @return this instance for fluent chaining
 	 */
 	public EmailBuilder listPossiblePaths(Boolean enable) {
@@ -832,12 +836,15 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	}
 
 	/**
-	 * When {@link #failIfMissingVariant()} is enabled, also indicate which paths were tried in order to help debugging why a variant was not found.
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which
+	 * paths were tried in order to help debugging why a variant was not found.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .listPossiblePaths()

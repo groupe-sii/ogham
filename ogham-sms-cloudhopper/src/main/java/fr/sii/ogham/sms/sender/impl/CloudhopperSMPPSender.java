@@ -1,5 +1,7 @@
 package fr.sii.ogham.sms.sender.impl;
 
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_IMPLEMENTATION_PRIORITY;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,7 @@ import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
 
+import fr.sii.ogham.core.builder.priority.Priority;
 import fr.sii.ogham.core.clean.Cleanable;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
@@ -34,6 +37,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
  * 
  * @author Aurélien Baudet
  */
+@Priority(properties="${ogham.sms.implementation-priority.cloudhopper}", defaultValue = DEFAULT_CLOUDHOPPER_IMPLEMENTATION_PRIORITY)
 public class CloudhopperSMPPSender extends AbstractSpecializedSender<Sms> implements Cleanable {
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperSMPPSender.class);
 

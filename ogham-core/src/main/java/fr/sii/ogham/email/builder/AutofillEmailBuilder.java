@@ -3,10 +3,10 @@ package fr.sii.ogham.email.builder;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.filler.EveryFillerDecorator;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -35,12 +35,12 @@ import fr.sii.ogham.email.message.Email;
  *
  */
 public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implements Builder<MessageFiller> {
+	private final BuildContext buildContext;
 	private AutofillSubjectBuilder subjectBuilder;
 	private AutofillDefaultEmailAddressBuilder<String> fromBuilder;
 	private AutofillDefaultEmailAddressBuilder<String[]> toBuilder;
 	private AutofillDefaultEmailAddressBuilder<String[]> ccBuilder;
 	private AutofillDefaultEmailAddressBuilder<String[]> bccBuilder;
-	private EnvironmentBuilder<?> environmentBuilder;
 
 	/**
 	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
@@ -50,12 +50,12 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            configuration about property resolution
+	 * @param buildContext
+	 *            for property resolution
 	 */
-	public AutofillEmailBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public AutofillEmailBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 */
 	public AutofillSubjectBuilder subject() {
 		if (subjectBuilder == null) {
-			subjectBuilder = new AutofillSubjectBuilder(this, environmentBuilder);
+			subjectBuilder = new AutofillSubjectBuilder(this, buildContext);
 		}
 		return subjectBuilder;
 	}
@@ -90,7 +90,7 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 */
 	public AutofillDefaultEmailAddressBuilder<String> from() {
 		if (fromBuilder == null) {
-			fromBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String.class);
+			fromBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String.class, buildContext);
 		}
 		return fromBuilder;
 	}
@@ -105,7 +105,7 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 */
 	public AutofillDefaultEmailAddressBuilder<String[]> to() {
 		if (toBuilder == null) {
-			toBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class);
+			toBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class, buildContext);
 		}
 		return toBuilder;
 	}
@@ -120,7 +120,7 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 */
 	public AutofillDefaultEmailAddressBuilder<String[]> cc() {
 		if (ccBuilder == null) {
-			ccBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class);
+			ccBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class, buildContext);
 		}
 		return ccBuilder;
 	}
@@ -135,7 +135,7 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 	 */
 	public AutofillDefaultEmailAddressBuilder<String[]> bcc() {
 		if (bccBuilder == null) {
-			bccBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class);
+			bccBuilder = new AutofillDefaultEmailAddressBuilder<>(this, String[].class, buildContext);
 		}
 		return bccBuilder;
 	}
@@ -146,8 +146,7 @@ public class AutofillEmailBuilder extends AbstractParent<EmailBuilder> implement
 		if (subjectBuilder != null) {
 			filler.addFiller(subjectBuilder.build());
 		}
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		filler.addFiller(new EmailFiller(propertyResolver, buildDefaultValueProps()));
+		filler.addFiller(new EmailFiller(buildDefaultValueProps()));
 		return filler;
 	}
 

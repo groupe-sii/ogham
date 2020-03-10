@@ -1,5 +1,6 @@
 package fr.sii.ogham.core.builder.resolution;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
@@ -51,11 +52,11 @@ public class FileResolutionBuilder<P> extends AbstractSingleResolutionBuilder<Fi
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            configuration about property resolution
+	 * @param buildContext
+	 *            for property resolution
 	 */
-	public FileResolutionBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(FileResolutionBuilder.class, parent, environmentBuilder);
+	public FileResolutionBuilder(P parent, BuildContext buildContext) {
+		super(FileResolutionBuilder.class, parent, buildContext);
 	}
 
 	@Override

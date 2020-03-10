@@ -1,18 +1,18 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.commons.gsm.DataCoding;
 import com.cloudhopper.smpp.SmppConstants;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToCharacterEncodingGroupDataCodingProvider;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToGeneralGroupDataCodingProvider;
@@ -61,8 +61,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.FixedByteValueDataCod
  * @author Aurélien Baudet
  */
 public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<DataCodingProvider> {
-	private final EnvironmentBuilder<?> environmentBuilder;
-	private final Function<PropertyResolver, Byte> interfaceVersionProvider;
+	private final Supplier<Byte> interfaceVersionProvider;
 	private final ConfigurationValueBuilderHelper<DataCodingSchemeBuilder, Boolean> autoValueBuilder;
 	private final ConfigurationValueBuilderHelper<DataCodingSchemeBuilder, Byte> dcsValueBuilder;
 	private DataCodingProvider custom;
@@ -74,19 +73,18 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 * @param interfaceVersionProvider
 	 *            A function used to retrieve the value of the interface
 	 *            version. This is needed when {@link #auto(Boolean)} mode is
 	 *            enabled.
 	 */
-	public DataCodingSchemeBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder, Function<PropertyResolver, Byte> interfaceVersionProvider) {
+	public DataCodingSchemeBuilder(CloudhopperBuilder parent, BuildContext buildContext, Supplier<Byte> interfaceVersionProvider) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
 		this.interfaceVersionProvider = interfaceVersionProvider;
-		this.autoValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
-		this.dcsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Byte.class);
+		this.autoValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		this.dcsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Byte.class, buildContext);
 	}
 
 	/**
@@ -322,15 +320,16 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 		this.dcsValueBuilder.setValue(value);
 		return this;
 	}
-	
-	
+
 	/**
 	 * Use the same Data Coding Scheme value for all messages.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .value()
@@ -339,8 +338,8 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #value(Byte)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #value(Byte)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .value((byte) 0x10)
@@ -349,8 +348,8 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 *   .defaultValue((byte) 0)
 	 * </pre>
 	 * 
-	 * The value {@code (byte) 0x10} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code (byte) 0x10} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -366,10 +365,9 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * Register a custom strategy to determine Data Coding Scheme value.
 	 * 
 	 * <p>
-	 * Automatic behavior (see {@link #auto(Boolean)} is still active but
-	 * custom strategy is executed first. As the custom
-	 * {@link DataCodingProvider} can return {@code null}, the automatic
-	 * behavior is executed in that case.
+	 * Automatic behavior (see {@link #auto(Boolean)} is still active but custom
+	 * strategy is executed first. As the custom {@link DataCodingProvider} can
+	 * return {@code null}, the automatic behavior is executed in that case.
 	 * 
 	 * <p>
 	 * If {@code null} value is provided, custom strategy is disabled.
@@ -386,8 +384,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	@Override
 	@SuppressWarnings("squid:S5411")
 	public DataCodingProvider build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		Byte dataCodingValue = dcsValueBuilder.getValue(propertyResolver);
+		Byte dataCodingValue = dcsValueBuilder.getValue();
 		if (dataCodingValue != null) {
 			return new FixedByteValueDataCodingProvider(dataCodingValue);
 		}
@@ -395,14 +392,14 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 		if (custom != null) {
 			firstSupporting.register(custom);
 		}
-		if (autoValueBuilder.getValue(propertyResolver, false)) {
-			registerAuto(propertyResolver, firstSupporting);
+		if (autoValueBuilder.getValue(false)) {
+			registerAuto(firstSupporting);
 		}
 		return firstSupporting;
 	}
 
-	private void registerAuto(PropertyResolver propertyResolver, FirstSupportingDataCodingProvider firstSupporting) {
-		Byte interfaceVersion = interfaceVersionProvider.apply(propertyResolver);
+	private void registerAuto(FirstSupportingDataCodingProvider firstSupporting) {
+		Byte interfaceVersion = interfaceVersionProvider.get();
 		if (interfaceVersion == SmppConstants.VERSION_3_3) {
 			firstSupporting.register(new CharsetMapToGeneralGroupDataCodingProvider(false));
 			return;

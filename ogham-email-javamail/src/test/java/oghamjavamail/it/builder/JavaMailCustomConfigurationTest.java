@@ -31,8 +31,6 @@ public class JavaMailCustomConfigurationTest {
 		MessagingService service = MessagingBuilder.empty()
 				.email()
 					.sender(JavaMailBuilder.class)
-					.environment()
-						.and()
 					.mimetype()
 						.tika()
 							.failIfOctetStream(false)
@@ -59,11 +57,11 @@ public class JavaMailCustomConfigurationTest {
 		additionalProps.setProperty("mail.host", "value of mail.host");
 		additionalProps.setProperty("mail.port", "value of mail.port");
 		MessagingService service = MessagingBuilder.empty()
+				.environment()
+					.properties(additionalProps)
+					.and()
 				.email()
 					.sender(JavaMailBuilder.class)
-					.environment()
-						.properties(additionalProps)
-						.and()
 					.mimetype()
 						.tika()
 							.failIfOctetStream(false)
@@ -93,11 +91,11 @@ public class JavaMailCustomConfigurationTest {
 		additionalProps.setProperty("mail.host", "value of mail.host");
 		additionalProps.setProperty("mail.port", "value of mail.port");
 		MessagingService service = MessagingBuilder.empty()
+				.environment()
+					.properties(additionalProps)
+					.and()
 				.email()
 					.sender(JavaMailBuilder.class)
-					.environment()
-						.properties(additionalProps)
-						.and()
 					.mimetype()
 						.tika()
 							.failIfOctetStream(false)

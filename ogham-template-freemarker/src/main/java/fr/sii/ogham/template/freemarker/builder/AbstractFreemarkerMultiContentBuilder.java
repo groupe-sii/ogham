@@ -3,7 +3,7 @@ package fr.sii.ogham.template.freemarker.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.template.VariantBuilder;
 import fr.sii.ogham.core.builder.template.VariantWithExt;
 import fr.sii.ogham.core.message.content.Variant;
@@ -14,8 +14,8 @@ import fr.sii.ogham.template.common.adapter.VariantResolver;
 public abstract class AbstractFreemarkerMultiContentBuilder<MYSELF extends AbstractFreemarkerMultiContentBuilder<MYSELF, P>, P> extends AbstractFreemarkerBuilder<MYSELF, P> implements VariantBuilder<MYSELF> {
 	private List<VariantWithExt> variants;
 	
-	protected AbstractFreemarkerMultiContentBuilder(Class<?> selfType, P parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(selfType, parent, environmentBuilder);
+	protected AbstractFreemarkerMultiContentBuilder(Class<?> selfType, P parent, BuildContext buildContext) {
+		super(selfType, parent, buildContext);
 		variants = new ArrayList<>();
 	}
 

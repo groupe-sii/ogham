@@ -1,11 +1,11 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.builder.cloudhopper.UserDataBuilder.UserDataPropValues;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
@@ -38,7 +38,6 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
  *
  */
 public class UserDataBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<UserDataPropValues> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<UserDataBuilder, Boolean> useShortMessageValueBuilder;
 	private final ConfigurationValueBuilderHelper<UserDataBuilder, Boolean> useTlvMessagePayloadValueBuilder;
 
@@ -49,14 +48,13 @@ public class UserDataBuilder extends AbstractParent<CloudhopperBuilder> implemen
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public UserDataBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public UserDataBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		useShortMessageValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
-		useTlvMessagePayloadValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		useShortMessageValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		useTlvMessagePayloadValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
 	/**
@@ -228,9 +226,8 @@ public class UserDataBuilder extends AbstractParent<CloudhopperBuilder> implemen
 
 	@Override
 	public UserDataPropValues build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		boolean useShort = useShortMessageValueBuilder.getValue(propertyResolver, false);
-		boolean useTlv = useTlvMessagePayloadValueBuilder.getValue(propertyResolver, false);
+		boolean useShort = useShortMessageValueBuilder.getValue(false);
+		boolean useTlv = useTlvMessagePayloadValueBuilder.getValue(false);
 		return new UserDataPropValues(useShort, useTlv);
 	}
 

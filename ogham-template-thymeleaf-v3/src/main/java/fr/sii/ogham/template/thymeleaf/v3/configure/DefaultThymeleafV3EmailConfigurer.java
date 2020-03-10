@@ -1,24 +1,21 @@
 package fr.sii.ogham.template.thymeleaf.v3.configure;
 
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.template.thymeleaf.common.ThymeleafConstants.DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
-import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiContentBuilder;
 import fr.sii.ogham.template.thymeleaf.common.configure.AbstractDefaultThymeleafEmailConfigurer;
 import fr.sii.ogham.template.thymeleaf.v3.ThymeleafV3TemplateDetector;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
-import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3SmsBuilder;
 
 /**
  * Default configurer for Thymeleaf template engine that is automatically
@@ -36,9 +33,7 @@ import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3SmsBuilder;
  * 
  * <p>
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder},
- * {@link ThymeleafV3EmailBuilder#environment(EnvironmentBuilder)} and
- * {@link ThymeleafV3SmsBuilder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * </p>
  * <p>
  * It also copies resource resolution configuration of
@@ -109,28 +104,16 @@ import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3SmsBuilder;
 public final class DefaultThymeleafV3EmailConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultThymeleafV3EmailConfigurer.class);
 
-	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY, phase = AFTER_INIT)
-	public static class EnvironmentPropagator implements MessagingConfigurer {
-		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if (canUseThymeleafV3()) {
-				AbstractThymeleafMultiContentBuilder<?, ?, ?> builder = msgBuilder.email().template(ThymeleafV3EmailBuilder.class);
-				// use same environment as parent builder
-				builder.environment(msgBuilder.environment());
-			}
-		}
-	}
-	
 	@ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_THYMELEAF_EMAIL_CONFIGURER_PRIORITY)
 	public static class ThymeleafV3EmailConfigurer extends AbstractDefaultThymeleafEmailConfigurer {
 		public ThymeleafV3EmailConfigurer() {
 			super(LOG);
 		}
-	
+
 		public ThymeleafV3EmailConfigurer(MessagingConfigurerAdapter delegate) {
 			super(LOG, delegate);
 		}
-	
+
 		@Override
 		protected boolean canUseThymeleaf() {
 			return canUseThymeleafV3();
@@ -140,12 +123,13 @@ public final class DefaultThymeleafV3EmailConfigurer {
 		protected Class<? extends AbstractThymeleafMultiContentBuilder<?, ?, ?>> getBuilderClass() {
 			return ThymeleafV3EmailBuilder.class;
 		}
+
+		private static boolean canUseThymeleafV3() {
+			return ClasspathUtils.exists("org.thymeleaf.TemplateEngine") && ClasspathUtils.exists("org.thymeleaf.IEngineConfiguration");
+		}
 	}
-	
-	private static boolean canUseThymeleafV3() {
-		return ClasspathUtils.exists("org.thymeleaf.TemplateEngine") && ClasspathUtils.exists("org.thymeleaf.IEngineConfiguration");
-	}
-	
+
+
 	private DefaultThymeleafV3EmailConfigurer() {
 		super();
 	}

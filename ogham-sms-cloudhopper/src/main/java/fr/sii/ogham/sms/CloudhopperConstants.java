@@ -6,6 +6,10 @@ public final class CloudhopperConstants {
 	 * templating configurers.
 	 */
 	public static final int DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY = 40000;
+	/**
+	 * The implementation has a priority of 40000.
+	 */
+	public static final int DEFAULT_CLOUDHOPPER_IMPLEMENTATION_PRIORITY = 40000;
 
 	/**
 	 * The priority for UCS-2 encoding. This is used by automatic guessing.

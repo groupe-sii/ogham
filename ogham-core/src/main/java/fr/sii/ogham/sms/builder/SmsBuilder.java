@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.annotation.RequiredClass;
@@ -11,7 +12,6 @@ import fr.sii.ogham.core.builder.annotation.RequiredClasses;
 import fr.sii.ogham.core.builder.annotation.RequiredProperties;
 import fr.sii.ogham.core.builder.annotation.RequiredProperty;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
@@ -275,7 +275,7 @@ import fr.sii.ogham.sms.sender.SmsSender;
 public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Builder<ConditionalSender> {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);
 
-	private EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private final TemplateBuilderHelper<SmsBuilder> templateBuilderHelper;
 	private final SenderImplementationBuilderHelper<SmsBuilder> senderBuilderHelper;
 	private AutofillSmsBuilder autofillBuilder;
@@ -283,19 +283,19 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
-	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
-	 * used to evaluate properties when {@link #build()} method is called.
+	 * when calling {@link #and()} method. The {@link BuildContext} is used to
+	 * evaluate properties when {@link #build()} method is called.
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public SmsBuilder(MessagingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public SmsBuilder(MessagingBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		templateBuilderHelper = new TemplateBuilderHelper<>(this, environmentBuilder);
-		senderBuilderHelper = new SenderImplementationBuilderHelper<>(this, environmentBuilder);
+		this.buildContext = buildContext;
+		templateBuilderHelper = new TemplateBuilderHelper<>(this, buildContext);
+		senderBuilderHelper = new SenderImplementationBuilderHelper<>(this, buildContext);
 	}
 
 	/**
@@ -326,7 +326,7 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	 */
 	public AutofillSmsBuilder autofill() {
 		if (autofillBuilder == null) {
-			autofillBuilder = new AutofillSmsBuilder(this, environmentBuilder);
+			autofillBuilder = new AutofillSmsBuilder(this, buildContext);
 		}
 		return autofillBuilder;
 	}
@@ -364,7 +364,7 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	 */
 	public PhoneNumbersBuilder numbers() {
 		if (phoneNumbersBuilder == null) {
-			phoneNumbersBuilder = new PhoneNumbersBuilder(this, environmentBuilder);
+			phoneNumbersBuilder = new PhoneNumbersBuilder(this, buildContext);
 		}
 		return phoneNumbersBuilder;
 	}
@@ -399,7 +399,7 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	 * constructor with two arguments:
 	 * <ul>
 	 * <li>The type of the parent builder ({@code &lt;P&gt;})</li>
-	 * <li>The {@link EnvironmentBuilder} instance</li>
+	 * <li>The {@link BuildContext} instance</li>
 	 * </ul>
 	 * If you don't care about chaining, just provide a default constructor.
 	 * 

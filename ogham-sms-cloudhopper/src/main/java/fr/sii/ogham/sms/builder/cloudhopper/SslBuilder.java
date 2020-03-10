@@ -2,12 +2,12 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 
 import com.cloudhopper.smpp.ssl.SslConfiguration;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
@@ -21,7 +21,6 @@ import fr.sii.ogham.core.fluent.AbstractParent;
  *
  */
 public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<SslConfiguration> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<SslBuilder, Boolean> enableSslValueBuilder;
 	private SslConfiguration sslConfiguration;
 
@@ -32,16 +31,14 @@ public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Bu
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public SslBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public SslBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		enableSslValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		enableSslValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
-	
 	/**
 	 * Enable or disable SSL.
 	 * 
@@ -85,9 +82,11 @@ public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Bu
 	 * Enable or disable SSL.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .enable()
@@ -96,8 +95,8 @@ public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Bu
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #enable(Boolean)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #enable(Boolean)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .enable(true)
@@ -118,7 +117,7 @@ public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Bu
 	public ConfigurationValueBuilder<SslBuilder, Boolean> enable() {
 		return enableSslValueBuilder;
 	}
-	
+
 	/**
 	 * Configure SSL handling.
 	 * 
@@ -140,8 +139,7 @@ public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Bu
 
 	@Override
 	public SslConfiguration build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		boolean enabled = enableSslValueBuilder.getValue(propertyResolver, false);
+		boolean enabled = enableSslValueBuilder.getValue(false);
 		return enabled ? sslConfiguration : null;
 	}
 

@@ -3,6 +3,7 @@ package fr.sii.ogham.template.thymeleaf.v2.buider;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.sms.builder.SmsBuilder;
@@ -72,11 +73,11 @@ public class ThymeleafV2SmsBuilder extends AbstractThymeleafBuilder<ThymeleafV2S
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public ThymeleafV2SmsBuilder(SmsBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(ThymeleafV2SmsBuilder.class, parent, environmentBuilder);
+	public ThymeleafV2SmsBuilder(SmsBuilder parent, BuildContext buildContext) {
+		super(ThymeleafV2SmsBuilder.class, parent, buildContext);
 	}
 
 	@Override

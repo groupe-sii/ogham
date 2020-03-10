@@ -2,27 +2,24 @@ package fr.sii.ogham.template.thymeleaf.common.buider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
-import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -34,7 +31,6 @@ import fr.sii.ogham.template.thymeleaf.common.ThymeleafContextConverter;
 import fr.sii.ogham.template.thymeleaf.common.ThymeleafParser;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
 import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
-import fr.sii.ogham.template.thymeleaf.common.configure.AbstractDefaultThymeleafEmailConfigurer;
 
 @SuppressWarnings("squid:S00119")
 public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafBuilder<MYSELF, P, E>, P, E extends AbstractThymeleafEngineConfigBuilder<E, MYSELF>> extends AbstractParent<P>
@@ -42,7 +38,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractThymeleafBuilder.class);
 
 	protected final MYSELF myself;
-	protected EnvironmentBuilder<MYSELF> environmentBuilder;
+	protected final BuildContext buildContext;
 	protected TemplateEngineDetector detector;
 	protected ResourceResolutionBuilderHelper<MYSELF> resourceResolutionBuilderHelper;
 	protected TemplateEngine engine;
@@ -52,99 +48,22 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	protected final ConfigurationValueBuilderHelper<MYSELF, Boolean> enableCacheValueBuilder;
 
 	protected AbstractThymeleafBuilder(Class<?> selfType) {
-		this(selfType, null, null);
+		this(selfType, null, new DefaultBuildContext());
 	}
 
 	@SuppressWarnings("unchecked")
-	protected AbstractThymeleafBuilder(Class<?> selfType, P parent, EnvironmentBuilder<?> environmentBuilder) {
+	protected AbstractThymeleafBuilder(Class<?> selfType, P parent, BuildContext buildContext) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
-		if (environmentBuilder != null) {
-			environment(environmentBuilder);
-		}
+		this.buildContext = buildContext;
 		customAdapters = new ArrayList<>();
-		enableCacheValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class);
+		enableCacheValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class, buildContext);
 	}
 
-	protected AbstractThymeleafBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
-		this(AbstractThymeleafBuilder.class, parent, environmentBuilder);
+	protected AbstractThymeleafBuilder(P parent, BuildContext buildContext) {
+		this(AbstractThymeleafBuilder.class, parent, buildContext);
 	}
 
-	/**
-	 * Configures environment for the builder (and sub-builders). Environment
-	 * consists of configuration properties/values that are used to configure
-	 * the system (see {@link EnvironmentBuilder} for more information).
-	 * 
-	 * You can use system properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .systemProperties();
-	 * </pre>
-	 * 
-	 * Or, you can load properties from a file:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties("/path/to/file.properties")
-	 * </pre>
-	 * 
-	 * Or using directly a {@link Properties} object:
-	 * 
-	 * <pre>
-	 * Properties myprops = new Properties();
-	 * myprops.setProperty("foo", "bar");
-	 * .environment()
-	 *    .properties(myprops)
-	 * </pre>
-	 * 
-	 * Or defining directly properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties()
-	 *       .set("foo", "bar")
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * If no environment was previously used, it creates a new one. Then each
-	 * time you call {@link #environment()}, the same instance is used.
-	 * </p>
-	 * 
-	 * @return the builder to configure properties handling
-	 */
-	public EnvironmentBuilder<MYSELF> environment() {
-		if (environmentBuilder == null) {
-			environmentBuilder = new SimpleEnvironmentBuilder<>(myself);
-		}
-		return environmentBuilder;
-	}
-
-	/**
-	 * NOTE: this is mostly for advance usage (when creating a custom module).
-	 * 
-	 * Inherits environment configuration from another builder. This is useful
-	 * for configuring independently different parts of Ogham but keeping a
-	 * whole coherence (see {@link AbstractDefaultThymeleafEmailConfigurer} for
-	 * an example of use).
-	 * 
-	 * The same instance is shared meaning that all changes done here will also
-	 * impact the other builder.
-	 * 
-	 * <p>
-	 * If a previous builder was defined (by calling {@link #environment()} for
-	 * example), the new builder will override it.
-	 * 
-	 * @param builder
-	 *            the builder to inherit
-	 * @return this instance for fluent chaining
-	 */
-	public MYSELF environment(EnvironmentBuilder<?> builder) {
-		environmentBuilder = new EnvironmentBuilderDelegate<>(myself, builder);
-		return myself;
-	}
-	
 	/**
 	 * Enable/disable cache for templates.
 	 * 
@@ -188,9 +107,11 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	 * Enable/disable cache for templates.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .cache()
@@ -199,8 +120,8 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #cache(Boolean)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #cache(Boolean)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .cache(false)
@@ -377,16 +298,15 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	protected abstract FirstSupportingResolverAdapter buildAdapters();
 
 	protected TemplateResolverOptions buildTemplateResolverOptions() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
 		TemplateResolverOptions options = new TemplateResolverOptions();
-		options.setCacheable(enableCacheValueBuilder.getValue(propertyResolver));
+		options.setCacheable(enableCacheValueBuilder.getValue());
 		// TODO: handle other options
 		return options;
 	}
 
 	private void initResolutionBuilder() {
 		if (resourceResolutionBuilderHelper == null) {
-			resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(myself, environmentBuilder);
+			resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(myself, buildContext);
 		}
 	}
 }

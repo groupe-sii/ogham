@@ -29,9 +29,6 @@ public class StringResourceResolverTest {
 	@Before
 	public void setup() {
 		parser = new ThymeleafV2SmsBuilder()
-				.environment()
-					.systemProperties()
-					.and()
 				.classpath()
 					.lookup("classpath:", "")
 					.pathPrefix("/template/thymeleaf/source/")

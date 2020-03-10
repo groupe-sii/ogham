@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configurer.Configurer;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
-import fr.sii.ogham.core.util.BuilderUtils;
 
 /**
  * Helper that allow registration of properties and default value but also
@@ -56,7 +55,7 @@ import fr.sii.ogham.core.util.BuilderUtils;
  * <p>
  * <strong>NOTE:</strong> This class is for internal use (or extensions for
  * Ogham). The developer that uses Ogham should not see
- * {@link #setValue(Object)} and {@link #getValue(PropertyResolver)} methods.
+ * {@link #setValue(Object)} and {@link #getValue()} methods.
  * 
  * 
  * @author Aurélien Baudet
@@ -68,6 +67,7 @@ import fr.sii.ogham.core.util.BuilderUtils;
  */
 public class ConfigurationValueBuilderHelper<P, V> extends AbstractParent<P> implements ConfigurationValueBuilder<P, V> {
 	private final Class<V> valueClass;
+	private final BuildContext buildContext;
 	private final List<String> properties;
 	private V defaultValue;
 	private V value;
@@ -81,10 +81,13 @@ public class ConfigurationValueBuilderHelper<P, V> extends AbstractParent<P> imp
 	 *            the parent builder
 	 * @param valueClass
 	 *            the type of the value
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public ConfigurationValueBuilderHelper(P parent, Class<V> valueClass) {
+	public ConfigurationValueBuilderHelper(P parent, Class<V> valueClass, BuildContext buildContext) {
 		super(parent);
 		this.valueClass = valueClass;
+		this.buildContext = buildContext;
 		properties = new ArrayList<>();
 		optionalValue = empty();
 	}
@@ -105,7 +108,7 @@ public class ConfigurationValueBuilderHelper<P, V> extends AbstractParent<P> imp
 		defaultValue = value;
 		return this;
 	}
-	
+
 	@Override
 	public ConfigurationValueBuilderHelper<P, V> defaultValue(MayOverride<V> possibleNewValue) {
 		defaultValue = possibleNewValue.override(defaultValue);
@@ -185,18 +188,16 @@ public class ConfigurationValueBuilderHelper<P, V> extends AbstractParent<P> imp
 	 * <li>null is returned</li>
 	 * </ol>
 	 * 
-	 * @param propertyResolver
-	 *            the property resolver used to evaluate properties
 	 * @return the value
 	 */
-	public V getValue(PropertyResolver propertyResolver) {
+	public V getValue() {
 		if (value != null) {
 			return value;
 		}
 		if (optionalValue.isPresent()) {
 			return optionalValue.get();
 		}
-		V prop = BuilderUtils.evaluate(properties, propertyResolver, valueClass);
+		V prop = buildContext.evaluate(properties, valueClass);
 		if (prop != null) {
 			return prop;
 		}
@@ -218,14 +219,12 @@ public class ConfigurationValueBuilderHelper<P, V> extends AbstractParent<P> imp
 	 * <li>The default value provided as parameter is used</li>
 	 * </ol>
 	 * 
-	 * @param propertyResolver
-	 *            the property resolver used to evaluate properties
 	 * @param defaultValue
 	 *            the default value to use if there isn't a non-null value
 	 * @return the value
 	 */
-	public V getValue(PropertyResolver propertyResolver, V defaultValue) {
-		V configuredValue = getValue(propertyResolver);
+	public V getValue(V defaultValue) {
+		V configuredValue = getValue();
 		if (configuredValue != null) {
 			return configuredValue;
 		}
@@ -240,4 +239,5 @@ public class ConfigurationValueBuilderHelper<P, V> extends AbstractParent<P> imp
 	public boolean hasValueOrProperties() {
 		return value != null || !properties.isEmpty() || defaultValue != null;
 	}
+
 }

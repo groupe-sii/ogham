@@ -7,10 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import com.sendgrid.SendGrid;
 
+import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
@@ -104,7 +105,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public SendGridV2Builder() {
-		this(null);
+		this(null, new DefaultBuildContext());
 	}
 
 	/**
@@ -115,17 +116,18 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 * msgBuilder
 	 * .email()
 	 *    .sender(SendGridV2Builder.class)
-	 *ConfigurationValueRegistry</pre>
+	 * </pre>
 	 * 
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public SendGridV2Builder(EmailBuilder parent) {
-		super(SendGridV2Builder.class, parent);
-		usernameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+	public SendGridV2Builder(EmailBuilder parent, BuildContext buildContext) {
+		super(SendGridV2Builder.class, parent, buildContext);
+		usernameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 	}
-
 
 	@Override
 	public SendGridV2Builder username(String username) {
@@ -148,7 +150,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	public ConfigurationValueBuilder<SendGridV2Builder, String> password() {
 		return passwordValueBuilder;
 	}
-	
+
 	/**
 	 * By default, calling SendGrid HTTP API is done through the default
 	 * {@link SendGrid} implementation. If you want to use another client
@@ -160,9 +162,9 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 * </pre>
 	 * 
 	 * NOTE: if you provide your custom implementation, any defined properties
-	 * and values using {@link #apiKey(String)}, {@link #username(String)}
-	 * or {@link #password(String)} won't be used at all. You then have to
-	 * handle it by yourself.
+	 * and values using {@link #apiKey(String)}, {@link #username(String)} or
+	 * {@link #password(String)} won't be used at all. You then have to handle
+	 * it by yourself.
 	 * 
 	 * @param client
 	 *            the custom client used to call SendGrid HTTP API
@@ -172,7 +174,6 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 		this.client = client;
 		return this;
 	}
-
 
 	/**
 	 * Ogham will transform general {@link Email} object into
@@ -199,11 +200,10 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 
 	@Override
 	public SendGridV2Sender build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		String apiKey = apiKeyValueBuilder.getValue(propertyResolver);
-		String username = usernameValueBuilder.getValue(propertyResolver);
-		String password = passwordValueBuilder.getValue(propertyResolver);
-		URL url = urlValueBuilder.getValue(propertyResolver);
+		String apiKey = apiKeyValueBuilder.getValue();
+		String username = usernameValueBuilder.getValue();
+		String password = passwordValueBuilder.getValue();
+		URL url = urlValueBuilder.getValue();
 		SendGridClient builtClient = buildClient(apiKey, username, password, url);
 		if (builtClient == null) {
 			return null;
@@ -228,7 +228,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 		if (url != null) {
 			sendGrid.setUrl(url.toString());
 		}
-		if(httpClient != null) {
+		if (httpClient != null) {
 			sendGrid.setClient(httpClient);
 		}
 		return sendGrid;

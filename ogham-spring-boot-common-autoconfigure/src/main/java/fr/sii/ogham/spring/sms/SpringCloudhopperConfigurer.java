@@ -13,14 +13,16 @@ import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 /**
  * This configurer is also useful to support property naming variants (see
- * <a href="https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed Binding</a>).
+ * <a href=
+ * "https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed
+ * Binding</a>).
  * 
  * @author Aurélien Baudet
  *
  */
 public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(SpringCloudhopperConfigurer.class);
-	
+
 	private final OghamSmppProperties smppProperties;
 	private final OghamCloudhopperProperties cloudhopperProperties;
 
@@ -33,8 +35,6 @@ public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
 	@Override
 	public void configure(MessagingBuilder builder) {
 		LOG.debug("[{}] apply configuration", this);
-		// use same environment as parent builder
-		builder.sms().sender(CloudhopperBuilder.class).environment(builder.environment());
 		if (smppProperties != null) {
 			applySmppConfiguration(builder);
 		}

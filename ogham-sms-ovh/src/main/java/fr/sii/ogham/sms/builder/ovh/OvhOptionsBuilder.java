@@ -1,11 +1,11 @@
 package fr.sii.ogham.sms.builder.ovh;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
 import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
@@ -26,7 +26,6 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  *
  */
 public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements Builder<OvhOptions> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, Boolean> noStopValueBuilder;
 	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, String> tagValueBuilder;
 	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, SmsCoding> smsCodingValueBuilder;
@@ -38,15 +37,14 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public OvhOptionsBuilder(OvhSmsBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public OvhOptionsBuilder(OvhSmsBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		noStopValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
-		tagValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		smsCodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmsCoding.class);
+		noStopValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		tagValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		smsCodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmsCoding.class, buildContext);
 	}
 
 	/**
@@ -304,22 +302,21 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 
 	@Override
 	public OvhOptions build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		boolean builtNoStop = buildNoStop(propertyResolver);
-		String builtTag = buildTag(propertyResolver);
-		SmsCoding builtSmsCoding = buildSmsCoding(propertyResolver);
+		boolean builtNoStop = buildNoStop();
+		String builtTag = buildTag();
+		SmsCoding builtSmsCoding = buildSmsCoding();
 		return new OvhOptions(builtNoStop, builtTag, builtSmsCoding);
 	}
 
-	private boolean buildNoStop(PropertyResolver propertyResolver) {
-		return noStopValueBuilder.getValue(propertyResolver, false);
+	private boolean buildNoStop() {
+		return noStopValueBuilder.getValue(false);
 	}
 
-	private String buildTag(PropertyResolver propertyResolver) {
-		return tagValueBuilder.getValue(propertyResolver);
+	private String buildTag() {
+		return tagValueBuilder.getValue();
 	}
 
-	private SmsCoding buildSmsCoding(PropertyResolver propertyResolver) {
-		return smsCodingValueBuilder.getValue(propertyResolver);
+	private SmsCoding buildSmsCoding() {
+		return smsCodingValueBuilder.getValue();
 	}
 }

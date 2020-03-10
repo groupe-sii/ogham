@@ -1,17 +1,16 @@
 package fr.sii.ogham.email.builder.javamail;
 
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
-import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
 
@@ -31,8 +30,7 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  * 
  * <p>
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder} and
- * {@link JavaMailBuilder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * </p>
  * 
  * <p>
@@ -77,18 +75,6 @@ public final class DefaultJavaMailConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultJavaMailConfigurer.class);
 	private static final int DEFAULT_SMTP_PORT = 25;
 
-	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY, phase = AFTER_INIT)
-	public static class EnvironmentPropagator implements MessagingConfigurer {
-		@Override
-		public void configure(MessagingBuilder msgBuilder) {
-			if(canUseJavaMail()) {
-				JavaMailBuilder builder = msgBuilder.email().sender(JavaMailBuilder.class);
-				// use same environment as parent builder
-				builder.environment(msgBuilder.environment());
-			}
-		}
-	}
-	
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_JAVAMAIL_CONFIGURER_PRIORITY)
 	public static class JavaMailConfigurer implements MessagingConfigurer {
 		@Override
@@ -119,12 +105,12 @@ public final class DefaultJavaMailConfigurer {
 						.pattern("application/xhtml[^;]*(;.*)?", "text/html$1");
 			// @formatter:on
 		}
+
+		private static boolean canUseJavaMail() {
+			return ClasspathUtils.exists("javax.mail.Transport") && ClasspathUtils.exists("javax.mail.internet.MimeMessage");
+		}
 	}
-	
-	private static boolean canUseJavaMail() {
-		return ClasspathUtils.exists("javax.mail.Transport") && ClasspathUtils.exists("javax.mail.internet.MimeMessage");
-	}
-	
+
 	private DefaultJavaMailConfigurer() {
 		super();
 	}

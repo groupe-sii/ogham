@@ -4,7 +4,6 @@ import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
 import static com.cloudhopper.smpp.SmppBindType.TRANSMITTER;
 import static fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion.VERSION_3_4;
 
-import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -26,15 +25,13 @@ import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.LoggingOptions;
 
 import fr.sii.ogham.core.async.ThreadSleepAwaiter;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
-import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.retry.SimpleRetryExecutor;
@@ -137,7 +134,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperBuilder.class);
 
 	private final ReadableEncoderBuilder sharedEncoderBuilder;
-	private EnvironmentBuilder<CloudhopperBuilder> environmentBuilder;
+	private BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, String> systemIdValueBuilder;
 	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, String> passwordValueBuilder;
 	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, String> hostValueBuilder;
@@ -164,8 +161,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public CloudhopperBuilder() {
-		this(null);
-		environmentBuilder = new SimpleEnvironmentBuilder<>(this);
+		this(null, new DefaultBuildContext());
 	}
 
 	/**
@@ -180,92 +176,20 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * 
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public CloudhopperBuilder(SmsBuilder parent) {
+	public CloudhopperBuilder(SmsBuilder parent, BuildContext buildContext) {
 		super(parent);
-		sharedEncoderBuilder = new ReadableEncoderBuilder();
-		systemIdValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class);
-		interfaceVersionValueBuilder = new ConfigurationValueBuilderHelper<>(this, InterfaceVersion.class);
-		systemTypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		bindTypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmppBindType.class);
-	}
-
-	/**
-	 * Configures environment for the builder (and sub-builders). Environment
-	 * consists of configuration properties/values that are used to configure
-	 * the system (see {@link EnvironmentBuilder} for more information).
-	 * 
-	 * You can use system properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .systemProperties();
-	 * </pre>
-	 * 
-	 * Or, you can load properties from a file:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties("/path/to/file.properties")
-	 * </pre>
-	 * 
-	 * Or using directly a {@link Properties} object:
-	 * 
-	 * <pre>
-	 * Properties myprops = new Properties();
-	 * myprops.setProperty("foo", "bar");
-	 * .environment()
-	 *    .properties(myprops)
-	 * </pre>
-	 * 
-	 * Or defining directly properties:
-	 * 
-	 * <pre>
-	 * .environment()
-	 *    .properties()
-	 *       .set("foo", "bar")
-	 * </pre>
-	 * 
-	 * 
-	 * <p>
-	 * If no environment was previously used, it creates a new one. Then each
-	 * time you call {@link #environment()}, the same instance is used.
-	 * </p>
-	 * 
-	 * @return the builder to configure properties handling
-	 */
-	public EnvironmentBuilder<CloudhopperBuilder> environment() {
-		if (environmentBuilder == null) {
-			environmentBuilder = new SimpleEnvironmentBuilder<>(this);
-		}
-		return environmentBuilder;
-	}
-
-	/**
-	 * NOTE: this is mostly for advance usage (when creating a custom module).
-	 * 
-	 * Inherits environment configuration from another builder. This is useful
-	 * for configuring independently different parts of Ogham but keeping a
-	 * whole coherence (see {@link DefaultCloudhopperConfigurer} for an example
-	 * of use).
-	 * 
-	 * The same instance is shared meaning that all changes done here will also
-	 * impact the other builder.
-	 * 
-	 * <p>
-	 * If a previous builder was defined (by calling {@link #environment()} for
-	 * example), the new builder will override it.
-	 * 
-	 * @param builder
-	 *            the builder to inherit
-	 * @return this instance for fluent chaining
-	 */
-	public CloudhopperBuilder environment(EnvironmentBuilder<?> builder) {
-		environmentBuilder = new EnvironmentBuilderDelegate<>(this, builder);
-		return this;
+		this.buildContext = buildContext;
+		sharedEncoderBuilder = new ReadableEncoderBuilder(buildContext);
+		systemIdValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
+		interfaceVersionValueBuilder = new ConfigurationValueBuilderHelper<>(this, InterfaceVersion.class, buildContext);
+		systemTypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		bindTypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmppBindType.class, buildContext);
 	}
 
 	/**
@@ -952,7 +876,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public EncoderBuilder encoder() {
 		if (encoderBuilder == null) {
-			encoderBuilder = new EncoderBuilder(this, environmentBuilder);
+			encoderBuilder = new EncoderBuilder(this, buildContext);
 			sharedEncoderBuilder.update(encoderBuilder);
 		}
 		return encoderBuilder;
@@ -1031,7 +955,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public MessageSplitterBuilder splitter() {
 		if (messageSplitterBuilder == null) {
-			messageSplitterBuilder = new MessageSplitterBuilder(this, environmentBuilder, sharedEncoderBuilder);
+			messageSplitterBuilder = new MessageSplitterBuilder(this, buildContext, sharedEncoderBuilder);
 		}
 		return messageSplitterBuilder;
 	}
@@ -1044,7 +968,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public SessionBuilder session() {
 		if (sessionBuilder == null) {
-			sessionBuilder = new SessionBuilder(this, environmentBuilder);
+			sessionBuilder = new SessionBuilder(this, buildContext);
 		}
 		return sessionBuilder;
 	}
@@ -1105,7 +1029,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public SslBuilder ssl() {
 		if (sslBuilder == null) {
-			sslBuilder = new SslBuilder(this, environmentBuilder);
+			sslBuilder = new SslBuilder(this, buildContext);
 		}
 		return sslBuilder;
 	}
@@ -1248,7 +1172,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public UserDataBuilder userData() {
 		if (userDataBuilder == null) {
-			userDataBuilder = new UserDataBuilder(this, environmentBuilder);
+			userDataBuilder = new UserDataBuilder(this, buildContext);
 		}
 		return userDataBuilder;
 	}
@@ -1313,16 +1237,15 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 */
 	public DataCodingSchemeBuilder dataCodingScheme() {
 		if (dataCodingBuilder == null) {
-			dataCodingBuilder = new DataCodingSchemeBuilder(this, environmentBuilder, this::getInterfaceVersion);
+			dataCodingBuilder = new DataCodingSchemeBuilder(this, buildContext, this::getInterfaceVersion);
 		}
 		return dataCodingBuilder;
 	}
 
 	@Override
 	public CloudhopperSMPPSender build() {
-		PropertyResolver propertyResolver = buildPropertyResolver();
 		CloudhopperSessionOptions sessionOpts = buildSessionOpts();
-		SmppSessionConfiguration session = buildSession(sessionOpts, propertyResolver);
+		SmppSessionConfiguration session = buildSession(sessionOpts);
 		if (session.getHost() == null || session.getPort() == 0) {
 			return null;
 		}
@@ -1408,27 +1331,22 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return smppSessionHandler;
 	}
 
-	private PropertyResolver buildPropertyResolver() {
-		return environmentBuilder.build();
-	}
-
 	private static PhoneNumberTranslator buildPhoneNumberTranslator() {
 		// TODO: allow configuration of fallback phone number translator
 		return new CompositePhoneNumberTranslator(new DefaultHandler());
 	}
 
-	private SmppSessionConfiguration buildSession(CloudhopperSessionOptions sessionOpts, PropertyResolver propertyResolver) {
+	private SmppSessionConfiguration buildSession(CloudhopperSessionOptions sessionOpts) {
 		if (sessionConfiguration != null) {
 			return sessionConfiguration;
 		}
-		SmppSessionConfiguration session = new SmppSessionConfiguration(buildBindType(propertyResolver), systemIdValueBuilder.getValue(propertyResolver),
-				passwordValueBuilder.getValue(propertyResolver));
-		session.setHost(getHost(propertyResolver));
-		session.setPort(getPort(propertyResolver));
-		session.setSystemType(systemTypeValueBuilder.getValue(propertyResolver));
+		SmppSessionConfiguration session = new SmppSessionConfiguration(buildBindType(), systemIdValueBuilder.getValue(), passwordValueBuilder.getValue());
+		session.setHost(getHost());
+		session.setPort(getPort());
+		session.setSystemType(systemTypeValueBuilder.getValue());
 		set(session::setBindTimeout, sessionOpts::getBindTimeout);
 		set(session::setConnectTimeout, sessionOpts::getConnectTimeout);
-		session.setInterfaceVersion(getInterfaceVersion(propertyResolver));
+		session.setInterfaceVersion(getInterfaceVersion());
 		set(session::setName, sessionOpts::getSessionName);
 		set(session::setRequestExpiryTimeout, sessionOpts::getRequestExpiryTimeout);
 		set(session::setWindowMonitorInterval, sessionOpts::getWindowMonitorInterval);
@@ -1469,21 +1387,21 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		}
 	}
 
-	private SmppBindType buildBindType(PropertyResolver propertyResolver) {
-		return bindTypeValueBuilder.getValue(propertyResolver, TRANSMITTER);
+	private SmppBindType buildBindType() {
+		return bindTypeValueBuilder.getValue(TRANSMITTER);
 	}
 
-	private Byte getInterfaceVersion(PropertyResolver propertyResolver) {
-		InterfaceVersion version = interfaceVersionValueBuilder.getValue(propertyResolver, VERSION_3_4);
+	private Byte getInterfaceVersion() {
+		InterfaceVersion version = interfaceVersionValueBuilder.getValue(VERSION_3_4);
 		return version.value();
 	}
 
-	private int getPort(PropertyResolver propertyResolver) {
-		return portValueBuilder.getValue(propertyResolver, 0);
+	private int getPort() {
+		return portValueBuilder.getValue(0);
 	}
 
-	private String getHost(PropertyResolver propertyResolver) {
-		return hostValueBuilder.getValue(propertyResolver);
+	private String getHost() {
+		return hostValueBuilder.getValue();
 	}
 
 	private static CloudhopperOptions buildOptions(CloudhopperSessionOptions sessionOpts) {

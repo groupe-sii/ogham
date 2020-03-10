@@ -8,12 +8,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import freemarker.core.Configurable;
@@ -38,7 +38,6 @@ import freemarker.template.Version;
  *            method)
  */
 public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> implements Builder<Configuration> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<FreemarkerConfigurationBuilder<P>, String> defaultEncodingValueBuilder;
 	private final ConfigurationValueBuilderHelper<FreemarkerConfigurationBuilder<P>, Boolean> enableStaticMethodAccessValueBuilder;
 	private final ConfigurationValueBuilderHelper<FreemarkerConfigurationBuilder<P>, String> staticMethodAccessVariableNameValueBuilder;
@@ -56,15 +55,14 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public FreemarkerConfigurationBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
+	public FreemarkerConfigurationBuilder(P parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		defaultEncodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		enableStaticMethodAccessValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
-		staticMethodAccessVariableNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		defaultEncodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		enableStaticMethodAccessValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		staticMethodAccessVariableNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 		sharedVariables = new HashMap<>();
 	}
 
@@ -421,7 +419,8 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 *   .defaultValue("statics")
 	 * </pre>
 	 * 
-	 * In both cases, {@code staticMethodAccessVariableName("myStatics")} is used.
+	 * In both cases, {@code staticMethodAccessVariableName("myStatics")} is
+	 * used.
 	 * 
 	 * <p>
 	 * If this method is called several times, only the last value is used.
@@ -431,21 +430,24 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 * property/default value configuration is applied.
 	 * 
 	 * @param variableName
-	 *            the name of the variable used to access static methods from templates
+	 *            the name of the variable used to access static methods from
+	 *            templates
 	 * @return this instance for fluent chaining
 	 */
 	public FreemarkerConfigurationBuilder<P> staticMethodAccessVariableName(String variableName) {
 		staticMethodAccessVariableNameValueBuilder.setValue(variableName);
 		return this;
 	}
-	
+
 	/**
 	 * Change the name of the variable used to access static methods.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .staticMethodAccessVariableName()
@@ -454,8 +456,8 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #staticMethodAccessVariableName(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #staticMethodAccessVariableName(String)}
+	 * takes precedence over property values and default value.
 	 * 
 	 * <pre>
 	 * .staticMethodAccessVariableName("myStatics")
@@ -464,8 +466,8 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 *   .defaultValue("statics")
 	 * </pre>
 	 * 
-	 * The value {@code "myStatics"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "myStatics"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -508,8 +510,7 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	@Override
 	public Configuration build() {
 		Configuration configuration = getConfiguration();
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		String defaultEncoding = defaultEncodingValueBuilder.getValue(propertyResolver);
+		String defaultEncoding = defaultEncodingValueBuilder.getValue();
 		if (defaultEncoding != null) {
 			configuration.setDefaultEncoding(defaultEncoding);
 		}
@@ -517,7 +518,7 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 			configuration.setTemplateExceptionHandler(templateExceptionHandler);
 		}
 		buildSharedVariables(configuration);
-		buildStaticMethodAccess(configuration, propertyResolver);
+		buildStaticMethodAccess(configuration);
 		return configuration;
 	}
 
@@ -544,10 +545,10 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 		}
 	}
 
-	private void buildStaticMethodAccess(Configuration configuration, PropertyResolver propertyResolver) {
-		boolean enableStaticMethods = enableStaticMethodAccessValueBuilder.getValue(propertyResolver, false);
+	private void buildStaticMethodAccess(Configuration configuration) {
+		boolean enableStaticMethods = enableStaticMethodAccessValueBuilder.getValue(false);
 		if (enableStaticMethods) {
-			String staticsVariableName = staticMethodAccessVariableNameValueBuilder.getValue(propertyResolver);
+			String staticsVariableName = staticMethodAccessVariableNameValueBuilder.getValue();
 			configuration.setSharedVariable(staticsVariableName, getBeansWrapper(configuration).getStaticModels());
 		}
 	}

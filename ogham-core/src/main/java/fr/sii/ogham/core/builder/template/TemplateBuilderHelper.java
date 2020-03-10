@@ -8,12 +8,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.builder.priority.ImplementationPriorityProvider;
+import fr.sii.ogham.core.builder.priority.PriorityProvider;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
@@ -22,6 +24,7 @@ import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
 import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser.TemplateImplementation;
 import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.core.util.PriorizedList;
 import fr.sii.ogham.template.common.adapter.FailIfNotFoundVariantResolver;
 import fr.sii.ogham.template.common.adapter.FailIfNotFoundWithTestedPathsVariantResolver;
 import fr.sii.ogham.template.common.adapter.FirstExistingResourceVariantResolver;
@@ -51,9 +54,10 @@ public class TemplateBuilderHelper<P> {
 
 	private final P parent;
 	private final List<Builder<? extends TemplateParser>> templateBuilders;
-	private final EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<TemplateBuilderHelper<P>, Boolean> missingVariantFailValueBuilder;
 	private final ConfigurationValueBuilderHelper<TemplateBuilderHelper<P>, Boolean> listPossiblePathsValueBuilder;
+	private final PriorityProvider<TemplateParser> priorityProvider;
 	private VariantResolver missingResolver;
 
 	/**
@@ -65,16 +69,17 @@ public class TemplateBuilderHelper<P> {
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public TemplateBuilderHelper(P parent, EnvironmentBuilder<?> environmentBuilder) {
+	public TemplateBuilderHelper(P parent, BuildContext buildContext) {
 		super();
 		this.parent = parent;
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 		templateBuilders = new ArrayList<>();
-		missingVariantFailValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
-		listPossiblePathsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		missingVariantFailValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		listPossiblePathsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		priorityProvider = new ImplementationPriorityProvider<>(buildContext);
 	}
 
 	/**
@@ -87,7 +92,6 @@ public class TemplateBuilderHelper<P> {
 		return !templateBuilders.isEmpty();
 	}
 
-	
 	/**
 	 * If a variant is missing, then force to fail.
 	 * 
@@ -145,9 +149,11 @@ public class TemplateBuilderHelper<P> {
 	 * </p>
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .failIfMissingVariant()
@@ -178,10 +184,10 @@ public class TemplateBuilderHelper<P> {
 	public ConfigurationValueBuilder<TemplateBuilderHelper<P>, Boolean> failIfMissingVariant() {
 		return missingVariantFailValueBuilder;
 	}
-	
-	
+
 	/**
-	 * When {@link #failIfMissingVariant()} is enabled, also indicate which paths were tried in order to help debugging why a variant was not found.
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which
+	 * paths were tried in order to help debugging why a variant was not found.
 	 * 
 	 * <p>
 	 * The value set using this method takes precedence over any property and
@@ -211,7 +217,8 @@ public class TemplateBuilderHelper<P> {
 	 * property/default value configuration is applied.
 	 * 
 	 * @param enable
-	 *            enable/disable tracking of possible paths for template variants
+	 *            enable/disable tracking of possible paths for template
+	 *            variants
 	 * @return this instance for fluent chaining
 	 */
 	public TemplateBuilderHelper<P> listPossiblePaths(Boolean enable) {
@@ -220,12 +227,15 @@ public class TemplateBuilderHelper<P> {
 	}
 
 	/**
-	 * When {@link #failIfMissingVariant()} is enabled, also indicate which paths were tried in order to help debugging why a variant was not found.
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which
+	 * paths were tried in order to help debugging why a variant was not found.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .listPossiblePaths()
@@ -316,7 +326,7 @@ public class TemplateBuilderHelper<P> {
 			}
 		}
 		// create the builder instance
-		B builder = instantiateBuilder(builderClass, parent, environmentBuilder);
+		B builder = instantiateBuilder(builderClass, parent, buildContext);
 		templateBuilders.add(builder);
 		return builder;
 	}
@@ -377,16 +387,15 @@ public class TemplateBuilderHelper<P> {
 		if (missingResolver != null) {
 			return missingResolver;
 		}
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		if (missingVariantFailValueBuilder.getValue(propertyResolver, false)) {
-			return buildFailingVariantResolver(propertyResolver);
+		if (missingVariantFailValueBuilder.getValue(false)) {
+			return buildFailingVariantResolver();
 		}
 		return new NullVariantResolver();
 	}
 
 	@SuppressWarnings("squid:S5411")
-	private VariantResolver buildFailingVariantResolver(PropertyResolver propertyResolver) {
-		if (!listPossiblePathsValueBuilder.getValue(propertyResolver, false)) {
+	private VariantResolver buildFailingVariantResolver() {
+		if (!listPossiblePathsValueBuilder.getValue(false)) {
 			return new FailIfNotFoundVariantResolver();
 		}
 		FailIfNotFoundWithTestedPathsVariantResolver failResolver = new FailIfNotFoundWithTestedPathsVariantResolver();
@@ -399,7 +408,7 @@ public class TemplateBuilderHelper<P> {
 	}
 
 	private List<TemplateImplementation> buildTemplateParserImpls() {
-		List<TemplateImplementation> impls = new ArrayList<>();
+		PriorizedList<TemplateImplementation> impls = new PriorizedList<>();
 		for (Builder<? extends TemplateParser> builder : templateBuilders) {
 			TemplateEngineDetector detector;
 			if (builder instanceof DetectorBuilder) {
@@ -407,9 +416,10 @@ public class TemplateBuilderHelper<P> {
 			} else {
 				detector = new FixedEngineDetector(true);
 			}
-			impls.add(new TemplateImplementation(detector, builder.build()));
+			TemplateParser templateParser = builder.build();
+			impls.register(new TemplateImplementation(detector, templateParser), priorityProvider.provide(templateParser));
 		}
-		return impls;
+		return impls.getOrdered();
 	}
 
 }

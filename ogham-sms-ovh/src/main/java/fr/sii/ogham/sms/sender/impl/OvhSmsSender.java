@@ -1,5 +1,7 @@
 package fr.sii.ogham.sms.sender.impl;
 
+import static fr.sii.ogham.sms.OvhSmsConstants.DEFAULT_OVHSMS_HTTP2SMS_IMPLEMENTATION_PRIORITY;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.sii.ogham.core.builder.priority.Priority;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.util.HttpException;
@@ -49,6 +52,7 @@ import fr.sii.ogham.sms.util.http.Response;
  * @author Aurélien Baudet
  *
  */
+@Priority(properties = "${ogham.sms.implementation-priority.ovh-http2sms}", defaultValue = DEFAULT_OVHSMS_HTTP2SMS_IMPLEMENTATION_PRIORITY)
 public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 	private static final Logger LOG = LoggerFactory.getLogger(OvhSmsSender.class);
 	private static final String CONTENT_TYPE = "application/json";

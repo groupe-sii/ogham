@@ -10,11 +10,12 @@ import org.slf4j.LoggerFactory;
 import com.sendgrid.Client;
 import com.sendgrid.SendGrid;
 
+import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
@@ -109,7 +110,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public SendGridV4Builder() {
-		this(null);
+		this(null, new DefaultBuildContext());
 	}
 
 	/**
@@ -124,10 +125,12 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * 
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public SendGridV4Builder(EmailBuilder parent) {
-		super(SendGridV4Builder.class, parent);
-		unitTestingValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+	public SendGridV4Builder(EmailBuilder parent, BuildContext buildContext) {
+		super(SendGridV4Builder.class, parent, buildContext);
+		unitTestingValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
 	/**
@@ -149,7 +152,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	@Override
 	public ConfigurationValueBuilder<SendGridV4Builder, String> username() {
 		LOG.warn("username and password are no more available with SendGrid v4");
-		return new ConfigurationValueBuilderHelper<>(this, String.class);
+		return new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 	}
 
 	/**
@@ -171,7 +174,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	@Override
 	public ConfigurationValueBuilder<SendGridV4Builder, String> password() {
 		LOG.warn("username and password are no more available with SendGrid v4");
-		return new ConfigurationValueBuilderHelper<>(this, String.class);
+		return new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 	}
 
 	/**
@@ -289,9 +292,9 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * </pre>
 	 * 
 	 * NOTE: if you provide your custom implementation, any defined properties
-	 * and values using {@link #apiKey(String)}, {@link #username(String)}
-	 * or {@link #password(String)} won't be used at all. You then have to
-	 * handle it by yourself.
+	 * and values using {@link #apiKey(String)}, {@link #username(String)} or
+	 * {@link #password(String)} won't be used at all. You then have to handle
+	 * it by yourself.
 	 * 
 	 * @param client
 	 *            the custom client used to call SendGrid HTTP API
@@ -314,8 +317,8 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * </pre>
 	 * 
 	 * NOTE: if you provide your custom implementation, any defined properties
-	 * and values using {@link #unitTesting(Boolean)} won't be used at all. You then have to
-	 * handle it by yourself.
+	 * and values using {@link #unitTesting(Boolean)} won't be used at all. You
+	 * then have to handle it by yourself.
 	 * 
 	 * @param httpClient
 	 *            the custom implementation of {@link HttpClient} used to call
@@ -354,10 +357,9 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 
 	@Override
 	public SendGridV4Sender build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		String apiKey = apiKeyValueBuilder.getValue(propertyResolver);
-		boolean test = unitTestingValueBuilder.getValue(propertyResolver, false);
-		URL url = urlValueBuilder.getValue(propertyResolver);
+		String apiKey = apiKeyValueBuilder.getValue();
+		boolean test = unitTestingValueBuilder.getValue(false);
+		URL url = urlValueBuilder.getValue();
 		SendGridClient builtClient = buildClient(apiKey, buildClientHelper(clientHelper, httpClient, test, url), url);
 		if (builtClient == null) {
 			return null;

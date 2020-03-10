@@ -9,12 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.annotation.RequiredClass;
 import fr.sii.ogham.core.builder.annotation.RequiredClasses;
 import fr.sii.ogham.core.builder.annotation.RequiredProperties;
 import fr.sii.ogham.core.builder.annotation.RequiredProperty;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.priority.ImplementationPriorityProvider;
+import fr.sii.ogham.core.builder.priority.PriorityProvider;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.fluent.MessageConditions;
 import fr.sii.ogham.core.condition.provider.ImplementationConditionProvider;
@@ -44,9 +47,10 @@ public class SenderImplementationBuilderHelper<P> {
 	private static final Logger LOG = LoggerFactory.getLogger(SenderImplementationBuilderHelper.class);
 
 	private final P parent;
-	private final EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private final List<Builder<? extends MessageSender>> senderBuilders;
 	private final List<MessageSender> customSenders;
+	private final PriorityProvider<MessageSender> priorityProvider;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -57,15 +61,16 @@ public class SenderImplementationBuilderHelper<P> {
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public SenderImplementationBuilderHelper(P parent, EnvironmentBuilder<?> environmentBuilder) {
+	public SenderImplementationBuilderHelper(P parent, BuildContext buildContext) {
 		super();
 		this.parent = parent;
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 		senderBuilders = new ArrayList<>();
 		customSenders = new ArrayList<>();
+		priorityProvider = new ImplementationPriorityProvider<>(buildContext);
 	}
 
 	/**
@@ -179,7 +184,7 @@ public class SenderImplementationBuilderHelper<P> {
 				return (B) builder;
 			}
 		}
-		B builder = instantiateBuilder(builderClass, parent, environmentBuilder);
+		B builder = instantiateBuilder(builderClass, parent, buildContext);
 		senderBuilders.add(builder);
 		return builder;
 	}
@@ -225,16 +230,16 @@ public class SenderImplementationBuilderHelper<P> {
 	 *            the sender that manages several implementations
 	 */
 	public void addSenders(MultiImplementationSender<?> mainSender) {
-		ImplementationConditionProvider implementationSelection = new ImplementationConditionProvider(environmentBuilder.build());
+		ImplementationConditionProvider implementationSelection = new ImplementationConditionProvider(buildContext.getPropertyResolver());
 		for (MessageSender customSender : customSenders) {
 			LOG.debug("Custom implementation {} registered into {}", customSender, mainSender);
-			mainSender.addImplementation(implementationSelection.provide(customSender), customSender);
+			mainSender.addImplementation(implementationSelection.provide(customSender), customSender, priorityProvider.provide(customSender));
 		}
 		for (Builder<? extends MessageSender> builder : senderBuilders) {
 			MessageSender sender = builder.build();
 			if (sender != null) {
 				LOG.debug("Implementation {} registered into {}", sender, mainSender);
-				mainSender.addImplementation(implementationSelection.provide(builder), sender);
+				mainSender.addImplementation(implementationSelection.provide(builder), sender, priorityProvider.provide(sender));
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package fr.sii.ogham.email.builder;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -20,8 +21,8 @@ import fr.sii.ogham.core.translator.content.ContentTranslator;
  *
  */
 public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implements Builder<ContentTranslator> {
+	private final BuildContext buildContext;
 	private ImageInliningBuilder imageInliningBuilder;
-	private EnvironmentBuilder<?> environmentBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -30,12 +31,12 @@ public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implement
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public ImageHandlingBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public ImageHandlingBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -131,7 +132,7 @@ public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implement
 	 */
 	public ImageInliningBuilder inline() {
 		if (imageInliningBuilder == null) {
-			imageInliningBuilder = new ImageInliningBuilder(this, environmentBuilder);
+			imageInliningBuilder = new ImageInliningBuilder(this, buildContext);
 		}
 		return imageInliningBuilder;
 	}

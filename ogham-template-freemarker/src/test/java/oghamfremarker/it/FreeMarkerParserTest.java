@@ -35,9 +35,6 @@ public class FreeMarkerParserTest {
 	@Before
 	public void setUp() {
 		parser = new FreemarkerSmsBuilder()
-					.environment()
-						.systemProperties()
-						.and()
 					.classpath()
 						.lookup("classpath:", "")
 						.pathPrefix("/template/freemarker/source/")

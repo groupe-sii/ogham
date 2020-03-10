@@ -9,6 +9,7 @@ import javax.activation.MimetypesFileTypeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
@@ -119,11 +120,11 @@ import fr.sii.ogham.html.translator.InlineImageTranslator;
 public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> implements ResourceResolutionBuilder<ImageInliningBuilder>, Builder<ContentTranslator> {
 	private static final Logger LOG = LoggerFactory.getLogger(ImageInliningBuilder.class);
 
-	private ResourceResolutionBuilderHelper<ImageInliningBuilder> resourceResolutionBuilderHelper;
+	private final BuildContext buildContext;
+	private final ResourceResolutionBuilderHelper<ImageInliningBuilder> resourceResolutionBuilderHelper;
 	private AttachImageBuilder attachBuilder;
 	private Base64InliningBuilder base64Builder;
 	private MimetypeDetectionBuilder<ImageInliningBuilder> mimetypeBuilder;
-	private EnvironmentBuilder<?> environmentBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -132,13 +133,13 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public ImageInliningBuilder(ImageHandlingBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public ImageInliningBuilder(ImageHandlingBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, environmentBuilder);
+		this.buildContext = buildContext;
+		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, buildContext);
 	}
 
 	/**
@@ -278,7 +279,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 */
 	public MimetypeDetectionBuilder<ImageInliningBuilder> mimetype() {
 		if (mimetypeBuilder == null) {
-			mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, environmentBuilder);
+			mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, buildContext);
 		}
 		return mimetypeBuilder;
 	}

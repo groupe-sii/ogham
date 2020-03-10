@@ -1,11 +1,11 @@
 package fr.sii.ogham.sms.builder;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
@@ -24,7 +24,6 @@ import fr.sii.ogham.sms.message.addressing.translator.ShortCodeNumberFormatHandl
  *
  */
 public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilder> implements Builder<PhoneNumberTranslator> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ConfigurationValueBuilderHelper<SenderNumberFormatBuilder, Boolean> enableAlphanumericValueBuilder;
 	private final ConfigurationValueBuilderHelper<SenderNumberFormatBuilder, Boolean> enableShortCodeValueBuilder;
 	private final ConfigurationValueBuilderHelper<SenderNumberFormatBuilder, Boolean> enableInternationalValueBuilder;
@@ -36,15 +35,14 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public SenderNumberFormatBuilder(SenderNumberBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public SenderNumberFormatBuilder(SenderNumberBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		enableAlphanumericValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
-		enableShortCodeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
-		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		enableAlphanumericValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		enableShortCodeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
 	/**
@@ -88,16 +86,17 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 		return this;
 	}
 
-	
 	/**
 	 * Enable/disable alphanumeric code conversion: if the sender address is
 	 * alphanumeric (contains both letters and numbers) or non-numeric, TON is
 	 * set to 5 and NPI to 0.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .alphanumericCode()
@@ -128,7 +127,7 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 	public ConfigurationValueBuilder<SenderNumberFormatBuilder, Boolean> alphanumericCode() {
 		return enableAlphanumericValueBuilder;
 	}
-	
+
 	/**
 	 * Enable/disable short code conversion: if the sender address is a short
 	 * code, TON is set to 3, and NPI is set to 0. A number is considered to be
@@ -170,16 +169,17 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 		return this;
 	}
 
-	
 	/**
 	 * Enable/disable short code conversion: if the sender address is a short
 	 * code, TON is set to 3, and NPI is set to 0. A number is considered to be
 	 * a short code if the length of the number is 5 digits or less.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .shortCode()
@@ -188,8 +188,8 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #shortCode(Boolean)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #shortCode(Boolean)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .shortCode(false)
@@ -210,7 +210,7 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 	public ConfigurationValueBuilder<SenderNumberFormatBuilder, Boolean> shortCode() {
 		return enableShortCodeValueBuilder;
 	}
-	
+
 	/**
 	 * Enable/disable international number conversion: if the sender starts with
 	 * a "+", TON is set to 1, and NPI is set to 1.
@@ -251,15 +251,16 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 		return this;
 	}
 
-	
 	/**
 	 * Enable/disable international number conversion: if the sender starts with
 	 * a "+", TON is set to 1, and NPI is set to 1.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .internationalNumber()
@@ -294,21 +295,20 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 	@Override
 	public PhoneNumberTranslator build() {
 		CompositePhoneNumberTranslator translator = new CompositePhoneNumberTranslator();
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		if (enabled(enableAlphanumericValueBuilder, propertyResolver)) {
+		if (enabled(enableAlphanumericValueBuilder)) {
 			translator.add(new AlphanumericCodeNumberFormatHandler());
 		}
-		if (enabled(enableShortCodeValueBuilder, propertyResolver)) {
+		if (enabled(enableShortCodeValueBuilder)) {
 			translator.add(new ShortCodeNumberFormatHandler());
 		}
-		if (enabled(enableInternationalValueBuilder, propertyResolver)) {
+		if (enabled(enableInternationalValueBuilder)) {
 			translator.add(new InternationalNumberFormatHandler());
 		}
 		translator.add(new DefaultHandler());
 		return translator;
 	}
 
-	private static boolean enabled(ConfigurationValueBuilderHelper<?, Boolean> props, PropertyResolver propertyResolver) {
-		return props.getValue(propertyResolver, false);
+	private static boolean enabled(ConfigurationValueBuilderHelper<?, Boolean> props) {
+		return props.getValue(false);
 	}
 }

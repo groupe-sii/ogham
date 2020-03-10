@@ -3,6 +3,8 @@ package fr.sii.ogham.template.thymeleaf.v3.buider;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.email.builder.EmailBuilder;
@@ -100,7 +102,7 @@ public class ThymeleafV3EmailBuilder extends AbstractThymeleafMultiContentBuilde
 	 * <strong>WARNING: use is only if you know what you are doing !</strong>
 	 */
 	public ThymeleafV3EmailBuilder() {
-		super(ThymeleafV3EmailBuilder.class, null, null);
+		super(ThymeleafV3EmailBuilder.class, null, new DefaultBuildContext());
 	}
 
 	/**
@@ -110,11 +112,11 @@ public class ThymeleafV3EmailBuilder extends AbstractThymeleafMultiContentBuilde
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public ThymeleafV3EmailBuilder(EmailBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
-		super(ThymeleafV3EmailBuilder.class, parent, environmentBuilder);
+	public ThymeleafV3EmailBuilder(EmailBuilder parent, BuildContext buildContext) {
+		super(ThymeleafV3EmailBuilder.class, parent, buildContext);
 	}
 
 	@Override
@@ -131,7 +133,7 @@ public class ThymeleafV3EmailBuilder extends AbstractThymeleafMultiContentBuilde
 	protected ThymeleafV3EngineConfigBuilder<ThymeleafV3EmailBuilder> getThymeleafEngineConfigBuilder() {
 		return new ThymeleafV3EngineConfigBuilder<>(myself);
 	}
-	
+
 	@Override
 	protected FirstSupportingResolverAdapter buildAdapters() {
 		FirstSupportingResolverAdapter adapter = new FirstSupportingResolverAdapter();

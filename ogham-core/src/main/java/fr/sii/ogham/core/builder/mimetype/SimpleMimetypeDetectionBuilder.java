@@ -7,11 +7,11 @@ import javax.activation.MimeTypeParseException;
 
 import org.apache.tika.Tika;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.mimetype.FallbackMimeTypeProvider;
@@ -41,9 +41,9 @@ import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
  *            method)
  */
 public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> implements MimetypeDetectionBuilder<P> {
-	private TikaBuilder<MimetypeDetectionBuilder<P>> tikaBuilder;
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<SimpleMimetypeDetectionBuilder<P>, String> defaultMimetypeValueBuilder;
-	private final EnvironmentBuilder<?> environmentBuilder;
+	private TikaBuilder<MimetypeDetectionBuilder<P>> tikaBuilder;
 	private SimpleReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replaceMimetypeBuilder;
 
 	/**
@@ -54,19 +54,19 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	 * 
 	 * @param parent
 	 *            the parent instance
-	 * @param environmentBuilder
+	 * @param buildContext
 	 *            used to evaluate property values
 	 */
-	public SimpleMimetypeDetectionBuilder(P parent, EnvironmentBuilder<?> environmentBuilder) {
+	public SimpleMimetypeDetectionBuilder(P parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		defaultMimetypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		this.buildContext = buildContext;
+		defaultMimetypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 	}
 
 	@Override
 	public TikaBuilder<MimetypeDetectionBuilder<P>> tika() {
 		if (tikaBuilder == null) {
-			tikaBuilder = new SimpleTikaBuilder<>(this, environmentBuilder);
+			tikaBuilder = new SimpleTikaBuilder<>(this, buildContext);
 		}
 		return tikaBuilder;
 	}
@@ -84,7 +84,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 
 	@Override
 	public ReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replace() {
-		if(replaceMimetypeBuilder == null) {
+		if (replaceMimetypeBuilder == null) {
 			replaceMimetypeBuilder = new SimpleReplaceMimetypeBuilder<>(this);
 		}
 		return replaceMimetypeBuilder;
@@ -109,7 +109,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 			throw new BuildException("No mimetype detector configured");
 		}
 	}
-	
+
 	private static MimeTypeProvider buildProvider(List<MimeTypeProvider> providers) {
 		if (providers.size() == 1) {
 			return providers.get(0);
@@ -118,7 +118,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	}
 
 	private MimeTypeProvider overrideProvider(MimeTypeProvider provider) {
-		if(replaceMimetypeBuilder==null) {
+		if (replaceMimetypeBuilder == null) {
 			return provider;
 		}
 		MimetypeReplacer replacer = replaceMimetypeBuilder.build();
@@ -132,8 +132,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	}
 
 	private void buildDefault(List<MimeTypeProvider> providers) throws MimeTypeParseException {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		String mimetype = defaultMimetypeValueBuilder.getValue(propertyResolver);
+		String mimetype = defaultMimetypeValueBuilder.getValue();
 		if (mimetype != null) {
 			providers.add(new FixedMimeTypeProvider(mimetype));
 		}

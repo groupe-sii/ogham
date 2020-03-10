@@ -14,9 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.sender.EmailSender;
@@ -71,14 +71,14 @@ public class CustomSenderBuilderTest {
 	}
 	
 	public static class CustomChainingBuilder extends FluentChainingBuilderWithEnv<EmailBuilder, EmailSender> {
-		public CustomChainingBuilder(EmailBuilder parent, EnvironmentBuilder<?> env) {
-			super(parent, env);
+		public CustomChainingBuilder(EmailBuilder parent, BuildContext buildContext) {
+			super(parent, buildContext);
 		}
 	}
 	
 	private static class InvisibleBuilder extends FluentChainingBuilderWithEnv<EmailBuilder, EmailSender> {
-		public InvisibleBuilder(EmailBuilder parent, EnvironmentBuilder<?> env) {
-			super(parent, env);
+		public InvisibleBuilder(EmailBuilder parent, BuildContext buildContext) {
+			super(parent, buildContext);
 		}
 	}
 	

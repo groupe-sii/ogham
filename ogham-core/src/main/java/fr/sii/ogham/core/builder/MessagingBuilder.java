@@ -241,7 +241,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	protected final boolean autoconfigure;
 	protected final Map<ConfigurationPhase, Boolean> alreadyConfigured;
 	protected final PriorizedList<ConfigurerWithPhase> configurers;
-	protected EnvironmentBuilder<MessagingBuilder> environmentBuilder;
+	protected final EnvironmentBuilder<MessagingBuilder> environmentBuilder;
+	protected final BuildContext buildContext;
 	protected MimetypeDetectionBuilder<MessagingBuilder> mimetypeBuilder;
 	protected StandaloneResourceResolutionBuilder<MessagingBuilder> resourceBuilder;
 	protected EmailBuilder emailBuilder;
@@ -276,9 +277,10 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		alreadyConfigured = new EnumMap<>(ConfigurationPhase.class);
 		configurers = new PriorizedList<>();
 		environmentBuilder = new SimpleEnvironmentBuilder<>(this);
-		mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, environmentBuilder);
-		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this, environmentBuilder);
-		wrapUncaughtValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		buildContext = new EnvBuilderBasedContext(environmentBuilder);
+		mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, buildContext);
+		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this, buildContext);
+		wrapUncaughtValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
 	/**
@@ -953,7 +955,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 */
 	public EmailBuilder email() {
 		if (emailBuilder == null) {
-			emailBuilder = new EmailBuilder(this, environmentBuilder);
+			emailBuilder = new EmailBuilder(this, buildContext);
 		}
 		return emailBuilder;
 	}
@@ -1197,7 +1199,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 */
 	public SmsBuilder sms() {
 		if (smsBuilder == null) {
-			smsBuilder = new SmsBuilder(this, environmentBuilder);
+			smsBuilder = new SmsBuilder(this, buildContext);
 		}
 		return smsBuilder;
 	}
@@ -1232,7 +1234,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		List<ConditionalSender> senders = buildSenders();
 		LOG.debug("Registered senders: {}", senders);
 		MessagingService service = new EverySupportingMessagingService(senders);
-		if (wrapUncaughtValueBuilder.getValue(environmentBuilder.build(), false)) {
+		if (wrapUncaughtValueBuilder.getValue(false)) {
 			service = new WrapExceptionMessagingService(service);
 		}
 		return service;

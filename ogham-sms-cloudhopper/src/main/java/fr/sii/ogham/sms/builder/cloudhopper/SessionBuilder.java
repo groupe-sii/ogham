@@ -1,12 +1,12 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.retry.RetryBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
 
@@ -17,7 +17,7 @@ import fr.sii.ogham.core.retry.FixedDelayRetry;
  *
  */
 public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<CloudhopperSessionOptions> {
-	private EnvironmentBuilder<?> environmentBuilder;
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<SessionBuilder, Long> bindValueBuilder;
 	private final ConfigurationValueBuilderHelper<SessionBuilder, Long> connectValueBuilder;
 	private final ConfigurationValueBuilderHelper<SessionBuilder, Long> requestExpiryValueBuilder;
@@ -38,23 +38,23 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public SessionBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public SessionBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		bindValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
-		connectValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
-		requestExpiryValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
-		windowMonitorInvervalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
-		windowWaitValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
-		windowSizeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class);
-		writeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
-		responseValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
-		unbindValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class);
-		sessionNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
-		keepSessionValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		this.buildContext = buildContext;
+		bindValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		connectValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		requestExpiryValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		windowMonitorInvervalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		windowWaitValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		windowSizeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
+		writeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		responseValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		unbindValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		sessionNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		keepSessionValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
 	/**
@@ -96,14 +96,15 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return this;
 	}
 
-	
 	/**
 	 * A name for the session (used to name threads).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .sessionName()
@@ -112,8 +113,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #sessionName(String)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #sessionName(String)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .sessionName("my-name")
@@ -122,8 +123,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *   .defaultValue("default-name")
 	 * </pre>
 	 * 
-	 * The value {@code "my-name"} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code "my-name"} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -134,7 +135,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public ConfigurationValueBuilder<SessionBuilder, String> sessionName() {
 		return sessionNameValueBuilder;
 	}
-	
+
 	/**
 	 * Set the maximum amount of time (in milliseconds) to wait for the success
 	 * of a bind attempt to the SMSC. Defaults to 5000.
@@ -175,15 +176,16 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return this;
 	}
 
-	
 	/**
 	 * Set the maximum amount of time (in milliseconds) to wait for the success
 	 * of a bind attempt to the SMSC. Defaults to 5000.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .bindTimeout()
@@ -192,8 +194,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #bindTimeout(Long)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #bindTimeout(Long)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .bindTimeout(1000L)
@@ -214,7 +216,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public ConfigurationValueBuilder<SessionBuilder, Long> bindTimeout() {
 		return bindValueBuilder;
 	}
-	
+
 	/**
 	 * Set the maximum amount of time (in milliseconds) to wait for a
 	 * establishing the connection. Defaults to 10000.
@@ -255,15 +257,16 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return this;
 	}
 
-	
 	/**
 	 * Set the maximum amount of time (in milliseconds) to wait for a
 	 * establishing the connection. Defaults to 10000.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .connectTimeout()
@@ -272,8 +275,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #connectTimeout(Long)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #connectTimeout(Long)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .connectTimeout(1000L)
@@ -311,11 +314,11 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 */
 	public RetryBuilder<SessionBuilder> connectRetry() {
 		if (connectRetryBuilder == null) {
-			connectRetryBuilder = new RetryBuilder<>(this, environmentBuilder);
+			connectRetryBuilder = new RetryBuilder<>(this, buildContext);
 		}
 		return connectRetryBuilder;
 	}
-	
+
 	/**
 	 * Set the amount of time (milliseconds) to wait for an endpoint to respond
 	 * to a request before it expires. Defaults to disabled (-1).
@@ -356,15 +359,16 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return this;
 	}
 
-	
 	/**
 	 * Set the amount of time (milliseconds) to wait for an endpoint to respond
 	 * to a request before it expires. Defaults to disabled (-1).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .requestExpiryTimeout()
@@ -395,7 +399,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public ConfigurationValueBuilder<SessionBuilder, Long> requestExpiryTimeout() {
 		return requestExpiryValueBuilder;
 	}
-	
+
 	/**
 	 * Sets the amount of time (milliseconds) between executions of monitoring
 	 * the window for requests that expire. It's recommended that this generally
@@ -439,7 +443,6 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return this;
 	}
 
-	
 	/**
 	 * Sets the amount of time (milliseconds) between executions of monitoring
 	 * the window for requests that expire. It's recommended that this generally
@@ -448,9 +451,11 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * clear out. Defaults to -1 (disabled).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .windowMonitorInterval()
@@ -481,7 +486,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public ConfigurationValueBuilder<SessionBuilder, Long> windowMonitorInterval() {
 		return windowMonitorInvervalValueBuilder;
 	}
-	
+
 	/**
 	 * Sets the maximum number of requests permitted to be outstanding
 	 * (unacknowledged) at a given time. Must be &gt; 0. Defaults to 1.
@@ -522,15 +527,16 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return this;
 	}
 
-	
 	/**
 	 * Sets the maximum number of requests permitted to be outstanding
 	 * (unacknowledged) at a given time. Must be &gt; 0. Defaults to 1.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .windowSize()
@@ -539,8 +545,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #windowSize(Integer)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #windowSize(Integer)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .windowSize(5)
@@ -549,8 +555,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *   .defaultValue(1)
 	 * </pre>
 	 * 
-	 * The value {@code 5} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code 5} is used regardless of the value of the properties and
+	 * default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -561,8 +567,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public ConfigurationValueBuilder<SessionBuilder, Integer> windowSize() {
 		return windowSizeValueBuilder;
 	}
-	
-	
+
 	/**
 	 * Set the amount of time (milliseconds) to wait until a slot opens up in
 	 * the sendWindow. Defaults to 60000.
@@ -595,7 +600,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * property/default value configuration is applied.
 	 * 
 	 * @param duration
-	 *            the amount of time in milliseconds to wait until a slot opens un
+	 *            the amount of time in milliseconds to wait until a slot opens
+	 *            up
 	 * @return this instance for fluent chaining
 	 */
 	public SessionBuilder windowWait(Long duration) {
@@ -608,9 +614,11 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * the sendWindow. Defaults to 60000.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .windowWait()
@@ -619,8 +627,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #windowWait(Long)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #windowWait(Long)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * <pre>
 	 * .windowWait(10000L)
@@ -629,8 +637,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *   .defaultValue(60000L)
 	 * </pre>
 	 * 
-	 * The value {@code 10000L} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code 10000L} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -641,8 +649,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public ConfigurationValueBuilder<SessionBuilder, Long> windowWait() {
 		return windowWaitValueBuilder;
 	}
-	
-	
+
 	/**
 	 * Set the maximum amount of time (in milliseconds) to wait for bytes to be
 	 * written when creating a new SMPP session. Defaults to 0 (no timeout, for
@@ -690,9 +697,11 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * backwards compatibility).
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .writeTimeout()
@@ -701,8 +710,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #writeTimeout(Long)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #writeTimeout(Long)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .writeTimeout(10000L)
@@ -711,8 +720,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *   .defaultValue(5000L)
 	 * </pre>
 	 * 
-	 * The value {@code 10000L} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code 10000L} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -723,8 +732,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public ConfigurationValueBuilder<SessionBuilder, Long> writeTimeout() {
 		return writeValueBuilder;
 	}
-	
-	
+
 	/**
 	 * Set the maximum amount of time (in milliseconds) to wait until a valid
 	 * response is received when a "submit" request is synchronously sends to
@@ -778,9 +786,11 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * 5000.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .responseTimeout()
@@ -789,8 +799,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #responseTimeout(Long)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #responseTimeout(Long)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .responseTimeout(1000L)
@@ -812,7 +822,6 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return responseValueBuilder;
 	}
 
-	
 	/**
 	 * Set the maximum amount of time (in milliseconds) to wait until the
 	 * session is unbounded, waiting up to a specified period of milliseconds
@@ -864,9 +873,11 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * Defaults to 5000.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .unbindTimeout()
@@ -875,8 +886,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #unbindTimeout(Long)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #unbindTimeout(Long)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .unbindTimeout(10000L)
@@ -885,8 +896,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 *   .defaultValue(5000L)
 	 * </pre>
 	 * 
-	 * The value {@code 10000L} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code 10000L} is used regardless of the value of the
+	 * properties and default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -898,7 +909,6 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return unbindValueBuilder;
 	}
 
-	
 	/**
 	 * Keep the previous session open instead of closing and reopening one.
 	 * 
@@ -942,9 +952,11 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * Keep the previous session open instead of closing and reopening one.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .keepSession()
@@ -953,8 +965,8 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #keepSession(Boolean)} takes
-	 * precedence over property values and default value.
+	 * Non-null value set using {@link #keepSession(Boolean)} takes precedence
+	 * over property values and default value.
 	 * 
 	 * <pre>
 	 * .keepSession(true)
@@ -979,17 +991,16 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	@Override
 	public CloudhopperSessionOptions build() {
 		CloudhopperSessionOptions sessionOpts = new CloudhopperSessionOptions();
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		sessionOpts.setBindTimeout(bindValueBuilder.getValue(propertyResolver));
-		sessionOpts.setConnectTimeout(connectValueBuilder.getValue(propertyResolver));
-		sessionOpts.setRequestExpiryTimeout(requestExpiryValueBuilder.getValue(propertyResolver));
-		sessionOpts.setWindowMonitorInterval(windowMonitorInvervalValueBuilder.getValue(propertyResolver));
-		sessionOpts.setWindowSize(windowSizeValueBuilder.getValue(propertyResolver));
-		sessionOpts.setWindowWaitTimeout(windowWaitValueBuilder.getValue(propertyResolver));
-		sessionOpts.setWriteTimeout(writeValueBuilder.getValue(propertyResolver));
-		sessionOpts.setResponseTimeout(responseValueBuilder.getValue(propertyResolver));
-		sessionOpts.setUnbindTimeout(unbindValueBuilder.getValue(propertyResolver));
-		sessionOpts.setKeepSession(keepSessionValueBuilder.getValue(propertyResolver, false));
+		sessionOpts.setBindTimeout(bindValueBuilder.getValue());
+		sessionOpts.setConnectTimeout(connectValueBuilder.getValue());
+		sessionOpts.setRequestExpiryTimeout(requestExpiryValueBuilder.getValue());
+		sessionOpts.setWindowMonitorInterval(windowMonitorInvervalValueBuilder.getValue());
+		sessionOpts.setWindowSize(windowSizeValueBuilder.getValue());
+		sessionOpts.setWindowWaitTimeout(windowWaitValueBuilder.getValue());
+		sessionOpts.setWriteTimeout(writeValueBuilder.getValue());
+		sessionOpts.setResponseTimeout(responseValueBuilder.getValue());
+		sessionOpts.setUnbindTimeout(unbindValueBuilder.getValue());
+		sessionOpts.setKeepSession(keepSessionValueBuilder.getValue(false));
 		if (connectRetryBuilder != null) {
 			sessionOpts.setConnectRetry(connectRetryBuilder.build());
 		}

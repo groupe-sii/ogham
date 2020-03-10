@@ -10,12 +10,12 @@ import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_UCS2
 
 import java.util.Random;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.util.PriorizedList;
@@ -101,7 +101,6 @@ import fr.sii.ogham.sms.splitter.SupportingSplitter;
  *
  */
 public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<MessageSplitter> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	private final ReadableEncoderBuilder encoderBuilder;
 	private final ConfigurationValueBuilderHelper<MessageSplitterBuilder, Boolean> enableValueBuilder;
 	private final PriorizedList<MessageSplitter> customSplitters;
@@ -115,17 +114,16 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 * @param encoderBuilder
 	 *            the encoder builder that is used to configure standard message
 	 *            splitting based on encoding charset
 	 */
-	public MessageSplitterBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder, ReadableEncoderBuilder encoderBuilder) {
+	public MessageSplitterBuilder(CloudhopperBuilder parent, BuildContext buildContext, ReadableEncoderBuilder encoderBuilder) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
 		this.encoderBuilder = encoderBuilder;
-		enableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
+		enableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 		customSplitters = new PriorizedList<>();
 	}
 
@@ -303,12 +301,11 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 		if (customSplitter != null) {
 			return customSplitter;
 		}
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		if (!splittingEnabled(propertyResolver)) {
+		if (!splittingEnabled()) {
 			return null;
 		}
-		if (encoderBuilder.autoGuessEnabled(propertyResolver)) {
-			return buildAutoGuessSplitter(propertyResolver);
+		if (encoderBuilder.autoGuessEnabled()) {
+			return buildAutoGuessSplitter();
 		}
 		if (!customSplitters.isEmpty()) {
 			return new FirstSupportingMessageSplitter(customSplitters.getOrdered());
@@ -316,23 +313,22 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 		throw new BuildException("Split of SMS is enabled but no splitter is configured");
 	}
 
-	private boolean splittingEnabled(PropertyResolver propertyResolver) {
-		return enableValueBuilder.getValue(propertyResolver, false);
+	private boolean splittingEnabled() {
+		return enableValueBuilder.getValue(false);
 	}
 
-	private MessageSplitter buildAutoGuessSplitter(PropertyResolver propertyResolver) {
+	private MessageSplitter buildAutoGuessSplitter() {
 		PriorizedList<MessageSplitter> registry = new PriorizedList<>();
-		registerStandardSplitter(propertyResolver, encoderBuilder.getGsm7Priorities(), NAME_GSM7, SEGMENT_SIZE_GSM_7BIT_SMS_PACKING_MODE, registry);
-		registerStandardSplitter(propertyResolver, encoderBuilder.getGsm8Priorities(), NAME_GSM8, SEGMENT_SIZE_GSM_8BIT, registry);
-		registerStandardSplitter(propertyResolver, encoderBuilder.getLatin1Priorities(), NAME_ISO_8859_1, SEGMENT_SIZE_GSM_8BIT, registry);
-		registerStandardSplitter(propertyResolver, encoderBuilder.getUcs2Priorities(), NAME_UCS_2, SEGMENT_SIZE_UCS2, registry);
+		registerStandardSplitter(encoderBuilder.getGsm7Priorities(), NAME_GSM7, SEGMENT_SIZE_GSM_7BIT_SMS_PACKING_MODE, registry);
+		registerStandardSplitter(encoderBuilder.getGsm8Priorities(), NAME_GSM8, SEGMENT_SIZE_GSM_8BIT, registry);
+		registerStandardSplitter(encoderBuilder.getLatin1Priorities(), NAME_ISO_8859_1, SEGMENT_SIZE_GSM_8BIT, registry);
+		registerStandardSplitter(encoderBuilder.getUcs2Priorities(), NAME_UCS_2, SEGMENT_SIZE_UCS2, registry);
 		registry.register(customSplitters);
 		return new FirstSupportingMessageSplitter(registry.getOrdered());
 	}
 
-	private void registerStandardSplitter(PropertyResolver propertyResolver, StandardEncodingHelper priorities, String supportedCharsetName, SegmentSizes maxSizes,
-			PriorizedList<MessageSplitter> registry) {
-		Integer priority = priorities.getValue(propertyResolver);
+	private void registerStandardSplitter(StandardEncodingHelper priorities, String supportedCharsetName, SegmentSizes maxSizes, PriorizedList<MessageSplitter> registry) {
+		Integer priority = priorities.getValue();
 		if (priority == null || priority <= 0) {
 			return;
 		}

@@ -8,12 +8,12 @@ import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
 import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.commons.charset.CharsetUtil;
 
+import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.util.PriorizedList;
 import fr.sii.ogham.sms.encoder.Encoder;
@@ -87,7 +87,6 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  *
  */
 public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<Encoder> {
-	private final EnvironmentBuilder<?> environmentBuilder;
 	protected final StandardEncodingHelper gsm7PackedValueBuilder;
 	protected final StandardEncodingHelper gsm8ValueBuilder;
 	protected final StandardEncodingHelper ucs2ValueBuilder;
@@ -103,19 +102,18 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for property resolution and evaluation
 	 */
-	public EncoderBuilder(CloudhopperBuilder parent, EnvironmentBuilder<?> environmentBuilder) {
+	public EncoderBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.environmentBuilder = environmentBuilder;
-		gsm7PackedValueBuilder = new StandardEncodingHelper(this, NAME_GSM7);
-		gsm8ValueBuilder = new StandardEncodingHelper(this, NAME_GSM);
-		ucs2ValueBuilder = new StandardEncodingHelper(this, NAME_UCS_2);
-		latin1ValueBuilder = new StandardEncodingHelper(this, NAME_ISO_8859_1);
+		gsm7PackedValueBuilder = new StandardEncodingHelper(this, NAME_GSM7, buildContext);
+		gsm8ValueBuilder = new StandardEncodingHelper(this, NAME_GSM, buildContext);
+		ucs2ValueBuilder = new StandardEncodingHelper(this, NAME_UCS_2, buildContext);
+		latin1ValueBuilder = new StandardEncodingHelper(this, NAME_ISO_8859_1, buildContext);
 		customEncoders = new PriorizedList<>();
-		autoGuessValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class);
-		fallbackCharsetNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class);
+		autoGuessValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		fallbackCharsetNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 	}
 
 	/**
@@ -728,31 +726,30 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 
 	@Override
 	public Encoder build() {
-		PropertyResolver propertyResolver = environmentBuilder.build();
-		if (autoGuessEnabled(propertyResolver)) {
-			return buildAutoGuessEncoder(propertyResolver);
+		if (autoGuessEnabled()) {
+			return buildAutoGuessEncoder();
 		}
 		if (customEncodersRegistered()) {
 			return new GuessEncodingEncoder(customEncoders.getOrdered());
 		}
-		String fallbackCharsetName = fallbackCharsetNameValueBuilder.getValue(propertyResolver);
+		String fallbackCharsetName = fallbackCharsetNameValueBuilder.getValue();
 		return buildFixedEncoder(fallbackCharsetName == null ? NAME_GSM : fallbackCharsetName);
 	}
 
-	protected boolean autoGuessEnabled(PropertyResolver propertyResolver) {
-		return autoGuessValueBuilder.getValue(propertyResolver, false);
+	protected boolean autoGuessEnabled() {
+		return autoGuessValueBuilder.getValue(false);
 	}
 
 	private boolean customEncodersRegistered() {
 		return !customEncoders.isEmpty();
 	}
 
-	private Encoder buildAutoGuessEncoder(PropertyResolver propertyResolver) {
+	private Encoder buildAutoGuessEncoder() {
 		PriorizedList<Encoder> registry = new PriorizedList<>();
-		registerStandardEncoder(propertyResolver, gsm7PackedValueBuilder, registry);
-		registerStandardEncoder(propertyResolver, gsm8ValueBuilder, registry);
-		registerStandardEncoder(propertyResolver, latin1ValueBuilder, registry);
-		registerStandardEncoder(propertyResolver, ucs2ValueBuilder, registry);
+		registerStandardEncoder(gsm7PackedValueBuilder, registry);
+		registerStandardEncoder(gsm8ValueBuilder, registry);
+		registerStandardEncoder(latin1ValueBuilder, registry);
+		registerStandardEncoder(ucs2ValueBuilder, registry);
 		registry.register(customEncoders);
 		return new GuessEncodingEncoder(registry.getOrdered());
 	}
@@ -761,8 +758,8 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 		return new CloudhopperCharsetSupportingEncoder(NamedCharset.from(charsetName));
 	}
 
-	private static void registerStandardEncoder(PropertyResolver propertyResolver, StandardEncodingHelper helper, PriorizedList<Encoder> registry) {
-		Integer priority = helper.getValue(propertyResolver);
+	private static void registerStandardEncoder(StandardEncodingHelper helper, PriorizedList<Encoder> registry) {
+		Integer priority = helper.getValue();
 		if (priority == null || priority <= 0) {
 			return;
 		}
