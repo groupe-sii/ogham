@@ -8,9 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.resource.resolver.RelativeResolver;
 import fr.sii.ogham.core.resource.resolver.RelativisableResourceResolver;
@@ -35,6 +35,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSingleResolutionBuilder<MYSELF, P>, P> extends AbstractParent<P> implements Builder<ResourceResolver> {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractSingleResolutionBuilder.class);
 
+	protected final BuildContext buildContext;
 	protected final List<String> lookups;
 	protected final ConfigurationValueBuilderHelper<MYSELF, String> pathPrefixValueBuilder;
 	protected final ConfigurationValueBuilderHelper<MYSELF, String> pathSuffixValueBuilder;
@@ -44,6 +45,7 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 	protected AbstractSingleResolutionBuilder(Class<?> selfType, P parent, BuildContext buildContext) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
+		this.buildContext = buildContext;
 		lookups = new ArrayList<>();
 		pathPrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
 		pathSuffixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
@@ -143,7 +145,7 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 
 	@Override
 	public ResourceResolver build() {
-		ResourceResolver resolver = createResolver();
+		ResourceResolver resolver = buildContext.register(createResolver());
 		if (!(resolver instanceof RelativisableResourceResolver)) {
 			return resolver;
 		}
@@ -151,7 +153,7 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 		String resolvedPathSuffix = pathSuffixValueBuilder.getValue("");
 		if (!resolvedPathPrefix.isEmpty() || !resolvedPathSuffix.isEmpty()) {
 			LOG.debug("Using parentPath {} and extension {} for resource resolution", resolvedPathPrefix, resolvedPathSuffix);
-			resolver = new RelativeResolver((RelativisableResourceResolver) resolver, resolvedPathPrefix, resolvedPathSuffix);
+			resolver = buildContext.register(new RelativeResolver((RelativisableResourceResolver) resolver, resolvedPathPrefix, resolvedPathSuffix));
 		}
 		return resolver;
 	}

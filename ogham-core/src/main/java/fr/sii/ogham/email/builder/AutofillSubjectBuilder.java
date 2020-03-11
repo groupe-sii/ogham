@@ -1,12 +1,12 @@
 package fr.sii.ogham.email.builder;
 
-import fr.sii.ogham.core.builder.AbstractAutofillDefaultValueBuilder;
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.filler.AbstractAutofillDefaultValueBuilder;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.filler.SubjectFiller;
 import fr.sii.ogham.core.subject.provider.FirstSupportingSubjectProvider;
@@ -234,23 +234,23 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 
 	@Override
 	public MessageFiller build() {
-		return new SubjectFiller(buildProvider());
+		return buildContext.register(new SubjectFiller(buildProvider()));
 	}
 
 	private SubjectProvider buildProvider() {
 		if (customProvider != null) {
 			return customProvider;
 		}
-		FirstSupportingSubjectProvider provider = new FirstSupportingSubjectProvider();
+		FirstSupportingSubjectProvider provider = buildContext.register(new FirstSupportingSubjectProvider());
 		String prefix = firstLinePrefixValueBuilder.getValue();
 		if (prefix != null) {
-			provider.addProvider(new TextPrefixSubjectProvider(prefix));
+			provider.addProvider(buildContext.register(new TextPrefixSubjectProvider(prefix)));
 		}
 		boolean htmlTitle = enableHtmlTitleValueBuilder.getValue(false);
 		if (htmlTitle) {
-			provider.addProvider(new HtmlTitleSubjectProvider());
+			provider.addProvider(buildContext.register(new HtmlTitleSubjectProvider()));
 		}
-		SubjectProvider multiContentProvider = new MultiContentSubjectProvider(provider);
+		SubjectProvider multiContentProvider = buildContext.register(new MultiContentSubjectProvider(provider));
 		provider.addProvider(multiContentProvider);
 		return provider;
 	}

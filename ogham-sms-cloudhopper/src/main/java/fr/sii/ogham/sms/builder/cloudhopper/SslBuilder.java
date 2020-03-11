@@ -2,11 +2,11 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 
 import com.cloudhopper.smpp.ssl.SslConfiguration;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 
@@ -32,7 +32,7 @@ public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Bu
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SslBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);

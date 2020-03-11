@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory;
 import com.sendgrid.Client;
 import com.sendgrid.SendGrid;
 
-import fr.sii.ogham.core.builder.BuildContext;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
@@ -126,7 +126,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SendGridV4Builder(EmailBuilder parent, BuildContext buildContext) {
 		super(SendGridV4Builder.class, parent, buildContext);
@@ -370,10 +370,10 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		} else {
 			LOG.debug("SendGrid instance provided so apiKey and unitTesting properties are not used");
 		}
-		return new SendGridV4Sender(builtClient, buildContentHandler(), buildMimetypeProvider(), interceptor);
+		return buildContext.register(new SendGridV4Sender(builtClient, buildContentHandler(), buildMimetypeProvider(), interceptor));
 	}
 
-	private static Client buildClientHelper(Client clientHelper, CloseableHttpClient httpClient, boolean test, URL url) {
+	private Client buildClientHelper(Client clientHelper, CloseableHttpClient httpClient, boolean test, URL url) {
 		// custom implementation
 		if (clientHelper != null) {
 			return clientHelper;
@@ -382,18 +382,18 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		// SendGrid Client doesn't support neither custom port nor custom
 		// protocol
 		if (url != null && httpClient != null) {
-			return new CustomizableUrlClient(httpClient, url.getProtocol(), url.getPort());
+			return buildContext.register(new CustomizableUrlClient(httpClient, url.getProtocol(), url.getPort()));
 		}
 		if (url != null) {
-			return new CustomizableUrlClient(test, url.getProtocol(), url.getPort());
+			return buildContext.register(new CustomizableUrlClient(test, url.getProtocol(), url.getPort()));
 		}
 		// custom http client
 		if (httpClient != null) {
-			return new Client(httpClient);
+			return buildContext.register(new Client(httpClient));
 		}
 		// test client (just to allow http instead of https)
 		if (test) {
-			return new Client(true);
+			return buildContext.register(new Client(true));
 		}
 		// use default Client implementation created directly by SendGrid
 		return null;
@@ -404,7 +404,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 			return this.client;
 		}
 		if (apiKey != null) {
-			return new DelegateSendGridClient(buildSendGrid(apiKey, client, url));
+			return buildContext.register(new DelegateSendGridClient(buildSendGrid(apiKey, client, url)));
 		}
 		return null;
 	}
@@ -426,10 +426,10 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 
 	private PriorizedContentHandler buildContentHandler() {
 		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();
-		PriorizedContentHandler contentHandler = new PriorizedContentHandler();
-		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
-		contentHandler.register(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler));
-		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider));
+		PriorizedContentHandler contentHandler = buildContext.register(new PriorizedContentHandler());
+		contentHandler.register(MultiContent.class, buildContext.register(new MultiContentHandler(contentHandler)));
+		contentHandler.register(ContentWithAttachments.class, buildContext.register(new ContentWithAttachmentsHandler(contentHandler)));
+		contentHandler.register(MayHaveStringContent.class, buildContext.register(new StringContentHandler(mimetypeProvider)));
 		return contentHandler;
 	}
 

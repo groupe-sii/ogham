@@ -1,7 +1,7 @@
 package oghamcore.it.core.condition.provider
 
-import fr.sii.ogham.core.builder.annotation.RequiredProperties
-import fr.sii.ogham.core.builder.annotation.RequiredProperty
+import fr.sii.ogham.core.builder.condition.RequiredProperties
+import fr.sii.ogham.core.builder.condition.RequiredProperty
 import fr.sii.ogham.core.condition.provider.RequiredPropertiesAnnotationProvider
 import fr.sii.ogham.core.env.PropertyResolver
 import fr.sii.ogham.testing.extension.common.LogTestInformation

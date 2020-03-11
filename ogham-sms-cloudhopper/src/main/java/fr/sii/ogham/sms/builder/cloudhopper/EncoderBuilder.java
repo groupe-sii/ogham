@@ -8,11 +8,11 @@ import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
 import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.commons.charset.CharsetUtil;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.util.PriorizedList;
@@ -87,6 +87,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  *
  */
 public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<Encoder> {
+	protected final BuildContext buildContext;
 	protected final StandardEncodingHelper gsm7PackedValueBuilder;
 	protected final StandardEncodingHelper gsm8ValueBuilder;
 	protected final StandardEncodingHelper ucs2ValueBuilder;
@@ -103,10 +104,11 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public EncoderBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		gsm7PackedValueBuilder = new StandardEncodingHelper(this, NAME_GSM7, buildContext);
 		gsm8ValueBuilder = new StandardEncodingHelper(this, NAME_GSM, buildContext);
 		ucs2ValueBuilder = new StandardEncodingHelper(this, NAME_UCS_2, buildContext);
@@ -730,7 +732,7 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 			return buildAutoGuessEncoder();
 		}
 		if (customEncodersRegistered()) {
-			return new GuessEncodingEncoder(customEncoders.getOrdered());
+			return buildContext.register(new GuessEncodingEncoder(customEncoders.getOrdered()));
 		}
 		String fallbackCharsetName = fallbackCharsetNameValueBuilder.getValue();
 		return buildFixedEncoder(fallbackCharsetName == null ? NAME_GSM : fallbackCharsetName);
@@ -751,18 +753,18 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 		registerStandardEncoder(latin1ValueBuilder, registry);
 		registerStandardEncoder(ucs2ValueBuilder, registry);
 		registry.register(customEncoders);
-		return new GuessEncodingEncoder(registry.getOrdered());
+		return buildContext.register(new GuessEncodingEncoder(registry.getOrdered()));
 	}
 
-	private static Encoder buildFixedEncoder(String charsetName) {
-		return new CloudhopperCharsetSupportingEncoder(NamedCharset.from(charsetName));
+	private Encoder buildFixedEncoder(String charsetName) {
+		return buildContext.register(new CloudhopperCharsetSupportingEncoder(NamedCharset.from(charsetName)));
 	}
 
-	private static void registerStandardEncoder(StandardEncodingHelper helper, PriorizedList<Encoder> registry) {
+	private void registerStandardEncoder(StandardEncodingHelper helper, PriorizedList<Encoder> registry) {
 		Integer priority = helper.getValue();
 		if (priority == null || priority <= 0) {
 			return;
 		}
-		registry.register(new CloudhopperCharsetSupportingEncoder(helper.getCharset()), priority);
+		registry.register(buildContext.register(new CloudhopperCharsetSupportingEncoder(helper.getCharset())), priority);
 	}
 }

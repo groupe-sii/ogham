@@ -1,6 +1,7 @@
 package fr.sii.ogham.email.builder;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
@@ -28,20 +29,25 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
  *
  */
 public class Base64InliningBuilder extends AbstractParent<ImageInliningBuilder> implements Builder<ImageInliner> {
+	private final BuildContext buildContext;
+
 	/**
 	 * Initializes with the parent (used when calling {@link #and()} method for
 	 * fluent chaining).
 	 * 
 	 * @param parent
 	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public Base64InliningBuilder(ImageInliningBuilder parent) {
+	public Base64InliningBuilder(ImageInliningBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 	}
 
 	@Override
 	public ImageInliner build() {
-		return new JsoupBase64ImageInliner();
+		return buildContext.register(new JsoupBase64ImageInliner());
 	}
 
 }

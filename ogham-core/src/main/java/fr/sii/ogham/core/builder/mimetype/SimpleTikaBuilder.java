@@ -3,10 +3,10 @@ package fr.sii.ogham.core.builder.mimetype;
 import org.apache.tika.Tika;
 import org.apache.tika.config.TikaConfig;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
@@ -35,6 +35,7 @@ import fr.sii.ogham.core.mimetype.TikaProvider;
  *            method)
  */
 public class SimpleTikaBuilder<P> extends AbstractParent<P> implements TikaBuilder<P> {
+	private final BuildContext buildContext;
 	private Tika tika;
 	private final ConfigurationValueBuilderHelper<SimpleTikaBuilder<P>, Boolean> failIfOctetStreamValueBuilder;
 
@@ -51,6 +52,7 @@ public class SimpleTikaBuilder<P> extends AbstractParent<P> implements TikaBuild
 	 */
 	public SimpleTikaBuilder(P parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		failIfOctetStreamValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
@@ -74,6 +76,6 @@ public class SimpleTikaBuilder<P> extends AbstractParent<P> implements TikaBuild
 	@Override
 	public MimeTypeProvider build() {
 		Tika tikaInstance = this.tika == null ? new Tika() : this.tika;
-		return new TikaProvider(tikaInstance, failIfOctetStreamValueBuilder.getValue(false));
+		return buildContext.register(new TikaProvider(tikaInstance, failIfOctetStreamValueBuilder.getValue(false)));
 	}
 }

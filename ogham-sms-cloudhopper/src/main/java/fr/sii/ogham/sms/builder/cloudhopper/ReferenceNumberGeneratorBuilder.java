@@ -3,6 +3,7 @@ package fr.sii.ogham.sms.builder.cloudhopper;
 import java.util.Random;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.splitter.RandomReferenceNumberGenerator;
 import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
@@ -76,6 +77,7 @@ import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
  *
  */
 public class ReferenceNumberGeneratorBuilder extends AbstractParent<MessageSplitterBuilder> implements Builder<ReferenceNumberGenerator> {
+	private final BuildContext buildContext;
 	private Random random;
 	private ReferenceNumberGenerator custom;
 
@@ -85,9 +87,12 @@ public class ReferenceNumberGeneratorBuilder extends AbstractParent<MessageSplit
 	 * 
 	 * @param parent
 	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public ReferenceNumberGeneratorBuilder(MessageSplitterBuilder parent) {
+	public ReferenceNumberGeneratorBuilder(MessageSplitterBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -151,8 +156,8 @@ public class ReferenceNumberGeneratorBuilder extends AbstractParent<MessageSplit
 			return custom;
 		}
 		if (random != null) {
-			return new RandomReferenceNumberGenerator(random);
+			return buildContext.register(new RandomReferenceNumberGenerator(random));
 		}
-		return new RandomReferenceNumberGenerator();
+		return buildContext.register(new RandomReferenceNumberGenerator());
 	}
 }

@@ -1,4 +1,4 @@
-package fr.sii.ogham.core.builder;
+package fr.sii.ogham.core.builder.context;
 
 import java.util.List;
 import java.util.Properties;

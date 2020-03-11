@@ -10,11 +10,11 @@ import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_UCS2
 
 import java.util.Random;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -101,6 +101,7 @@ import fr.sii.ogham.sms.splitter.SupportingSplitter;
  *
  */
 public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<MessageSplitter> {
+	private final BuildContext buildContext;
 	private final ReadableEncoderBuilder encoderBuilder;
 	private final ConfigurationValueBuilderHelper<MessageSplitterBuilder, Boolean> enableValueBuilder;
 	private final PriorizedList<MessageSplitter> customSplitters;
@@ -115,13 +116,14 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 * @param encoderBuilder
 	 *            the encoder builder that is used to configure standard message
 	 *            splitting based on encoding charset
 	 */
 	public MessageSplitterBuilder(CloudhopperBuilder parent, BuildContext buildContext, ReadableEncoderBuilder encoderBuilder) {
 		super(parent);
+		this.buildContext = buildContext;
 		this.encoderBuilder = encoderBuilder;
 		enableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 		customSplitters = new PriorizedList<>();
@@ -237,7 +239,7 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 	 */
 	public ReferenceNumberGeneratorBuilder referenceNumber() {
 		if (referenceNumberBuilder == null) {
-			referenceNumberBuilder = new ReferenceNumberGeneratorBuilder(this);
+			referenceNumberBuilder = new ReferenceNumberGeneratorBuilder(this, buildContext);
 		}
 		return referenceNumberBuilder;
 	}
@@ -308,7 +310,7 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 			return buildAutoGuessSplitter();
 		}
 		if (!customSplitters.isEmpty()) {
-			return new FirstSupportingMessageSplitter(customSplitters.getOrdered());
+			return buildContext.register(new FirstSupportingMessageSplitter(customSplitters.getOrdered()));
 		}
 		throw new BuildException("Split of SMS is enabled but no splitter is configured");
 	}
@@ -324,7 +326,7 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 		registerStandardSplitter(encoderBuilder.getLatin1Priorities(), NAME_ISO_8859_1, SEGMENT_SIZE_GSM_8BIT, registry);
 		registerStandardSplitter(encoderBuilder.getUcs2Priorities(), NAME_UCS_2, SEGMENT_SIZE_UCS2, registry);
 		registry.register(customSplitters);
-		return new FirstSupportingMessageSplitter(registry.getOrdered());
+		return buildContext.register(new FirstSupportingMessageSplitter(registry.getOrdered()));
 	}
 
 	private void registerStandardSplitter(StandardEncodingHelper priorities, String supportedCharsetName, SegmentSizes maxSizes, PriorizedList<MessageSplitter> registry) {
@@ -336,15 +338,15 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 	}
 
 	private MessageSplitter buildStandardSplitter(String supportingCharset, SegmentSizes maxSizes) {
-		SupportingEncoder encoder = new CloudhopperCharsetSupportingEncoder(NamedCharset.from(supportingCharset));
-		return new SupportedEncoderConditionalSplitter(encoder, new GsmMessageSplitter(encoder, maxSizes, buildReferenceNumberGenerator()));
+		SupportingEncoder encoder = buildContext.register(new CloudhopperCharsetSupportingEncoder(NamedCharset.from(supportingCharset)));
+		return buildContext.register(new SupportedEncoderConditionalSplitter(encoder, buildContext.register(new GsmMessageSplitter(encoder, maxSizes, buildReferenceNumberGenerator()))));
 	}
 
 	private ReferenceNumberGenerator buildReferenceNumberGenerator() {
 		if (referenceNumberBuilder != null) {
 			return referenceNumberBuilder.build();
 		}
-		return new RandomReferenceNumberGenerator();
+		return buildContext.register(new RandomReferenceNumberGenerator());
 	}
 
 }

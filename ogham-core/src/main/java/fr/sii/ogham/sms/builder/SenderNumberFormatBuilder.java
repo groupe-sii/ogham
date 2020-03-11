@@ -1,10 +1,10 @@
 package fr.sii.ogham.sms.builder;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.message.PhoneNumber;
@@ -24,6 +24,7 @@ import fr.sii.ogham.sms.message.addressing.translator.ShortCodeNumberFormatHandl
  *
  */
 public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilder> implements Builder<PhoneNumberTranslator> {
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<SenderNumberFormatBuilder, Boolean> enableAlphanumericValueBuilder;
 	private final ConfigurationValueBuilderHelper<SenderNumberFormatBuilder, Boolean> enableShortCodeValueBuilder;
 	private final ConfigurationValueBuilderHelper<SenderNumberFormatBuilder, Boolean> enableInternationalValueBuilder;
@@ -36,10 +37,11 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SenderNumberFormatBuilder(SenderNumberBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		enableAlphanumericValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 		enableShortCodeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
@@ -294,17 +296,17 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 
 	@Override
 	public PhoneNumberTranslator build() {
-		CompositePhoneNumberTranslator translator = new CompositePhoneNumberTranslator();
+		CompositePhoneNumberTranslator translator = buildContext.register(new CompositePhoneNumberTranslator());
 		if (enabled(enableAlphanumericValueBuilder)) {
-			translator.add(new AlphanumericCodeNumberFormatHandler());
+			translator.add(buildContext.register(new AlphanumericCodeNumberFormatHandler()));
 		}
 		if (enabled(enableShortCodeValueBuilder)) {
-			translator.add(new ShortCodeNumberFormatHandler());
+			translator.add(buildContext.register(new ShortCodeNumberFormatHandler()));
 		}
 		if (enabled(enableInternationalValueBuilder)) {
-			translator.add(new InternationalNumberFormatHandler());
+			translator.add(buildContext.register(new InternationalNumberFormatHandler()));
 		}
-		translator.add(new DefaultHandler());
+		translator.add(buildContext.register(new DefaultHandler()));
 		return translator;
 	}
 

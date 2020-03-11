@@ -38,6 +38,11 @@ public class WithPriority<P> {
 		return priority;
 	}
 
+	@Override
+	public String toString() {
+		return priorized + " (priority=" + priority + ")";
+	}
+
 	/**
 	 * Provide a comparator used to sort by priority. Higher priority value
 	 * first.

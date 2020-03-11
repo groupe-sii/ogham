@@ -1,7 +1,7 @@
 package fr.sii.ogham.core.condition.provider;
 
-import fr.sii.ogham.core.builder.annotation.RequiredClass;
-import fr.sii.ogham.core.builder.annotation.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.FixedCondition;

@@ -4,17 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.annotation.RequiredClass;
-import fr.sii.ogham.core.builder.annotation.RequiredClasses;
-import fr.sii.ogham.core.builder.annotation.RequiredProperties;
-import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
@@ -356,7 +356,7 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public EmailBuilder(MessagingBuilder parent, BuildContext buildContext) {
 		super(parent);
@@ -890,30 +890,30 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 
 	@Override
 	public ConditionalSender build() {
-		EmailSender emailSender = new EmailSender();
+		EmailSender emailSender = buildContext.register(new EmailSender());
 		ConditionalSender sender = emailSender;
 		senderBuilderHelper.addSenders(emailSender);
 		if (autofillBuilder != null) {
 			MessageFiller messageFiller = autofillBuilder.build();
 			LOG.debug("Automatic filling of message enabled {}", messageFiller);
-			sender = new FillerSender(messageFiller, sender);
+			sender = buildContext.register(new FillerSender(messageFiller, sender));
 		}
 		if (attachmentBuilder != null) {
 			AttachmentResourceTranslator resourceTranslator = attachmentBuilder.build();
 			LOG.debug("Resource translation enabled {}", resourceTranslator);
-			sender = new AttachmentResourceTranslatorSender(resourceTranslator, sender);
+			sender = buildContext.register(new AttachmentResourceTranslatorSender(resourceTranslator, sender));
 		}
 		if (templateBuilderHelper.hasRegisteredTemplates() || cssBuilder != null || imageBuilder != null) {
 			ContentTranslator translator = buildContentTranslator();
 			LOG.debug("Content translation enabled {}", translator);
-			sender = new ContentTranslatorSender(translator, sender);
+			sender = buildContext.register(new ContentTranslatorSender(translator, sender));
 
 		}
 		return sender;
 	}
 
 	private ContentTranslator buildContentTranslator() {
-		EveryContentTranslator translator = new EveryContentTranslator();
+		EveryContentTranslator translator = buildContext.register(new EveryContentTranslator());
 		addTemplateTranslator(translator);
 		addMultiContent(translator);
 		addCssInlining(translator);
@@ -927,11 +927,11 @@ public class EmailBuilder extends AbstractParent<MessagingBuilder> implements Bu
 		}
 		TemplateParser templateParser = templateBuilderHelper.buildTemplateParser();
 		LOG.debug("Registering content translator that parses templates using {}", templateParser);
-		translator.addTranslator(new TemplateContentTranslator(templateParser, templateBuilderHelper.buildVariant()));
+		translator.addTranslator(buildContext.register(new TemplateContentTranslator(templateParser, templateBuilderHelper.buildVariant())));
 	}
 
-	private static void addMultiContent(EveryContentTranslator translator) {
-		translator.addTranslator(new MultiContentTranslator(translator));
+	private void addMultiContent(EveryContentTranslator translator) {
+		translator.addTranslator(buildContext.register(new MultiContentTranslator(translator)));
 	}
 
 	private void addImageInlining(EveryContentTranslator translator) {

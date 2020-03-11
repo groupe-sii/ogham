@@ -14,9 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.email.builder.EmailBuilder;

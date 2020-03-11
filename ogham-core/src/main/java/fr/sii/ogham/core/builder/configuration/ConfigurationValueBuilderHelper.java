@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
@@ -82,7 +82,7 @@ public class ConfigurationValueBuilderHelper<P, V> extends AbstractParent<P> imp
 	 * @param valueClass
 	 *            the type of the value
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public ConfigurationValueBuilderHelper(P parent, Class<V> valueClass, BuildContext buildContext) {
 		super(parent);

@@ -5,7 +5,7 @@ import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM7;
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_ISO_8859_1;
 import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
 
-import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.sms.encoder.Encoder;
 import fr.sii.ogham.sms.splitter.MessageSplitter;
 
@@ -36,7 +36,7 @@ public class ReadableEncoderBuilder {
 	 * Initialize with the build context
 	 * 
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public ReadableEncoderBuilder(BuildContext buildContext) {
 		super();

@@ -24,15 +24,21 @@ import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
 import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.EnvBuilderBasedContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.registry.CleanableRegistry;
+import fr.sii.ogham.core.builder.registry.Registry;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.StandaloneResourceResolutionBuilder;
+import fr.sii.ogham.core.clean.Cleanable;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.sender.ConditionalSender;
+import fr.sii.ogham.core.service.CleanableMessagingService;
 import fr.sii.ogham.core.service.EverySupportingMessagingService;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.service.WrapExceptionMessagingService;
@@ -88,9 +94,9 @@ import fr.sii.ogham.sms.message.Sms;
  *   .build();
  * // send the email
  * service.send(new Email()
- *   .content(new MultiTemplateContent("email/sample", new SampleBean("foo", 42)))
+ *   .body().template("email/sample", new SampleBean("foo", 42))
  *   .to("Foo Bar &lt;foo.bar@sii.fr&gt;"))
- *   .attach(new Attachment("file:/data/reports/report1.pdf"));
+ *   .attach().file("file:/data/reports/report1.pdf");
  * </code>
  * </pre>
  * 
@@ -108,13 +114,13 @@ import fr.sii.ogham.sms.message.Sms;
  * replaced by values provided by a simple bean object (no conversion is
  * needed). As "ogham-template-thymeleaf" is used and the template is a
  * Thymeleaf template (Thymeleaf directive on &lt;html&gt; tag), this template
- * is parse by Thymeleaf</li>
+ * is parsed by Thymeleaf</li>
  * <li>The text content comes from a template located in the classpath
  * (email/sample.txt.ftl) and variables that are present in the template are
  * replaced by values provided by a simple bean object (no conversion is
  * needed). As "ogham-template-freemarker" is used and the template is a
- * Freemarker template (".ftl" extension), this template is parse by
- * Thymeleaf</li>
+ * Freemarker template (".ftl" extension), this template is parsed by
+ * Freemarker</li>
  * </ul>
  * </li>
  * <li>The HTML template has CSS styles that are inlined (CSS are forbidden by
@@ -153,9 +159,9 @@ import fr.sii.ogham.sms.message.Sms;
  *   .build();
  * // send the email
  * service.send(new Email()
- *   .content(new MultiTemplateContent("email/sample", new SampleBean("foo", 42)))
+ *   .body().template("email/sample", new SampleBean("foo", 42))
  *   .to("Foo Bar &lt;foo.bar@sii.fr&gt;"))
- *   .attach(new Attachment("file:/data/reports/report1.pdf"));
+ *   .attach().file("file:/data/reports/report1.pdf");
  * </code>
  * </pre>
  * 
@@ -178,9 +184,9 @@ import fr.sii.ogham.sms.message.Sms;
  *   .build();
  * // send the email
  * service.send(new Email()
- *   .content(new MultiTemplateContent("email/sample", new SampleBean("foo", 42)))
+ *   .body().template("email/sample", new SampleBean("foo", 42))
  *   .to("Foo Bar &lt;foo.bar@sii.fr&gt;"))
- *   .attach(new Attachment("file:/data/reports/report1.pdf"));
+ *   .attach().file("file:/data/reports/report1.pdf");
  * </code>
  * </pre>
  * 
@@ -217,9 +223,9 @@ import fr.sii.ogham.sms.message.Sms;
  *   .build();
  * // send the email
  * service.send(new Email()
- *   .content(new MultiTemplateContent("email/sample", new SampleBean("foo", 42)))
+ *   .body().template("email/sample", new SampleBean("foo", 42))
  *   .to("Foo Bar &lt;foo.bar@sii.fr&gt;"))
- *   .attach(new Attachment("file:/data/reports/report1.pdf"));
+ *   .attach().file("file:/data/reports/report1.pdf");
  * </code>
  * </pre>
  * 
@@ -230,6 +236,16 @@ import fr.sii.ogham.sms.message.Sms;
  * <li>It overrides default mimetype to provide a mimetype that fit your needs
  * when mimetype detection is not enough accurate</li>
  * </ul>
+ * 
+ * 
+ * <p>
+ * The {@link MessagingService} may open some resources (files, sockets, ...).
+ * The built {@link MessagingService} is wrapped by
+ * {@link CleanableMessagingService}. This way the instantiated service can
+ * clean opened resources either manually (if developer explicitly calls
+ * {@link CleanableMessagingService#clean()}) or automatically (see
+ * {@link CleanableMessagingService} for more information).
+ * 
  * 
  * @author Aurélien Baudet
  *
@@ -243,6 +259,8 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	protected final PriorizedList<ConfigurerWithPhase> configurers;
 	protected final EnvironmentBuilder<MessagingBuilder> environmentBuilder;
 	protected final BuildContext buildContext;
+	protected final Registry<Object> registry;
+	protected final Cleanable cleaner;
 	protected MimetypeDetectionBuilder<MessagingBuilder> mimetypeBuilder;
 	protected StandaloneResourceResolutionBuilder<MessagingBuilder> resourceBuilder;
 	protected EmailBuilder emailBuilder;
@@ -277,7 +295,10 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		alreadyConfigured = new EnumMap<>(ConfigurationPhase.class);
 		configurers = new PriorizedList<>();
 		environmentBuilder = new SimpleEnvironmentBuilder<>(this);
-		buildContext = new EnvBuilderBasedContext(environmentBuilder);
+		CleanableRegistry cleanableRegistry = new CleanableRegistry();
+		registry = cleanableRegistry;
+		cleaner = cleanableRegistry;
+		buildContext = new EnvBuilderBasedContext(environmentBuilder, registry);
 		mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, buildContext);
 		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this, buildContext);
 		wrapUncaughtValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
@@ -1237,6 +1258,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		if (wrapUncaughtValueBuilder.getValue(false)) {
 			service = new WrapExceptionMessagingService(service);
 		}
+		service = new CleanableMessagingService(service, cleaner);
 		return service;
 	}
 

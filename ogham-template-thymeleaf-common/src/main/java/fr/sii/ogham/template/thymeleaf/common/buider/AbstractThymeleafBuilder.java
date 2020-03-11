@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
@@ -247,7 +247,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	@Override
 	public TemplateParser build() {
 		LOG.info("Thymeleaf parser is registered");
-		return new ThymeleafParser(buildEngine(), buildResolver(), buildContext());
+		return buildContext.register(new ThymeleafParser(buildEngine(), buildResolver(), buildContext()));
 	}
 
 	@Override
@@ -261,7 +261,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	 * @return the resource resolver
 	 */
 	public FirstSupportingResourceResolver buildResolver() {
-		return new FirstSupportingResourceResolver(buildResolvers());
+		return buildContext.register(new FirstSupportingResourceResolver(buildResolvers()));
 	}
 
 	protected TemplateEngine buildEngine() {
@@ -274,7 +274,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 			builtEngine = engineBuilder.build();
 		} else {
 			LOG.debug("Using default Thymeleaf engine");
-			builtEngine = new TemplateEngine();
+			builtEngine = buildContext.register(new TemplateEngine());
 		}
 		builtEngine.addTemplateResolver(buildTemplateResolver(builtEngine));
 		return builtEngine;
@@ -287,7 +287,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	protected abstract E getThymeleafEngineConfigBuilder();
 
 	protected ThymeleafContextConverter buildContext() {
-		return contextConverter == null ? new SimpleThymeleafContextConverter() : contextConverter;
+		return contextConverter == null ? buildContext.register(new SimpleThymeleafContextConverter()) : contextConverter;
 	}
 
 	private List<ResourceResolver> buildResolvers() {
@@ -298,7 +298,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 	protected abstract FirstSupportingResolverAdapter buildAdapters();
 
 	protected TemplateResolverOptions buildTemplateResolverOptions() {
-		TemplateResolverOptions options = new TemplateResolverOptions();
+		TemplateResolverOptions options = buildContext.register(new TemplateResolverOptions());
 		options.setCacheable(enableCacheValueBuilder.getValue());
 		// TODO: handle other options
 		return options;

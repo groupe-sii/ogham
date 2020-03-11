@@ -4,12 +4,12 @@ import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotS
 import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT
 import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.BEFORE_BUILD
 
-import fr.sii.ogham.core.builder.BuildContext
 import fr.sii.ogham.core.builder.MessagingBuilder
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper
 import fr.sii.ogham.core.builder.configurer.ConfigurationPhase
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer
+import fr.sii.ogham.core.builder.context.BuildContext
 import fr.sii.ogham.core.env.PropertyResolver
 import fr.sii.ogham.core.exception.MessagingException
 import fr.sii.ogham.core.message.Message

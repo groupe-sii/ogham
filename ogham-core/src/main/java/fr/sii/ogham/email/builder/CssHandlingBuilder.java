@@ -1,7 +1,7 @@
 package fr.sii.ogham.email.builder;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
@@ -26,7 +26,7 @@ public class CssHandlingBuilder extends AbstractParent<EmailBuilder> implements 
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public CssHandlingBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(parent);

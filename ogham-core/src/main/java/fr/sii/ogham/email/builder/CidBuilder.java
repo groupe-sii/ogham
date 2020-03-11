@@ -1,6 +1,7 @@
 package fr.sii.ogham.email.builder;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
@@ -19,6 +20,7 @@ import fr.sii.ogham.email.message.Email;
  *
  */
 public class CidBuilder extends AbstractParent<AttachImageBuilder> implements Builder<IdGenerator> {
+	private final BuildContext buildContext;
 	private IdGenerator idGenerator;
 	private boolean sequential;
 
@@ -28,9 +30,12 @@ public class CidBuilder extends AbstractParent<AttachImageBuilder> implements Bu
 	 * 
 	 * @param parent
 	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public CidBuilder(AttachImageBuilder parent) {
+	public CidBuilder(AttachImageBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -84,7 +89,7 @@ public class CidBuilder extends AbstractParent<AttachImageBuilder> implements Bu
 			return idGenerator;
 		}
 		if (sequential) {
-			return new SequentialIdGenerator();
+			return buildContext.register(new SequentialIdGenerator());
 		}
 		return null;
 	}

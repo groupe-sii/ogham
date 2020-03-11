@@ -12,6 +12,7 @@ import fr.sii.ogham.core.sender.ContentTranslatorSender;
 import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.core.sender.MultiImplementationSender;
 import fr.sii.ogham.core.sender.MultiImplementationSender.Implementation;
+import fr.sii.ogham.core.service.CleanableMessagingService;
 import fr.sii.ogham.core.service.EverySupportingMessagingService;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.service.WrapExceptionMessagingService;
@@ -113,6 +114,9 @@ public final class ImplementationFinder {
 	private static MessagingService getRealService(MessagingService service) {
 		try {
 			if (service instanceof WrapExceptionMessagingService) {
+				return getRealService((MessagingService) readField(service, DELEGATE_FIELD, true));
+			}
+			if (service instanceof CleanableMessagingService) {
 				return getRealService((MessagingService) readField(service, DELEGATE_FIELD, true));
 			}
 			if (service instanceof EverySupportingMessagingService) {

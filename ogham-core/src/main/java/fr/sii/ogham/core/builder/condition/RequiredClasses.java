@@ -1,4 +1,4 @@
-package fr.sii.ogham.core.builder.annotation;
+package fr.sii.ogham.core.builder.condition;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

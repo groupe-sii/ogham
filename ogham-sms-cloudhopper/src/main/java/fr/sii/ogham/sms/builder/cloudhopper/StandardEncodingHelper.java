@@ -1,7 +1,7 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
 
 /**

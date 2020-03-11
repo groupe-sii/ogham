@@ -3,7 +3,7 @@ package fr.sii.ogham.template.thymeleaf.common.buider;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.template.VariantBuilder;
 import fr.sii.ogham.core.builder.template.VariantWithExt;
 import fr.sii.ogham.core.message.content.Variant;
@@ -31,7 +31,7 @@ public abstract class AbstractThymeleafMultiContentBuilder<MYSELF extends Abstra
 	}
 
 	private ExtensionMappingVariantResolver buildExtMappingVariantResolver() {
-		ExtensionMappingVariantResolver resolver = new ExtensionMappingVariantResolver(buildResolver());
+		ExtensionMappingVariantResolver resolver = buildContext.register(new ExtensionMappingVariantResolver(buildResolver()));
 		for(VariantWithExt v : variants) {
 			resolver.register(v.getVariant(), v.getExtension());
 		}

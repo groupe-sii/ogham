@@ -1,10 +1,10 @@
 package fr.sii.ogham.sms.builder;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.message.PhoneNumber;
@@ -22,6 +22,7 @@ import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
  *
  */
 public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumberBuilder> implements Builder<PhoneNumberTranslator> {
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<RecipientNumberFormatBuilder, Boolean> enableInternationalValueBuilder;
 
 	/**
@@ -32,10 +33,11 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public RecipientNumberFormatBuilder(RecipientNumberBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
@@ -122,11 +124,11 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 
 	@Override
 	public PhoneNumberTranslator build() {
-		CompositePhoneNumberTranslator translator = new CompositePhoneNumberTranslator();
+		CompositePhoneNumberTranslator translator = buildContext.register(new CompositePhoneNumberTranslator());
 		if (enabled(enableInternationalValueBuilder)) {
-			translator.add(new InternationalNumberFormatHandler());
+			translator.add(buildContext.register(new InternationalNumberFormatHandler()));
 		}
-		translator.add(new DefaultHandler());
+		translator.add(buildContext.register(new DefaultHandler()));
 		return translator;
 	}
 

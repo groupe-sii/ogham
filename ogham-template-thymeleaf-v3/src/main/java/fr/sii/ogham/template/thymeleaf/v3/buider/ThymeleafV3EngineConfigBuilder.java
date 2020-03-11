@@ -1,5 +1,6 @@
 package fr.sii.ogham.template.thymeleaf.v3.buider;
 
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafEngineConfigBuilder;
 
 /**
@@ -18,8 +19,10 @@ public class ThymeleafV3EngineConfigBuilder<P> extends AbstractThymeleafEngineCo
 	 * 
 	 * @param parent
 	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public ThymeleafV3EngineConfigBuilder(P parent) {
-		super(ThymeleafV3EngineConfigBuilder.class, parent);
+	public ThymeleafV3EngineConfigBuilder(P parent, BuildContext buildContext) {
+		super(ThymeleafV3EngineConfigBuilder.class, parent, buildContext);
 	}
 }

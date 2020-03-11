@@ -1,6 +1,6 @@
 package fr.sii.ogham.template.freemarker.builder;
 
-import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import freemarker.template.Configuration;
@@ -90,7 +90,7 @@ public class FreemarkerEmailBuilder extends AbstractFreemarkerMultiContentBuilde
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public FreemarkerEmailBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(FreemarkerEmailBuilder.class, parent, buildContext);

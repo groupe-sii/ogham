@@ -75,7 +75,7 @@ public class LoggingExtensionTest {
 		EngineTestKit.engine("junit-jupiter")
 			.selectors(selectMethod(FakeTest.class, "success"))
 			.execute()
-				.tests()
+				.testEvents()
 					.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 		String logs = writer.toString();
 		assertThat(logs).contains(SUCCESS_HEADER);
@@ -87,7 +87,7 @@ public class LoggingExtensionTest {
 		EngineTestKit.engine("junit-jupiter")
 			.selectors(selectMethod(FakeTest.class, "failure"))
 			.execute()
-				.tests()
+				.testEvents()
 					.assertStatistics(s -> s.aborted(0).failed(1).succeeded(0).skipped(0));
 		String logs = writer.toString();
 		assertThat(logs).contains(FAILURE_HEADER);
@@ -99,7 +99,7 @@ public class LoggingExtensionTest {
 		EngineTestKit.engine("junit-jupiter")
 			.selectors(selectMethod(FakeTest.class, "caught"))
 			.execute()
-				.tests()
+				.testEvents()
 					.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 		String logs = writer.toString();
 		assertThat(logs).contains(CAUGHT_HEADER);

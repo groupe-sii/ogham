@@ -4,7 +4,7 @@ import static fr.sii.ogham.core.condition.fluent.Conditions.alwaysTrue;
 import static fr.sii.ogham.core.condition.fluent.Conditions.not;
 import static fr.sii.ogham.core.condition.fluent.Conditions.requiredClass;
 
-import fr.sii.ogham.core.builder.annotation.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.fluent.Conditions;
 import fr.sii.ogham.core.condition.fluent.FluentCondition;

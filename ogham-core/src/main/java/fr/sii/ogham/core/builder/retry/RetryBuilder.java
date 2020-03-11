@@ -2,8 +2,8 @@ package fr.sii.ogham.core.builder.retry;
 
 import fr.sii.ogham.core.async.Awaiter;
 import fr.sii.ogham.core.async.ThreadSleepAwaiter;
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
@@ -42,7 +42,7 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public RetryBuilder(P parent, BuildContext buildContext) {
 		super(parent);
@@ -111,7 +111,7 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 		if (fixedDelay == null) {
 			return null;
 		}
-		return new SimpleRetryExecutor(new BuilderToRetryStrategyProviderBridge(fixedDelay), buildAwaiter());
+		return buildContext.register(new SimpleRetryExecutor(new BuilderToRetryStrategyProviderBridge(fixedDelay), buildAwaiter()));
 	}
 
 	private Awaiter buildAwaiter() {

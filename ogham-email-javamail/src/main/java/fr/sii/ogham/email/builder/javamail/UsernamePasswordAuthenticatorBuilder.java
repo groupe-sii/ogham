@@ -2,11 +2,11 @@ package fr.sii.ogham.email.builder.javamail;
 
 import javax.mail.Authenticator;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.email.sender.impl.javamail.UpdatableUsernamePasswordAuthenticator;
 import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
@@ -43,6 +43,7 @@ import fr.sii.ogham.email.sender.impl.javamail.UsernamePasswordAuthenticator;
  *
  */
 public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMailBuilder> implements Builder<Authenticator> {
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<UsernamePasswordAuthenticatorBuilder, String> usernameValueBuilder;
 	private final ConfigurationValueBuilderHelper<UsernamePasswordAuthenticatorBuilder, String> passwordValueBuilder;
 	private final ConfigurationValueBuilderHelper<UsernamePasswordAuthenticatorBuilder, Boolean> updatableValueBuilder;
@@ -54,10 +55,11 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public UsernamePasswordAuthenticatorBuilder(JavaMailBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		usernameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 		updatableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
@@ -311,14 +313,14 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 		boolean isUpdatable = updatableValueBuilder.getValue(false);
 		if (isUpdatable) {
 			if (usernameValueBuilder.hasValueOrProperties() && passwordValueBuilder.hasValueOrProperties()) {
-				return new UpdatableUsernamePasswordAuthenticator(usernameValueBuilder, passwordValueBuilder);
+				return buildContext.register(new UpdatableUsernamePasswordAuthenticator(usernameValueBuilder, passwordValueBuilder));
 			}
 			return null;
 		}
 		String u = usernameValueBuilder.getValue();
 		String p = passwordValueBuilder.getValue();
 		if (u != null && p != null) {
-			return new UsernamePasswordAuthenticator(u, p);
+			return buildContext.register(new UsernamePasswordAuthenticator(u, p));
 		}
 		return null;
 	}

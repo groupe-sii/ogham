@@ -1,10 +1,10 @@
 package fr.sii.ogham.sms.builder.ovh;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.sender.impl.ovh.OvhOptions;
@@ -26,6 +26,7 @@ import fr.sii.ogham.sms.sender.impl.ovh.SmsCoding;
  *
  */
 public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements Builder<OvhOptions> {
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, Boolean> noStopValueBuilder;
 	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, String> tagValueBuilder;
 	private final ConfigurationValueBuilderHelper<OvhOptionsBuilder, SmsCoding> smsCodingValueBuilder;
@@ -38,10 +39,11 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public OvhOptionsBuilder(OvhSmsBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		noStopValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 		tagValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
 		smsCodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmsCoding.class, buildContext);
@@ -305,7 +307,7 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 		boolean builtNoStop = buildNoStop();
 		String builtTag = buildTag();
 		SmsCoding builtSmsCoding = buildSmsCoding();
-		return new OvhOptions(builtNoStop, builtTag, builtSmsCoding);
+		return buildContext.register(new OvhOptions(builtNoStop, builtTag, builtSmsCoding));
 	}
 
 	private boolean buildNoStop() {

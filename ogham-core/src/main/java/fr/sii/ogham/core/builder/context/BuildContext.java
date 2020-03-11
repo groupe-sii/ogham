@@ -1,7 +1,8 @@
-package fr.sii.ogham.core.builder;
+package fr.sii.ogham.core.builder.context;
 
 import java.util.List;
 
+import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.env.PropertyResolver;
 

@@ -1,10 +1,10 @@
 package fr.sii.ogham.core.builder.retry;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
@@ -51,6 +51,7 @@ import fr.sii.ogham.core.retry.RetryStrategy;
  *            method)
  */
 public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<RetryStrategy> {
+	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Integer> maxRetriesValueBuilder;
 	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Long> delayValueBuilder;
 
@@ -62,10 +63,11 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public FixedDelayBuilder(P parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
 		delayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
 	}
@@ -232,7 +234,7 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	public RetryStrategy build() {
 		int evaluatedMaxRetries = buildMaxRetries();
 		long evaluatedDelay = buildDelay();
-		return new FixedDelayRetry(evaluatedMaxRetries, evaluatedDelay);
+		return buildContext.register(new FixedDelayRetry(evaluatedMaxRetries, evaluatedDelay));
 	}
 
 	private int buildMaxRetries() {

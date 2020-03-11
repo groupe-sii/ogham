@@ -98,7 +98,12 @@ public abstract class MultiImplementationSender<M extends Message> implements Co
 	}
 
 	protected boolean supportsMessageType(Message message) {
-		return message.getClass().isAssignableFrom(getManagedClass());
+		Class<M> managedClass = getManagedClass();
+		if (managedClass == null) {
+			LOG.warn("No managed class is declared");
+			return false;
+		}
+		return managedClass.isAssignableFrom(message.getClass());
 	}
 
 	@SuppressWarnings("unchecked")

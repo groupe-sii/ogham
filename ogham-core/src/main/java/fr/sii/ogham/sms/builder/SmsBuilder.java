@@ -4,14 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.annotation.RequiredClass;
-import fr.sii.ogham.core.builder.annotation.RequiredClasses;
-import fr.sii.ogham.core.builder.annotation.RequiredProperties;
-import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
@@ -289,7 +289,7 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SmsBuilder(MessagingBuilder parent, BuildContext buildContext) {
 		super(parent);
@@ -513,28 +513,28 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 
 	@Override
 	public ConditionalSender build() {
-		SmsSender smsSender = new SmsSender();
+		SmsSender smsSender = buildContext.register(new SmsSender());
 		ConditionalSender sender = smsSender;
 		senderBuilderHelper.addSenders(smsSender);
 		if (templateBuilderHelper.hasRegisteredTemplates()) {
 			ContentTranslator translator = buildContentTranslator();
 			LOG.debug("Content translation enabled {}", translator);
-			sender = new ContentTranslatorSender(translator, sender);
+			sender = buildContext.register(new ContentTranslatorSender(translator, sender));
 		}
 		if (phoneNumbersBuilder != null) {
 			PhoneNumberTranslatorPair pair = phoneNumbersBuilder.build();
-			sender = new PhoneNumberTranslatorSender(pair.getSender(), pair.getRecipient(), sender);
+			sender = buildContext.register(new PhoneNumberTranslatorSender(pair.getSender(), pair.getRecipient(), sender));
 		}
 		if (autofillBuilder != null) {
 			MessageFiller messageFiller = autofillBuilder.build();
 			LOG.debug("Automatic filling of message enabled {}", messageFiller);
-			sender = new FillerSender(messageFiller, sender);
+			sender = buildContext.register(new FillerSender(messageFiller, sender));
 		}
 		return sender;
 	}
 
 	private ContentTranslator buildContentTranslator() {
-		EveryContentTranslator translator = new EveryContentTranslator();
+		EveryContentTranslator translator = buildContext.register(new EveryContentTranslator());
 		addTemplateTranslator(translator);
 		return translator;
 	}
@@ -545,7 +545,7 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 		}
 		TemplateParser templateParser = templateBuilderHelper.buildTemplateParser();
 		LOG.debug("Registering content translator that parses templates using {}", templateParser);
-		translator.addTranslator(new TemplateContentTranslator(templateParser));
+		translator.addTranslator(buildContext.register(new TemplateContentTranslator(templateParser)));
 	}
 
 }

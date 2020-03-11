@@ -3,8 +3,8 @@ package fr.sii.ogham.template.thymeleaf.v3.buider;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import fr.sii.ogham.core.builder.BuildContext;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
 import fr.sii.ogham.email.builder.EmailBuilder;
@@ -113,7 +113,7 @@ public class ThymeleafV3EmailBuilder extends AbstractThymeleafMultiContentBuilde
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public ThymeleafV3EmailBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(ThymeleafV3EmailBuilder.class, parent, buildContext);
@@ -121,29 +121,29 @@ public class ThymeleafV3EmailBuilder extends AbstractThymeleafMultiContentBuilde
 
 	@Override
 	protected TemplateEngineDetector createTemplateDetector() {
-		return new ThymeleafV3TemplateDetector(buildResolver());
+		return buildContext.register(new ThymeleafV3TemplateDetector(buildResolver()));
 	}
 
 	@Override
 	protected ITemplateResolver buildTemplateResolver(TemplateEngine builtEngine) {
-		return new ThymeLeafV3FirstSupportingTemplateResolver(buildResolver(), buildAdapters());
+		return buildContext.register(new ThymeLeafV3FirstSupportingTemplateResolver(buildResolver(), buildAdapters()));
 	}
 
 	@Override
 	protected ThymeleafV3EngineConfigBuilder<ThymeleafV3EmailBuilder> getThymeleafEngineConfigBuilder() {
-		return new ThymeleafV3EngineConfigBuilder<>(myself);
+		return buildContext.register(new ThymeleafV3EngineConfigBuilder<>(myself, buildContext));
 	}
 
 	@Override
 	protected FirstSupportingResolverAdapter buildAdapters() {
-		FirstSupportingResolverAdapter adapter = new FirstSupportingResolverAdapter();
+		FirstSupportingResolverAdapter adapter = buildContext.register(new FirstSupportingResolverAdapter());
 		for (TemplateResolverAdapter custom : customAdapters) {
 			adapter.addAdapter(custom);
 		}
-		ThymeleafV3TemplateOptionsApplier applier = new ThymeleafV3TemplateOptionsApplier();
-		adapter.addAdapter(new ClassPathResolverAdapter(applier));
-		adapter.addAdapter(new FileResolverAdapter(applier));
-		adapter.addAdapter(new StringResolverAdapter(applier));
+		ThymeleafV3TemplateOptionsApplier applier = buildContext.register(new ThymeleafV3TemplateOptionsApplier());
+		adapter.addAdapter(buildContext.register(new ClassPathResolverAdapter(applier)));
+		adapter.addAdapter(buildContext.register(new FileResolverAdapter(applier)));
+		adapter.addAdapter(buildContext.register(new StringResolverAdapter(applier)));
 		adapter.setOptions(buildTemplateResolverOptions());
 		return adapter;
 	}

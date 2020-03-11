@@ -8,11 +8,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.priority.ImplementationPriorityProvider;
 import fr.sii.ogham.core.builder.priority.PriorityProvider;
@@ -70,7 +70,7 @@ public class TemplateBuilderHelper<P> {
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public TemplateBuilderHelper(P parent, BuildContext buildContext) {
 		super();
@@ -360,7 +360,7 @@ public class TemplateBuilderHelper<P> {
 		}
 		LOG.info("Using auto detection mechanism");
 		LOG.debug("Auto detection mechanisms: {}", impls);
-		return new AutoDetectTemplateParser(impls);
+		return buildContext.register(new AutoDetectTemplateParser(impls));
 	}
 
 	/**
@@ -373,7 +373,7 @@ public class TemplateBuilderHelper<P> {
 	 * @return the variant resolver
 	 */
 	public VariantResolver buildVariant() {
-		FirstExistingResourceVariantResolver variantResolver = new FirstExistingResourceVariantResolver(buildDefaultVariantResolver());
+		FirstExistingResourceVariantResolver variantResolver = buildContext.register(new FirstExistingResourceVariantResolver(buildDefaultVariantResolver()));
 		for (Builder<? extends TemplateParser> builder : templateBuilders) {
 			if (builder instanceof VariantBuilder) {
 				variantResolver.addVariantResolver(((VariantBuilder<?>) builder).buildVariant());
@@ -390,13 +390,13 @@ public class TemplateBuilderHelper<P> {
 		if (missingVariantFailValueBuilder.getValue(false)) {
 			return buildFailingVariantResolver();
 		}
-		return new NullVariantResolver();
+		return buildContext.register(new NullVariantResolver());
 	}
 
 	@SuppressWarnings("squid:S5411")
 	private VariantResolver buildFailingVariantResolver() {
 		if (!listPossiblePathsValueBuilder.getValue(false)) {
-			return new FailIfNotFoundVariantResolver();
+			return buildContext.register(new FailIfNotFoundVariantResolver());
 		}
 		FailIfNotFoundWithTestedPathsVariantResolver failResolver = new FailIfNotFoundWithTestedPathsVariantResolver();
 		for (Builder<? extends TemplateParser> builder : templateBuilders) {
@@ -404,7 +404,7 @@ public class TemplateBuilderHelper<P> {
 				failResolver.addVariantResolver(((VariantBuilder<?>) builder).buildVariant());
 			}
 		}
-		return failResolver;
+		return buildContext.register(failResolver);
 	}
 
 	private List<TemplateImplementation> buildTemplateParserImpls() {
@@ -414,7 +414,7 @@ public class TemplateBuilderHelper<P> {
 			if (builder instanceof DetectorBuilder) {
 				detector = ((DetectorBuilder<?>) builder).buildDetector();
 			} else {
-				detector = new FixedEngineDetector(true);
+				detector = buildContext.register(new FixedEngineDetector(true));
 			}
 			TemplateParser templateParser = builder.build();
 			impls.register(new TemplateImplementation(detector, templateParser), priorityProvider.provide(templateParser));

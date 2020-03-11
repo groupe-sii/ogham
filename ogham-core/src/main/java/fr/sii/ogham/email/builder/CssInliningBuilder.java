@@ -5,8 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
@@ -35,6 +35,7 @@ import fr.sii.ogham.html.translator.InlineCssTranslator;
 public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> implements ResourceResolutionBuilder<CssInliningBuilder>, Builder<ContentTranslator> {
 	private static final Logger LOG = LoggerFactory.getLogger(CssInliningBuilder.class);
 
+	private final BuildContext buildContext;
 	private ResourceResolutionBuilderHelper<CssInliningBuilder> resourceResolutionBuilderHelper;
 	private boolean useJsoup;
 
@@ -46,10 +47,11 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public CssInliningBuilder(CssHandlingBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, buildContext);
 	}
 
@@ -94,22 +96,22 @@ public class CssInliningBuilder extends AbstractParent<CssHandlingBuilder> imple
 			LOG.info("CSS won't be applied on HTML content of your emails because no inliner is configured");
 			return null;
 		}
-		return new InlineCssTranslator(cssInliner, buildResolver(), buildRelativePathProvider());
+		return buildContext.register(new InlineCssTranslator(cssInliner, buildResolver(), buildRelativePathProvider()));
 	}
 
 	private CssInliner buildInliner() {
 		if (useJsoup) {
-			return new JsoupCssInliner();
+			return buildContext.register(new JsoupCssInliner());
 		}
 		return null;
 	}
 
 	private ResourceResolver buildResolver() {
 		List<ResourceResolver> resolvers = resourceResolutionBuilderHelper.buildResolvers();
-		return new FirstSupportingResourceResolver(resolvers);
+		return buildContext.register(new FirstSupportingResourceResolver(resolvers));
 	}
 
 	private RelativePathResolver buildRelativePathProvider() {
-		return new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups());
+		return buildContext.register(new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups()));
 	}
 }

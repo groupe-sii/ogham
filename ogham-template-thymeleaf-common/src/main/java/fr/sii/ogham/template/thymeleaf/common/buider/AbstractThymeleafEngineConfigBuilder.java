@@ -12,10 +12,12 @@ import org.thymeleaf.messageresolver.IMessageResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 
 public abstract class AbstractThymeleafEngineConfigBuilder<MYSELF extends AbstractThymeleafEngineConfigBuilder<MYSELF, P>, P> extends AbstractParent<P> implements Builder<TemplateEngine> {
 	protected final MYSELF myself;
+	protected final BuildContext buildContext;
 	protected Set<IDialect> dialects;
 	protected Map<String, IDialect> dialectsByPrefix;
 	protected Set<ITemplateResolver> templateResolvers;
@@ -23,9 +25,10 @@ public abstract class AbstractThymeleafEngineConfigBuilder<MYSELF extends Abstra
 	protected Set<IMessageResolver> messageResolvers;
 
 	@SuppressWarnings("unchecked")
-	public AbstractThymeleafEngineConfigBuilder(Class<?> selfType, P parent) {
+	public AbstractThymeleafEngineConfigBuilder(Class<?> selfType, P parent, BuildContext buildContext) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
+		this.buildContext = buildContext;
 	}
 	
 
@@ -335,7 +338,7 @@ public abstract class AbstractThymeleafEngineConfigBuilder<MYSELF extends Abstra
 	
 	@Override
 	public TemplateEngine build() {
-		TemplateEngine engine = new TemplateEngine();
+		TemplateEngine engine = buildContext.register(new TemplateEngine());
 		configureDialects(engine);
 		configureMessageResolvers(engine);
 		configureTemplateResolvers(engine);

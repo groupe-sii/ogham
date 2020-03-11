@@ -1,10 +1,10 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.retry.RetryBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -39,7 +39,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SessionBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
@@ -990,7 +990,7 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 
 	@Override
 	public CloudhopperSessionOptions build() {
-		CloudhopperSessionOptions sessionOpts = new CloudhopperSessionOptions();
+		CloudhopperSessionOptions sessionOpts = buildContext.register(new CloudhopperSessionOptions());
 		sessionOpts.setBindTimeout(bindValueBuilder.getValue());
 		sessionOpts.setConnectTimeout(connectValueBuilder.getValue());
 		sessionOpts.setRequestExpiryTimeout(requestExpiryValueBuilder.getValue());

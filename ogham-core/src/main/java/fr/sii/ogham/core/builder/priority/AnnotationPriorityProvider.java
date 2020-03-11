@@ -2,7 +2,7 @@ package fr.sii.ogham.core.builder.priority;
 
 import static java.util.Arrays.asList;
 
-import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
 
 /**
  * Provide the priority of an implementation based on {@link Priority}

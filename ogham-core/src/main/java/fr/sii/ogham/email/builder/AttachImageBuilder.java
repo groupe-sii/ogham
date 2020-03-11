@@ -1,6 +1,7 @@
 package fr.sii.ogham.email.builder;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.id.generator.IdGenerator;
@@ -33,6 +34,7 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
  *
  */
 public class AttachImageBuilder extends AbstractParent<ImageInliningBuilder> implements Builder<ImageInliner> {
+	private final BuildContext buildContext;
 	private CidBuilder cidBuilder;
 
 	/**
@@ -41,9 +43,12 @@ public class AttachImageBuilder extends AbstractParent<ImageInliningBuilder> imp
 	 * 
 	 * @param parent
 	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public AttachImageBuilder(ImageInliningBuilder parent) {
+	public AttachImageBuilder(ImageInliningBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 	}
 
 	/**
@@ -58,7 +63,7 @@ public class AttachImageBuilder extends AbstractParent<ImageInliningBuilder> imp
 	 */
 	public CidBuilder cid() {
 		if (cidBuilder == null) {
-			cidBuilder = new CidBuilder(this);
+			cidBuilder = new CidBuilder(this, buildContext);
 		}
 		return cidBuilder;
 	}
@@ -72,6 +77,6 @@ public class AttachImageBuilder extends AbstractParent<ImageInliningBuilder> imp
 		if (idGenerator == null) {
 			throw new BuildException("Can't build inliner that attaches images because no identifier generator configured");
 		}
-		return new JsoupAttachImageInliner(idGenerator);
+		return buildContext.register(new JsoupAttachImageInliner(idGenerator));
 	}
 }

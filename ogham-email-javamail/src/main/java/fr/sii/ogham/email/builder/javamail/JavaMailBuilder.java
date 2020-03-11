@@ -21,13 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
@@ -657,7 +657,7 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		LOG.info("Sending email using JavaMail API is registered");
 		LOG.debug("SMTP server address: {}:{}", props.getProperty("mail.host"), props.getProperty("mail.port"));
 		JavaMailAttachmentHandler attachmentHandler = buildAttachmentHandler(mimetypeProvider);
-		return new JavaMailSender(props, buildContentHandler(mimetypeProvider, attachmentHandler), attachmentHandler, buildAuthenticator(), interceptor);
+		return buildContext.register(new JavaMailSender(props, buildContentHandler(mimetypeProvider, attachmentHandler), attachmentHandler, buildAuthenticator(), interceptor));
 	}
 
 	@Override
@@ -667,11 +667,11 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	private Properties buildProperties() {
-		return new PropertiesBridge(new FirstExistingPropertiesResolver(buildPropertyResolver(), new JavaPropertiesResolver(additionalProperties, getConverter())));
+		return buildContext.register(new PropertiesBridge(new FirstExistingPropertiesResolver(buildPropertyResolver(), new JavaPropertiesResolver(additionalProperties, getConverter()))));
 	}
 
 	private OverrideJavaMailResolver buildPropertyResolver() {
-		return new OverrideJavaMailResolver(getPropertyResolver(), getConverter(), hostValueBuilder, portValueBuilder);
+		return buildContext.register(new OverrideJavaMailResolver(getPropertyResolver(), getConverter(), hostValueBuilder, portValueBuilder));
 	}
 
 	private Converter getConverter() {
@@ -689,10 +689,10 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	}
 
 	private PriorizedContentHandler buildContentHandler(MimeTypeProvider mimetypeProvider, JavaMailAttachmentHandler attachmentHandler) {
-		PriorizedContentHandler contentHandler = new PriorizedContentHandler();
-		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
-		contentHandler.register(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler, attachmentHandler));
-		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider, buildCharset()));
+		PriorizedContentHandler contentHandler = buildContext.register(new PriorizedContentHandler());
+		contentHandler.register(MultiContent.class, buildContext.register(new MultiContentHandler(contentHandler)));
+		contentHandler.register(ContentWithAttachments.class, buildContext.register(new ContentWithAttachmentsHandler(contentHandler, attachmentHandler)));
+		contentHandler.register(MayHaveStringContent.class, buildContext.register(new StringContentHandler(mimetypeProvider, buildCharset())));
 		return contentHandler;
 	}
 
@@ -702,25 +702,25 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 		}
 		Charset charset = this.charsetValueBuilder.getValue();
 		if (charset != null) {
-			return new FixedCharsetDetector(charset);
+			return buildContext.register(new FixedCharsetDetector(charset));
 		}
-		return new FixedCharsetDetector();
+		return buildContext.register(new FixedCharsetDetector());
 	}
 
 	private PropertyResolver getPropertyResolver() {
 		return buildContext.getPropertyResolver();
 	}
 
-	private static JavaMailAttachmentHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
-		return new JavaMailAttachmentHandler(buildAttachmentResourceHandler(mimetypeProvider));
+	private JavaMailAttachmentHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
+		return buildContext.register(new JavaMailAttachmentHandler(buildAttachmentResourceHandler(mimetypeProvider)));
 	}
 
-	private static MapAttachmentResourceHandler buildAttachmentResourceHandler(MimeTypeProvider mimetypeProvider) {
-		MapAttachmentResourceHandler resourceHandler = new MapAttachmentResourceHandler();
-		resourceHandler.registerResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));
-		resourceHandler.registerResourceHandler(OverrideNameWrapper.class, new OverrideNameWrapperResourceHandler(resourceHandler));
-		resourceHandler.registerResourceHandler(LookupResource.class, new FailResourceHandler(noResourceResolverConfigured()));
-		resourceHandler.registerResourceHandler(NamedResource.class, new StreamResourceHandler(mimetypeProvider));
+	private MapAttachmentResourceHandler buildAttachmentResourceHandler(MimeTypeProvider mimetypeProvider) {
+		MapAttachmentResourceHandler resourceHandler = buildContext.register(new MapAttachmentResourceHandler());
+		resourceHandler.registerResourceHandler(FileResource.class, buildContext.register(new FileResourceHandler(mimetypeProvider)));
+		resourceHandler.registerResourceHandler(OverrideNameWrapper.class, buildContext.register(new OverrideNameWrapperResourceHandler(resourceHandler)));
+		resourceHandler.registerResourceHandler(LookupResource.class, buildContext.register(new FailResourceHandler(noResourceResolverConfigured())));
+		resourceHandler.registerResourceHandler(NamedResource.class, buildContext.register(new StreamResourceHandler(mimetypeProvider)));
 		return resourceHandler;
 	}
 

@@ -8,6 +8,7 @@ import org.thymeleaf.messageresolver.IMessageResolver;
 import org.thymeleaf.templatemode.ITemplateModeHandler;
 import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
 
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafEngineConfigBuilder;
 
 /**
@@ -30,9 +31,11 @@ public class ThymeleafV2EngineConfigBuilder<P> extends AbstractThymeleafEngineCo
 	 * 
 	 * @param parent
 	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public ThymeleafV2EngineConfigBuilder(P parent) {
-		super(ThymeleafV2EngineConfigBuilder.class, parent);
+	public ThymeleafV2EngineConfigBuilder(P parent, BuildContext buildContext) {
+		super(ThymeleafV2EngineConfigBuilder.class, parent, buildContext);
 	}
 
 	/**
@@ -94,8 +97,8 @@ public class ThymeleafV2EngineConfigBuilder<P> extends AbstractThymeleafEngineCo
 	 * {@link #addTemplateModeHandler(ITemplateModeHandler)} methods.
 	 * </p>
 	 * <p>
-	 * This method is useful for creating subclasses of TemplateEngine
-	 * that establish default configurations for Template Mode Handlers.
+	 * This method is useful for creating subclasses of TemplateEngine that
+	 * establish default configurations for Template Mode Handlers.
 	 * </p>
 	 * <p>
 	 * By default, template mode handlers set are
@@ -117,6 +120,7 @@ public class ThymeleafV2EngineConfigBuilder<P> extends AbstractThymeleafEngineCo
 		defaultTemplateModeHandlers().addAll(defaultTemplateModeHandlers);
 		return this;
 	}
+
 	/**
 	 * <p>
 	 * Sets the default message resolvers. These are used when no message

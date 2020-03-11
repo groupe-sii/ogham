@@ -6,13 +6,13 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.builder.SmsBuilder;
 import fr.sii.ogham.sms.message.Sms;
@@ -101,7 +101,7 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public OvhSmsBuilder(SmsBuilder parent, BuildContext buildContext) {
 		super(parent);
@@ -502,7 +502,7 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 		}
 		LOG.info("Sending SMS using OVH API is registered");
 		LOG.debug("OVH account: account={}, login={}", authParams.getAccount(), authParams.getLogin());
-		return new OvhSmsSender(url, authParams, buildOptions(), new DefaultSmsCodingDetector());
+		return buildContext.register(new OvhSmsSender(url, authParams, buildOptions(), buildContext.register(new DefaultSmsCodingDetector())));
 	}
 
 	private URL buildUrl() {
@@ -513,7 +513,7 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 		String accountValue = accountValueBuilder.getValue();
 		String loginValue = loginValueBuilder.getValue();
 		String passwordValue = passwordValueBuilder.getValue();
-		return new OvhAuthParams(accountValue, loginValue, passwordValue);
+		return buildContext.register(new OvhAuthParams(accountValue, loginValue, passwordValue));
 	}
 
 	private OvhOptions buildOptions() {

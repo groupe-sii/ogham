@@ -1,8 +1,8 @@
 package fr.sii.ogham.sms.builder;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.message.PhoneNumber;
@@ -45,7 +45,7 @@ public class SenderNumberBuilder extends AbstractParent<PhoneNumbersBuilder> imp
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SenderNumberBuilder(PhoneNumbersBuilder parent, BuildContext buildContext) {
 		super(parent);

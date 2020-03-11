@@ -9,8 +9,8 @@ import javax.activation.MimetypesFileTypeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
@@ -134,7 +134,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public ImageInliningBuilder(ImageHandlingBuilder parent, BuildContext buildContext) {
 		super(parent);
@@ -180,7 +180,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 */
 	public AttachImageBuilder attach() {
 		if (attachBuilder == null) {
-			attachBuilder = new AttachImageBuilder(this);
+			attachBuilder = new AttachImageBuilder(this, buildContext);
 		}
 		return attachBuilder;
 	}
@@ -224,7 +224,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 */
 	public Base64InliningBuilder base64() {
 		if (base64Builder == null) {
-			base64Builder = new Base64InliningBuilder(this);
+			base64Builder = new Base64InliningBuilder(this, buildContext);
 		}
 		return base64Builder;
 	}
@@ -335,7 +335,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 			return null;
 		}
 		LOG.info("Images will be inlined");
-		return new InlineImageTranslator(buildInliner(), buildResolver(), mimetypeProvider, buildRelativePathProvider());
+		return buildContext.register(new InlineImageTranslator(buildInliner(), buildResolver(), mimetypeProvider, buildRelativePathProvider()));
 	}
 
 	private MimeTypeProvider buildMimetypeProvider() {
@@ -346,7 +346,7 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	}
 
 	private ImageInliner buildInliner() {
-		EveryImageInliner inliner = new EveryImageInliner();
+		EveryImageInliner inliner = buildContext.register(new EveryImageInliner());
 		if (attachBuilder != null) {
 			inliner.addInliner(attachBuilder.build());
 		}
@@ -358,10 +358,10 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 
 	private ResourceResolver buildResolver() {
 		List<ResourceResolver> resolvers = resourceResolutionBuilderHelper.buildResolvers();
-		return new FirstSupportingResourceResolver(resolvers);
+		return buildContext.register(new FirstSupportingResourceResolver(resolvers));
 	}
 
 	private RelativePathResolver buildRelativePathProvider() {
-		return new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups());
+		return buildContext.register(new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups()));
 	}
 }

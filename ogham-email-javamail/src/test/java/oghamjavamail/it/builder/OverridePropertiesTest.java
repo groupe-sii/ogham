@@ -7,12 +7,17 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.Properties;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
-import fr.sii.ogham.core.builder.BuildContext;
-import fr.sii.ogham.core.builder.EnvBuilderBasedContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.EnvBuilderBasedContext;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
+import fr.sii.ogham.core.builder.registry.Registry;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.JavaPropertiesResolver;
@@ -20,6 +25,10 @@ import fr.sii.ogham.core.env.PropertyResolver;
 import fr.sii.ogham.email.builder.javamail.OverrideJavaMailResolver;
 
 public class OverridePropertiesTest {
+	@Rule public final MockitoRule mokito = MockitoJUnit.rule();
+	
+	@Mock Registry<Object> registry;
+	
 	PropertyResolver defaultResolver;
 	PropertyResolver emptyResolver;
 	Converter converter;
@@ -44,7 +53,7 @@ public class OverridePropertiesTest {
 		emptyProps = new Properties();
 		emptyResolver = new JavaPropertiesResolver(emptyProps, converter);
 		environmentBuilder = new SimpleEnvironmentBuilder<>(null);
-		BuildContext ctx = new EnvBuilderBasedContext(environmentBuilder);
+		BuildContext ctx = new EnvBuilderBasedContext(environmentBuilder, registry);
 		hosts = new ConfigurationValueBuilderHelper<>(null, String.class, ctx);
 		ports = new ConfigurationValueBuilderHelper<>(null, Integer.class, ctx);
 	}

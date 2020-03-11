@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import com.sendgrid.SendGrid;
 
-import fr.sii.ogham.core.builder.BuildContext;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
@@ -121,7 +121,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SendGridV2Builder(EmailBuilder parent, BuildContext buildContext) {
 		super(SendGridV2Builder.class, parent, buildContext);
@@ -210,7 +210,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 		}
 		LOG.info("Sending email using SendGrid API is registered");
 		LOG.debug("SendGrid account: apiKey={}, username={}", apiKey, username);
-		return new SendGridV2Sender(builtClient, buildContentHandler(), interceptor);
+		return buildContext.register(new SendGridV2Sender(builtClient, buildContentHandler(), interceptor));
 	}
 
 	private SendGridClient buildClient(String apiKey, String username, String password, URL url) {
@@ -218,7 +218,7 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 			return client;
 		}
 		if (apiKey != null || (username != null && password != null)) {
-			return new DelegateSendGridClient(buildSendGrid(apiKey, username, password, url));
+			return buildContext.register(new DelegateSendGridClient(buildSendGrid(apiKey, username, password, url)));
 		}
 		return null;
 	}
@@ -234,19 +234,19 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 		return sendGrid;
 	}
 
-	private static SendGrid newSendGrid(String apiKey, String username, String password) {
+	private SendGrid newSendGrid(String apiKey, String username, String password) {
 		if (apiKey != null) {
-			return new SendGrid(apiKey);
+			return buildContext.register(new SendGrid(apiKey));
 		}
-		return new SendGrid(username, password);
+		return buildContext.register(new SendGrid(username, password));
 	}
 
 	private PriorizedContentHandler buildContentHandler() {
 		MimeTypeProvider mimetypeProvider = mimetypeBuilder.build();
-		PriorizedContentHandler contentHandler = new PriorizedContentHandler();
-		contentHandler.register(MultiContent.class, new MultiContentHandler(contentHandler));
-		contentHandler.register(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler));
-		contentHandler.register(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider));
+		PriorizedContentHandler contentHandler = buildContext.register(new PriorizedContentHandler());
+		contentHandler.register(MultiContent.class, buildContext.register(new MultiContentHandler(contentHandler)));
+		contentHandler.register(ContentWithAttachments.class, buildContext.register(new ContentWithAttachmentsHandler(contentHandler)));
+		contentHandler.register(MayHaveStringContent.class, buildContext.register(new StringContentHandler(mimetypeProvider)));
 		return contentHandler;
 	}
 }

@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.builder.resolution;
 
-import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.resource.resolver.StringResourceResolver;
 
@@ -38,7 +38,7 @@ public class StringResolutionBuilder<P> extends AbstractSingleResolutionBuilder<
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public StringResolutionBuilder(P parent, BuildContext buildContext) {
 		super(StringResolutionBuilder.class, parent, buildContext);

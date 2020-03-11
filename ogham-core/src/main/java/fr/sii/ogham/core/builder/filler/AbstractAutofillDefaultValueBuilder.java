@@ -1,8 +1,9 @@
-package fr.sii.ogham.core.builder;
+package fr.sii.ogham.core.builder.filler;
 
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
@@ -23,6 +24,7 @@ import fr.sii.ogham.core.fluent.AbstractParent;
 @SuppressWarnings("squid:S00119")
 public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P, V> extends AbstractParent<P> {
 	protected final MYSELF myself;
+	protected final BuildContext buildContext;
 	protected final ConfigurationValueBuilderHelper<MYSELF, V> defaultValueBuilder;
 
 	/**
@@ -44,12 +46,13 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P, V> extends 
 	 * @param valueClass
 	 *            the type of the value
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	@SuppressWarnings("unchecked")
 	public AbstractAutofillDefaultValueBuilder(Class<?> selfType, P parent, Class<V> valueClass, BuildContext buildContext) {
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
+		this.buildContext = buildContext;
 		defaultValueBuilder = new ConfigurationValueBuilderHelper<>(myself, valueClass, buildContext);
 	}
 

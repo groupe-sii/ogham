@@ -2,8 +2,8 @@ package fr.sii.ogham.core.condition.provider;
 
 import static fr.sii.ogham.core.condition.fluent.Conditions.alwaysTrue;
 
-import fr.sii.ogham.core.builder.annotation.RequiredProperties;
-import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
 import fr.sii.ogham.core.condition.AndCondition;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.fluent.Conditions;

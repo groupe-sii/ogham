@@ -9,12 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.annotation.RequiredClass;
-import fr.sii.ogham.core.builder.annotation.RequiredClasses;
-import fr.sii.ogham.core.builder.annotation.RequiredProperties;
-import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.priority.ImplementationPriorityProvider;
 import fr.sii.ogham.core.builder.priority.PriorityProvider;
@@ -62,7 +62,7 @@ public class SenderImplementationBuilderHelper<P> {
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SenderImplementationBuilderHelper(P parent, BuildContext buildContext) {
 		super();
@@ -233,7 +233,7 @@ public class SenderImplementationBuilderHelper<P> {
 		ImplementationConditionProvider implementationSelection = new ImplementationConditionProvider(buildContext.getPropertyResolver());
 		for (MessageSender customSender : customSenders) {
 			LOG.debug("Custom implementation {} registered into {}", customSender, mainSender);
-			mainSender.addImplementation(implementationSelection.provide(customSender), customSender, priorityProvider.provide(customSender));
+			mainSender.addImplementation(implementationSelection.provide(customSender), buildContext.register(customSender), priorityProvider.provide(customSender));
 		}
 		for (Builder<? extends MessageSender> builder : senderBuilders) {
 			MessageSender sender = builder.build();

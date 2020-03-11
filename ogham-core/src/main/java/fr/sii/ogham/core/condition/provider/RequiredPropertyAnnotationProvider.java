@@ -7,7 +7,7 @@ import static fr.sii.ogham.core.condition.fluent.Conditions.requiredPropertyValu
 
 import java.util.regex.Pattern;
 
-import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.fluent.Conditions;
 import fr.sii.ogham.core.condition.fluent.FluentCondition;

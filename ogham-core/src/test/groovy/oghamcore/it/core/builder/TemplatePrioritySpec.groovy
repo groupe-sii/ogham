@@ -2,7 +2,7 @@ package oghamcore.it.core.builder
 
 
 import fr.sii.ogham.core.builder.Builder
-import fr.sii.ogham.core.builder.DefaultBuildContext
+import fr.sii.ogham.core.builder.context.DefaultBuildContext
 import fr.sii.ogham.core.builder.priority.Priority
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper
 import fr.sii.ogham.core.message.Message

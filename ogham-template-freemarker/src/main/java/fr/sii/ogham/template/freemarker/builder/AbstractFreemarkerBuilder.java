@@ -8,9 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
@@ -192,7 +192,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	@Override
 	public TemplateParser build() {
 		LOG.info("Freemarker parser is registered");
-		return new FreeMarkerParser(buildConfiguration(), buildResolver());
+		return buildContext.register(new FreeMarkerParser(buildConfiguration(), buildResolver()));
 	}
 
 	@Override
@@ -202,9 +202,9 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 
 	private TemplateEngineDetector buildDefaultDetector() {
 		FirstSupportingResourceResolver resolver = buildResolver();
-		OrTemplateDetector or = new OrTemplateDetector();
-		or.addDetector(new FreeMarkerTemplateDetector(resolver, ".ftl", ".ftlh"));
-		or.addDetector(new SimpleResourceEngineDetector(resolver, new FixedEngineDetector(true)));
+		OrTemplateDetector or = buildContext.register(new OrTemplateDetector());
+		or.addDetector(buildContext.register(new FreeMarkerTemplateDetector(resolver, ".ftl", ".ftlh")));
+		or.addDetector(buildContext.register(new SimpleResourceEngineDetector(resolver, buildContext.register(new FixedEngineDetector(true)))));
 		return or;
 	}
 
@@ -214,7 +214,7 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 	 * @return the resource resolver
 	 */
 	public FirstSupportingResourceResolver buildResolver() {
-		return new FirstSupportingResourceResolver(buildResolvers());
+		return buildContext.register(new FirstSupportingResourceResolver(buildResolvers()));
 	}
 
 	private Configuration buildConfiguration() {
@@ -230,8 +230,8 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 		}
 		FirstSupportingResourceResolver builtResolver = buildResolver();
 		FirstSupportingResolverAdapter builtAdapter = buildAdapter();
-		builtConfiguration.setTemplateLoader(new FreeMarkerFirstSupportingTemplateLoader(builtResolver, builtAdapter));
-		builtConfiguration.setTemplateLookupStrategy(new SkipLocaleForStringContentTemplateLookupStrategy(builtConfiguration.getTemplateLookupStrategy(), builtResolver, builtAdapter));
+		builtConfiguration.setTemplateLoader(buildContext.register(new FreeMarkerFirstSupportingTemplateLoader(builtResolver, builtAdapter)));
+		builtConfiguration.setTemplateLookupStrategy(buildContext.register(new SkipLocaleForStringContentTemplateLookupStrategy(builtConfiguration.getTemplateLookupStrategy(), builtResolver, builtAdapter)));
 		return builtConfiguration;
 	}
 
@@ -245,10 +245,10 @@ public abstract class AbstractFreemarkerBuilder<MYSELF extends AbstractFreemarke
 		for (TemplateLoaderAdapter custom : customAdapters) {
 			adapter.addAdapter(custom);
 		}
-		adapter.addAdapter(new ClassPathResolverAdapter(classLoader));
-		adapter.addAdapter(new FileResolverAdapter());
-		adapter.addAdapter(new StringResolverAdapter());
-		adapter.setOptions(new TemplateLoaderOptions());
+		adapter.addAdapter(buildContext.register(new ClassPathResolverAdapter(classLoader)));
+		adapter.addAdapter(buildContext.register(new FileResolverAdapter()));
+		adapter.addAdapter(buildContext.register(new StringResolverAdapter()));
+		adapter.setOptions(buildContext.register(new TemplateLoaderOptions()));
 		return adapter;
 	}
 

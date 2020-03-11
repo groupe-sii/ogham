@@ -5,8 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
@@ -39,6 +39,7 @@ import fr.sii.ogham.email.attachment.Attachment;
 public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> implements ResourceResolutionBuilder<AttachmentHandlingBuilder>, Builder<AttachmentResourceTranslator> {
 	private static final Logger LOG = LoggerFactory.getLogger(AttachmentHandlingBuilder.class);
 
+	private final BuildContext buildContext;
 	private ResourceResolutionBuilderHelper<AttachmentHandlingBuilder> resourceResolutionBuilderHelper;
 
 	/**
@@ -49,10 +50,11 @@ public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> impl
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public AttachmentHandlingBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(parent);
+		this.buildContext = buildContext;
 		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper<>(this, buildContext);
 	}
 
@@ -78,16 +80,16 @@ public class AttachmentHandlingBuilder extends AbstractParent<EmailBuilder> impl
 
 	@Override
 	public AttachmentResourceTranslator build() {
-		EveryResourceTranslator translator = new EveryResourceTranslator();
+		EveryResourceTranslator translator = buildContext.register(new EveryResourceTranslator());
 		LOG.info("Using translator that calls all registered translators");
-		translator.addTranslator(new OverrideNameWrapperResourceTranslator(translator));
-		translator.addTranslator(new LookupResourceTranslator(buildResolver()));
+		translator.addTranslator(buildContext.register(new OverrideNameWrapperResourceTranslator(translator)));
+		translator.addTranslator(buildContext.register(new LookupResourceTranslator(buildResolver())));
 		LOG.debug("Registered translators: {}", translator.getTranslators());
 		return translator;
 	}
 
 	private ResourceResolver buildResolver() {
 		List<ResourceResolver> resolvers = resourceResolutionBuilderHelper.buildResolvers();
-		return new FirstSupportingResourceResolver(resolvers);
+		return buildContext.register(new FirstSupportingResourceResolver(resolvers));
 	}
 }

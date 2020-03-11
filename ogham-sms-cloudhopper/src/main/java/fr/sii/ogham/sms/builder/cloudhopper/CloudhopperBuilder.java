@@ -25,13 +25,13 @@ import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.LoggingOptions;
 
 import fr.sii.ogham.core.async.ThreadSleepAwaiter;
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.DefaultBuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.retry.SimpleRetryExecutor;
@@ -177,7 +177,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public CloudhopperBuilder(SmsBuilder parent, BuildContext buildContext) {
 		super(parent);
@@ -1252,20 +1252,20 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		CloudhopperOptions options = buildOptions(sessionOpts);
 		LOG.info("Sending SMS using Cloudhopper is registered");
 		LOG.debug("SMPP server address: {}:{}", session.getHost(), session.getPort());
-		return new CloudhopperSMPPSender(session, options, buildPreparator(), buildClientSupplier(), buildSmppSessionHandler());
+		return buildContext.register(new CloudhopperSMPPSender(session, options, buildPreparator(), buildClientSupplier(), buildSmppSessionHandler()));
 	}
 
 	private CloudhopperSessionOptions buildSessionOpts() {
 		if (sessionBuilder != null) {
 			return sessionBuilder.build();
 		}
-		CloudhopperSessionOptions cloudhopperSessionOptions = new CloudhopperSessionOptions();
+		CloudhopperSessionOptions cloudhopperSessionOptions = buildContext.register(new CloudhopperSessionOptions());
 		cloudhopperSessionOptions.setConnectRetry(noRetry());
 		return cloudhopperSessionOptions;
 	}
 
 	private SimpleRetryExecutor noRetry() {
-		return new SimpleRetryExecutor(() -> null, new ThreadSleepAwaiter());
+		return buildContext.register(new SimpleRetryExecutor(() -> null, buildContext.register(new ThreadSleepAwaiter())));
 	}
 
 	private MessagePreparator buildPreparator() {
@@ -1285,41 +1285,41 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	}
 
 	private MessagePreparator buildShortMessagePreparator() {
-		return new ShortMessagePreparator(buildSplitter(buildEncoder()), buildDataCodingProvider(), buildPhoneNumberTranslator());
+		return buildContext.register(new ShortMessagePreparator(buildSplitter(buildEncoder()), buildDataCodingProvider(), buildPhoneNumberTranslator()));
 	}
 
 	private MessagePreparator buildTlvMessagePayloadMessagePreparator() {
-		return new TlvMessagePayloadMessagePreparator(buildSplitter(buildEncoder()), buildDataCodingProvider(), buildPhoneNumberTranslator());
+		return buildContext.register(new TlvMessagePayloadMessagePreparator(buildSplitter(buildEncoder()), buildDataCodingProvider(), buildPhoneNumberTranslator()));
 	}
 
 	private Encoder buildEncoder() {
 		if (encoderBuilder == null) {
-			return new CloudhopperCharsetSupportingEncoder(NamedCharset.from(NAME_GSM));
+			return buildContext.register(new CloudhopperCharsetSupportingEncoder(NamedCharset.from(NAME_GSM)));
 		}
 		return encoderBuilder.build();
 	}
 
 	private DataCodingProvider buildDataCodingProvider() {
 		if (dataCodingBuilder == null) {
-			return new CharsetMapToCharacterEncodingGroupDataCodingProvider(true);
+			return buildContext.register(new CharsetMapToCharacterEncodingGroupDataCodingProvider(true));
 		}
 		return dataCodingBuilder.build();
 	}
 
 	private MessageSplitter buildSplitter(Encoder encoder) {
 		if (messageSplitterBuilder == null) {
-			return new NoSplitMessageSplitter(encoder);
+			return buildContext.register(new NoSplitMessageSplitter(encoder));
 		}
 		MessageSplitter splitter = messageSplitterBuilder.build();
 		if (splitter != null) {
 			return splitter;
 		}
-		return new NoSplitMessageSplitter(encoder);
+		return buildContext.register(new NoSplitMessageSplitter(encoder));
 	}
 
 	private SmppClientSupplier buildClientSupplier() {
 		if (clientSupplier == null) {
-			return DefaultSmppClient::new;
+			return buildContext.register(DefaultSmppClient::new);
 		}
 		return clientSupplier;
 	}
@@ -1331,16 +1331,16 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return smppSessionHandler;
 	}
 
-	private static PhoneNumberTranslator buildPhoneNumberTranslator() {
+	private PhoneNumberTranslator buildPhoneNumberTranslator() {
 		// TODO: allow configuration of fallback phone number translator
-		return new CompositePhoneNumberTranslator(new DefaultHandler());
+		return buildContext.register(new CompositePhoneNumberTranslator(buildContext.register(new DefaultHandler())));
 	}
 
 	private SmppSessionConfiguration buildSession(CloudhopperSessionOptions sessionOpts) {
 		if (sessionConfiguration != null) {
 			return sessionConfiguration;
 		}
-		SmppSessionConfiguration session = new SmppSessionConfiguration(buildBindType(), systemIdValueBuilder.getValue(), passwordValueBuilder.getValue());
+		SmppSessionConfiguration session = buildContext.register(new SmppSessionConfiguration(buildBindType(), systemIdValueBuilder.getValue(), passwordValueBuilder.getValue()));
 		session.setHost(getHost());
 		session.setPort(getPort());
 		session.setSystemType(systemTypeValueBuilder.getValue());
@@ -1404,11 +1404,11 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return hostValueBuilder.getValue();
 	}
 
-	private static CloudhopperOptions buildOptions(CloudhopperSessionOptions sessionOpts) {
+	private CloudhopperOptions buildOptions(CloudhopperSessionOptions sessionOpts) {
 		Long responseTimeout = sessionOpts.getResponseTimeout() == null ? DEFAULT_RESPONSE_TIMEOUT : sessionOpts.getResponseTimeout();
 		Long unbindTimeout = sessionOpts.getUnbindTimeout() == null ? DEFAULT_UNBIND_TIMEOUT : sessionOpts.getUnbindTimeout();
 		RetryExecutor connectRetry = sessionOpts.getConnectRetry();
-		return new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry, sessionOpts.isKeepSession());
+		return buildContext.register(new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry, sessionOpts.isKeepSession()));
 	}
 
 }

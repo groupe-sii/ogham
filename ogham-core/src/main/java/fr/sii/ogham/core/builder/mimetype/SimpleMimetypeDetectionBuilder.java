@@ -7,10 +7,10 @@ import javax.activation.MimeTypeParseException;
 
 import org.apache.tika.Tika;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -134,7 +134,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	private void buildDefault(List<MimeTypeProvider> providers) throws MimeTypeParseException {
 		String mimetype = defaultMimetypeValueBuilder.getValue();
 		if (mimetype != null) {
-			providers.add(new FixedMimeTypeProvider(mimetype));
+			providers.add(buildContext.register(new FixedMimeTypeProvider(mimetype)));
 		}
 	}
 

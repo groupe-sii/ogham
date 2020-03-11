@@ -1,4 +1,4 @@
-package fr.sii.ogham.core.builder.annotation;
+package fr.sii.ogham.core.builder.condition;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

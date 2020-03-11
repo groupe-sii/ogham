@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.exception;
 
 import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+import static java.util.Collections.unmodifiableList;
 
 import java.util.List;
 
@@ -11,12 +12,12 @@ public class MultipleCauseExceptionWrapper extends Exception {
 
 	public MultipleCauseExceptionWrapper(String message, List<Exception> causes) {
 		super(message);
-		this.causes = causes;
+		this.causes = unmodifiableList(causes);
 	}
 
 	public MultipleCauseExceptionWrapper(List<Exception> causes) {
 		super();
-		this.causes = causes;
+		this.causes = unmodifiableList(causes);
 	}
 
 	public List<Exception> getCauses() {

@@ -1,7 +1,7 @@
 package fr.sii.ogham.core.builder.resolution;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
@@ -39,7 +39,7 @@ public class StandaloneResourceResolutionBuilder<P> extends AbstractParent<P> im
 	 * {@code null}.
 	 * 
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public StandaloneResourceResolutionBuilder(BuildContext buildContext) {
 		this(null, buildContext);
@@ -53,7 +53,7 @@ public class StandaloneResourceResolutionBuilder<P> extends AbstractParent<P> im
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public StandaloneResourceResolutionBuilder(P parent, BuildContext buildContext) {
 		super(parent);

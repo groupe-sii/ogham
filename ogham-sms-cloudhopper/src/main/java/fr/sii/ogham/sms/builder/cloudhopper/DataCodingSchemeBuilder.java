@@ -7,11 +7,11 @@ import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.commons.gsm.DataCoding;
 import com.cloudhopper.smpp.SmppConstants;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToCharacterEncodingGroupDataCodingProvider;
@@ -61,6 +61,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.FixedByteValueDataCod
  * @author Aurélien Baudet
  */
 public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> implements Builder<DataCodingProvider> {
+	private final BuildContext buildContext;
 	private final Supplier<Byte> interfaceVersionProvider;
 	private final ConfigurationValueBuilderHelper<DataCodingSchemeBuilder, Boolean> autoValueBuilder;
 	private final ConfigurationValueBuilderHelper<DataCodingSchemeBuilder, Byte> dcsValueBuilder;
@@ -74,7 +75,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 * @param interfaceVersionProvider
 	 *            A function used to retrieve the value of the interface
 	 *            version. This is needed when {@link #auto(Boolean)} mode is
@@ -82,6 +83,7 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	 */
 	public DataCodingSchemeBuilder(CloudhopperBuilder parent, BuildContext buildContext, Supplier<Byte> interfaceVersionProvider) {
 		super(parent);
+		this.buildContext = buildContext;
 		this.interfaceVersionProvider = interfaceVersionProvider;
 		this.autoValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 		this.dcsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Byte.class, buildContext);
@@ -386,9 +388,9 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	public DataCodingProvider build() {
 		Byte dataCodingValue = dcsValueBuilder.getValue();
 		if (dataCodingValue != null) {
-			return new FixedByteValueDataCodingProvider(dataCodingValue);
+			return buildContext.register(new FixedByteValueDataCodingProvider(dataCodingValue));
 		}
-		FirstSupportingDataCodingProvider firstSupporting = new FirstSupportingDataCodingProvider();
+		FirstSupportingDataCodingProvider firstSupporting = buildContext.register(new FirstSupportingDataCodingProvider());
 		if (custom != null) {
 			firstSupporting.register(custom);
 		}
@@ -401,11 +403,11 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 	private void registerAuto(FirstSupportingDataCodingProvider firstSupporting) {
 		Byte interfaceVersion = interfaceVersionProvider.get();
 		if (interfaceVersion == SmppConstants.VERSION_3_3) {
-			firstSupporting.register(new CharsetMapToGeneralGroupDataCodingProvider(false));
+			firstSupporting.register(buildContext.register(new CharsetMapToGeneralGroupDataCodingProvider(false)));
 			return;
 		}
 		// 3.4+
-		firstSupporting.register(new CharsetMapToCharacterEncodingGroupDataCodingProvider(false));
+		firstSupporting.register(buildContext.register(new CharsetMapToCharacterEncodingGroupDataCodingProvider(false)));
 	}
 
 }

@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.builder.priority;
 
-import fr.sii.ogham.core.builder.BuildContext;
+import fr.sii.ogham.core.builder.context.BuildContext;
 
 /**
  * {@link PriorityProvider} used to encapsulate the default behavior for

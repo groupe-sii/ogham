@@ -2,10 +2,10 @@ package fr.sii.ogham.core.builder.charset;
 
 import java.nio.charset.Charset;
 
-import fr.sii.ogham.core.builder.BuildContext;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.charset.FixedCharsetDetector;
@@ -22,7 +22,7 @@ public class SimpleCharsetDetectorBuilder<P> extends AbstractParent<P> implement
 	 * @param parent
 	 *            the parent builder
 	 * @param buildContext
-	 *            for property resolution and evaluation
+	 *            for registering instances and property evaluation
 	 */
 	public SimpleCharsetDetectorBuilder(P parent, BuildContext buildContext) {
 		super(parent);
