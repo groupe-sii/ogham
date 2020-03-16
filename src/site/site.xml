@@ -29,16 +29,20 @@
 				<href>${this.site.url}</href>
 			</brand>
 			<slogan>Sending email, sms or whatever is a piece of cake</slogan>
+			<header type="banner"></header>
 			<titleTemplate>%2$s | %1$s</titleTemplate>
 			<!-- Use Table of Contents at the top of the page (max 6 elements) -->
 			<toc numberItems="6" cssClass="border rounded">top</toc>
 			<!-- Include the documentation and tools in the top navigation (in addition 
 				to links) -->
 			<navbar filterMenu="Documentation|Samples|Versions"
+				theme=""
+				background=""
 				cssClass="border-bottom">
 			</navbar>
 			<navside-menu cssClass="" />
 			<breadcrumbs>false</breadcrumbs>
+			<toc>false</toc>
 			<footer />
 			<!-- Split menus in the bottom navigation -->
 			<bottomNav maxSpan="9">
@@ -59,38 +63,30 @@
 				<index>
 					<!-- Override the title -->
 					<titleTemplate>Ogham</titleTemplate>
-					<!-- no ToC on the main index page -->
-					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 					<highlightJs>false</highlightJs>
 				</index>
 				<user-manual>
 					<highlightJs>false</highlightJs>
-					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</user-manual>
 				<features>
 					<highlightJs>false</highlightJs>
-					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</features>
 				<roadmap>
 					<highlightJs>false</highlightJs>
-					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</roadmap>
 				<release-notes>
 					<highlightJs>false</highlightJs>
-					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</release-notes>
 				<migration-guide>
 					<highlightJs>false</highlightJs>
-					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
 				</migration-guide>
 				<contribute>
-					<toc>false</toc>
 				</contribute>
 				<!-- Disable source highlighting for Maven reports -->
 				<source-repository>
@@ -98,18 +94,13 @@
 				</source-repository>
 				<issue-tracking>
 					<highlightJs>false</highlightJs>
-					<toc>false</toc>
 				</issue-tracking>
 				<license>
 					<highlightJs>false</highlightJs>
-					<toc>false</toc>
 				</license>
-				<!-- Disable ToC for some Maven reports -->
 				<project-info>
-					<toc>false</toc>
 				</project-info>
 				<github-report>
-					<toc>false</toc>
 				</github-report>
 				<dependencies>
 					<tocTopMax>4</tocTopMax>
@@ -117,15 +108,10 @@
 			</pages>
 			<endContent>
 				<script src="$resourcePath/js/site.js"></script>
-				<script src="$resourcePath/js/fix-headings.js"></script>	<!-- TODO: remove when https://github.com/devacfr/reflow-maven-skin/issues/63 
-					is fixed -->
 				<script src="$resourcePath/javascripts/progress.js"></script>
-				<script
-					src="$resourcePath/javascripts/sourcecode/source-utils.js"></script>
-				<script
-					src="$resourcePath/javascripts/sourcecode/highlight-lines.js"></script>
-				<script
-					src="$resourcePath/javascripts/sourcecode/collapse-lines.js"></script>
+				<script src="$resourcePath/javascripts/sourcecode/source-utils.js"></script>
+				<script src="$resourcePath/javascripts/sourcecode/highlight-lines.js"></script>
+				<script src="$resourcePath/javascripts/sourcecode/collapse-lines.js"></script>
 				<script src="$resourcePath/javascripts/tabcontainer.js"></script>
 			</endContent>
 		</reflowSkin>
@@ -134,6 +120,8 @@
 	<body>
 		<head>
 			<![CDATA[
+			<link rel="icon" href="$resourcePath/favicon.ico" type="image/x-icon" />
+			<link rel="shortcut icon" href="$resourcePath/favicon.ico" type="image/x-icon" />
 			<link rel="author" href="https://github.com/aurelien-baudet" />
 			<!--link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700" crossorigin="anonymous" /-->
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
@@ -162,7 +150,7 @@
 		</menu>
 		<menu name="Samples" inherit="top">
 			<item name="Email"
-				href="${this.github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email?" />
+				href="${this.github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email" />
 			<item name="SMS"
 				href="${this.github.code.url}/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms" />
 			<item name="Spring"
