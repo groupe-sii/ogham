@@ -2,20 +2,17 @@ server:
   port: 8050
 initializr:
   bootVersions:
-    - id: 1.5.21.RELEASE
-      name: 1.5.21
+    - id: 1.5.22.RELEASE
+      name: 1.5.22
       default: false
-    - id: 2.1.5.RELEASE
-      name: 2.1.5
-      default: false
-    - id: 2.1.12.RELEASE
-      name: 2.1.12
+    - id: 2.1.13.RELEASE
+      name: 2.1.13
       default: true
-    - id: 2.2.4.RELEASE
-      name: 2.2.4
+    - id: 2.2.5.RELEASE
+      name: 2.2.5
       default: false
-    - id: 2.3.0.M1
-      name: 2.3.0 M1
+    - id: 2.3.0.M3
+      name: 2.3.0 M3
       default: false
   javaVersions:
     - id: 13
