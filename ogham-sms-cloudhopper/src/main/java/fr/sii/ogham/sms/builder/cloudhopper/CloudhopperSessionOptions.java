@@ -1,7 +1,15 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
 import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.KeepAliveOptions;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ReuseSessionOptions;
 
+/**
+ * Intermediate object that carries configured options.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class CloudhopperSessionOptions {
 	private String sessionName;
 	private Long bindTimeout;
@@ -14,7 +22,8 @@ public class CloudhopperSessionOptions {
 	private Long responseTimeout;
 	private Long unbindTimeout;
 	private RetryExecutor connectRetry;
-	private boolean keepSession;
+	private ReuseSessionOptions reuseSession;
+	private KeepAliveOptions keepAlive;
 
 	public String getSessionName() {
 		return sessionName;
@@ -104,11 +113,19 @@ public class CloudhopperSessionOptions {
 		this.connectRetry = connectRetry;
 	}
 
-	public boolean isKeepSession() {
-		return keepSession;
+	public ReuseSessionOptions getReuseSession() {
+		return reuseSession;
 	}
 
-	public void setKeepSession(boolean keepSession) {
-		this.keepSession = keepSession;
+	public void setReuseSession(ReuseSessionOptions reuseSession) {
+		this.reuseSession = reuseSession;
+	}
+
+	public KeepAliveOptions getKeepAlive() {
+		return keepAlive;
+	}
+
+	public void setKeepAlive(KeepAliveOptions keepAlive) {
+		this.keepAlive = keepAlive;
 	}
 }

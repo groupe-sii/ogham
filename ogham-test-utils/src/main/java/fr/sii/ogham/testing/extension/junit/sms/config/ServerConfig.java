@@ -1,11 +1,14 @@
 package fr.sii.ogham.testing.extension.junit.sms.config;
 
+import static fr.sii.ogham.testing.extension.junit.sms.config.SlowConfig.noWait;
+import static fr.sii.ogham.testing.extension.junit.sms.config.SlowConfig.waitFor;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.sii.ogham.testing.sms.simulator.config.Awaiter;
 import fr.sii.ogham.testing.sms.simulator.config.Credentials;
 import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
 import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
@@ -20,6 +23,7 @@ public class ServerConfig {
 	private final List<Credentials> credentials = new ArrayList<>();
 	private SmppServerConfig annotationConfig;
 	private SlowConfig slowConfig;
+	private boolean keepMessages;
 
 	/**
 	 * Register allowed credentials.
@@ -65,6 +69,19 @@ public class ServerConfig {
 	}
 
 	/**
+	 * If the server is restarted, it indicates if received messages in the
+	 * previous session should be kept (true) or dropped (false).
+	 * 
+	 * @param keep
+	 *            indicate if messages should be kept or not between sessions
+	 * @return this instance for fluent chaining
+	 */
+	public ServerConfig keepMessages(boolean keep) {
+		keepMessages = keep;
+		return this;
+	}
+
+	/**
 	 * Create the final {@link SimulatorConfiguration} that is used by the SMPP
 	 * server.
 	 * 
@@ -74,6 +91,7 @@ public class ServerConfig {
 		SimulatorConfiguration config = new SimulatorConfiguration();
 		config.setCredentials(buildCredentials());
 		config.setServerDelays(buildServerDelays());
+		config.setKeepMessages(keepMessages);
 		return config;
 	}
 
@@ -96,30 +114,37 @@ public class ServerConfig {
 
 	private static ServerDelays buildServerDelays(Slow slow) {
 		ServerDelays delays = new ServerDelays();
-		delays.setSendAlertNotificationDelay(slow.sendAlertNotificationDelay());
-		delays.setSendBindDelay(slow.sendBindDelay());
-		delays.setSendBindRespDelay(slow.sendBindRespDelay());
-		delays.setSendCancelSmDelay(slow.sendCancelSmDelay());
-		delays.setSendCancelSmRespDelay(slow.sendCancelSmRespDelay());
-		delays.setSendDataSmDelay(slow.sendDataSmDelay());
-		delays.setSendDataSmRespDelay(slow.sendDataSmRespDelay());
-		delays.setSendDeliverSmDelay(slow.sendDeliverSmDelay());
-		delays.setSendDeliverSmRespDelay(slow.sendDeliverSmRespDelay());
-		delays.setSendEnquireLinkDelay(slow.sendEnquireLinkDelay());
-		delays.setSendEnquireLinkRespDelay(slow.sendEnquireLinkRespDelay());
-		delays.setSendGenericNackDelay(slow.sendGenericNackDelay());
-		delays.setSendHeaderDelay(slow.sendHeaderDelay());
-		delays.setSendOutbindDelay(slow.sendOutbindDelay());
-		delays.setSendQuerySmDelay(slow.sendQuerySmDelay());
-		delays.setSendQuerySmRespDelay(slow.sendQuerySmRespDelay());
-		delays.setSendReplaceSmDelay(slow.sendReplaceSmDelay());
-		delays.setSendReplaceSmRespDelay(slow.sendReplaceSmRespDelay());
-		delays.setSendSubmiMultiDelay(slow.sendSubmiMultiDelay());
-		delays.setSendSubmitMultiRespDelay(slow.sendSubmitMultiRespDelay());
-		delays.setSendSubmitSmDelay(slow.sendSubmitSmDelay());
-		delays.setSendSubmitSmRespDelay(slow.sendSubmitSmRespDelay());
-		delays.setSendUnbindDelay(slow.sendUnbindDelay());
-		delays.setSendUnbindRespDelay(slow.sendUnbindRespDelay());
+		delays.setSendAlertNotificationWaiting(toAwaiter(slow.sendAlertNotificationDelay()));
+		delays.setSendBindWaiting(toAwaiter(slow.sendBindDelay()));
+		delays.setSendBindRespWaiting(toAwaiter(slow.sendBindRespDelay()));
+		delays.setSendCancelSmWaiting(toAwaiter(slow.sendCancelSmDelay()));
+		delays.setSendCancelSmRespWaiting(toAwaiter(slow.sendCancelSmRespDelay()));
+		delays.setSendDataSmWaiting(toAwaiter(slow.sendDataSmDelay()));
+		delays.setSendDataSmRespWaiting(toAwaiter(slow.sendDataSmRespDelay()));
+		delays.setSendDeliverSmWaiting(toAwaiter(slow.sendDeliverSmDelay()));
+		delays.setSendDeliverSmRespWaiting(toAwaiter(slow.sendDeliverSmRespDelay()));
+		delays.setSendEnquireLinkWaiting(toAwaiter(slow.sendEnquireLinkDelay()));
+		delays.setSendEnquireLinkRespWaiting(toAwaiter(slow.sendEnquireLinkRespDelay()));
+		delays.setSendGenericNackWaiting(toAwaiter(slow.sendGenericNackDelay()));
+		delays.setSendHeaderWaiting(toAwaiter(slow.sendHeaderDelay()));
+		delays.setSendOutbindWaiting(toAwaiter(slow.sendOutbindDelay()));
+		delays.setSendQuerySmWaiting(toAwaiter(slow.sendQuerySmDelay()));
+		delays.setSendQuerySmRespWaiting(toAwaiter(slow.sendQuerySmRespDelay()));
+		delays.setSendReplaceSmWaiting(toAwaiter(slow.sendReplaceSmDelay()));
+		delays.setSendReplaceSmRespWaiting(toAwaiter(slow.sendReplaceSmRespDelay()));
+		delays.setSendSubmiMultiWaiting(toAwaiter(slow.sendSubmiMultiDelay()));
+		delays.setSendSubmitMultiRespWaiting(toAwaiter(slow.sendSubmitMultiRespDelay()));
+		delays.setSendSubmitSmWaiting(toAwaiter(slow.sendSubmitSmDelay()));
+		delays.setSendSubmitSmRespWaiting(toAwaiter(slow.sendSubmitSmRespDelay()));
+		delays.setSendUnbindWaiting(toAwaiter(slow.sendUnbindDelay()));
+		delays.setSendUnbindRespWaiting(toAwaiter(slow.sendUnbindRespDelay()));
 		return delays;
+	}
+	
+	private static Awaiter toAwaiter(long delayMs) {
+		if (delayMs == 0) {
+			return noWait();
+		}
+		return waitFor(delayMs);
 	}
 }

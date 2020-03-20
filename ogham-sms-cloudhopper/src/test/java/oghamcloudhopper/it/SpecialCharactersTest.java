@@ -34,7 +34,6 @@ public class SpecialCharactersTest {
 			.host("127.0.0.1")
 			.port(smppServer.getPort())
 			.session()
-				.keepSession(true)
 				.connectRetry()
 					.fixedDelay()
 						.maxRetries(10)

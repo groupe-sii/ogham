@@ -38,4 +38,9 @@ public class NamedCallable<V> implements Callable<V> {
 		return name;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 }

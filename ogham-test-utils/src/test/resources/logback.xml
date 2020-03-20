@@ -19,6 +19,7 @@
 	</logger>
 
 	<logger name="org.thymeleaf.TemplateEngine.CONFIG" level="INFO" />
+	<logger name="fr.sii.ogham.testing.sms.simulator.jsmpp" level="TRACE" />
 
 	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />

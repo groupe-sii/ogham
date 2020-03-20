@@ -3,28 +3,34 @@ package fr.sii.ogham.spring.sms;
 public class UserDataProperties {
 	/**
 	 * Enable/disable use of short_message field to carry text message (named
-	 * User Data).
+	 * User Data).<br />
+	 * <br />
+	 * Default: <i>true</i>
 	 */
-	private boolean useShortMessage = true;
+	private Boolean useShortMessage;
 	/**
 	 * Enable/disable use of {@code message_payload} optional TLV
-	 * (Tag-Value-Length) parameter to carry text message (named User Data).
+	 * (Tag-Value-Length) parameter to carry text message (named User
+	 * Data).<br />
+	 * <br />
+	 * Default: <i>false</i>
 	 */
-	private boolean useTlvMessagePayload = false;
+	private Boolean useTlvMessagePayload;
 
-	public boolean isUseShortMessage() {
+	public Boolean getUseShortMessage() {
 		return useShortMessage;
 	}
 
-	public void setUseShortMessage(boolean useShortMessage) {
+	public void setUseShortMessage(Boolean useShortMessage) {
 		this.useShortMessage = useShortMessage;
 	}
 
-	public boolean isUseTlvMessagePayload() {
+	public Boolean getUseTlvMessagePayload() {
 		return useTlvMessagePayload;
 	}
 
-	public void setUseTlvMessagePayload(boolean useTlvMessagePayload) {
+	public void setUseTlvMessagePayload(Boolean useTlvMessagePayload) {
 		this.useTlvMessagePayload = useTlvMessagePayload;
 	}
+
 }

@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.sender;
 
-import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.core.util.LogUtils.logString;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -86,10 +86,10 @@ public abstract class MultiImplementationSender<M extends Message> implements Co
 	public void send(Message message) throws MessageException {
 		MessageSender sender = getSender(message);
 		if (sender == null) {
-			LOG.warn("No implementation is able to send the message {}. Skipping", summarize(message));
+			LOG.warn("No implementation is able to send the message {}. Skipping", logString(message));
 			return;
 		}
-		LOG.debug("Sending message {} using {} implementation", summarize(message), sender);
+		LOG.debug("Sending message {} using {} implementation", logString(message), sender);
 		sender.send(message);
 	}
 
@@ -120,7 +120,7 @@ public abstract class MultiImplementationSender<M extends Message> implements Co
 			LOG.debug("Can handle the message type {}. Is there any implementation available to send it ?", message.getClass());
 			for (Implementation impl : implementations.getOrdered()) {
 				if (impl.getCondition().accept(message)) {
-					LOG.debug("The implementation {} can handle the message {}", impl.getSender(), summarize(message));
+					LOG.debug("The implementation {} can handle the message {}", impl.getSender(), logString(message));
 					return impl.getSender();
 				}
 			}

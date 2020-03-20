@@ -11,6 +11,7 @@ import java.util.List;
 public class SimulatorConfiguration {
 	private List<Credentials> credentials;
 	private ServerDelays serverDelays;
+	private boolean keepMessages;
 
 	/**
 	 * Get the allowed credentials
@@ -48,6 +49,27 @@ public class SimulatorConfiguration {
 	 */
 	public void setServerDelays(ServerDelays serverDelays) {
 		this.serverDelays = serverDelays;
+	}
+
+	/**
+	 * If the server is restarted, it indicates if received messages in the
+	 * previous session should be kept (true) or dropped (false).
+	 * 
+	 * @return indicate if messages should be kept or not between sessions
+	 */
+	public boolean isKeepMessages() {
+		return keepMessages;
+	}
+
+	/**
+	 * If the server is restarted, it indicates if received messages in the
+	 * previous session should be kept (true) or dropped (false).
+	 * 
+	 * @param keepMessages
+	 *            indicate if messages should be kept or not between sessions
+	 */
+	public void setKeepMessages(boolean keepMessages) {
+		this.keepMessages = keepMessages;
 	}
 
 }

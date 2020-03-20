@@ -7,9 +7,11 @@ public class EncoderProperties {
 	private AutoGuessProperties autoGuess = new AutoGuessProperties();
 	/**
 	 * Set which Cloudhopper Charset should be used if nothing else is
-	 * configured.
+	 * configured.<br />
+	 * <br />
+	 * Default: <i>"GSM"</i>
 	 */
-	private String defaultCharset = "GSM";
+	private String defaultCharset;
 	@NestedConfigurationProperty
 	private Gsm7bitPackedProperties gsm7bitPacked = new Gsm7bitPackedProperties();
 	@NestedConfigurationProperty
@@ -48,16 +50,19 @@ public class EncoderProperties {
 		 * enabled (using {@link #autoGuess(Boolean)}) and UCS-2 is enabled
 		 * (using {@link #ucs2(Integer)}).</li>
 		 * </ul>
+		 * 
+		 * Default: <i>true</i>
 		 */
-		private boolean enable = true;
+		private Boolean enable;
 
-		public boolean isEnable() {
+		public Boolean getEnable() {
 			return enable;
 		}
 
-		public void setEnable(boolean enable) {
+		public void setEnable(Boolean enable) {
 			this.enable = enable;
 		}
+
 	}
 
 	public static class Gsm7bitPackedProperties {
@@ -67,22 +72,25 @@ public class EncoderProperties {
 		 * Only 7 bits are necessary to represents characters. In GSM 8-bit
 		 * encoding a leading 0 is added. However, GSM 7-bit encoding is packed.
 		 * Every character is "merged" with the next one in order to use more
-		 * characters for the same number of octets.
+		 * characters for the same number of octets.<br />
+		 * <br />
 		 * 
-		 * <p>
-		 * If priority value is 0 or negative, it disables GSM 7-bit encoding.
+		 * If priority value is 0 or negative, it disables GSM 7-bit
+		 * encoding.<br />
+		 * <br />
 		 * 
-		 * <p>
-		 * Disabled by default as most services doesn't support it.
+		 * It is disabled by default as most services doesn't support it.<br />
+		 * <br />
 		 * 
+		 * Default: <i>0</i>
 		 */
-		private int priority = 0;
+		private Integer priority;
 
-		public int getPriority() {
+		public Integer getPriority() {
 			return priority;
 		}
 
-		public void setPriority(int priority) {
+		public void setPriority(Integer priority) {
 			this.priority = priority;
 		}
 	}
@@ -92,38 +100,46 @@ public class EncoderProperties {
 		 * Set priority for encoding text messages using GSM 8-bit encoding. GSM
 		 * 7-bit encoding and GSM 8-bit encoding use the same character tables.
 		 * Only 7 bits are necessary to represents characters. In GSM 8-bit
-		 * encoding a leading 0 is added.
+		 * encoding a leading 0 is added.<br />
+		 * <br />
 		 * 
-		 * <p>
-		 * If priority value is 0 or negative, it disables GSM 8-bit encoding.
+		 * If priority value is 0 or negative, it disables GSM 8-bit
+		 * encoding.<br />
+		 * <br />
+		 * 
+		 * Default: <i>99000</i>
 		 * 
 		 */
-		private int priority = 99000;
+		private Integer priority;
 
-		public int getPriority() {
+		public Integer getPriority() {
 			return priority;
 		}
 
-		public void setPriority(int priority) {
+		public void setPriority(Integer priority) {
 			this.priority = priority;
 		}
 	}
 
 	public static class Latin1Properties {
 		/**
-		 * Set priority for encoding text messages using Latin-1 (ISO-8859-1).
+		 * Set priority for encoding text messages using Latin-1
+		 * (ISO-8859-1).<br />
+		 * <br />
 		 * 
-		 * <p>
-		 * If priority value is 0 or negative, it disables Latin-1 encoding.
+		 * If priority value is 0 or negative, it disables Latin-1
+		 * encoding.<br />
+		 * <br />
 		 * 
+		 * Default: <i>98000</i>
 		 */
-		private int priority = 98000;
+		private Integer priority;
 
-		public int getPriority() {
+		public Integer getPriority() {
 			return priority;
 		}
 
-		public void setPriority(int priority) {
+		public void setPriority(Integer priority) {
 			this.priority = priority;
 		}
 	}
@@ -131,19 +147,22 @@ public class EncoderProperties {
 	public static class Ucs2Properties {
 		/**
 		 * Set priority for encoding text messages using UCS-2. UCS-2 uses two
-		 * octets per character.
+		 * octets per character.<br />
+		 * <br />
 		 * 
-		 * <p>
-		 * If priority value is 0 or negative, it disables UCS-2 encoding.
+		 * If priority value is 0 or negative, it disables UCS-2 encoding.<br />
+		 * <br />
+		 * 
+		 * Default: <i>90000</i>
 		 * 
 		 */
-		private int priority = 90000;
+		private Integer priority;
 
-		public int getPriority() {
+		public Integer getPriority() {
 			return priority;
 		}
 
-		public void setPriority(int priority) {
+		public void setPriority(Integer priority) {
 			this.priority = priority;
 		}
 	}

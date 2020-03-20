@@ -1,5 +1,7 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
+import com.cloudhopper.smpp.pdu.EnquireLink;
+
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
@@ -9,6 +11,8 @@ import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.retry.RetryBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.KeepAliveOptions;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ReuseSessionOptions;
 
 /**
  * Configures Cloudhopper session management (timeouts, retry, session name...).
@@ -28,8 +32,9 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	private final ConfigurationValueBuilderHelper<SessionBuilder, Long> responseValueBuilder;
 	private final ConfigurationValueBuilderHelper<SessionBuilder, Long> unbindValueBuilder;
 	private final ConfigurationValueBuilderHelper<SessionBuilder, String> sessionNameValueBuilder;
-	private final ConfigurationValueBuilderHelper<SessionBuilder, Boolean> keepSessionValueBuilder;
 	private RetryBuilder<SessionBuilder> connectRetryBuilder;
+	private ReuseSessionBuilder reuseSessionBuilder;
+	private KeepAliveBuilder keepAliveBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -54,7 +59,6 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		responseValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
 		unbindValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
 		sessionNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		keepSessionValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
 	}
 
 	/**
@@ -910,82 +914,80 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	}
 
 	/**
-	 * Keep the previous session open instead of closing and reopening one.
+	 * Reuse the previous session instead of closing and reopening one if
+	 * possible. However, if the session has been closed by the remote server, a
+	 * new session will be created.
 	 * 
 	 * <p>
-	 * The value set using this method takes precedence over any property and
-	 * default value configured using {@link #keepSession()}.
+	 * When sending the first message, a new session is created. Later, when
+	 * sending the next message, if the session is still alive, this session is
+	 * reused. As the connection is not actively maintained, the session may be
+	 * killed by the server. Therefore to check if the session is still alive,
+	 * an {@link EnquireLink} request is sent. If a response is received from
+	 * the server, then the session is still alive and the message can be sent
+	 * using the same session. If a failure response or no response is received
+	 * after some time from the server, then a new session must be created.
 	 * 
-	 * <pre>
-	 * .keepSession(true)
-	 * .keepSession()
-	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
-	 *   .defaultValue(false)
-	 * </pre>
-	 * 
-	 * <pre>
-	 * .keepSession(true)
-	 * .keepSession()
-	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
-	 *   .defaultValue(false)
-	 * </pre>
-	 * 
-	 * In both cases, {@code keepSession(true)} is used.
 	 * 
 	 * <p>
-	 * If this method is called several times, only the last value is used.
+	 * To check if the session is still alive, the {@link EnquireLink} request
+	 * is sent just before sending the real message. In order to prevent sending
+	 * an {@link EnquireLink} request before <strong>every</strong> message, the
+	 * date of the last sent message or {@link EnquireLink} is kept. This date
+	 * is compared to a delay to ensure that no {@link EnquireLink} is sent
+	 * during this delay.
 	 * 
 	 * <p>
-	 * If {@code null} value is set, it is like not setting a value at all. The
-	 * property/default value configuration is applied.
+	 * This builder let you configure:
+	 * <ul>
+	 * <li>Enable/disable reuse session management</li>
+	 * <li>The maximum time to wait for a response from the server for
+	 * {@link EnquireLink} request</li>
+	 * <li>The time to wait before sending a new {@link EnquireLink} request
+	 * again</li>
+	 * </ul>
 	 * 
-	 * @param keepOpened
-	 *            true to reuse same session for sending messages
-	 * @return this instance for fluent chaining
+	 * <p>
+	 * <strong>NOTE:</strong> If {@link #keepAlive()} strategy is enabled, this
+	 * option has no effect.
+	 * 
+	 * @return the builder to configure reuse session strategy
 	 */
-	public SessionBuilder keepSession(Boolean keepOpened) {
-		keepSessionValueBuilder.setValue(keepOpened);
-		return this;
+	public ReuseSessionBuilder reuseSession() {
+		if (reuseSessionBuilder == null) {
+			reuseSessionBuilder = new ReuseSessionBuilder(this, buildContext);
+		}
+		return reuseSessionBuilder;
 	}
 
 	/**
-	 * Keep the previous session open instead of closing and reopening one.
+	 * Configure keep alive management. Keep alive strategy actively maintains
+	 * the session opened by sending {@link EnquireLink} messages to the server.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some
-	 * property keys and/or a default value. The aim is to let developer be able
-	 * to externalize its configuration (using system properties, configuration
-	 * file or anything else). If the developer doesn't configure any value for
-	 * the registered properties, the default value is used (if set).
-	 * 
-	 * <pre>
-	 * .keepSession()
-	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
-	 *   .defaultValue(false)
-	 * </pre>
+	 * Even if client sends messages to keep session alive, the connection may
+	 * be broken or closed by the server. Therefore, automatic reconnection is
+	 * done.
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #keepSession(Boolean)} takes precedence
-	 * over property values and default value.
+	 * This builder let you configure:
+	 * <ul>
+	 * <li>Enable/disable active keep alive management</li>
+	 * <li>The time to wait between two {@link EnquireLink} messages</li>
+	 * <li>The maximum time to wait for a response from the server for
+	 * {@link EnquireLink} request</li>
+	 * </ul>
 	 * 
-	 * <pre>
-	 * .keepSession(true)
-	 * .keepSession()
-	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
-	 *   .defaultValue(false)
-	 * </pre>
+	 * <strong>NOTE:</strong> If this strategy is enabled,
+	 * {@link #reuseSession()} has no effect.
 	 * 
-	 * The value {@code true} is used regardless of the value of the properties
-	 * and default value.
-	 * 
-	 * <p>
-	 * See {@link ConfigurationValueBuilder} for more information.
-	 * 
-	 * 
-	 * @return the builder to configure property keys/default value
+	 * @return the builder to configure keep alive management
 	 */
-	public ConfigurationValueBuilder<SessionBuilder, Boolean> keepSession() {
-		return keepSessionValueBuilder;
+	public KeepAliveBuilder keepAlive() {
+		if (keepAliveBuilder == null) {
+			keepAliveBuilder = new KeepAliveBuilder(this, buildContext);
+		}
+		return keepAliveBuilder;
 	}
 
 	@Override
@@ -1000,10 +1002,11 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 		sessionOpts.setWriteTimeout(writeValueBuilder.getValue());
 		sessionOpts.setResponseTimeout(responseValueBuilder.getValue());
 		sessionOpts.setUnbindTimeout(unbindValueBuilder.getValue());
-		sessionOpts.setKeepSession(keepSessionValueBuilder.getValue(false));
 		if (connectRetryBuilder != null) {
 			sessionOpts.setConnectRetry(connectRetryBuilder.build());
 		}
+		sessionOpts.setKeepAlive(keepAliveBuilder != null ? keepAliveBuilder.build() : new KeepAliveOptions(false));
+		sessionOpts.setReuseSession(reuseSessionBuilder != null ? reuseSessionBuilder.build() : new ReuseSessionOptions(false));
 		return sessionOpts;
 	}
 

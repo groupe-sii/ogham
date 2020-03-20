@@ -123,13 +123,13 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 		 * number: if the sender address is alphanumeric (contains both letters
 		 * and numbers) or non-numeric, TON is set to 5 and NPI to 0.
 		 */
-		private boolean enable;
+		private Boolean enable;
 
-		public boolean isEnable() {
+		public Boolean getEnable() {
 			return enable;
 		}
 
-		public void setEnable(boolean enable) {
+		public void setEnable(Boolean enable) {
 			this.enable = enable;
 		}
 	}
@@ -141,15 +141,16 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 		 * set to 0. A number is considered to be a short code if the length of
 		 * the number is 5 digits or less.
 		 */
-		private boolean enable;
+		private Boolean enable;
 
-		public boolean isEnable() {
+		public Boolean getEnable() {
 			return enable;
 		}
 
-		public void setEnable(boolean enable) {
+		public void setEnable(Boolean enable) {
 			this.enable = enable;
 		}
+
 	}
 
 	public static class FromInternationalFormatProperties {
@@ -159,15 +160,16 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 		 * NPI is set to 1.
 		 * 
 		 */
-		private boolean enable;
+		private Boolean enable;
 
-		public boolean isEnable() {
+		public Boolean getEnable() {
 			return enable;
 		}
 
-		public void setEnable(boolean enable) {
+		public void setEnable(Boolean enable) {
 			this.enable = enable;
 		}
+
 	}
 
 	public static class ToProperties {
@@ -203,13 +205,13 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 		 * and NPI is set to 1.
 		 * 
 		 */
-		private boolean enable;
+		private Boolean enable;
 
-		public boolean isEnable() {
+		public Boolean getEnable() {
 			return enable;
 		}
 
-		public void setEnable(boolean enable) {
+		public void setEnable(Boolean enable) {
 			this.enable = enable;
 		}
 

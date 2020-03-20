@@ -2,11 +2,13 @@ package fr.sii.ogham.testing.assertion.internal;
 
 import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinder.findSender;
 import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 
 import org.hamcrest.Matcher;
 
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
 import fr.sii.ogham.testing.util.HasParent;
 
 /**
@@ -66,7 +68,7 @@ public class CloudhopperAssertions extends HasParent<MessagingServiceAssertions>
 	 * @return this instance for fluent chaining
 	 */
 	public CloudhopperAssertions interfaceVersion(Matcher<Byte> matcher) {
-		assertThat(cloudhopperSender.getSmppSessionConfiguration().getInterfaceVersion(), matcher);
+		assertThat(getConfiguration(cloudhopperSender).getInterfaceVersion(), matcher);
 		return this;
 	}
 
@@ -118,11 +120,19 @@ public class CloudhopperAssertions extends HasParent<MessagingServiceAssertions>
 		return findSender(messagingService, CloudhopperSMPPSender.class);
 	}
 
+	private static ExtendedSmppSessionConfiguration getConfiguration(CloudhopperSMPPSender cloudhopperSender) {
+		try {
+			return (ExtendedSmppSessionConfiguration) readField(cloudhopperSender, "configuration", true);
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException("Failed to read 'configuration' of CloudhopperSMPPSender", e);
+		}
+	}
+	
 	private static String getHost(CloudhopperSMPPSender cloudhopperSender) {
-		return cloudhopperSender.getSmppSessionConfiguration().getHost();
+		return getConfiguration(cloudhopperSender).getHost();
 	}
 
 	private static int getPort(CloudhopperSMPPSender cloudhopperSender) {
-		return cloudhopperSender.getSmppSessionConfiguration().getPort();
+		return getConfiguration(cloudhopperSender).getPort();
 	}
 }

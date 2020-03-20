@@ -12,6 +12,7 @@ import fr.sii.ogham.core.message.capability.HasToFluent;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.message.fluent.SingleContentBuilder;
+import fr.sii.ogham.core.util.Loggable;
 import fr.sii.ogham.core.util.EqualsBuilder;
 import fr.sii.ogham.core.util.HashCodeBuilder;
 import fr.sii.ogham.core.util.StringUtils;
@@ -28,7 +29,7 @@ import fr.sii.ogham.core.util.StringUtils;
  * @author Aurélien Baudet
  *
  */
-public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipient>, HasRecipientsFluent<Sms, Recipient>, HasToFluent<Sms> {
+public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipient>, HasRecipientsFluent<Sms, Recipient>, HasToFluent<Sms>, Loggable {
 	/**
 	 * The number of the sender
 	 */
@@ -379,11 +380,12 @@ public class Sms implements Message, HasContentFluent<Sms>, HasRecipients<Recipi
 
 	@Override
 	public String toString() {
-		return toString(true);
+		return toString(false);
 	}
 
-	public String toSummaryString() {
-		return toString(false);
+	@Override
+	public String toLogString() {
+		return toString(true);
 	}
 
 	@Override

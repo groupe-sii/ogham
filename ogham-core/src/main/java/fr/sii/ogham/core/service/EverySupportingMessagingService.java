@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.service;
 
-import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.core.util.LogUtils.logString;
 
 import java.util.Arrays;
 import java.util.List;
@@ -74,16 +74,16 @@ public class EverySupportingMessagingService implements MessagingService {
 	public void send(Message message) throws MessagingException {
 		LOG.info("Sending message...");
 		LOG.trace("{}", message);
-		LOG.debug("Find senders that is able to send the message {}", summarize(message));
+		LOG.debug("Find senders that is able to send the message {}", logString(message));
 		boolean sent = false;
 		for (ConditionalSender sender : senders) {
 			if (sender.supports(message)) {
-				LOG.debug("Sending message {} using sender {}...", summarize(message), sender);
+				LOG.debug("Sending message {} using sender {}...", logString(message), sender);
 				sender.send(message);
-				LOG.debug("Message {} sent using sender {}", summarize(message), sender);
+				LOG.debug("Message {} sent using sender {}", logString(message), sender);
 				sent = true;
 			} else {
-				LOG.debug("Sender {} can't handle the message {}", sender, summarize(message));
+				LOG.debug("Sender {} can't handle the message {}", sender, logString(message));
 			}
 		}
 		if(sent) {

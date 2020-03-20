@@ -1,14 +1,18 @@
 package fr.sii.ogham.sms.builder.cloudhopper;
 
-import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
-import static com.cloudhopper.smpp.SmppBindType.TRANSMITTER;
-import static fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion.VERSION_3_4;
+
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_BIND_TYPE;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CHARSET;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_INTERFACE_VERSION;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_RESPONSE_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_UNBIND_TIMEOUT;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import com.cloudhopper.commons.charset.Charset;
 import com.cloudhopper.smpp.SmppBindType;
@@ -43,7 +47,8 @@ import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTransl
 import fr.sii.ogham.sms.message.addressing.translator.DefaultHandler;
 import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
-import fr.sii.ogham.sms.sender.impl.cloudhopper.CloudhopperOptions;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.KeepAliveOptions;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.CloudhopperCharsetSupportingEncoder;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToCharacterEncodingGroupDataCodingProvider;
@@ -51,6 +56,16 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.DataCodingProvider;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.ShortMessagePreparator;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.TlvMessagePayloadMessagePreparator;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.AlwaysNewSessionStrategy;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.DefaultErrorAnalyzer;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.ErrorAnalyzer;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.ErrorHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.KeepSessionAliveStrategy;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.LogErrorHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.MayReuseSessionStrategy;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.RespondToDeliveryReceiptHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.RespondToEnquireLinkRequestHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.SessionHandlingStrategy;
 import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
 import fr.sii.ogham.sms.splitter.MessageSplitter;
 import fr.sii.ogham.sms.splitter.NoSplitMessageSplitter;
@@ -127,10 +142,6 @@ import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
  * @author Aurélien Baudet
  */
 public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Builder<CloudhopperSMPPSender> {
-	private static final long DEFAULT_UNBIND_TIMEOUT = 5000L;
-
-	private static final long DEFAULT_RESPONSE_TIMEOUT = 5000L;
-
 	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperBuilder.class);
 
 	private final ReadableEncoderBuilder sharedEncoderBuilder;
@@ -143,7 +154,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, InterfaceVersion> interfaceVersionValueBuilder;
 	private final ConfigurationValueBuilderHelper<CloudhopperBuilder, SmppBindType> bindTypeValueBuilder;
 	private SessionBuilder sessionBuilder;
-	private SmppSessionConfiguration sessionConfiguration;
+	private ExtendedSmppSessionConfiguration sessionConfiguration;
 	private Address addressRange;
 	private SslBuilder sslBuilder;
 	private LoggingBuilder loggingBuilder;
@@ -984,7 +995,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	 *            the Cloudhopper session to use
 	 * @return this instance for fluent chaining
 	 */
-	public CloudhopperBuilder session(SmppSessionConfiguration session) {
+	public CloudhopperBuilder session(ExtendedSmppSessionConfiguration session) {
 		this.sessionConfiguration = session;
 		return this;
 	}
@@ -1245,14 +1256,14 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 	@Override
 	public CloudhopperSMPPSender build() {
 		CloudhopperSessionOptions sessionOpts = buildSessionOpts();
-		SmppSessionConfiguration session = buildSession(sessionOpts);
-		if (session.getHost() == null || session.getPort() == 0) {
+		ExtendedSmppSessionConfiguration configuration = buildSessionConfiguration(sessionOpts);
+		if (configuration.getHost() == null || configuration.getPort() == 0) {
 			return null;
 		}
-		CloudhopperOptions options = buildOptions(sessionOpts);
 		LOG.info("Sending SMS using Cloudhopper is registered");
-		LOG.debug("SMPP server address: {}:{}", session.getHost(), session.getPort());
-		return buildContext.register(new CloudhopperSMPPSender(session, options, buildPreparator(), buildClientSupplier(), buildSmppSessionHandler()));
+		LOG.debug("SMPP server address: {}:{}", configuration.getHost(), configuration.getPort());
+		SessionHandlingStrategy sessionHandler = buildSessionHandlingStrategy(configuration);
+		return buildContext.register(new CloudhopperSMPPSender(configuration, sessionHandler, buildPreparator()));
 	}
 
 	private CloudhopperSessionOptions buildSessionOpts() {
@@ -1260,10 +1271,52 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 			return sessionBuilder.build();
 		}
 		CloudhopperSessionOptions cloudhopperSessionOptions = buildContext.register(new CloudhopperSessionOptions());
-		cloudhopperSessionOptions.setConnectRetry(noRetry());
+		cloudhopperSessionOptions.setConnectRetry(buildConnectRetry(cloudhopperSessionOptions));
 		return cloudhopperSessionOptions;
 	}
 
+	private SessionHandlingStrategy buildSessionHandlingStrategy(ExtendedSmppSessionConfiguration configuration) {
+		if (configuration.getKeepAlive() != null && configuration.getKeepAlive().isEnable(false)) {
+			return buildKeepAliveHandler(configuration);
+		}
+		if (configuration.getReuseSession() != null && configuration.getReuseSession().isEnable(false)) {
+			return buildReuseSessionHandler(configuration);
+		}
+		return buildAlwaysNewSessionHandler(configuration);
+	}
+
+	private SessionHandlingStrategy buildKeepAliveHandler(ExtendedSmppSessionConfiguration configuration) {
+		return new KeepSessionAliveStrategy(configuration, buildClientSupplier(), buildSmppSessionHandler(), configuration.getConnectRetry(), configuration.getKeepAlive().getExecutor(), buildKeepAliveErrorAnalyzer(configuration.getKeepAlive()), buildReconnectionErrorHandler());
+	}
+	
+	private ErrorAnalyzer buildKeepAliveErrorAnalyzer(KeepAliveOptions options) {
+		return new DefaultErrorAnalyzer(options.getMaxConsecutiveTimeouts());
+	}
+	
+	private ErrorHandler buildReconnectionErrorHandler() {
+		// TODO: make this configurable ?
+		return new LogErrorHandler("Failed to reconnect", Level.ERROR);
+	}
+
+	private SessionHandlingStrategy buildReuseSessionHandler(ExtendedSmppSessionConfiguration configuration) {
+		return new MayReuseSessionStrategy(configuration, buildClientSupplier(), buildSmppSessionHandler(), configuration.getConnectRetry(), buildReuseSessionErrorAnalyzer());
+	}
+	
+	private ErrorAnalyzer buildReuseSessionErrorAnalyzer() {
+		return new DefaultErrorAnalyzer(1);
+	}
+
+	private SessionHandlingStrategy buildAlwaysNewSessionHandler(ExtendedSmppSessionConfiguration configuration) {
+		return new AlwaysNewSessionStrategy(configuration, buildClientSupplier(), buildSmppSessionHandler(), configuration.getConnectRetry());
+	}
+
+	private RetryExecutor buildConnectRetry(CloudhopperSessionOptions sessionOpts) {
+		if (sessionOpts.getConnectRetry() == null) {
+			return noRetry();
+		}
+		return sessionOpts.getConnectRetry();
+	}
+	
 	private SimpleRetryExecutor noRetry() {
 		return buildContext.register(new SimpleRetryExecutor(() -> null, buildContext.register(new ThreadSleepAwaiter())));
 	}
@@ -1294,7 +1347,7 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 
 	private Encoder buildEncoder() {
 		if (encoderBuilder == null) {
-			return buildContext.register(new CloudhopperCharsetSupportingEncoder(NamedCharset.from(NAME_GSM)));
+			return buildContext.register(new CloudhopperCharsetSupportingEncoder(NamedCharset.from(DEFAULT_CHARSET)));
 		}
 		return encoderBuilder.build();
 	}
@@ -1326,9 +1379,13 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 
 	private SmppSessionHandlerSupplier buildSmppSessionHandler() {
 		if (smppSessionHandler == null) {
-			return () -> null;
+			return defaultSmppSessionHandlerSupplier();
 		}
 		return smppSessionHandler;
+	}
+	
+	private SmppSessionHandlerSupplier defaultSmppSessionHandlerSupplier() {
+		return () -> new RespondToEnquireLinkRequestHandler(new RespondToDeliveryReceiptHandler(new DefaultSmppSessionHandler()));
 	}
 
 	private PhoneNumberTranslator buildPhoneNumberTranslator() {
@@ -1336,31 +1393,58 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		return buildContext.register(new CompositePhoneNumberTranslator(buildContext.register(new DefaultHandler())));
 	}
 
-	private SmppSessionConfiguration buildSession(CloudhopperSessionOptions sessionOpts) {
-		if (sessionConfiguration != null) {
-			return sessionConfiguration;
-		}
-		SmppSessionConfiguration session = buildContext.register(new SmppSessionConfiguration(buildBindType(), systemIdValueBuilder.getValue(), passwordValueBuilder.getValue()));
-		session.setHost(getHost());
-		session.setPort(getPort());
-		session.setSystemType(systemTypeValueBuilder.getValue());
-		set(session::setBindTimeout, sessionOpts::getBindTimeout);
-		set(session::setConnectTimeout, sessionOpts::getConnectTimeout);
-		session.setInterfaceVersion(getInterfaceVersion());
-		set(session::setName, sessionOpts::getSessionName);
-		set(session::setRequestExpiryTimeout, sessionOpts::getRequestExpiryTimeout);
-		set(session::setWindowMonitorInterval, sessionOpts::getWindowMonitorInterval);
-		set(session::setWindowSize, sessionOpts::getWindowSize);
-		set(session::setWindowWaitTimeout, sessionOpts::getWindowWaitTimeout);
-		set(session::setWriteTimeout, sessionOpts::getWriteTimeout);
-		session.setAddressRange(addressRange);
+	private ExtendedSmppSessionConfiguration buildSessionConfiguration(CloudhopperSessionOptions sessionOpts) {
+		ExtendedSmppSessionConfiguration session = buildContext.register(new ExtendedSmppSessionConfiguration());
+		ExtendedSmppSessionConfiguration manual = sessionConfiguration == null ? new ExtendedSmppSessionConfiguration() : sessionConfiguration;
+		// @formatter:off
+		merge(session::setType,                    bindTypeValueBuilder::getValue,            manual::getType,                                           () -> DEFAULT_BIND_TYPE);
+		merge(session::setHost,                    hostValueBuilder::getValue,                manual::getHost);
+		merge(session::setPort,                    portValueBuilder::getValue,                manual::getPort,                                           () -> 0);
+		merge(session::setSystemId,                systemIdValueBuilder::getValue,            manual::getSystemId);
+		merge(session::setPassword,                passwordValueBuilder::getValue,            manual::getPassword);
+		merge(session::setSystemType,              systemTypeValueBuilder::getValue,          manual::getSystemType);
+		merge(session::setBindTimeout,             sessionOpts::getBindTimeout,               considerZeroAsDefault(manual::getBindTimeout));
+		merge(session::setConnectTimeout,          sessionOpts::getConnectTimeout,            considerZeroAsDefault(manual::getConnectTimeout));
+		merge(session::setInterfaceVersion,        this::getInterfaceVersion,                 manual::getInterfaceVersion);
+		merge(session::setName,                    sessionOpts::getSessionName,               manual::getName);
+		merge(session::setRequestExpiryTimeout,    sessionOpts::getRequestExpiryTimeout,      considerZeroAsDefault(manual::getRequestExpiryTimeout));
+		merge(session::setWindowMonitorInterval,   sessionOpts::getWindowMonitorInterval,     considerZeroAsDefault(manual::getWindowMonitorInterval));
+		merge(session::setWindowSize,              sessionOpts::getWindowSize,                considerZeroAsDefault(manual::getWindowSize));
+		merge(session::setWindowWaitTimeout,       sessionOpts::getWindowWaitTimeout,         considerZeroAsDefault(manual::getWindowWaitTimeout));
+		merge(session::setWriteTimeout,            sessionOpts::getWriteTimeout,              considerZeroAsDefault(manual::getWriteTimeout));
+		merge(session::setResponseTimeout,         sessionOpts::getResponseTimeout,           considerZeroAsDefault(manual::getResponseTimeout),         () -> DEFAULT_RESPONSE_TIMEOUT);
+		merge(session::setUnbindTimeout,           sessionOpts::getUnbindTimeout,             considerZeroAsDefault(manual::getUnbindTimeout),           () -> DEFAULT_UNBIND_TIMEOUT);
+		merge(session::setReuseSession,            sessionOpts::getReuseSession,              manual::getReuseSession);
+		merge(session::setAddressRange,            () -> addressRange,                        manual::getAddressRange);
+		merge(session::setKeepAlive,               sessionOpts::getKeepAlive,                 manual::getKeepAlive);
+		merge(session::setConnectRetry,            () -> buildConnectRetry(sessionOpts),      manual::getConnectRetry);
+		// @formatter:on
 		configureSsl(session);
 		configureLogs(session);
 		return session;
 	}
 
-	private static <T> void set(Consumer<T> setter, Supplier<T> getter) {
+	private static <T> Supplier<T> considerZeroAsDefault(Supplier<T> getter) {
 		T value = getter.get();
+		if (value instanceof Long) {
+			return () -> (Long) value == 0 ? null : value;
+		}
+		if (value instanceof Integer) {
+			return () -> (Integer) value == 0 ? null : value;
+		}
+		return getter;
+	}
+	
+	@SafeVarargs
+	private static <T> void merge(Consumer<T> setter, Supplier<T>... getters) {
+		T value = null;
+		for (Supplier<T> getter : getters) {
+			value = getter.get();
+			if (value != null) {
+				break;
+			}
+		}
+		// if there is a value, set it
 		if (value != null) {
 			setter.accept(value);
 		}
@@ -1387,28 +1471,10 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		}
 	}
 
-	private SmppBindType buildBindType() {
-		return bindTypeValueBuilder.getValue(TRANSMITTER);
-	}
 
 	private Byte getInterfaceVersion() {
-		InterfaceVersion version = interfaceVersionValueBuilder.getValue(VERSION_3_4);
+		InterfaceVersion version = interfaceVersionValueBuilder.getValue(DEFAULT_INTERFACE_VERSION);
 		return version.value();
-	}
-
-	private int getPort() {
-		return portValueBuilder.getValue(0);
-	}
-
-	private String getHost() {
-		return hostValueBuilder.getValue();
-	}
-
-	private CloudhopperOptions buildOptions(CloudhopperSessionOptions sessionOpts) {
-		Long responseTimeout = sessionOpts.getResponseTimeout() == null ? DEFAULT_RESPONSE_TIMEOUT : sessionOpts.getResponseTimeout();
-		Long unbindTimeout = sessionOpts.getUnbindTimeout() == null ? DEFAULT_UNBIND_TIMEOUT : sessionOpts.getUnbindTimeout();
-		RetryExecutor connectRetry = sessionOpts.getConnectRetry();
-		return buildContext.register(new CloudhopperOptions(responseTimeout, unbindTimeout, connectRetry, sessionOpts.isKeepSession()));
 	}
 
 }

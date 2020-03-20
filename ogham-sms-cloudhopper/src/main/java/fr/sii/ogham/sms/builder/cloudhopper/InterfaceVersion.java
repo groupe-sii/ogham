@@ -51,6 +51,15 @@ public enum InterfaceVersion {
 	public byte value() {
 		return value;
 	}
+	
+	/**
+	 * The version as string.
+	 * 
+	 * @return the version string
+	 */
+	public String getVersionString() {
+		return versionNames.get(0);
+	}
 
 	private boolean matches(String versionName) {
 		for (String v : versionNames) {

@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.sender;
 
-import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.core.util.LogUtils.logString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,12 +60,12 @@ public class FallbackSender implements MessageSender {
 		List<Exception> causes = new ArrayList<>();
 		for (MessageSender sender : senders) {
 			try {
-				LOG.debug("Try to send message {} using sender {}", summarize(message), sender);
+				LOG.debug("Try to send message {} using sender {}", logString(message), sender);
 				sender.send(message);
-				LOG.debug("Message {} sent using sender {}", summarize(message), sender);
+				LOG.debug("Message {} sent using sender {}", logString(message), sender);
 				return;
 			} catch (Exception e) {
-				LOG.debug("Message {} couldn't be sent using sender {}. Cause: {}", summarize(message), sender, e.getMessage());
+				LOG.debug("Message {} couldn't be sent using sender {}. Cause: {}", logString(message), sender, e.getMessage());
 				LOG.trace("", e);
 				causes.add(e);
 			}

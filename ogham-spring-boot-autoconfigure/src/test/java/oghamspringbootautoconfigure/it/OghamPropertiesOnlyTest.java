@@ -1,9 +1,9 @@
 package oghamspringbootautoconfigure.it;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -26,6 +26,7 @@ import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.builder.ovh.OvhSmsBuilder;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.OvhSmsSender;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import mock.MockApplication;
 import utils.SendGridUtils;
@@ -46,11 +47,12 @@ public class OghamPropertiesOnlyTest {
 	SendGrid springSendGridClient;
 
 	@Test
-	public void cloudhopperPropertiesDefinedInAppPropertiesOrInSystemPropertiesShouldOverrideOghamDefaultProperties() {
+	public void cloudhopperPropertiesDefinedInAppPropertiesOrInSystemPropertiesShouldOverrideOghamDefaultProperties() throws IllegalAccessException {
 		CloudhopperSMPPSender sender = builder.sms().sender(CloudhopperBuilder.class).build();
-		assertThat(sender.getSmppSessionConfiguration().getHost(), equalTo("localhost"));
-		assertThat(sender.getSmppSessionConfiguration().getPort(), equalTo(2775));
-		assertThat(sender.getSmppSessionConfiguration().getInterfaceVersion(), equalTo(SmppConstants.VERSION_5_0));
+		ExtendedSmppSessionConfiguration config =  (ExtendedSmppSessionConfiguration) FieldUtils.readField(sender, "configuration", true);
+		assertThat(config.getHost(), equalTo("localhost"));
+		assertThat(config.getPort(), equalTo(2775));
+		assertThat(config.getInterfaceVersion(), equalTo(SmppConstants.VERSION_5_0));
 	}
 
 	@Test

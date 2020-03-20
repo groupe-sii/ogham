@@ -17,9 +17,10 @@ public class OghamCloudhopperConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(SpringCloudhopperConfigurer.class)
 	public SpringCloudhopperConfigurer springCloudhopperConfigurer(
+			@Autowired(required = false) OghamSmsProperties smsProperties,
 			@Autowired(required = false) OghamSmppProperties smppProperties,
 			@Autowired(required = false) OghamCloudhopperProperties cloudhopperProperties) {
-		return new SpringCloudhopperConfigurer(smppProperties, cloudhopperProperties);
+		return new SpringCloudhopperConfigurer(smsProperties, smppProperties, cloudhopperProperties);
 	}
 	// @formatter:on
 }

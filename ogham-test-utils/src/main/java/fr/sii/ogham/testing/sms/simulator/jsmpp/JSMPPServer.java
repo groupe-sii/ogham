@@ -54,11 +54,10 @@ public class JSMPPServer implements SmppServerSimulator<SubmitSm> {
 			thread = new Thread(simulator);
 			thread.start();
 			simulator.waitTillRunning(5000L);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new SmppServerException("Failed to start JSMPPServer", e);
+			LOG.debug("simulator started");
+		} catch (ServerStartupException e) {
+			throw new SmppServerException("Failed to start JSMPP server", e);
 		}
-		LOG.debug("simulator started");
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package fr.sii.ogham.email.sendgrid.v4.sender.impl;
 
-import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.core.util.LogUtils.logString;
 import static fr.sii.ogham.email.sendgrid.SendGridConstants.DEFAULT_SENDGRID_IMPLEMENTATION_PRIORITY;
 import static fr.sii.ogham.email.sendgrid.sender.EmailValidator.validate;
 
@@ -103,7 +103,7 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 			LOG.debug("Preparing to send email using SendGrid: {}", message);
 			final Mail sgEmail = intercept(toSendGridEmail(message), message);
 
-			LOG.debug("Sending email {}", summarize(message));
+			LOG.debug("Sending email {}", logString(message));
 			LOG.trace("SendGrid email: {}", sgEmail);
 			delegate.send(sgEmail);
 			LOG.debug("Email has been successfully sent");

@@ -176,7 +176,7 @@ class JsmppSimulatorSpec extends Specification {
 			session.setMessageReceiverListener(listener)
 
 		when:
-			sendSms(session, "test sms")
+			sendSmsWithDeliveryReceipt(session, "test sms")
 			Awaitility.await().atMost(Duration.ofSeconds(5)).untilTrue(receiptReceived)
 			
 		then:
@@ -232,6 +232,16 @@ class JsmppSimulatorSpec extends Specification {
 			TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657",
 			new ESMClass(), (byte)0, (byte)1,  new AbsoluteTimeFormatter().format(new Date()), null,
 			new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT), (byte)0,
+			new GeneralDataCoding(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS1, false), (byte)0,
+			message.getBytes());
+	}
+
+	private String sendSmsWithDeliveryReceipt(SMPPSession session, String message) {
+		return session.submitShortMessage("CMT",
+			TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616",
+			TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657",
+			new ESMClass(), (byte)0, (byte)1,  new AbsoluteTimeFormatter().format(new Date()), null,
+			new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE), (byte)0,
 			new GeneralDataCoding(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS1, false), (byte)0,
 			message.getBytes());
 	}

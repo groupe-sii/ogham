@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import fr.sii.ogham.core.exception.retry.ExecutionFailedNotRetriedException;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
 import fr.sii.ogham.core.exception.retry.RetryException;
 import fr.sii.ogham.core.exception.retry.RetryExecutionInterruptedException;
+import fr.sii.ogham.core.exception.retry.UnrecoverableException;
 
 /**
  * A simple implementation that tries to execute the action, if it fails (any
@@ -45,6 +47,29 @@ public class SimpleRetryExecutor implements RetryExecutor {
 	private final Awaiter awaiter;
 
 	/**
+	 * Use to check if the exception is recoverable (means that a retry can be
+	 * attempted) or not (should fail immediately).
+	 */
+	private final Predicate<Exception> recoverable;
+
+	/**
+	 * Initializes with a provider in order to use a fresh {@link RetryStrategy}
+	 * strategy each time the execute method is called. This is mandatory to be
+	 * able to use the {@link RetryExecutor} in a multi-threaded application.
+	 * This avoids sharing same instance between several
+	 * {@link #execute(Callable)} calls.
+	 * Every exception is considered as recoverable (means that retry is attempted).
+	 * 
+	 * @param retryProvider
+	 *            the provider that will provide the retry strategy
+	 * @param awaiter
+	 *            the waiter that waits some time between retries
+	 */
+	public SimpleRetryExecutor(RetryStrategyProvider retryProvider, Awaiter awaiter) {
+		this(retryProvider, awaiter, e -> true);
+	}
+
+	/**
 	 * Initializes with a provider in order to use a fresh {@link RetryStrategy}
 	 * strategy each time the execute method is called. This is mandatory to be
 	 * able to use the {@link RetryExecutor} in a multi-threaded application.
@@ -55,11 +80,16 @@ public class SimpleRetryExecutor implements RetryExecutor {
 	 *            the provider that will provide the retry strategy
 	 * @param awaiter
 	 *            the waiter that waits some time between retries
+	 * @param recoverable
+	 *            check if the exception is recoverable (means that retry can be
+	 *            attempted) or unrecoverable (means that it should fail
+	 *            immediately)
 	 */
-	public SimpleRetryExecutor(RetryStrategyProvider retryProvider, Awaiter awaiter) {
+	public SimpleRetryExecutor(RetryStrategyProvider retryProvider, Awaiter awaiter, Predicate<Exception> recoverable) {
 		super();
 		this.retryProvider = retryProvider;
 		this.awaiter = awaiter;
+		this.recoverable = recoverable;
 	}
 
 	@Override
@@ -72,29 +102,40 @@ public class SimpleRetryExecutor implements RetryExecutor {
 		return executeWithRetry(actionToRetry, retry);
 	}
 
-	private <V> V executeWithRetry(Callable<V> actionToRetry, RetryStrategy retry) throws RetryExecutionInterruptedException, MaximumAttemptsReachedException {
+	private <V> V executeWithRetry(Callable<V> actionToRetry, RetryStrategy retry) throws RetryExecutionInterruptedException, MaximumAttemptsReachedException, UnrecoverableException {
 		List<Exception> failures = new ArrayList<>();
 		do {
 			try {
 				return actionToRetry.call();
 			} catch (Exception e) {
-				failures.add(e);
-				Instant nextDate = retry.nextDate();
-				LOG.debug("{} failed ({}). Cause: {}. Retrying at {}...", e.getMessage(), e.getClass(), getActionName(actionToRetry), nextDate);
-				LOG.trace("{}", e.getMessage(), e);
-				pauseUntil(nextDate);
+				handleFailure(actionToRetry, failures, e);
+				pause(actionToRetry, retry, e);
 			}
 		} while (!retry.terminated());
 		// action couldn't be executed
 		throw new MaximumAttemptsReachedException("Maximum attempts to execute action " + getActionName(actionToRetry) + " is reached", failures);
 	}
 
-	private <V> V executeWithoutRetry(Callable<V> actionToRetry) throws ExecutionFailedNotRetriedException {
+	private <V> void handleFailure(Callable<V> actionToRetry, List<Exception> failures, Exception e) throws UnrecoverableException {
+		failures.add(e);
+		if (!recoverable.test(e)) {
+			throw new UnrecoverableException("Unrecoverable exception thrown while executing " + getActionName(actionToRetry), failures);
+		}
+	}
+
+	private static <V> V executeWithoutRetry(Callable<V> actionToRetry) throws ExecutionFailedNotRetriedException {
 		try {
 			return actionToRetry.call();
 		} catch (Exception e) {
 			throw new ExecutionFailedNotRetriedException("Failed to execute action " + getActionName(actionToRetry) + " and no retry strategy configured", e);
 		}
+	}
+
+	private <V> void pause(Callable<V> actionToRetry, RetryStrategy retry, Exception e) throws RetryExecutionInterruptedException {
+		Instant nextDate = retry.nextDate();
+		LOG.debug("{} failed ({}: {}). Retrying at {}...", getActionName(actionToRetry), e.getClass(), e.getMessage(), nextDate);
+		LOG.trace("{}", e.getMessage(), e);
+		pauseUntil(nextDate);
 	}
 
 	private void pauseUntil(Instant nextDate) throws RetryExecutionInterruptedException {

@@ -8,315 +8,316 @@ package fr.sii.ogham.testing.sms.simulator.config;
  */
 public class ServerDelays {
 	/**
-	 * Simulate slow server by waiting {@code sendAlertNotificationDelay}
-	 * milliseconds before sending "AlertNotification" data
+	 * Simulate slow server by executing {@code sendAlertNotificationWaiting}
+	 * function before sending "AlertNotification" data
 	 */
-	private long sendAlertNotificationDelay;
+	private Awaiter sendAlertNotificationWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendBindDelay} milliseconds before
+	 * Simulate slow server by executing {@code sendBindWaiting} function before
 	 * sending "Bind" data
 	 */
-	private long sendBindDelay;
+	private Awaiter sendBindWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendBindRespDelay} milliseconds
+	 * Simulate slow server by executing {@code sendBindRespWaiting} function
 	 * before sending "BindResp" data
 	 */
-	private long sendBindRespDelay;
+	private Awaiter sendBindRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendCancelSmDelay} milliseconds
+	 * Simulate slow server by executing {@code sendCancelSmWaiting} function
 	 * before sending "CancelSm" data
 	 */
-	private long sendCancelSmDelay;
+	private Awaiter sendCancelSmWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendCancelSmRespDelay}
-	 * milliseconds before sending "CancelSmResp" data
+	 * Simulate slow server by executing {@code sendCancelSmRespWaiting}
+	 * function before sending "CancelSmResp" data
 	 */
-	private long sendCancelSmRespDelay;
+	private Awaiter sendCancelSmRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendDataSmDelay} milliseconds
+	 * Simulate slow server by executing {@code sendDataSmWaiting} function
 	 * before sending "DataSm" data
 	 */
-	private long sendDataSmDelay;
+	private Awaiter sendDataSmWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendDataSmRespDelay} milliseconds
+	 * Simulate slow server by executing {@code sendDataSmRespWaiting} function
 	 * before sending "DataSmResp" data
 	 */
-	private long sendDataSmRespDelay;
+	private Awaiter sendDataSmRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendDeliverSmDelay} milliseconds
+	 * Simulate slow server by executing {@code sendDeliverSmWaiting} function
 	 * before sending "DeliverSm" data
 	 */
-	private long sendDeliverSmDelay;
+	private Awaiter sendDeliverSmWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendDeliverSmRespDelay}
-	 * milliseconds before sending "DeliverSmResp" data
+	 * Simulate slow server by executing {@code sendDeliverSmRespWaiting}
+	 * function before sending "DeliverSmResp" data
 	 */
-	private long sendDeliverSmRespDelay;
+	private Awaiter sendDeliverSmRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendEnquireLinkDelay} milliseconds
+	 * Simulate slow server by executing {@code sendEnquireLinkWaiting} function
 	 * before sending "EnquireLink" data
 	 */
-	private long sendEnquireLinkDelay;
+	private Awaiter sendEnquireLinkWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendEnquireLinkRespDelay}
-	 * milliseconds before sending "EnquireLinkResp" data
+	 * Simulate slow server by executing {@code sendEnquireLinkRespWaiting}
+	 * function before sending "EnquireLinkResp" data
 	 */
-	private long sendEnquireLinkRespDelay;
+	private Awaiter sendEnquireLinkRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendGenericNackDelay} milliseconds
+	 * Simulate slow server by executing {@code sendGenericNackWaiting} function
 	 * before sending "GenericNack" data
 	 */
-	private long sendGenericNackDelay;
+	private Awaiter sendGenericNackWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendHeaderDelay} milliseconds
+	 * Simulate slow server by executing {@code sendHeaderWaiting} function
 	 * before sending "Header" data
 	 */
-	private long sendHeaderDelay;
+	private Awaiter sendHeaderWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendOutbindDelay} milliseconds
+	 * Simulate slow server by executing {@code sendOutbindWaiting} function
 	 * before sending "Outbind" data
 	 */
-	private long sendOutbindDelay;
+	private Awaiter sendOutbindWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendQuerySmDelay} milliseconds
+	 * Simulate slow server by executing {@code sendQuerySmWaiting} function
 	 * before sending "QuerySm" data
 	 */
-	private long sendQuerySmDelay;
+	private Awaiter sendQuerySmWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendQuerySmRespDelay} milliseconds
+	 * Simulate slow server by executing {@code sendQuerySmRespWaiting} function
 	 * before sending "QuerySmResp" data
 	 */
-	private long sendQuerySmRespDelay;
+	private Awaiter sendQuerySmRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendReplaceSmDelay} milliseconds
+	 * Simulate slow server by executing {@code sendReplaceSmWaiting} function
 	 * before sending "ReplaceSm" data
 	 */
-	private long sendReplaceSmDelay;
+	private Awaiter sendReplaceSmWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendReplaceSmRespDelay}
-	 * milliseconds before sending "ReplaceSmResp" data
+	 * Simulate slow server by executing {@code sendReplaceSmRespWaiting}
+	 * function before sending "ReplaceSmResp" data
 	 */
-	private long sendReplaceSmRespDelay;
+	private Awaiter sendReplaceSmRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendSubmiMultiDelay} milliseconds
+	 * Simulate slow server by executing {@code sendSubmiMultiWaiting} function
 	 * before sending "SubmiMulti" data
 	 */
-	private long sendSubmiMultiDelay;
+	private Awaiter sendSubmiMultiWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendSubmitMultiRespDelay}
-	 * milliseconds before sending "SubmitMultiResp" data
+	 * Simulate slow server by executing {@code sendSubmitMultiRespWaiting}
+	 * function before sending "SubmitMultiResp" data
 	 */
-	private long sendSubmitMultiRespDelay;
+	private Awaiter sendSubmitMultiRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendSubmitSmDelay} milliseconds
+	 * Simulate slow server by executing {@code sendSubmitSmWaiting} function
 	 * before sending "SubmitSm" data
 	 */
-	private long sendSubmitSmDelay;
+	private Awaiter sendSubmitSmWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendSubmitSmRespDelay}
-	 * milliseconds before sending "SubmitSmResp" data
+	 * Simulate slow server by executing {@code sendSubmitSmRespWaiting}
+	 * function before sending "SubmitSmResp" data
 	 */
-	private long sendSubmitSmRespDelay;
+	private Awaiter sendSubmitSmRespWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendUnbindDelay} milliseconds
+	 * Simulate slow server by executing {@code sendUnbindWaiting} function
 	 * before sending "Unbind" data
 	 */
-	private long sendUnbindDelay;
+	private Awaiter sendUnbindWaiting;
 	/**
-	 * Simulate slow server by waiting {@code sendUnbindRespDelay} milliseconds
+	 * Simulate slow server by executing {@code sendUnbindRespWaiting} function
 	 * before sending "UnbindResp" data
 	 */
-	private long sendUnbindRespDelay;
+	private Awaiter sendUnbindRespWaiting;
 
-	public long getSendAlertNotificationDelay() {
-		return sendAlertNotificationDelay;
+	public Awaiter getSendAlertNotificationWaiting() {
+		return sendAlertNotificationWaiting;
 	}
 
-	public void setSendAlertNotificationDelay(long sendAlertNotificationDelay) {
-		this.sendAlertNotificationDelay = sendAlertNotificationDelay;
+	public void setSendAlertNotificationWaiting(Awaiter sendAlertNotificationWaiting) {
+		this.sendAlertNotificationWaiting = sendAlertNotificationWaiting;
 	}
 
-	public long getSendBindDelay() {
-		return sendBindDelay;
+	public Awaiter getSendBindWaiting() {
+		return sendBindWaiting;
 	}
 
-	public void setSendBindDelay(long sendBindDelay) {
-		this.sendBindDelay = sendBindDelay;
+	public void setSendBindWaiting(Awaiter sendBindWaiting) {
+		this.sendBindWaiting = sendBindWaiting;
 	}
 
-	public long getSendBindRespDelay() {
-		return sendBindRespDelay;
+	public Awaiter getSendBindRespWaiting() {
+		return sendBindRespWaiting;
 	}
 
-	public void setSendBindRespDelay(long sendBindRespDelay) {
-		this.sendBindRespDelay = sendBindRespDelay;
+	public void setSendBindRespWaiting(Awaiter sendBindRespWaiting) {
+		this.sendBindRespWaiting = sendBindRespWaiting;
 	}
 
-	public long getSendCancelSmDelay() {
-		return sendCancelSmDelay;
+	public Awaiter getSendCancelSmWaiting() {
+		return sendCancelSmWaiting;
 	}
 
-	public void setSendCancelSmDelay(long sendCancelSmDelay) {
-		this.sendCancelSmDelay = sendCancelSmDelay;
+	public void setSendCancelSmWaiting(Awaiter sendCancelSmWaiting) {
+		this.sendCancelSmWaiting = sendCancelSmWaiting;
 	}
 
-	public long getSendCancelSmRespDelay() {
-		return sendCancelSmRespDelay;
+	public Awaiter getSendCancelSmRespWaiting() {
+		return sendCancelSmRespWaiting;
 	}
 
-	public void setSendCancelSmRespDelay(long sendCancelSmRespDelay) {
-		this.sendCancelSmRespDelay = sendCancelSmRespDelay;
+	public void setSendCancelSmRespWaiting(Awaiter sendCancelSmRespWaiting) {
+		this.sendCancelSmRespWaiting = sendCancelSmRespWaiting;
 	}
 
-	public long getSendDataSmDelay() {
-		return sendDataSmDelay;
+	public Awaiter getSendDataSmWaiting() {
+		return sendDataSmWaiting;
 	}
 
-	public void setSendDataSmDelay(long sendDataSmDelay) {
-		this.sendDataSmDelay = sendDataSmDelay;
+	public void setSendDataSmWaiting(Awaiter sendDataSmWaiting) {
+		this.sendDataSmWaiting = sendDataSmWaiting;
 	}
 
-	public long getSendDataSmRespDelay() {
-		return sendDataSmRespDelay;
+	public Awaiter getSendDataSmRespWaiting() {
+		return sendDataSmRespWaiting;
 	}
 
-	public void setSendDataSmRespDelay(long sendDataSmRespDelay) {
-		this.sendDataSmRespDelay = sendDataSmRespDelay;
+	public void setSendDataSmRespWaiting(Awaiter sendDataSmRespWaiting) {
+		this.sendDataSmRespWaiting = sendDataSmRespWaiting;
 	}
 
-	public long getSendDeliverSmDelay() {
-		return sendDeliverSmDelay;
+	public Awaiter getSendDeliverSmWaiting() {
+		return sendDeliverSmWaiting;
 	}
 
-	public void setSendDeliverSmDelay(long sendDeliverSmDelay) {
-		this.sendDeliverSmDelay = sendDeliverSmDelay;
+	public void setSendDeliverSmWaiting(Awaiter sendDeliverSmWaiting) {
+		this.sendDeliverSmWaiting = sendDeliverSmWaiting;
 	}
 
-	public long getSendDeliverSmRespDelay() {
-		return sendDeliverSmRespDelay;
+	public Awaiter getSendDeliverSmRespWaiting() {
+		return sendDeliverSmRespWaiting;
 	}
 
-	public void setSendDeliverSmRespDelay(long sendDeliverSmRespDelay) {
-		this.sendDeliverSmRespDelay = sendDeliverSmRespDelay;
+	public void setSendDeliverSmRespWaiting(Awaiter sendDeliverSmRespWaiting) {
+		this.sendDeliverSmRespWaiting = sendDeliverSmRespWaiting;
 	}
 
-	public long getSendEnquireLinkDelay() {
-		return sendEnquireLinkDelay;
+	public Awaiter getSendEnquireLinkWaiting() {
+		return sendEnquireLinkWaiting;
 	}
 
-	public void setSendEnquireLinkDelay(long sendEnquireLinkDelay) {
-		this.sendEnquireLinkDelay = sendEnquireLinkDelay;
+	public void setSendEnquireLinkWaiting(Awaiter sendEnquireLinkWaiting) {
+		this.sendEnquireLinkWaiting = sendEnquireLinkWaiting;
 	}
 
-	public long getSendEnquireLinkRespDelay() {
-		return sendEnquireLinkRespDelay;
+	public Awaiter getSendEnquireLinkRespWaiting() {
+		return sendEnquireLinkRespWaiting;
 	}
 
-	public void setSendEnquireLinkRespDelay(long sendEnquireLinkRespDelay) {
-		this.sendEnquireLinkRespDelay = sendEnquireLinkRespDelay;
+	public void setSendEnquireLinkRespWaiting(Awaiter sendEnquireLinkRespWaiting) {
+		this.sendEnquireLinkRespWaiting = sendEnquireLinkRespWaiting;
 	}
 
-	public long getSendGenericNackDelay() {
-		return sendGenericNackDelay;
+	public Awaiter getSendGenericNackWaiting() {
+		return sendGenericNackWaiting;
 	}
 
-	public void setSendGenericNackDelay(long sendGenericNackDelay) {
-		this.sendGenericNackDelay = sendGenericNackDelay;
+	public void setSendGenericNackWaiting(Awaiter sendGenericNackWaiting) {
+		this.sendGenericNackWaiting = sendGenericNackWaiting;
 	}
 
-	public long getSendHeaderDelay() {
-		return sendHeaderDelay;
+	public Awaiter getSendHeaderWaiting() {
+		return sendHeaderWaiting;
 	}
 
-	public void setSendHeaderDelay(long sendHeaderDelay) {
-		this.sendHeaderDelay = sendHeaderDelay;
+	public void setSendHeaderWaiting(Awaiter sendHeaderWaiting) {
+		this.sendHeaderWaiting = sendHeaderWaiting;
 	}
 
-	public long getSendOutbindDelay() {
-		return sendOutbindDelay;
+	public Awaiter getSendOutbindWaiting() {
+		return sendOutbindWaiting;
 	}
 
-	public void setSendOutbindDelay(long sendOutbindDelay) {
-		this.sendOutbindDelay = sendOutbindDelay;
+	public void setSendOutbindWaiting(Awaiter sendOutbindWaiting) {
+		this.sendOutbindWaiting = sendOutbindWaiting;
 	}
 
-	public long getSendQuerySmDelay() {
-		return sendQuerySmDelay;
+	public Awaiter getSendQuerySmWaiting() {
+		return sendQuerySmWaiting;
 	}
 
-	public void setSendQuerySmDelay(long sendQuerySmDelay) {
-		this.sendQuerySmDelay = sendQuerySmDelay;
+	public void setSendQuerySmWaiting(Awaiter sendQuerySmWaiting) {
+		this.sendQuerySmWaiting = sendQuerySmWaiting;
 	}
 
-	public long getSendQuerySmRespDelay() {
-		return sendQuerySmRespDelay;
+	public Awaiter getSendQuerySmRespWaiting() {
+		return sendQuerySmRespWaiting;
 	}
 
-	public void setSendQuerySmRespDelay(long sendQuerySmRespDelay) {
-		this.sendQuerySmRespDelay = sendQuerySmRespDelay;
+	public void setSendQuerySmRespWaiting(Awaiter sendQuerySmRespWaiting) {
+		this.sendQuerySmRespWaiting = sendQuerySmRespWaiting;
 	}
 
-	public long getSendReplaceSmDelay() {
-		return sendReplaceSmDelay;
+	public Awaiter getSendReplaceSmWaiting() {
+		return sendReplaceSmWaiting;
 	}
 
-	public void setSendReplaceSmDelay(long sendReplaceSmDelay) {
-		this.sendReplaceSmDelay = sendReplaceSmDelay;
+	public void setSendReplaceSmWaiting(Awaiter sendReplaceSmWaiting) {
+		this.sendReplaceSmWaiting = sendReplaceSmWaiting;
 	}
 
-	public long getSendReplaceSmRespDelay() {
-		return sendReplaceSmRespDelay;
+	public Awaiter getSendReplaceSmRespWaiting() {
+		return sendReplaceSmRespWaiting;
 	}
 
-	public void setSendReplaceSmRespDelay(long sendReplaceSmRespDelay) {
-		this.sendReplaceSmRespDelay = sendReplaceSmRespDelay;
+	public void setSendReplaceSmRespWaiting(Awaiter sendReplaceSmRespWaiting) {
+		this.sendReplaceSmRespWaiting = sendReplaceSmRespWaiting;
 	}
 
-	public long getSendSubmiMultiDelay() {
-		return sendSubmiMultiDelay;
+	public Awaiter getSendSubmiMultiWaiting() {
+		return sendSubmiMultiWaiting;
 	}
 
-	public void setSendSubmiMultiDelay(long sendSubmiMultiDelay) {
-		this.sendSubmiMultiDelay = sendSubmiMultiDelay;
+	public void setSendSubmiMultiWaiting(Awaiter sendSubmiMultiWaiting) {
+		this.sendSubmiMultiWaiting = sendSubmiMultiWaiting;
 	}
 
-	public long getSendSubmitMultiRespDelay() {
-		return sendSubmitMultiRespDelay;
+	public Awaiter getSendSubmitMultiRespWaiting() {
+		return sendSubmitMultiRespWaiting;
 	}
 
-	public void setSendSubmitMultiRespDelay(long sendSubmitMultiRespDelay) {
-		this.sendSubmitMultiRespDelay = sendSubmitMultiRespDelay;
+	public void setSendSubmitMultiRespWaiting(Awaiter sendSubmitMultiRespWaiting) {
+		this.sendSubmitMultiRespWaiting = sendSubmitMultiRespWaiting;
 	}
 
-	public long getSendSubmitSmDelay() {
-		return sendSubmitSmDelay;
+	public Awaiter getSendSubmitSmWaiting() {
+		return sendSubmitSmWaiting;
 	}
 
-	public void setSendSubmitSmDelay(long sendSubmitSmDelay) {
-		this.sendSubmitSmDelay = sendSubmitSmDelay;
+	public void setSendSubmitSmWaiting(Awaiter sendSubmitSmWaiting) {
+		this.sendSubmitSmWaiting = sendSubmitSmWaiting;
 	}
 
-	public long getSendSubmitSmRespDelay() {
-		return sendSubmitSmRespDelay;
+	public Awaiter getSendSubmitSmRespWaiting() {
+		return sendSubmitSmRespWaiting;
 	}
 
-	public void setSendSubmitSmRespDelay(long sendSubmitSmRespDelay) {
-		this.sendSubmitSmRespDelay = sendSubmitSmRespDelay;
+	public void setSendSubmitSmRespWaiting(Awaiter sendSubmitSmRespWaiting) {
+		this.sendSubmitSmRespWaiting = sendSubmitSmRespWaiting;
 	}
 
-	public long getSendUnbindDelay() {
-		return sendUnbindDelay;
+	public Awaiter getSendUnbindWaiting() {
+		return sendUnbindWaiting;
 	}
 
-	public void setSendUnbindDelay(long sendUnbindDelay) {
-		this.sendUnbindDelay = sendUnbindDelay;
+	public void setSendUnbindWaiting(Awaiter sendUnbindWaiting) {
+		this.sendUnbindWaiting = sendUnbindWaiting;
 	}
 
-	public long getSendUnbindRespDelay() {
-		return sendUnbindRespDelay;
+	public Awaiter getSendUnbindRespWaiting() {
+		return sendUnbindRespWaiting;
 	}
 
-	public void setSendUnbindRespDelay(long sendUnbindRespDelay) {
-		this.sendUnbindRespDelay = sendUnbindRespDelay;
+	public void setSendUnbindRespWaiting(Awaiter sendUnbindRespWaiting) {
+		this.sendUnbindRespWaiting = sendUnbindRespWaiting;
 	}
+
 }

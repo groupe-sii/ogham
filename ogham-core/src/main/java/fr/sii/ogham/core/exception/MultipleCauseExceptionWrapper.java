@@ -4,6 +4,7 @@ import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 import static java.util.Collections.unmodifiableList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MultipleCauseExceptionWrapper extends Exception {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
@@ -16,11 +17,17 @@ public class MultipleCauseExceptionWrapper extends Exception {
 	}
 
 	public MultipleCauseExceptionWrapper(List<Exception> causes) {
-		super();
+		super(toCauseString(causes));
 		this.causes = unmodifiableList(causes);
 	}
 
 	public List<Exception> getCauses() {
 		return causes;
+	}
+	
+	private static String toCauseString(List<Exception> causes) {
+		return causes.stream()
+				.map(Exception::getMessage)
+				.collect(Collectors.joining("\n- ", "List of original failures:\n- ", "\n"));
 	}
 }

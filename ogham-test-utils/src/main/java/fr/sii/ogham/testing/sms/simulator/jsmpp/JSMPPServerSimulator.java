@@ -1,6 +1,8 @@
 package fr.sii.ogham.testing.sms.simulator.jsmpp;
 
 import static fr.sii.ogham.testing.sms.simulator.decode.MessageDecoder.decode;
+import static java.util.Collections.unmodifiableList;
+import static org.jsmpp.bean.SMSCDeliveryReceipt.SUCCESS_FAILURE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +14,6 @@ import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
-import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
@@ -26,7 +27,6 @@ import org.jsmpp.session.ServerResponseDeliveryAdapter;
 import org.jsmpp.session.Session;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
-import org.jsmpp.util.RandomMessageIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 
 	private ExecutorService execService;
 	private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(RECEIPT_THREAD_POOL_SIZE);
-	private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
+	private final MessageIDGenerator messageIDGenerator = new UnsecureRandomMessageIDGenerator();
 	private int port;
 	private boolean stopped;
 	private List<SubmitSm> receivedMessages = new ArrayList<>();
@@ -54,6 +54,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 	private final Object startupMonitor = new Object();
 	private volatile boolean running = false;
 	private final SimulatorConfiguration config;
+	private ServerStartupException startupFailure;
 
 	public JSMPPServerSimulator(int port, SimulatorConfiguration config) {
 		this.port = port;
@@ -80,7 +81,8 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 			}
 		} catch (IOException e) {
 			if (!stopped) { // NOSONAR
-				LOG.error("Failed to initialize SMPP server simulator", e);
+				LOG.trace("Failed to initialize SMPP server simulator", e);
+				startupFailure = new ServerStartupException("Server failed to start", e);
 				close();
 			}
 		} finally {
@@ -100,7 +102,9 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 
 	public synchronized void reset() {
 		stopped = false;
-		receivedMessages.clear();
+		if (!config.isKeepMessages()) {
+			receivedMessages.clear();
+		}
 	}
 
 	public synchronized void stop() {
@@ -108,6 +112,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		running = false;
 		stopped = true;
 		if (execService != null) {
+			LOG.trace("Stopping executor service");
 			execService.shutdownNow();
 			execService = null;
 		}
@@ -117,12 +122,16 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 
 	private void close() {
 		if (serverSession != null) {
+			LOG.trace("Closing server session");
 			serverSession.close();
+			LOG.trace("Server session closed");
 			serverSession = null;
 		}
 		if (sessionListener != null) {
 			try {
+				LOG.trace("Closing session listener");
 				sessionListener.close();
+				LOG.trace("Session listener closed");
 				sessionListener = null;
 			} catch (IOException e) {
 				// nothing to do
@@ -131,17 +140,29 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		}
 	}
 
-	public boolean waitTillRunning(long timeoutInMs) throws InterruptedException {
-		long t = System.currentTimeMillis();
-		synchronized (startupMonitor) {
-			// Loop to avoid spurious wake ups, see
-			// https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
-			while (!running && System.currentTimeMillis() - t < timeoutInMs) {
-				startupMonitor.wait(timeoutInMs);
+	public void waitTillRunning(long timeoutInMs) throws ServerStartupException {
+		try {
+			long t = System.currentTimeMillis();
+			synchronized (startupMonitor) {
+				// Loop to avoid spurious wake ups, see
+				// https://www.securecoding.cert.org/confluence/display/java/THI03-J.+Always+invoke+wait%28%29+and+await%28%29+methods+inside+a+loop
+				while (!running && startupFailure == null && System.currentTimeMillis() - t < timeoutInMs) {
+					startupMonitor.wait(timeoutInMs);
+				}
 			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new ServerStartupException("Server failed to start (interrupted)", e);
+		}
+		
+		if (startupFailure != null) {
+			throw startupFailure;
 		}
 
-		return running;
+		if (!running) {
+			close();
+			throw new ServerStartupException("Server bouldn't be started after "+timeoutInMs+"ms");
+		}
 	}
 
 	public QuerySmResult onAcceptQuerySm(QuerySm querySm, SMPPServerSession source) throws ProcessRequestException {
@@ -155,7 +176,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 			LOG.debug("Receiving submit_sm '{}', and return message id {}", decode(new SubmitSmAdapter(submitSm)), messageId);
 		}
 		receivedMessages.add(submitSm);
-		if (SMSCDeliveryReceipt.DEFAULT.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
+		if (SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
 		}
 		return messageId;
@@ -171,7 +192,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Receiving submit_multi_sm '{}', and return message id {}", submitMulti, messageId);
 		}
-		if (SMSCDeliveryReceipt.DEFAULT.containedIn(submitMulti.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
+		if (SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
 			execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
 		}
 
@@ -194,7 +215,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 	}
 
 	public List<SubmitSm> getReceivedMessages() {
-		return receivedMessages;
+		return unmodifiableList(new ArrayList<>(receivedMessages));
 	}
 
 	public int getPort() {

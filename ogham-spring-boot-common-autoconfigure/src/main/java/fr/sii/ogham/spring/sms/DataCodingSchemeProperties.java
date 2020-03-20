@@ -71,14 +71,16 @@ public class DataCodingSchemeProperties {
 		 * <li>{@link CharsetUtil#NAME_UCS_2} {@literal ->}
 		 * {@link DataCoding#CHAR_ENC_UCS2}</li>
 		 * </ul>
+		 * 
+		 * Default: <i>true</i>
 		 */
-		private boolean enable = true;
+		private Boolean enable;
 
-		public boolean isEnable() {
+		public Boolean getEnable() {
 			return enable;
 		}
 
-		public void setEnable(boolean enable) {
+		public void setEnable(Boolean enable) {
 			this.enable = enable;
 		}
 	}

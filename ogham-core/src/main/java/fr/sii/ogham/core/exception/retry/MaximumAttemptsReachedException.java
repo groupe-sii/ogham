@@ -4,13 +4,15 @@ import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
 import java.util.List;
 
+import fr.sii.ogham.core.exception.MultipleCauseExceptionWrapper;
+
 public class MaximumAttemptsReachedException extends RetryExecutionFailureException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 
 	private final List<Exception> executionFailures;
 
 	public MaximumAttemptsReachedException(String message, List<Exception> executionFailures) {
-		super(message);
+		super(message, new MultipleCauseExceptionWrapper(executionFailures));
 		this.executionFailures = executionFailures;
 	}
 

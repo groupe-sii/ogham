@@ -1,6 +1,6 @@
 package fr.sii.ogham.email.sender.impl;
 
-import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.core.util.LogUtils.logString;
 import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_IMPLEMENTATION_PRIORITY;
 import static fr.sii.ogham.email.attachment.ContentDisposition.ATTACHMENT;
 import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
@@ -101,7 +101,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	public void send(Email email) throws MessageException {
 		try {
 			LOG.debug("Initialize Java mail session with authenticator {} and properties {}", authenticator, properties);
-			LOG.debug("Create the mime message for email {}", summarize(email));
+			LOG.debug("Create the mime message for email {}", logString(email));
 			MimeMessage mimeMsg = createMimeMessage();
 			// set the sender address
 			setFrom(email, mimeMsg);
@@ -113,7 +113,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 			// default behavior is done => message is ready but let possibility
 			// to add extra operations to do on the message
 			if (interceptor != null) {
-				LOG.debug("Executing extra operations for email {}", summarize(email));
+				LOG.debug("Executing extra operations for email {}", logString(email));
 				interceptor.intercept(mimeMsg, email);
 			}
 			// message is ready => send it
@@ -295,7 +295,7 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	 *             when the content can't be constructed
 	 */
 	private void setMimeContent(Email email, MimeMessage mimeMsg) throws MessagingException, ContentHandlerException, AttachmentResourceHandlerException, IOException {
-		LOG.debug("Add message content for email {}", summarize(email));
+		LOG.debug("Add message content for email {}", logString(email));
 
 		Multipart mixedContainer = new MimeMultipart("mixed");
 

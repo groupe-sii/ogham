@@ -41,13 +41,22 @@ public class OghamSmppProperties {
 	 * <br />
 	 * 
 	 * This is an alias of ogham.sms.cloudhopper.port. If both properties are
-	 * defined, the value of the property ogham.sms.cloudhopper.port is used.
+	 * defined, the value of the property ogham.sms.cloudhopper.port is
+	 * used.<br />
+	 * <br />
+	 * Default: <i>2775</i>
 	 */
 	private Integer port;
 	/**
-	 * The bind command type. Default to "TRANSMITTER".
+	 * The bind command type.<br />
+	 * 
+	 * This is an alias of ogham.sms.cloudhopper.bind-type. If both properties
+	 * are defined, the value of the property ogham.sms.cloudhopper.bind-type is
+	 * used.<br />
+	 * <br />
+	 * Default: <i>"TRANSMITTER".</i>
 	 */
-	private SmppBindType bindType = SmppBindType.TRANSMITTER;
+	private SmppBindType bindType;
 	/**
 	 * The system_type parameter is used to categorize the type of ESME that is
 	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
@@ -55,7 +64,11 @@ public class OghamSmppProperties {
 	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
 	 * this case, the ESME can set the system_type to NULL. The system_type
 	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
-	 * etc.
+	 * etc.<br />
+	 * 
+	 * This is an alias of ogham.sms.cloudhopper.system-type. If both properties
+	 * are defined, the value of the property ogham.sms.cloudhopper.system-type
+	 * is used.<br />
 	 */
 	private String systemType;
 	@NestedConfigurationProperty

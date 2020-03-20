@@ -14,13 +14,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.cloudhopper.smpp.SmppSessionConfiguration;
-
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
 import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
 import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.extension.junit.SmppServerRule;
@@ -42,7 +41,7 @@ public class TlvMessagePayloadTest {
 
 	@Before
 	public void setUp() throws IOException {
-		SmppSessionConfiguration configuration = new SmppSessionConfiguration();
+		ExtendedSmppSessionConfiguration configuration = new ExtendedSmppSessionConfiguration();
 		configuration.setHost("127.0.0.1");
 		configuration.setPort(smppServer.getPort());
 		// @formatter:off

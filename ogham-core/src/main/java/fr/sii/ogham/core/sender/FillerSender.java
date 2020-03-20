@@ -1,6 +1,6 @@
 package fr.sii.ogham.core.sender;
 
-import static fr.sii.ogham.core.util.LogUtils.summarize;
+import static fr.sii.ogham.core.util.LogUtils.logString;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +50,10 @@ public class FillerSender implements ConditionalSender {
 
 	@Override
 	public void send(Message message) throws MessageException {
-		LOG.debug("Filling message {} with {} filler", summarize(message), filler);
+		LOG.debug("Filling message {} with {} filler", logString(message), filler);
 		// fill message with automatic values
 		filler.fill(message);
-		LOG.debug("Message {} is filled, send it using {}", summarize(message), delegate);
+		LOG.debug("Message {} is filled, send it using {}", logString(message), delegate);
 		// send message
 		delegate.send(message);
 	}
