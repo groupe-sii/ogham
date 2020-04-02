@@ -1,0 +1,181 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+This strategy opens a session when needed and try to reuse it if possible.
+
+When sending the first message, a new session is created. Later, when sending
+the next message, if the session is still alive, this session is reused. As
+the connection is not actively maintained, the session may be killed by the
+server. Therefore to check if the session is still alive, an
+`enquire_link` request is sent. If a response is received from the
+server, then the session is still alive and the message can be sent using the
+same session. If a failure response or no response is received after some
+time from the server, then a new session must be created.
+
+To check if the session is still alive, the `enquire_link` request is
+sent just before sending the real message. In order to prevent sending an
+`enquire_link` request before *every* message, the date
+of the last sent message or `enquire_link` is kept. This date is
+compared to a delay to ensure that no `enquire_link` is sent during this
+delay.
+
+
+To enable reuse session strategy, update the configuration like this:
+
+.Enable reuse session
+[role="tab-container no-max-height"]
+Reuse session sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+----
+include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
+----
+<1> Load properties from a file that is in the classpath.
+
+{standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] Properties
+
+[source, python, role="irrelevant-lines:1-5 highlight-lines:6"]
+----
+include::{standard-samples-resourcesdir}/sms.properties[]
+ogham.sms.cloudhopper.session.reuse-session.enable=true           # <1>
+----
+<1> Enable reuse session (with default values)
+
+
+[role=tab-container-end]
+-
+
+
+The following diagram explains how it works:
+
+.How reuse session works
+[plantuml, subs="attributes", role="text-center"]
+....
+skinparam ParticipantPadding 40
+
+participant Application
+participant Ogham
+participant EnquireLinkTask
+participant Server
+
+autonumber
+
+Application -> Ogham: send("sms 1")
+activate Ogham
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>bind</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>bound ["session 1"]</color>
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>submit_sm ["sms 1"]</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>submit_sm_resp</color>
+Application <-- Ogham: return
+deactivate Ogham
+...less than 30 seconds (no check required)...
+Application -> Ogham: send("sms 2")
+activate Ogham
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>submit_sm ["sms 2"]</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>submit_sm_resp</color>
+Application <-- Ogham: return
+deactivate Ogham
+|||
+...1 minute later (connection is still opened)...
+|||
+Application -> Ogham: send("sms 3")
+activate Ogham
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>enquire_link</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>enquire_link_resp</color>
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>submit_sm ["sms 3"]</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>submit_sm_resp</color>
+Application <-- Ogham: return
+deactivate Ogham
+|||
+...several minutes later (server closed the connection)...
+|||
+Application -> Ogham: send("sms 4")
+activate Ogham
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>enquire_link</color>
+...
+Ogham -> Ogham: timeout
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>bind</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>bound ["session 2"]</color>
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>submit_sm ["sms 4"]</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>submit_sm_resp</color>
+Application <-- Ogham: return
+deactivate Ogham
+....
+
+
+By default, Ogham considers that session should remain opened if last interaction (connection, 
+`enquire_link` or `submit_sm`) with the server happened less than 30 seconds ago (recommended value).
+If the server doesn't send a response after a delay (10 seconds by default), Ogham will consider
+the connection as down.
+
+Timings are configurable:
+
+
+.Custom reuse session configuration
+[role="tab-container no-max-height"]
+Reuse session configuration sample
+
+[role=tab]
+image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+----
+include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
+----
+<1> Load properties from a file that is in the classpath.
+
+{standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
+
+[role=tab]
+image:{images-dir}/icons/properties.png[width=37,height=30] Properties
+
+[source, python, role="irrelevant-lines:1-5 highlight-lines:7-9"]
+----
+include::{standard-samples-resourcesdir}/sms.properties[]
+ogham.sms.cloudhopper.session.reuse-session.enable=true
+ogham.sms.cloudhopper.session.reuse-session.last-interaction-expiration-delay=60000       # <1>
+ogham.sms.cloudhopper.session.reuse-session.enquire-link-timeout=5000                     # <2>
+----
+<1> Change delay to consider last interaction `enquire_link` requests to 1 minute.
+<2> Change default response timeout to 5 seconds.
+
+
+[role=tab-container-end]
+-
+
+
+
+.Connection lost
+[NOTE]
+====
+If the connection to the server is lost in the following cases:
+
+* The server has explicitly closed the session
+* The server has been shutdown
+* The server has been restarted
+* The network is not available
+
+Ogham will detect that the session is down and a new session will be used for next message.
+====
+
+
+.Expiration delay
+[WARNING]
+====
+If `ogham.sms.cloudhopper.session.reuse-session.last-interaction-expiration-delay` is to high, Ogham may
+consider that the session is still alive whereas the server may ignore the session (some servers
+may consider the client as outdated but without sending explicit close). In this case, no
+`enquire_link` request is sent. The message is sent using the same session. However, it will fail
+because Ogham reuses a session that is closed. In this case, the SMS can't be sent and an error is
+raised.
+
+It is up to the developer to configure the right values according to the server when using this strategy.
+====
+
+	 

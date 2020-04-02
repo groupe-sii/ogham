@@ -2,16 +2,25 @@
 include::{docdir}/variables.adoc[]
 
 
-== Catalog of SMTP properties
+== Email
+
+=== Catalog of SMTP properties
 
 ////
 TODO: whole list of email properties
 ////
 
-[[advanced-smpp-configuration]]
-== Catalog of SMPP properties
+== SMS
 
-include::{user-manual-dir}/sms/smpp-configuration.adoc[leveloffset=+2]
+[[session-strategy]]
+=== Session management
+
+include::{user-manual-dir}sms/session-handling-strategy.adoc[leveloffset=+2]
+
+[[advanced-smpp-configuration]]
+=== Catalog of SMPP properties
+
+include::{user-manual-dir}sms/smpp-configuration.adoc[leveloffset=+2]
 
 
 == Use the builder to define your own behaviors

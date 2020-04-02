@@ -1,0 +1,67 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+This strategy is the simplest one. It is useful when your application only sends some SMS sometimes.
+For each SMS, a session is created, the message is sent and the session is closed.
+
+This is the default behavior.
+
+The diagram explains how it works:
+
+.How it works
+[plantuml, subs="attributes", role="text-center"]
+....
+skinparam ParticipantPadding 40
+
+participant Application
+participant Ogham
+participant Server
+
+autonumber
+
+Application -> Ogham: send("sms 1")
+activate Ogham
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>bind</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>bound ["session 1"]</color>
+
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>submit_sm ["sms 1"]</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>submit_sm_resp</color>
+
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>unbind</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>unbound ["session 1"]</color>
+Application <-- Ogham: return
+deactivate Ogham
+|||
+...
+|||
+Application -> Ogham: send("sms 2")
+activate Ogham
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>bind</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>bound ["session 2"]</color>
+
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>submit_sm ["sms 2"]</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>submit_sm_resp</color>
+
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>unbind</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>unbound ["session 2"]</color>
+Application <-- Ogham: return
+deactivate Ogham
+|||
+...
+|||
+Application -> Ogham: send("sms 3")
+activate Ogham
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>bind</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>bound ["session 3"]</color>
+
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>submit_sm ["sms 3"]</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>submit_sm_resp</color>
+
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>unbind</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>unbound ["session 3"]</color>
+Application <-- Ogham: return
+deactivate Ogham
+|||
+...
+....
+

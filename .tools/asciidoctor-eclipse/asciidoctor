@@ -42,6 +42,7 @@ fi
 
 final_sourcefile="$outdir/$relative_sourcefile"
 final_generatedfile="$outdir/$relative_generatedfile"
+final_generateddir="$(dirname "$final_generatedfile")"
 
 >&2 echo "[DEBUG] |SCRIPT|     eclipse_sourcefile=$eclipse_sourcefile"
 >&2 echo "[DEBUG] |SCRIPT|     eclipse_generatedfile=$eclipse_generatedfile"
@@ -72,6 +73,8 @@ if [ "$build" == "true" ]; then
 			| sed -re "s|^(.+</title>[^<]*)(<link.+)(</head>.+)(</body>.+)$|\1\3\2\4|" \
 			| sed -e 's/\\N/\r/g' \
 			| sed -e 's/\\R/\r/g') > $final_generatedfile;
+		# change path of generated diagrams
+		sed -i -re "s|<img src=\"(diag-[^\"]+)\"|<img src=\"$final_generateddir/\1\"|g" $final_generatedfile;
   } || {
     >&2 $($asciidoctor $asciidoctor_args);
 		exit 0;

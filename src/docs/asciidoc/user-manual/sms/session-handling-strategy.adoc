@@ -1,0 +1,26 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+Session (connection between the client and the server) may be handled in many ways. Ogham natively
+provides three strategies:
+
+* Always use a new session for each message
+* Reuse same session for several messages until the connection is lost
+* Actively keep the session alive
+
+This section explains the difference between each implementation, how it works and how to use it.
+
+== Always use a new session
+
+include::{user-manual-dir}/sms/session-handling-always-new.adoc[leveloffset=+2]
+
+
+== Reuse session
+
+include::{user-manual-dir}/sms/session-handling-reuse.adoc[leveloffset=+2]
+
+
+== Keep session alive
+
+include::{user-manual-dir}/sms/session-handling-keep-alive.adoc[leveloffset=+2]
+

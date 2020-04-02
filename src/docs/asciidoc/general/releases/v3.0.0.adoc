@@ -98,10 +98,13 @@ Link to new behavior
 
 === Test utilities
 
-Rename `receivedMessages().forEach()` in test utilities (for both email and SMS).
+Rename `receivedMessages().forEach()` into `receivedMessages().every()` in test utilities (for 
+both email and SMS).
 
 == New features
 
+
+=== Auto-cleanup
 
 === Fluent API for message construction
 
@@ -151,7 +154,8 @@ TODO
 
 Encoding + auto-guess
 Split
-keep session
+reuse session
+keep session alive (thanks to dainv85 https://github.com/dainv85 contribution)
 Short message vs TLV
 
 
