@@ -27,7 +27,6 @@ import fr.sii.ogham.spring.email.OghamJavaMailConfiguration;
 import fr.sii.ogham.spring.sms.OghamCloudhopperConfiguration;
 import fr.sii.ogham.spring.sms.OghamOvhSmsConfiguration;
 import fr.sii.ogham.spring.sms.OghamSmsProperties;
-import fr.sii.ogham.spring.sms.OghamSmsglobalServiceProviderConfiguration;
 import fr.sii.ogham.spring.template.OghamCommonTemplateProperties;
 import fr.sii.ogham.spring.template.OghamFreemarkerConfiguration;
 import fr.sii.ogham.spring.template.OghamNoTemplateEngineConfiguration;
@@ -65,7 +64,6 @@ import fr.sii.ogham.spring.v1.template.OghamThymeleafV2Configuration;
 							OghamJavaMailConfiguration.class,
 							OghamSendGridV2Configuration.class,
 							OghamCloudhopperConfiguration.class,
-							OghamSmsglobalServiceProviderConfiguration.class,
 							OghamOvhSmsConfiguration.class })
 //@formatter:on
 public class OghamSpringBoot1AutoConfiguration {
