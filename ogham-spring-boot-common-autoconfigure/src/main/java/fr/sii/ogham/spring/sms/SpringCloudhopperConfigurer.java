@@ -93,7 +93,19 @@ public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
 					.connectRetry()
 						.fixedDelay()
 							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()
-							.delay().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getDelayBetweenAttempts()));
+							.delay().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getDelayBetweenAttempts())).and()
+							.and()
+						.exponentialDelay()
+							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()
+							.initialDelay().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getExponentialInitialDelay())).and()
+							.and()
+						.perExecutionDelay()
+							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()
+							.delays().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getPerExecutionDelaysAsArray())).and()
+							.and()
+						.fixedInterval()
+							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()
+							.interval().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getExecutionInterval()));
 		// @formatter:on
 	}
 

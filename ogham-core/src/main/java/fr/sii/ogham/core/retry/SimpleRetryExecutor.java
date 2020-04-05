@@ -105,11 +105,12 @@ public class SimpleRetryExecutor implements RetryExecutor {
 	private <V> V executeWithRetry(Callable<V> actionToRetry, RetryStrategy retry) throws RetryExecutionInterruptedException, MaximumAttemptsReachedException, UnrecoverableException {
 		List<Exception> failures = new ArrayList<>();
 		do {
+			Instant executionStartTime = Instant.now();
 			try {
 				return actionToRetry.call();
 			} catch (Exception e) {
 				handleFailure(actionToRetry, failures, e);
-				pause(actionToRetry, retry, e);
+				pause(executionStartTime, Instant.now(), actionToRetry, retry, e);
 			}
 		} while (!retry.terminated());
 		// action couldn't be executed
@@ -131,8 +132,8 @@ public class SimpleRetryExecutor implements RetryExecutor {
 		}
 	}
 
-	private <V> void pause(Callable<V> actionToRetry, RetryStrategy retry, Exception e) throws RetryExecutionInterruptedException {
-		Instant nextDate = retry.nextDate();
+	private <V> void pause(Instant executionStartTime, Instant executionFailureTime, Callable<V> actionToRetry, RetryStrategy retry, Exception e) throws RetryExecutionInterruptedException {
+		Instant nextDate = retry.nextDate(executionStartTime, executionFailureTime);
 		LOG.debug("{} failed ({}: {}). Retrying at {}...", getActionName(actionToRetry), e.getClass(), e.getMessage(), nextDate);
 		LOG.trace("{}", e.getMessage(), e);
 		pauseUntil(nextDate);

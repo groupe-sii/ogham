@@ -10,16 +10,16 @@ import org.junit.Test;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.retry.ExponentialDelayRetry;
 
-public class FixedDelayRetryExecutorTest {
+public class ExponentialDelayRetryExecutorTest {
 	@Rule public final MockitoRule mockito = MockitoJUnit.rule();
 	
-	FixedDelayRetry retry;
+	ExponentialDelayRetry retry;
 	
 	@Before
 	public void setup() {
-		retry = new FixedDelayRetry(5, 10L);
+		retry = new ExponentialDelayRetry(5, 10L);
 	}
 	
 	@Test
@@ -31,19 +31,19 @@ public class FixedDelayRetryExecutorTest {
 		assertThat("first execution => not terminated", retry.terminated(), is(false));
 		assertThat("first execution => decrease remaining retries", retry.getRemainingRetries(), is(4));
 		// simulate second execution
-		assertThat("second execution failed => provide next date", retry.nextDate(ofEpochMilli(1010L), ofEpochMilli(2010L)), is(ofEpochMilli(2020L)));
+		assertThat("second execution failed => provide next date", retry.nextDate(ofEpochMilli(1010L), ofEpochMilli(2010L)), is(ofEpochMilli(2030L)));
 		assertThat("second execution => not terminated", retry.terminated(), is(false));
 		assertThat("second execution => decrease remaining retries", retry.getRemainingRetries(), is(3));
 		// simulate third execution
-		assertThat("third execution failed => provide next date", retry.nextDate(ofEpochMilli(2020L), ofEpochMilli(3020L)), is(ofEpochMilli(3030L)));
+		assertThat("third execution failed => provide next date", retry.nextDate(ofEpochMilli(2020L), ofEpochMilli(3020L)), is(ofEpochMilli(3060L)));
 		assertThat("third execution => not terminated", retry.terminated(), is(false));
 		assertThat("third execution => decrease remaining retries", retry.getRemainingRetries(), is(2));
 		// simulate fourth execution
-		assertThat("fourth execution failed => provide next date", retry.nextDate(ofEpochMilli(3030L), ofEpochMilli(4030L)), is(ofEpochMilli(4040L)));
+		assertThat("fourth execution failed => provide next date", retry.nextDate(ofEpochMilli(3030L), ofEpochMilli(4030L)), is(ofEpochMilli(4110L)));
 		assertThat("fourth execution => not terminated", retry.terminated(), is(false));
 		assertThat("fourth execution => decrease remaining retries", retry.getRemainingRetries(), is(1));
 		// simulate fifth execution
-		assertThat("fifth execution failed => provide next date", retry.nextDate(ofEpochMilli(4040L), ofEpochMilli(5040L)), is(ofEpochMilli(5050L)));
+		assertThat("fifth execution failed => provide next date", retry.nextDate(ofEpochMilli(4040L), ofEpochMilli(5040L)), is(ofEpochMilli(5200L)));
 		assertThat("fifth execution => terminated", retry.terminated(), is(true));
 		assertThat("fifth execution => decrease remaining retries", retry.getRemainingRetries(), is(0));
 	}

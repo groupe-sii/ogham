@@ -1,11 +1,10 @@
 package fr.sii.ogham.core.retry;
 
 import java.time.Instant;
-import java.util.function.Supplier;
 
 /**
- * Retry several times with a fixed delay between each try until the maximum
- * attempts is reached.
+ * Retry several times with a fixed delay to wait after the last execution
+ * failure until the maximum attempts is reached.
  * 
  * If delay is 500ms and max retries is 5, it means that a retry will be
  * attempted every 500ms until 5 attempts are reached (inclusive). For example,
@@ -36,39 +35,21 @@ import java.util.function.Supplier;
 public class FixedDelayRetry implements RetryStrategy {
 	private final int maxRetries;
 	private final long delay;
-	private final Supplier<Instant> currentTimeSupplier;
 	private int retries;
 
 	/**
-	 * Initializes with the maximum attempts and the delay between each attempt.
-	 * 
-	 * <p>
-	 * The next date is determined using {@link Instant#now()}.
+	 * Initializes with the maximum attempts and the delay to wait after a
+	 * failure.
 	 * 
 	 * @param maxRetries
 	 *            the maximum attempts
 	 * @param delay
-	 *            the delay between two attempts
+	 *            the delay to wait after failure to do another attempt
 	 */
 	public FixedDelayRetry(int maxRetries, long delay) {
-		this(maxRetries, delay, Instant::now);
-	}
-
-	/**
-	 * Initializes with the maximum attempts and the delay between each attempt.
-	 * 
-	 * @param maxRetries
-	 *            the maximum attempts
-	 * @param delay
-	 *            the delay between two attempts
-	 * @param currentTimeSupplier
-	 *            a custom implementation used to provide current time
-	 */
-	public FixedDelayRetry(int maxRetries, long delay, Supplier<Instant> currentTimeSupplier) {
 		super();
 		this.maxRetries = maxRetries;
 		this.delay = delay;
-		this.currentTimeSupplier = currentTimeSupplier;
 		retries = maxRetries;
 	}
 
@@ -78,9 +59,9 @@ public class FixedDelayRetry implements RetryStrategy {
 	}
 
 	@Override
-	public Instant nextDate() {
+	public Instant nextDate(Instant executionStartTime, Instant executionFailureTime) {
 		retries--;
-		return currentTimeSupplier.get().plusMillis(delay);
+		return executionFailureTime.plusMillis(delay);
 	}
 
 	public int getRemainingRetries() {

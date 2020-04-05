@@ -26,9 +26,13 @@ public class DefaultBuildContext implements BuildContext {
 	private final Converter converter;
 
 	public DefaultBuildContext() {
+		this(new Properties());
+	}
+
+	public DefaultBuildContext(Properties props) {
 		super();
 		this.converter = new DefaultConverter();
-		this.propertyResolver = new JavaPropertiesResolver(new Properties(), converter);
+		this.propertyResolver = new JavaPropertiesResolver(props, converter);
 	}
 
 	@Override

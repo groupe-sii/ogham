@@ -1,5 +1,8 @@
 package fr.sii.ogham.core.builder.retry;
 
+import java.util.Arrays;
+import java.util.List;
+
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
@@ -7,40 +10,43 @@ import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
-import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
 import fr.sii.ogham.core.retry.RetryStrategy;
 
 /**
- * Configures retry handling based on a fixed delay.
+ * Configures retry handling based on a specific delay for each execution.
  * 
- * Retry several times with a fixed delay between each try until the maximum
- * attempts is reached.
+ * Retry several times with a fixed delay to wait after the last execution
+ * failure until the maximum attempts is reached. A specific delay is used for
+ * each execution. If there are more attempts than the configured delays, the
+ * last delays is used for remaining attempts.
+ * 
  * 
  * For example:
  * 
  * <pre>
- * .delay(500)
- * .maxRetries(5)
+ *    .delays(500, 750, 1800)
+ *    .maxRetries(5)
  * </pre>
  * 
- * Means that a retry will be attempted every 500ms until 5 attempts are reached
- * (inclusive). For example, you want to connect to an external system at t1=0
- * and the connection timeout (100ms) is triggered at t2=100ms. Using this retry
- * will provide the following behavior:
+ * Means that a retry will be attempted with specified delays until 5 attempts
+ * are reached (inclusive). For example, you want to connect to an external
+ * system at t1=0 and the connection timeout (100ms) is triggered at t2=100ms.
+ * Using this retry will provide the following behavior:
  * 
  * <ul>
  * <li>0: connect</li>
  * <li>100: timeout</li>
  * <li>600: connect</li>
  * <li>700: timeout</li>
- * <li>1200: connect</li>
- * <li>1300: timeout</li>
- * <li>1800: connect</li>
- * <li>1900: timeout</li>
- * <li>2400: connect</li>
- * <li>2500: timeout</li>
- * <li>3000: connect</li>
- * <li>3100: timeout</li>
+ * <li>1450: connect</li>
+ * <li>1550: timeout</li>
+ * <li>3350: connect</li>
+ * <li>3450: timeout</li>
+ * <li>5250: connect</li>
+ * <li>5350: timeout</li>
+ * <li>7150: connect</li>
+ * <li>7250: timeout</li>
  * <li>fail</li>
  * </ul>
  * 
@@ -50,10 +56,10 @@ import fr.sii.ogham.core.retry.RetryStrategy;
  *            the type of the parent builder (when calling {@link #and()}
  *            method)
  */
-public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<RetryStrategy> {
+public class PerExecutionDelayBuilder<P> extends AbstractParent<P> implements Builder<RetryStrategy> {
 	private final BuildContext buildContext;
-	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Integer> maxRetriesValueBuilder;
-	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Long> delayValueBuilder;
+	private final ConfigurationValueBuilderHelper<PerExecutionDelayBuilder<P>, Integer> maxRetriesValueBuilder;
+	private final ConfigurationValueBuilderHelper<PerExecutionDelayBuilder<P>, Long[]> delaysValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -65,11 +71,11 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * @param buildContext
 	 *            for registering instances and property evaluation
 	 */
-	public FixedDelayBuilder(P parent, BuildContext buildContext) {
+	public PerExecutionDelayBuilder(P parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
 		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		delayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		delaysValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long[].class, buildContext);
 	}
 
 	/**
@@ -106,7 +112,7 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 *            the maximum number of attempts
 	 * @return this instance for fluent chaining
 	 */
-	public FixedDelayBuilder<P> maxRetries(Integer maxRetries) {
+	public PerExecutionDelayBuilder<P> maxRetries(Integer maxRetries) {
 		this.maxRetriesValueBuilder.setValue(maxRetries);
 		return this;
 	}
@@ -147,32 +153,34 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * 
 	 * @return the builder to configure property keys/default value
 	 */
-	public ConfigurationValueBuilder<FixedDelayBuilder<P>, Integer> maxRetries() {
+	public ConfigurationValueBuilder<PerExecutionDelayBuilder<P>, Integer> maxRetries() {
 		return maxRetriesValueBuilder;
 	}
 
 	/**
-	 * Set the delay between two executions (in milliseconds).
+	 * Set specific delays (in milliseconds) used for each execution. If there
+	 * are more attempts than the configured delays, the last delays is used for
+	 * remaining attempts.
 	 * 
 	 * <p>
 	 * The value set using this method takes precedence over any property and
-	 * default value configured using {@link #delay()}.
+	 * default value configured using {@link #delays()}.
 	 * 
 	 * <pre>
-	 * .delay(5000L)
-	 * .delay()
+	 * .delays(5000L)
+	 * .delays()
 	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
 	 *   .defaultValue(10000L)
 	 * </pre>
 	 * 
 	 * <pre>
-	 * .delay(5000L)
-	 * .delay()
+	 * .delays(5000L)
+	 * .delays()
 	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
 	 *   .defaultValue(10000L)
 	 * </pre>
 	 * 
-	 * In both cases, {@code delay(5000L)} is used.
+	 * In both cases, {@code delays(5000L)} is used.
 	 * 
 	 * <p>
 	 * If this method is called several times, only the last value is used.
@@ -181,17 +189,60 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * If {@code null} value is set, it is like not setting a value at all. The
 	 * property/default value configuration is applied.
 	 * 
-	 * @param delay
-	 *            the time between two attempts
+	 * @param delays
+	 *            the delays for each execution
 	 * @return this instance for fluent chaining
 	 */
-	public FixedDelayBuilder<P> delay(Long delay) {
-		delayValueBuilder.setValue(delay);
+	public PerExecutionDelayBuilder<P> delays(List<Long> delays) {
+		delaysValueBuilder.setValue(delays == null ? null : delays.toArray(new Long[delays.size()]));
 		return this;
 	}
 
 	/**
-	 * Set the delay between two executions (in milliseconds).
+	 * Set specific delays (in milliseconds) used for each execution. If there
+	 * are more attempts than the configured delays, the last delays is used for
+	 * remaining attempts.
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #delays()}.
+	 * 
+	 * <pre>
+	 * .delays(5000L)
+	 * .delays()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(10000L)
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .delays(5000L)
+	 * .delays()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue(10000L)
+	 * </pre>
+	 * 
+	 * In both cases, {@code delays(5000L)} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param delays
+	 *            the delays for each execution
+	 * @return this instance for fluent chaining
+	 */
+	public PerExecutionDelayBuilder<P> delays(Long... delays) {
+		delaysValueBuilder.setValue(delays);
+		return this;
+	}
+
+	/**
+	 * Set specific delays (in milliseconds) used for each new execution. If
+	 * there are more attempts than the configured delays, the last delay is
+	 * used for remaining attempts.
 	 * 
 	 * <p>
 	 * This method is mainly used by {@link Configurer}s to register some
@@ -201,18 +252,18 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .delay()
+	 * .delays()
 	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
 	 *   .defaultValue(10000L)
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #delay(Long)} takes precedence over
+	 * Non-null value set using {@link #delays(Long...)} takes precedence over
 	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .delay(5000L)
-	 * .delay()
+	 * .delays(5000L)
+	 * .delays()
 	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
 	 *   .defaultValue(10000L)
 	 * </pre>
@@ -226,25 +277,26 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * 
 	 * @return the builder to configure property keys/default value
 	 */
-	public ConfigurationValueBuilder<FixedDelayBuilder<P>, Long> delay() {
-		return delayValueBuilder;
+	public ConfigurationValueBuilder<PerExecutionDelayBuilder<P>, Long[]> delays() {
+		return delaysValueBuilder;
 	}
 
 	@Override
 	public RetryStrategy build() {
 		int evaluatedMaxRetries = buildMaxRetries();
-		long evaluatedDelay = buildDelay();
-		if (evaluatedMaxRetries == 0 || evaluatedDelay == 0) {
+		List<Long> evaluatedDelays = buildDelays();
+		if (evaluatedMaxRetries == 0 || evaluatedDelays.isEmpty()) {
 			return null;
 		}
-		return buildContext.register(new FixedDelayRetry(evaluatedMaxRetries, evaluatedDelay));
+		return buildContext.register(new PerExecutionDelayRetry(evaluatedMaxRetries, evaluatedDelays));
 	}
 
 	private int buildMaxRetries() {
 		return maxRetriesValueBuilder.getValue(0);
 	}
 
-	private long buildDelay() {
-		return delayValueBuilder.getValue(0L);
+	private List<Long> buildDelays() {
+		Long[] delays = delaysValueBuilder.getValue(new Long[0]);
+		return Arrays.asList(delays);
 	}
 }

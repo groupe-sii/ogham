@@ -231,7 +231,19 @@ public final class DefaultCloudhopperConfigurer {
 					.connectRetry()
 						.fixedDelay()
 							.maxRetries().properties("${ogham.sms.cloudhopper.session.connect-retry.max-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()
-							.delay().properties("${ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_RETRY_DELAY));							
+							.delay().properties("${ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_RETRY_DELAY)).and()
+							.and()
+						.exponentialDelay()
+							.maxRetries().properties("${ogham.sms.cloudhopper.session.connect-retry.max-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()
+							.initialDelay().properties("${ogham.sms.cloudhopper.session.connect-retry.exponential-intial-delay}").and()
+							.and()
+						.perExecutionDelay()
+							.maxRetries().properties("${ogham.sms.cloudhopper.session.connect-retry.max-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()
+							.delays().properties("${ogham.sms.cloudhopper.session.connect-retry.per-execution-delays}").and()
+							.and()
+						.fixedInterval()
+							.maxRetries().properties("${ogham.sms.cloudhopper.session.connect-retry.max-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()
+							.interval().properties("${ogham.sms.cloudhopper.session.connect-retry.execution-interval}");							
 			// @formatter:on
 		}
 		

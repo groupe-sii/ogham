@@ -44,7 +44,7 @@ public class SimpleRetryExecutorTest {
 	public void setup() throws WaitException {
 		when(provider.provide()).thenReturn(strategy);
 		// provide 4 next dates
-		when(strategy.nextDate())
+		when(strategy.nextDate(any(), any()))
 			.thenReturn(ofEpochMilli(100L))
 			.thenReturn(ofEpochMilli(2000L))
 			.thenReturn(ofEpochMilli(30000L))

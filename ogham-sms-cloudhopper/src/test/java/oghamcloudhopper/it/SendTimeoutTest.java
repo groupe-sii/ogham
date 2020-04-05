@@ -81,4 +81,27 @@ public class SendTimeoutTest {
 		assertThat("should indicate timeout", e, hasAnyCause(SmppTimeoutException.class, hasMessage("Unable to get response within [200 ms]")));
 	}
 
+	@Test
+	@SmppServerConfig(slow = @Slow(sendBindRespDelay = 500L))
+	public void connectionTimeoutPerExecutionRetry() throws MessagingException {
+		MessagingBuilder builder = MessagingBuilder.standard();
+		builder
+			.environment()
+				.properties()
+					.set("ogham.sms.smpp.host", "localhost")
+					.set("ogham.sms.smpp.port", smppServer.getPort())
+					.set("ogham.sms.cloudhopper.session.connect-retry.max-attempts", 5)
+					.set("ogham.sms.cloudhopper.session.connect-retry.per-execution-delays", "100, 300, 400")
+					.set("ogham.sms.cloudhopper.session.bind-timeout", 200);
+		MessagingService service = builder.build();
+
+		MessageException e = assertThrows("should throw", MessageException.class, () -> {
+			service.send(new Sms().content("foo").from("605040302010").to("010203040506"));
+		});
+		assertThat("should indicate cause", e, hasAnyCause(ConnectionFailedException.class));
+		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class));
+		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasSize(5))));
+		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(instanceOf(SmppTimeoutException.class)))));
+	}
+	
 }

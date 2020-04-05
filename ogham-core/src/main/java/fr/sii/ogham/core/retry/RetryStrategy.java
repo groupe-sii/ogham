@@ -31,7 +31,12 @@ public interface RetryStrategy {
 	 * Strategy may define a fixed delay, random delay, exponential delay or
 	 * anything else.
 	 * 
+	 * @param executionStartTime
+	 *            the date and time when the action has been started
+	 * @param executionFailureTime
+	 *            the date and time when the action has failed
 	 * @return the next execution date
 	 */
-	Instant nextDate();
+	Instant nextDate(Instant executionStartTime, Instant executionFailureTime);
+
 }

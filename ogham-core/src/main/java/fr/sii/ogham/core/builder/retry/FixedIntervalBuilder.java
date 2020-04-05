@@ -7,20 +7,24 @@ import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.fluent.AbstractParent;
-import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.retry.FixedIntervalRetry;
+import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.retry.RetryStrategy;
+import fr.sii.ogham.core.retry.SimpleRetryExecutor;
 
 /**
- * Configures retry handling based on a fixed delay.
+ * Configures retry handling based on a fixed interval (based on first execution
+ * start date).
  * 
- * Retry several times with a fixed delay between each try until the maximum
- * attempts is reached.
+ * Retry several times with a fixed interval between each try until the maximum
+ * attempts is reached. The interval is based on the first execution start date.
  * 
  * For example:
  * 
  * <pre>
- * .delay(500)
- * .maxRetries(5)
+ * .fixedInterval()
+ *    .interval(500)
+ *    .maxRetries(5)
  * </pre>
  * 
  * Means that a retry will be attempted every 500ms until 5 attempts are reached
@@ -28,21 +32,32 @@ import fr.sii.ogham.core.retry.RetryStrategy;
  * and the connection timeout (100ms) is triggered at t2=100ms. Using this retry
  * will provide the following behavior:
  * 
+ * 
  * <ul>
  * <li>0: connect</li>
  * <li>100: timeout</li>
- * <li>600: connect</li>
- * <li>700: timeout</li>
- * <li>1200: connect</li>
- * <li>1300: timeout</li>
- * <li>1800: connect</li>
- * <li>1900: timeout</li>
- * <li>2400: connect</li>
- * <li>2500: timeout</li>
- * <li>3000: connect</li>
- * <li>3100: timeout</li>
+ * <li>500: connect</li>
+ * <li>600: timeout</li>
+ * <li>1000: connect</li>
+ * <li>1100: timeout</li>
+ * <li>1500: connect</li>
+ * <li>1600: timeout</li>
+ * <li>2000: connect</li>
+ * <li>2100: timeout</li>
+ * <li>2500: connect</li>
+ * <li>2600: timeout</li>
  * <li>fail</li>
  * </ul>
+ * 
+ * 
+ * <strong>NOTE:</strong> The provided date doesn't take the duration of the
+ * execution in account. If an execution takes 1s to execute while retry delay
+ * is set to 500ms, there may have several executions in parallel. However, this
+ * totally depends on the {@link RetryExecutor} implementation. For example
+ * {@link SimpleRetryExecutor} won't run several executions in parallel. In this
+ * case, it will execute the action as soon as the previous one has failed
+ * therefore the delay may not be complied.
+ * 
  * 
  * @author Aurélien Baudet
  *
@@ -50,10 +65,10 @@ import fr.sii.ogham.core.retry.RetryStrategy;
  *            the type of the parent builder (when calling {@link #and()}
  *            method)
  */
-public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<RetryStrategy> {
+public class FixedIntervalBuilder<P> extends AbstractParent<P> implements Builder<RetryStrategy> {
 	private final BuildContext buildContext;
-	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Integer> maxRetriesValueBuilder;
-	private final ConfigurationValueBuilderHelper<FixedDelayBuilder<P>, Long> delayValueBuilder;
+	private final ConfigurationValueBuilderHelper<FixedIntervalBuilder<P>, Integer> maxRetriesValueBuilder;
+	private final ConfigurationValueBuilderHelper<FixedIntervalBuilder<P>, Long> intervalValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -65,11 +80,11 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * @param buildContext
 	 *            for registering instances and property evaluation
 	 */
-	public FixedDelayBuilder(P parent, BuildContext buildContext) {
+	public FixedIntervalBuilder(P parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
 		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		delayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		intervalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
 	}
 
 	/**
@@ -106,7 +121,7 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 *            the maximum number of attempts
 	 * @return this instance for fluent chaining
 	 */
-	public FixedDelayBuilder<P> maxRetries(Integer maxRetries) {
+	public FixedIntervalBuilder<P> maxRetries(Integer maxRetries) {
 		this.maxRetriesValueBuilder.setValue(maxRetries);
 		return this;
 	}
@@ -147,32 +162,32 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * 
 	 * @return the builder to configure property keys/default value
 	 */
-	public ConfigurationValueBuilder<FixedDelayBuilder<P>, Integer> maxRetries() {
+	public ConfigurationValueBuilder<FixedIntervalBuilder<P>, Integer> maxRetries() {
 		return maxRetriesValueBuilder;
 	}
 
 	/**
-	 * Set the delay between two executions (in milliseconds).
+	 * Set the interval between two executions (in milliseconds).
 	 * 
 	 * <p>
 	 * The value set using this method takes precedence over any property and
-	 * default value configured using {@link #delay()}.
+	 * default value configured using {@link #interval()}.
 	 * 
 	 * <pre>
-	 * .delay(5000L)
-	 * .delay()
+	 * .interval(5000L)
+	 * .interval()
 	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
 	 *   .defaultValue(10000L)
 	 * </pre>
 	 * 
 	 * <pre>
-	 * .delay(5000L)
-	 * .delay()
+	 * .interval(5000L)
+	 * .interval()
 	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
 	 *   .defaultValue(10000L)
 	 * </pre>
 	 * 
-	 * In both cases, {@code delay(5000L)} is used.
+	 * In both cases, {@code interval(5000L)} is used.
 	 * 
 	 * <p>
 	 * If this method is called several times, only the last value is used.
@@ -181,17 +196,17 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * If {@code null} value is set, it is like not setting a value at all. The
 	 * property/default value configuration is applied.
 	 * 
-	 * @param delay
+	 * @param interval
 	 *            the time between two attempts
 	 * @return this instance for fluent chaining
 	 */
-	public FixedDelayBuilder<P> delay(Long delay) {
-		delayValueBuilder.setValue(delay);
+	public FixedIntervalBuilder<P> interval(Long interval) {
+		intervalValueBuilder.setValue(interval);
 		return this;
 	}
 
 	/**
-	 * Set the delay between two executions (in milliseconds).
+	 * Set the interval between two executions (in milliseconds).
 	 * 
 	 * <p>
 	 * This method is mainly used by {@link Configurer}s to register some
@@ -201,18 +216,18 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
-	 * .delay()
+	 * .interval()
 	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
 	 *   .defaultValue(10000L)
 	 * </pre>
 	 * 
 	 * <p>
-	 * Non-null value set using {@link #delay(Long)} takes precedence over
+	 * Non-null value set using {@link #interval(Long)} takes precedence over
 	 * property values and default value.
 	 * 
 	 * <pre>
-	 * .delay(5000L)
-	 * .delay()
+	 * .interval(5000L)
+	 * .interval()
 	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
 	 *   .defaultValue(10000L)
 	 * </pre>
@@ -226,25 +241,25 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	 * 
 	 * @return the builder to configure property keys/default value
 	 */
-	public ConfigurationValueBuilder<FixedDelayBuilder<P>, Long> delay() {
-		return delayValueBuilder;
+	public ConfigurationValueBuilder<FixedIntervalBuilder<P>, Long> interval() {
+		return intervalValueBuilder;
 	}
 
 	@Override
 	public RetryStrategy build() {
 		int evaluatedMaxRetries = buildMaxRetries();
-		long evaluatedDelay = buildDelay();
-		if (evaluatedMaxRetries == 0 || evaluatedDelay == 0) {
+		long evaluatedInterval = buildInterval();
+		if (evaluatedMaxRetries == 0 || evaluatedInterval == 0) {
 			return null;
 		}
-		return buildContext.register(new FixedDelayRetry(evaluatedMaxRetries, evaluatedDelay));
+		return buildContext.register(new FixedIntervalRetry(evaluatedMaxRetries, evaluatedInterval));
 	}
 
 	private int buildMaxRetries() {
 		return maxRetriesValueBuilder.getValue(0);
 	}
 
-	private long buildDelay() {
-		return delayValueBuilder.getValue(0L);
+	private long buildInterval() {
+		return intervalValueBuilder.getValue(0L);
 	}
 }
