@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.async.Awaiter;
 import fr.sii.ogham.core.exception.async.WaitException;
 import fr.sii.ogham.core.exception.retry.ExecutionFailedNotRetriedException;
+import fr.sii.ogham.core.exception.retry.ExecutionFailureWrapper;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
 import fr.sii.ogham.core.exception.retry.RetryException;
 import fr.sii.ogham.core.exception.retry.RetryExecutionInterruptedException;
@@ -50,7 +51,7 @@ public class SimpleRetryExecutor implements RetryExecutor {
 	 * Use to check if the exception is recoverable (means that a retry can be
 	 * attempted) or not (should fail immediately).
 	 */
-	private final Predicate<Exception> recoverable;
+	private final Predicate<Throwable> recoverable;
 
 	/**
 	 * Initializes with a provider in order to use a fresh {@link RetryStrategy}
@@ -85,7 +86,7 @@ public class SimpleRetryExecutor implements RetryExecutor {
 	 *            attempted) or unrecoverable (means that it should fail
 	 *            immediately)
 	 */
-	public SimpleRetryExecutor(RetryStrategyProvider retryProvider, Awaiter awaiter, Predicate<Exception> recoverable) {
+	public SimpleRetryExecutor(RetryStrategyProvider retryProvider, Awaiter awaiter, Predicate<Throwable> recoverable) {
 		super();
 		this.retryProvider = retryProvider;
 		this.awaiter = awaiter;
@@ -109,16 +110,17 @@ public class SimpleRetryExecutor implements RetryExecutor {
 			try {
 				return actionToRetry.call();
 			} catch (Exception e) {
-				handleFailure(actionToRetry, failures, e);
-				pause(executionStartTime, Instant.now(), actionToRetry, retry, e);
+				Instant executionFailure = Instant.now();
+				handleFailure(executionStartTime, executionFailure, actionToRetry, failures, e);
+				pause(executionStartTime, executionFailure, actionToRetry, retry, e);
 			}
 		} while (!retry.terminated());
 		// action couldn't be executed
 		throw new MaximumAttemptsReachedException("Maximum attempts to execute action " + getActionName(actionToRetry) + " is reached", failures);
 	}
 
-	private <V> void handleFailure(Callable<V> actionToRetry, List<Exception> failures, Exception e) throws UnrecoverableException {
-		failures.add(e);
+	private <V> void handleFailure(Instant executionStart, Instant executionFailure, Callable<V> actionToRetry, List<Exception> failures, Exception e) throws UnrecoverableException {
+		failures.add(new ExecutionFailureWrapper(getActionName(actionToRetry), executionStart, executionFailure, e));
 		if (!recoverable.test(e)) {
 			throw new UnrecoverableException("Unrecoverable exception thrown while executing " + getActionName(actionToRetry), failures);
 		}

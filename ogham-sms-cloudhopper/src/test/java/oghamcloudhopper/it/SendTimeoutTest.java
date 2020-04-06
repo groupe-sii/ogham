@@ -58,7 +58,7 @@ public class SendTimeoutTest {
 		assertThat("should indicate cause", e, hasAnyCause(ConnectionFailedException.class));
 		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class));
 		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasSize(5))));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(instanceOf(SmppTimeoutException.class)))));
+		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(SmppTimeoutException.class))))));
 	}
 	
 	
@@ -101,7 +101,7 @@ public class SendTimeoutTest {
 		assertThat("should indicate cause", e, hasAnyCause(ConnectionFailedException.class));
 		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class));
 		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasSize(5))));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(instanceOf(SmppTimeoutException.class)))));
+		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(SmppTimeoutException.class))))));
 	}
 	
 }

@@ -22,6 +22,7 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
+import fr.sii.ogham.core.exception.retry.UnrecoverableException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.ConnectionFailedException;
@@ -56,7 +57,7 @@ public class ConnectionFailureTest {
 		assertThat("should indicate cause", e, hasAnyCause(ConnectionFailedException.class));
 		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class));
 		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasSize(5))));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(instanceOf(SmppChannelConnectException.class)))));
+		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(SmppChannelConnectException.class))))));
 	}
 	
 	@Test
@@ -77,10 +78,10 @@ public class ConnectionFailureTest {
 			service.send(new Sms().content("foo").from("605040302010").to("010203040506"));
 		});
 		assertThat("should indicate cause", e, hasAnyCause(ConnectionFailedException.class));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasSize(5))));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(instanceOf(SmppBindException.class)))));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(hasMessage(containsString("Password invalid"))))));
+		assertThat("should indicate cause", e, hasAnyCause(UnrecoverableException.class));
+		assertThat("should indicate cause", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasSize(1))));
+		assertThat("should indicate cause", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(SmppBindException.class))))));
+		assertThat("should indicate cause", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(SmppBindException.class), hasMessage(containsString("Password invalid")))))));
 	}
 	
 	@Test
@@ -101,9 +102,9 @@ public class ConnectionFailureTest {
 			service.send(new Sms().content("foo").from("605040302010").to("010203040506"));
 		});
 		assertThat("should indicate cause", e, hasAnyCause(ConnectionFailedException.class));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasSize(5))));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(instanceOf(SmppBindException.class)))));
-		assertThat("should indicate cause", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(hasMessage(containsString("Password invalid"))))));
+		assertThat("should indicate cause", e, hasAnyCause(UnrecoverableException.class));
+		assertThat("should indicate cause", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasSize(1))));
+		assertThat("should indicate cause", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(SmppBindException.class))))));
+		assertThat("should indicate cause", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(SmppBindException.class), hasMessage(containsString("Password invalid")))))));
 	}
 }

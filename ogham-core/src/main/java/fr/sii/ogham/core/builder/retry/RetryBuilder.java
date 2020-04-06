@@ -1,10 +1,13 @@
 package fr.sii.ogham.core.builder.retry;
 
+import java.util.function.Predicate;
+
 import fr.sii.ogham.core.async.Awaiter;
 import fr.sii.ogham.core.async.ThreadSleepAwaiter;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
 import fr.sii.ogham.core.retry.RetryExecutor;
@@ -40,6 +43,7 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 	private Awaiter awaiter;
 	private RetryExecutor executor;
 	private RetryExecutorFactory executorFactory;
+	private Predicate<Throwable> retryable;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -309,6 +313,61 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 		return this;
 	}
 
+	/**
+	 * A predicate that checks if the raised error should allow another retry or
+	 * not. This is useful when an error is raised and the error is severe so it
+	 * should stop immediately.
+	 * 
+	 * <p>
+	 * The predicate returns {@code true} if the exception is not fatal and a
+	 * retry may be attempted. It returns {@code false} if the exception is
+	 * fatal and no more attempt should be executed and retry must stop
+	 * immediately.
+	 * 
+	 * <p>
+	 * If {@code null} is passed to this method, it removes any previously
+	 * defined predicate. Therefore the default predicate is used: all
+	 * {@link Exception}s are considered retryable but not {@link Error}s.
+	 * 
+	 * @param retryable
+	 *            the predicate that returns true if the exception is not fatal
+	 *            and a retry can be attempted
+	 * @return this instance for fluent chaining
+	 */
+	public RetryBuilder<P> retryable(Predicate<Throwable> retryable) {
+		this.retryable = retryable;
+		return this;
+	}
+
+	/**
+	 * A condition that checks if the raised error should allow another retry or
+	 * not. This is useful when an error is raised and the error is severe so it
+	 * should stop immediately.
+	 * 
+	 * <p>
+	 * The condition returns {@code true} if the exception is not fatal and a
+	 * retry may be attempted. It returns {@code false} if the exception is
+	 * fatal and no more attempt should be executed and retry must stop
+	 * immediately.
+	 * 
+	 * <p>
+	 * If {@code null} is passed to this method, it removes any previously
+	 * defined condition. Therefore the default condition is used: all
+	 * {@link Exception}s are considered retryable but not {@link Error}s.
+	 * 
+	 * <p>
+	 * This method internally calls {@link #retryable(Predicate)}.
+	 * 
+	 * @param retryable
+	 *            the condition that returns true if the exception is not fatal
+	 *            and a retry can be attempted
+	 * @return this instance for fluent chaining
+	 */
+	@SuppressWarnings("squid:S1905")
+	public RetryBuilder<P> retryable(Condition<Throwable> retryable) {
+		return retryable(retryable == null ? (Predicate<Throwable>) null : retryable::accept);
+	}
+
 	@Override
 	public RetryExecutor build() {
 		if (executor != null) {
@@ -323,7 +382,7 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 		if (executorFactory != null) {
 			return executorFactory.create(retryProvider, builtAwaiter);
 		}
-		return buildContext.register(new SimpleRetryExecutor(retryProvider, builtAwaiter));
+		return buildContext.register(new SimpleRetryExecutor(retryProvider, builtAwaiter, buildRetryable()));
 	}
 
 	private Builder<RetryStrategy> buildRetryStrategy() {
@@ -354,5 +413,12 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 			return new ThreadSleepAwaiter();
 		}
 		return awaiter;
+	}
+
+	private Predicate<Throwable> buildRetryable() {
+		if (retryable == null) {
+			return e -> e instanceof Exception;
+		}
+		return retryable;
 	}
 }
