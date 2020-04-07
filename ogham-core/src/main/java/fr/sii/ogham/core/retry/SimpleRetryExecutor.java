@@ -116,13 +116,13 @@ public class SimpleRetryExecutor implements RetryExecutor {
 			}
 		} while (!retry.terminated());
 		// action couldn't be executed
-		throw new MaximumAttemptsReachedException("Maximum attempts to execute action " + getActionName(actionToRetry) + " is reached", failures);
+		throw new MaximumAttemptsReachedException("Maximum attempts to execute action '" + getActionName(actionToRetry) + "' is reached", failures);
 	}
 
 	private <V> void handleFailure(Instant executionStart, Instant executionFailure, Callable<V> actionToRetry, List<Exception> failures, Exception e) throws UnrecoverableException {
 		failures.add(new ExecutionFailureWrapper(getActionName(actionToRetry), executionStart, executionFailure, e));
 		if (!recoverable.test(e)) {
-			throw new UnrecoverableException("Unrecoverable exception thrown while executing " + getActionName(actionToRetry), failures);
+			throw new UnrecoverableException("Unrecoverable exception thrown while executing '" + getActionName(actionToRetry) + "'", failures);
 		}
 	}
 
@@ -130,7 +130,7 @@ public class SimpleRetryExecutor implements RetryExecutor {
 		try {
 			return actionToRetry.call();
 		} catch (Exception e) {
-			throw new ExecutionFailedNotRetriedException("Failed to execute action " + getActionName(actionToRetry) + " and no retry strategy configured", e);
+			throw new ExecutionFailedNotRetriedException("Failed to execute action '" + getActionName(actionToRetry) + "' and no retry strategy configured", e);
 		}
 	}
 

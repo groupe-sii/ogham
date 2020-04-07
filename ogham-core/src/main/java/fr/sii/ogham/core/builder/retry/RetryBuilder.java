@@ -9,7 +9,10 @@ import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.retry.ExponentialDelayRetry;
 import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.retry.FixedIntervalRetry;
+import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.core.retry.RetryStrategy;
 import fr.sii.ogham.core.retry.RetryStrategyProvider;
@@ -18,10 +21,18 @@ import fr.sii.ogham.core.retry.SimpleRetryExecutor;
 /**
  * Configures retry handling.
  * 
- * For now, only a {@link FixedDelayRetry} is handled. The
- * {@link FixedDelayRetry} needs a delay between two tries and a maximum
- * attempts. In the future, we could handle different strategies if needed like
- * retrying with an exponential delay for example.
+ * Ogham provides several strategies to handle retry:
+ * 
+ * <ul>
+ * <li>{@link FixedDelayRetry}: wait for a fixed delay after the last
+ * failure</li>
+ * <li>{@link FixedIntervalRetry}: wait for a fixed delay between executions (do
+ * not wait for the end of the action)</li>
+ * <li>{@link ExponentialDelayRetry}: start with a delay, the next delay will be
+ * doubled on so on</li>
+ * <li>{@link PerExecutionDelayRetry}: provide a custom delay for each
+ * execution</li>
+ * </ul>
  * 
  * <p>
  * The {@link RetryExecutor} instance may be {@code null} if nothing has been

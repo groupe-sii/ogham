@@ -214,6 +214,30 @@ public final class BuilderUtils {
 		}
 	}
 
+	/**
+	 * Build the instance using the provided builder.
+	 * 
+	 * <p>
+	 * If builder is {@code null}, it returns {@code null}.
+	 * 
+	 * <p>
+	 * If builder is not {@code null}, the value of {@link Builder#build()} is
+	 * used. The returned value may be {@code null}.
+	 * 
+	 * @param <T>
+	 *            the type of the built instance
+	 * @param builder
+	 *            the builder
+	 * @return the built instance or null if builder is null or if it returns
+	 *         null
+	 */
+	public static <T> T build(Builder<T> builder) {
+		if (builder == null) {
+			return null;
+		}
+		return builder.build();
+	}
+
 	private static <T, B extends Builder<? extends T>, P> B instantiate(Class<B> builderClass, P parent, BuildContext buildContext)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException {
 		try {

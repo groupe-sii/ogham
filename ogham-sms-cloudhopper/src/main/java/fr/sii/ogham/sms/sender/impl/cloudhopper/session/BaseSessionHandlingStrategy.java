@@ -1,5 +1,7 @@
 package fr.sii.ogham.sms.sender.impl.cloudhopper.session;
 
+import static fr.sii.ogham.core.retry.NamedCallable.named;
+
 import org.slf4j.Logger;
 
 import com.cloudhopper.smpp.SmppClient;
@@ -8,7 +10,6 @@ import com.cloudhopper.smpp.SmppSession;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
 import fr.sii.ogham.core.exception.retry.RetryException;
 import fr.sii.ogham.core.exception.retry.RetryExecutionInterruptedException;
-import fr.sii.ogham.core.retry.NamedCallable;
 import fr.sii.ogham.core.retry.RetryExecutor;
 import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
 import fr.sii.ogham.sms.builder.cloudhopper.SmppSessionHandlerSupplier;
@@ -88,7 +89,7 @@ public abstract class BaseSessionHandlingStrategy implements SessionHandlingStra
 	 */
 	protected synchronized SmppSession connect(final SmppClient client) throws SmppException {
 		try {
-			return retry.execute(new NamedCallable<>("Connection to SMPP server", () -> client.bind(configuration, smppSessionHandlerSupplier.get())));
+			return retry.execute(named("Connection to SMPP server", () -> client.bind(configuration, smppSessionHandlerSupplier.get())));
 		} catch (RetryExecutionInterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new ConnectionFailedException("Failed to initialize SMPP session (interrupted)", e);

@@ -43,4 +43,36 @@ public class NamedCallable<V> implements Callable<V> {
 		return name;
 	}
 
+	/**
+	 * Wrap an action to provide a name. This is useful for debugging purpose
+	 * and in logs.
+	 * 
+	 * @param <V>
+	 *            the type of the returned value of the original action
+	 * @param name
+	 *            the name to use for the action
+	 * @param action
+	 *            the real action to execute
+	 * @return the wrapped action
+	 */
+	public static <V> Callable<V> named(String name, Callable<V> action) {
+		return new NamedCallable<>(name, action);
+	}
+
+	/**
+	 * Wrap an action to provide a name. This is useful for debugging purpose
+	 * and in logs.
+	 * 
+	 * @param name
+	 *            the name to use for the action
+	 * @param action
+	 *            the real action to execute
+	 * @return the wrapped action
+	 */
+	public static Callable<Void> named(String name, Executable action) {
+		return new NamedCallable<>(name, () -> {
+			action.execute();
+			return null;
+		});
+	}
 }

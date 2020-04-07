@@ -200,7 +200,23 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 					.and()
 				.and()
 			.failIfMissingVariant().defaultValue(overrideIfNotSet(true)).and()
-			.listPossiblePaths().defaultValue(overrideIfNotSet(true));
+			.listPossiblePaths().defaultValue(overrideIfNotSet(true)).and()
+			.autoRetry()
+				.fixedDelay()
+					.maxRetries().properties("${ogham.email.send-retry.max-attempts}").and()
+					.delay().properties("${ogham.email.send-retry.delay-between-attempts}").and()
+					.and()
+				.exponentialDelay()
+					.maxRetries().properties("${ogham.email.send-retry.max-attempts}").and()
+					.initialDelay().properties("${ogham.email.send-retry.exponential-intial-delay}").and()
+					.and()
+				.perExecutionDelay()
+					.maxRetries().properties("${ogham.email.send-retry.max-attempts}").and()
+					.delays().properties("${ogham.email.send-retry.per-execution-delays}").and()
+					.and()
+				.fixedInterval()
+					.maxRetries().properties("${ogham.email.send-retry.max-attempts}").and()
+					.interval().properties("${ogham.email.send-retry.execution-interval}");
 		// @formatter:on
 	}
 
@@ -226,7 +242,26 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 					.and()
 				.to()
 					.format()
-						.internationalNumber().properties("${ogham.sms.to.international-format.enable}").defaultValue(overrideIfNotSet(true));
+						.internationalNumber().properties("${ogham.sms.to.international-format.enable}").defaultValue(overrideIfNotSet(true)).and()
+						.and()
+					.and()
+				.and()
+			.autoRetry()
+				.fixedDelay()
+					.maxRetries().properties("${ogham.sms.send-retry.max-attempts}").and()
+					.delay().properties("${ogham.sms.send-retry.delay-between-attempts}").and()
+					.and()
+				.exponentialDelay()
+					.maxRetries().properties("${ogham.sms.send-retry.max-attempts}").and()
+					.initialDelay().properties("${ogham.sms.send-retry.exponential-intial-delay}").and()
+					.and()
+				.perExecutionDelay()
+					.maxRetries().properties("${ogham.sms.send-retry.max-attempts}").and()
+					.delays().properties("${ogham.sms.send-retry.per-execution-delays}").and()
+					.and()
+				.fixedInterval()
+					.maxRetries().properties("${ogham.sms.send-retry.max-attempts}").and()
+					.interval().properties("${ogham.sms.send-retry.execution-interval}");
 		// @formatter:on
 	}
 

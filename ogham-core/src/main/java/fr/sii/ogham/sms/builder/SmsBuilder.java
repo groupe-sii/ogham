@@ -3,6 +3,7 @@ package fr.sii.ogham.sms.builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.async.Awaiter;
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
@@ -12,15 +13,23 @@ import fr.sii.ogham.core.builder.condition.RequiredProperties;
 import fr.sii.ogham.core.builder.condition.RequiredProperty;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.retry.RetryBuilder;
 import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
 import fr.sii.ogham.core.builder.template.VariantBuilder;
+import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.fluent.MessageConditions;
 import fr.sii.ogham.core.filler.MessageFiller;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.retry.ExponentialDelayRetry;
+import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.retry.FixedIntervalRetry;
+import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.sender.AutoRetrySender;
 import fr.sii.ogham.core.sender.ConditionalSender;
 import fr.sii.ogham.core.sender.ContentTranslatorSender;
 import fr.sii.ogham.core.sender.FillerSender;
@@ -29,6 +38,7 @@ import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.translator.content.EveryContentTranslator;
 import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
+import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
@@ -280,6 +290,7 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 	private final SenderImplementationBuilderHelper<SmsBuilder> senderBuilderHelper;
 	private AutofillSmsBuilder autofillBuilder;
 	private PhoneNumbersBuilder phoneNumbersBuilder;
+	private RetryBuilder<SmsBuilder> retryBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -511,6 +522,50 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 		return senderBuilderHelper.register(builderClass);
 	}
 
+	/**
+	 * Configure automatic retry if message couldn't be sent.
+	 * 
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * .autoRetry()
+	 *   .fixedDelay()
+	 *     .maxRetries().properties("${ogham.sms.send-retry.max-attempts}").and()
+	 *     .delay().properties("${ogham.sms.send-retry.delay-between-attempts}")
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * This builder lets you configure:
+	 * <ul>
+	 * <li>The retry strategy:
+	 * <ul>
+	 * <li>{@link FixedDelayRetry}: wait for a fixed delay after the last
+	 * failure</li>
+	 * <li>{@link FixedIntervalRetry}: wait for a fixed delay between executions
+	 * (do not wait for the end of the action)</li>
+	 * <li>{@link ExponentialDelayRetry}: start with a delay, the next delay
+	 * will be doubled on so on</li>
+	 * <li>{@link PerExecutionDelayRetry}: provide a custom delay for each
+	 * execution</li>
+	 * </ul>
+	 * </li>
+	 * <li>The {@link RetryExecutor} implementation</li>
+	 * <li>The {@link Awaiter} implementation</li>
+	 * <li>The {@link Condition} used to determine if the raised error should
+	 * trigger a retry or not</li>
+	 * </ul>
+	 * 
+	 * @return the builder to configure retry management
+	 */
+	public RetryBuilder<SmsBuilder> autoRetry() {
+		if (retryBuilder == null) {
+			retryBuilder = new RetryBuilder<>(this, buildContext);
+		}
+		return retryBuilder;
+	}
+
 	@Override
 	public ConditionalSender build() {
 		SmsSender smsSender = buildContext.register(new SmsSender());
@@ -529,6 +584,11 @@ public class SmsBuilder extends AbstractParent<MessagingBuilder> implements Buil
 			MessageFiller messageFiller = autofillBuilder.build();
 			LOG.debug("Automatic filling of message enabled {}", messageFiller);
 			sender = buildContext.register(new FillerSender(messageFiller, sender));
+		}
+		RetryExecutor retryExecutor = BuilderUtils.build(retryBuilder);
+		if (retryExecutor != null) {
+			LOG.debug("Automatic retry of message sending enabled {}", retryExecutor);
+			sender = buildContext.register(new AutoRetrySender(sender, retryExecutor));
 		}
 		return sender;
 	}

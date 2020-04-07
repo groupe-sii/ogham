@@ -75,11 +75,11 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 
 			try {
 				// sender
-				translatePhoneNumber(sms.getFrom(), sms.getFrom().getPhoneNumber(), senderTranslator, "sender", "FROM");
+				translatePhoneNumber(sms.getFrom(), senderTranslator, "sender", "FROM");
 
 				// receivers
 				for (Recipient currentRecipient : sms.getRecipients()) {
-					translatePhoneNumber(currentRecipient, currentRecipient.getPhoneNumber(), recipientTranslator, "recipient", "TO");
+					translatePhoneNumber(currentRecipient, recipientTranslator, "recipient", "TO");
 				}
 
 				LOG.debug("Sending translated message {} using {}", sms, delegate);
@@ -93,12 +93,19 @@ public class PhoneNumberTranslatorSender implements ConditionalSender {
 		}
 	}
 
-	private static void translatePhoneNumber(Contact contact, PhoneNumber senderPhoneNumber, PhoneNumberTranslator translator, String type, String field) throws PhoneNumberTranslatorException {
-		if (senderPhoneNumber instanceof AddressedPhoneNumber) {
-			LOG.info("No need for {} translation. Already addressed : {}", type, senderPhoneNumber);
+	private static void translatePhoneNumber(Contact contact, PhoneNumberTranslator translator, String type, String field) throws PhoneNumberTranslatorException {
+		if (contact == null) {
+			return;
+		}
+		PhoneNumber phoneNumber = contact.getPhoneNumber();
+		if (phoneNumber == null) {
+			return;
+		}
+		if (phoneNumber instanceof AddressedPhoneNumber) {
+			LOG.info("No need for {} translation. Already addressed : {}", type, phoneNumber);
 		} else {
-			LOG.debug("Translate the message {} phone number {} using {}", field, senderPhoneNumber, translator);
-			contact.setPhoneNumber(translator.translate(senderPhoneNumber));
+			LOG.debug("Translate the message {} phone number {} using {}", field, phoneNumber, translator);
+			contact.setPhoneNumber(translator.translate(phoneNumber));
 		}
 	}
 
