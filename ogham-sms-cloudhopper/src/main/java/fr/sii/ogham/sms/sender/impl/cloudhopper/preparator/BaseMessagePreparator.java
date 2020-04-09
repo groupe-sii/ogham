@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.type.Address;
 
+import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.sms.encoder.Encoded;
 import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
 import fr.sii.ogham.sms.exception.message.SplitMessageException;
+import fr.sii.ogham.sms.message.Contact;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.Recipient;
 import fr.sii.ogham.sms.message.Sms;
@@ -98,7 +100,7 @@ public abstract class BaseMessagePreparator implements MessagePreparator {
 	public List<SubmitSm> prepareMessages(Sms message) throws MessagePreparationException {
 		try {
 			return createMessages(message);
-		} catch (PhoneNumberTranslatorException | DataCodingException e) {
+		} catch (PhoneNumberTranslatorException | DataCodingException | InvalidMessageException e) {
 			throw new MessagePreparationException("Failed to prepare messages", message, e);
 		} catch (SplitMessageException e) {
 			throw new MessagePreparationException("Failed to split SMPP message before sending it", message, e);
@@ -119,7 +121,7 @@ public abstract class BaseMessagePreparator implements MessagePreparator {
 	 */
 	protected abstract void fill(Sms originalMessage, SubmitSm submit, Segment part) throws MessagePreparationException;
 
-	private List<SubmitSm> createMessages(Sms message) throws PhoneNumberTranslatorException, SplitMessageException, DataCodingException, MessagePreparationException {
+	private List<SubmitSm> createMessages(Sms message) throws PhoneNumberTranslatorException, SplitMessageException, DataCodingException, MessagePreparationException, InvalidMessageException {
 		List<SubmitSm> messages = new ArrayList<>();
 		for (Recipient recipient : message.getRecipients()) {
 			messages.addAll(createMessages(message, recipient));
@@ -127,7 +129,7 @@ public abstract class BaseMessagePreparator implements MessagePreparator {
 		return messages;
 	}
 
-	private List<SubmitSm> createMessages(Sms message, Recipient recipient) throws PhoneNumberTranslatorException, SplitMessageException, DataCodingException, MessagePreparationException {
+	private List<SubmitSm> createMessages(Sms message, Recipient recipient) throws PhoneNumberTranslatorException, SplitMessageException, DataCodingException, MessagePreparationException, InvalidMessageException {
 		List<SubmitSm> messages = new ArrayList<>();
 
 		List<Segment> parts = messageSplitter.split(message.getContent().toString());
@@ -143,21 +145,21 @@ public abstract class BaseMessagePreparator implements MessagePreparator {
 		return messages;
 	}
 
-	private void addEsmClassSubmit(Sms message, Recipient recipient, List<SubmitSm> messages, Segment part) throws PhoneNumberTranslatorException, DataCodingException, MessagePreparationException {
+	private void addEsmClassSubmit(Sms message, Recipient recipient, List<SubmitSm> messages, Segment part) throws PhoneNumberTranslatorException, DataCodingException, MessagePreparationException, InvalidMessageException {
 		SubmitSm submit = createMessage(message, recipient, part);
 		submit.setEsmClass(ESM_CLASS_UDHI_MASK);
 		messages.add(submit);
 	}
 
-	private void addSubmit(Sms message, Recipient recipient, List<SubmitSm> messages, Segment part) throws PhoneNumberTranslatorException, DataCodingException, MessagePreparationException {
+	private void addSubmit(Sms message, Recipient recipient, List<SubmitSm> messages, Segment part) throws PhoneNumberTranslatorException, DataCodingException, MessagePreparationException, InvalidMessageException {
 		SubmitSm submit = createMessage(message, recipient, part);
 		messages.add(submit);
 	}
 
-	private SubmitSm createMessage(Sms message, Recipient recipient, Segment part) throws PhoneNumberTranslatorException, DataCodingException, MessagePreparationException {
+	private SubmitSm createMessage(Sms message, Recipient recipient, Segment part) throws PhoneNumberTranslatorException, DataCodingException, MessagePreparationException, InvalidMessageException {
 		SubmitSm submit = new SubmitSm();
-		submit.setSourceAddress(toAddress(message.getFrom().getPhoneNumber()));
-		submit.setDestAddress(toAddress(recipient.getPhoneNumber()));
+		submit.setSourceAddress(toAddress("sender", message, message.getFrom()));
+		submit.setDestAddress(toAddress("recipient", message, recipient));
 
 		if (part instanceof EncodedSegment) {
 			Encoded encoded = ((EncodedSegment) part).getEncoded();
@@ -169,6 +171,17 @@ public abstract class BaseMessagePreparator implements MessagePreparator {
 		return submit;
 	}
 
+	private Address toAddress(String field, Sms msg, Contact contact) throws PhoneNumberTranslatorException, InvalidMessageException {
+		if (contact == null) {
+			throw new InvalidMessageException(field+" is not set", msg, "Missing "+field+" phone number");
+		}
+		PhoneNumber phoneNumber = contact.getPhoneNumber();
+		if (phoneNumber == null) {
+			throw new InvalidMessageException(field+" phone number is not set", msg, "Missing "+field+" phone number");
+		}
+		return toAddress(phoneNumber);
+	}
+	
 	/**
 	 * Transforms a {@link PhoneNumber} in a {@link Address} type.
 	 * 

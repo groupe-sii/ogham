@@ -5,6 +5,7 @@ import static fr.sii.ogham.core.CoreConstants.DEFAULT_MESSAGING_CONFIGURER_PRIOR
 import static fr.sii.ogham.core.CoreConstants.FILE_LOOKUPS;
 import static fr.sii.ogham.core.CoreConstants.STRING_LOOKUPS;
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
+import static fr.sii.ogham.core.builder.configurer.SendMessageRetryablePredicates.canResendMessage;
 
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -216,7 +217,9 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 					.and()
 				.fixedInterval()
 					.maxRetries().properties("${ogham.email.send-retry.max-attempts}").and()
-					.interval().properties("${ogham.email.send-retry.execution-interval}");
+					.interval().properties("${ogham.email.send-retry.execution-interval}").and()
+					.and()
+				.retryable(canResendMessage());
 		// @formatter:on
 	}
 
@@ -261,7 +264,9 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 					.and()
 				.fixedInterval()
 					.maxRetries().properties("${ogham.sms.send-retry.max-attempts}").and()
-					.interval().properties("${ogham.sms.send-retry.execution-interval}");
+					.interval().properties("${ogham.sms.send-retry.execution-interval}").and()
+					.and()
+				.retryable(canResendMessage());
 		// @formatter:on
 	}
 
@@ -276,5 +281,4 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 			.defaultMimetype().properties("${ogham.mimetype.default-mimetype}").defaultValue(overrideIfNotSet("application/octet-stream"));
 		// @formatter:on
 	}
-
 }

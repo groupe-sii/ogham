@@ -24,7 +24,10 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.handler.TemplateParsingFailedException;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
+import fr.sii.ogham.core.exception.retry.UnrecoverableException;
 import fr.sii.ogham.core.sender.MessageSender;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
@@ -85,6 +88,17 @@ public class AutoRetryTest {
 		assertThat("should indicate original exceptions", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(MessageException.class))))));
 	}
 	
+	@Test
+	public void emailNotRetriedOnFirstExecutionDueToParsingError() throws MessagingException {
+		doThrow(new MessageException("foo", new Email(), new ContentTranslatorException("bar", new TemplateParsingFailedException("parse")))).when(emailSender).send(any());
+		MessageNotSentException e = assertThrows("should indicate that message can't be sent", MessageNotSentException.class, () -> {
+			service.send(new Email());
+		});
+		verify(emailSender, times(1)).send(any());
+		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
+		assertThat("should indicate original exceptions", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasSize(1))));
+		assertThat("should indicate original exceptions", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(TemplateParsingFailedException.class))))));
+	}
 	
 	@Test
 	public void smsSentSuccessfullyOnFirstExecution() throws MessagingException {
@@ -110,5 +124,17 @@ public class AutoRetryTest {
 		assertThat("should indicate that this is due to maximum attempts reached", e, hasAnyCause(MaximumAttemptsReachedException.class));
 		assertThat("should indicate original exceptions", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasSize(5))));
 		assertThat("should indicate original exceptions", e, hasAnyCause(MaximumAttemptsReachedException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(MessageException.class))))));
+	}
+	
+	@Test
+	public void smsNotRetriedOnFirstExecutionDueToParsingError() throws MessagingException {
+		doThrow(new MessageException("foo", new Sms(), new ContentTranslatorException("bar", new TemplateParsingFailedException("parse")))).when(smsSender).send(any());
+		MessageNotSentException e = assertThrows("should indicate that message can't be sent", MessageNotSentException.class, () -> {
+			service.send(new Sms());
+		});
+		verify(smsSender, times(1)).send(any());
+		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
+		assertThat("should indicate original exceptions", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasSize(1))));
+		assertThat("should indicate original exceptions", e, hasAnyCause(UnrecoverableException.class, hasProperty("executionFailures", hasItem(hasAnyCause(instanceOf(TemplateParsingFailedException.class))))));
 	}
 }

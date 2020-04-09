@@ -60,7 +60,8 @@ public class AutoDetectTemplateParser implements TemplateParser {
 				LOG.debug("Template engine {} can't be used for {}", impl.getParser(), templatePath);
 			}
 		}
-		throw new NoEngineDetectionException("Auto detection couldn't find any parser able to handle the template " + templatePath.getOriginalPath());
+		throw new NoEngineDetectionException("Auto detection couldn't find any parser able to handle the template " + templatePath.getOriginalPath() + ".\n"
+				+ "Either the template uses a template engine that is not registered in Ogham or the path points to a non existing template.");
 	}
 	
 

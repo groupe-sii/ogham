@@ -34,6 +34,8 @@ import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WINDOW_MONITOR_INTER
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WINDOW_SIZE;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WINDOW_WAIT_TIMEOUT;
 import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_WRITE_TIMEOUT;
+import static fr.sii.ogham.sms.builder.cloudhopper.CloudhopperRetryablePredicates.canResendMessage;
+import static fr.sii.ogham.sms.builder.cloudhopper.CloudhopperRetryablePredicates.canRetryConnecting;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,6 +174,10 @@ public final class DefaultCloudhopperConfigurer {
 				return;
 			}
 			LOG.debug("[{}] apply configuration", this);
+			// add additional checks to indicate that a message should not be
+			// retried in some circumstances
+			msgBuilder.sms().autoRetry().retryable(canResendMessage()::and);
+			// configure message sender
 			CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);
 			// @formatter:off
 			builder
@@ -229,7 +235,7 @@ public final class DefaultCloudhopperConfigurer {
 						.maxConsecutiveTimeouts().properties("${ogham.sms.cloudhopper.session.keep-alive.max-consecutive-timeouts}").defaultValue(overrideIfNotSet(DEFAULT_KEEP_ALIVE_MAX_CONSECUTIVE_TIMEOUTS)).and()
 						.and()
 					.connectRetry()
-						.retryable(new DefaultConnectRetryablePredicate())
+						.retryable(canRetryConnecting())
 						.fixedDelay()
 							.maxRetries().properties("${ogham.sms.cloudhopper.session.connect-retry.max-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()
 							.delay().properties("${ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_RETRY_DELAY)).and()
@@ -247,7 +253,7 @@ public final class DefaultCloudhopperConfigurer {
 							.interval().properties("${ogham.sms.cloudhopper.session.connect-retry.execution-interval}");
 			// @formatter:on
 		}
-		
+
 		private static boolean canUseCloudhopper() {
 			return ClasspathUtils.exists("com.cloudhopper.smpp.SmppClient");
 		}

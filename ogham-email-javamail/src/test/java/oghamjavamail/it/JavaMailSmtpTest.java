@@ -22,6 +22,7 @@ import org.junit.Test;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
+import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.builder.javamail.JavaMailBuilder;
@@ -99,7 +100,7 @@ public class JavaMailSmtpTest {
 		// @formatter:on
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected=InvalidMessageException.class)
 	public void missingRecipientIsInvalid() throws MessageException {
 		// @formatter:off
 		sender.send(new Email()

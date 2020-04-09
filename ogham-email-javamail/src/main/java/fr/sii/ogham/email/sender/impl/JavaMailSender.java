@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import fr.sii.ogham.core.builder.priority.Priority;
 import fr.sii.ogham.core.env.PropertiesBridge;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
 import fr.sii.ogham.email.attachment.Attachment;
@@ -149,10 +150,12 @@ public class JavaMailSender extends AbstractSpecializedSender<Email> {
 	 *             when the email address is not valid
 	 * @throws UnsupportedEncodingException
 	 *             when the email address is not valid
+	 * @throws InvalidMessageException
+	 *             when the email address is not valid
 	 */
-	private static void setFrom(Email email, MimeMessage mimeMsg) throws MessagingException, UnsupportedEncodingException {
+	private static void setFrom(Email email, MimeMessage mimeMsg) throws MessagingException, UnsupportedEncodingException, InvalidMessageException {
 		if (email.getFrom() == null) {
-			throw new IllegalArgumentException("The sender address has not been set");
+			throw new InvalidMessageException("The sender address has not been set", email, "Missing sender email address");
 		}
 		mimeMsg.setFrom(toInternetAddress(email.getFrom()));
 	}

@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.builder.retry;
 
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 import fr.sii.ogham.core.async.Awaiter;
 import fr.sii.ogham.core.async.ThreadSleepAwaiter;
@@ -347,6 +348,30 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 	 */
 	public RetryBuilder<P> retryable(Predicate<Throwable> retryable) {
 		this.retryable = retryable;
+		return this;
+	}
+
+	/**
+	 * Combine the current configured predicate with another.
+	 * 
+	 * <p>
+	 * This may be useful when an implementation wants to add additional checks
+	 * to the ones configured by Ogham core or other implementations.
+	 * 
+	 * <p>
+	 * If no predicate is currently configured, a predicate that accepts
+	 * everything is provided.
+	 * 
+	 * <p>
+	 * <strong>NOTE:</strong> This is advanced usage mostly for developers that
+	 * extend Ogham with new implementations.
+	 * 
+	 * @param merger
+	 *            a function used to merge predicates
+	 * @return this instance for fluent chaining
+	 */
+	public RetryBuilder<P> retryable(UnaryOperator<Predicate<Throwable>> merger) {
+		retryable = merger.apply(retryable == null ? (error -> true) : retryable);
 		return this;
 	}
 
