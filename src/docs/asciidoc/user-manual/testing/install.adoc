@@ -6,7 +6,7 @@ include::{docdir}/variables.adoc[]
 Include Ogham test dependency
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 [source, xml, subs=attributes+]
 ----
@@ -22,7 +22,7 @@ image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
 
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample

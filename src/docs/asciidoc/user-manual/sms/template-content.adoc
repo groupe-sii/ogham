@@ -7,7 +7,7 @@ This sample shows how to send a SMS with a content following a template engine l
 Sample with template
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-21 highlight-lines:29,30"]
 ----
@@ -24,7 +24,7 @@ set using `ogham.sms.from.default-value` property
 {standard-sms-samples-sourcedir-url}/TemplateSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf} ThymeLeaf template
 
 [source, html]
 ----

@@ -15,7 +15,7 @@ The following sample shows a Spring Web that exposes one simple endpoint for sen
 Email sample with Spring Boot
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-16,46-58 irrelevant-lines:1-16 highlight-lines:31,32,38-41"]
 ----
@@ -30,7 +30,7 @@ include::{spring-email-samples-sourcedir}/ThymeleafHtmlAndFreemarkerTextSample.j
 {spring-email-samples-sourcedir-url}/ThymeleafHtmlAndFreemarkerTextSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 [source, html]
 ----
@@ -44,7 +44,7 @@ include::{spring-samples-resourcesdir}/email/mixed.html[]
 {spring-samples-resourcesdir-url}/email/mixed.html?ts={tabsize}[Source code of the HTML template]
 
 [role=tab]
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+image:{icons-freemarker-text-template} Text template
 
 [source, txt]
 ----
@@ -55,7 +55,7 @@ include::{spring-samples-resourcesdir}/email/mixed.txt.ftlh[]
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Spring properties
+image:{icons-properties-file} Spring properties
 
 [source, python]
 ----

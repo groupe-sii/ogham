@@ -4,7 +4,7 @@ include::{docdir}/variables.adoc[]
 
 [role="feature feature-email"]
 ====
-image:{images-dir}/icons/email.png[Email,width=100,height=100] Send Email
+image:{icons-features-email} Send Email
 
 * No need to know RFCs
 * <<user-manual.adoc#email-template, Use templates for email body>>
@@ -18,7 +18,7 @@ image:{images-dir}/icons/email.png[Email,width=100,height=100] Send Email
 
 [role="feature feature-sms"]
 ====
-image:{images-dir}/icons/sms.png[Email,width=100,height=100] Send SMS
+image:{icons-features-sms} Send SMS
 
 * No need to know SMPP protocol
 * <<user-manual.adoc#sms-template, Use templates for SMS message>>
@@ -29,7 +29,7 @@ image:{images-dir}/icons/sms.png[Email,width=100,height=100] Send SMS
 
 [role="feature feature-templating"]
 ====
-image:{images-dir}/icons/templating.png[Email,width=100,height=100] Designed for templating
+image:{icons-features-templating} Designed for templating
 
 * Easy <<user-manual.adoc#resource-resolution, file loading>>
 * <<user-manual.adoc#thymeleaf, ThymeLeaf>> integration
@@ -39,7 +39,7 @@ image:{images-dir}/icons/templating.png[Email,width=100,height=100] Designed for
 
 [role="feature feature-spring"]
 ====
-image:{images-dir}/icons/spring-boot.png[Email,width=100,height=100] Framework support
+image:{icons-features-spring-boot} Framework support
 
 * https://projects.spring.io/spring-boot/[Spring Boot]
 ** <<user-manual.adoc#spring-boot-usage, Autoconfiguration>>
@@ -50,7 +50,7 @@ image:{images-dir}/icons/spring-boot.png[Email,width=100,height=100] Framework s
 
 [role="feature testing"]
 ====
-image:{images-dir}/icons/test.png[Email,width=100,height=100] Testing tools
+image:{icons-features-testing} Testing tools
 
 * <<user-manual.adoc#testing-tools, Fluent testing API>>
 * Mock <<user-manual.adoc#testing-email, SMTP>>/<<user-manual.adoc#testing-sms, SMPP>> servers
@@ -58,7 +58,7 @@ image:{images-dir}/icons/test.png[Email,width=100,height=100] Testing tools
 
 [role="feature implementation-selection"]
 ====
-image:{images-dir}/icons/configuration.png[Email,width=100,height=100] Automatic configuration
+image:{icons-features-auto-conf} Automatic configuration
 
 * Protocol selection based on classpath and configuration
 * Template engine selection based on classpath and template content

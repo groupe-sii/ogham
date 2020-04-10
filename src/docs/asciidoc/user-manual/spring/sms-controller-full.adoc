@@ -15,7 +15,7 @@ The following sample shows a Spring Web that exposes one simple endpoint for sen
 SMS Sample with Spring Boot
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-16,45-57 irrelevant-lines:1-16 highlight-lines:30,31,37-40"]
 ----
@@ -30,7 +30,7 @@ include::{spring-sms-samples-sourcedir}/TemplateSample.java[]
 {spring-sms-samples-sourcedir-url}/TemplateSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Template
+image:{icons-freemarker-html-template} Template
 
 [source]
 ----
@@ -41,7 +41,7 @@ include::{spring-samples-resourcesdir}/sms/register.txt.ftl[]
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Spring properties
+image:{icons-properties-file} Spring properties
 
 [source, python]
 ----

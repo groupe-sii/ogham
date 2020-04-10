@@ -273,6 +273,7 @@ public class RetryBuilder<P> extends AbstractParent<P> implements Builder<RetryE
 	/**
 	 * Use custom executor instead of default one ({@link SimpleRetryExecutor}).
 	 * 
+	 * <p>
 	 * <strong>NOTE:</strong> Using custom executor doesn't take retry
 	 * strategies into account. If you want to benefit from
 	 * {@link RetryStrategy}s, use {@link #executor(RetryExecutorFactory)}

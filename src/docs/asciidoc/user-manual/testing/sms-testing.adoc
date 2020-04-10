@@ -9,7 +9,7 @@ To test your application SMS, you can start a local SMPP server. You can then us
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19"]
 ----
@@ -41,7 +41,7 @@ Sending a SMS to several recipients is the same as sending several distinct SMS.
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19,21-38 highlight-lines:56"]
 ----

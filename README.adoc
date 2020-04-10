@@ -84,7 +84,7 @@ When using the module to send email based on an HTML template, the templating sy
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 [source, xml, subs=attributes+]
 ----
@@ -99,7 +99,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts
 
 
 [role=tab]
-image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample
@@ -128,7 +128,7 @@ This will include:
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 [source, xml, subs=attributes+]
 ----
@@ -143,7 +143,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/pom.xml?ts={
 
 
 [role=tab]
-image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample
@@ -169,7 +169,7 @@ You can combine Ogham with existing Spring Boot dependencies:
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 
 [source, xml, subs=attributes+]
@@ -194,7 +194,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 ----
 
 [role=tab]
-image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample
@@ -267,7 +267,7 @@ Finally, the last line sends the email. The specified email is really basic. It 
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -331,7 +331,7 @@ This sample shows how to send an email with a content following a template engin
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,34-46 irrelevant-lines:1-9,12-19 highlight-lines:28-29"]
 ----
@@ -394,7 +394,7 @@ public class HtmlTemplateSample {
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf} ThymeLeaf template
 
 [source, html]
 ----
@@ -445,7 +445,7 @@ This sample is a variant of the previous one. It allows you to directly use the 
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,35-47 irrelevant-lines:1-10,12-19"]
 ----
@@ -504,7 +504,7 @@ public class HtmlTemplateWithSubjectSample {
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateWithSubjectSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf} ThymeLeaf template
 
 [source, html, role="highlight-lines:4"]
 ----
@@ -540,7 +540,7 @@ with `Subject:` (spaces can be added after colon). Other lines are used as conte
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-19"]
 ----
@@ -600,7 +600,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 [role=tab]
 
-image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
+image:{icons-freemarker-text-template} Text template
 
 [source, text, role="highlight-lines:1"]
 ----
@@ -651,7 +651,7 @@ simplifies image and CSS integration and is able to partially rewrite the HTML.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -715,7 +715,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="highlight-lines:7-8,12,18,27,39,42"]
 ----
@@ -789,7 +789,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS
+image:{icons-css} CSS
 
 .layout.css
 [source, css]
@@ -874,7 +874,7 @@ footer .social a {
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Sent HTML
+image:{icons-html} Sent HTML
 
 [source, html]
 ----
@@ -1037,7 +1037,7 @@ It is possible to configure Ogham to use a
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -1101,7 +1101,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="collapse-lines:1-10,14-16,19-24,28-36,41-49 highlight-lines:12,27,39"]
 ----
@@ -1170,7 +1170,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:1-8,12-73,76-83,88-96 highlight-lines:10,75,86"]
 ----
@@ -1305,7 +1305,7 @@ this information for you thanks to <<mimetype-detection, automatic mimetype dete
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -1369,7 +1369,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="collapse-lines:1-16,19-24,26-49 highlight-lines:18"]
 ----
@@ -1435,7 +1435,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:1-14,68-72,74-96 highlight-lines:16-67"]
 ----
@@ -1559,7 +1559,7 @@ on the `<img>` tag.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -1623,7 +1623,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="collapse-lines:1-40,44-49 highlight-lines:42"]
 ----
@@ -1692,7 +1692,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:1-87,91-96 highlight-lines:89"]
 ----
@@ -1896,7 +1896,7 @@ It is possible to configure Ogham to use a
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -1960,7 +1960,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="highlight-lines:7-8"]
 ----
@@ -2023,7 +2023,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS files
+image:{icons-css} CSS files
 
 .layout.css
 [source, css]
@@ -2107,7 +2107,7 @@ footer .social a {
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:16-72 highlight-lines:8,9,10,12,15,74,83,84,85,88,92"]
 ----
@@ -2243,7 +2243,7 @@ nodes, the whole contained rules are not applied at all.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -2307,7 +2307,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="highlight-lines:47"]
 ----
@@ -2377,7 +2377,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/css.png[width=37,height=30] CSS files
+image:{icons-css} CSS files
 
 .layout.css
 [source, css]
@@ -2461,7 +2461,7 @@ footer .social a {
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:9-82,84-91 highlight-lines:94"]
 ----
@@ -2607,7 +2607,7 @@ be unreadable.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,11-20,23-30 highlight-lines:39-40"]
 ----
@@ -2684,7 +2684,7 @@ and text template files).
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,37-49 irrelevant-lines:1-9,12-19 highlight-lines:31-32"]
 ----
@@ -2754,7 +2754,7 @@ The underlying `Content` is a `MultiTemplateContent`.
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf-text.jpg[width=30,height=30] Text template
+image:{icons-thymeleaf-text-template} Text template
 
 .Text template located in `src/main/resources/template/thymeleaf/simple.txt`
 [source, txt]
@@ -2766,7 +2766,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf-html-template} HTML template
 
 .HTML template located at `src/main/resources/template/thymeleaf/simple.html`
 [source, html]
@@ -2811,7 +2811,7 @@ the same email. Just write your templates with the engine you want.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,37-49 irrelevant-lines:1-9,12-19 highlight-lines:31-32"]
 ----
@@ -2876,7 +2876,7 @@ extension). The HTML template uses Thymeleaf while the text template uses FreeMa
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
-image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
+image:{icons-freemarker-text-template} Text template
 
 .Text template located in `src/main/resources/template/mixed/simple.txt.ftl`
 [source, txt]
@@ -2888,7 +2888,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 .HTML template located at `src/main/resources/template/mixed/simple.html`
 [source, html]
@@ -2920,7 +2920,7 @@ to use the template engine that best suits your needs.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-12 irrelevant-lines:1-12,14-21 highlight-lines:32-33"]
 ----
@@ -3018,7 +3018,7 @@ address in the email constructor or using the setter, this value is used instead
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:17,35"]
 ----
@@ -3099,7 +3099,7 @@ To define several recipient addresses, you can provide a string separated by `,`
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-24,26-34,51-70 irrelevant-lines:1-24 highlight-lines:41-43"]
 ----
@@ -3241,7 +3241,7 @@ This sample shows how to send a basic email through GMail. Sending through GMail
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:-7 irrelevant-lines:-7 highlight-lines:16-22"]
 ----
@@ -3319,7 +3319,7 @@ difference is the configuration of Ogham.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java (SendGrid)
+image:{icons-java-code} Java (SendGrid)
 
 [source, java, role="collapse-lines:1-40,60-72 irrelevant-lines:1-40"]
 ----
@@ -3405,7 +3405,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] Properties (SendGrid)
+image:{icons-properties-file} Properties (SendGrid)
 
 [source, python]
 ----
@@ -3423,7 +3423,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java (JavaMail)
+image:{icons-java-code} Java (JavaMail)
 
 [source, java, role="collapse-lines:1-40,60-72 irrelevant-lines:1-40"]
 ----
@@ -3509,7 +3509,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] Properties (JavaMail)
+image:{icons-properties-file} Properties (JavaMail)
 
 [source, python]
 ----
@@ -3565,7 +3565,7 @@ This sample defines two properties mandatory (system ID and password) by this pr
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -3634,7 +3634,7 @@ This sample shows how to send a SMS with a content following a template engine l
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-21 highlight-lines:29,30"]
 ----
@@ -3699,7 +3699,7 @@ set using `ogham.sms.from.default-value` property
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf} ThymeLeaf template
 
 [source, html]
 ----
@@ -3741,7 +3741,7 @@ to the message encoding). Therefore, you don't need to handle the split of messa
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,12-21 highlight-lines:27-30"]
 ----
@@ -3817,7 +3817,7 @@ You can send SMS using https://www.smsglobal.com/[SmsGlobal] SMPP server:
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 highlight-lines:15-18"]
 ----
@@ -3899,7 +3899,7 @@ If you explicitly specify the sender phone number, this value is used instead of
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:19,35"]
 ----
@@ -4084,7 +4084,7 @@ Property configuration is a good way to separate code from configuration. Ogham 
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, highlight="4-5"]
 ----
@@ -4114,7 +4114,7 @@ You can use configuration properties that are defined several ways:
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,25 irrelevant-lines:1-9,25"]
 ----
@@ -4186,7 +4186,7 @@ For configuration inside the application, code has higher priority than configur
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,25 irrelevant-lines:1-9,25"]
 ----
@@ -4230,7 +4230,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] classpath:email.properties
+image:{icons-properties-file} classpath:email.properties
 
 [source, python]
 ----
@@ -4240,7 +4240,7 @@ ogham.email.from.default-value=foo@test.com
 ----
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] file:/etc/app/email.properties
+image:{icons-properties-file} file:/etc/app/email.properties
 
 [source, python]
 ----
@@ -4288,7 +4288,7 @@ For example, if you use two configuration files defined in the classpath:
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java]
 ----
@@ -4301,7 +4301,7 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 ----
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] common.properties
+image:{icons-properties-file} common.properties
 
 [source, python]
 ----
@@ -4310,7 +4310,7 @@ mail.smtp.port=25
 ----
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] email.properties
+image:{icons-properties-file} email.properties
 
 [source, python]
 ----
@@ -4347,7 +4347,7 @@ If you want to use a different priority order, you can explicitly register prope
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java]
 ----
@@ -4360,7 +4360,7 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 ----
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] common.properties
+image:{icons-properties-file} common.properties
 
 [source, python]
 ----
@@ -4369,7 +4369,7 @@ mail.smtp.port=25
 ----
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] email.properties
+image:{icons-properties-file} email.properties
 
 [source, python]
 ----
@@ -4540,7 +4540,7 @@ The following sample shows a Spring Web that exposes one simple endpoint for sen
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-16,46-58 irrelevant-lines:1-16 highlight-lines:31,32,38-41"]
 ----
@@ -4614,7 +4614,7 @@ public class ThymeleafHtmlAndFreemarkerTextSample {
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/email/ThymeleafHtmlAndFreemarkerTextSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 [source, html]
 ----
@@ -4638,7 +4638,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/resources/email/mixed.html?ts={tabsize}[Source code of the HTML template]
 
 [role=tab]
-image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
+image:{icons-freemarker-text-template} Text template
 
 [source, txt]
 ----
@@ -4649,7 +4649,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/res
 
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] Spring properties
+image:{icons-properties-file} Spring properties
 
 [source, python]
 ----
@@ -4689,7 +4689,7 @@ The following sample shows a Spring Web that exposes one simple endpoint for sen
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-16,45-57 irrelevant-lines:1-16 highlight-lines:30,31,37-40"]
 ----
@@ -4762,7 +4762,7 @@ public class TemplateSample {
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/java/fr/sii/ogham/sample/springboot/sms/TemplateSample.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Template
+image:{icons-freemarker-html-template} Template
 
 [source]
 ----
@@ -4773,7 +4773,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/res
 
 
 [role=tab]
-image:src/docs/resources/images/icons/properties.png[width=37,height=30] Spring properties
+image:{icons-properties-file} Spring properties
 
 [source, python]
 ----
@@ -4800,6 +4800,10 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/res
 _____
 
 
+////
+TODO: explain aim of service providers
+TODO: list implemented service providers
+////
 
 == Testing
 
@@ -4813,7 +4817,7 @@ _____
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 [source, xml, subs=attributes+]
 ----
@@ -4829,7 +4833,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts
 
 
 [role=tab]
-image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample
@@ -4925,7 +4929,7 @@ http://www.icegreen.com/greenmail/[GreenMail] as local SMTP server.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-23 irrelevant-lines:1-23"]
 ----
@@ -5041,7 +5045,7 @@ the same utility function every time.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-26,27-44,71-83 irrelevant-lines:1-26 highlight-lines:63"]
 ----
@@ -5140,7 +5144,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 [source, html]
 ----
@@ -5164,7 +5168,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Expected HTML
+image:{icons-html} Expected HTML
 
 [source, html]
 ----
@@ -5198,7 +5202,7 @@ When your tests report errors due to HTML differences, Ogham helps with Eclipse 
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-25,27-44,71-83 irrelevant-lines:1-25"]
 ----
@@ -5297,7 +5301,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 [source, html]
 ----
@@ -5321,7 +5325,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Expected HTML
+image:{icons-html} Expected HTML
 
 [source, html, role="highlight-lines:4,8"]
 ----
@@ -5378,7 +5382,7 @@ Testing an email sent with two main parts (HTML and text fallback) is straightfo
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-25,27-44,69-81 irrelevant-lines:1-25 highlight-lines:58-63"]
 ----
@@ -5478,7 +5482,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/j
 
 
 [role=tab]
-image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 [source, html]
 ----
@@ -5499,7 +5503,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
+image:{icons-freemarker-text-template} Text template
 
 [source, html]
 ----
@@ -5511,7 +5515,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/html.png[width=37,height=30] Expected HTML
+image:{icons-html} Expected HTML
 
 [source, html]
 ----
@@ -5533,7 +5537,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/r
 
 
 [role=tab]
-image:src/docs/resources/images/icons/txt.png[width=30,height=30] Expected text
+image:{icons-text} Expected text
 
 [source]
 ----
@@ -5558,7 +5562,7 @@ You can also test that attachments are sent correctly.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:63-68"]
 ----
@@ -5659,7 +5663,7 @@ When you send an email to several recipients, there is one message per recipient
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-24,26-43 irrelevant-lines:1-24 highlight-lines:55"]
 ----
@@ -5763,7 +5767,7 @@ Sometimes you also need to send several different emails. The emails may have so
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-23,25-42 irrelevant-lines:1-23 highlight-lines:60,70,78,86"]
 ----
@@ -5882,7 +5886,7 @@ GreenMail allows to start the SMTP server with user and credentials.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,51-74 highlight-lines:36,43-45"]
 ----
@@ -5991,7 +5995,7 @@ To test your application SMS, you can start a local SMPP server. You can then us
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19"]
 ----
@@ -6078,7 +6082,7 @@ Sending a SMS to several recipients is the same as sending several distinct SMS.
 _____
 
 [role=tab]
-image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19,21-38 highlight-lines:56"]
 ----

@@ -24,7 +24,7 @@ For configuration inside the application, code has higher priority than configur
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,25 irrelevant-lines:1-9,25"]
 ----
@@ -42,7 +42,7 @@ include::{standard-samples-sourcedir}/fr/sii/ogham/sample/standard/PropertiesSam
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] classpath:email.properties
+image:{icons-properties-file} classpath:email.properties
 
 [source, python]
 ----
@@ -52,7 +52,7 @@ ogham.email.from.default-value=foo@test.com
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] file:/etc/app/email.properties
+image:{icons-properties-file} file:/etc/app/email.properties
 
 [source, python]
 ----
@@ -100,7 +100,7 @@ For example, if you use two configuration files defined in the classpath:
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java]
 ----
@@ -113,7 +113,7 @@ image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] common.properties
+image:{icons-properties-file} common.properties
 
 [source, python]
 ----
@@ -122,7 +122,7 @@ mail.smtp.port=25
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] email.properties
+image:{icons-properties-file} email.properties
 
 [source, python]
 ----
@@ -159,7 +159,7 @@ If you want to use a different priority order, you can explicitly register prope
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java]
 ----
@@ -172,7 +172,7 @@ image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] common.properties
+image:{icons-properties-file} common.properties
 
 [source, python]
 ----
@@ -181,7 +181,7 @@ mail.smtp.port=25
 ----
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] email.properties
+image:{icons-properties-file} email.properties
 
 [source, python]
 ----

@@ -1,0 +1,109 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+Some messages may fail while sending (due to network error for example).
+Ogham provides a mechanism to automatically resend a message when it fails
+under some circumstances.
+
+Ogham provides several strategies for retry management:
+
+1. `fixedDelay()`: Wait for a fixed delay between each attempt (wait for the end of the last execution
+   before start waiting)
+2. `fixedInterval()`: Retry on fixed interval (do not wait for the end of the last execution)
+3. `exponentialDelay()`: Wait for a delay that will be doubled between each attempt
+   (wait for the end of the last execution before start waiting)
+4. `perExecutionDelay()`: Use a specific delay for each execution (for example: 
+   100ms after the first execution, 500ms after the second, 8000ms after the third,
+   ...)  
+
+
+To enable one of these strategies, don't change your code. You just need to 
+update Ogham configuration.
+
+
+
+.Default configuration
+[NOTE]
+====
+Default Ogham configuration (using `MessagingBuiler.standard()` or `MessagingBuilder.minimal()`) 
+doesn't enable automatic re-send of messages.
+====
+
+
+.Skip retry for some errors
+[IMPORTANT]
+====
+To prevent retrying for nothing, Ogham analyze the raised error (and associated causes) to skip retry.
+This happens if the exception (or cause) met one this condition:
+
+* If the error is a JVM error (instance of `Error`). This kind of errors should not be ignored.
+* If the preparation of the message has failed (template parsing, associated resource not found,
+  mimetype detection failed, message is not valid, ...). This kind of error will always give the same
+  result.
+* If the developer used an invalid value (`null`, illegal argument, ...). If the value is invalid, 
+  there is no point in retrying.
+  
+This is the default configuration for all kind of messages (email, SMS, ...). In addition to general
+exceptions, each sender implementation may register other conditions (like Cloudhopper for example
+that skip exceptions for SMS preparation).
+====
+
+
+.Add custom rule to skip retry
+[TIP]
+====
+You may need to skip retry for some other exceptions. Ogham lets you 
+<<user-manual.adoc#skip-custom-exceptions, register custom conditions>>.
+====
+
+
+
+.Several strategies configured
+[NOTE]
+====
+Even if several strategies are configured, only one can be used. Therefore, Ogham defines the following
+priority for the strategies (uses the first one that is fully configured):
+
+* `perExecutionDelay()`
+* `exponentialDelay()`
+* `fixedInterval()`
+* `fixedDelay()`
+====
+
+
+.Using interval
+[WARNING]
+====
+When using a strategy based on interval (not waiting for the end of the last execution), there
+may have unexpected behaviors: the current execution may not be finished while a new retry is started.
+This may lead to several messages sent with the same content for example (in case the execution
+succeeds but take longer that configured interval).
+
+<<user-manual#retry-fixed-interval, More explanation below>>.
+====
+
+
+== Fixed delay
+
+include::{user-manual-dir}/retry/retry-strategy-fixed-delay.adoc[leveloffset=+2]
+
+
+== Exponential delay
+
+include::{user-manual-dir}/retry/retry-strategy-exponential-delay.adoc[leveloffset=+2]
+
+
+== Per execution delay
+
+include::{user-manual-dir}/retry/retry-strategy-per-execution-delay.adoc[leveloffset=+2]
+
+
+[[retry-fixed-interval]]
+== Fixed interval
+
+include::{user-manual-dir}/retry/retry-strategy-fixed-interval.adoc[leveloffset=+2]
+
+
+
+

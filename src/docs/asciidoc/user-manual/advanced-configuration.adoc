@@ -2,7 +2,29 @@
 include::{docdir}/variables.adoc[]
 
 
+== Auto re-send messages
+
+[[retry-strategy]]
+=== Retry handling
+
+include::{user-manual-dir}retry/auto-resend.adoc[leveloffset=+2]
+
+[[retry-executor]]
+=== RetryExecutor
+
+include::{user-manual-dir}retry/executor.adoc[leveloffset=+2]
+
+[[skip-custom-exceptions]]
+=== Skip custom exceptions
+
+include::{user-manual-dir}retry/custom-skipped-exceptions.adoc[leveloffset=+2]
+
+
 == Email
+
+[[custom-cid-generation]]
+=== Content-ID generator
+
 
 === Catalog of SMTP properties
 
@@ -48,4 +70,7 @@ TODO: relation entre builders et configurers
 ////
 TODO: custom interceptors
 ////
+
+== 
+
 

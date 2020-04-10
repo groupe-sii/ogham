@@ -29,6 +29,7 @@ endif::[]
 :standard-sms-samples-sourcedir-url: {standard-samples-sourcedir-url}/fr/sii/ogham/sample/standard/sms
 :standard-samples-testsourcedir-url: {standard-samples-url}/src/test/java
 :standard-samples-testresourcesdir-url: {standard-samples-url}/src/test/resources
+:standard-advanced-samples-sourcedir-url: {standard-samples-sourcedir-url}/fr/sii/ogham/sample/standard/advanced
 
 :spring-samples-url: {sourcedir-url}/sample-spring-usage
 :spring-samples-sourcedir-url: {spring-samples-url}/src/main/java
@@ -46,6 +47,7 @@ endif::[]
 :standard-sms-samples-sourcedir: {standard-samples-sourcedir}/fr/sii/ogham/sample/standard/sms
 :standard-samples-testsourcedir: {standard-samples-rootdir}/src/test/java
 :standard-samples-testresourcesdir: {standard-samples-rootdir}/src/test/resources
+:standard-advanced-samples-sourcedir: {standard-samples-sourcedir}/fr/sii/ogham/sample/standard/advanced
 
 :spring-samples-rootdir: {sourcedir}/sample-spring-usage
 :spring-samples-sourcedir: {spring-samples-rootdir}/src/main/java
@@ -53,5 +55,4 @@ endif::[]
 :spring-email-samples-sourcedir: {spring-samples-sourcedir}/fr/sii/ogham/sample/springboot/email
 :spring-sms-samples-sourcedir: {spring-samples-sourcedir}/fr/sii/ogham/sample/springboot/sms
 
-:plantuml-config: {docdir}/plantuml.config
-:plantuml-network-color: #999
+include::{docdir}/theme.adoc[]

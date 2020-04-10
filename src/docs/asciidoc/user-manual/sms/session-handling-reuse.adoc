@@ -27,7 +27,7 @@ To enable reuse session strategy, update the configuration like this:
 Reuse session sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -38,7 +38,7 @@ include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
 {standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Properties
+image:{icons-properties-file} Properties
 
 [source, python, role="irrelevant-lines:1-5 highlight-lines:6"]
 ----
@@ -122,7 +122,7 @@ Timings are configurable:
 Reuse session configuration sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -133,7 +133,7 @@ include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
 {standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Properties
+image:{icons-properties-file} Properties
 
 [source, python, role="irrelevant-lines:1-5 highlight-lines:7-9"]
 ----

@@ -41,7 +41,7 @@ the HTML using `src` attribute
 Attach images
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="diff-remove-lines:2 diff-add-lines:3"]
 ----
@@ -76,7 +76,7 @@ Inline CSS rules
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="diff-remove-lines:3 diff-add-lines:4"]
 ----
@@ -128,7 +128,7 @@ Update code
 
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27"]
 ----
@@ -283,7 +283,7 @@ from `forEach()` to `every()`.
 
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-24,26-43 irrelevant-lines:46-52 diff-remove-lines:55 diff-add-lines:56"]
 ----

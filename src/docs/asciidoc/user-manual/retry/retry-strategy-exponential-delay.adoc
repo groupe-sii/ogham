@@ -1,0 +1,247 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+Retry several times with an initial delay to wait after the last execution
+failure. The following delays are doubled until the maximum attempts is
+reached.
+
+
+.How it works
+[role="tab-container no-max-height"]
+Diagrams
+
+[role=tab]
+Message sent
+
+This diagram shows what happens if the message can't be sent twice but can be sent the third time.
+The initial delay is configured to 5 seconds.
+
+For the explanation, the server returns a response after 10 seconds (timeout).
+
+[plantuml, subs="attributes", role="text-center"]
+....
+!pragma teoz true
+
+skinparam ParticipantPadding 120
+
+participant Application
+participant Ogham
+participant Server
+
+autonumber
+
+Application -> Ogham: send(message)
+activate Ogham
+
+Ogham -> Ogham: execute()
+activate Ogham
+{a} Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>send</color>
+|||
+|||
+{b} Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>failed</color>
+autonumber stop
+{c} Application <-[#fff]- Ogham
+autonumber resume
+deactivate Ogham
+...
+...
+...
+autonumber stop
+{d} Application <-[#fff]- Ogham
+autonumber resume
+
+Ogham -> Ogham: execute()
+activate Ogham
+{e} Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>send</color>
+|||
+|||
+{f} Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>failed</color>
+autonumber stop
+{g} Application <-[#fff]- Ogham
+autonumber resume
+deactivate Ogham
+...
+...
+...
+autonumber stop
+{h} Application <-[#fff]- Ogham
+autonumber resume
+
+Ogham -> Ogham: execute()
+activate Ogham
+Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>send</color>
+Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>success</color>
+
+Application <-- Ogham: return
+deactivate Ogham
+
+{a} <-> {b}: server timeout (10s)
+{c} <-> {d}: wait for 5s\nbefore retrying
+{e} <-> {f}: server timeout (10s)
+{g} <-> {h}: wait for 10s\nbefore retrying
+....
+
+
+[role=tab]
+Message can't be sent
+
+This diagram shows what happens if the message can't be sent and the maximum attempts 
+is reached. The initial delay is configured to 5 seconds. The maximum attempts is configured to 4.
+
+For the explanation, the server returns a response after 10 seconds (timeout).
+
+[plantuml, subs="attributes", role="text-center"]
+....
+!pragma teoz true
+
+skinparam ParticipantPadding 120
+
+participant Application
+participant Ogham
+participant Server
+
+autonumber
+
+Application -> Ogham: send(message)
+activate Ogham
+
+Ogham -> Ogham: execute()
+activate Ogham
+{a} Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>send</color>
+|||
+|||
+{b} Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>failed</color>
+autonumber stop
+{c} Application <-[#fff]- Ogham
+autonumber resume
+deactivate Ogham
+...
+...
+...
+autonumber stop
+{d} Application <-[#fff]- Ogham
+autonumber resume
+
+Ogham -> Ogham: execute()
+activate Ogham
+{e} Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>send</color>
+|||
+|||
+{f} Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>failed</color>
+autonumber stop
+{g} Application <-[#fff]- Ogham
+autonumber resume
+deactivate Ogham
+...
+...
+...
+autonumber stop
+{h} Application <-[#fff]- Ogham
+autonumber resume
+
+Ogham -> Ogham: execute()
+activate Ogham
+{i} Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>send</color>
+|||
+|||
+{j} Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>failed</color>
+autonumber stop
+{k} Application <-[#fff]- Ogham
+autonumber resume
+deactivate Ogham
+...
+...
+...
+autonumber stop
+{l} Application <-[#fff]- Ogham
+autonumber resume
+
+Ogham -> Ogham: execute()
+activate Ogham
+{m} Ogham -[{plantuml-network-color}]-> Server: <color {plantuml-network-color}>send</color>
+|||
+|||
+{n} Ogham <-[{plantuml-network-color}]- Server: <color {plantuml-network-color}>failed</color>
+deactivate Ogham
+
+Application <-- Ogham: throw **MaximumAttemptsReachedException**
+deactivate Ogham
+
+
+{a} <-> {b}: server timeout (10s)
+{c} <-> {d}: wait for 5s\nbefore retrying
+{e} <-> {f}: server timeout (10s)
+{g} <-> {h}: wait for 10s\nbefore retrying
+{i} <-> {j}: server timeout (10s)
+{k} <-> {l}: wait for 20s\nbefore retrying
+{m} <-> {n}: server timeout (10s)
+....
+
+
+[role=tab-container-end]
+-
+
+
+
+.Enable re-send of email with exponential delay
+[role="tab-container no-max-height"]
+Re-send email
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+----
+include::{standard-email-samples-sourcedir}/BasicClasspathPropertiesSample.java[]
+----
+<1> Load properties from a file that is in the classpath.
+
+{standard-email-samples-sourcedir-url}/BasicClasspathPropertiesSample.java?ts={tabsize}[Source code of the sample].
+
+[role=tab]
+image:{icons-properties-file} Properties
+
+[source, python, role="irrelevant-lines:1-3 highlight-lines:4-5"]
+----
+include::{standard-samples-resourcesdir}/email.properties[]
+ogham.email.send-retry.max-attempts=10                    # <1>
+ogham.email.send-retry.exponential-initial-delay=5000     # <2>
+----
+<1> Set the maximum attempts to `10`
+<2> Set the initial delay to `5 seconds`. After each failing attempts, the delay is doubled
+
+
+[role=tab-container-end]
+-
+
+
+.Enable re-send of SMS with exponential delay
+[role="tab-container no-max-height"]
+Re-send SMS
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
+----
+include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
+----
+<1> Load properties from a file that is in the classpath.
+
+{standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
+
+[role=tab]
+image:{icons-properties-file} Properties
+
+[source, python, role="irrelevant-lines:1-5 highlight-lines:6-7"]
+----
+include::{standard-samples-resourcesdir}/sms.properties[]
+ogham.sms.send-retry.max-attempts=10                    # <1>
+ogham.sms.send-retry.exponential-initial-delay=5000     # <2>
+----
+<1> Set the maximum attempts to `10`
+<2> Set the initial delay to `5 seconds`. After each failing attempts, the delay is doubled
+
+
+[role=tab-container-end]
+-

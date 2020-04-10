@@ -73,7 +73,7 @@ It is possible to configure Ogham to use a
 Attach images
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -88,7 +88,7 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="collapse-lines:1-10,14-16,19-24,28-36,41-49 highlight-lines:12,27,39"]
 ----
@@ -107,7 +107,7 @@ be inlined (using `attach` strategy)
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:1-8,12-73,76-83,88-96 highlight-lines:10,75,86"]
 ----
@@ -145,7 +145,7 @@ this information for you thanks to <<mimetype-detection, automatic mimetype dete
 Embed images as base64
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -160,7 +160,7 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="collapse-lines:1-16,19-24,26-49 highlight-lines:18"]
 ----
@@ -176,7 +176,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:1-14,68-72,74-96 highlight-lines:16-67"]
 ----
@@ -203,7 +203,7 @@ on the `<img>` tag.
 Skip embedding
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -218,7 +218,7 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="collapse-lines:1-40,44-49 highlight-lines:42"]
 ----
@@ -237,7 +237,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:1-87,91-96 highlight-lines:89"]
 ----

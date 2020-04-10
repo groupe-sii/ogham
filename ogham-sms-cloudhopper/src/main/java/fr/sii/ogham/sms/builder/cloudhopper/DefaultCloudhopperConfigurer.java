@@ -242,7 +242,7 @@ public final class DefaultCloudhopperConfigurer {
 							.and()
 						.exponentialDelay()
 							.maxRetries().properties("${ogham.sms.cloudhopper.session.connect-retry.max-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()
-							.initialDelay().properties("${ogham.sms.cloudhopper.session.connect-retry.exponential-intial-delay}").and()
+							.initialDelay().properties("${ogham.sms.cloudhopper.session.connect-retry.exponential-initial-delay}").and()
 							.and()
 						.perExecutionDelay()
 							.maxRetries().properties("${ogham.sms.cloudhopper.session.connect-retry.max-attempts}").defaultValue(overrideIfNotSet(DEFAULT_CONNECT_MAX_RETRIES)).and()

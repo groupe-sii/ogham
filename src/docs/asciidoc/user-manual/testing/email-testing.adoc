@@ -12,7 +12,7 @@ http://www.icegreen.com/greenmail/[GreenMail] as local SMTP server.
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-23 irrelevant-lines:1-23"]
 ----
@@ -62,7 +62,7 @@ the same utility function every time.
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-26,27-44,71-83 irrelevant-lines:1-26 highlight-lines:63"]
 ----
@@ -77,7 +77,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTest
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 [source, html]
 ----
@@ -89,7 +89,7 @@ include::{standard-samples-resourcesdir}/template/register.html[]
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Expected HTML
+image:{icons-html} Expected HTML
 
 [source, html]
 ----
@@ -113,7 +113,7 @@ When your tests report errors due to HTML differences, Ogham helps with Eclipse 
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-25,27-44,71-83 irrelevant-lines:1-25"]
 ----
@@ -128,7 +128,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTest
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 [source, html]
 ----
@@ -140,7 +140,7 @@ include::{standard-samples-resourcesdir}/template/register.html[]
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Expected HTML
+image:{icons-html} Expected HTML
 
 [source, html, role="highlight-lines:4,8"]
 ----
@@ -197,7 +197,7 @@ Testing an email sent with two main parts (HTML and text fallback) is straightfo
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-25,27-44,69-81 irrelevant-lines:1-25 highlight-lines:58-63"]
 ----
@@ -215,7 +215,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlAndT
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 [source, html]
 ----
@@ -227,7 +227,7 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
 
 
 [role=tab]
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+image:{icons-freemarker-text-template} Text template
 
 [source, html]
 ----
@@ -239,7 +239,7 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Expected HTML
+image:{icons-html} Expected HTML
 
 [source, html]
 ----
@@ -251,7 +251,7 @@ include::{standard-samples-testresourcesdir}/expected/simple_bar_42.html[]
 
 
 [role=tab]
-image:{images-dir}/icons/txt.png[width=30,height=30] Expected text
+image:{icons-text} Expected text
 
 [source]
 ----
@@ -276,7 +276,7 @@ You can also test that attachments are sent correctly.
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:63-68"]
 ----
@@ -307,7 +307,7 @@ When you send an email to several recipients, there is one message per recipient
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-24,26-43 irrelevant-lines:1-24 highlight-lines:55"]
 ----
@@ -338,7 +338,7 @@ Sometimes you also need to send several different emails. The emails may have so
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-23,25-42 irrelevant-lines:1-23 highlight-lines:60,70,78,86"]
 ----
@@ -364,7 +364,7 @@ GreenMail allows to start the SMTP server with user and credentials.
 Sample
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,51-74 highlight-lines:36,43-45"]
 ----

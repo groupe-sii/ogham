@@ -1,0 +1,45 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+.Use custom RetryExecutor
+[role="tab-container no-max-height"]
+Custom retry executor
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-24 irrelevant-lines:1-24"]
+----
+include::{standard-advanced-samples-sourcedir}/CustomRetryExecutorSample.java[]
+----
+<1> Use an invalid SMTP port in order to test retry
+<2> Configure maximum attempts for email
+<3> Enable retry using a fixed delay between each attempts for email
+<4> Use an invalid SMPP port in order to test retry
+<5> Configure maximum attempts for SMS
+<6> Enable retry using a delay that is doubled between each attempts for SMS
+<7> Register custom `RetryExecutor` for email
+<8> Register custom `RetryExecutor` for SMS
+<9> Get the instance of the `RetryStrategy` that will compute the date of the next attempt
+<10> Date when the execution started
+<11> Execute the action (here it is sending an email or a SMS)
+<12> Ask `RetryStrategy` when should next attempt be executed
+<13> Ask `Awaiter` to wait until next date
+<14> Ask `RetryStrategy` if maximum attempts are reached or not
+<15> All executions have failed and maximum attempts are reached so throw `MaximumAttemptsReachedException`
+<16> If waiting has failed, wrap the exception
+
+{standard-advanced-samples-sourcedir-url}/CustomRetryExecutorSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab-container-end]
+-
+
+
+[NOTE]
+====
+As Cloudhopper SMPP implementation (for sending SMS) also uses a `RetryStrategy` for connecting to
+SMPP server (10 maximum attempts spaced 5 seconds apart), you may notice in logs that connection
+is retried 50 times (5 times for sending multiplied by 10 connection attempts).
+====

@@ -6,7 +6,7 @@ include::{docdir}/variables.adoc[]
 Include Ogham dependency for Spring Boot
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 [source, xml, subs=attributes+]
 ----
@@ -21,7 +21,7 @@ image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
 
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample
@@ -47,7 +47,7 @@ You can combine Ogham with existing Spring Boot dependencies:
 Ogham with Spring Boot dependencies
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 
 [source, xml, subs=attributes+]
@@ -72,7 +72,7 @@ image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
 ----
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample

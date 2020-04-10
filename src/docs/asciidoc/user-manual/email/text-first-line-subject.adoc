@@ -10,7 +10,7 @@ with `Subject:` (spaces can be added after colon). Other lines are used as conte
 Sample with template
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-19"]
 ----
@@ -22,7 +22,7 @@ include::{standard-email-samples-sourcedir}/TextTemplateWithSubjectSample.java[]
 
 [role=tab]
 
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+image:{icons-freemarker-text-template} Text template
 
 [source, text, role="highlight-lines:1"]
 ----

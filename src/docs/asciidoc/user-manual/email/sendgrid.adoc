@@ -8,7 +8,7 @@ difference is the configuration of Ogham.
 Sample using SendGrid
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java (SendGrid)
+image:{icons-java-code} Java (SendGrid)
 
 [source, java, role="collapse-lines:1-40,60-72 irrelevant-lines:1-40"]
 ----
@@ -21,7 +21,7 @@ include::{standard-email-samples-sourcedir}/sendgrid/SendGridFullSample.java[]
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Properties (SendGrid)
+image:{icons-properties-file} Properties (SendGrid)
 
 [source, python]
 ----
@@ -36,7 +36,7 @@ include::{standard-samples-resourcesdir}/sendgrid-template.properties[]
 
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java (JavaMail)
+image:{icons-java-code} Java (JavaMail)
 
 [source, java, role="collapse-lines:1-40,60-72 irrelevant-lines:1-40"]
 ----
@@ -49,7 +49,7 @@ include::{standard-email-samples-sourcedir}/FullSample.java[]
 
 
 [role=tab]
-image:{images-dir}/icons/properties.png[width=37,height=30] Properties (JavaMail)
+image:{icons-properties-file} Properties (JavaMail)
 
 [source, python]
 ----

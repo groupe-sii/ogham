@@ -1,0 +1,9 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+This is a simple implementation that runs in the current thread (no thread is created).
+It executes the action and if it fails, it suspends the current thread (using an `Awaiter` implementation)
+for some time (configured through <<user-manual.adoc#retry-strategy, `RetryStrategy`>>).
+
+It repeats that until either the it succeeds or the maximum attempts is reached (or the strategy indicates
+that it should stop).

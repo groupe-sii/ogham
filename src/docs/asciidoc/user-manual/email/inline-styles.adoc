@@ -66,7 +66,7 @@ It is possible to configure Ogham to use a
 Inline CSS using style attribute
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -81,7 +81,7 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="highlight-lines:7-8"]
 ----
@@ -94,7 +94,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 
 
 [role=tab]
-image:{images-dir}/icons/css.png[width=37,height=30] CSS files
+image:{icons-css} CSS files
 
 .layout.css
 [source, css]
@@ -111,7 +111,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:16-72 highlight-lines:8,9,10,12,15,74,83,84,85,88,92"]
 ----
@@ -150,7 +150,7 @@ nodes, the whole contained rules are not applied at all.
 Skip CSS inlining on node
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -165,7 +165,7 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="highlight-lines:47"]
 ----
@@ -185,7 +185,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 
 
 [role=tab]
-image:{images-dir}/icons/css.png[width=37,height=30] CSS files
+image:{icons-css} CSS files
 
 .layout.css
 [source, css]
@@ -202,7 +202,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Generated HTML
+image:{icons-html} Generated HTML
 
 [source, html, role="collapse-lines:9-82,84-91 highlight-lines:94"]
 ----

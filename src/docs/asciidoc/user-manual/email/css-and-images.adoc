@@ -31,7 +31,7 @@ simplifies image and CSS integration and is able to partially rewrite the HTML.
 Sample with template
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -46,7 +46,7 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] ThymeLeaf template
+image:{icons-thymeleaf-html-template} ThymeLeaf template
 
 [source, html, role="highlight-lines:7-8,12,18,27,39,42"]
 ----
@@ -70,7 +70,7 @@ determined
 
 
 [role=tab]
-image:{images-dir}/icons/css.png[width=37,height=30] CSS
+image:{icons-css} CSS
 
 .layout.css
 [source, css]
@@ -88,7 +88,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css
 
 
 [role=tab]
-image:{images-dir}/icons/html.png[width=37,height=30] Sent HTML
+image:{icons-html} Sent HTML
 
 [source, html]
 ----

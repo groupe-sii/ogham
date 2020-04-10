@@ -202,7 +202,7 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simple.html[]
 =====
 
 [.title]
-image:{images-dir}/icons/java-logo.png[Java,width=16,height=30] Standalone usage
+image:{icons-java-code} Standalone usage
 
 
 `ogham-all` dependency provides all Ogham features. All implementations/protocols 
@@ -220,7 +220,7 @@ to exclude some dependencies).
 Include Ogham standalone dependency
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 
 [source, xml, subs=attributes+]
@@ -233,7 +233,7 @@ image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
 ----
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample
@@ -256,7 +256,7 @@ TODO: gradle code sample
 =====
 
 [.title]
-image:{images-dir}/icons/spring-boot.png[Spring Boot,width=30,height=30] Spring Boot starter
+image:{icons-spring-boot} Spring Boot starter
 
 Ogham natively provides Spring Boot integration. `ogham-spring-boot-starter-all` is like
 `ogham-all` but uses Spring Boot starters instead for implementations/template engines.
@@ -270,7 +270,7 @@ Developers can also select features by <<user-manual.adoc#select-features-spring
 Include Ogham dependency for Spring Boot
 
 [role=tab]
-image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
+image:{icons-maven}
 
 [source, xml, subs=attributes+]
 ----
@@ -283,7 +283,7 @@ image:{images-dir}/icons/maven-logo.png[Maven,width=118,height=30]
 
 
 [role=tab]
-image:{images-dir}/icons/gradlephant-logo.png[Gradle,width=114,height=30]
+image:{icons-gradle}
 
 ////
 TODO: gradle code sample

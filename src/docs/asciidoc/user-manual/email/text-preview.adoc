@@ -12,7 +12,7 @@ be unreadable.
 Sample using HTML and text
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,11-20,23-30 highlight-lines:39-40"]
 ----
@@ -47,7 +47,7 @@ and text template files).
 Sample using HTML and text templates
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,37-49 irrelevant-lines:1-9,12-19 highlight-lines:31-32"]
 ----
@@ -67,7 +67,7 @@ The underlying `Content` is a `MultiTemplateContent`.
 {standard-email-samples-sourcedir-url}/HtmlAndTextTemplateSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-text.jpg[width=30,height=30] Text template
+image:{icons-thymeleaf-text-template} Text template
 
 .Text template located in `src/main/resources/template/thymeleaf/simple.txt`
 [source, txt]
@@ -79,7 +79,7 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simple.txt[]
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf-html.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf-html-template} HTML template
 
 .HTML template located at `src/main/resources/template/thymeleaf/simple.html`
 [source, html]
@@ -115,7 +115,7 @@ the same email. Just write your templates with the engine you want.
 Sample using HTML with ThymeLeaf and text with FreeMarker
 
 [role=tab]
-image:{images-dir}/icons/java-logo.png[width=16,height=30] Java
+image:{icons-java-code} Java
 
 [source, java, role="collapse-lines:1-9,37-49 irrelevant-lines:1-9,12-19 highlight-lines:31-32"]
 ----
@@ -130,7 +130,7 @@ extension). The HTML template uses Thymeleaf while the text template uses FreeMa
 {standard-email-samples-sourcedir-url}/HtmlAndTextMixedTemplateEnginesSample.java?ts={tabsize}[Source code of the sample]
 
 [role=tab]
-image:{images-dir}/icons/freemarker-logo.png[width=60,height=24] Text template
+image:{icons-freemarker-text-template} Text template
 
 .Text template located in `src/main/resources/template/mixed/simple.txt.ftl`
 [source, txt]
@@ -142,7 +142,7 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
 
 
 [role=tab]
-image:{images-dir}/icons/thymeleaf.jpg[width=30,height=30] HTML template
+image:{icons-thymeleaf} HTML template
 
 .HTML template located at `src/main/resources/template/mixed/simple.html`
 [source, html]

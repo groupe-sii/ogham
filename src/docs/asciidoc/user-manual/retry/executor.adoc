@@ -1,0 +1,17 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+== SimpleRetryExecutor
+
+include::{user-manual-dir}/retry/simple-retry-executor.adoc[leveloffset=+2]
+
+[TIP]
+====
+Currently Ogham only provides this implementation but other may come in future versions. 
+====
+
+
+== Custom executor
+
+include::{user-manual-dir}/retry/custom-executor.adoc[leveloffset=+2]
+

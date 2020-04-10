@@ -5,9 +5,9 @@ import java.util.List;
 
 /**
  * Retry several times with a fixed delay to wait after the last execution
- * failure until the maximum attempts is reached. A specific delay is used for
- * each execution. If there are more attempts than the configured delays, the
- * last delays is used for remaining attempts.
+ * failure until the maximum attempts is reached. A specific delay is used
+ * between each execution. If there are more attempts than the configured
+ * delays, the last delay is used for remaining attempts.
  * 
  * If maximum attempts are set to 5 and delays are configured like this:
  * <ol>
