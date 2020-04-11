@@ -460,13 +460,6 @@ public class OghamCloudhopperProperties {
 			return perExecutionDelays;
 		}
 
-		public Long[] getPerExecutionDelaysAsArray() {
-			if (perExecutionDelays == null) {
-				return null;
-			}
-			return perExecutionDelays.toArray(new Long[perExecutionDelays.size()]);
-		}
-
 		public void setPerExecutionDelays(List<Long> perExecutionDelays) {
 			this.perExecutionDelays = perExecutionDelays;
 		}

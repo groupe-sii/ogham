@@ -1,5 +1,7 @@
 package fr.sii.ogham.spring.sms;
 
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -7,6 +9,7 @@ import fr.sii.ogham.spring.common.MessageSpecificFreemarkerProperties;
 import fr.sii.ogham.spring.common.MessageSpecificTemplateProperties;
 import fr.sii.ogham.spring.common.MessageSpecificThymeleafProperties;
 import fr.sii.ogham.spring.common.OghamTemplateProperties;
+import fr.sii.ogham.spring.common.SendRetryProperties;
 
 @ConfigurationProperties("ogham.sms")
 public class OghamSmsProperties implements OghamTemplateProperties {
@@ -22,6 +25,8 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 	private MessageSpecificTemplateProperties template = new MessageSpecificTemplateProperties();
 	@NestedConfigurationProperty
 	private SplitProperties split = new SplitProperties();
+	@NestedConfigurationProperty
+	private SendRetryProperties sendRetry = new SendRetryProperties();
 
 	public FromProperties getFrom() {
 		return from;
@@ -69,6 +74,14 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 
 	public void setSplit(SplitProperties split) {
 		this.split = split;
+	}
+
+	public SendRetryProperties getSendRetry() {
+		return sendRetry;
+	}
+
+	public void setSendRetry(SendRetryProperties sendRetry) {
+		this.sendRetry = sendRetry;
 	}
 
 	public static class FromProperties {
@@ -177,15 +190,15 @@ public class OghamSmsProperties implements OghamTemplateProperties {
 		 * If no recipient phone number is explicitly defined on the message,
 		 * Ogham will use this phone number as default recipient number.
 		 */
-		private String defaultValue;
+		private List<String> defaultValue;
 		@NestedConfigurationProperty
 		private ToInternationalFormatProperties internationalFormat = new ToInternationalFormatProperties();
 
-		public String getDefaultValue() {
+		public List<String> getDefaultValue() {
 			return defaultValue;
 		}
-
-		public void setDefaultValue(String defaultValue) {
+		
+		public void setDefaultValue(List<String> defaultValue) {
 			this.defaultValue = defaultValue;
 		}
 

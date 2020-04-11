@@ -1,5 +1,7 @@
 package fr.sii.ogham.spring.email;
 
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -7,6 +9,7 @@ import fr.sii.ogham.spring.common.MessageSpecificFreemarkerProperties;
 import fr.sii.ogham.spring.common.MessageSpecificTemplateProperties;
 import fr.sii.ogham.spring.common.MessageSpecificThymeleafProperties;
 import fr.sii.ogham.spring.common.OghamTemplateProperties;
+import fr.sii.ogham.spring.common.SendRetryProperties;
 
 @ConfigurationProperties("ogham.email")
 public class OghamEmailProperties implements OghamTemplateProperties {
@@ -26,6 +29,8 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 	private MessageSpecificThymeleafProperties thymeleaf = new MessageSpecificThymeleafProperties();
 	@NestedConfigurationProperty
 	private MessageSpecificTemplateProperties template = new MessageSpecificTemplateProperties();
+	@NestedConfigurationProperty
+	private SendRetryProperties sendRetry = new SendRetryProperties();
 
 	public FromProperties getFrom() {
 		return from;
@@ -89,6 +94,14 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 
 	public void setTemplate(MessageSpecificTemplateProperties template) {
 		this.template = template;
+	}
+
+	public SendRetryProperties getSendRetry() {
+		return sendRetry;
+	}
+
+	public void setSendRetry(SendRetryProperties sendRetry) {
+		this.sendRetry = sendRetry;
 	}
 
 	public static class SubjectProperties {
@@ -176,20 +189,20 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 			this.defaultValue = defaultValue;
 		}
 	}
-
+	
 	public static class ToProperties {
 		/**
 		 * Configures how to handle missing email recipient address: if no "to"
 		 * address is explicitly defined on the email, Ogham will use this
 		 * value.
 		 */
-		private String defaultValue;
+		private List<String> defaultValue;
 
-		public String getDefaultValue() {
+		public List<String> getDefaultValue() {
 			return defaultValue;
 		}
-
-		public void setDefaultValue(String defaultValue) {
+		
+		public void setDefaultValue(List<String> defaultValue) {
 			this.defaultValue = defaultValue;
 		}
 	}
@@ -200,13 +213,13 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 		 * address is explicitly defined on the email, Ogham will use this
 		 * value.
 		 */
-		private String defaultValue;
+		private List<String> defaultValue;
 
-		public String getDefaultValue() {
+		public List<String> getDefaultValue() {
 			return defaultValue;
 		}
-
-		public void setDefaultValue(String defaultValue) {
+		
+		public void setDefaultValue(List<String> defaultValue) {
 			this.defaultValue = defaultValue;
 		}
 	}
@@ -217,13 +230,13 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 		 * address is explicitly defined on the email, Ogham will use this
 		 * value.
 		 */
-		private String defaultValue;
+		private List<String> defaultValue;
 
-		public String getDefaultValue() {
+		public List<String> getDefaultValue() {
 			return defaultValue;
 		}
-
-		public void setDefaultValue(String defaultValue) {
+		
+		public void setDefaultValue(List<String> defaultValue) {
 			this.defaultValue = defaultValue;
 		}
 	}

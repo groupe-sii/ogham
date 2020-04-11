@@ -1,6 +1,7 @@
 package fr.sii.ogham.spring.sms;
 
 import static fr.sii.ogham.core.util.ConfigurationValueUtils.firstValue;
+import static fr.sii.ogham.spring.util.PropertiesUtils.asArray;
 import static java.util.Optional.ofNullable;
 
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion;
 import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
 
 /**
- * This configurer is also useful to support property naming variants (see
+ * This configurer is useful to support property naming variants (see
  * <a href=
  * "https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0">Relaxed
  * Binding</a>).
@@ -101,7 +102,7 @@ public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
 							.and()
 						.perExecutionDelay()
 							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()
-							.delays().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getPerExecutionDelaysAsArray())).and()
+							.delays().value(ofNullable(asArray(cloudhopperProperties.getSession().getConnectRetry().getPerExecutionDelays(), Long.class))).and()
 							.and()
 						.fixedInterval()
 							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()
