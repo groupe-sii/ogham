@@ -52,6 +52,7 @@ public final class CloudhopperRetryablePredicates {
 	 *            the error to analyze
 	 * @return true if a connect may be retried
 	 */
+	@SuppressWarnings("squid:S1126")
 	public static boolean canRetryConnecting(Throwable error) {
 		if (fatalJvmError(error) || invalidCredentials(error) || invalidSystemType(error) || alreadyBound(error)) {
 			return false;
@@ -162,6 +163,7 @@ public final class CloudhopperRetryablePredicates {
 	 *            the error to analyze
 	 * @return true if a connect may be retried
 	 */
+	@SuppressWarnings("squid:S1126")
 	public static boolean canResendMessage(Throwable error) {
 		if (isDataCodingError(error) || isEncodingError(error) || messagePreparationFailed(error)) {
 			return false;

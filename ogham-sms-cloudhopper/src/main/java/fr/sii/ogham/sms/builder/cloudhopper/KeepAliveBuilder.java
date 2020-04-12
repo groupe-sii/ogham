@@ -431,10 +431,9 @@ public class KeepAliveBuilder extends AbstractParent<SessionBuilder> implements 
 		return executor(() -> executor);
 	}
 
-	
-	
 	/**
-	 * The maximum number of consecutive timeouts to {@link EnquireLink} requests to consider that a new session is required.
+	 * The maximum number of consecutive timeouts to {@link EnquireLink}
+	 * requests to consider that a new session is required.
 	 * 
 	 * <p>
 	 * The value set using this method takes precedence over any property and
@@ -473,12 +472,15 @@ public class KeepAliveBuilder extends AbstractParent<SessionBuilder> implements 
 	}
 
 	/**
-	 * The maximum number of consecutive timeouts to {@link EnquireLink} requests to consider that a new session is required.
+	 * The maximum number of consecutive timeouts to {@link EnquireLink}
+	 * requests to consider that a new session is required.
 	 * 
 	 * <p>
-	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
-	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
-	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * <pre>
 	 * .maxConsecutiveTimeouts()
@@ -497,8 +499,8 @@ public class KeepAliveBuilder extends AbstractParent<SessionBuilder> implements 
 	 *   .defaultValue(3)
 	 * </pre>
 	 * 
-	 * The value {@code 5} is used regardless of the value of the properties
-	 * and default value.
+	 * The value {@code 5} is used regardless of the value of the properties and
+	 * default value.
 	 * 
 	 * <p>
 	 * See {@link ConfigurationValueBuilder} for more information.
@@ -509,7 +511,7 @@ public class KeepAliveBuilder extends AbstractParent<SessionBuilder> implements 
 	public ConfigurationValueBuilder<KeepAliveBuilder, Integer> maxConsecutiveTimeouts() {
 		return maxConsecutiveTimeoutsValueBuilder;
 	}
-	
+
 	@Override
 	public KeepAliveOptions build() {
 		KeepAliveOptions keepAliveOptions = new KeepAliveOptions();
@@ -534,13 +536,12 @@ public class KeepAliveBuilder extends AbstractParent<SessionBuilder> implements 
 	 * @return the factory
 	 */
 	public static Supplier<ScheduledExecutorService> defaultEnquireLinkTimerFactory() {
-		return () -> Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-			@Override
-			public Thread newThread(Runnable runnable) {
-				Thread thread = new Thread(runnable);
-				thread.setName("EnquireLink-" + enquireLinkThreadCounter.incrementAndGet());
-				return thread;
-			}
-		});
+		return () -> Executors.newSingleThreadScheduledExecutor(KeepAliveBuilder::newThread);
+	}
+
+	private static Thread newThread(Runnable runnable) {
+		Thread thread = new Thread(runnable);
+		thread.setName("EnquireLink-" + enquireLinkThreadCounter.incrementAndGet());
+		return thread;
 	}
 }

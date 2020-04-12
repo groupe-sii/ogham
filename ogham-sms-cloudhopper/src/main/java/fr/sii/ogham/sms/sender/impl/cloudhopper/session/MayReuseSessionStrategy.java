@@ -109,13 +109,13 @@ public class MayReuseSessionStrategy extends BaseSessionHandlingStrategy impleme
 	}
 
 	@Override
-	protected SmppSession connect(SmppClient client) throws SmppException {
+	protected synchronized SmppSession connect(SmppClient client) throws SmppException {
 		SmppSession session = super.connect(client);
 		updateLastSentOrSession();
 		return session;
 	}
 
-	private boolean isSessionStillAlive() throws SmppException {
+	private boolean isSessionStillAlive() {
 		long elapsedTime = now() - lastSentOrSession;
 		boolean skipEnquireLink = elapsedTime < configuration.getReuseSession().getLastInteractionExpirationDelay();
 		LOG.trace("Skip EnquireLink? {} {} => {}", elapsedTime, configuration.getReuseSession().getLastInteractionExpirationDelay(), skipEnquireLink);

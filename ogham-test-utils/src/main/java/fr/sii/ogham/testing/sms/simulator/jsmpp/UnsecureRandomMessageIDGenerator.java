@@ -27,10 +27,12 @@ import org.jsmpp.util.RandomMessageIDGenerator;
 public class UnsecureRandomMessageIDGenerator implements MessageIDGenerator {
 	private final Random random;
 
+	@SuppressWarnings("java:S2245")
 	public UnsecureRandomMessageIDGenerator() {
 		random = new Random();
 	}
 
+	@SuppressWarnings({ "squid:S00112", "squid:S109" })  // code copied from Cloudhopper
 	@Override
 	public MessageId newMessageId() {
 		/*

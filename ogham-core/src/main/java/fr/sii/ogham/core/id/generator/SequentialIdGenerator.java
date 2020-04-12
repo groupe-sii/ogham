@@ -80,7 +80,7 @@ public class SequentialIdGenerator implements IdGenerator {
 		try {
 			return URLEncoder.encode(name, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			LOG.warn("Failed to use " + name + " as id prefix => no prefix used", e);
+			LOG.warn("Failed to use {} as id prefix => no prefix used", name, e);
 			return "";
 		}
 	}

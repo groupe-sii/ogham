@@ -70,6 +70,7 @@ public final class SendMessageRetryablePredicates {
 	 *            the error to analyze
 	 * @return true if the message can be sent again
 	 */
+	@SuppressWarnings("squid:S1126")
 	public static boolean canResendMessage(Throwable error) {
 		if (fatalJvmError(error) || isMessagePreparationError(error)) {
 			return false;
