@@ -1,5 +1,7 @@
 package fr.sii.ogham.core.builder.mimetype;
 
+import java.util.List;
+
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
 import fr.sii.ogham.core.fluent.AbstractParent;
@@ -59,6 +61,23 @@ public class MimetypeDetectionBuilderDelegate<P> extends AbstractParent<P> imple
 	@Override
 	public ReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replace() {
 		return new ReplaceMimetypeBuilderDelegate<>(this, delegate.replace());
+	}
+
+	@Override
+	public MimetypeDetectionBuilder<P> allowed(List<String> mimetypes) {
+		delegate.allowed(mimetypes);
+		return this;
+	}
+
+	@Override
+	public MimetypeDetectionBuilder<P> allowed(String... mimetypes) {
+		delegate.allowed(mimetypes);
+		return this;
+	}
+
+	@Override
+	public ConfigurationValueBuilder<MimetypeDetectionBuilder<P>, String[]> allowed() {
+		return new ConfigurationValueBuilderDelegate<>(this, delegate.allowed());
 	}
 
 	@Override

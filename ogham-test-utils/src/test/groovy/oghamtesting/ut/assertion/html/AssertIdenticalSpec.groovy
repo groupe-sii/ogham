@@ -4,9 +4,7 @@ import static fr.sii.ogham.testing.assertion.html.AssertHtml.assertEquals
 
 import org.junit.ComparisonFailure
 
-import fr.sii.ogham.testing.assertion.html.AssertHtml
 import fr.sii.ogham.testing.extension.common.LogTestInformation
-import spock.lang.IgnoreRest
 import spock.lang.Specification
 import spock.lang.Unroll
 

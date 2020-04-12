@@ -2,6 +2,7 @@ package fr.sii.ogham.core.builder.mimetype;
 
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.List;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -171,4 +172,126 @@ public interface MimetypeDetectionBuilder<P> extends Parent<P>, Builder<MimeType
 	 * @return the builder to configure property keys/default value
 	 */
 	ConfigurationValueBuilder<MimetypeDetectionBuilder<P>, String> defaultMimetype();
+
+	/**
+	 * Define which mimetypes are allowed or not.
+	 * <p>
+	 * The mimetypes may contain {@literal *} to match sub-types (for example
+	 * {@code "image/*"}). If the mimetype starts with {@literal !}, the
+	 * mimetype is forbidden ({@code "!application/pdf"} for example)
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #allowed()}.
+	 * 
+	 * <pre>
+	 * .allowed("images/*")
+	 * .allowed()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("*")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .allowed("images/*")
+	 * .allowed()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("*")
+	 * </pre>
+	 * 
+	 * In both cases, {@code allowed("images/*")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param mimetypes
+	 *            the allowed/unallowed mimetypes
+	 * @return this instance for fluent chaining
+	 */
+	MimetypeDetectionBuilder<P> allowed(List<String> mimetypes);
+
+	/**
+	 * Define which mimetypes are allowed or not.
+	 * <p>
+	 * The mimetypes may contain {@literal *} to match sub-types (for example
+	 * {@code "image/*"}). If the mimetype starts with {@literal !}, the
+	 * mimetype is forbidden ({@code "!application/pdf"} for example)
+	 * 
+	 * <p>
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #allowed()}.
+	 * 
+	 * <pre>
+	 * .allowed("images/*", "!application/pdf")
+	 * .allowed()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("*")
+	 * </pre>
+	 * 
+	 * <pre>
+	 * .allowed("images/*", "!application/pdf")
+	 * .allowed()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("*")
+	 * </pre>
+	 * 
+	 * In both cases, {@code allowed("images/*", "!application/pdf")} is used.
+	 * 
+	 * <p>
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * <p>
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param mimetypes
+	 *            the allowed/unallowed mimetypes
+	 * @return this instance for fluent chaining
+	 */
+	MimetypeDetectionBuilder<P> allowed(String... mimetypes);
+
+	/**
+	 * Define which mimetypes are allowed or not.
+	 * <p>
+	 * The mimetypes may contain {@literal *} to match sub-types (for example
+	 * {@code "image/*"}). If the mimetype starts with {@literal !}, the
+	 * mimetype is forbidden ({@code "!application/pdf"} for example)
+	 * 
+	 * <p>
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * <pre>
+	 * .allowed()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("*")
+	 * </pre>
+	 * 
+	 * <p>
+	 * Non-null value set using {@link #allowed(List)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * <pre>
+	 * .allowed("images/*")
+	 * .allowed()
+	 *   .properties("${custom.property.high-priority}", "${custom.property.low-priority}")
+	 *   .defaultValue("*")
+	 * </pre>
+	 * 
+	 * The value {@code "images/*"} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * <p>
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	ConfigurationValueBuilder<MimetypeDetectionBuilder<P>, String[]> allowed();
 }

@@ -2,7 +2,9 @@ package fr.sii.ogham.core.builder.mimetype;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
+import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
 import org.apache.tika.Tika;
@@ -19,6 +21,8 @@ import fr.sii.ogham.core.mimetype.FixedMimeTypeProvider;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.mimetype.OverrideMimetypeProvider;
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
+import fr.sii.ogham.core.mimetype.validation.AllowedMimetypeDecorator;
+import fr.sii.ogham.core.mimetype.validation.MatchMimetypePredicate;
 
 /**
  * Builds a {@link FallbackMimeTypeProvider}:
@@ -43,6 +47,7 @@ import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
 public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> implements MimetypeDetectionBuilder<P> {
 	private final BuildContext buildContext;
 	private final ConfigurationValueBuilderHelper<SimpleMimetypeDetectionBuilder<P>, String> defaultMimetypeValueBuilder;
+	private final ConfigurationValueBuilderHelper<MimetypeDetectionBuilder<P>, String[]> allowedMimetypesValueBuilder;
 	private TikaBuilder<MimetypeDetectionBuilder<P>> tikaBuilder;
 	private SimpleReplaceMimetypeBuilder<MimetypeDetectionBuilder<P>> replaceMimetypeBuilder;
 
@@ -61,6 +66,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 		super(parent);
 		this.buildContext = buildContext;
 		defaultMimetypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		allowedMimetypesValueBuilder = new ConfigurationValueBuilderHelper<>(this, String[].class, buildContext);
 	}
 
 	@Override
@@ -91,6 +97,23 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	}
 
 	@Override
+	public MimetypeDetectionBuilder<P> allowed(List<String> mimetypes) {
+		allowedMimetypesValueBuilder.setValue(mimetypes == null ? null : mimetypes.toArray(new String[mimetypes.size()]));
+		return this;
+	}
+
+	@Override
+	public MimetypeDetectionBuilder<P> allowed(String... mimetypes) {
+		allowedMimetypesValueBuilder.setValue(mimetypes);
+		return this;
+	}
+
+	@Override
+	public ConfigurationValueBuilder<MimetypeDetectionBuilder<P>, String[]> allowed() {
+		return allowedMimetypesValueBuilder;
+	}
+
+	@Override
 	public MimeTypeProvider build() {
 		try {
 			List<MimeTypeProvider> providers = new ArrayList<>();
@@ -98,7 +121,7 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 			buildDefault(providers);
 			assertNotEmpty(providers);
 			MimeTypeProvider provider = buildProvider(providers);
-			return overrideProvider(provider);
+			return validateProvider(overrideProvider(provider));
 		} catch (MimeTypeParseException e) {
 			throw new BuildException("Failed to build mimetype provider", e);
 		}
@@ -137,5 +160,26 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 			providers.add(buildContext.register(new FixedMimeTypeProvider(mimetype)));
 		}
 	}
+	
+	private MimeTypeProvider validateProvider(MimeTypeProvider provider) {
+		String[] allowed = allowedMimetypesValueBuilder.getValue(new String[0]);
+		if (allowed.length <= 0) {
+			// no validation
+			return provider;
+		}
+		Predicate<MimeType> merged = m -> true;
+		for (int i=0 ; i<allowed.length ; i++) {
+			Predicate<MimeType> predicate = toPredicate(allowed[i]);
+			merged = merged.and(predicate);
+		}
+		return new AllowedMimetypeDecorator(merged, provider);
+	}
 
+	private static Predicate<MimeType> toPredicate(String allowed) {
+		if (allowed.startsWith("!")) {
+			return toPredicate(allowed.substring(1)).negate();
+		}
+		return new MatchMimetypePredicate(allowed);
+	}
+	
 }

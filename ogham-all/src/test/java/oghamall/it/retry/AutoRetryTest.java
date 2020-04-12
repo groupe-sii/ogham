@@ -27,9 +27,12 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.exception.handler.ImageInliningException;
 import fr.sii.ogham.core.exception.handler.NoContentException;
 import fr.sii.ogham.core.exception.handler.TemplateNotFoundException;
 import fr.sii.ogham.core.exception.handler.TemplateParsingFailedException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
 import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
 import fr.sii.ogham.core.exception.retry.UnrecoverableException;
 import fr.sii.ogham.core.exception.template.NoEngineDetectionException;
@@ -178,14 +181,37 @@ public class AutoRetryTest {
 			messagingService.send(new Email()
 					.from("sender@yopmail.com")
 					.to("recipient@yopmail.com")
-					.body().template("/template/freemarker/source/invalid-resources.html.ftl", null));
+					.body().template("/template/freemarker/source/invalid-resources.html.ftl", new SimpleBean("foo", 42)));
 		});
 		// @formatter:on
 		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
 		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
-		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasItem(hasAnyCause(instanceOf(TemplateParsingFailedException.class)))));
-		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasItem(hasAnyCause(instanceOf(ParseException.class)))));
-		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasItem(hasAnyCause(instanceOf(InvalidReferenceException.class)))));
+		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasItem(hasAnyCause(instanceOf(ImageInliningException.class)))));
+		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasItem(hasAnyCause(instanceOf(ResourceResolutionException.class)))));
+	}
+	
+	@Test
+	public void doNotResendEmailIfMimetypeDetectionFailed() throws MessagingException {
+		// @formatter:off
+		builder
+			.environment()
+				.properties()
+					.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
+					.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+		// @formatter:on
+		MessagingService messagingService = builder.build();
+		// @formatter:off
+		MessageNotSentException e = assertThrows("should throw", MessageNotSentException.class, () -> {
+			messagingService.send(new Email()
+					.from("sender@yopmail.com")
+					.to("recipient@yopmail.com")
+					.body().template("/template/freemarker/source/invalid-image-mimetype.html.ftl", new SimpleBean("foo", 42)));
+		});
+		// @formatter:on
+		assertThat("should indicate that this is due to unrecoverable error", e, hasAnyCause(UnrecoverableException.class));
+		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasSize(1)));
+		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasItem(hasAnyCause(instanceOf(ImageInliningException.class)))));
+		assertThat("should indicate original exceptions", e, executionFailures(UnrecoverableException.class, hasItem(hasAnyCause(instanceOf(MimeTypeDetectionException.class)))));
 	}
 	
 	@Test

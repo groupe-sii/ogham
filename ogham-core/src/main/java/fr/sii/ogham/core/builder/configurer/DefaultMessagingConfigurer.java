@@ -162,7 +162,7 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 		configure(builder.css().inline());
 		configure(builder.images().inline());
 		// configure mimetype detection for images
-		configure(builder.images().inline().mimetype());
+		configureImageInliningMimetype(builder.images().inline().mimetype());
 
 		// @formatter:off
 		builder
@@ -279,6 +279,17 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 				.failIfOctetStream().properties("${ogham.mimetype.tika.fail-if-octet-stream}").defaultValue(overrideIfNotSet(true)).and()
 				.and()
 			.defaultMimetype().properties("${ogham.mimetype.default-mimetype}").defaultValue(overrideIfNotSet("application/octet-stream"));
+		// @formatter:on
+	}
+
+	protected void configureImageInliningMimetype(MimetypeDetectionBuilder<?> builder) {
+		// @formatter:off
+		builder
+			.tika()
+				.instance(new Tika())
+				.failIfOctetStream().defaultValue(overrideIfNotSet(true)).and()
+				.and()
+			.allowed().properties("${ogham.email.image-inlining.mimetype.allowed-mimetypes}").defaultValue(overrideIfNotSet(new String[] { "image/*" }));
 		// @formatter:on
 	}
 }

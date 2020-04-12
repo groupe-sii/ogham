@@ -54,6 +54,8 @@ public class SpringGeneralMessagingConfigurer implements SpringMessagingConfigur
 	}
 
 	private void configure(EmailBuilder builder) {
+		// configure mimetype detection for images
+		configureImageInliningMimetype(builder.images().inline().mimetype());
 		// @formatter:off
 		builder
 			.autofill()
@@ -145,6 +147,13 @@ public class SpringGeneralMessagingConfigurer implements SpringMessagingConfigur
 				.failIfOctetStream().value(ofNullable(mimetypeProperties.getTika().isFailIfOctetStream())).and()
 				.and()
 			.defaultMimetype().value(ofNullable(mimetypeProperties.getDefaultMimetype()));
+		// @formatter:on
+	}
+
+	private void configureImageInliningMimetype(MimetypeDetectionBuilder<?> builder) {
+		// @formatter:off
+		builder
+			.allowed().value(ofNullable(asArray(emailProperties.getImageInlining().getMimetype().getAllowedMimetypes(), String.class)));
 		// @formatter:on
 	}
 

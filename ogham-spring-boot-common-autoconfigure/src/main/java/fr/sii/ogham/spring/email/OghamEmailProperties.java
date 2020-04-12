@@ -31,6 +31,8 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 	private MessageSpecificTemplateProperties template = new MessageSpecificTemplateProperties();
 	@NestedConfigurationProperty
 	private SendRetryProperties sendRetry = new SendRetryProperties();
+	@NestedConfigurationProperty
+	private ImageInliningProperties imageInlining = new ImageInliningProperties();
 
 	public FromProperties getFrom() {
 		return from;
@@ -104,6 +106,14 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 		this.sendRetry = sendRetry;
 	}
 
+	public ImageInliningProperties getImageInlining() {
+		return imageInlining;
+	}
+
+	public void setImageInlining(ImageInliningProperties imageInlining) {
+		this.imageInlining = imageInlining;
+	}
+
 	public static class SubjectProperties {
 		/**
 		 * Configures how to handle missing email subject: if no subject is
@@ -172,7 +182,7 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 			this.firstLinePrefix = firstLinePrefix;
 		}
 	}
-	
+
 	public static class FromProperties {
 		/**
 		 * Configures how to handle missing email sender address: if no sender
@@ -189,7 +199,7 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 			this.defaultValue = defaultValue;
 		}
 	}
-	
+
 	public static class ToProperties {
 		/**
 		 * Configures how to handle missing email recipient address: if no "to"
@@ -201,7 +211,7 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 		public List<String> getDefaultValue() {
 			return defaultValue;
 		}
-		
+
 		public void setDefaultValue(List<String> defaultValue) {
 			this.defaultValue = defaultValue;
 		}
@@ -218,7 +228,7 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 		public List<String> getDefaultValue() {
 			return defaultValue;
 		}
-		
+
 		public void setDefaultValue(List<String> defaultValue) {
 			this.defaultValue = defaultValue;
 		}
@@ -235,9 +245,47 @@ public class OghamEmailProperties implements OghamTemplateProperties {
 		public List<String> getDefaultValue() {
 			return defaultValue;
 		}
-		
+
 		public void setDefaultValue(List<String> defaultValue) {
 			this.defaultValue = defaultValue;
 		}
 	}
+
+	public static class ImageInliningProperties {
+		@NestedConfigurationProperty
+		private MimetypeProperties mimetype = new MimetypeProperties();
+
+		public MimetypeProperties getMimetype() {
+			return mimetype;
+		}
+
+		public void setMimetype(MimetypeProperties mimetype) {
+			this.mimetype = mimetype;
+		}
+	}
+	
+	public static class MimetypeProperties {
+		
+		/**
+		 * The allowed mimetypes for image inlining.<br />
+		 * <br />
+		 * Each allowed mimetype pattern may contain "*" character to indicate
+		 * that is accepts several characters (useful to match sub-types such as
+		 * "image/*" to match all kind of images).<br />
+		 * <br />
+		 * If the pattern starts with "!", then the mimetype is excluded. For
+		 * example, "image/*,!image/png" indicates that all kind of images are
+		 * allowed except for PNG images.
+		 */
+		private List<String> allowedMimetypes;
+
+		public List<String> getAllowedMimetypes() {
+			return allowedMimetypes;
+		}
+
+		public void setAllowedMimetypes(List<String> allowedMimetypes) {
+			this.allowedMimetypes = allowedMimetypes;
+		}
+	}
+
 }

@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.not
 import fr.sii.ogham.core.builder.MessagingBuilder
 import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder
 import fr.sii.ogham.testing.extension.common.LogTestInformation
-import spock.lang.IgnoreRest
 import spock.lang.Specification
 
 @LogTestInformation
@@ -39,7 +38,6 @@ class SmsglobalServiceProviderConfigurerSpec extends Specification {
 						.enabled(is(false))
 	}
 	
-	@IgnoreRest
 	def "SmsGlobal service provider forced configuration should use TLV message_payload and disable splitter"() {
 		given:
 			MessagingBuilder builder = MessagingBuilder.standard()
