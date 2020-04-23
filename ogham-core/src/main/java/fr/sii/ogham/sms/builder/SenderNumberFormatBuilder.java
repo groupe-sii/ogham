@@ -42,9 +42,9 @@ public class SenderNumberFormatBuilder extends AbstractParent<SenderNumberBuilde
 	public SenderNumberFormatBuilder(SenderNumberBuilder parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		enableAlphanumericValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		enableShortCodeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		enableAlphanumericValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		enableShortCodeValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		enableInternationalValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 	}
 
 	/**

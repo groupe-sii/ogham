@@ -208,9 +208,9 @@ public class JavaMailBuilder extends AbstractParent<EmailBuilder> implements Bui
 	public JavaMailBuilder(EmailBuilder parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		charsetValueBuilder = new ConfigurationValueBuilderHelper<>(this, Charset.class, buildContext);
+		hostValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		portValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);
+		charsetValueBuilder = buildContext.newConfigurationValueBuilder(this, Charset.class);
 		additionalProperties = new Properties();
 	}
 

@@ -26,7 +26,7 @@ public class SimpleCharsetDetectorBuilder<P> extends AbstractParent<P> implement
 	 */
 	public SimpleCharsetDetectorBuilder(P parent, BuildContext buildContext) {
 		super(parent);
-		charsetValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		charsetValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
 	}
 
 	@Override

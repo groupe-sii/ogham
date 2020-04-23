@@ -194,13 +194,13 @@ public class CloudhopperBuilder extends AbstractParent<SmsBuilder> implements Bu
 		super(parent);
 		this.buildContext = buildContext;
 		sharedEncoderBuilder = new ReadableEncoderBuilder(buildContext);
-		systemIdValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		hostValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		portValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		interfaceVersionValueBuilder = new ConfigurationValueBuilderHelper<>(this, InterfaceVersion.class, buildContext);
-		systemTypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		bindTypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmppBindType.class, buildContext);
+		systemIdValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		passwordValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		hostValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		portValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);
+		interfaceVersionValueBuilder = buildContext.newConfigurationValueBuilder(this, InterfaceVersion.class);
+		systemTypeValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		bindTypeValueBuilder = buildContext.newConfigurationValueBuilder(this, SmppBindType.class);
 	}
 
 	/**

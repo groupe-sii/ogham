@@ -125,8 +125,8 @@ public class SendGridV2Builder extends AbstractSendGridBuilder<SendGridV2Builder
 	 */
 	public SendGridV2Builder(EmailBuilder parent, BuildContext buildContext) {
 		super(SendGridV2Builder.class, parent, buildContext);
-		usernameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		usernameValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		passwordValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
 	}
 
 	@Override

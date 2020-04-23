@@ -47,8 +47,8 @@ public abstract class AbstractSingleResolutionBuilder<MYSELF extends AbstractSin
 		myself = (MYSELF) selfType.cast(this);
 		this.buildContext = buildContext;
 		lookups = new ArrayList<>();
-		pathPrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
-		pathSuffixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
+		pathPrefixValueBuilder = buildContext.newConfigurationValueBuilder(myself, String.class);
+		pathSuffixValueBuilder = buildContext.newConfigurationValueBuilder(myself, String.class);
 	}
 
 	/**

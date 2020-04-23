@@ -1,8 +1,10 @@
 package fr.sii.ogham.core.builder.context;
 
 import java.util.List;
+import java.util.function.Function;
 
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.env.PropertyResolver;
 
@@ -73,4 +75,44 @@ public interface BuildContext {
 	 * @return the converter
 	 */
 	Converter getConverter();
+
+	/**
+	 * Create a new {@link ConfigurationValueBuilder} instance associated to
+	 * this {@link BuildContext}.
+	 * 
+	 * @param <P>
+	 *            the type of the parent
+	 * @param <V>
+	 *            the type of the value
+	 * @param <T>
+	 *            the type of the {@link ConfigurationValueBuilder}
+	 * @param parent
+	 *            the parent instance
+	 * @param valueClass
+	 *            the class of the value
+	 * @return the {@link ConfigurationValueBuilder} instance
+	 */
+	<P, V, T extends ConfigurationValueBuilder<P, V>> T newConfigurationValueBuilder(P parent, Class<V> valueClass);
+
+	/**
+	 * Create a new {@link ConfigurationValueBuilder} instance using a custom
+	 * factory. The factory receives the current {@link BuildContext} instance
+	 * in order to associate the {@link ConfigurationValueBuilder} with this
+	 * {@link BuildContext}.
+	 * 
+	 * <p>
+	 * This can be useful for creating a derived instance instead of default
+	 * one.
+	 * 
+	 * @param <P>
+	 *            the type of the parent
+	 * @param <V>
+	 *            the type of the value
+	 * @param <T>
+	 *            the type of the {@link ConfigurationValueBuilder}
+	 * @param factory
+	 *            the factory used to create the instance
+	 * @return the {@link ConfigurationValueBuilder} instance
+	 */
+	<P, V, T extends ConfigurationValueBuilder<P, V>> T newConfigurationValueBuilder(Function<BuildContext, T> factory);
 }

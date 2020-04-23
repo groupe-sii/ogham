@@ -44,9 +44,9 @@ public class OvhOptionsBuilder extends AbstractParent<OvhSmsBuilder> implements 
 	public OvhOptionsBuilder(OvhSmsBuilder parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		noStopValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		tagValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		smsCodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, SmsCoding.class, buildContext);
+		noStopValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		tagValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		smsCodingValueBuilder = buildContext.newConfigurationValueBuilder(this, SmsCoding.class);
 	}
 
 	/**

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -252,7 +253,7 @@ import fr.sii.ogham.sms.message.Sms;
  */
 public class MessagingBuilder implements Builder<MessagingService> {
 	private static final Logger LOG = LoggerFactory.getLogger(MessagingBuilder.class);
-	private static final String BASE_PACKAGE = "fr.sii.ogham";
+	public static final String BASE_PACKAGE = "fr.sii.ogham";
 
 	protected final boolean autoconfigure;
 	protected final Map<ConfigurationPhase, Boolean> alreadyConfigured;
@@ -261,6 +262,7 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	protected final BuildContext buildContext;
 	protected final Registry<Object> registry;
 	protected final Cleanable cleaner;
+	protected CleanableRegistry cleanableRegistry;
 	protected MimetypeDetectionBuilder<MessagingBuilder> mimetypeBuilder;
 	protected StandaloneResourceResolutionBuilder<MessagingBuilder> resourceBuilder;
 	protected EmailBuilder emailBuilder;
@@ -294,14 +296,13 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		this.autoconfigure = autoconfigure;
 		alreadyConfigured = new EnumMap<>(ConfigurationPhase.class);
 		configurers = new PriorizedList<>();
-		environmentBuilder = new SimpleEnvironmentBuilder<>(this);
-		CleanableRegistry cleanableRegistry = new CleanableRegistry();
-		registry = cleanableRegistry;
-		cleaner = cleanableRegistry;
-		buildContext = new EnvBuilderBasedContext(environmentBuilder, registry);
-		mimetypeBuilder = new SimpleMimetypeDetectionBuilder<>(this, buildContext);
-		resourceBuilder = new StandaloneResourceResolutionBuilder<>(this, buildContext);
-		wrapUncaughtValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		environmentBuilder = createEnvironmentBuilder();
+		registry = createRegistry();
+		cleaner = createCleanable();
+		buildContext = createBuildContext();
+		mimetypeBuilder = createMimetypeBuilder();
+		resourceBuilder = createResourceResolutionBuilder();
+		wrapUncaughtValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 	}
 
 	/**
@@ -1261,6 +1262,38 @@ public class MessagingBuilder implements Builder<MessagingService> {
 		service = new CleanableMessagingService(service, cleaner);
 		return service;
 	}
+	
+	protected StandaloneResourceResolutionBuilder<MessagingBuilder> createResourceResolutionBuilder() {
+		return new StandaloneResourceResolutionBuilder<>(this, buildContext);
+	}
+	
+	protected MimetypeDetectionBuilder<MessagingBuilder> createMimetypeBuilder() {
+		return new SimpleMimetypeDetectionBuilder<>(this, buildContext);
+	}
+	
+	protected Cleanable createCleanable() {
+		return getOrCreateCleanableRegistry();
+	}
+	
+	protected Registry<Object> createRegistry() {
+		return getOrCreateCleanableRegistry();
+	}
+	
+	protected CleanableRegistry getOrCreateCleanableRegistry() {
+		if (cleanableRegistry == null) {
+			cleanableRegistry = new CleanableRegistry();
+		}
+		return cleanableRegistry;
+	}
+	
+	protected EnvironmentBuilder<MessagingBuilder> createEnvironmentBuilder() {
+		return new SimpleEnvironmentBuilder<>(this);
+	}
+	
+	protected BuildContext createBuildContext() {
+		return new EnvBuilderBasedContext(environmentBuilder, registry);
+	}
+
 
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
@@ -1652,7 +1685,119 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder standard(boolean autoconfigure, String... basePackages) {
-		MessagingBuilder builder = new MessagingBuilder(autoconfigure);
+		return standard(() -> new MessagingBuilder(autoconfigure), autoconfigure, basePackages);
+	}
+
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and registers auto-configures but doesn't apply them if
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
+	 * 
+	 * <p>
+	 * This method allows to use a custom {@link MessagingBuilder}
+	 * implementation.
+	 * 
+	 * <p>
+	 * <strong>NOTE:</strong> This is for advanced usage only.
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the standard behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Enables all {@link Email} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Enables all {@link Sms} sender implementations that are present in
+	 * the classpath and configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in the provided
+	 * packages and sub-packages are loaded. Some Ogham modules are optional
+	 * meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "standard" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "standard").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * <li><code>DefaultJavaMailConfigurer</code>: 50000</li>
+	 * <li><code>DefaultCloudhopperConfigurer</code>: 40000</li>
+	 * <li><code>DefaultSendGridConfigurer</code>: 30000</li>
+	 * <li><code>DefaultOvhSmsConfigurer</code>: 20000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by standard
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior that fits 95% of usages. You can still override some behaviors
+	 * for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * 
+	 * @param factory
+	 *            the factory used to create the {@link MessagingBuilder}
+	 *            instance
+	 * @param autoconfigure
+	 *            true to automatically apply found configurers, false to
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
+	 * @param basePackages
+	 *            the base packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 * @param <T>
+	 *            the type of final {@link MessagingBuilder}
+	 * @return the messaging builder that can be customized
+	 */
+	public static <T extends MessagingBuilder> T standard(Supplier<T> factory, boolean autoconfigure, String... basePackages) {
+		T builder = factory.get();
 		findAndRegister(builder, "standard", basePackages);
 		if (autoconfigure) {
 			builder.configure(ConfigurationPhase.AFTER_INIT);
@@ -2024,7 +2169,115 @@ public class MessagingBuilder implements Builder<MessagingService> {
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder minimal(boolean autoconfigure, String... basePackages) {
-		MessagingBuilder builder = new MessagingBuilder(autoconfigure);
+		return minimal(() -> new MessagingBuilder(autoconfigure), autoconfigure, basePackages);
+	}
+
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and registers auto-configures but doesn't apply them if
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
+	 * 
+	 * <p>
+	 * This method allows to use a custom {@link MessagingBuilder}
+	 * implementation.
+	 * 
+	 * <p>
+	 * <strong>NOTE:</strong> This is for advanced usage only.
+	 * 
+	 * 
+	 * Usage example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * <p>
+	 * Basically, the minimal behavior:
+	 * <ul>
+	 * <li>Enables all template engines that are present in the classpath and
+	 * configures them</li>
+	 * <li>Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception</li>
+	 * <li>Uses system properties</li>
+	 * <li>Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)</li>
+	 * <li>Enables mimetype detection</li>
+	 * <li>Enables locating templates, css, images and all other resources using
+	 * lookup prefix ("file:" for files that are present on the filesystem,
+	 * "classpath:" and "" for files that are present in the classpath)</li>
+	 * <li>Enables use of some properties to provide path prefix/suffix for
+	 * locating resources</li>
+	 * <li>Enables images and css inlining used by HTML {@link Email}s</li>
+	 * </ul>
+	 * 
+	 * The minimal behavior doesn't automatically auto-configure sender
+	 * implementations.
+	 * 
+	 * <p>
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in the provided
+	 * packages and sub-packages are loaded. Some Ogham modules are optional
+	 * meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the "minimal" builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to "minimal").
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * <ul>
+	 * <li><code>DefaultMessagingConfigurer</code>: 100000</li>
+	 * <li><code>DefaultThymeleafEmailConfigurer</code>: 90000</li>
+	 * <li><code>DefaultFreemarkerEmailConfigurer</code>: 80000</li>
+	 * <li><code>DefaultThymeleafSmsConfigurer</code>: 70000</li>
+	 * <li><code>DefaultFreemarkerSmsConfigurer</code>: 60000</li>
+	 * </ul>
+	 * 
+	 * TODO: link to whole configuration that is applied by minimal
+	 * 
+	 * <p>
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior with no sender implementation. This is useful if you only want
+	 * to use a particular implementation or your custom sender implementation.
+	 * You can still override some behaviors for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * <pre>
+	 * <code>
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties("application.properties")
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param factory
+	 *            the factory used to create the {@link MessagingBuilder}
+	 *            instance
+	 * @param autoconfigure
+	 *            true to automatically apply found configurers, false to
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
+	 * @param basePackages
+	 *            the base packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 * @param <T>
+	 *            the type of final {@link MessagingBuilder}
+	 * @return the messaging builder that can be customized
+	 */
+	public static <T extends MessagingBuilder> T minimal(Supplier<T> factory, boolean autoconfigure, String... basePackages) {
+		T builder = factory.get();
 		findAndRegister(builder, "minimal", basePackages);
 		if (autoconfigure) {
 			builder.configure(ConfigurationPhase.AFTER_INIT);

@@ -490,7 +490,7 @@ public class OghamCloudhopperProperties {
 		 * 
 		 * Default: <i>30 seconds</i>
 		 */
-		private Long enquireLinkInterval;
+		private Long requestInterval;
 		/**
 		 * The maximum amount of time (in milliseconds) to wait for receiving a
 		 * response from the server to an {@link EnquireLink} request.<br />
@@ -498,7 +498,7 @@ public class OghamCloudhopperProperties {
 		 * 
 		 * Default: <i>10 seconds</i>
 		 */
-		private Long enquireLinkTimeout;
+		private Long responseTimeout;
 		/**
 		 * Connect to the server directly when the client is ready (if true).
 		 * Otherwise, the connection is done when the first message is
@@ -532,20 +532,20 @@ public class OghamCloudhopperProperties {
 			this.enable = enable;
 		}
 
-		public Long getEnquireLinkInterval() {
-			return enquireLinkInterval;
+		public Long getRequestInterval() {
+			return requestInterval;
 		}
 
-		public void setEnquireLinkInterval(Long enquireLinkInterval) {
-			this.enquireLinkInterval = enquireLinkInterval;
+		public void setRequestInterval(Long enquireLinkInterval) {
+			this.requestInterval = enquireLinkInterval;
 		}
 
-		public Long getEnquireLinkTimeout() {
-			return enquireLinkTimeout;
+		public Long getResponseTimeout() {
+			return responseTimeout;
 		}
 
-		public void setEnquireLinkTimeout(Long enquireLinkTimeout) {
-			this.enquireLinkTimeout = enquireLinkTimeout;
+		public void setResponseTimeout(Long enquireLinkTimeout) {
+			this.responseTimeout = enquireLinkTimeout;
 		}
 
 		public Boolean getConnectAtStartup() {
@@ -613,7 +613,7 @@ public class OghamCloudhopperProperties {
 		 * 
 		 * Default: <i>10 seconds</i>
 		 */
-		private Long enquireLinkTimeout;
+		private Long responseTimeout;
 
 		public Boolean getEnable() {
 			return enable;
@@ -631,12 +631,12 @@ public class OghamCloudhopperProperties {
 			this.lastInteractionExpirationDelay = delay;
 		}
 
-		public Long getEnquireLinkTimeout() {
-			return enquireLinkTimeout;
+		public Long getResponseTimeout() {
+			return responseTimeout;
 		}
 
-		public void setEnquireLinkTimeout(Long enquireLinkTimeout) {
-			this.enquireLinkTimeout = enquireLinkTimeout;
+		public void setResponseTimeout(Long enquireLinkTimeout) {
+			this.responseTimeout = enquireLinkTimeout;
 		}
 	}
 }

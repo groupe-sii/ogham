@@ -46,11 +46,11 @@ public class KeepAliveBuilder extends AbstractParent<SessionBuilder> implements 
 
 	public KeepAliveBuilder(SessionBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.enableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		this.enquireLinkIntervalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		this.enquireLinkTimeoutValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		this.connectAtStartupValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		this.maxConsecutiveTimeoutsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
+		this.enableValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		this.enquireLinkIntervalValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		this.enquireLinkTimeoutValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		this.connectAtStartupValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		this.maxConsecutiveTimeoutsValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);
 	}
 
 	/**

@@ -53,7 +53,7 @@ public abstract class AbstractAutofillDefaultValueBuilder<MYSELF, P, V> extends 
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
 		this.buildContext = buildContext;
-		defaultValueBuilder = new ConfigurationValueBuilderHelper<>(myself, valueClass, buildContext);
+		defaultValueBuilder = buildContext.newConfigurationValueBuilder(myself, valueClass);
 	}
 
 	/**

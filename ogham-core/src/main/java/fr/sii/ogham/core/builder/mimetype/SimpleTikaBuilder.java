@@ -53,7 +53,7 @@ public class SimpleTikaBuilder<P> extends AbstractParent<P> implements TikaBuild
 	public SimpleTikaBuilder(P parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		failIfOctetStreamValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		failIfOctetStreamValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 	}
 
 	@Override

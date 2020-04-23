@@ -1,7 +1,10 @@
 package fr.sii.ogham.core.builder.context;
 
 import java.util.List;
+import java.util.function.Function;
 
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.registry.Registry;
 import fr.sii.ogham.core.convert.Converter;
@@ -51,4 +54,14 @@ public class EnvBuilderBasedContext implements BuildContext {
 		return environmentBuilder.converter().build();
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public <P, V, T extends ConfigurationValueBuilder<P, V>> T newConfigurationValueBuilder(P parent, Class<V> valueClass) {
+		return newConfigurationValueBuilder(ctx -> (T) new ConfigurationValueBuilderHelper<>(parent, valueClass, ctx));
+	}
+
+	@Override
+	public <P, V, T extends ConfigurationValueBuilder<P, V>> T newConfigurationValueBuilder(Function<BuildContext, T> factory) {
+		return factory.apply(this);
+	}
 }

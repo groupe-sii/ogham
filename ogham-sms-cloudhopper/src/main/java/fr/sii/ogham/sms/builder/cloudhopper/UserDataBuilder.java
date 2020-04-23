@@ -53,8 +53,8 @@ public class UserDataBuilder extends AbstractParent<CloudhopperBuilder> implemen
 	 */
 	public UserDataBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
-		useShortMessageValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		useTlvMessagePayloadValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		useShortMessageValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		useTlvMessagePayloadValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 	}
 
 	/**

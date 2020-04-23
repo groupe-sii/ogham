@@ -60,9 +60,9 @@ public class UsernamePasswordAuthenticatorBuilder extends AbstractParent<JavaMai
 	public UsernamePasswordAuthenticatorBuilder(JavaMailBuilder parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		usernameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		updatableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		usernameValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		passwordValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		updatableValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 	}
 
 	/**

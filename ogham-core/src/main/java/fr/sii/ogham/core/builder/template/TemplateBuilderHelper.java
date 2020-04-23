@@ -77,8 +77,8 @@ public class TemplateBuilderHelper<P> {
 		this.parent = parent;
 		this.buildContext = buildContext;
 		templateBuilders = new ArrayList<>();
-		missingVariantFailValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		listPossiblePathsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		missingVariantFailValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		listPossiblePathsValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 		priorityProvider = new ImplementationPriorityProvider<>(buildContext);
 	}
 

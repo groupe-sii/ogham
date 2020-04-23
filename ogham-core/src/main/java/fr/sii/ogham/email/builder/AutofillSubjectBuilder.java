@@ -49,8 +49,8 @@ public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder<
 	 */
 	public AutofillSubjectBuilder(AutofillEmailBuilder parent, BuildContext buildContext) {
 		super(AutofillSubjectBuilder.class, parent, String.class, buildContext);
-		enableHtmlTitleValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class, buildContext);
-		firstLinePrefixValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
+		enableHtmlTitleValueBuilder = buildContext.newConfigurationValueBuilder(myself, Boolean.class);
+		firstLinePrefixValueBuilder = buildContext.newConfigurationValueBuilder(myself, String.class);
 	}
 	
 	/**

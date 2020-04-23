@@ -125,7 +125,7 @@ public class MessageSplitterBuilder extends AbstractParent<CloudhopperBuilder> i
 		super(parent);
 		this.buildContext = buildContext;
 		this.encoderBuilder = encoderBuilder;
-		enableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		enableValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 		customSplitters = new PriorizedList<>();
 	}
 

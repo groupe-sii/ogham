@@ -106,10 +106,10 @@ public class OvhSmsBuilder extends AbstractParent<SmsBuilder> implements Builder
 	public OvhSmsBuilder(SmsBuilder parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		urlValueBuilder = new ConfigurationValueBuilderHelper<>(this, URL.class, buildContext);
-		accountValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		loginValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		passwordValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		urlValueBuilder = buildContext.newConfigurationValueBuilder(this, URL.class);
+		accountValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		loginValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		passwordValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
 	}
 
 	/**

@@ -74,8 +74,8 @@ public class PerExecutionDelayBuilder<P> extends AbstractParent<P> implements Bu
 	public PerExecutionDelayBuilder(P parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		delaysValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long[].class, buildContext);
+		maxRetriesValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);
+		delaysValueBuilder = buildContext.newConfigurationValueBuilder(this, Long[].class);
 	}
 
 	/**

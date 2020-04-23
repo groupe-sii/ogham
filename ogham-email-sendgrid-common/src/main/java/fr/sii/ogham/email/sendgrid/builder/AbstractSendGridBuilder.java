@@ -37,8 +37,8 @@ public abstract class AbstractSendGridBuilder<MYSELF extends AbstractSendGridBui
 		super(parent);
 		myself = (MYSELF) selfType.cast(this);
 		this.buildContext = buildContext;
-		apiKeyValueBuilder = new ConfigurationValueBuilderHelper<>(myself, String.class, buildContext);
-		urlValueBuilder = new ConfigurationValueBuilderHelper<>(myself, URL.class, buildContext);
+		apiKeyValueBuilder = buildContext.newConfigurationValueBuilder(myself, String.class);
+		urlValueBuilder = buildContext.newConfigurationValueBuilder(myself, URL.class);
 		if (mimetypeBuilder != null) {
 			mimetype(mimetypeBuilder);
 		}

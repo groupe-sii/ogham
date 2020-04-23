@@ -38,7 +38,7 @@ public class RecipientNumberFormatBuilder extends AbstractParent<RecipientNumber
 	public RecipientNumberFormatBuilder(RecipientNumberBuilder parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		enableInternationalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		enableInternationalValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 	}
 
 	/**

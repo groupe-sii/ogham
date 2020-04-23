@@ -51,9 +51,9 @@ public class ReuseSessionBuilder extends AbstractParent<SessionBuilder> implemen
 
 	public ReuseSessionBuilder(SessionBuilder parent, BuildContext buildContext) {
 		super(parent);
-		this.enableValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		this.lastInteractionExpirationDelayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		this.enquireLinkTimeoutValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		this.enableValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		this.lastInteractionExpirationDelayValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		this.enquireLinkTimeoutValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
 	}
 
 	/**

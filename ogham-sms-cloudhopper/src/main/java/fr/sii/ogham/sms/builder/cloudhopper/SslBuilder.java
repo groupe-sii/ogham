@@ -36,7 +36,7 @@ public class SslBuilder extends AbstractParent<CloudhopperBuilder> implements Bu
 	 */
 	public SslBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
-		enableSslValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		enableSslValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 	}
 
 	/**

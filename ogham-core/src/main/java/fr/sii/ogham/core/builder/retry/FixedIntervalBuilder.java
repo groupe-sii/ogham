@@ -83,8 +83,8 @@ public class FixedIntervalBuilder<P> extends AbstractParent<P> implements Builde
 	public FixedIntervalBuilder(P parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		intervalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		maxRetriesValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);
+		intervalValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
 	}
 
 	/**

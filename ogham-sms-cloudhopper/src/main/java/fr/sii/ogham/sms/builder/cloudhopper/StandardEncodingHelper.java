@@ -11,7 +11,7 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
  * @author Aurélien Baudet
  *
  */
-class StandardEncodingHelper extends ConfigurationValueBuilderHelper<EncoderBuilder, Integer> {
+public class StandardEncodingHelper extends ConfigurationValueBuilderHelper<EncoderBuilder, Integer> {
 	private final String charsetName;
 
 	public StandardEncodingHelper(EncoderBuilder parent, String charsetName, BuildContext buildContext) {

@@ -60,9 +60,9 @@ public class FreemarkerConfigurationBuilder<P> extends AbstractParent<P> impleme
 	 */
 	public FreemarkerConfigurationBuilder(P parent, BuildContext buildContext) {
 		super(parent);
-		defaultEncodingValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		enableStaticMethodAccessValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		staticMethodAccessVariableNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		defaultEncodingValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		enableStaticMethodAccessValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		staticMethodAccessVariableNameValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
 		sharedVariables = new HashMap<>();
 	}
 

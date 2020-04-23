@@ -2,7 +2,10 @@ package fr.sii.ogham.core.builder.context;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
 
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.JavaPropertiesResolver;
@@ -53,6 +56,17 @@ public class DefaultBuildContext implements BuildContext {
 	@Override
 	public Converter getConverter() {
 		return converter;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <P, V, T extends ConfigurationValueBuilder<P, V>> T newConfigurationValueBuilder(P parent, Class<V> valueClass) {
+		return newConfigurationValueBuilder(ctx -> (T) new ConfigurationValueBuilderHelper<>(parent, valueClass, ctx));
+	}
+
+	@Override
+	public <P, V, T extends ConfigurationValueBuilder<P, V>> T newConfigurationValueBuilder(Function<BuildContext, T> factory) {
+		return factory.apply(this);
 	}
 
 }

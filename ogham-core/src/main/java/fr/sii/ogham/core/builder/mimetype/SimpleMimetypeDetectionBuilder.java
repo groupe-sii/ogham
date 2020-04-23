@@ -65,8 +65,8 @@ public class SimpleMimetypeDetectionBuilder<P> extends AbstractParent<P> impleme
 	public SimpleMimetypeDetectionBuilder(P parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		defaultMimetypeValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
-		allowedMimetypesValueBuilder = new ConfigurationValueBuilderHelper<>(this, String[].class, buildContext);
+		defaultMimetypeValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
+		allowedMimetypesValueBuilder = buildContext.newConfigurationValueBuilder(this, String[].class);
 	}
 
 	@Override

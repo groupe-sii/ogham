@@ -109,13 +109,13 @@ public class EncoderBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public EncoderBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		gsm7PackedValueBuilder = new StandardEncodingHelper(this, NAME_GSM7, buildContext);
-		gsm8ValueBuilder = new StandardEncodingHelper(this, NAME_GSM, buildContext);
-		ucs2ValueBuilder = new StandardEncodingHelper(this, NAME_UCS_2, buildContext);
-		latin1ValueBuilder = new StandardEncodingHelper(this, NAME_ISO_8859_1, buildContext);
+		gsm7PackedValueBuilder = buildContext.newConfigurationValueBuilder(ctx -> new StandardEncodingHelper(this, NAME_GSM7, ctx));
+		gsm8ValueBuilder = buildContext.newConfigurationValueBuilder(ctx -> new StandardEncodingHelper(this, NAME_GSM, ctx));
+		ucs2ValueBuilder = buildContext.newConfigurationValueBuilder(ctx -> new StandardEncodingHelper(this, NAME_UCS_2, ctx));
+		latin1ValueBuilder = buildContext.newConfigurationValueBuilder(ctx -> new StandardEncodingHelper(this, NAME_ISO_8859_1, ctx));
 		customEncoders = new PriorizedList<>();
-		autoGuessValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		fallbackCharsetNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		autoGuessValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		fallbackCharsetNameValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
 	}
 
 	/**

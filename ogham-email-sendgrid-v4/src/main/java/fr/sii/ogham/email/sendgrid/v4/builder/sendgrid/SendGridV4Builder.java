@@ -102,7 +102,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	private SendGridClient client;
 	private SendGridInterceptor interceptor;
 	private Client clientHelper;
-	private ConfigurationValueBuilderHelper<SendGridV4Builder, Boolean> unitTestingValueBuilder;
+	private final ConfigurationValueBuilderHelper<SendGridV4Builder, Boolean> unitTestingValueBuilder;
 
 	/**
 	 * Default constructor when using SendGrid sender without all Ogham work.
@@ -130,7 +130,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	 */
 	public SendGridV4Builder(EmailBuilder parent, BuildContext buildContext) {
 		super(SendGridV4Builder.class, parent, buildContext);
-		unitTestingValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
+		unitTestingValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	@Override
 	public ConfigurationValueBuilder<SendGridV4Builder, String> username() {
 		LOG.warn("username and password are no more available with SendGrid v4");
-		return new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		return buildContext.newConfigurationValueBuilder(this, String.class);
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 	@Override
 	public ConfigurationValueBuilder<SendGridV4Builder, String> password() {
 		LOG.warn("username and password are no more available with SendGrid v4");
-		return new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		return buildContext.newConfigurationValueBuilder(this, String.class);
 	}
 
 	/**

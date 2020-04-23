@@ -85,8 +85,8 @@ public class DataCodingSchemeBuilder extends AbstractParent<CloudhopperBuilder> 
 		super(parent);
 		this.buildContext = buildContext;
 		this.interfaceVersionProvider = interfaceVersionProvider;
-		this.autoValueBuilder = new ConfigurationValueBuilderHelper<>(this, Boolean.class, buildContext);
-		this.dcsValueBuilder = new ConfigurationValueBuilderHelper<>(this, Byte.class, buildContext);
+		this.autoValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);
+		this.dcsValueBuilder = buildContext.newConfigurationValueBuilder(this, Byte.class);
 	}
 
 	/**

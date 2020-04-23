@@ -70,8 +70,8 @@ public class ExponentialDelayBuilder<P> extends AbstractParent<P> implements Bui
 	public ExponentialDelayBuilder(P parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		initialDelayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		maxRetriesValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);
+		initialDelayValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
 	}
 
 	/**

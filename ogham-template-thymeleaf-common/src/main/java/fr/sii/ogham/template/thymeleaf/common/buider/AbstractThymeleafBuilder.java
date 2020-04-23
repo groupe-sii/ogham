@@ -57,7 +57,7 @@ public abstract class AbstractThymeleafBuilder<MYSELF extends AbstractThymeleafB
 		myself = (MYSELF) selfType.cast(this);
 		this.buildContext = buildContext;
 		customAdapters = new ArrayList<>();
-		enableCacheValueBuilder = new ConfigurationValueBuilderHelper<>(myself, Boolean.class, buildContext);
+		enableCacheValueBuilder = buildContext.newConfigurationValueBuilder(myself, Boolean.class);
 	}
 
 	protected AbstractThymeleafBuilder(P parent, BuildContext buildContext) {

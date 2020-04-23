@@ -68,8 +68,8 @@ public class FixedDelayBuilder<P> extends AbstractParent<P> implements Builder<R
 	public FixedDelayBuilder(P parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		maxRetriesValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		delayValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
+		maxRetriesValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);
+		delayValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
 	}
 
 	/**

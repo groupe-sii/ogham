@@ -49,16 +49,16 @@ public class SessionBuilder extends AbstractParent<CloudhopperBuilder> implement
 	public SessionBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
 		super(parent);
 		this.buildContext = buildContext;
-		bindValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		connectValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		requestExpiryValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		windowMonitorInvervalValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		windowWaitValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		windowSizeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Integer.class, buildContext);
-		writeValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		responseValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		unbindValueBuilder = new ConfigurationValueBuilderHelper<>(this, Long.class, buildContext);
-		sessionNameValueBuilder = new ConfigurationValueBuilderHelper<>(this, String.class, buildContext);
+		bindValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		connectValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		requestExpiryValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		windowMonitorInvervalValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		windowWaitValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		windowSizeValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);
+		writeValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		responseValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		unbindValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);
+		sessionNameValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);
 	}
 
 	/**
