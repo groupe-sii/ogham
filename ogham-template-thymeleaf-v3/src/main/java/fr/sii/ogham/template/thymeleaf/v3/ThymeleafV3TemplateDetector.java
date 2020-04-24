@@ -64,7 +64,7 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 			}
 			return isThymeleafTemplate || isEmptyTemplate(resolvedTemplate);
 		} catch (IOException e) {
-			throw new EngineDetectionException("Failed to detect if template can be read by thymeleaf", e);
+			throw new EngineDetectionException("Failed to detect because template can't be read by thymeleaf", e);
 		}
 	}
 

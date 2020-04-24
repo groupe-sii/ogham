@@ -15,7 +15,7 @@ import fr.sii.ogham.core.resource.NamedResource;
 import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
 
 /**
  * Implementation that is able to handle any {@link Resource}.

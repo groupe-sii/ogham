@@ -10,7 +10,7 @@ import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 
 /**
@@ -76,7 +76,7 @@ public final class StringContentHandler implements SendGridContentHandler {
 				LOG.trace("content: {}", content);
 				setMimeContent(email, contentStr, mime);
 			} catch (MimeTypeDetectionException e) {
-				throw new ContentHandlerException("Unable to set the email content", e);
+				throw new ContentHandlerException("Unable to set the email content", content, e);
 			}
 		} else {
 			throw new IllegalArgumentException("This instance can only work with MayHaveStringContent instances, but was passed " + content.getClass().getSimpleName());

@@ -4,6 +4,15 @@ import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
 import fr.sii.ogham.core.clean.Cleanable;
 
+/**
+ * Specialized exception that keeps a reference to the {@link Cleanable}
+ * instance which {@link Cleanable#clean()} method has been called and failed.
+ * 
+ * This may be useful to manually trying to cleanup again.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class CleanableException extends CleanException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 

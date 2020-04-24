@@ -9,6 +9,7 @@ import javax.activation.MimeTypeParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.exception.mimetype.InvalidMimetypeException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
 
@@ -77,7 +78,7 @@ public class OverrideMimetypeProvider implements MimeTypeProvider {
 		try {
 			return new MimeType(replaced);
 		} catch (MimeTypeParseException e) {
-			throw new MimeTypeDetectionException("Replacing mimetype " + original + " by " + replaced + " failed because " + replaced + " is not valid", e);
+			throw new InvalidMimetypeException("Replacing mimetype " + original + " by " + replaced + " failed because " + replaced + " is not valid", e);
 		}
 	}
 

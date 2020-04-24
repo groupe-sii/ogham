@@ -23,7 +23,7 @@ import fr.sii.ogham.core.sender.AbstractSpecializedSender;
 import fr.sii.ogham.core.util.Base64Utils;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.message.Recipient;

@@ -5,6 +5,15 @@ import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.message.Message;
 
+/**
+ * The developer may not provide all fields of the message in its code. Some
+ * values may be automatically filled.
+ * 
+ * This exception is thrown when there is an issue while filling the message.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class FillMessageException extends MessageException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 

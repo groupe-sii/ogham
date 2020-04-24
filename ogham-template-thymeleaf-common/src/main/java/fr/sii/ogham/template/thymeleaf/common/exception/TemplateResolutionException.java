@@ -5,7 +5,18 @@ import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.template.exception.TemplateRuntimeException;
 
-@SuppressWarnings({ "squid:MaximumInheritanceDepth" })	// Object, Throwable, Exception and RuntimeException are counted but this is stupid
+/**
+ * Specialized exception that is thrown by template engine integrations to
+ * indicate that a template couldn't be resolved.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@SuppressWarnings({ "squid:MaximumInheritanceDepth" }) // Object, Throwable,
+														// Exception and
+														// RuntimeException are
+														// counted but this is
+														// stupid
 public class TemplateResolutionException extends TemplateRuntimeException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 

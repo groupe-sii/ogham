@@ -9,7 +9,7 @@ import fr.sii.ogham.core.resource.NamedResource;
 import fr.sii.ogham.core.resource.OverrideNameWrapper;
 import fr.sii.ogham.core.resource.Resource;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
 
 public class OverrideNameWrapperResourceHandler implements JavaMailAttachmentResourceHandler {
 	private final JavaMailAttachmentResourceHandler delegate;

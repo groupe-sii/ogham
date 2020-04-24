@@ -4,6 +4,13 @@ import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
 import fr.sii.ogham.email.attachment.Attachment;
 
+/**
+ * Specific exception for SendGrid that indicates that an attachment is not
+ * readable or doesn't exist.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class AttachmentReadException extends SendGridException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 

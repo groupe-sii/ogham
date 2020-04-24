@@ -4,7 +4,7 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimePart;
 
 import fr.sii.ogham.core.message.content.Content;
-import fr.sii.ogham.email.exception.javamail.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
 

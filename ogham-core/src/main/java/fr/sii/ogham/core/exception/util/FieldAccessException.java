@@ -4,6 +4,13 @@ import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
 
 import fr.sii.ogham.core.exception.MessagingRuntimeException;
 
+/**
+ * Ogham provides some utility functions. This exception is thrown while trying
+ * to access a field value through reflection but it failed.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class FieldAccessException extends MessagingRuntimeException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 

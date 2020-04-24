@@ -10,8 +10,8 @@ import javax.mail.internet.MimePart;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.util.PriorityComparator;
 import fr.sii.ogham.core.util.PriorizedMatchingHandler;
-import fr.sii.ogham.email.exception.javamail.ContentHandlerException;
-import fr.sii.ogham.email.exception.javamail.NoContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.NoContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 
 /**

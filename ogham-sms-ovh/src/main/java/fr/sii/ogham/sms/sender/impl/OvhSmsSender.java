@@ -228,7 +228,7 @@ public class OvhSmsSender extends AbstractSpecializedSender<Sms> {
 			return StringUtils.leftPad(withoutSpaces, INTERNATIONAL_FORMAT_LENGTH, '0');
 		} else {
 			throw new PhoneNumberException("Invalid phone number. OVH only accepts international phone numbers. Please write the phone number with the country prefix. "
-					+ "For example, if the number is 0601020304 and it is a French number, then the international number is +33601020304");
+					+ "For example, if the number is 0601020304 and it is a French number, then the international number is +33601020304", phoneNumber);
 		}
 	}
 

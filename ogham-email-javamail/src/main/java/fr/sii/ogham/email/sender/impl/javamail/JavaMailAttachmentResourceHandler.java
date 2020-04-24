@@ -4,7 +4,7 @@ import javax.mail.BodyPart;
 
 import fr.sii.ogham.core.resource.NamedResource;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
 
 /**
  * Handle attachments and add it to the email.

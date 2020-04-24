@@ -7,6 +7,7 @@ import java.util.List;
 
 import fr.sii.ogham.core.clean.Cleanable;
 import fr.sii.ogham.core.exception.clean.CleanException;
+import fr.sii.ogham.core.exception.clean.CleanableException;
 import fr.sii.ogham.core.exception.clean.MultipleCleanException;
 
 /**
@@ -58,7 +59,7 @@ public class CleanableRegistry implements Registry<Object>, Cleanable {
 		try {
 			cleanable.clean();
 		} catch (CleanException e) {
-			failures.add(e);
+			failures.add(new CleanableException(e, cleanable));
 		}
 	}
 }

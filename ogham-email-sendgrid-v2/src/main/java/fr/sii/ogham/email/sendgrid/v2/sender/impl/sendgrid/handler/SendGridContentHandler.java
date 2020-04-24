@@ -3,7 +3,7 @@ package fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler;
 import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.message.content.Content;
-import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 
 /**

@@ -12,10 +12,10 @@ import fr.sii.ogham.core.exception.handler.TemplateNotFoundException;
 import fr.sii.ogham.core.exception.handler.TemplateParsingFailedException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
-import fr.sii.ogham.core.exception.template.BeanException;
 import fr.sii.ogham.core.exception.template.ContextException;
 import fr.sii.ogham.core.exception.template.EngineDetectionException;
 import fr.sii.ogham.core.exception.template.ParseException;
+import fr.sii.ogham.core.exception.util.BeanException;
 import fr.sii.ogham.core.util.ExceptionUtils;
 
 /**

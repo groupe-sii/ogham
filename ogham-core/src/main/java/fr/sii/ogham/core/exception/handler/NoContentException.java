@@ -6,6 +6,13 @@ import java.util.List;
 
 import fr.sii.ogham.core.message.content.MultiContent;
 
+/**
+ * A specialized exception that is thrown when the content of the message is not
+ * set or empty.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class NoContentException extends ContentTranslatorException {
 	/**
 	 * 

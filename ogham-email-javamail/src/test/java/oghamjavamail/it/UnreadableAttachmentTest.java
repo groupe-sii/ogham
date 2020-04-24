@@ -25,7 +25,7 @@ import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 

@@ -12,7 +12,7 @@ import com.sendgrid.SendGrid;
 
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
-import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.PriorizedContentHandler;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.handler.StringContentHandler;
@@ -85,7 +85,7 @@ public final class PriorizedContentHandlerTest {
 		final SendGrid.Email email = new SendGrid.Email();
 		final StringContent content = new StringContent("Insignificant");
 
-		final ContentHandlerException e = new ContentHandlerException("Thrown by mock");
+		final ContentHandlerException e = new ContentHandlerException("Thrown by mock", mock(Content.class));
 		doThrow(e).when(handler).setContent(null, email, content);
 
 		instance.setContent(null, email, content);

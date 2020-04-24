@@ -15,7 +15,7 @@ import com.sendgrid.helpers.mail.Mail;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
-import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MultiContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
@@ -94,7 +94,7 @@ public final class MultiContentHandlerTest {
 		final Content content = new MultiContent(exp);
 		final Mail email = new Mail();
 
-		final ContentHandlerException e = new ContentHandlerException("Thrown by mock");
+		final ContentHandlerException e = new ContentHandlerException("Thrown by mock", exp);
 		doThrow(e).when(delegate).setContent(null, email, exp);
 		instance.setContent(null, email, content);
 	}

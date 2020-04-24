@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.exception.mimetype.NoMimetypeDetectorException;
 import fr.sii.ogham.core.util.IOUtils;
 
 /**
@@ -53,7 +54,7 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 				LOG.debug("{} could not detect mime type for file {}. Cause: {}", provider, file, e);
 			}
 		}
-		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype for the file " + file);
+		throw new NoMimetypeDetectorException("No mimetype provider could provide the mimetype for the file " + file);
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 				LOG.debug("{} could not detect mime type for file {}. Cause: {}", provider, fileName, e);
 			}
 		}
-		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype for the file " + fileName);
+		throw new NoMimetypeDetectorException("No mimetype provider could provide the mimetype for the file " + fileName);
 	}
 
 	@Override
@@ -78,11 +79,11 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 			ByteArrayInputStream copy = new ByteArrayInputStream(IOUtils.toByteArray(stream));
 			MimeType mimetype = detect(copy);
 			if(mimetype==null) {
-				throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");
+				throw new NoMimetypeDetectorException("No mimetype provider could provide the mimetype from the provided content");
 			}
 			return mimetype;
 		} catch (IOException e) {
-			throw new MimeTypeDetectionException("Can't read the content of the stream", e);
+			throw new NoMimetypeDetectorException("Can't read the content of the stream", e);
 		}
 	}
 
@@ -120,7 +121,7 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 				LOG.trace("content: {}", content);
 			}
 		}
-		throw new MimeTypeDetectionException("No mimetype provider could provide the mimetype from the provided content");
+		throw new NoMimetypeDetectorException("No mimetype provider could provide the mimetype from the provided content");
 	}
 
 	/**

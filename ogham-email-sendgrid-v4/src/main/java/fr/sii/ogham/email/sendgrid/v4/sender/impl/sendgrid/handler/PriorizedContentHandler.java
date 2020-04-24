@@ -12,7 +12,7 @@ import com.sendgrid.helpers.mail.Mail;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.util.PriorityComparator;
 import fr.sii.ogham.core.util.PriorizedMatchingHandler;
-import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 
 /**
@@ -138,7 +138,7 @@ public final class PriorizedContentHandler implements SendGridContentHandler {
 		final SendGridContentHandler handler = findHandler(content);
 		if (handler == null) {
 			LOG.warn("No content handler found for requested type {}", clazz);
-			throw new ContentHandlerException("No content handler found for content type " + clazz.getSimpleName());
+			throw new ContentHandlerException("No content handler found for content type " + clazz.getSimpleName(), content);
 		} else {
 			handler.setContent(original, email, content);
 		}

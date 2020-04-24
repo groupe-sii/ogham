@@ -5,7 +5,7 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
 
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
 
 public class JavaMailAttachmentHandler {
 	/**

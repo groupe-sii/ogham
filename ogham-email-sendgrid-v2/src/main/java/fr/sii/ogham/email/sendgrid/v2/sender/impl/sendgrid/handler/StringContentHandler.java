@@ -10,7 +10,7 @@ import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.email.exception.sendgrid.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 
 /**
@@ -72,9 +72,9 @@ public final class StringContentHandler implements SendGridContentHandler {
 				final String mime = mimeProvider.detect(contentStr).toString();
 				LOG.debug("Email content has detected type {}", mime);
 				LOG.trace("content: {}", content);
-				setMimeContent(email, contentStr, mime);
+				setMimeContent(email, contentStr, mime, content);
 			} catch (MimeTypeDetectionException e) {
-				throw new ContentHandlerException("Unable to set the email content", e);
+				throw new ContentHandlerException("Unable to set the email content", content, e);
 			}
 		} else {
 			throw new IllegalArgumentException("This instance can only work with MayHaveStringContent instances, but was passed " + content.getClass().getSimpleName());
@@ -82,13 +82,13 @@ public final class StringContentHandler implements SendGridContentHandler {
 
 	}
 
-	private static void setMimeContent(final SendGrid.Email email, final String contentStr, final String mime) throws ContentHandlerException {
+	private static void setMimeContent(final SendGrid.Email email, final String contentStr, final String mime, Content content) throws ContentHandlerException {
 		if ("text/plain".equals(mime)) {
 			email.setText(contentStr);
 		} else if ("text/html".equals(mime)) {
 			email.setHtml(contentStr);
 		} else {
-			throw new ContentHandlerException("MIME type " + mime + " is not supported");
+			throw new ContentHandlerException("MIME type " + mime + " is not supported", content);
 		}
 	}
 

@@ -11,7 +11,7 @@ import org.apache.commons.beanutils.NestedNullException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.exception.template.BeanException;
+import fr.sii.ogham.core.exception.util.BeanException;
 import fr.sii.ogham.core.util.bean.MapBeanReadWrapper;
 import fr.sii.ogham.core.util.converter.EmailAddressConverter;
 import fr.sii.ogham.core.util.converter.SmsSenderConverter;

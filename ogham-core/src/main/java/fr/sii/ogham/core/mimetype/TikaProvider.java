@@ -12,6 +12,7 @@ import org.apache.tika.mime.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.exception.mimetype.InvalidMimetypeException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
 
 /**
@@ -70,7 +71,7 @@ public class TikaProvider implements MimeTypeProvider {
 			checkMimeType(mimetype);
 			return new MimeType(mimetype);
 		} catch (MimeTypeParseException e) {
-			throw new MimeTypeDetectionException("Invalid mimetype", e);
+			throw new InvalidMimetypeException("Invalid mimetype", e);
 		} catch (IOException e) {
 			throw new MimeTypeDetectionException("Failed to get the mimetype for the file " + file, e);
 		}
@@ -90,7 +91,7 @@ public class TikaProvider implements MimeTypeProvider {
 			checkMimeType(mimetype);
 			return new MimeType(mimetype);
 		} catch (MimeTypeParseException e) {
-			throw new MimeTypeDetectionException("Invalid mimetype", e);
+			throw new InvalidMimetypeException("Invalid mimetype", e);
 		} catch (IOException e) {
 			throw new MimeTypeDetectionException("Failed to get the mimetype because the stream is not readable", e);
 		}
@@ -105,7 +106,7 @@ public class TikaProvider implements MimeTypeProvider {
 			checkMimeType(mimetype);
 			return new MimeType(mimetype);
 		} catch (MimeTypeParseException e) {
-			throw new MimeTypeDetectionException("Invalid mimetype", e);
+			throw new InvalidMimetypeException("Invalid mimetype", e);
 		}
 	}
 
@@ -118,7 +119,7 @@ public class TikaProvider implements MimeTypeProvider {
 
 	private void checkMimeType(String mimetype) throws MimeTypeDetectionException {
 		if (failIfOctetStream && MediaType.OCTET_STREAM.toString().equals(mimetype)) {
-			throw new MimeTypeDetectionException("Default mimetype found (application/octet-stream) but provider is configured to fail in this case");
+			throw new InvalidMimetypeException("Default mimetype found (application/octet-stream) but provider is configured to fail in this case");
 		}
 	}
 

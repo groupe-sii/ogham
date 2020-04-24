@@ -6,6 +6,16 @@ import java.util.List;
 
 import fr.sii.ogham.core.exception.MultipleCauseExceptionWrapper;
 
+/**
+ * Specialized exception that indicates that the action couldn't be executed due
+ * to too many attempts.
+ * 
+ * This exception provides the list of original exceptions thrown while trying
+ * to execute the action.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
 public class MaximumAttemptsReachedException extends RetryExecutionFailureException {
 	private static final long serialVersionUID = SERIAL_VERSION_UID;
 

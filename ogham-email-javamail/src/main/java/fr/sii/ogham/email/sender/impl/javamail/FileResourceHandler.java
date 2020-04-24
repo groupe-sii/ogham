@@ -14,7 +14,7 @@ import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.FileResource;
 import fr.sii.ogham.core.resource.NamedResource;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
 
 /**
  * Specific implementation for files so that mimetype detection may also use the

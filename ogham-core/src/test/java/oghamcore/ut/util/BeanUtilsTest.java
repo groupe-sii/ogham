@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.rits.cloning.Cloner;
 
-import fr.sii.ogham.core.exception.template.BeanException;
+import fr.sii.ogham.core.exception.util.BeanException;
 import fr.sii.ogham.core.util.BeanUtils;
 import fr.sii.ogham.core.util.BeanUtils.Options;
 import mock.context.NestedBean;

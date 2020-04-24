@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
-import fr.sii.ogham.email.exception.javamail.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
 
