@@ -51,7 +51,7 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 				return mimetype;
 			} catch (MimeTypeDetectionException e) {
 				// nothing to do => try next one
-				LOG.debug("{} could not detect mime type for file {}. Cause: {}", provider, file, e);
+				LOG.debug("{} could not detect mime type for file {}. Cause: {}", provider, file, e.getMessage(), e);
 			}
 		}
 		throw new NoMimetypeDetectorException("No mimetype provider could provide the mimetype for the file " + file);
@@ -67,7 +67,7 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 				return mimetype;
 			} catch (MimeTypeDetectionException e) {
 				// nothing to do => try next one
-				LOG.debug("{} could not detect mime type for file {}. Cause: {}", provider, fileName, e);
+				LOG.debug("{} could not detect mime type for file {}. Cause: {}", provider, fileName, e.getMessage(), e);
 			}
 		}
 		throw new NoMimetypeDetectorException("No mimetype provider could provide the mimetype for the file " + fileName);
@@ -98,7 +98,7 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 			} catch (MimeTypeDetectionException e) {
 				// try next one => move read cursor to beginning
 				copy.reset();
-				LOG.debug("{} could not detect mime type from stream. Cause: {}", provider, e);
+				LOG.debug("{} could not detect mime type from stream. Cause: {}", provider, e.getMessage(), e);
 			}
 		}
 		return mimetype;
@@ -117,7 +117,7 @@ public class FallbackMimeTypeProvider implements MimeTypeProvider {
 				return mimetype;
 			} catch (MimeTypeDetectionException e) {
 				// nothing to do => try next one
-				LOG.debug("{} could not detect mime type from content. Cause: {}", provider, e);
+				LOG.debug("{} could not detect mime type from content. Cause: {}", provider, e.getMessage(), e);
 				LOG.trace("content: {}", content);
 			}
 		}

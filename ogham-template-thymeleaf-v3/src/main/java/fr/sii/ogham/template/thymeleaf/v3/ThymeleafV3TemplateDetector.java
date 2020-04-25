@@ -97,7 +97,7 @@ public class ThymeleafV3TemplateDetector implements TemplateEngineDetector {
 		try {
 			return resolver.getResource(templateName);
 		} catch (ResourceResolutionException e) {
-			LOG.trace("Thymeleaf detector can't be applied because " + templateName + " couldn't be resolved", e);
+			LOG.trace("Thymeleaf detector can't be applied because {} couldn't be resolved", templateName, e);
 			return null;
 		}
 	}
