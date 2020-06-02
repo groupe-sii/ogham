@@ -220,6 +220,8 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 	}
 
 	private void registerStatics(AbstractFreemarkerBuilder<?, ?> builder, Configuration configuration) {
-		builder.configuration().addSharedVariable(oghamFreemarkerProperties.getStaticMethodAccess().getVariableName(), getBeansWrapper(configuration).getStaticModels());
+		builder.configuration()
+			.enableStaticMethodAccess(true)
+			.staticMethodAccessVariableName(oghamFreemarkerProperties.getStaticMethodAccess().getVariableName());
 	}
 }
