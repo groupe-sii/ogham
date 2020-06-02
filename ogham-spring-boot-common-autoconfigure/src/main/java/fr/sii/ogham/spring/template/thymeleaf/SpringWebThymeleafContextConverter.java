@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.expression.EvaluationContext;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.view.AbstractTemplateView;
@@ -80,6 +81,11 @@ public class SpringWebThymeleafContextConverter implements ThymeleafContextConve
 	@Override
 	public IContext convert(fr.sii.ogham.core.template.context.Context context) throws ContextException {
 		IContext base = delegate.convert(context);
+		
+		// the web context may be lost due to @Async method call
+		if (isAsyncCall()) {
+			return base;
+		}
 
 		// partially borrowed from org.thymeleaf.spring5.view.ThymeleafView
 		final Map<String, Object> springModel = new HashMap<>(30);
@@ -106,6 +112,15 @@ public class SpringWebThymeleafContextConverter implements ThymeleafContextConve
 		thymeleafRequestContextWrapper.wrapAndRegister(requestContext, request, response, servletContext, springModel);
 
 		return contextMerger.merge(thymeleafWebContextProvider.getWebContext(context, base, request, response, servletContext, applicationContext, springModel), base);
+	}
+
+	private boolean isAsyncCall() {
+		try {
+			RequestContextHolder.currentRequestAttributes();
+			return false;
+		} catch(IllegalStateException e) {
+			return true;
+		}
 	}
 
 	protected static void addRequestContextAsVariable(final Map<String, Object> model, final String variableName, final RequestContext requestContext) throws ContextException {
