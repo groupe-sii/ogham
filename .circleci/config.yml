@@ -30,7 +30,9 @@ defaults: &defaults
   docker:
     - image: circleci/openjdk:8-jdk
   environment:
-    JAVA_TOOL_OPTIONS: '-Xmx2g'
+    # -Xmx3g => many OOM
+    # -Xmx2g => sometimes OOM
+    JAVA_TOOL_OPTIONS: '-Xmx1600m'
 
 version: 2.1
 orbs:
