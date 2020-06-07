@@ -1,7 +1,6 @@
 package fr.sii.ogham.html.inliner.impl.jsoup;
 
-import static fr.sii.ogham.html.inliner.CssInlinerConstants.INLINE_MODE_ATTR;
-import static fr.sii.ogham.html.inliner.CssInlinerConstants.InlineModes.SKIP;
+import static fr.sii.ogham.html.inliner.impl.jsoup.CssInlineUtils.isInlineModeAllowed;
 
 import java.util.List;
 import java.util.StringTokenizer;
@@ -13,11 +12,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.html.inliner.CssInliner;
+import fr.sii.ogham.html.inliner.CssInlinerConstants.InlineModes;
 import fr.sii.ogham.html.inliner.ExternalCss;
 
 public class JsoupCssInliner implements CssInliner {
+	private static final Logger LOG = LoggerFactory.getLogger(JsoupCssInliner.class);
+	
 	private static final String HREF_ATTR = "href";
 	private static final String TEMP_STYLE_ATTR = "data-cssstyle";
 	private static final String STYLE_ATTR = "style";
@@ -48,10 +52,11 @@ public class JsoupCssInliner implements CssInliner {
 	 *            the html document
 	 */
 	private static void extractStyles(Document doc, String stylesheet) {
-		String trimmedStylesheet = NEW_LINES.matcher(stylesheet).replaceAll("");
-		trimmedStylesheet = COMMENTS.matcher(trimmedStylesheet).replaceAll("");
-		trimmedStylesheet = SPACES.matcher(trimmedStylesheet).replaceAll(" ");
-		String styleRules = trimmedStylesheet.trim();
+		String cleanedStylesheet = ignoreAtRules(stylesheet);
+		cleanedStylesheet = NEW_LINES.matcher(cleanedStylesheet).replaceAll("");
+		cleanedStylesheet = COMMENTS.matcher(cleanedStylesheet).replaceAll("");
+		cleanedStylesheet = SPACES.matcher(cleanedStylesheet).replaceAll(" ");
+		String styleRules = cleanedStylesheet.trim();
 		String delims = "{}";
 		StringTokenizer st = new StringTokenizer(styleRules, delims);
 		while (st.countTokens() > 1) {
@@ -77,11 +82,14 @@ public class JsoupCssInliner implements CssInliner {
 	private static void internStyles(Document doc, List<ExternalCss> cssContents) {
 		Elements els = doc.select(CSS_LINKS_SELECTOR);
 		for (Element e : els) {
-			if (!isSkipped(e)) {
+			if (isInlineModeAllowed(e, InlineModes.STYLE_ATTR)) {
 				String path = e.attr(HREF_ATTR);
-				Element style = new Element(Tag.valueOf(STYLE_TAG), "");
-				style.appendChild(new DataNode(getCss(cssContents, path)));
-				e.replaceWith(style);
+				String css = getCss(cssContents, path);
+				if (css != null) {
+					Element style = new Element(Tag.valueOf(STYLE_TAG), "");
+					style.appendChild(new DataNode(css));
+					e.replaceWith(style);
+				}
 			}
 		}
 	}
@@ -92,7 +100,7 @@ public class JsoupCssInliner implements CssInliner {
 				return css.getContent();
 			}
 		}
-		throw new IllegalStateException("The css with path " + path + " doesn't exist in the list of css contents");
+		return null;
 	}
 
 	/**
@@ -106,7 +114,7 @@ public class JsoupCssInliner implements CssInliner {
 		Elements els = doc.select(STYLE_TAG);
 		StringBuilder styles = new StringBuilder();
 		for (Element e : els) {
-			if (!isSkipped(e)) {
+			if (isInlineModeAllowed(e, InlineModes.STYLE_ATTR)) {
 				styles.append(e.data());
 				e.remove();
 			}
@@ -125,10 +133,10 @@ public class JsoupCssInliner implements CssInliner {
 		Elements allStyledElements = doc.getElementsByAttribute(TEMP_STYLE_ATTR);
 
 		for (Element e : allStyledElements) {
-			if (!isSkipped(e)) {
+			if (isInlineModeAllowed(e, InlineModes.STYLE_ATTR)) {
 				String newStyle = e.attr(TEMP_STYLE_ATTR);
 				String oldStyle = e.attr(STYLE_ATTR);
-				e.attr(STYLE_ATTR, (newStyle + "; " + oldStyle).replaceAll(";+", ";").trim());
+				e.attr(STYLE_ATTR, (newStyle.trim() + ";" + oldStyle.trim()).replaceAll(";+", ";").trim());
 			}
 			e.removeAttr(TEMP_STYLE_ATTR);
 		}
@@ -142,8 +150,62 @@ public class JsoupCssInliner implements CssInliner {
 		return prop.trim() + " " + newProp.trim() + ";";
 	}
 	
-	private static boolean isSkipped(Element e) {
-		return SKIP.is(e.attr(INLINE_MODE_ATTR));
+
+	private static String ignoreAtRules(String stylesheet) {
+		StringBuilder sb = new StringBuilder();
+		int line = 1;
+		int startLine = 0;
+		boolean inAtRule = false;
+		boolean inNestedAtRule = false;
+		int opened = 0;
+		StringBuilder rule = new StringBuilder();
+		for (int i=0 ; i<stylesheet.length() ; i++) {
+			char c = stylesheet.charAt(i);
+			if (c == '\n') {
+				line++;
+			}
+			if (c == '@' && !inAtRule) {
+				inAtRule = true;
+				startLine = line;
+			}
+			if (inAtRule && c == '{') {
+				inNestedAtRule = true;
+				opened++;
+			}
+			if (inAtRule && inNestedAtRule && c == '}') {
+				opened--;
+			}
+			if (inAtRule && !inNestedAtRule && c == ';') {
+				inAtRule = false;
+				LOG.warn("{} rule is not handled by JsoupCssInliner implementation. Line {}:'{}' is skipped", rulename(rule), startLine, rule);
+				continue;
+			}
+			if (inAtRule && inNestedAtRule && opened == 0) {
+				inAtRule = false;
+				inNestedAtRule = false;
+				LOG.warn("{} rule is not handled by JsoupCssInliner implementation. Lines {}-{} are skipped", rulename(rule), startLine, line);
+				continue;
+			}
+			if (!inAtRule) {
+				sb.append(c);
+				rule = new StringBuilder();
+			} else {
+				rule.append(c);
+			}
+		}
+		return sb.toString();
+	}
+	
+	private static String rulename(StringBuilder rule) {
+		StringBuilder name = new StringBuilder();
+		for (int i=0 ; i<rule.length() ; i++) {
+			char c = rule.charAt(i);
+			if (c != '@' && c != '-' && !Character.isAlphabetic(c) && !Character.isDigit(c)) {
+				break;
+			}
+			name.append(c);
+		}
+		return name.toString();
 	}
 
 }

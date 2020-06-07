@@ -46,6 +46,12 @@ public final class CssInlinerConstants {
 	public static final String INLINE_MODE_ATTR = "data-inline-styles";
 
 	/**
+	 * Attribute to mark an image as already inlined in order to not process it
+	 * again
+	 */
+	public static final String INLINED_ATTR = "data-styles-inlined";
+
+	/**
 	 * Interface for defining an inline mode
 	 * 
 	 * @author Aurélien Baudet
@@ -76,6 +82,10 @@ public final class CssInlinerConstants {
 	 *
 	 */
 	public enum InlineModes implements InlineMode {
+		/**
+		 * Do not inline the image
+		 */
+		STYLE_ATTR("style-attribute"),
 		/**
 		 * Do not inline the image
 		 */

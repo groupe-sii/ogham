@@ -1,6 +1,7 @@
 package fr.sii.ogham.core.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ public final class HtmlUtils {
 	private static final String HREF_ATTR = "href";
 	private static final String IMG_SELECTOR = "img";
 	private static final String SRC_ATTR = "src";
+	private static final Pattern URL_PATTERN = Pattern.compile("^https?://.+$", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Indicates if the provided content is HTML or not. It is considered HTML
@@ -94,6 +96,29 @@ public final class HtmlUtils {
 		Document doc = Jsoup.parse(htmlContent);
 		Elements titleNode = doc.select("head > title");
 		return titleNode.isEmpty() ? null : doc.title();
+	}
+
+	/**
+	 * The list of provided URLs are either relative or absolute. This method
+	 * returns only the list of relative URLs.
+	 * 
+	 * <p>
+	 * The URL is considered absolute if it starts with {@code "http://"} or
+	 * {@code https://}.
+	 * 
+	 * 
+	 * @param urls
+	 *            the urls (relative or absolute)
+	 * @return the relative urls only
+	 */
+	public static List<String> skipExternalUrls(List<String> urls) {
+		for (Iterator<String> it = urls.iterator(); it.hasNext();) {
+			String url = it.next();
+			if (URL_PATTERN.matcher(url).matches()) {
+				it.remove();
+			}
+		}
+		return urls;
 	}
 
 	private HtmlUtils() {

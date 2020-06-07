@@ -1,5 +1,10 @@
 package fr.sii.ogham.html.translator;
 
+import static fr.sii.ogham.core.util.HtmlUtils.getDistinctCssUrls;
+import static fr.sii.ogham.core.util.HtmlUtils.isHtml;
+import static fr.sii.ogham.core.util.HtmlUtils.skipExternalUrls;
+import static fr.sii.ogham.html.inliner.impl.jsoup.CssInlineUtils.removeOghamAttributes;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +25,6 @@ import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
-import fr.sii.ogham.core.util.HtmlUtils;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.html.inliner.CssInliner;
 import fr.sii.ogham.html.inliner.ExternalCss;
@@ -64,15 +68,17 @@ public class InlineCssTranslator implements ContentTranslator {
 	public Content translate(Content content) throws ContentTranslatorException {
 		if (content instanceof MayHaveStringContent && ((MayHaveStringContent) content).canProvideString()) {
 			String stringContent = ((MayHaveStringContent) content).asString();
-			if (HtmlUtils.isHtml(stringContent)) {
-				List<String> cssFiles = HtmlUtils.getDistinctCssUrls(stringContent);
+			if (isHtml(stringContent)) {
+				List<String> cssFiles = skipExternalUrls(getDistinctCssUrls(stringContent));
 				if (!cssFiles.isEmpty()) {
 					// prepare list of css files/urls with their content
 					List<ExternalCss> cssResources = load(getSourcePath(content), cssFiles);
 					// generate the content with inlined css
 					String inlinedContentStr = cssInliner.inline(stringContent, cssResources);
+					// remove ogham attributes
+					String cleaned = clean(inlinedContentStr);
 					// update the HTML content
-					return updateHtmlContent(content, inlinedContentStr);
+					return updateHtmlContent(content, cleaned);
 				}
 			}
 		} else {
@@ -118,6 +124,11 @@ public class InlineCssTranslator implements ContentTranslator {
 		}
 		return inlinedContent;
 	}
+	
+	private static String clean(String content) {
+		return removeOghamAttributes(content);
+	}
+
 
 	@Override
 	public String toString() {

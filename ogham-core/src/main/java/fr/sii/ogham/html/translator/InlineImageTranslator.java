@@ -1,14 +1,14 @@
 package fr.sii.ogham.html.translator;
 
+import static fr.sii.ogham.core.util.HtmlUtils.getDistinctImageUrls;
+import static fr.sii.ogham.core.util.HtmlUtils.skipExternalUrls;
 import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,6 @@ import fr.sii.ogham.core.resource.path.ResourcePath;
 import fr.sii.ogham.core.resource.path.UnresolvedPath;
 import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
-import fr.sii.ogham.core.util.HtmlUtils;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
 import fr.sii.ogham.html.inliner.ContentWithImages;
@@ -53,7 +52,6 @@ import fr.sii.ogham.html.inliner.ImageResource;
  */
 public class InlineImageTranslator implements ContentTranslator {
 	private static final Logger LOG = LoggerFactory.getLogger(InlineImageTranslator.class);
-	private static final Pattern URL_PATTERN = Pattern.compile("^https?://.+$", Pattern.CASE_INSENSITIVE);
 	
 	/**
 	 * The image inliner
@@ -87,7 +85,7 @@ public class InlineImageTranslator implements ContentTranslator {
 	public Content translate(Content content) throws ContentTranslatorException {
 		if (content instanceof MayHaveStringContent && ((MayHaveStringContent) content).canProvideString()) {
 			String stringContent = ((MayHaveStringContent) content).asString();
-			List<String> images = filterExternalUrls(HtmlUtils.getDistinctImageUrls(stringContent));
+			List<String> images = skipExternalUrls(getDistinctImageUrls(stringContent));
 			if (!images.isEmpty()) {
 				LOG.debug("inlining {} images", images.size());
 				// parepare list of images paths/urls with their content
@@ -113,16 +111,6 @@ public class InlineImageTranslator implements ContentTranslator {
 		String html = removeOghamAttributes(contentWithImages.getContent());
 		contentWithImages.setContent(html);
 		return contentWithImages;
-	}
-
-	private static List<String> filterExternalUrls(List<String> imageUrls) {
-		for(Iterator<String> it = imageUrls.iterator() ; it.hasNext() ; ) {
-			String url = it.next();
-			if(URL_PATTERN.matcher(url).matches()) {
-				it.remove();
-			}
-		}
-		return imageUrls;
 	}
 
 	private static ResourcePath getSourcePath(Content content) {

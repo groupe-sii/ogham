@@ -90,4 +90,13 @@ public class JsoupCssInlinerTest {
 		// TODO: test css with rules with higher priority before rules with lower priority
 		Assert.fail("Not implemented");
 	}
+
+	@Test
+	public void ignoreAtRules() throws IOException {
+		String source = resourceAsString(SOURCE_FOLDER+"at-rules.html");
+		String css1 = resourceAsString(SOURCE_FOLDER+"css/at-rules.css");
+		String expected = resourceAsString(EXPECTED_FOLDER+"at-rules.html");
+		AssertHtml.assertEquals(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/at-rules.css"), css1))));
+	}
+	
 }
