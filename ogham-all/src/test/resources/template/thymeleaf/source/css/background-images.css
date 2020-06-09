@@ -1,0 +1,10 @@
+.header {
+	background: #ccc url("../images/header-bande-verticale-1px300px-degrade.jpg") repeat-x;
+	height: 300px;
+}
+
+.footer {
+	background: url("../images/header-bande-verticale-1px300px-degrade.jpg") no-repeat;
+	height: 300px;
+	--inline-image: base64;
+}

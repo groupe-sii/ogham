@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="css/relative-urls.css" rel="stylesheet" />
+<style>
+.style-absolute-url-1 {
+	background: url('http://absolute-url');
+}
+.style-absolute-url-2 {
+	background: url("http://absolute-url");
+}
+.style-absolute-url-3 {
+	background: url(http://absolute-url);
+}
+
+.style-absolute-path-1 {
+	background: url('/absolute/path');
+}	
+.style-absolute-path-2 {
+	background: url("/absolute/path");
+}
+.style-absolute-path-3 {
+	background: url(/absolute/path);
+}
+
+.style-absolute-file-1 {	
+	background: url('file:///absolute/path');
+}
+.style-absolute-file-2 {	
+	background: url("file:///absolute/path");
+}
+.style-absolute-file-3 {	
+	background: url(file:///absolute/path);
+}
+.style-absolute-file-4 {	
+	background: url('file:/absolute/path');
+}
+.style-absolute-file-5 {	
+	background: url("file:/absolute/path");
+}
+.style-absolute-file-6 {	
+	background: url(file:/absolute/path);
+}
+.style-absolute-file-7 {	
+	background: url('file:absolute/path');
+}
+.style-absolute-file-8 {	
+	background: url("file:absolute/path");
+}
+.style-absolute-file-9 {	
+	background: url(file:absolute/path);
+}
+
+.style-absolute-classpath-1 {	
+	background: url('classpath:/absolute/path');
+}
+.style-absolute-classpath-2 {	
+	background: url("classpath:/absolute/path");
+}
+.style-absolute-classpath-3 {	
+	background: url(classpath:/absolute/path);
+}
+.style-absolute-classpath-4 {	
+	background: url('classpath:absolute/path');
+}
+.style-absolute-classpath-5 {	
+	background: url("classpath:absolute/path");
+}
+.style-absolute-classpath-6 {	
+	background: url(classpath:absolute/path);
+}
+
+.style-relative-path-1 {	
+	background: url('relative/path');
+}
+.style-relative-path-2 {	
+	background: url("relative/path");
+}
+.style-relative-path-3 {	
+	background: url(relative/path);
+}
+.style-relative-path-4 {	
+	background: url('./relative/path');
+}
+.style-relative-path-5 {	
+	background: url("./relative/path");
+}
+.style-relative-path-6 {	
+	background: url(./relative/path);
+}
+.style-relative-path-7 {	
+	background: url('../relative/path');
+}
+.style-relative-path-8 {	
+	background: url("../relative/path");
+}
+.style-relative-path-9 {	
+	background: url(../relative/path);
+}
+
+.style-relative-path-special-chars-1 {	
+	background: 
+		no-repeat bottom center url('../images/le\'ft.gif');
+
+}
+.style-relative-path-special-chars-2 {	
+	background: 
+		no-repeat top center url(
+			"../images/h(1).gif"
+		)
+}
+</style>
+</head>
+<body>
+	<div class="absolute-url-1"></div>
+	<div class="absolute-url-2"></div>
+	<div class="absolute-url-3"></div>
+
+	<div class="absolute-path-1"></div>
+	<div class="absolute-path-2"></div>
+	<div class="absolute-path-3"></div>
+	
+	<div class="absolute-file-1"></div>
+	<div class="absolute-file-2"></div>
+	<div class="absolute-file-3"></div>
+	<div class="absolute-file-4"></div>
+	<div class="absolute-file-5"></div>
+	<div class="absolute-file-6"></div>
+	<div class="absolute-file-7"></div>
+	<div class="absolute-file-8"></div>
+	<div class="absolute-file-9"></div>
+	
+	<div class="absolute-classpath-1"></div>
+	<div class="absolute-classpath-2"></div>
+	<div class="absolute-classpath-3"></div>
+	<div class="absolute-classpath-4"></div>
+	<div class="absolute-classpath-5"></div>
+	<div class="absolute-classpath-6"></div>
+
+	<div class="relative-path-1"></div>
+	<div class="relative-path-2"></div>
+	<div class="relative-path-3"></div>
+	<div class="relative-path-4"></div>
+	<div class="relative-path-5"></div>
+	<div class="relative-path-6"></div>
+	<div class="relative-path-7"></div>
+	<div class="relative-path-8"></div>
+	<div class="relative-path-9"></div>
+	
+	<div class="relative-path-special-chars-1"></div>
+	<div class="relative-path-special-chars-2"></div>
+
+
+
+	<div class="style-absolute-url-1"></div>
+	<div class="style-absolute-url-2"></div>
+	<div class="style-absolute-url-3"></div>
+
+	<div class="style-absolute-path-1"></div>
+	<div class="style-absolute-path-2"></div>
+	<div class="style-absolute-path-3"></div>
+	
+	<div class="style-absolute-file-1"></div>
+	<div class="style-absolute-file-2"></div>
+	<div class="style-absolute-file-3"></div>
+	<div class="style-absolute-file-4"></div>
+	<div class="style-absolute-file-5"></div>
+	<div class="style-absolute-file-6"></div>
+	<div class="style-absolute-file-7"></div>
+	<div class="style-absolute-file-8"></div>
+	<div class="style-absolute-file-9"></div>
+	
+	<div class="style-absolute-classpath-1"></div>
+	<div class="style-absolute-classpath-2"></div>
+	<div class="style-absolute-classpath-3"></div>
+	<div class="style-absolute-classpath-4"></div>
+	<div class="style-absolute-classpath-5"></div>
+	<div class="style-absolute-classpath-6"></div>
+
+	<div class="style-relative-path-1"></div>
+	<div class="style-relative-path-2"></div>
+	<div class="style-relative-path-3"></div>
+	<div class="style-relative-path-4"></div>
+	<div class="style-relative-path-5"></div>
+	<div class="style-relative-path-6"></div>
+	<div class="style-relative-path-7"></div>
+	<div class="style-relative-path-8"></div>
+	<div class="style-relative-path-9"></div>
+	
+	<div class="style-relative-path-special-chars-1"></div>
+	<div class="style-relative-path-special-chars-2"></div>
+</body>
+</html>

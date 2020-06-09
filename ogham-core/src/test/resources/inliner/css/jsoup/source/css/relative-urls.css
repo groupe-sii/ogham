@@ -1,0 +1,106 @@
+.absolute-url-1 {
+	background: url('http://absolute-url');
+}
+.absolute-url-2 {
+	background: url("http://absolute-url");
+}
+.absolute-url-3 {
+	background: url(http://absolute-url);
+}
+
+.absolute-path-1 {
+	background: url('/absolute/path');
+}	
+.absolute-path-2 {
+	background: url("/absolute/path");
+}
+.absolute-path-3 {
+	background: url(/absolute/path);
+}
+
+.absolute-file-1 {	
+	background: url('file:///absolute/path');
+}
+.absolute-file-2 {	
+	background: url("file:///absolute/path");
+}
+.absolute-file-3 {	
+	background: url(file:///absolute/path);
+}
+.absolute-file-4 {	
+	background: url('file:/absolute/path');
+}
+.absolute-file-5 {	
+	background: url("file:/absolute/path");
+}
+.absolute-file-6 {	
+	background: url(file:/absolute/path);
+}
+.absolute-file-7 {	
+	background: url('file:absolute/path');
+}
+.absolute-file-8 {	
+	background: url("file:absolute/path");
+}
+.absolute-file-9 {	
+	background: url(file:absolute/path);
+}
+
+.absolute-classpath-1 {	
+	background: url('classpath:/absolute/path');
+}
+.absolute-classpath-2 {	
+	background: url("classpath:/absolute/path");
+}
+.absolute-classpath-3 {	
+	background: url(classpath:/absolute/path);
+}
+.absolute-classpath-4 {	
+	background: url('classpath:absolute/path');
+}
+.absolute-classpath-5 {	
+	background: url("classpath:absolute/path");
+}
+.absolute-classpath-6 {	
+	background: url(classpath:absolute/path);
+}
+
+.relative-path-1 {	
+	background: url('relative/path');
+}
+.relative-path-2 {	
+	background: url("relative/path");
+}
+.relative-path-3 {	
+	background: url(relative/path);
+}
+.relative-path-4 {	
+	background: url('./relative/path');
+}
+.relative-path-5 {	
+	background: url("./relative/path");
+}
+.relative-path-6 {	
+	background: url(./relative/path);
+}
+.relative-path-7 {	
+	background: url('../relative/path');
+}
+.relative-path-8 {	
+	background: url("../relative/path");
+}
+.relative-path-9 {	
+	background: url(../relative/path);
+}
+
+.relative-path-special-chars-1 {	
+	background: 
+		no-repeat bottom center url('../images/le\'ft.gif');
+
+}
+.relative-path-special-chars-2 {	
+	background: 
+		no-repeat top center url(
+			"../images/h(1).gif"
+		)
+}

@@ -9,7 +9,7 @@ import fr.sii.ogham.core.translator.content.ContentTranslator;
 /**
  * Image handling consists of defining how images are inlined in the email:
  * <ul>
- * <li>Either inlining directly in the HTML content by enconding image into
+ * <li>Either inlining directly in the HTML content by encoding image into
  * base64 string</li>
  * <li>Or attaching the image to the email and referencing it using a
  * <a href="https://tools.ietf.org/html/rfc4021#section-2.2.2">Content-ID
@@ -43,7 +43,7 @@ public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implement
 	 * Configures how images are handled. Image handling consists of defining
 	 * how images are inlined in the email:
 	 * <ul>
-	 * <li>Either inlining directly in the HTML content by enconding image into
+	 * <li>Either inlining directly in the HTML content by encoding image into
 	 * base64 string</li>
 	 * <li>Or attaching the image to the email and referencing it using a
 	 * <a href="https://tools.ietf.org/html/rfc4021#section-2.2.2">Content-ID
@@ -74,6 +74,29 @@ public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implement
 	 * Then the image will be loaded from the classpath and attached to the
 	 * email. The src attribute will be replaced by the Content-ID.
 	 * 
+	 * It also works for images included from CSS:
+	 * 
+	 * <pre>
+	 * <code>
+	 *  &lt;style&gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: attach;
+	 *     }
+	 *  &lt;/style&gt;
+	 * </code>
+	 * </pre>
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	<div style="background: url('classpath:/foo.png'); --inline-image: attach;"></div>
+	 * }
+	 * </pre>
+	 * 
+	 * Then the image will be loaded from the classpath and attached to the
+	 * email. The url will be replaced by the Content-ID.
 	 * 
 	 * <p>
 	 * If {@link ImageInliningBuilder#base64()} is called, it enables inlining
@@ -91,6 +114,30 @@ public class ImageHandlingBuilder extends AbstractParent<EmailBuilder> implement
 	 * Then the image will be loaded from the classpath and encoded into a
 	 * base64 string. This base64 string is used in the src attribute of the
 	 * {@code <img>}.
+	 * 
+	 * It also works for images included from CSS:
+	 * 
+	 * <pre>
+	 * <code>
+	 *  &lt;style&gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: base64;
+	 *     }
+	 *  &lt;/style&gt;
+	 * </code>
+	 * </pre>
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	<div style="background: url('classpath:/foo.png'); --inline-image: base64;"></div>
+	 * }
+	 * </pre>
+	 * 
+	 * Then the image will be loaded from the classpath and encoded into a
+	 * base64 string. The url is updated with the base64 string.
 	 * 
 	 * <p>
 	 * If you don't want to inline a particular image, you can set the

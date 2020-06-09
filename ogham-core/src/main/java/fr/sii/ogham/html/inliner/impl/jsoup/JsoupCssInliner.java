@@ -1,9 +1,12 @@
 package fr.sii.ogham.html.inliner.impl.jsoup;
 
+import static fr.sii.ogham.core.util.HtmlUtils.CSS_URL_FUNC_PATTERN;
+import static fr.sii.ogham.core.util.HtmlUtils.relativize;
 import static fr.sii.ogham.html.inliner.impl.jsoup.CssInlineUtils.isInlineModeAllowed;
 
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
@@ -84,20 +87,20 @@ public class JsoupCssInliner implements CssInliner {
 		for (Element e : els) {
 			if (isInlineModeAllowed(e, InlineModes.STYLE_ATTR)) {
 				String path = e.attr(HREF_ATTR);
-				String css = getCss(cssContents, path);
+				ExternalCss css = getCss(cssContents, path);
 				if (css != null) {
 					Element style = new Element(Tag.valueOf(STYLE_TAG), "");
-					style.appendChild(new DataNode(css));
+					style.appendChild(new DataNode(getCssContent(css)));
 					e.replaceWith(style);
 				}
 			}
 		}
 	}
 
-	private static String getCss(List<ExternalCss> cssContents, String path) {
+	private static ExternalCss getCss(List<ExternalCss> cssContents, String path) {
 		for (ExternalCss css : cssContents) {
 			if (css.getPath().getOriginalPath().contains(path)) {
-				return css.getContent();
+				return css;
 			}
 		}
 		return null;
@@ -206,6 +209,32 @@ public class JsoupCssInliner implements CssInliner {
 			name.append(c);
 		}
 		return name.toString();
+	}
+
+
+	private static String getCssContent(ExternalCss css) {
+		String content = css.getContent();
+		return updateRelativeUrls(content, css);
+	}
+
+	private static String updateRelativeUrls(String content, ExternalCss css) {
+		StringBuffer sb = new StringBuffer();
+		Matcher m = CSS_URL_FUNC_PATTERN.matcher(content);
+		while (m.find()) {
+			String delim = "";
+			String url = m.group("unquotedurl");
+			if (url == null) {
+				url = m.group("doublequotedurl");
+				delim = "\"";
+			}
+			if (url == null) {
+				url = m.group("singlequotedurl");
+				delim = "'";
+			}
+			m.appendReplacement(sb, Matcher.quoteReplacement(m.group("start")+delim+relativize(css.getPath().getOriginalPath(), url)+delim+m.group("end")));
+		}
+		m.appendTail(sb);
+		return sb.toString();
 	}
 
 }

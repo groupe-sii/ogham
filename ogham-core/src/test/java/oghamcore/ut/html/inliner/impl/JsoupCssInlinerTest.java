@@ -98,5 +98,13 @@ public class JsoupCssInlinerTest {
 		String expected = resourceAsString(EXPECTED_FOLDER+"at-rules.html");
 		AssertHtml.assertEquals(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/at-rules.css"), css1))));
 	}
+
+	@Test
+	public void updateRelativeUrls() throws IOException {
+		String source = resourceAsString(SOURCE_FOLDER+"relative-urls.html");
+		String css1 = resourceAsString(SOURCE_FOLDER+"css/relative-urls.css");
+		String expected = resourceAsString(EXPECTED_FOLDER+"relative-urls.html");
+		AssertHtml.assertEquals(expected, inliner.inline(source, Arrays.asList(new ExternalCss(new UnresolvedPath("css/relative-urls.css"), css1))));
+	}
 	
 }

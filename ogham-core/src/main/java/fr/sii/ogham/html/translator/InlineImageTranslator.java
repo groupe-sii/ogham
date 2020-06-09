@@ -1,8 +1,10 @@
 package fr.sii.ogham.html.translator;
 
+import static fr.sii.ogham.core.util.HtmlUtils.getDistinctCssImageUrls;
 import static fr.sii.ogham.core.util.HtmlUtils.getDistinctImageUrls;
 import static fr.sii.ogham.core.util.HtmlUtils.skipExternalUrls;
 import static fr.sii.ogham.html.inliner.impl.jsoup.ImageInlineUtils.removeOghamAttributes;
+import static fr.sii.ogham.html.inliner.impl.regexp.CssImageInlineUtils.removeOghamProperties;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -85,10 +87,10 @@ public class InlineImageTranslator implements ContentTranslator {
 	public Content translate(Content content) throws ContentTranslatorException {
 		if (content instanceof MayHaveStringContent && ((MayHaveStringContent) content).canProvideString()) {
 			String stringContent = ((MayHaveStringContent) content).asString();
-			List<String> images = skipExternalUrls(getDistinctImageUrls(stringContent));
+			List<String> images = skipExternalUrls(merge(getDistinctImageUrls(stringContent), getDistinctCssImageUrls(stringContent)));
 			if (!images.isEmpty()) {
 				LOG.debug("inlining {} images", images.size());
-				// parepare list of images paths/urls with their content
+				// prepare list of images paths/urls with their content
 				List<ImageResource> imageResources = load(getSourcePath(content), images);
 				// generate new HTML with inlined images
 				ContentWithImages contentWithImages = inliner.inline(stringContent, imageResources);
@@ -107,8 +109,16 @@ public class InlineImageTranslator implements ContentTranslator {
 		return content;
 	}
 
+	private static List<String> merge(List<String> distinctImageUrls, List<String> distinctCssImageUrls) {
+		List<String> merged = new ArrayList<>(distinctImageUrls);
+		merged.addAll(distinctCssImageUrls);
+		return merged;
+	}
+
 	private static ContentWithImages clean(ContentWithImages contentWithImages) {
-		String html = removeOghamAttributes(contentWithImages.getContent());
+		String html = contentWithImages.getContent();
+		html = removeOghamAttributes(html);
+		html = removeOghamProperties(html);
 		contentWithImages.setContent(html);
 		return contentWithImages;
 	}

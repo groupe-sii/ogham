@@ -69,4 +69,15 @@ public class ImageResource {
 	public String getName() {
 		return name;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ImageResource(")
+			.append("src=").append(srcUrl).append(", ")
+			.append("path=").append(path).append(", ")
+			.append("name=").append(name).append(", ")
+			.append("mimetype=").append(mimetype).append(")");
+		return builder.toString();
+	}
 }

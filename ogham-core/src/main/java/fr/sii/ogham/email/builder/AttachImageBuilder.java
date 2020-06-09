@@ -6,8 +6,10 @@ import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.id.generator.IdGenerator;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.html.inliner.EveryImageInliner;
 import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+import fr.sii.ogham.html.inliner.impl.regexp.RegexAttachBackgroudImageInliner;
 
 /**
  * Configures how attachment of images is handled.
@@ -27,8 +29,33 @@ import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
  * Then the image will be loaded from the classpath and attached to the email.
  * The src attribute will be replaced by the Content-ID.
  * 
- * The Content-ID is generated using a {@link IdGenerator} that is configured
+ * The Content-ID is generated using an {@link IdGenerator} that is configured
  * through the {@link #cid()} method.
+ * 
+ * <p>
+ * In the same way, if your template contains the following code:
+ * 
+ * <pre>
+ * <code>
+ *  &lt;style&gt;
+ *     .some-class {
+ *       background: url('classpath:/foo.png');
+ *       --inline-image: attach;
+ *     }
+ *  &lt;/style&gt;
+ * </code>
+ * </pre>
+ * 
+ * Or directly on {@code style} attribute:
+ * 
+ * <pre>
+ * {@code
+ * 	<div style="background: url('classpath:/foo.png'); --inline-image: attach;"></div>
+ * }
+ * </pre>
+ * 
+ * Then the image will be loaded from the classpath and attached to the email.
+ * The url will be replaced by the Content-ID.
  * 
  * @author Aurélien Baudet
  *
@@ -77,6 +104,9 @@ public class AttachImageBuilder extends AbstractParent<ImageInliningBuilder> imp
 		if (idGenerator == null) {
 			throw new BuildException("Can't build inliner that attaches images because no identifier generator configured");
 		}
-		return buildContext.register(new JsoupAttachImageInliner(idGenerator));
+		EveryImageInliner inliner = buildContext.register(new EveryImageInliner());
+		inliner.addInliner(buildContext.register(new JsoupAttachImageInliner(idGenerator)));
+		inliner.addInliner(buildContext.register(new RegexAttachBackgroudImageInliner(idGenerator)));
+		return inliner;
 	}
 }

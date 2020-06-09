@@ -163,6 +163,34 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 * Then the image will be loaded from the classpath and attached to the
 	 * email. The src attribute will be replaced by the Content-ID.
 	 * 
+	 * 
+	 * 
+	 * <p>
+	 * In the same way, if your template contains the following code:
+	 * 
+	 * <pre>
+	 * <code>
+	 *  &lt;style&gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: attach;
+	 *     }
+	 *  &lt;/style&gt;
+	 * </code>
+	 * </pre>
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	<div style=
+	"background: url('classpath:/foo.png'); --inline-image: attach;"></div>
+	 * }
+	 * </pre>
+	 * 
+	 * Then the image will be loaded from the classpath and attached to the
+	 * email. The url will be replaced by the Content-ID.
+	 * 
 	 * <p>
 	 * If no inline mode is defined, image attachment is used by default:
 	 * 
@@ -172,7 +200,27 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 * }
 	 * </pre>
 	 * 
-	 * The example above as the same result as the example that explicitly
+	 * Or:
+	 * 
+	 * <pre>
+	 * <code>
+	 *  &lt;style&gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *     }
+	 *  &lt;/style&gt;
+	 * </code>
+	 * </pre>
+	 * 
+	 * Or:
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	<div style="background: url('classpath:/foo.png');"></div>
+	 * }
+	 * </pre>
+	 * 
+	 * The examples above have the same result as the example that explicitly
 	 * defines the inline mode.
 	 * 
 	 * 
@@ -204,6 +252,31 @@ public class ImageInliningBuilder extends AbstractParent<ImageHandlingBuilder> i
 	 * base64 string. This base64 string is used in the src attribute of the
 	 * {@code <img>}.
 	 * 
+	 * 
+	 * <p>
+	 * In the same way, if your template contains the following code:
+	 * 
+	 * <pre>
+	 * <code>
+	 *  &lt;style&gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: base64;
+	 *     }
+	 *  &lt;/style&gt;
+	 * </code>
+	 * </pre>
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * <pre>
+	 * {@code
+	 * 	<div style="background: url('classpath:/foo.png'); --inline-image: base64;"></div>
+	 * }
+	 * </pre>
+	 * 
+	 * Then the image will be loaded from the classpath and encoded into a
+	 * base64 string. The url is updated with the base64 string.
 	 * 
 	 * <p>
 	 * If no inline mode is defined <strong>and</strong> image attachment is not

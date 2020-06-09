@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Demystifying Email Design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+	.relative-path-attached {
+		background-image: 
+			no-repeat url('images/h1.gif') top center, 
+			url('images/right.gif');
+		background-image:
+			linear-gradient(to bottom, rgba(255,255,0,0.5), rgba(0,0,255,0.5)),
+			url("images/fb.gif");
+	}
+	
+	.absolute-path-attached {
+		background-image: 
+			no-repeat url('/inliner/images/translator/source/images/h1.gif') top center, 
+			url('classpath:/inliner/images/translator/source/images/right.gif');
+	}
+	
+	.not-inlined {
+		background: none;
+		background-image: url("http://some-url/fb.gif");
+	}
+	
+	.relative-path-base64 {
+		background-image: 
+			no-repeat url('images/h1.gif') top center, 
+			url('images/right.gif');
+		background-image:
+			linear-gradient(to bottom, rgba(255,255,0,0.5), rgba(0,0,255,0.5)),
+			url("images/fb.gif");
+		--inline-image: base64;
+	}
+	
+	.absolute-path-base64 {
+		background-image: 
+			no-repeat url('/inliner/images/translator/source/images/h1.gif') top center, 
+			url('classpath:/inliner/images/translator/source/images/right.gif');
+		--inline-image: h1=base64 right=base64;
+	}
+	
+	.mixed {
+		background-image: 
+			no-repeat url('images/fb.gif') top center, 
+			url('images/tw.gif');
+		background-image: 
+			no-repeat url('/inliner/images/translator/source/images/h1.gif') top center, 
+			url('classpath:/inliner/images/translator/source/images/right.gif');
+		--inline-image: h1=base64 
+						/inliner/images/translator/source/images/right=attach
+						base64;
+	}
+
+	.skipped {
+		background: url('images/h1.gif');
+		--inline-image: skip;
+	}
+</style>
+</head>
+<body>
+	<div class="relative-path-inlined" style="background: url('images/h1.gif'); background: url(&quot;images/right.gif&quot;)"></div>
+	
+	<div class="absolute-path-inlined" style="background-image: 
+			no-repeat url('/inliner/images/translator/source/images/h1.gif') top center, 
+			url('classpath:/inliner/images/translator/source/images/right.gif');"></div>
+	
+	<div class="not-inlined" style="background: none; background-image: url('http://some-url/fb.gif');"></div>
+	
+	
+	<div class="relative-path-base64" style="
+		background-image: 
+			no-repeat url('images/h1.gif') top center, 
+			url('images/right.gif');
+		background-image:
+			linear-gradient(to bottom, rgba(255,255,0,0.5), rgba(0,0,255,0.5)),
+			url(&quot;images/fb.gif&quot;);
+		--inline-image: base64;
+	"></div>
+	
+	<div class="absolute-path-base64" style="
+		background-image: 
+			no-repeat url('/inliner/images/translator/source/images/h1.gif') top center, 
+			url('classpath:/inliner/images/translator/source/images/right.gif');
+		--inline-image: h1=base64 right=base64;
+	"></div>
+	
+	<div class="mixed" style="
+		background-image: 
+			no-repeat url('images/fb.gif') top center, 
+			url('images/tw.gif');
+		background-image: 
+			no-repeat url('/inliner/images/translator/source/images/h1.gif') top center, 
+			url('classpath:/inliner/images/translator/source/images/right.gif');
+		--inline-image: h1=base64 
+						/inliner/images/translator/source/images/right=attach
+						base64;
+	"></div>
+
+	<div class="skipped" style="
+		background: url('images/h1.gif');
+		--inline-image: skip;
+	"></div>
+</body>
+</html>
