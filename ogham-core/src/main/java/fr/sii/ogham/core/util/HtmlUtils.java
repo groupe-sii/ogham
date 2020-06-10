@@ -159,7 +159,7 @@ public final class HtmlUtils {
 	 * <li><code>list-style</code></li>
 	 * <li><code>list-style-image</code></li>
 	 * <li><code>cursor</code></li>
-	 * <ul>
+	 * </ul>
 	 * 
 	 * @param htmlContent
 	 *            the html content that may contain image files
@@ -232,12 +232,12 @@ public final class HtmlUtils {
 	 * <li>If {@code other} parameter is relative, then it merges {@code other}
 	 * into {@code base}. For example:
 	 * <ul>
-	 * <li>base="css/foo.css", other="bar.png" => returns "css/bar.png"</li>
-	 * <li>base="css/foo.css", other="../images/bar.png" => returns
+	 * <li>base="css/foo.css", other="bar.png" {@literal =>} returns "css/bar.png"</li>
+	 * <li>base="css/foo.css", other="../images/bar.png" {@literal =>} returns
 	 * "images/bar.png"</li>
-	 * <li>base="http://some-url/css/foo.css", other="bar.png" => returns
+	 * <li>base="http://some-url/css/foo.css", other="bar.png" {@literal =>} returns
 	 * "http://some-url/css/bar.png"</li>
-	 * <li>base="http://some-url/css/foo.css", other="../images/bar.png" =>
+	 * <li>base="http://some-url/css/foo.css", other="../images/bar.png" {@literal =>}
 	 * returns "http://some-url/images/bar.png"</li>
 	 * </ul>
 	 * </li>
