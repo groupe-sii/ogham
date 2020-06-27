@@ -1,0 +1,21 @@
+.header {
+	background: #ccc url("../images/header.jpg") repeat-x;    /* // <1> 
+	*/
+	height: 200px;
+}
+
+.footer {
+	background: url("../images/footer.jpg") no-repeat;        /* // <2>
+	*/
+	height: 200px;
+	--inline-image: base64;                                   /* // <3>
+	*/
+}
+
+.content {
+	background: url("../images/h1.gif") no-repeat;            /* // <4>
+	*/
+	--inline-image: skip;                                     /* // <5>
+	*/
+	height: 400px;
+}

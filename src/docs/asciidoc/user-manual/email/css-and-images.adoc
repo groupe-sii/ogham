@@ -163,6 +163,8 @@ Here is the list of supported transformations:
 * [x] `<img>` tags that use local images are embedded (using `cid` reference)
 * [x] `<img>` tags that use local images are embedded (using base64 data URI)
 * [x] Inline CSS rules using `style` attribute
+* [x] `background` images that use local images are embedded (using `cid` reference)
+* [x] `background` images that use local images are embedded (using base64 data URI)
 * [ ] Use XHTML instead of HTML
 * [ ] Tables used for layout explicitly set default values
 * [ ] Remove HTML comments (except conditional comments used to target Outlook)

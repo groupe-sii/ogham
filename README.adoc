@@ -949,6 +949,8 @@ Here is the list of supported transformations:
 * [x] `<img>` tags that use local images are embedded (using `cid` reference)
 * [x] `<img>` tags that use local images are embedded (using base64 data URI)
 * [x] Inline CSS rules using `style` attribute
+* [x] `background` images that use local images are embedded (using `cid` reference)
+* [x] `background` images that use local images are embedded (using base64 data URI)
 * [ ] Use XHTML instead of HTML
 * [ ] Tables used for layout explicitly set default values
 * [ ] Remove HTML comments (except conditional comments used to target Outlook)
@@ -1172,7 +1174,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 [role=tab]
 image:{icons-html} Generated HTML
 
-[source, html, role="collapse-lines:1-8,12-73,76-83,88-96 highlight-lines:10,75,86"]
+[source, html, role="collapse-lines:1-8,12-24,27-34,39-47 highlight-lines:10,26,37"]
 ----
 <!doctype html>
 <html>
@@ -1190,57 +1192,8 @@ image:{icons-html} Generated HTML
         <p>42</p>
         <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
             <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
-vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
-RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
-ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
-pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
-WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
-eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
-3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
-E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
-iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
-dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
-kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
-9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
-Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
-ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
-zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
-YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
-DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
-YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
-X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
-+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
-2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
-Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
-sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
-xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
-K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
-5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
-U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
-gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
-1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
-zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
-hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
-H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
-lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
-3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
-lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
-WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
-MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
-J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
-00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
-sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
-Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
-4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
-v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
-CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
-LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
-S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
-T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
-UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
-/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
-ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
-K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+                        [...]
+                        K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                        <!--5-->
             <p class="text">Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
                 volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
@@ -1437,7 +1390,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 [role=tab]
 image:{icons-html} Generated HTML
 
-[source, html, role="collapse-lines:1-14,68-72,74-96 highlight-lines:16-67"]
+[source, html, role="collapse-lines:1-14,19-23,25-47 highlight-lines:16-18"]
 ----
 <!doctype html>
 <html>
@@ -1455,57 +1408,8 @@ image:{icons-html} Generated HTML
         <p>42</p>
         <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
             <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
-vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
-RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
-ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
-pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
-WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
-eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
-3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
-E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
-iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
-dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
-kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
-9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
-Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
-ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
-zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
-YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
-DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
-YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
-X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
-+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
-2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
-Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
-sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
-xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
-K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
-5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
-U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
-gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
-1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
-zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
-hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
-H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
-lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
-3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
-lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
-WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
-MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
-J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
-00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
-sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
-Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
-4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
-v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
-CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
-LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
-S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
-T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
-UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
-/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
-ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
-K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+                        [...]
+                        K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                        <!--5-->
             <p class="text">Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
                 volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
@@ -1543,7 +1447,8 @@ K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                         
 <3> _
 <4> _
 <5> The data URL starts with `data:` followed by the mimetype (`image/gif`) and 
-the image converted to a base64 string.
+the image converted to a base64 string (the base64 string is partially shown here
+for readability).
 
 [role=tab-container-end]
 _____
@@ -1694,7 +1599,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/r
 [role=tab]
 image:{icons-html} Generated HTML
 
-[source, html, role="collapse-lines:1-87,91-96 highlight-lines:89"]
+[source, html, role="collapse-lines:1-38,42-47 highlight-lines:40"]
 ----
 <!doctype html>
 <html>
@@ -1712,57 +1617,8 @@ image:{icons-html} Generated HTML
         <p>42</p>
         <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
             <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
-vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
-RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
-ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
-pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
-WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
-eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
-3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
-E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
-iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
-dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
-kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
-9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
-Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
-ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
-zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
-YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
-DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
-YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
-X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
-+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
-2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
-Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
-sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
-xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
-K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
-5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
-U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
-gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
-1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
-zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
-hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
-H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
-lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
-3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
-lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
-WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
-MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
-J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
-00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
-sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
-Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
-4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
-v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
-CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
-LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
-S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
-T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
-UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
-/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
-ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
-K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+                        [...]
+                        K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                        <!--5-->
             <p class="text">Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
                 volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
@@ -2127,57 +1983,8 @@ image:{icons-html} Generated HTML
         <p>42</p>
         <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
             <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
-vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
-RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
-ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
-pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
-WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
-eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
-3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
-E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
-iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
-dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
-kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
-9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
-Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
-ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
-zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
-YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
-DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
-YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
-X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
-+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
-2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
-Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
-sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
-xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
-K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
-5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
-U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
-gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
-1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
-zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
-hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
-H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
-lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
-3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
-lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
-WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
-MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
-J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
-00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
-sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
-Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
-4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
-v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
-CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
-LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
-S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
-T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
-UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
-/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
-ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
-K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+                        [...]
+                        K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                        <!--5-->
             <p class="text">Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
                 volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
@@ -2481,57 +2288,8 @@ image:{icons-html} Generated HTML
         <p>42</p>
         <div class="left" style="width: 250px; display: inline-block; margin-right: 36px;">
             <img src="data:image/gif;base64,R0lGODlh+gCMANUAAOxRVfySUllNTaNvTPS1j
-vlpbfRUWPuKjdJ+Tvn8/v2qrNJQVv7d3vh2e+n0/fH4/fd8VOPx/Oft8/3q7PT5/sxQVct8TueC
-RsRNU/7Rt/3IyiowPPaNTpZIUHpeSpNnTf3U1CM6RO72/fLl6vyeZP2uguWIUDg7R15PTfmQUFJ
-ERDk/TS41QzA3Rdx6P//59vpeYsBOVO/3/f7n6P24j/7g4T88R//38zNCRTM6Rv2/wf7P0NSATv
-pWWv///xU2QyH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZ
-WhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIg
-eDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE
-3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLz
-E5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iI
-iB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJo
-dHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmF
-kb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG
-9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxM
-Tc1MTc0QUJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRp
-ZDoxMTc1MTc0QkJFMTUxMUUyQjUwQ0YzRjY0Nzg2NURGMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSB
-zdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjExNzUxNzQ4QkUxNTExRTJCNTBDRjNGNjQ3ODY1RE
-YwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNzUxNzQ5QkUxNTExRTJCNTBDRjNGNjQ3O
-DY1REYwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hw
-YWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2dj
-X1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ
-+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ
-2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAv
-Li0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAA
-sAAAAAPoAjAAABv/An3BILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuH
-xOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6Slpo45HRgVr
-K2ur7CxsrO0tbauMR0hp3o2Bj3AwcLDxMXGx8jJysYLu7x3McvS09TVyx3Pd7/W3N3exxXZdt/k
-5d0L4nXm6+zJ6Olz7fLzwO/wcccwChoHwfr8whpo0FEAmQEACBMqXMiwocOF24jZu/fmmA4fPl4
-U7HEx48YeEzAyOHbwocmTKCMKm0ixzbEaGH306wET48wCMX0cQ8mzJ8T/YixbrjmmAOMMGMCK+j
-gabAdGHSR9SkXJTGjFYwcOIA2WdSswGFmTGRhLtqzZs2jTnj0W1CoaenDXtXVrJq7db3PpkrnL1
-1pevWL6Cpb2FzCYwYiRFTbsRRiMBpAjS55MubLly5gza4a8kvHbYAUeiB5NurTp06hTq17N+sGI
-zp7rgm5Nu7bt26RfB1scW4uw0LiDCx+uu17vMr+HK1/eungP3sev/KZAvbr169iza9/Ovbt3Cs6
-hR6/yO6f58+jTq1/Pvj36CbDHHwbtvr79+/hzwt8tP0z5/AAGKOB+xvX3xX8CJqggewQ+Z+CB9L
-H33YQJLGhfg+I9+ASC6ckQ/8GHIIYo4ogkUmChexhq2AWH6DlA4oswhijDie2lqOIWLJ5HQYw8k
-lghjevZeGMWOQJp5H1CDildhEc2iWR8SlpRpJNUvgdllFRMeWEJAXTp5ZdghikmCRksmCSWU2jp
-3g0kiOnmm2KWmeCZaEahZnsZwKmnniQoSGedGzIJIA17FurmC3NeCWigwOAkIKFuXnBBCilc4MK
-lmLpwgZ6IDqjook3cyR6kYlrKAQeZZropnJ0G+CeoS9yZgAgO1GqrrQTAmUKXKZzq66l7SnDrsL
-WaqN6rsCZxp4sw5mros15K0OOPVvKXLKM9OKoesy86C+2z0vJI7XnIXmuEqDIQi/9rlyYg4O678
-MYrb7w8RKvurcamV665RIi6HqQqbCDwwAQXbLDBCHTZKoD78iuEv+oBfPDEFA9sgcKJWuuwEhCn
-J3HFIBd8cQAL59eww7LSeq+zAYfs8gYjC3tvsUF+unG/grYYI8svuxzztMfafPPDOZ/HLYkss6D
-00kw37bTTP4sbtMZDn1v0eemu3KUKT3ft9dIxz0zz1AVWbXWjCQL89dpQY+wp1WYP0TF6arNtNw
-sjl4zfyfzOfV7dd6+dd8Zlxy331TklkLW6SQcueJcyz5xvtYUb/sOyO2/t+OMBhBvjuObxbS7mz
-Wq+uddRf062g5YfjvZ6is/c+OlPhy3/9uTkCj203+YBTnvTg79dueG85+T772C77aruNxcf0/HI
-4608w8xvLOvixM4evdK2S14z3MQjHtPRI2q/feowgq5f9SiLjxH5IpofPfovqh+T6NdeL/vWLfT
-v//8ADGAAu3cv3IWOfX1zX3sgJYAVOPCBEIygBCUYvOWBL27OwwgDJ8jBDj6wgtS7oNky6IMNev
-CEEQShyRA4OgWOqksNRKEMV6DCvbEwfy78FwxnKMMaPkmEVSOhCXnoQR9e6IbJEuIOiVjE6a0Qi
-LsTRkgCNEQmTtCI9dkBEmE1jAaAgAFgDKMYxzhGLgUghla8Ype+SMY2tnEHH2Fd6y73jZIA/wAC
-S0wjBbuUEJWcY45C8GM17IjHM+pRjQHoYznCAchoeIOQeTzkB/mIEEFaAxuA9MUjE1JINErSgSN
-T5DcA4AxAnqADt5AFBlbZyU9CcGSrXGUqY4EBXQCyCwOI5CdHVspb0iGXhnQlKLvUS1/KAZie3C
-UxjVkHZApzmAEoJjPf4Mxn8nKac6imMK+JzTgA8wMoCKc4x0nOcpbTBMvsJhyA+S1DSVOdamBnO
-/f0TniiQZ566hW06mlPM+DzTajS1LP42U8y/DNSmNpVoQhaUDEctFSYGmhD1/DQMFXqAhwwVAom
-ugYUzHNPKbAARyn6UTiZAAcjXYMAPjCAlrr0pTMwjWlMPcDQlNr0pjjNqU53ytOe+vSnQA2qUId
-K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                                                <!--5-->
+                        [...]
+                        K1KIa9ahITapSl8rUpjr1qVCNqlSHFAQAOw==">                                        <!--5-->
             <p class="text">Lorem ipsum dolor sit amet, consectetur
                 adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum
                 volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero
@@ -2589,6 +2347,774 @@ _____
 In future version of Ogham, a new strategy may be added in order to include
 styles using `<style>` tags.
 ====
+
+
+===== Inline background images
+
+
+
+As developer you may need to use background images to make your email more attractive.
+As for `<img>` tags, the images have to be either served from a server that is 
+available online (and referenced by an URL) or embedded with the email.
+
+Ogham provides automatic inlining of images included through CSS. It works for the
+following properties:
+
+* `background`, `background-image`
+* `list-style`, `list-style-image`
+* `cursor`
+
+
+.Email client support
+[WARNING]
+====
+Even if the properties `background`, `background-image`, `list-style`, 
+`list-style-image` and `cursor` can be inlined by Ogham, it doesn't mean that email
+clients support those properties.
+====
+
+
+.Use a background color as fallback
+[TIP]
+====
+We recommend that you provide a background color in addition to a background image
+as fallback in case that the image is not displayed by the email client.
+====
+
+
+As well as `<img>` inlining, Ogham provides the following strategies:
+
+* Either attached with the email and referenced in the HTML using a 
+https://tools.ietf.org/html/rfc2392[Content-ID].
+* Or images are converted to a base64 string and embedded in the HTML using the
+https://tools.ietf.org/html/rfc2397[data URL scheme]
+* Or not inlined at all (if the image points to an external URL or it is explicitly
+skipped)
+
+
+.Automatically skip external URLs
+[NOTE]
+====
+If the `url()` value references an external image (starting with `http://` or 
+`https://`), the image is not inlined at all.
+====
+
+
+.Images referenced in the HTML
+[NOTE]
+====
+In addition to CSS rules defined in external CSS file, Ogham also supports inlining
+of images referenced either in `<style>` tags or directly on HTML tags using `style`
+attribute. 
+====
+
+
+
+====== Attach and reference images
+
+By default, if a CSS rule contains one of `background`, `background-image`,
+`list-style`, `list-style-image` or `cursor` properties with an `url()` that points
+to a local image, the image is automatically attached and referenced using a
+https://tools.ietf.org/html/rfc2392[Content-ID] that is automatically generated.
+
+.Default choice explanation
+[NOTE]
+====
+Like `<img>` inlining, attach strategy is handled by more clients than base64
+strategy.
+====
+
+.Customize CID generation
+[TIP]
+====
+Default Content-ID generation simply uses a incremental number. It is possible to
+use <<custom-cid-generation, custom Content-ID generation>>.
+====
+
+
+Instead of using default strategy, it is possible to explicitly indicate which
+inlining strategy to use for a particular image. This is done through 
+`--inline-image` property.
+
+
+[role="tab-container no-max-height"]
+_____
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlWithBackgroundImagesTemplateSample {
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from.default-value", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template (if provided)
+        service.send(new Email()
+                        .body().template("classpath:/template/thymeleaf/background-images",    // <1>
+                                        new SimpleBean("foo", 42))                             // <2>
+                        .to("ogham-test@yopmail.com"));
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> The path to the templates (`/template/thymeleaf/background-images.html` for the main body
+<2> The template context
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+[role=tab]
+image:{icons-thymeleaf-html-template} ThymeLeaf template
+
+[source, html, role="highlight-lines:7,10"]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Inline background images</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="/resources/css/background-images.css" rel="stylesheet" />       <!--1-->
+</head>
+<body>
+    <div class="header">                                                    <!--2-->
+        Hello [[${name}]] !
+    </div>
+    <div class="content">                                                   <!--3-->
+        content
+    </div>
+    <div class="footer">                                                    <!--4-->
+        footer
+    </div>
+</body>
+</html>
+----
+<1> Include CSS file that contains rules with `background` images
+<2> A node that is targeted by a CSS rule that uses a background image. The 
+background image will be inlined (using `attach` strategy).
+<3> _
+<4> _
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:2"]
+----
+.header {
+    background: #ccc url("../images/header.jpg") repeat-x;    /* // <1> 
+    */
+    height: 200px;
+}
+
+.footer {
+    background: url("../images/footer.jpg") no-repeat;        /* // <2>
+    */
+    height: 200px;
+    --inline-image: base64;                                   /* // <3>
+    */
+}
+
+.content {
+    background: url("../images/h1.gif") no-repeat;            /* // <4>
+    */
+    --inline-image: skip;                                     /* // <5>
+    */
+    height: 400px;
+}
+----
+<1> A `background` property that references a local image using `url()`. As nothing
+is specified, the image will be inlined using `attach` strategy.
+<2> _
+<3> _
+<4> _
+<5> _
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-html} Generated HTML
+
+[source, html, role="highlight-lines:7,10"]
+----
+<!doctype html>
+<html>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+  <title>Inline background images</title> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+                                                                                                                                                             <!--1--> 
+ </head> 
+ <body> 
+  <div class="header" style="background: #ccc url(&quot;cid:0&quot;) repeat-x;    height: 200px;">                                                             <!--2--> 
+   Hello foo ! 
+  </div> 
+  <div class="content" style="background: url(&quot;classpath:/resources/images/h1.gif&quot;) no-repeat;    height: 400px;    ">                               <!--3--> 
+   content 
+  </div> 
+  <div class="footer" style="background: url(&quot;data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkq[...]JpRFcBO8BIP/2Q==&quot;) no-repeat;    height: 200px;    ">   <!--4-->
+   footer 
+  </div>  
+ </body>
+</html>
+----
+<1> The CSS file is inlined (so the inclusion is removed)
+<2> The image is attached and the generated Content-ID is `0`.
+<3> _
+<4> _
+
+
+[role=tab-container-end]
+_____
+
+
+====== Embed using data URL scheme
+
+Instead of attaching the image with the email, it is possible to inline images
+included through CSS rules directly as a base64 string. To enable it,
+you need to provide the `--inline-image` property with `base64` value.
+
+[role="tab-container no-max-height"]
+_____
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlWithBackgroundImagesTemplateSample {
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from.default-value", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template (if provided)
+        service.send(new Email()
+                        .body().template("classpath:/template/thymeleaf/background-images",    // <1>
+                                        new SimpleBean("foo", 42))                             // <2>
+                        .to("ogham-test@yopmail.com"));
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> The path to the templates (`/template/thymeleaf/background-images.html` for the main body
+<2> The template context
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+[role=tab]
+image:{icons-thymeleaf-html-template} ThymeLeaf template
+
+[source, html, role="highlight-lines:7,16"]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Inline background images</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="/resources/css/background-images.css" rel="stylesheet" />       <!--1-->
+</head>
+<body>
+    <div class="header">                                                    <!--2-->
+        Hello [[${name}]] !
+    </div>
+    <div class="content">                                                   <!--3-->
+        content
+    </div>
+    <div class="footer">                                                    <!--4-->
+        footer
+    </div>
+</body>
+</html>
+----
+<1> Include CSS file that contains rules with `background` images
+<2> _
+<3> _
+<4> A node that is targeted by a CSS rule that uses a background image. The 
+background image will be inlined (using `base64` strategy).
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:8,11"]
+----
+.header {
+    background: #ccc url("../images/header.jpg") repeat-x;    /* // <1> 
+    */
+    height: 200px;
+}
+
+.footer {
+    background: url("../images/footer.jpg") no-repeat;        /* // <2>
+    */
+    height: 200px;
+    --inline-image: base64;                                   /* // <3>
+    */
+}
+
+.content {
+    background: url("../images/h1.gif") no-repeat;            /* // <4>
+    */
+    --inline-image: skip;                                     /* // <5>
+    */
+    height: 400px;
+}
+----
+<1> _
+<2> A `background` property that references a local image using `url()`. The inline
+strategy is specified using `--inline-image` property on the same CSS rule. 
+<3> Indicate the inlining strategy: use `base64` for all images contained in
+`.footer` rule.
+<4> _
+<5> _
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-html} Generated HTML
+
+[source, html, role="highlight-lines:16"]
+----
+<!doctype html>
+<html>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+  <title>Inline background images</title> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+                                                                                                                                                             <!--1--> 
+ </head> 
+ <body> 
+  <div class="header" style="background: #ccc url(&quot;cid:0&quot;) repeat-x;    height: 200px;">                                                             <!--2--> 
+   Hello foo ! 
+  </div> 
+  <div class="content" style="background: url(&quot;classpath:/resources/images/h1.gif&quot;) no-repeat;    height: 400px;    ">                               <!--3--> 
+   content 
+  </div> 
+  <div class="footer" style="background: url(&quot;data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkq[...]JpRFcBO8BIP/2Q==&quot;) no-repeat;    height: 200px;    ">   <!--4-->
+   footer 
+  </div>  
+ </body>
+</html>
+----
+<1> _
+<2> _
+<3> _
+<4> The `style` attribute contains the `background` property with the image
+content converted as a base64 string (the base64 string is partially shown here
+for readability).
+
+
+[role=tab-container-end]
+_____
+
+
+.Use different strategies for images defined in the same CSS rule
+[TIP]
+====
+It is possible to reference several images (either `background` property with
+multiple background images or several properties) on the same CSS rule.
+`--inline-image` allows a more advanced syntax that allows to provide 
+<<user-manual.adoc#background-image-specific-image-strategy, a strategy for a specific image>>.
+====
+
+====== Skip some images
+
+[role="tab-container no-max-height"]
+_____
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class HtmlWithBackgroundImagesTemplateSample {
+    public static void main(String[] args) throws MessagingException {
+        // configure properties (could be stored in a properties file or defined
+        // in System properties)
+        Properties properties = new Properties();
+        properties.setProperty("mail.smtp.host", "<your server host>");
+        properties.setProperty("mail.smtp.port", "<your server port>");
+        properties.setProperty("ogham.email.from.default-value", "<email address to display for the sender user>");
+        // Instantiate the messaging service using default behavior and
+        // provided properties
+        MessagingService service = MessagingBuilder.standard()
+                .environment()
+                    .properties(properties)
+                    .and()
+                .build();
+        // send the email using fluent API
+        // Note that the extension of the template is not given. This version
+        // automatically takes the provided path and adds the '.html' extension
+        // for the HTML template and '.txt.ftl' for text template (if provided)
+        service.send(new Email()
+                        .body().template("classpath:/template/thymeleaf/background-images",    // <1>
+                                        new SimpleBean("foo", 42))                             // <2>
+                        .to("ogham-test@yopmail.com"));
+    }
+
+    public static class SimpleBean {
+        private String name;
+        private int value;
+        public SimpleBean(String name, int value) {
+            super();
+            this.name = name;
+            this.value = value;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
+}
+----
+<1> The path to the templates (`/template/thymeleaf/background-images.html` for the main body
+<2> The template context
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+[role=tab]
+image:{icons-thymeleaf-html-template} ThymeLeaf template
+
+[source, html, role="highlight-lines:7,13"]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Inline background images</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="/resources/css/background-images.css" rel="stylesheet" />       <!--1-->
+</head>
+<body>
+    <div class="header">                                                    <!--2-->
+        Hello [[${name}]] !
+    </div>
+    <div class="content">                                                   <!--3-->
+        content
+    </div>
+    <div class="footer">                                                    <!--4-->
+        footer
+    </div>
+</body>
+</html>
+----
+<1> Include CSS file that contains rules with `background` images
+<2> _
+<3> A node that is targeted by a CSS rule that uses a background image. The 
+background image will not be inlined.
+<4> _
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:16,18"]
+----
+.header {
+    background: #ccc url("../images/header.jpg") repeat-x;    /* // <1> 
+    */
+    height: 200px;
+}
+
+.footer {
+    background: url("../images/footer.jpg") no-repeat;        /* // <2>
+    */
+    height: 200px;
+    --inline-image: base64;                                   /* // <3>
+    */
+}
+
+.content {
+    background: url("../images/h1.gif") no-repeat;            /* // <4>
+    */
+    --inline-image: skip;                                     /* // <5>
+    */
+    height: 400px;
+}
+----
+<1> _
+<2> _
+<3> _
+<4> A `background` property that references a local image using `url()`. The inline
+strategy is specified using `--inline-image` property on the same CSS rule. 
+<5> Indicate the inlining strategy (`skip`): do not inline any image contained in
+`.content` rule.
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-html} Generated HTML
+
+[source, html, role="highlight-lines:13"]
+----
+<!doctype html>
+<html>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+  <title>Inline background images</title> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+                                                                                                                                                             <!--1--> 
+ </head> 
+ <body> 
+  <div class="header" style="background: #ccc url(&quot;cid:0&quot;) repeat-x;    height: 200px;">                                                             <!--2--> 
+   Hello foo ! 
+  </div> 
+  <div class="content" style="background: url(&quot;classpath:/resources/images/h1.gif&quot;) no-repeat;    height: 400px;    ">                               <!--3--> 
+   content 
+  </div> 
+  <div class="footer" style="background: url(&quot;data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkq[...]JpRFcBO8BIP/2Q==&quot;) no-repeat;    height: 200px;    ">   <!--4-->
+   footer 
+  </div>  
+ </body>
+</html>
+----
+<1> _
+<2> _
+<3> The `style` attribute contains the `background` property with unchanged
+url to the image (except for the path, see note below).
+<4> _
+
+
+[role=tab-container-end]
+_____
+
+
+.Relative resources
+[NOTE]
+====
+It is possible to reference images from CSS using relative path. When Ogham
+inlines the CSS rules in the HTML using `style` attribute, the path to local images
+relative to the CSS file are updated to the absolute path. This way, the path in the
+HTML points to the right file.
+====
+
+
+[[background-image-specific-image-strategy]]
+====== Indicate a different strategy for specific images
+
+`background` and `background-image` properties allow to 
+https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Backgrounds_and_Borders/Using_multiple_backgrounds[use multiple backgrounds].
+Moreover, you could use several properties that reference different images on the same CSS rule.
+That's why Ogham provides a more advanced syntax to be able to specify which strategy
+to use for which image.
+
+The possible syntaxes are:
+
+* `--inline-image: <strategy>;` to apply the same stategy to all images that need
+to be inlined.
+* `--inline-image: <image1>=<strategy1> <image2>=<strategy2> ... <imageN>=<strategyN>;`
+to apply `<strategy1>` on image that matches the path defined by 
+`<image1>`, `<strategy2>` on image that matches the path defined by 
+`<image2>`, and so on.
+* `--inline-image: <image1>=<strategy1> <image2>=<strategy2> ... <imageN>=<strategyN> <default strategy>;`:
+same as before but for all images that don't match any path, it applies
+the `<default strategy>`.
+
+
+.Same strategy for all images
+[role="tab-container no-max-height"]
+_____
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:6"]
+----
+.same-strategy-for-all-images {
+    background-image: 
+        no-repeat url('/static/images/h1.gif') top center,     // <1>
+        url('../images/right.gif');                            // <2>
+    list-style-image: url('../images/disc.png');               // <3>
+    --inline-image: base64;                                    // <4>
+}
+----
+<1> A first background that references the image `h1.gif` available in classpath 
+subfolder `static/images`.
+<2> A second background that references the local image `right.gif` that is 
+relative to the CSS file. 
+<3> Use the local image `disc.png` to style the list bullets.
+<4> Indicate the inlining strategy (`base64`) for the three images.
+
+
+[role=tab-container-end]
+_____
+
+
+.Strategy per image
+[role="tab-container no-max-height"]
+_____
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:6"]
+----
+.strategy-per-images {
+    background-image: 
+        no-repeat url('/static/images/h1.gif') top center,              // <1>
+        url('../images/right.gif');                                     // <2>
+    list-style-image: url('../images/disc.png');                        // <3>
+    --inline-image: h1=base64 images/right.gif=attach disc.png=skip;    // <4>
+}
+----
+<1> A first background that references the image `h1.gif` available in classpath 
+folder `static/images`.
+<2> A second background that references the local image `right.gif` that is 
+relative to the CSS file. 
+<3> Use the local image `disc.png` to style the list bullets.
+<4> Indicate the inlining strategy per image:
++
+* Use `base64` strategy for image `h1.gif`
+* Use `attach` strategy for image `right.gif`
+* Skip inlining for image `disc.png`
+
+
+[role=tab-container-end]
+_____
+
+.Image matching
+[NOTE]
+====
+The image matching is simply a `contains` test. It means that if you write
+`--inline-image: gif=base64 png=attach;`, `base64` strategy is applied on `h1.gif`
+and `right.gif` while `attach` strategy is used for `disc.png` in the example above.
+====
+
+
+.Strategy per image with default
+[role="tab-container no-max-height"]
+_____
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:6"]
+----
+.strategy-per-images-with-default {
+    background-image: 
+        no-repeat url('/static/images/h1.gif') top center,              // <1>
+        url('../images/right.gif');                                     // <2>
+    list-style-image: url('../images/disc.png');                        // <3>
+    --inline-image: h1=base64 attach;                                   // <4>
+}
+----
+<1> A first background that references the image `h1.gif` available in classpath 
+folder `static/images`.
+<2> A second background that references the local image `right.gif` that is 
+relative to the CSS file. 
+<3> Use the local image `disc.png` to style the list bullets.
+<4> Indicate the inlining strategies:
++
+* Use `base64` strategy for image `h1.gif`
+* Use `attach` strategy for all other images defined in the rule (`right.gif` 
+and `disc.png`)
+
+
+[role=tab-container-end]
+_____
+
 
 
 

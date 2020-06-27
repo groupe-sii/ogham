@@ -1,0 +1,445 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+As developer you may need to use background images to make your email more attractive.
+As for `<img>` tags, the images have to be either served from a server that is 
+available online (and referenced by an URL) or embedded with the email.
+
+Ogham provides automatic inlining of images included through CSS. It works for the
+following properties:
+
+* `background`, `background-image`
+* `list-style`, `list-style-image`
+* `cursor`
+
+
+.Email client support
+[WARNING]
+====
+Even if the properties `background`, `background-image`, `list-style`, 
+`list-style-image` and `cursor` can be inlined by Ogham, it doesn't mean that email
+clients support those properties.
+====
+
+
+.Use a background color as fallback
+[TIP]
+====
+We recommend that you provide a background color in addition to a background image
+as fallback in case that the image is not displayed by the email client.
+====
+
+
+As well as `<img>` inlining, Ogham provides the following strategies:
+
+* Either attached with the email and referenced in the HTML using a 
+https://tools.ietf.org/html/rfc2392[Content-ID].
+* Or images are converted to a base64 string and embedded in the HTML using the
+https://tools.ietf.org/html/rfc2397[data URL scheme]
+* Or not inlined at all (if the image points to an external URL or it is explicitly
+skipped)
+
+
+.Automatically skip external URLs
+[NOTE]
+====
+If the `url()` value references an external image (starting with `http://` or 
+`https://`), the image is not inlined at all.
+====
+
+
+.Images referenced in the HTML
+[NOTE]
+====
+In addition to CSS rules defined in external CSS file, Ogham also supports inlining
+of images referenced either in `<style>` tags or directly on HTML tags using `style`
+attribute. 
+====
+
+
+
+== Attach and reference images
+
+By default, if a CSS rule contains one of `background`, `background-image`,
+`list-style`, `list-style-image` or `cursor` properties with an `url()` that points
+to a local image, the image is automatically attached and referenced using a
+https://tools.ietf.org/html/rfc2392[Content-ID] that is automatically generated.
+
+.Default choice explanation
+[NOTE]
+====
+Like `<img>` inlining, attach strategy is handled by more clients than base64
+strategy.
+====
+
+.Customize CID generation
+[TIP]
+====
+Default Content-ID generation simply uses a incremental number. It is possible to
+use <<custom-cid-generation, custom Content-ID generation>>.
+====
+
+
+Instead of using default strategy, it is possible to explicitly indicate which
+inlining strategy to use for a particular image. This is done through 
+`--inline-image` property.
+
+
+[role="tab-container no-max-height"]
+Attach background images
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithBackgroundImagesTemplateSample.java[]
+----
+<1> The path to the templates (`/template/thymeleaf/background-images.html` for the main body
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+[role=tab]
+image:{icons-thymeleaf-html-template} ThymeLeaf template
+
+[source, html, role="highlight-lines:7,10"]
+----
+include::{standard-samples-resourcesdir}/template/thymeleaf/background-images.html[]
+----
+<1> Include CSS file that contains rules with `background` images
+<2> A node that is targeted by a CSS rule that uses a background image. The 
+background image will be inlined (using `attach` strategy).
+<3> _
+<4> _
+
+{standard-samples-resourcesdir-url}/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:2"]
+----
+include::{standard-samples-resourcesdir}/resources/css/background-images.css[]
+----
+<1> A `background` property that references a local image using `url()`. As nothing
+is specified, the image will be inlined using `attach` strategy.
+<2> _
+<3> _
+<4> _
+<5> _
+
+{standard-samples-resourcesdir-url}/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-html} Generated HTML
+
+[source, html, role="highlight-lines:7,10"]
+----
+include::{resourcesdir}/samples/email/inline-background-images-result.html[]
+----
+<1> The CSS file is inlined (so the inclusion is removed)
+<2> The image is attached and the generated Content-ID is `0`.
+<3> _
+<4> _
+
+
+[role=tab-container-end]
+-
+
+
+== Embed using data URL scheme
+
+Instead of attaching the image with the email, it is possible to inline images
+included through CSS rules directly as a base64 string. To enable it,
+you need to provide the `--inline-image` property with `base64` value.
+
+[role="tab-container no-max-height"]
+Base64 background images
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithBackgroundImagesTemplateSample.java[]
+----
+<1> The path to the templates (`/template/thymeleaf/background-images.html` for the main body
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+[role=tab]
+image:{icons-thymeleaf-html-template} ThymeLeaf template
+
+[source, html, role="highlight-lines:7,16"]
+----
+include::{standard-samples-resourcesdir}/template/thymeleaf/background-images.html[]
+----
+<1> Include CSS file that contains rules with `background` images
+<2> _
+<3> _
+<4> A node that is targeted by a CSS rule that uses a background image. The 
+background image will be inlined (using `base64` strategy).
+
+{standard-samples-resourcesdir-url}/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:8,11"]
+----
+include::{standard-samples-resourcesdir}/resources/css/background-images.css[]
+----
+<1> _
+<2> A `background` property that references a local image using `url()`. The inline
+strategy is specified using `--inline-image` property on the same CSS rule. 
+<3> Indicate the inlining strategy: use `base64` for all images contained in
+`.footer` rule.
+<4> _
+<5> _
+
+{standard-samples-resourcesdir-url}/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-html} Generated HTML
+
+[source, html, role="highlight-lines:16"]
+----
+include::{resourcesdir}/samples/email/inline-background-images-result.html[]
+----
+<1> _
+<2> _
+<3> _
+<4> The `style` attribute contains the `background` property with the image
+content converted as a base64 string (the base64 string is partially shown here
+for readability).
+
+
+[role=tab-container-end]
+-
+
+
+.Use different strategies for images defined in the same CSS rule
+[TIP]
+====
+It is possible to reference several images (either `background` property with
+multiple background images or several properties) on the same CSS rule.
+`--inline-image` allows a more advanced syntax that allows to provide 
+<<user-manual.adoc#background-image-specific-image-strategy, a strategy for a specific image>>.
+====
+
+== Skip some images
+
+[role="tab-container no-max-height"]
+Skip background images
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
+----
+include::{standard-email-samples-sourcedir}/HtmlWithBackgroundImagesTemplateSample.java[]
+----
+<1> The path to the templates (`/template/thymeleaf/background-images.html` for the main body
+<2> The template context
+
+{standard-email-samples-sourcedir-url}/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
+
+
+[role=tab]
+image:{icons-thymeleaf-html-template} ThymeLeaf template
+
+[source, html, role="highlight-lines:7,13"]
+----
+include::{standard-samples-resourcesdir}/template/thymeleaf/background-images.html[]
+----
+<1> Include CSS file that contains rules with `background` images
+<2> _
+<3> A node that is targeted by a CSS rule that uses a background image. The 
+background image will not be inlined.
+<4> _
+
+{standard-samples-resourcesdir-url}/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:16,18"]
+----
+include::{standard-samples-resourcesdir}/resources/css/background-images.css[]
+----
+<1> _
+<2> _
+<3> _
+<4> A `background` property that references a local image using `url()`. The inline
+strategy is specified using `--inline-image` property on the same CSS rule. 
+<5> Indicate the inlining strategy (`skip`): do not inline any image contained in
+`.content` rule.
+
+{standard-samples-resourcesdir-url}/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
+
+
+[role=tab]
+image:{icons-html} Generated HTML
+
+[source, html, role="highlight-lines:13"]
+----
+include::{resourcesdir}/samples/email/inline-background-images-result.html[]
+----
+<1> _
+<2> _
+<3> The `style` attribute contains the `background` property with unchanged
+url to the image (except for the path, see note below).
+<4> _
+
+
+[role=tab-container-end]
+-
+
+
+.Relative resources
+[NOTE]
+====
+It is possible to reference images from CSS using relative path. When Ogham
+inlines the CSS rules in the HTML using `style` attribute, the path to local images
+relative to the CSS file are updated to the absolute path. This way, the path in the
+HTML points to the right file.
+====
+
+
+[[background-image-specific-image-strategy]]
+== Indicate a different strategy for specific images
+
+`background` and `background-image` properties allow to 
+https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Backgrounds_and_Borders/Using_multiple_backgrounds[use multiple backgrounds].
+Moreover, you could use several properties that reference different images on the same CSS rule.
+That's why Ogham provides a more advanced syntax to be able to specify which strategy
+to use for which image.
+
+The possible syntaxes are:
+
+* `--inline-image: <strategy>;` to apply the same stategy to all images that need
+to be inlined.
+* `--inline-image: <image1>=<strategy1> <image2>=<strategy2> ... <imageN>=<strategyN>;`
+to apply `<strategy1>` on image that matches the path defined by 
+`<image1>`, `<strategy2>` on image that matches the path defined by 
+`<image2>`, and so on.
+* `--inline-image: <image1>=<strategy1> <image2>=<strategy2> ... <imageN>=<strategyN> <default strategy>;`:
+same as before but for all images that don't match any path, it applies
+the `<default strategy>`.
+
+
+.Same strategy for all images
+[role="tab-container no-max-height"]
+Same strategy for all images
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:6"]
+----
+.same-strategy-for-all-images {
+	background-image: 
+		no-repeat url('/static/images/h1.gif') top center,     // <1>
+		url('../images/right.gif');                            // <2>
+	list-style-image: url('../images/disc.png');               // <3>
+	--inline-image: base64;                                    // <4>
+}
+----
+<1> A first background that references the image `h1.gif` available in classpath 
+subfolder `static/images`.
+<2> A second background that references the local image `right.gif` that is 
+relative to the CSS file. 
+<3> Use the local image `disc.png` to style the list bullets.
+<4> Indicate the inlining strategy (`base64`) for the three images.
+
+
+[role=tab-container-end]
+-
+
+
+.Strategy per image
+[role="tab-container no-max-height"]
+Strategy per image
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:6"]
+----
+.strategy-per-images {
+	background-image: 
+		no-repeat url('/static/images/h1.gif') top center,              // <1>
+		url('../images/right.gif');                                     // <2>
+	list-style-image: url('../images/disc.png');                        // <3>
+	--inline-image: h1=base64 images/right.gif=attach disc.png=skip;    // <4>
+}
+----
+<1> A first background that references the image `h1.gif` available in classpath 
+folder `static/images`.
+<2> A second background that references the local image `right.gif` that is 
+relative to the CSS file. 
+<3> Use the local image `disc.png` to style the list bullets.
+<4> Indicate the inlining strategy per image:
++
+* Use `base64` strategy for image `h1.gif`
+* Use `attach` strategy for image `right.gif`
+* Skip inlining for image `disc.png`
+
+
+[role=tab-container-end]
+-
+
+.Image matching
+[NOTE]
+====
+The image matching is simply a `contains` test. It means that if you write
+`--inline-image: gif=base64 png=attach;`, `base64` strategy is applied on `h1.gif`
+and `right.gif` while `attach` strategy is used for `disc.png` in the example above.
+====
+
+
+.Strategy per image with default
+[role="tab-container no-max-height"]
+Strategy per image with default
+
+
+[role=tab]
+image:{icons-css} CSS
+
+[source, css, role="highlight-lines:6"]
+----
+.strategy-per-images-with-default {
+	background-image: 
+		no-repeat url('/static/images/h1.gif') top center,              // <1>
+		url('../images/right.gif');                                     // <2>
+	list-style-image: url('../images/disc.png');                        // <3>
+	--inline-image: h1=base64 attach;                                   // <4>
+}
+----
+<1> A first background that references the image `h1.gif` available in classpath 
+folder `static/images`.
+<2> A second background that references the local image `right.gif` that is 
+relative to the CSS file. 
+<3> Use the local image `disc.png` to style the list bullets.
+<4> Indicate the inlining strategies:
++
+* Use `base64` strategy for image `h1.gif`
+* Use `attach` strategy for all other images defined in the rule (`right.gif` 
+and `disc.png`)
+
+
+[role=tab-container-end]
+-
+

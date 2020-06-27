@@ -109,7 +109,7 @@ be inlined (using `attach` strategy)
 [role=tab]
 image:{icons-html} Generated HTML
 
-[source, html, role="collapse-lines:1-8,12-73,76-83,88-96 highlight-lines:10,75,86"]
+[source, html, role="collapse-lines:1-8,12-24,27-34,39-47 highlight-lines:10,26,37"]
 ----
 include::{resourcesdir}/samples/email/inlining-result.html[]
 ----
@@ -178,7 +178,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 [role=tab]
 image:{icons-html} Generated HTML
 
-[source, html, role="collapse-lines:1-14,68-72,74-96 highlight-lines:16-67"]
+[source, html, role="collapse-lines:1-14,19-23,25-47 highlight-lines:16-18"]
 ----
 include::{resourcesdir}/samples/email/inlining-result.html[]
 ----
@@ -187,7 +187,8 @@ include::{resourcesdir}/samples/email/inlining-result.html[]
 <3> _
 <4> _
 <5> The data URL starts with `data:` followed by the mimetype (`image/gif`) and 
-the image converted to a base64 string.
+the image converted to a base64 string (the base64 string is partially shown here
+for readability).
 
 [role=tab-container-end]
 -
@@ -239,7 +240,7 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 [role=tab]
 image:{icons-html} Generated HTML
 
-[source, html, role="collapse-lines:1-87,91-96 highlight-lines:89"]
+[source, html, role="collapse-lines:1-38,42-47 highlight-lines:40"]
 ----
 include::{resourcesdir}/samples/email/inlining-result.html[]
 ----
