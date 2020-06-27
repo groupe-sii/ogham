@@ -1,0 +1,23 @@
+#toc .sectlevel1 {
+	padding-right: 10px;
+	position: relative;
+}
+
+#toc ul.sectlevel3 {
+	overflow-y: hidden;
+	height: 0;
+}
+
+#toc ul.sectlevel3.opened,
+#toc ul.sectlevel2 > .reading .sectlevel3 {
+	height: auto;
+}
+
+#toc .reading > a {
+	font-weight: bold;
+}
+#toc .reading > a::before {
+	content: "▶";
+	position: absolute;
+	right: -10px;
+}
