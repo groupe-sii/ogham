@@ -52,6 +52,7 @@ h5 {
 }
 h6 {
 	@include doc-title-adjacent-margin(6);
+	font-size: 1.1rem;
 }
 
 .main-body {

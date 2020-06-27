@@ -125,7 +125,11 @@
 			<link rel="shortcut icon" href="$resourcePath/favicon.ico" type="image/x-icon" />
 			<link rel="author" href="https://github.com/aurelien-baudet" />
 			<!--link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700" crossorigin="anonymous" /-->
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
+			<!-- 
+				TODO: Asciidoctor uses Font Awesome 4 while Reflow skin uses Font Awesome 5.
+				Therefore, we need to manually provide missing icons until Asciidoctor upgrades Font Awesome.
+			-->
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 			<link rel="stylesheet" href="$resourcePath/styles/custom-styles.css" />
 			<link rel="stylesheet" href="$resourcePath/styles/toc.css" />
 			<link rel="stylesheet" href="$resourcePath/styles/progress.css" />
