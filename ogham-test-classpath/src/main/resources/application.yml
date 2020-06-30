@@ -26,7 +26,7 @@ spring-matrix:
     build:
       - maven
     spring-boot-version:
-      - 2.1.13.RELEASE
+      - 2.1.15.RELEASE
     spring-boot-dependencies:
       -
       - web
@@ -48,8 +48,8 @@ spring-matrix:
     build:
       - maven
     spring-boot-version:
-      - 2.2.6.RELEASE
-      - 2.3.0.M4
+      - 2.2.8.RELEASE
+      - 2.3.1.RELEASE
     spring-boot-dependencies:
       -
       - web

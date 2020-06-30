@@ -28,9 +28,9 @@
 		<thymeleaf-v3.version>3.0.11.RELEASE</thymeleaf-v3.version>
 		<thymeleaf.version>${thymeleaf-v3.version}</thymeleaf.version>
 		<ognl.version>3.1.26</ognl.version>		<!-- TODO: ognl 3.2.x not supported by Thymeleaf (https://github.com/thymeleaf/thymeleaf/issues/727) -->
-		<freemarker.version>2.3.29</freemarker.version>
+		<freemarker.version>2.3.30</freemarker.version>
 		<javamail.version>1.6.2</javamail.version>
-		<slf4j.version>1.7.26</slf4j.version>
+		<slf4j.version>1.7.30</slf4j.version>
 		<logback.version>1.2.3</logback.version>
 		<commons-lang.version>3.9</commons-lang.version>
 		<cloudhopper.version>5.0.9</cloudhopper.version>
@@ -45,20 +45,21 @@
 		<libphonenumber.version>8.3.2</libphonenumber.version>
 		<tika.version>1.23</tika.version>
 		<javax-activation.version>1.2.0</javax-activation.version>
-		<jackson.version>2.10.3</jackson.version>
+		<jackson.version>2.11.0</jackson.version>
 		<reflections.version>0.9.11</reflections.version>
 		<guava.version>27.1-jre</guava.version>
 		<httpclient.version>4.5.8</httpclient.version>
 		<spring-boot-v1.version>1.5.22.RELEASE</spring-boot-v1.version>
-		<spring-boot-v2.version>2.2.5.RELEASE</spring-boot-v2.version>
+		<spring-boot-v2.version>2.3.1.RELEASE</spring-boot-v2.version>
 		<spring-boot.version>${spring-boot-v2.version}</spring-boot.version>
+		<joda-time.version>2.10.6</joda-time.version>
 		<!-- Dependencies - tests -->
 		<junit.version>4.13</junit.version>
-		<junit-jupiter.version>5.6.0</junit-jupiter.version>
-		<xmlunit.version>1.6</xmlunit.version>
-		<mockito-junit-jupiter.version>3.2.4</mockito-junit-jupiter.version>
+		<junit-jupiter.version>5.6.2</junit-jupiter.version>
+		<xmlunit.version>2.7.0</xmlunit.version>
+		<mockito-junit-jupiter.version>3.3.3</mockito-junit-jupiter.version>
 		<mockito.version>${mockito-junit-jupiter.version}</mockito.version>
-		<byte-buddy.version>1.10.7</byte-buddy.version>
+		<byte-buddy.version>1.10.11</byte-buddy.version>
 		<objenesis.version>3.1</objenesis.version>
 		<cloning.version>1.9.12</cloning.version>
 		<greenmail.version>1.5.11</greenmail.version>
@@ -549,8 +550,8 @@
 				<version>${equalsverifier.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>xmlunit</groupId>
-				<artifactId>xmlunit</artifactId>
+				<groupId>org.xmlunit</groupId>
+				<artifactId>xmlunit-core</artifactId>
 				<version>${xmlunit.version}</version>
 			</dependency>
 			<dependency>
@@ -583,6 +584,11 @@
 				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
 				<version>${javassist.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>${joda-time.version}</version>
 			</dependency>
 			<!-- Must be at the end to avoid overriding versions explicitly set -->
 			<dependency>

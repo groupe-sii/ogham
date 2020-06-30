@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfigurati
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
@@ -87,6 +89,7 @@ public class OghamSpringBoot2ThymeleafAutoConfigurationTests {
 	
 
 	@Configuration
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	protected static class CustomThymeleafEngineConfig {
 		
 		@Bean
