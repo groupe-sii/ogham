@@ -1,0 +1,27 @@
+{
+  "from": {
+    "name": "Sender Name",
+    "email": "sender@sii.fr"
+  },
+  "subject": "Thymeleaf",
+  "personalizations": [
+    {
+      "to": [
+        {
+          "name": "Recipient Name",
+          "email": "recipient@sii.fr"
+        }
+      ]
+    }
+  ],
+  "content": [
+    {
+      "type": "text/plain",
+      "value": "foo 42"
+    },
+    {
+      "type": "text/html",
+      "value": "<!DOCTYPE html>\n<html>\n    <head>\n        <title>Thymeleaf simple</title>\n        <meta charset=\"utf-8\" />\n    </head>\n    <body>\n        <h1 class=\"title\">foo</h1>\n        <p class=\"text\">42</p>\n    </body>\n</html>\n"
+    }
+  ]
+}

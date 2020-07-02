@@ -13,6 +13,8 @@ import com.sendgrid.helpers.mail.Mail;
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CorrectPackageNameMailCompat;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.PriorizedContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
@@ -39,7 +41,7 @@ public final class PriorizedContentHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void contentParamCannotBeNull() throws ContentHandlerException {
-		instance.setContent(null, new Mail(), null);
+		instance.setContent(null, new CorrectPackageNameMailCompat(), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -62,8 +64,9 @@ public final class PriorizedContentHandlerTest {
 	public void setContent_noMatchingHandler() throws ContentHandlerException {
 		final Mail email = new Mail();
 		final StringContent content = new StringContent("Insignificant");
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
-		instance.setContent(null, email, content);
+		instance.setContent(null, compat, content);
 	}
 
 	@Test
@@ -72,10 +75,11 @@ public final class PriorizedContentHandlerTest {
 
 		final Mail email = new Mail();
 		final StringContent content = new StringContent("Insignificant");
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
-		instance.setContent(null, email, content);
+		instance.setContent(null, compat, content);
 
-		verify(handler).setContent(null, email, content);
+		verify(handler).setContent(null, compat, content);
 	}
 
 	@Test(expected = ContentHandlerException.class)
@@ -84,11 +88,12 @@ public final class PriorizedContentHandlerTest {
 
 		final Mail email = new Mail();
 		final StringContent content = new StringContent("Insignificant");
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
 		final ContentHandlerException e = new ContentHandlerException("Thrown by mock", mock(Content.class));
-		doThrow(e).when(handler).setContent(null, email, content);
+		doThrow(e).when(handler).setContent(null, compat, content);
 
-		instance.setContent(null, email, content);
+		instance.setContent(null, compat, content);
 	}
 
 }

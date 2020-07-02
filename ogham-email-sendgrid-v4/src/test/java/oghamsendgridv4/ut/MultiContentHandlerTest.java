@@ -16,6 +16,8 @@ import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CorrectPackageNameMailCompat;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MultiContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
@@ -42,7 +44,7 @@ public final class MultiContentHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void contentParamCannotBeNull() throws ContentHandlerException {
-		instance.setContent(null, new Mail(), null);
+		instance.setContent(null, new CorrectPackageNameMailCompat(), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -61,10 +63,11 @@ public final class MultiContentHandlerTest {
 		final Content exp = new StringContent("Insignificant");
 		final Content content = new MultiContent(exp);
 		final Mail email = new Mail();
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
-		instance.setContent(null, email, content);
+		instance.setContent(null, compat, content);
 
-		verify(delegate).setContent(any(), any(Mail.class), eq(exp));
+		verify(delegate).setContent(any(), any(MailCompat.class), eq(exp));
 	}
 
 	@Test
@@ -73,19 +76,21 @@ public final class MultiContentHandlerTest {
 		final Content exp2 = new StringContent("Insignificant 2");
 		final Content content = new MultiContent(exp1, exp2);
 		final Mail email = new Mail();
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
+		
+		instance.setContent(null, compat, content);
 
-		instance.setContent(null, email, content);
-
-		verify(delegate).setContent(any(), any(Mail.class), eq(exp1));
-		verify(delegate).setContent(any(), any(Mail.class), eq(exp2));
+		verify(delegate).setContent(any(), any(MailCompat.class), eq(exp1));
+		verify(delegate).setContent(any(), any(MailCompat.class), eq(exp2));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void setContent_notMultiContent() throws ContentHandlerException {
 		final Content content = new StringContent("Insignificant");
 		final Mail email = new Mail();
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
-		instance.setContent(null, email, content);
+		instance.setContent(null, compat, content);
 	}
 
 	@Test(expected = ContentHandlerException.class)
@@ -93,10 +98,11 @@ public final class MultiContentHandlerTest {
 		final Content exp = new StringContent("Insignificant");
 		final Content content = new MultiContent(exp);
 		final Mail email = new Mail();
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
 		final ContentHandlerException e = new ContentHandlerException("Thrown by mock", exp);
-		doThrow(e).when(delegate).setContent(null, email, exp);
-		instance.setContent(null, email, content);
+		doThrow(e).when(delegate).setContent(null, compat, exp);
+		instance.setContent(null, compat, content);
 	}
 
 }

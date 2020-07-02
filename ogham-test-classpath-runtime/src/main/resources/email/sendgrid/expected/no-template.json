@@ -1,0 +1,23 @@
+{
+  "from": {
+    "name": "Sender Name",
+    "email": "sender@sii.fr"
+  },
+  "subject": "Simple",
+  "personalizations": [
+    {
+      "to": [
+        {
+          "name": "Recipient Name",
+          "email": "recipient@sii.fr"
+        }
+      ]
+    }
+  ],
+  "content": [
+    {
+      "type": "text/plain",
+      "value": "string body"
+    }
+  ]
+}

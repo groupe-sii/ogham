@@ -12,8 +12,8 @@ spring-matrix:
       - thymeleaf
       - freemarker
       - mail
-      - web+thymeleaf
-      - web+freemarker
+      - web + thymeleaf
+      - web + freemarker
     ogham-dependencies:
       - spring-boot-autoconfigure
       - spring-boot-starter-email
@@ -32,12 +32,12 @@ standalone-matrix:
     - sms-ovh
     - sms-cloudhopper
     - all
-    - spring-boot-autoconfigure+core
-    - spring-boot-autoconfigure+email-javamail
-    - spring-boot-autoconfigure+email-sendgrid
-    - spring-boot-autoconfigure+sms-cloudhopper
-    - spring-boot-autoconfigure+sms-ovh
-    - spring-boot-autoconfigure+all
+    - spring-boot-autoconfigure + core
+    - spring-boot-autoconfigure + email-javamail
+    - spring-boot-autoconfigure + email-sendgrid
+    - spring-boot-autoconfigure + sms-cloudhopper
+    - spring-boot-autoconfigure + sms-ovh
+    - spring-boot-autoconfigure + all
     - spring-boot-starter-email
     - spring-boot-starter-sms
     - spring-boot-starter-all

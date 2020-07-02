@@ -78,6 +78,7 @@ public abstract class AbstractSpringSendGridConfigurer implements SpringMessagin
 		builder.email()
 			.sender(getSendGridBuilderClass())
 				.apiKey().value(ofNullable(properties.getApiKey())).and()
+				.url().value(ofNullable(properties.getUrl())).and()
 				.username().value(ofNullable(properties.getUsername())).and()
 				.password().value(ofNullable(properties.getPassword()));
 		// @formatter:on

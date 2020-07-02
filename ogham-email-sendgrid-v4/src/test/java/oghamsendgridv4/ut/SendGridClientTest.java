@@ -17,6 +17,8 @@ import com.sendgrid.helpers.mail.Mail;
 
 import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CorrectPackageNameMailCompat;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 
 public final class SendGridClientTest {
 
@@ -46,7 +48,8 @@ public final class SendGridClientTest {
 	@Test
 	public void send() throws SendGridException, IOException {
 		final Response response = new Response(200, "OK", null);
-		final Mail exp = new Mail();
+		final Mail email = new Mail();
+		final MailCompat exp = new CorrectPackageNameMailCompat(email);
 
 		when(delegate.api(any())).thenReturn(response);
 
@@ -58,7 +61,8 @@ public final class SendGridClientTest {
 	@Test(expected = SendGridException.class)
 	public void send_errorResponse() throws SendGridException, IOException {
 		final Response response = new Response(403, "FORBIDDEN", null);
-		final Mail exp = new Mail();
+		final Mail email = new Mail();
+		final MailCompat exp = new CorrectPackageNameMailCompat(email);
 
 		when(delegate.api(any())).thenReturn(response);
 

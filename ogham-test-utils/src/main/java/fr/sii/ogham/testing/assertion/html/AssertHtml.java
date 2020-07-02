@@ -69,14 +69,12 @@ public final class AssertHtml {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void logDifferences(DetailedDiff diff) {
 		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
 			LOG.error(difference.toString()); // NOSONAR
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static void logUnrecoverableDifferences(DetailedDiff diff) {
 		for (Difference difference : (List<Difference>) diff.getAllDifferences()) {
 			if (!difference.isRecoverable()) {

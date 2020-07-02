@@ -22,8 +22,16 @@ import lombok.Data;
 public class AddMavenDependency implements DependencyAdder {
 	
 	public void addDependencies(Project<?> project, List<Dependency> dependencies) throws AddDependencyException {
+		addDependencies(project, dependencies, false);
+	}
+
+	@Override
+	public void addDependencies(Project<?> project, List<Dependency> dependencies, boolean skipSameDepWithDifferentScope) throws AddDependencyException {
 		Model model = read(project);
 		for(Dependency dep : dependencies) {
+			if (skipSameDepWithDifferentScope && alreadyContainsDependency(model, dep)) {
+				continue;
+			}
 			model.addDependency(convert(dep));
 		}
 		write(project, model);
@@ -54,5 +62,15 @@ public class AddMavenDependency implements DependencyAdder {
 		dependency.setVersion(dep.getVersion());
 		dependency.setScope(dep.getScope().getValue());
 		return dependency;
+	}
+
+	private boolean alreadyContainsDependency(Model model, Dependency dep) {
+		return model.getDependencies().stream().anyMatch(mavenDep -> isSameDependency(mavenDep, dep));
+	}
+	
+	private boolean isSameDependency(org.apache.maven.model.Dependency mavenDep, Dependency newDep) {
+		return mavenDep.getArtifactId().equals(newDep.getArtifactId())
+				&& mavenDep.getGroupId().equals(newDep.getGroupId())
+				&& mavenDep.getVersion().equals(newDep.getVersion());
 	}
 }

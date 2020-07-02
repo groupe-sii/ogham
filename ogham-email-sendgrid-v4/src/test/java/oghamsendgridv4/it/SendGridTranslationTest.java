@@ -30,6 +30,7 @@ import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
 import fr.sii.ogham.email.sendgrid.v4.builder.sendgrid.SendGridV4Builder;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 /**
@@ -84,9 +85,9 @@ public final class SendGridTranslationTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<MailCompat> argument = ArgumentCaptor.forClass(MailCompat.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final Mail val = argument.getValue().getDelegate();
 
 		assertEquals(SUBJECT, val.getSubject());
 		assertEquals(FROM, getFromName(val));
@@ -112,9 +113,9 @@ public final class SendGridTranslationTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<MailCompat> argument = ArgumentCaptor.forClass(MailCompat.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final Mail val = argument.getValue().getDelegate();
 
 		assertEquals(SUBJECT, val.getSubject());
 		assertEquals(FROM, getFromName(val));
@@ -136,9 +137,9 @@ public final class SendGridTranslationTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<MailCompat> argument = ArgumentCaptor.forClass(MailCompat.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final Mail val = argument.getValue().getDelegate();
 
 		assertEquals(SUBJECT, val.getSubject());
 		assertEquals(FROM, getFromName(val));
@@ -160,9 +161,9 @@ public final class SendGridTranslationTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<MailCompat> argument = ArgumentCaptor.forClass(MailCompat.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final Mail val = argument.getValue().getDelegate();
 
 		assertEquals(SUBJECT, val.getSubject());
 		assertEquals(FROM, getFromName(val));
@@ -184,9 +185,9 @@ public final class SendGridTranslationTest {
 
 		messagingService.send(email);
 
-		final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+		final ArgumentCaptor<MailCompat> argument = ArgumentCaptor.forClass(MailCompat.class);
 		verify(sendGridClient).send(argument.capture());
-		final Mail val = argument.getValue();
+		final Mail val = argument.getValue().getDelegate();
 
 		assertEquals(SUBJECT, val.getSubject());
 		assertEquals(FROM, getFromName(val));

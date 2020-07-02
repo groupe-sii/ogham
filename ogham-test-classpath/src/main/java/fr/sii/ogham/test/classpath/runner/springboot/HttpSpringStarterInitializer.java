@@ -37,7 +37,7 @@ public class HttpSpringStarterInitializer implements ProjectInitializer<SpringBo
 				+ "&artifactId={artifactId}"
 				+ "&version={version}"
 				+ "&description="
-				+ "&packageName=fr.sii.spring.boot.runtime.testing"
+				+ "&packageName=fr.sii.springboot.runtime.testing"
 				+ "&type={type}"
 				+ "&packaging=jar"
 				+ "&javaVersion={javaVersion}"

@@ -28,6 +28,7 @@ import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.CustomizableUr
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.DelegateSendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridInterceptor;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CompatUtil;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.ContentWithAttachmentsHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.MultiContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.PriorizedContentHandler;
@@ -370,7 +371,7 @@ public class SendGridV4Builder extends AbstractSendGridBuilder<SendGridV4Builder
 		} else {
 			LOG.debug("SendGrid instance provided so apiKey and unitTesting properties are not used");
 		}
-		return buildContext.register(new SendGridV4Sender(builtClient, buildContentHandler(), buildMimetypeProvider(), interceptor));
+		return buildContext.register(new SendGridV4Sender(builtClient, buildContentHandler(), buildMimetypeProvider(), CompatUtil.getDefaultCompatFactory(), interceptor));
 	}
 
 	private Client buildClientHelper(Client clientHelper, CloseableHttpClient httpClient, boolean test, URL url) {

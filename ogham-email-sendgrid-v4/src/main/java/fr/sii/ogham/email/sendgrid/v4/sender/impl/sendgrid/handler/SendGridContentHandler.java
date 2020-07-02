@@ -1,10 +1,9 @@
 package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler;
 
-import com.sendgrid.helpers.mail.Mail;
-
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 
 /**
  * Description of the operations a content handler used with emails sent to
@@ -28,6 +27,6 @@ public interface SendGridContentHandler {
 	 * @throws ContentHandlerException
 	 *             the handler is unable to add the content to the email
 	 */
-	void setContent(Email original, Mail email, Content content) throws ContentHandlerException;
+	void setContent(Email original, MailCompat email, Content content) throws ContentHandlerException;
 
 }

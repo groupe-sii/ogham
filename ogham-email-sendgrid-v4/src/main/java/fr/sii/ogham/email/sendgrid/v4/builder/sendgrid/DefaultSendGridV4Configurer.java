@@ -71,12 +71,13 @@ public final class DefaultSendGridV4Configurer {
 			builder.mimetype(msgBuilder.mimetype());
 			builder
 				.apiKey().properties("${ogham.email.sendgrid.api-key}").and()
-				.unitTesting().properties("${ogham.email.sendgrid.unit-testing}");
+				.unitTesting().properties("${ogham.email.sendgrid.unit-testing}").and()
+				.url().properties("${ogham.email.sendgrid.url}");
 			// @formatter:on
 		}
 
 		private static boolean canUseSendGrid() {
-			return ClasspathUtils.exists("com.sendgrid.SendGrid") && ClasspathUtils.exists("com.sendgrid.helpers.mail.Mail");
+			return ClasspathUtils.exists("com.sendgrid.SendGrid") && ClasspathUtils.exists("com.sendgrid.SendGridAPI");
 		}
 	}
 

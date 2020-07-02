@@ -1,5 +1,7 @@
 package fr.sii.ogham.spring.email;
 
+import java.net.URL;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("ogham.email.sendgrid")
@@ -13,6 +15,18 @@ public class OghamSendGridProperties {
 	 * Spring Boot provides its own SendGrid client.
 	 */
 	private String apiKey;
+	/**
+	 * Set SendGrid API base URL.<br />
+	 * <br />
+	 * 
+	 * Changing the URL may be useful in tests.<br />
+	 * <br />
+	 * 
+	 * /!\ In Spring Boot application: if you provide a value for
+	 * spring.sendgrid.api-key, this property is not used. This is because
+	 * Spring Boot provides its own SendGrid client.
+	 */
+	private URL url;
 	/**
 	 * Set username for SendGrid HTTP API.<br />
 	 * <br />
@@ -87,6 +101,14 @@ public class OghamSendGridProperties {
 	@Deprecated
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public URL getUrl() {
+		return url;
+	}
+
+	public void setUrl(URL url) {
+		this.url = url;
 	}
 
 	public boolean isUnitTesting() {

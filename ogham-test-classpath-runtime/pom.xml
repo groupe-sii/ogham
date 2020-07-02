@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>fr.sii.ogham</groupId>
+	<artifactId>ogham-test-classpath-runtime</artifactId>
+	<version>${ogham.version}</version>
+	<packaging>jar</packaging>
+
+	<name>ogham-test-classpath-runtime</name>
+	<description />
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<sonar.skip>true</sonar.skip>
+		<jacoco.skip>true</jacoco.skip>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<maven.site.skip>true</maven.site.skip>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<ogham.version>3.0.0-SNAPSHOT</ogham.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-core</artifactId>
+			<version>${ogham.version}</version>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-test-utils</artifactId>
+			<version>${ogham.version}</version>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

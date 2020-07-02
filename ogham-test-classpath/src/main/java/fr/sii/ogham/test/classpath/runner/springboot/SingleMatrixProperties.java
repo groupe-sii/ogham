@@ -1,5 +1,7 @@
 package fr.sii.ogham.test.classpath.runner.springboot;
 
+import static fr.sii.ogham.test.classpath.matrix.MatrixUtils.expand;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class SingleMatrixProperties {
 	private List<BuildTool> build;
 	private List<String> springBootVersion;
 	private List<String> springBootDependencies;
-	private List<OghamDependency> oghamDependencies;
+	private List<String> oghamDependencies;
 	
 	public List<List<SpringBootDependency>> getExpandedSpringBootDependencies() {
 		List<List<SpringBootDependency>> deps = new ArrayList<>();
@@ -25,8 +27,22 @@ public class SingleMatrixProperties {
 			List<SpringBootDependency> bootDeps = new ArrayList<>();
 			deps.add(bootDeps);
 			if(!dep.isEmpty()) {
-				for(String d : dep.split("\\+")) {
+				for(String d : expand(dep)) {
 					bootDeps.add(SpringBootDependency.fromModule(d));
+				}
+			}
+		}
+		return deps;
+	}
+	
+	public List<List<OghamDependency>> getExpandedOghamDependencies() {
+		List<List<OghamDependency>> deps = new ArrayList<>();
+		for(String dep : oghamDependencies) {
+			List<OghamDependency> oghamDeps = new ArrayList<>();
+			deps.add(oghamDeps);
+			if(!dep.isEmpty()) {
+				for(String d : expand(dep)) {
+					oghamDeps.add(OghamDependency.fromArtifactName(d));
 				}
 			}
 		}

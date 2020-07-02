@@ -6,6 +6,7 @@ import static fr.sii.ogham.test.classpath.runner.springboot.SpringBootDependency
 import static fr.sii.ogham.test.classpath.runner.util.RunnerUtils.addMavenWrapper;
 import static fr.sii.ogham.test.classpath.runner.util.RunnerUtils.addModules;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -23,7 +24,6 @@ import org.springframework.stereotype.Component;
 
 import fr.sii.ogham.test.classpath.core.BuildTool;
 import fr.sii.ogham.test.classpath.core.JavaVersion;
-import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 import fr.sii.ogham.test.classpath.core.exception.AddDependencyException;
 import fr.sii.ogham.test.classpath.core.exception.ProjectInitializationException;
 import fr.sii.ogham.test.classpath.ogham.OghamDependency;
@@ -70,8 +70,8 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 				for (BuildTool buildTool : matrix.getBuild()) {
 					for (String bootVersion : matrix.getSpringBootVersion()) {
 						for (List<SpringBootDependency> springDeps : matrix.getExpandedSpringBootDependencies()) {
-							for (Dependency oghamDeps : getOghamDependencies(matrix.getOghamDependencies())) {
-								expanded.add(new SpringBootProjectParams(javaVersion, buildTool, bootVersion, getDependencies(springDeps), asList(oghamDeps)));
+							for (List<OghamResolvedDependency> oghamDeps : resolveExpandedOghamDependencies(matrix.getExpandedOghamDependencies())) {
+								expanded.add(new SpringBootProjectParams(javaVersion, buildTool, bootVersion, getDependencies(springDeps), oghamDeps));
 							}
 						}
 					}
@@ -88,12 +88,15 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 		return dependencies;
 	}
 
-	private List<Dependency> getOghamDependencies(List<OghamDependency> oghamDependencies) {
-		List<Dependency> deps = new ArrayList<>();
-		for(OghamDependency od : oghamDependencies) {
-			deps.add(od.toDependency(oghamProperties.getOghamVersion()));
-		}
-		return deps;
+	private List<List<OghamResolvedDependency>> resolveExpandedOghamDependencies(List<List<OghamDependency>> expandedOghamDependencies) {
+		return expandedOghamDependencies.stream()
+				.map(this::resolveOghamDependencies)
+				.collect(toList());
 	}
-
+	
+	private List<OghamResolvedDependency> resolveOghamDependencies(List<OghamDependency> oghamDependencies) {
+		return oghamDependencies.stream()
+				.map(dep -> new OghamResolvedDependency(dep, dep.toDependency(oghamProperties.getOghamVersion())))
+				.collect(toList());
+	}
 }

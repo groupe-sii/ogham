@@ -23,6 +23,8 @@ import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.StringContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CorrectPackageNameMailCompat;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridContentHandler;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.StringContentHandler;
 
@@ -59,7 +61,7 @@ public final class StringContentHandlerTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void contentParamCannotBeNull() throws ContentHandlerException {
-		instance.setContent(null, new Mail(), null);
+		instance.setContent(null, new CorrectPackageNameMailCompat(), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -70,11 +72,12 @@ public final class StringContentHandlerTest {
 	@Test
 	public void setContent_text() throws ContentHandlerException, MimeTypeDetectionException, MimeTypeParseException {
 		final Mail email = new Mail();
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
 		final MimeType mime = new MimeType("text/plain");
 		when(provider.detect(CONTENT_TEXT)).thenReturn(mime);
 
-		instance.setContent(null, email, content);
+		instance.setContent(null, compat, content);
 
 		assertEquals("The email was not correctly updated", CONTENT_TEXT, getText(email));
 	}
@@ -83,11 +86,12 @@ public final class StringContentHandlerTest {
 	public void setContent_html() throws ContentHandlerException, MimeTypeDetectionException, MimeTypeParseException {
 		final Mail email = new Mail();
 		final StringContent content = new StringContent(CONTENT_HTML);
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
 		final MimeType mime = new MimeType("text/html");
 		when(provider.detect(CONTENT_HTML)).thenReturn(mime);
 
-		instance.setContent(null, email, content);
+		instance.setContent(null, compat, content);
 
 		assertEquals("The email was not correctly updated", CONTENT_HTML, getHtml(email));
 	}
@@ -96,19 +100,21 @@ public final class StringContentHandlerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void setContent_badContentType() throws ContentHandlerException {
 		final Mail email = new Mail();
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
-		instance.setContent(null, email, testContent);
+		instance.setContent(null, compat, testContent);
 	}
 
 	@Test(expected = ContentHandlerException.class)
 	public void setContent_providerFailure() throws ContentHandlerException, MimeTypeDetectionException {
 		final Mail email = new Mail();
 		final Content content = new StringContent(CONTENT_TEXT);
+		final MailCompat compat = new CorrectPackageNameMailCompat(email);
 
 		final MimeTypeDetectionException exception = new MimeTypeDetectionException("Sent by mock");
 		when(provider.detect(CONTENT_TEXT)).thenThrow(exception);
 
-		instance.setContent(null, email, content);
+		instance.setContent(null, compat, content);
 	}
 
 }

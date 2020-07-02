@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.sii.ogham.test.classpath.core.JavaVersion;
-import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 import fr.sii.ogham.test.classpath.ogham.OghamDependency;
 import fr.sii.ogham.test.classpath.runner.standalone.StandaloneProjectParams;
 
@@ -33,10 +32,10 @@ public class IdentifierGenerator {
 		return identifier.startsWith(javaVersion.getNormalizedName());
 	}
 
-	private static String toOghamBootDepsString(List<Dependency> deps) {
+	private static String toOghamBootDepsString(List<OghamResolvedDependency> deps) {
 		List<String> depsStr = new ArrayList<>();
-		for(Dependency dep : deps) {
-			depsStr.add(dep.getArtifactId().replace("ogham-spring-boot-", ""));
+		for(OghamResolvedDependency dep : deps) {
+			depsStr.add(dep.getResolvedDependency().getArtifactId().replace("ogham-spring-boot-", ""));
 		}
 		return StringUtils.join(depsStr, "_");
 	}

@@ -1,11 +1,10 @@
 package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler;
 
-import com.sendgrid.helpers.mail.Mail;
-
 import fr.sii.ogham.core.message.content.Content;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 
 /**
  * Content handler for {@link MultiContent} instances. All it does is, for each
@@ -53,7 +52,7 @@ public final class MultiContentHandler implements SendGridContentHandler {
 	 *             the content provided is not of the right type
 	 */
 	@Override
-	public void setContent(final Email original, final Mail email, final Content content) throws ContentHandlerException {
+	public void setContent(final Email original, final MailCompat email, final Content content) throws ContentHandlerException {
 		if (email == null) {
 			throw new IllegalArgumentException("[email] cannot be null");
 		}

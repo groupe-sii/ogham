@@ -72,7 +72,8 @@ public final class DefaultSendGridV2Configurer {
 			builder
 				.apiKey().properties("${ogham.email.sendgrid.api-key}").and()
 				.username().properties("${ogham.email.sendgrid.username}").and()
-				.password().properties("${ogham.email.sendgrid.password}");
+				.password().properties("${ogham.email.sendgrid.password}").and()
+				.url().properties("${ogham.email.sendgrid.url}");
 			// @formatter:on
 		}
 

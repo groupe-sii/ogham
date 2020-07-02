@@ -1,5 +1,7 @@
 package fr.sii.ogham.test.classpath.runner.standalone;
 
+import static fr.sii.ogham.test.classpath.matrix.MatrixUtils.expand;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class StandaloneMatrixProperties {
 			List<OghamDependency> oghamDeps = new ArrayList<>();
 			deps.add(oghamDeps);
 			if(!dep.isEmpty()) {
-				for(String d : dep.split("\\+")) {
+				for(String d : expand(dep)) {
 					oghamDeps.add(OghamDependency.fromArtifactName(d));
 				}
 			}

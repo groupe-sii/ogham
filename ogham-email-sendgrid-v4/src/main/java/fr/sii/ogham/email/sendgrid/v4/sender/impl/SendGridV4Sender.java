@@ -11,10 +11,6 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Attachments;
-import com.sendgrid.helpers.mail.objects.Personalization;
-
 import fr.sii.ogham.core.builder.priority.Priority;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
@@ -32,6 +28,11 @@ import fr.sii.ogham.email.sendgrid.sender.exception.AttachmentReadException;
 import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridInterceptor;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.AttachmentsCompat;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CompatFactory;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.CompatUtil;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.PersonalizationCompat;
 import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler.SendGridContentHandler;
 
 /**
@@ -45,7 +46,23 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 	private final SendGridClient delegate;
 	private final SendGridContentHandler handler;
 	private final MimeTypeProvider mimetypeProvider;
+	private final CompatFactory objectsFactory;
 	private final SendGridInterceptor interceptor;
+
+	/**
+	 * Uses the default {@link CompatFactory} ({@link CompatUtil#getDefaultCompatFactory()}).
+	 * 
+	 * @param service
+	 *            the underlying SendGrid service
+	 * @param handler
+	 *            the content handler, in change of converting the email content
+	 *            into something the {@link SendGridClient} can work with
+	 * @param mimetypeProvider
+	 *            determines mimetype for attachments
+	 */
+	public SendGridV4Sender(final SendGridClient service, final SendGridContentHandler handler, MimeTypeProvider mimetypeProvider) {
+		this(service, handler, mimetypeProvider, CompatUtil.getDefaultCompatFactory(), null);
+	}
 
 	/**
 	 * Constructor.
@@ -57,9 +74,13 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 	 *            into something the {@link SendGridClient} can work with
 	 * @param mimetypeProvider
 	 *            determines mimetype for attachments
+	 * @param objectsFactory
+	 *            factory that creates instances of {@code sendgrid-java}
+	 *            objects. This is needed due to issue in package naming with
+	 *            {@code sendgrid-java} 4.3.0
 	 */
-	public SendGridV4Sender(final SendGridClient service, final SendGridContentHandler handler, MimeTypeProvider mimetypeProvider) {
-		this(service, handler, mimetypeProvider, null);
+	public SendGridV4Sender(final SendGridClient service, final SendGridContentHandler handler, MimeTypeProvider mimetypeProvider, CompatFactory objectsFactory) {
+		this(service, handler, mimetypeProvider, objectsFactory, null);
 	}
 
 	/**
@@ -74,8 +95,12 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 	 *            determines mimetype for attachments
 	 * @param interceptor
 	 *            an extension point for customizing the email to send
+	 * @param objectsFactory
+	 *            factory that creates instances of {@code sendgrid-java}
+	 *            objects. This is needed due to issue in package naming with
+	 *            {@code sendgrid-java} 4.3.0
 	 */
-	public SendGridV4Sender(final SendGridClient service, final SendGridContentHandler handler, MimeTypeProvider mimetypeProvider, SendGridInterceptor interceptor) {
+	public SendGridV4Sender(final SendGridClient service, final SendGridContentHandler handler, MimeTypeProvider mimetypeProvider, CompatFactory objectsFactory, SendGridInterceptor interceptor) {
 		if (service == null) {
 			throw new IllegalArgumentException("[service] cannot be null");
 		}
@@ -89,6 +114,7 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 		this.delegate = service;
 		this.handler = handler;
 		this.mimetypeProvider = mimetypeProvider;
+		this.objectsFactory = objectsFactory;
 		this.interceptor = interceptor;
 	}
 
@@ -101,7 +127,7 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 
 		try {
 			LOG.debug("Preparing to send email using SendGrid: {}", message);
-			final Mail sgEmail = intercept(toSendGridEmail(message), message);
+			final MailCompat sgEmail = intercept(toSendGridEmail(message), message);
 
 			LOG.debug("Sending email {}", logString(message));
 			LOG.trace("SendGrid email: {}", sgEmail);
@@ -116,18 +142,18 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 		}
 	}
 
-	private Mail intercept(Mail sendGridEmail, Email source) {
+	private MailCompat intercept(MailCompat sendGridEmail, Email source) {
 		if (interceptor == null) {
 			return sendGridEmail;
 		}
 		return interceptor.intercept(sendGridEmail, source);
 	}
 
-	private Mail toSendGridEmail(final Email message) throws ContentHandlerException, AttachmentReadException {
-		final Mail sendGridMail = new Mail();
+	private MailCompat toSendGridEmail(final Email message) throws ContentHandlerException, AttachmentReadException {
+		final MailCompat sendGridMail = objectsFactory.newMail();
 		sendGridMail.setSubject(message.getSubject());
 
-		sendGridMail.setFrom(new com.sendgrid.helpers.mail.objects.Email(message.getFrom().getAddress(), message.getFrom().getPersonal()));
+		sendGridMail.setFrom(message.getFrom().getAddress(), message.getFrom().getPersonal());
 
 		sendGridMail.addPersonalization(toPersonalization(message));
 
@@ -140,32 +166,32 @@ public final class SendGridV4Sender extends AbstractSpecializedSender<Email> imp
 		return sendGridMail;
 	}
 
-	private static Personalization toPersonalization(final Email message) {
-		Personalization personalization = new Personalization();
+	private PersonalizationCompat toPersonalization(final Email message) {
+		PersonalizationCompat personalization = objectsFactory.newPersonalization();
 		for (Recipient recipient : message.getRecipients()) {
 			addRecipient(personalization, recipient);
 		}
 		return personalization;
 	}
 
-	private static void addRecipient(Personalization personalization, Recipient recipient) {
+	private static void addRecipient(PersonalizationCompat personalization, Recipient recipient) {
 		final EmailAddress address = recipient.getAddress();
 		switch (recipient.getType()) {
 			case TO:
-				personalization.addTo(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
+				personalization.addTo(address.getAddress(), address.getPersonal());
 				break;
 			case CC:
-				personalization.addCc(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
+				personalization.addCc(address.getAddress(), address.getPersonal());
 				break;
 			case BCC:
-				personalization.addBcc(new com.sendgrid.helpers.mail.objects.Email(address.getAddress(), address.getPersonal()));
+				personalization.addBcc(address.getAddress(), address.getPersonal());
 				break;
 		}
 	}
 
-	private void addAttachment(final Mail sendGridMail, final Attachment attachment) throws AttachmentReadException {
+	private void addAttachment(final MailCompat sendGridMail, final Attachment attachment) throws AttachmentReadException {
 		try {
-			Attachments sendGridAttachment = new Attachments();
+			AttachmentsCompat sendGridAttachment = objectsFactory.newAttachments();
 			byte[] bytes = IOUtils.toByteArray(attachment.getResource().getInputStream());
 			sendGridAttachment.setContent(Base64Utils.encodeToString(bytes));
 			sendGridAttachment.setContentId(toCid(attachment.getContentId()));

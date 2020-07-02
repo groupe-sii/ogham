@@ -1,5 +1,7 @@
 package fr.sii.ogham.test.classpath.matrix;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,10 @@ public class MatrixUtils {
 			}
 		}
 		return expandedValues;
+	}
+	
+	public static List<String> expand(String dependenciesString) {
+		return asList(dependenciesString.split("\\s*\\+\\s*"));
 	}
 
 	private MatrixUtils() {

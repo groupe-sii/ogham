@@ -1,20 +1,28 @@
 package fr.sii.ogham.test.classpath.runner.springboot;
 
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
+import fr.sii.ogham.test.classpath.core.facet.Facet;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public enum SpringBootDependency {
 	LOMBOK("lombok"),
 	CONFIGURATION_PROCESSOR("configuration-processor"),
 	WEB("web"),
-	THYMELEAF("thymeleaf"),
-	FREEMARKER("freemarker"),
+	THYMELEAF("thymeleaf", Facet.TEMPLATE_THYMELEAF),
+	FREEMARKER("freemarker", Facet.TEMPLATE_FREEMARKER),
 	MAIL("mail"),
 	DEVTOOLS("devtools");
 	
 	private final String module;
+	private final Facet[] facets;
+
+	public List<Facet> getFacets() {
+		return asList(facets);
+	}
 
 	public static SpringBootDependency fromModule(String moduleName) {
 		for(SpringBootDependency d : SpringBootDependency.values()) {
@@ -23,5 +31,10 @@ public enum SpringBootDependency {
 			}
 		}
 		throw new IllegalArgumentException("No matching SpringBootDependency for "+moduleName);
+	}
+
+	private SpringBootDependency(String module, Facet... facets) {
+		this.module = module;
+		this.facets = facets;
 	}
 }

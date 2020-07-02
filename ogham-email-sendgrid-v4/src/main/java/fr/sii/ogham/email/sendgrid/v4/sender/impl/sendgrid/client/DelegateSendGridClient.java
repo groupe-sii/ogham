@@ -14,10 +14,10 @@ import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 import com.sendgrid.SendGridAPI;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Email;
 
 import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.EmailCompat;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 
 /**
  * Facade wrapping the {@link SendGrid} object.
@@ -45,7 +45,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 	}
 
 	@Override
-	public void send(final Mail email) throws SendGridException {
+	public void send(final MailCompat email) throws SendGridException {
 		if (email == null) {
 			throw new IllegalArgumentException("[email] cannot be null");
 		}
@@ -65,7 +65,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 		}
 	}
 
-	private Response callApi(final Mail email) throws SendGridException {
+	private Response callApi(final MailCompat email) throws SendGridException {
 		try {
 			Request request = prepareRequest(email);
 			return delegate.api(request);
@@ -74,7 +74,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 		}
 	}
 
-	private static Request prepareRequest(final Mail email) throws SendGridException {
+	private static Request prepareRequest(final MailCompat email) throws SendGridException {
 		Request request = new Request();
 		request.setMethod(Method.POST);
 		request.setEndpoint("mail/send");
@@ -90,7 +90,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 		return statusCode >= 200 && statusCode < 300;
 	}
 
-	private static String debug(Email address) {
+	private static String debug(EmailCompat address) {
 		if (address == null) {
 			return null;
 		}
@@ -100,7 +100,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 		return address.getEmail();
 	}
 
-	private static List<String> debug(final Mail email) {
+	private static List<String> debug(final MailCompat email) {
 		if (email.getPersonalization() == null) {
 			return null; // NOSONAR
 		}

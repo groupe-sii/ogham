@@ -22,6 +22,10 @@
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-email-sendgrid-v4</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-email-sendgrid-v430-compat</artifactId>
+		</dependency>
 
 		<!-- Tests -->
 		<dependency>
