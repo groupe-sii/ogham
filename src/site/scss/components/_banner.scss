@@ -17,6 +17,7 @@
 	text-align: center;
 	margin-bottom: $banner-margin-bottom;
 	position: relative;
+	overflow: hidden;
 	
 	.bannerLeft.float-left {
 		float: none !important;

@@ -18,6 +18,7 @@
 			$(targetedAnchor)[0].scrollIntoView({block: "start", inline: "nearest", behavior: "smooth"});
 		}
 	}
+	
 
 	$(document).ready(function() {
 		addVersions();

@@ -46,15 +46,20 @@ h3 {
 }
 h4 {
 	@include doc-title-adjacent-margin(4);
+	padding-bottom: 0.4em;
 }
 h5 {
 	@include doc-title-adjacent-margin(5);
+	padding-bottom: 0.4em;
 }
 h6 {
 	@include doc-title-adjacent-margin(6);
 	font-size: 1.1rem;
+	padding-bottom: 0.4em;
+	padding-right: 20px;
 }
 
+// restore hover to display anchor
 .main-body {
 	h2[id], h3[id], h4[id] {
 		&,
@@ -63,3 +68,41 @@ h6 {
 		}
 	}
 }
+
+// sticky position offset due to header
+h5 {
+	top: $navbar-height;
+}
+h6 {
+	top: calc(#{$navbar-height} + 2em);
+}
+
+h3,
+h4,
+h5,
+h6 {
+	background: none;
+	
+	&::after {
+		content: "";
+	    position: absolute;
+	    display: block;
+	    background: #fff;
+	    bottom: 0;
+	    width: 100%;
+	    z-index: -1;
+   }
+}
+h3,
+h4 {
+	&::after {
+		top: 4rem;
+	}
+}
+h5,
+h6 {
+	&::after {
+	    top: 0;
+   }
+}
+
