@@ -1,6 +1,8 @@
 package fr.sii.ogham.test.classpath.runner.standalone;
 
 import static fr.sii.ogham.test.classpath.matrix.MatrixUtils.expand;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import fr.sii.ogham.test.classpath.core.BuildTool;
 import fr.sii.ogham.test.classpath.core.JavaVersion;
+import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 import fr.sii.ogham.test.classpath.ogham.OghamDependency;
 import lombok.Data;
 
@@ -20,6 +23,7 @@ public class StandaloneMatrixProperties {
 	private List<String> java;
 	private List<BuildTool> build;
 	private List<String> oghamDependencies;
+	private List<String> additionalDependencies;
 	
 	public List<List<OghamDependency>> getExpandedOghamDependencies() {
 		List<List<OghamDependency>> deps = new ArrayList<>();
@@ -41,5 +45,14 @@ public class StandaloneMatrixProperties {
 			javaVersions.add(JavaVersion.fromVersion(version));
 		}
 		return javaVersions;
+	}
+	
+	public List<Dependency> getAdditionalDependencies() {
+		if (additionalDependencies == null) {
+			return emptyList();
+		}
+		return additionalDependencies.stream()
+				.map(Dependency::from)
+				.collect(toList());
 	}
 }

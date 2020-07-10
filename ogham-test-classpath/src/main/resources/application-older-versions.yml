@@ -15,10 +15,12 @@ spring-matrix:
       - web + thymeleaf
       - web + freemarker
     ogham-dependencies:
-      - spring-boot-autoconfigure
+      - spring-boot-autoconfigure + core
       - spring-boot-starter-email
       - spring-boot-starter-sms
       - spring-boot-starter-all
+  additional-dependencies:
+    - com.github.tomakehurst:wiremock-jre8:2.23.2:test
         
 standalone-matrix:
   java:
@@ -32,6 +34,18 @@ standalone-matrix:
     - sms-ovh
     - sms-cloudhopper
     - all
+    - email-javamail + template-thymeleaf
+    - email-javamail + template-freemarker
+    - email-javamail + template-thymeleaf + template-freemarker
+    - email-sendgrid + template-thymeleaf
+    - email-sendgrid + template-freemarker
+    - email-sendgrid + template-thymeleaf + template-freemarker
+    - sms-ovh + template-thymeleaf
+    - sms-ovh + template-freemarker
+    - sms-ovh + template-thymeleaf + template-freemarker
+    - sms-cloudhopper + template-thymeleaf
+    - sms-cloudhopper + template-freemarker
+    - sms-cloudhopper + template-thymeleaf + template-freemarker
     - spring-boot-autoconfigure + core
     - spring-boot-autoconfigure + email-javamail
     - spring-boot-autoconfigure + email-sendgrid

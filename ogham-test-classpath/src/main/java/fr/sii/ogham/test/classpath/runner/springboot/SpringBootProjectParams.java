@@ -5,6 +5,7 @@ import java.util.List;
 import fr.sii.ogham.test.classpath.core.BuildTool;
 import fr.sii.ogham.test.classpath.core.JavaVersion;
 import fr.sii.ogham.test.classpath.core.ProjectVariables;
+import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,4 +23,5 @@ public class SpringBootProjectParams implements ProjectVariables {
 	@Singular("addDependency")
 	private List<SpringBootDependency> springBootDependencies;
 	private List<OghamResolvedDependency> oghamDependencies;
+	private List<Dependency> additionalDependencies;
 }

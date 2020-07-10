@@ -9,6 +9,7 @@ import java.nio.file.Path;
 
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
@@ -30,6 +31,19 @@ public class HttpSpringStarterInitializer implements ProjectInitializer<SpringBo
 
 	@Override
 	public Project<SpringBootProjectParams> initialize(Path parentFolder, String identifier, SpringBootProjectParams variables) throws ProjectInitializationException {
+		URI url = generateUrl(identifier, variables);
+		ResponseEntity<byte[]> response = getGeneratedProject(url);
+		if(response.getStatusCode().is2xxSuccessful()) {
+			try {
+				return new Project<>(unzip(response.getBody(), identifier, parentFolder), variables);
+			} catch(IOException | ZipException | RuntimeException e) {
+				throw new ProjectInitializationException("Failed to initialize Spring Boot project while trying to unzip Spring starter zip", e);
+			}
+		}
+		throw new ProjectInitializationException("Failed to download Spring starter zip");
+	}
+
+	private URI generateUrl(String identifier, SpringBootProjectParams variables) {
 		// @formatter:off
 		String url = springStarterProperties.getUrl()
 				+ "?name={artifactId}"
@@ -48,25 +62,24 @@ public class HttpSpringStarterInitializer implements ProjectInitializer<SpringBo
 			url += "&dependencies=" + dependency.getModule();
 		}
 		UriTemplate template = new UriTemplate(url);
-		URI expanded = template.expand(identifier,
+		return template.expand(identifier,
 				identifier,
 				oghamProperties.getOghamVersion(),
 				variables.getBuildTool().getType(),
 				variables.getJavaVersion().getVersion(),
 				variables.getSpringBootVersion());
-		log.debug("Starter resolved url: {}", expanded);
-		RequestEntity<Void> request = RequestEntity.get(expanded)
-										.header(USER_AGENT, "ogham/"+oghamProperties.getOghamVersion())
-										.build();
-		ResponseEntity<byte[]> response = restTemplate.exchange(request, byte[].class);
-		if(response.getStatusCode().is2xxSuccessful()) {
-			try {
-				return new Project<>(unzip(response.getBody(), identifier, parentFolder), variables);
-			} catch(IOException | ZipException | RuntimeException e) {
-				throw new ProjectInitializationException("Failed to initialize Spring Boot project while trying to unzip Spring starter zip", e);
-			}
+	}
+	
+	private ResponseEntity<byte[]> getGeneratedProject(URI url) throws ProjectInitializationException {
+		try {
+			log.debug("Starter resolved url: {}", url);
+			RequestEntity<Void> request = RequestEntity.get(url)
+											.header(USER_AGENT, "ogham/"+oghamProperties.getOghamVersion())
+											.build();
+			return restTemplate.exchange(request, byte[].class);
+		} catch(RestClientException e) {
+			throw new ProjectInitializationException("Request to download Spring Boot zip failed", e);
 		}
-		throw new ProjectInitializationException("Failed to download Spring starter zip");
 	}
 
 	private Path unzip(byte[] content, String identifier, Path parentFolder) throws IOException, ZipException {

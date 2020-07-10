@@ -5,6 +5,7 @@ import java.util.List;
 import fr.sii.ogham.test.classpath.core.BuildTool;
 import fr.sii.ogham.test.classpath.core.JavaVersion;
 import fr.sii.ogham.test.classpath.core.ProjectVariables;
+import fr.sii.ogham.test.classpath.core.dependency.Dependency;
 import fr.sii.ogham.test.classpath.ogham.OghamDependency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +22,5 @@ public class StandaloneProjectParams implements ProjectVariables {
 	private BuildTool buildTool;
 	@Singular("addDependency")
 	private List<OghamDependency> oghamDependencies;
+	private List<Dependency> additionalDependencies;
 }

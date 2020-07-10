@@ -49,7 +49,12 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 	
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		run(args.getNonOptionArgs().get(0), args.getOptionValues("override")!=null);
+		try {
+			run(args.getNonOptionArgs().get(0), args.getOptionValues("override")!=null);
+		} catch (Exception e) {
+			log.error("Failed to create Spring Boot projects", e);
+			System.exit(1);
+		}
 	}
 
 	@SuppressWarnings("javadoc")
@@ -71,7 +76,7 @@ public class SpringBootProjectRunner implements ApplicationRunner {
 					for (String bootVersion : matrix.getSpringBootVersion()) {
 						for (List<SpringBootDependency> springDeps : matrix.getExpandedSpringBootDependencies()) {
 							for (List<OghamResolvedDependency> oghamDeps : resolveExpandedOghamDependencies(matrix.getExpandedOghamDependencies())) {
-								expanded.add(new SpringBootProjectParams(javaVersion, buildTool, bootVersion, getDependencies(springDeps), oghamDeps));
+								expanded.add(new SpringBootProjectParams(javaVersion, buildTool, bootVersion, getDependencies(springDeps), oghamDeps, springMatrixProperties.getAdditionalDependencies()));
 							}
 						}
 					}

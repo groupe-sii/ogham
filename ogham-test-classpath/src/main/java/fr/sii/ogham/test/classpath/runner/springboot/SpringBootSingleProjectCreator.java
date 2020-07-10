@@ -64,6 +64,8 @@ public class SpringBootSingleProjectCreator implements SingleProjectCreator<Spri
 			dependencyAdder.addDependencies(project, toResolvedDependencies(params.getOghamDependencies()));
 			// add/update code for testing
 			dependencyAdder.addDependencies(project, classpathTestRuntime());
+			// add additional dependencies
+			dependencyAdder.addDependencies(project, params.getAdditionalDependencies());
 			facetAdder.addFacet(project, mergeFacets(params));
 			appNamer.setPackagedAppName(project, "app");
 			return identifier;

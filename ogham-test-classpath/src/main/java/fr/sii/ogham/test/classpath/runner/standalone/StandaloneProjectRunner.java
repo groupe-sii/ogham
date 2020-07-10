@@ -44,7 +44,12 @@ public class StandaloneProjectRunner implements ApplicationRunner {
 	
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		run(args.getNonOptionArgs().get(0), args.getOptionValues("override")!=null);
+		try {
+			run(args.getNonOptionArgs().get(0), args.getOptionValues("override")!=null);
+		} catch (Exception e) {
+			log.error("Failed to create standalone projects", e);
+			System.exit(1);
+		}
 	}
 	
 	public void run(String parentFolderPath, boolean override) throws IOException, InterruptedException, ExecutionException, XmlPullParserException, ProjectInitializationException, AddDependencyException, SingleProjectCreationException {
@@ -62,7 +67,7 @@ public class StandaloneProjectRunner implements ApplicationRunner {
 		for (JavaVersion javaVersion : standaloneMatrixProperties.getJavaVersions()) {
 			for (BuildTool buildTool : standaloneMatrixProperties.getBuild()) {
 				for (List<OghamDependency> oghamDeps : standaloneMatrixProperties.getExpandedOghamDependencies()) {
-					expanded.add(new StandaloneProjectParams(javaVersion, buildTool, oghamDeps));
+					expanded.add(new StandaloneProjectParams(javaVersion, buildTool, oghamDeps, standaloneMatrixProperties.getAdditionalDependencies()));
 				}
 			}
 		}

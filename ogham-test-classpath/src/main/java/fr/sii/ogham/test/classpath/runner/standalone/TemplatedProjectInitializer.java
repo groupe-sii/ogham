@@ -9,6 +9,8 @@ import java.nio.file.Path;
 
 import fr.sii.ogham.test.classpath.core.Project;
 import fr.sii.ogham.test.classpath.core.ProjectInitializer;
+import fr.sii.ogham.test.classpath.core.dependency.DependencyAdder;
+import fr.sii.ogham.test.classpath.core.exception.AddDependencyException;
 import fr.sii.ogham.test.classpath.core.exception.ProjectInitializationException;
 import fr.sii.ogham.test.classpath.core.facet.Facet;
 import fr.sii.ogham.test.classpath.ogham.OghamProperties;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TemplatedProjectInitializer implements ProjectInitializer<StandaloneProjectParams> {
 	private final Configuration freemarkerConfig;
 	private final OghamProperties oghamProperties;
+	private final DependencyAdder dependencyAdder;
 
 	@Override
 	public Project<StandaloneProjectParams> initialize(Path parentFolder, String identifier, StandaloneProjectParams variables) throws ProjectInitializationException {
@@ -35,8 +38,11 @@ public class TemplatedProjectInitializer implements ProjectInitializer<Standalon
 			copy(resourceFolder, generatedProjectPath);
 			// evaluate templates
 			write(resourceFolder + "/pom.xml.ftl", new TemplateModel(new GeneratedProject(identifier, identifier), oghamProperties.getOghamVersion(), generateActiveFacets(variables)), generatedProjectPath.resolve("pom.xml"));
-			return new Project<>(generatedProjectPath, variables);
-		} catch (IOException | TemplateException e) {
+			Project<StandaloneProjectParams> project = new Project<>(generatedProjectPath, variables);
+			// add additional dependencies
+			dependencyAdder.addDependencies(project, variables.getAdditionalDependencies());
+			return project;
+		} catch (IOException | TemplateException | AddDependencyException e) {
 			log.error("Failed to initialize project {}: {}", identifier, e.getMessage());
 			throw new ProjectInitializationException("Failed to initialize project " + identifier, e);
 		}

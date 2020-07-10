@@ -56,4 +56,5 @@ public class SingleMatrixProperties {
 		}
 		return javaVersions;
 	}
+
 }

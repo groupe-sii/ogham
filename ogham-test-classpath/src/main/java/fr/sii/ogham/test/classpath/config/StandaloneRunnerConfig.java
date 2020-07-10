@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import fr.sii.ogham.test.classpath.core.ProjectInitializer;
+import fr.sii.ogham.test.classpath.core.dependency.DependencyAdder;
 import fr.sii.ogham.test.classpath.ogham.OghamDependency;
 import fr.sii.ogham.test.classpath.ogham.OghamProperties;
 import fr.sii.ogham.test.classpath.runner.common.ParallelProjectsCreator;
@@ -17,11 +18,11 @@ import fr.sii.ogham.test.classpath.runner.standalone.TemplatedProjectInitializer
 @Configuration
 public class StandaloneRunnerConfig {
 	@Bean
-	public ProjectInitializer<StandaloneProjectParams> standaloneProjectInitializer(OghamProperties oghamProperties) {
+	public ProjectInitializer<StandaloneProjectParams> standaloneProjectInitializer(OghamProperties oghamProperties, DependencyAdder dependencyAdder) {
 		freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_28);
 		cfg.setClassForTemplateLoading(TemplatedProjectInitializer.class, "/");
 		cfg.setDefaultEncoding("UTF-8");
-		return new TemplatedProjectInitializer(cfg, oghamProperties);
+		return new TemplatedProjectInitializer(cfg, oghamProperties, dependencyAdder);
 	}
 	
 	@Bean
