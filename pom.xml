@@ -22,35 +22,37 @@
 
 		<!-- Dependencies -->
 		<ogham.version>${project.version}</ogham.version>
-		<commons-io.version>2.6</commons-io.version>
+		<commons-io.version>2.7</commons-io.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<thymeleaf-v2.version>2.1.6.RELEASE</thymeleaf-v2.version>
 		<thymeleaf-v3.version>3.0.11.RELEASE</thymeleaf-v3.version>
 		<thymeleaf.version>${thymeleaf-v3.version}</thymeleaf.version>
-		<ognl.version>3.1.26</ognl.version>		<!-- TODO: ognl 3.2.x not supported by Thymeleaf (https://github.com/thymeleaf/thymeleaf/issues/727) -->
+		<ognl.version>3.1.28</ognl.version>		<!-- TODO: ognl 3.2.x not supported by Thymeleaf (https://github.com/thymeleaf/thymeleaf/issues/727) -->
 		<freemarker.version>2.3.30</freemarker.version>
 		<javamail.version>1.6.2</javamail.version>
 		<jakarta-mail.version>1.6.5</jakarta-mail.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<logback.version>1.2.3</logback.version>
-		<commons-lang.version>3.9</commons-lang.version>
+		<commons-lang.version>3.10</commons-lang.version>
 		<cloudhopper.version>5.0.9</cloudhopper.version>
 		<cloudhopper-fizzed.version>5.0.9</cloudhopper-fizzed.version>
 		<cloudhopper-gsm.version>3.0.0</cloudhopper-gsm.version>
-		<jsoup.version>1.12.1</jsoup.version>
+		<jsoup.version>1.13.1</jsoup.version>
 		<commons-codec.version>1.14</commons-codec.version>
 		<sendgrid-java-v4.version>4.6.1</sendgrid-java-v4.version>
 		<sendgrid-java-v2.version>2.2.2</sendgrid-java-v2.version>
 		<sendgrid-java.version>${sendgrid-java-v4.version}</sendgrid-java.version>
 		<commons-logging.version>1.2</commons-logging.version>
 		<libphonenumber.version>8.3.2</libphonenumber.version>
-		<tika.version>1.23</tika.version>
+		<tika.version>1.24.1</tika.version>
 		<javax-activation.version>1.2.0</javax-activation.version>
 		<jakarta-activation.version>1.2.2</jakarta-activation.version>
-		<jackson.version>2.11.0</jackson.version>
+		<jackson.version>2.11.1</jackson.version>
 		<reflections.version>0.9.11</reflections.version>
-		<guava.version>27.1-jre</guava.version>
-		<httpclient.version>4.5.8</httpclient.version>
+		<guava.version>29.0-jre</guava.version>
+		<httpcore.version>4.4.13</httpcore.version>
+		<httpclient.version>4.5.12</httpclient.version>
+		<httpmime.version>4.5.12</httpmime.version>
 		<spring-boot-v1.version>1.5.22.RELEASE</spring-boot-v1.version>
 		<spring-boot-v2.version>2.3.1.RELEASE</spring-boot-v2.version>
 		<spring-boot.version>${spring-boot-v2.version}</spring-boot.version>
@@ -61,27 +63,29 @@
 		<xmlunit.version>2.7.0</xmlunit.version>
 		<mockito-junit-jupiter.version>3.3.3</mockito-junit-jupiter.version>
 		<mockito.version>${mockito-junit-jupiter.version}</mockito.version>
-		<byte-buddy.version>1.10.11</byte-buddy.version>
+		<byte-buddy.version>1.10.13</byte-buddy.version>
 		<objenesis.version>3.1</objenesis.version>
 		<cloning.version>1.9.12</cloning.version>
 		<greenmail.version>1.5.14</greenmail.version>
-		<jsmpp.version>2.3.9</jsmpp.version>
+		<jsmpp.version>2.3.10</jsmpp.version>
 		<equalsverifier.version>3.1.12</equalsverifier.version>
-		<wiremock.version>2.23.2</wiremock.version>
+		<wiremock.version>2.27.1</wiremock.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<spock.version>1.3-groovy-2.5</spock.version>
 		<groovy-eclipse-compiler.version>3.6.0-03</groovy-eclipse-compiler.version>
 		<groovy-eclipse-batch.version>2.5.8-03</groovy-eclipse-batch.version>
-		<awaitility.version>4.0.2</awaitility.version>
+		<awaitility.version>4.0.3</awaitility.version>
 		<!-- Dependencies - documentation -->
-		<asciidoctorj-diagram.version>2.0.1</asciidoctorj-diagram.version>
-		<asciidoctorj.version>2.2.0</asciidoctorj.version>
+		<asciidoctorj-diagram.version>2.0.2</asciidoctorj-diagram.version>
+		<asciidoctorj.version>2.3.0</asciidoctorj.version>
 		<asciidoctorj-monotree.version>0.0.1</asciidoctorj-monotree.version>
 		<bootstrap.version>4.3.1</bootstrap.version>
 		<bootswatch.version>4.2.1</bootswatch.version>
 		<!-- Fix dependency convergence -->
 		<asm.version>7.0</asm.version>
 		<javassist.version>3.26.0-GA</javassist.version>
+		<opentest4j.version>1.2.0</opentest4j.version>
+		<conscrypt-openjdk-uber.version>2.4.0</conscrypt-openjdk-uber.version>
 
 		<!-- Tests -->
 		<skip.integration.tests>false</skip.integration.tests>
@@ -147,7 +151,7 @@
 		<maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
 		<reflow-skin.version>2.3.0</reflow-skin.version>
 		<velocity.version>1.7</velocity.version>
-		<asciidoctor-plugin.version>2.0.0-RC.1</asciidoctor-plugin.version>
+		<asciidoctor-plugin.version>2.0.0</asciidoctor-plugin.version>
 		<sass-maven-plugin.version>3.7.2</sass-maven-plugin.version>
 		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
 		<maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
@@ -443,8 +447,18 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>${httpcore.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>${httpclient.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpmime</artifactId>
+				<version>${httpmime.version}</version>
 			</dependency>
 
 			<!-- Template parsers -->
@@ -619,6 +633,16 @@
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
 				<version>${joda-time.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opentest4j</groupId>
+				<artifactId>opentest4j</artifactId>
+				<version>${opentest4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.conscrypt</groupId>
+				<artifactId>conscrypt-openjdk-uber</artifactId>
+				<version>${conscrypt-openjdk-uber.version}</version>
 			</dependency>
 			<!-- Must be at the end to avoid overriding versions explicitly set -->
 			<dependency>

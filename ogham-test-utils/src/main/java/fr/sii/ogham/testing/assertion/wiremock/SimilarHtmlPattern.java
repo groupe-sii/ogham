@@ -3,6 +3,7 @@ package fr.sii.ogham.testing.assertion.wiremock;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.w3c.dom.Document;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.MatchResult;
 import com.github.tomakehurst.wiremock.matching.StringValuePattern;
@@ -30,7 +31,7 @@ public class SimilarHtmlPattern extends StringValuePattern {
 	 * @param expectedValue
 	 *            the expected HTML
 	 */
-	public SimilarHtmlPattern(String expectedValue) {
+	public SimilarHtmlPattern(@JsonProperty("similarHtml") String expectedValue) {
 		super(expectedValue);
 	}
 
