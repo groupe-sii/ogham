@@ -23,7 +23,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>fr.sii.ogham</groupId>
+			<groupId>fr.sii.ogham.internal</groupId>
 			<artifactId>ogham-test-classpath-runtime</artifactId>
 			<version>${oghamVersion}</version>
 			<scope>test</scope>

@@ -76,7 +76,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>fr.sii.ogham</groupId>
+			<groupId>fr.sii.ogham.internal</groupId>
 			<artifactId>ogham-test-utils-internal</artifactId>
 			<scope>test</scope>
 			<exclusions>

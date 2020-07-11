@@ -323,7 +323,7 @@
 				<version>${ogham.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>fr.sii.ogham</groupId>
+				<groupId>fr.sii.ogham.internal</groupId>
 				<artifactId>ogham-test-classpath</artifactId>
 				<version>${ogham.version}</version>
 			</dependency>
@@ -333,7 +333,7 @@
 				<version>${ogham.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>fr.sii.ogham</groupId>
+				<groupId>fr.sii.ogham.internal</groupId>
 				<artifactId>ogham-test-utils-internal</artifactId>
 				<version>${ogham.version}</version>
 			</dependency>

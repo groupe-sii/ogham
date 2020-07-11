@@ -81,7 +81,7 @@ public class SpringBootSingleProjectCreator implements SingleProjectCreator<Spri
 	
 	private List<Dependency> classpathTestRuntime() {
 		return asList(
-				new Dependency("fr.sii.ogham", "ogham-test-classpath-runtime", oghamProperties.getOghamVersion()),
+				new Dependency("fr.sii.ogham.internal", "ogham-test-classpath-runtime", oghamProperties.getOghamVersion()),
 				new Dependency("fr.sii.ogham", "ogham-test-utils", oghamProperties.getOghamVersion(), Scope.TEST)
 			);
 	}
