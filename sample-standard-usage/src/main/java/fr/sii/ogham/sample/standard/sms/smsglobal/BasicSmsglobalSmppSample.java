@@ -12,7 +12,7 @@ public class BasicSmsglobalSmppSample {
 		// configure properties (could be stored in a properties file or defined
 		// in System properties)
 		Properties properties = new Properties();
-		properties.setProperty("ogham.sms.smpp.host", "smsglobal.com");                                         // <1>
+		properties.setProperty("ogham.sms.smpp.host", "smpp.smsglobal.com");                                    // <1>
 		properties.setProperty("ogham.sms.smpp.system-id", "<your smsglobal username available in API keys>");  // <2>
 		properties.setProperty("ogham.sms.smpp.password", "<your smsglobal password available in API keys>");   // <3>
 		properties.setProperty("ogham.sms.from.default-value", "<phone number to display for the sender>");     // <4>

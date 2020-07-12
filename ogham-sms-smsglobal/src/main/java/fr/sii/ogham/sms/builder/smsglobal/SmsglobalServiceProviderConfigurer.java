@@ -36,7 +36,7 @@ import fr.sii.ogham.sms.builder.cloudhopper.DefaultCloudhopperConfigurer;
  * "ogham.sms.automatic-service-provider-configuration.enable" is true (default
  * value)</li>
  * <li>and the property "ogham.sms.cloudhopper.host" or "ogham.sms.smpp.host"
- * equals "smsglobal.com"</li>
+ * equals "smpp.smsglobal.com"</li>
  * </ul>
  * 
  * <p>
@@ -122,7 +122,7 @@ public final class SmsglobalServiceProviderConfigurer {
 				return false;
 			}
 			String host = evaluate(asList("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}"), propertyResolver, String.class);
-			if ("smsglobal.com".equals(host)) {
+			if ("smpp.smsglobal.com".equals(host)) {
 				return true;
 			}
 			Boolean force = evaluate("${ogham.sms.smsglobal.service-provider.auto-conf.force}", propertyResolver, Boolean.class);

@@ -19,7 +19,7 @@ class SmsglobalServiceProviderConfigurerSpec extends Specification {
 			builder
 				.environment()
 					.properties()
-						.set("ogham.sms.smpp.host", "smsglobal.com")
+						.set("ogham.sms.smpp.host", "smpp.smsglobal.com")
 
 		when:
 			def service = builder.build()
@@ -27,7 +27,7 @@ class SmsglobalServiceProviderConfigurerSpec extends Specification {
 		then:
 			assertThat(service)
 				.cloudhopper()
-					.host(is("smsglobal.com"))
+					.host(is("smpp.smsglobal.com"))
 					.port(is(1775))
 					.interfaceVersion(is(VERSION_3_4.value()))
 					.userData()
@@ -70,7 +70,7 @@ class SmsglobalServiceProviderConfigurerSpec extends Specification {
 			builder
 				.environment()
 					.properties()
-						.set("ogham.sms.smpp.host", "smsglobal.com")
+						.set("ogham.sms.smpp.host", "smpp.smsglobal.com")
 						.and()
 					.and()
 				.sms()
@@ -89,7 +89,7 @@ class SmsglobalServiceProviderConfigurerSpec extends Specification {
 		then:
 			assertThat(service)
 				.cloudhopper()
-					.host(is("smsglobal.com"))
+					.host(is("smpp.smsglobal.com"))
 					.port(is(5000))
 					.userData()
 						.useShortMessage(is(true))
@@ -99,7 +99,7 @@ class SmsglobalServiceProviderConfigurerSpec extends Specification {
 						.enabled(is(true))
 	}
 
-	def "SmsGlobal service provider configuration should not be used if host is not smsglobal.com"() {
+	def "SmsGlobal service provider configuration should not be used if host is not smpp.smsglobal.com"() {
 		given:
 			MessagingBuilder builder = MessagingBuilder.standard()
 			builder
