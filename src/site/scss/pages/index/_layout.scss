@@ -39,11 +39,16 @@ main > .header + .row > div {
 		a {
 			@extend .btn, .btn-primary;
 		}
+	
+		p {
+			text-align: center;
+		}
 	}
 
 	.belief p {
 		color: $hero-belief-color;
 		font-size: $hero-belief-font-size;
+		text-align: center;
 	}
 }
 
@@ -72,6 +77,7 @@ main > .header + .row > div {
 			text-align: center;
 			font-size: 1.5rem;
 			font-family: $headings-font-family;
+			min-height: 126px;
 
 			&::before {
 				display: block;
@@ -80,7 +86,7 @@ main > .header + .row > div {
 			}
 		}
 		.content {
-			text-align: left;
+			text-align: justify;
 			font-family: $font-family-base;
 			overflow: hidden;
 			white-space: normal;
@@ -92,7 +98,6 @@ main > .header + .row > div {
 		margin-left: $index-benefit-spacing;
 	}
 }
-
 
 #usage,
 #get_it_now {
@@ -116,8 +121,8 @@ main > .header + .row > div {
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
-		margin-left: (- $index-code-samples-spacing);
-		margin-right: (- $index-code-samples-spacing);
+// 		margin-left: (- $index-code-samples-spacing);
+// 		margin-right: (- $index-code-samples-spacing);
 	}
 	pre {
 		overflow: hidden;
@@ -131,19 +136,21 @@ main > .header + .row > div {
 	.explanations {
 		flex: 1 0 30%;
 		max-width: 100%;
-		margin-left: $index-code-samples-spacing;
-		margin-right: $index-code-samples-spacing;
+		min-width: 250px;
+		padding-left: $index-code-samples-spacing;
+		padding-right: $index-code-samples-spacing;
 	}
 	.code-example {
 		flex: 1 0 65%;
 		max-width: 100%;
-		margin-left: $index-code-samples-spacing;
-		margin-right: $index-code-samples-spacing;
+		padding-left: $index-code-samples-spacing;
+		padding-right: $index-code-samples-spacing;
+		overflow: auto;
 	}
 	.more {
 		flex: 0 0 100%;
-		margin-left: $index-code-samples-spacing;
-		margin-right: $index-code-samples-spacing;
+		padding-left: $index-code-samples-spacing;
+		padding-right: $index-code-samples-spacing;
 		
 		a {
 			display: block;

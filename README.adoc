@@ -80,19 +80,36 @@ When using the module to send email based on an HTML template, the templating sy
 
 
 
-[role=tab-container]
+[role="tab-container no-max-height"]
 _____
 
 [role=tab]
 image:{icons-maven}
 
-[source, xml, subs=attributes+]
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-14,20- highlight-lines:15-19"]
 ----
-<dependency>
-    <groupId>fr.sii.ogham</groupId>
-    <artifactId>ogham-all</artifactId>
-    <version>2.0.0</version>
-</dependency>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>sample</groupId>
+  <artifactId>all</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <properties>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>fr.sii.ogham</groupId>
+      <artifactId>ogham-all</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+  </dependencies>
+</project>
 ----
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts={tabsize}[View code of an example pom.xml]
@@ -101,9 +118,22 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11"]
+----
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-all:{ogham-version}'
+}
+----
 
 [role=tab-container-end]
 _____
@@ -111,7 +141,7 @@ _____
 
 This will include:
 
-* Sending email through SMTP server (using https://javaee.github.io/javamail/[JavaMail])
+* Sending email through SMTP server (using https://eclipse-ee4j.github.io/mail/[Jakarta Mail], formely JavaMail)
 * Sending email through https://sendgrid.com/[SendGrid]
 * Sending SMS through SMPP server (using https://github.com/fizzed/cloudhopper-smpp[Cloudhopper])
 * Sending SMS through https://www.ovhtelecom.fr/sms/api-sms.xml[OVH SMS API]
@@ -119,35 +149,114 @@ This will include:
 * http://www.thymeleaf.org/[ThymeLeaf] template engine available for building message contents
 
 
+
+.Java version compatibility
+[NOTE]
+====
+Ogham is compatible with Java 8 and up to Java 14 (included).
+====
+
+
+
 [[install-spring-boot]]
 ==== With Spring Boot
 
 
 
-[role=tab-container]
+[role="tab-container no-max-height"]
 _____
 
 [role=tab]
 image:{icons-maven}
 
-[source, xml, subs=attributes+]
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-21,28- highlight-lines:22-26"]
 ----
-<dependency>
-    <groupId>fr.sii.ogham</groupId>
-    <artifactId>ogham-spring-boot-starter-all</artifactId>
-    <version>2.0.0</version>
-</dependency>
-----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>samples</groupId>
+    <artifactId>ogham-and-spring-boot</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>ogham-and-spring-boot</name>
+    <description>Demo project for Spring Boot</description>
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/pom.xml?ts={tabsize}[View code of an example pom.xml with Spring Boot starter]
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.sii.ogham</groupId>
+            <artifactId>ogham-spring-boot-starter-all</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+----
 
 
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-13,17-24 highlight-lines:16"]
+----
+plugins {
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group = 'samples'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:{ogham-version}'
+    
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+----
 
 [role=tab-container-end]
 _____
@@ -165,54 +274,182 @@ This will include:
 
 You can combine Ogham with existing Spring Boot dependencies:
 
-[role=tab-container]
+
+.Ogham adapts itself to Spring Boot features
+[role="tab-container no-max-height"]
 _____
 
 [role=tab]
 image:{icons-maven}
 
 
-[source, xml, subs=attributes+]
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-21,40- highlight-lines:22-26"]
 ----
-<dependency>
-    <groupId>fr.sii.ogham</groupId>
-    <artifactId>ogham-spring-boot-starter-all</artifactId>
-    <version>2.0.0</version>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-freemarker</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-thymeleaf</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-mail</artifactId>
-</dependency>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>samples</groupId>
+    <artifactId>ogham-and-spring-boot</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>ogham-and-spring-boot</name>
+    <description>Demo project for Spring Boot</description>
+
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.sii.ogham</groupId>
+            <artifactId>ogham-spring-boot-starter-all</artifactId>    <!--1-->
+            <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>   <!--2-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>    <!--3-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>         <!--4-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
 ----
+<1> Add Ogham starter for Spring Boot to benefit for all Ogham features in 
+your Spring Boot application.
+<2> Import FreeMarker starter as usual. Ogham will adapt to additional FreeMarker 
+provided by Spring Boot.
+<3> Import Thymeleaf starter as usual. Ogham will adapt to additional Thymeleaf 
+provided by Spring Boot.
+<4> Import Mail starter as usual. Ogham will adapt to use mail features provided
+by Spring Boot.
 
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-13,21-27 highlight-lines:16"]
+----
+plugins {
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group = 'samples'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:{ogham-version}'   // <1>
+    
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'      // <2>
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'       // <3>
+    implementation 'org.springframework.boot:spring-boot-starter-mail'            // <4>
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+----
+<1> Add Ogham starter for Spring Boot to benefit for all Ogham features in 
+your Spring Boot application.
+<2> Import FreeMarker starter as usual. Ogham will adapt to additional FreeMarker 
+provided by Spring Boot.
+<3> Import Thymeleaf starter as usual. Ogham will adapt to additional Thymeleaf 
+provided by Spring Boot.
+<4> Import Mail starter as usual. Ogham will adapt to use mail features provided
+by Spring Boot.
+
 
 [role=tab-container-end]
 _____
 
 
-Ogham will auto-configure to use Spring Boot additions and support Spring Boot configuration properties like `spring.mail.host` for example.
+Ogham will auto-configure to use Spring Boot additions and support Spring Boot 
+configuration properties like `spring.mail.host` for example.
 
-Ogham has been tested with following Spring Boot versions:
 
-* 1.3.8
-* 1.4.6
-* 1.5.3
+Ogham is compatible with following Spring Boot versions:
 
-Using Java 8 and Java 7.
+* 1.4.x (currently automatically tested against 1.4.7.RELEASE, see note below)
+* 1.5.x (currently automatically tested against 1.5.22.RELEASE)
+* 2.1.x (currently automatically tested against 2.1.15.RELEASE)
+* 2.2.x (currently automatically tested against 2.2.8.RELEASE)
+* 2.3.x (currently automatically tested against 2.3.1.RELEASE)
+
+.Java version compatibility
+[NOTE]
+====
+Ogham is compatible with Java 8 and up to Java 14 (included).
+
+However, Spring Boot may not be compatible with some Java versions (depending on
+Spring Boot version).
+====
+
+
+.Java 7
+[IMPORTANT]
+====
+Java 7 support has been dropped since Ogham 3.0.0. Therefore, Ogham is no more 
+tested with Spring Boot 1.3.x
+====
+
+
+.Spring Boot 1.4.x and WireMock
+[WARNING]
+====
+Latest WireMock versions are not compatible with Spring Boot 1.4.x. So if you
+are using Spring Boot 1.4.x, also using `ogham-test-utils` for writing tests and
+want to use WireMock in one of your test, you may experience `ClassNotFoundException`.
+This is due to different `org.apache.httpcomponents` versions.
+
+In this case, just use a different version of WireMock by manually adding the dependency
+`com.github.tomakehurst:wiremock-jre8:2.23.2:test`. This will force to use a 
+previous WireMock version that is compatible with Spring Boot 1.4.x.
+====
 
 
 === Select the features you need
@@ -221,18 +458,426 @@ Using Java 8 and Java 7.
 ==== Standalone
 
 
+Importing `ogham-all` dependency is easy but may import dependencies that you
+don't need. For example, you may only need FreeMarker but not Thymeleaf. Or
+you may only need to send emails through SMTP but never use SendGrid.
 
-////
-TODO: select dependencies with spring boot
-////
+That's why Ogham provides different modules so you can compose as you like:
+
+.Jakarta Mail and FreeMarker only
+[role="tab-container no-max-height"]
+_____
+
+[role=tab]
+image:{icons-maven}
+
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-14,25-, highlight-lines:15-24"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>sample</groupId>
+  <artifactId>javamail-and-freemarker</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <properties>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>fr.sii.ogham</groupId>
+      <artifactId>ogham-email-javamail</artifactId>        <!--1-->
+      <version>2.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.sii.ogham</groupId>
+      <artifactId>ogham-template-freemarker</artifactId>   <!--2-->
+      <version>2.0.0</version>
+    </dependency>
+  </dependencies>
+</project>
+----
+<1> Import only dependencies needed to send emails through SMTP (using Jakarta Mail).
+<2> Import only dependencies needed to handle FreeMarker templates.
+
+
+[role=tab]
+image:{icons-gradle}
+
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11-12"]
+----
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-email-javamail:3.0.0-SNAPSHOT'        // <1>
+    implementation 'fr.sii.ogham:ogham-template-freemarker:3.0.0-SNAPSHOT'   // <2>
+}
+----
+<1> Import only dependencies needed to send emails through SMTP (using Jakarta Mail).
+<2> Import only dependencies needed to handle FreeMarker templates.
+
+[role=tab-container-end]
+_____
+
+Another example for sending SMS only:
+
+.SMPP only without using templates
+[role="tab-container no-max-height"]
+_____
+
+[role=tab]
+image:{icons-maven}
+
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-14,20- highlight-lines:15-19"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>sample</groupId>
+  <artifactId>sms-only</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <properties>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>fr.sii.ogham</groupId>
+      <artifactId>ogham-sms-cloudhopper</artifactId>    <!--1-->
+      <version>2.0.0</version>
+    </dependency>
+  </dependencies>
+</project>
+----
+<1> Import only dependencies needed to send SMS through SMPP (using Cloudhopper).
+
+[role=tab]
+image:{icons-gradle}
+
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11"]
+----
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-sms-cloudhopper:3.0.0-SNAPSHOT'    // <1>
+}
+----
+<1> Import only dependencies needed to send SMS through SMPP (using Cloudhopper).
+
+
+[role=tab-container-end]
+_____
 
 [[select-features-spring-boot]]
 ==== With Spring Boot
 
 
-////
-TODO: select dependencies with spring boot
-////
+
+Ogham provides starters like Spring Boot does. If you are just interested in
+sending emails, just include the `ogham-spring-boot-starter-email`.
+It includes everything to work with email in Ogham plus FreeMarker and Thymeleaf but
+it doesn't import anything to deal with SMS.
+
+.Email with all features
+[role="tab-container no-max-height"]
+_____
+
+[role=tab]
+image:{icons-maven}
+
+
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-21,40- highlight-lines:22-26"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>samples</groupId>
+    <artifactId>ogham-and-spring-boot</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>ogham-and-spring-boot-email-only</name>
+    <description>Demo project for Spring Boot</description>
+
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.sii.ogham</groupId>
+            <artifactId>ogham-spring-boot-starter-email</artifactId>  <!--1-->
+            <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>   <!--2-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>    <!--3-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>         <!--4-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+----
+<1> Add Ogham starter for Spring Boot to benefit for Ogham email features in 
+your Spring Boot application.
+<2> Import FreeMarker starter as usual. Ogham will adapt to additional FreeMarker 
+provided by Spring Boot.
+<3> Import Thymeleaf starter as usual. Ogham will adapt to additional Thymeleaf 
+provided by Spring Boot.
+<4> Import Mail starter as usual. Ogham will adapt to use mail features provided
+by Spring Boot.
+
+
+[role=tab]
+image:{icons-gradle}
+
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-13,21-27 highlight-lines:16"]
+----
+plugins {
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group = 'samples'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-spring-boot-starter-email:{ogham-version}'  // <1>
+    
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'       // <2>
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'        // <3>
+    implementation 'org.springframework.boot:spring-boot-starter-mail'             // <4>
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+----
+<1> Add Ogham starter for Spring Boot to benefit for email Ogham features in 
+your Spring Boot application.
+<2> Import FreeMarker starter as usual. Ogham will adapt to additional FreeMarker 
+provided by Spring Boot.
+<3> Import Thymeleaf starter as usual. Ogham will adapt to additional Thymeleaf 
+provided by Spring Boot.
+<4> Import Mail starter as usual. Ogham will adapt to use mail features provided
+by Spring Boot.
+
+
+[role=tab-container-end]
+_____
+
+
+If you want to be even more selective, you can manually select Ogham libraries.
+To benefit from Spring Boot auto-configuration, you just need to add
+`ogham-spring-boot-autoconfigure`.
+
+.Email and FreeMarker only using Spring Boot features
+[role="tab-container no-max-height"]
+_____
+
+[role=tab]
+image:{icons-maven}
+
+
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-21,47- highlight-lines:22-36"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>samples</groupId>
+    <artifactId>ogham-and-spring-boot</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>ogham-and-spring-boot-email-only</name>
+    <description>Demo project for Spring Boot</description>
+
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.sii.ogham</groupId>
+            <artifactId>ogham-spring-boot-autoconfigure</artifactId>    <!--1-->
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.sii.ogham</groupId>
+            <artifactId>ogham-email-javamail</artifactId>               <!--2-->
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.sii.ogham</groupId>
+            <artifactId>ogham-template-freemarker</artifactId>          <!--3-->
+            <version>2.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>     <!--4-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>           <!--5-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+----
+<1> Provides auto-configuration to register Ogham beans in Spring Boot application. 
+Also configures Ogham to use Spring Boot beans.
+<2> Provides Ogham features to send emails through SMTP (using Jakarta Mail).
+<3> Provides Ogham features to handle FreeMarker template engine.
+<4> Import Spring Boot FreeMarker starter as usual. Ogham will automatically adapt
+itself to use Spring Boot features.
+<5> Import Spring Boot Mail starter. Ogham will automatically adapt
+itself to use Spring Boot features.
+
+[role=tab]
+image:{icons-gradle}
+
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-13,22-28 highlight-lines:16-18"]
+----
+plugins {
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group = 'samples'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-spring-boot-autoconfigure:{ogham-version}'   // <1>
+    implementation 'fr.sii.ogham:ogham-email-javamail:2.0.0'              // <2>
+    implementation 'fr.sii.ogham:ogham-template-freemarker:2.0.0'         // <3>
+
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'        // <4>
+    implementation 'org.springframework.boot:spring-boot-starter-mail'              // <5>
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+----
+<1> Provides auto-configuration to register Ogham beans in Spring Boot application. 
+Also configures Ogham to use Spring Boot beans.
+<2> Provides Ogham features to send emails through SMTP (using Jakarta Mail).
+<3> Provides Ogham features to handle FreeMarker template engine.
+<4> Import Spring Boot FreeMarker starter as usual. Ogham will automatically adapt
+itself to use Spring Boot features.
+<5> Import Spring Boot Mail starter. Ogham will automatically adapt
+itself to use Spring Boot features.
+
+
+[role=tab-container-end]
+_____
 
 
 == Usage

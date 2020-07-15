@@ -222,7 +222,7 @@ Include Ogham standalone dependency
 [role=tab]
 image:{icons-maven}
 
-
+.Add `ogham-all` dependency to your pom.xml
 [source, xml, subs=attributes+]
 ----
 <dependency>
@@ -235,9 +235,13 @@ image:{icons-maven}
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+.Add `ogham-all` dependency to your build.gradle
+[source, groovy, subs=attributes+]
+----
+dependencies {
+	implementation 'fr.sii.ogham:ogham-all:{ogham-version}'
+}
+----
 
 [role=tab-container-end]
 -
@@ -272,6 +276,7 @@ Include Ogham dependency for Spring Boot
 [role=tab]
 image:{icons-maven}
 
+.Add `ogham-spring-boot-starter-all` dependency to your pom.xml
 [source, xml, subs=attributes+]
 ----
 <dependency>
@@ -285,9 +290,13 @@ image:{icons-maven}
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+.Add `ogham-spring-boot-starter-all` dependency to your build.gradle
+[source, groovy, subs=attributes+]
+----
+dependencies {
+	implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:{ogham-version}'
+}
+----
 
 [role=tab-container-end]
 -

@@ -1,7 +1,136 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+Importing `ogham-all` dependency is easy but may import dependencies that you
+don't need. For example, you may only need FreeMarker but not Thymeleaf. Or
+you may only need to send emails through SMTP but never use SendGrid.
 
-////
-TODO: select dependencies with spring boot
-////
+That's why Ogham provides different modules so you can compose as you like:
+
+.Jakarta Mail and FreeMarker only
+[role="tab-container no-max-height"]
+Select Ogham standalone dependencies
+
+[role=tab]
+image:{icons-maven}
+
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-14,25-, highlight-lines:15-24"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>sample</groupId>
+  <artifactId>javamail-and-freemarker</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <properties>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>fr.sii.ogham</groupId>
+      <artifactId>ogham-email-javamail</artifactId>        <!--1-->
+      <version>{ogham-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.sii.ogham</groupId>
+      <artifactId>ogham-template-freemarker</artifactId>   <!--2-->
+      <version>{ogham-version}</version>
+    </dependency>
+  </dependencies>
+</project>
+----
+<1> Import only dependencies needed to send emails through SMTP (using Jakarta Mail).
+<2> Import only dependencies needed to handle FreeMarker templates.
+
+
+[role=tab]
+image:{icons-gradle}
+
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11-12"]
+----
+plugins {
+    id 'java'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-email-javamail:3.0.0-SNAPSHOT'        // <1>
+    implementation 'fr.sii.ogham:ogham-template-freemarker:3.0.0-SNAPSHOT'   // <2>
+}
+----
+<1> Import only dependencies needed to send emails through SMTP (using Jakarta Mail).
+<2> Import only dependencies needed to handle FreeMarker templates.
+
+[role=tab-container-end]
+-
+
+Another example for sending SMS only:
+
+.SMPP only without using templates
+[role="tab-container no-max-height"]
+Select Ogham standalone dependencies
+
+[role=tab]
+image:{icons-maven}
+
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-14,20- highlight-lines:15-19"]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>sample</groupId>
+  <artifactId>sms-only</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <properties>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>fr.sii.ogham</groupId>
+      <artifactId>ogham-sms-cloudhopper</artifactId>    <!--1-->
+      <version>{ogham-version}</version>
+    </dependency>
+  </dependencies>
+</project>
+----
+<1> Import only dependencies needed to send SMS through SMPP (using Cloudhopper).
+
+[role=tab]
+image:{icons-gradle}
+
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11"]
+----
+plugins {
+    id 'java'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+    implementation 'fr.sii.ogham:ogham-sms-cloudhopper:3.0.0-SNAPSHOT'    // <1>
+}
+----
+<1> Import only dependencies needed to send SMS through SMPP (using Cloudhopper).
+
+
+[role=tab-container-end]
+-

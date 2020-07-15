@@ -2,19 +2,36 @@
 include::{docdir}/variables.adoc[]
 
 
-[role=tab-container]
+[role="tab-container no-max-height"]
 Include Ogham standalone dependency
 
 [role=tab]
 image:{icons-maven}
 
-[source, xml, subs=attributes+]
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-14,20- highlight-lines:15-19"]
 ----
-<dependency>
-	<groupId>fr.sii.ogham</groupId>
-	<artifactId>ogham-all</artifactId>
-	<version>{ogham-version}</version>
-</dependency>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>sample</groupId>
+  <artifactId>all</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <properties>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>fr.sii.ogham</groupId>
+      <artifactId>ogham-all</artifactId>
+      <version>{ogham-version}</version>
+    </dependency>
+  </dependencies>
+</project>
 ----
 
 {standard-samples-url}/pom.xml?ts={tabsize}[View code of an example pom.xml]
@@ -23,9 +40,22 @@ image:{icons-maven}
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11"]
+----
+plugins {
+    id 'java'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'fr.sii.ogham:ogham-all:{ogham-version}'
+}
+----
 
 [role=tab-container-end]
 -
@@ -33,10 +63,19 @@ TODO: gradle code sample
 
 This will include:
 
-* Sending email through SMTP server (using https://javaee.github.io/javamail/[JavaMail])
+* Sending email through SMTP server (using https://eclipse-ee4j.github.io/mail/[Jakarta Mail], formely JavaMail)
 * Sending email through https://sendgrid.com/[SendGrid]
 * Sending SMS through SMPP server (using https://github.com/fizzed/cloudhopper-smpp[Cloudhopper])
 * Sending SMS through https://www.ovhtelecom.fr/sms/api-sms.xml[OVH SMS API]
 * http://freemarker.org/[FreeMarker] template engine available for building message contents
 * http://www.thymeleaf.org/[ThymeLeaf] template engine available for building message contents
+
+
+
+.Java version compatibility
+[NOTE]
+====
+Ogham is compatible with Java 8 and up to Java 14 (included).
+====
+
 

@@ -2,30 +2,100 @@
 include::{docdir}/variables.adoc[]
 
 
-[role=tab-container]
+[role="tab-container no-max-height"]
 Include Ogham dependency for Spring Boot
 
 [role=tab]
 image:{icons-maven}
 
-[source, xml, subs=attributes+]
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-21,28- highlight-lines:22-26"]
 ----
-<dependency>
-	<groupId>fr.sii.ogham</groupId>
-	<artifactId>ogham-spring-boot-starter-all</artifactId>
-	<version>{ogham-version}</version>
-</dependency>
-----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.3.1.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>samples</groupId>
+	<artifactId>ogham-and-spring-boot</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>ogham-and-spring-boot</name>
+	<description>Demo project for Spring Boot</description>
 
-{spring-samples-url}/pom.xml?ts={tabsize}[View code of an example pom.xml with Spring Boot starter]
+	<properties>
+		<java.version>11</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-spring-boot-starter-all</artifactId>
+			<version>{ogham-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+----
 
 
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-13,17-24 highlight-lines:16"]
+----
+plugins {
+	id 'org.springframework.boot' version '2.3.1.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'samples'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:{ogham-version}'
+	
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+----
 
 [role=tab-container-end]
 -
@@ -43,52 +113,180 @@ This will include:
 
 You can combine Ogham with existing Spring Boot dependencies:
 
-[role=tab-container]
+
+.Ogham adapts itself to Spring Boot features
+[role="tab-container no-max-height"]
 Ogham with Spring Boot dependencies
 
 [role=tab]
 image:{icons-maven}
 
 
-[source, xml, subs=attributes+]
+.pom.xml
+[source, xml, subs=attributes+, role="collapse-lines:1-21,40- highlight-lines:22-26"]
 ----
-<dependency>
-	<groupId>fr.sii.ogham</groupId>
-	<artifactId>ogham-spring-boot-starter-all</artifactId>
-	<version>{ogham-version}</version>
-</dependency>
-<dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-freemarker</artifactId>
-</dependency>
-<dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-thymeleaf</artifactId>
-</dependency>
-<dependency>
-	<groupId>org.springframework.boot</groupId>
-	<artifactId>spring-boot-starter-mail</artifactId>
-</dependency>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.3.1.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>samples</groupId>
+	<artifactId>ogham-and-spring-boot</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>ogham-and-spring-boot</name>
+	<description>Demo project for Spring Boot</description>
+
+	<properties>
+		<java.version>11</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>ogham-spring-boot-starter-all</artifactId>    <!--1-->
+			<version>{ogham-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>   <!--2-->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>    <!--3-->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>         <!--4-->
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
 ----
+<1> Add Ogham starter for Spring Boot to benefit for all Ogham features in 
+your Spring Boot application.
+<2> Import FreeMarker starter as usual. Ogham will adapt to additional FreeMarker 
+provided by Spring Boot.
+<3> Import Thymeleaf starter as usual. Ogham will adapt to additional Thymeleaf 
+provided by Spring Boot.
+<4> Import Mail starter as usual. Ogham will adapt to use mail features provided
+by Spring Boot.
 
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+.build.gradle
+[source, groovy, subs=attributes+, role="collapse-lines:1-13,21-27 highlight-lines:16"]
+----
+plugins {
+	id 'org.springframework.boot' version '2.3.1.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'samples'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:{ogham-version}'   // <1>
+	
+	implementation 'org.springframework.boot:spring-boot-starter-freemarker'      // <2>
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'       // <3>
+	implementation 'org.springframework.boot:spring-boot-starter-mail'            // <4>
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+----
+<1> Add Ogham starter for Spring Boot to benefit for all Ogham features in 
+your Spring Boot application.
+<2> Import FreeMarker starter as usual. Ogham will adapt to additional FreeMarker 
+provided by Spring Boot.
+<3> Import Thymeleaf starter as usual. Ogham will adapt to additional Thymeleaf 
+provided by Spring Boot.
+<4> Import Mail starter as usual. Ogham will adapt to use mail features provided
+by Spring Boot.
+
 
 [role=tab-container-end]
 -
 
 
-Ogham will auto-configure to use Spring Boot additions and support Spring Boot configuration properties like `spring.mail.host` for example.
+Ogham will auto-configure to use Spring Boot additions and support Spring Boot 
+configuration properties like `spring.mail.host` for example.
 
-Ogham has been tested with following Spring Boot versions:
 
-* 1.3.8
-* 1.4.6
-* 1.5.3
+Ogham is compatible with following Spring Boot versions:
 
-Using Java 8 and Java 7.
+* 1.4.x (currently automatically tested against 1.4.7.RELEASE, see note below)
+* 1.5.x (currently automatically tested against 1.5.22.RELEASE)
+* 2.1.x (currently automatically tested against 2.1.15.RELEASE)
+* 2.2.x (currently automatically tested against 2.2.8.RELEASE)
+* 2.3.x (currently automatically tested against 2.3.1.RELEASE)
+
+.Java version compatibility
+[NOTE]
+====
+Ogham is compatible with Java 8 and up to Java 14 (included).
+
+However, Spring Boot may not be compatible with some Java versions (depending on
+Spring Boot version).
+====
+
+
+.Java 7
+[IMPORTANT]
+====
+Java 7 support has been dropped since Ogham 3.0.0. Therefore, Ogham is no more 
+tested with Spring Boot 1.3.x
+====
+
+
+.Spring Boot 1.4.x and WireMock
+[WARNING]
+====
+Latest WireMock versions are not compatible with Spring Boot 1.4.x. So if you
+are using Spring Boot 1.4.x, also using `ogham-test-utils` for writing tests and
+want to use WireMock in one of your test, you may experience `ClassNotFoundException`.
+This is due to different `org.apache.httpcomponents` versions.
+
+In this case, just use a different version of WireMock by manually adding the dependency
+`com.github.tomakehurst:wiremock-jre8:2.23.2:test`. This will force to use a 
+previous WireMock version that is compatible with Spring Boot 1.4.x.
+====
 
