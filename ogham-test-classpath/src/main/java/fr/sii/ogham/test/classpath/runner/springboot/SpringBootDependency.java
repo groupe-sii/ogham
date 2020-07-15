@@ -12,9 +12,9 @@ public enum SpringBootDependency {
 	LOMBOK("lombok"),
 	CONFIGURATION_PROCESSOR("configuration-processor"),
 	WEB("web"),
-	THYMELEAF("thymeleaf", Facet.TEMPLATE_THYMELEAF),
-	FREEMARKER("freemarker", Facet.TEMPLATE_FREEMARKER),
-	MAIL("mail"),
+	THYMELEAF("thymeleaf", Facet.SPRING_THYMELEAF),
+	FREEMARKER("freemarker", Facet.SPRING_FREEMARKER),
+	MAIL("mail", Facet.SPRING_MAIL),
 	DEVTOOLS("devtools");
 	
 	private final String module;

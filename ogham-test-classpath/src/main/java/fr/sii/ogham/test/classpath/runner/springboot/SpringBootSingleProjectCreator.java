@@ -1,6 +1,7 @@
 package fr.sii.ogham.test.classpath.runner.springboot;
 
 import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.generateIdentifier;
+import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.getGroupName;
 import static fr.sii.ogham.test.classpath.runner.util.RunnerUtils.isSkip;
 import static fr.sii.ogham.test.classpath.runner.util.SourceUtils.copy;
 import static java.util.Arrays.asList;
@@ -45,13 +46,14 @@ public class SpringBootSingleProjectCreator implements SingleProjectCreator<Spri
 
 	public String createProject(Path parentFolder, boolean override, SpringBootProjectParams params, List<SpringBootDependency> exclude) throws SingleProjectCreationException {
 		String identifier = generateIdentifier(params, exclude);
-		if (isSkip(override, parentFolder.resolve(params.getJavaVersion().name()).resolve(identifier))) {
+		Path moduleParentFolder = parentFolder.resolve(params.getJavaVersion().name()).resolve(getGroupName(identifier));
+		if (isSkip(override, moduleParentFolder.resolve(identifier))) {
 			log.info("Skipping creation of project {} because projects already exist", identifier);
 			return identifier;
 		}
 		log.info("Creating project {}", identifier);
 		try {
-			Project<SpringBootProjectParams> project = projectInitializer.initialize(parentFolder.resolve(params.getJavaVersion().name()), identifier, params);
+			Project<SpringBootProjectParams> project = projectInitializer.initialize(moduleParentFolder, identifier, params);
 			// copy source code
 			copy("/common", project.getPath());
 			copy("/spring-boot/src", project.getPath().resolve("src"));

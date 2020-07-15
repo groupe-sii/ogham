@@ -12,7 +12,11 @@ public enum Facet {
 	SMS_OVH("sms-ovh"),
 	SMS_CLOUDHOPPER("sms-cloudhopper"),
 	TEMPLATE_FREEMARKER("template-freemarker"),
-	TEMPLATE_THYMELEAF("template-thymeleaf");
+	TEMPLATE_THYMELEAF("template-thymeleaf"),
+	SPRING_MAIL("spring-mail"),
+	SPRING_SENDGRID("spring-sendgrid"),
+	SPRING_THYMELEAF("spring-thymeleaf"),
+	SPRING_FREEMARKER("spring-thymeleaf");
 	
 	private final String facetName;
 	

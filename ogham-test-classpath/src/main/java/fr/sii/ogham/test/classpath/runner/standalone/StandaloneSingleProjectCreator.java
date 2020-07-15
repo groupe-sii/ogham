@@ -1,6 +1,7 @@
 package fr.sii.ogham.test.classpath.runner.standalone;
 
 import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.generateIdentifier;
+import static fr.sii.ogham.test.classpath.runner.springboot.IdentifierGenerator.getGroupName;
 import static fr.sii.ogham.test.classpath.runner.util.RunnerUtils.isSkip;
 
 import java.nio.file.Path;
@@ -32,13 +33,14 @@ public class StandaloneSingleProjectCreator implements SingleProjectCreator<Stan
 
 	public String createProject(Path parentFolder, boolean override, StandaloneProjectParams params, List<OghamDependency> exclude) throws SingleProjectCreationException {
 		String identifier = generateIdentifier(params);
-		if (isSkip(override, parentFolder.resolve(params.getJavaVersion().name()).resolve(identifier))) {
+		Path moduleParentFolder = parentFolder.resolve(params.getJavaVersion().name()).resolve(getGroupName(identifier));
+		if (isSkip(override, moduleParentFolder.resolve(identifier))) {
 			log.info("Skipping creation of project {} because projects already exist", identifier);
 			return identifier;
 		}
 		log.info("Creating project {}", identifier);
 		try {
-			Project<StandaloneProjectParams> project = projectInitializer.initialize(parentFolder.resolve(params.getJavaVersion().name()), identifier, params);
+			Project<StandaloneProjectParams> project = projectInitializer.initialize(moduleParentFolder, identifier, params);
 			dependencyAdder.addDependencies(project, toDependencies(params.getOghamDependencies()));
 			return identifier;
 		} catch (ProjectInitializationException | AddDependencyException e) {

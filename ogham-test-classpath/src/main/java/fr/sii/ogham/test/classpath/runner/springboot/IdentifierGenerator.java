@@ -32,6 +32,13 @@ public class IdentifierGenerator {
 		return identifier.startsWith(javaVersion.getNormalizedName());
 	}
 
+	public static String getGroupName(String identifier) {
+		if (identifier.contains(".boot-")) {
+			return identifier.replaceAll("^.+boot-(\\d+[.]\\d+)[.]\\d+[.][^.]+.*$", "spring-boot-$1.x");
+		}
+		return "standalone";
+	}
+
 	private static String toOghamBootDepsString(List<OghamResolvedDependency> deps) {
 		List<String> depsStr = new ArrayList<>();
 		for(OghamResolvedDependency dep : deps) {

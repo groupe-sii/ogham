@@ -17,228 +17,386 @@ before_install:
 
 jobs:
   include:
-    - stage: "Build"
-      jdk: oraclejdk8
-      script:
-        - travis_retry ci/./build.sh
-    - stage: "Build"
-      jdk: openjdk8
-      script:
-        - travis_retry ci/./build.sh
-    - stage: "Build"
-      jdk: oraclejdk9
-      script:
-        - travis_retry ci/./build.sh
-    - stage: "Build"
-      jdk: openjdk9
-      script:
-        - travis_retry ci/./build.sh
-    - stage: "Build"
-      jdk: openjdk10
-      script:
-        - travis_retry ci/./build.sh
-    - stage: "Build"
-      jdk: oraclejdk11
-      script:
-        - travis_retry ci/./build.sh
-    - stage: "Build"
-      jdk: openjdk11
-      script:
-        - travis_retry ci/./build.sh
-    - stage: "Build"
-      jdk: openjdk12
-      script:
-        - travis_retry ci/./build.sh
-    - stage: "Build"
-      jdk: openjdk13
-      script:
-        - travis_retry ci/./build.sh
-    
-    - stage: test
-      name: "Unit Tests (oraclejdk8)"
-      jdk: oraclejdk8
-      script: travis_retry ci/./run-unit-tests.sh
-    - stage: test
-      name: "Unit Tests (openjdk8)"
-      jdk: openjdk8
-      script: travis_retry ci/./run-unit-tests.sh
-    - stage: test
-      name: "Unit Tests (oraclejdk9)"
-      jdk: oraclejdk9
-      script: travis_retry ci/./run-unit-tests.sh
-    - stage: test
-      name: "Unit Tests (openjdk9)"
-      jdk: openjdk9
-      script: travis_retry ci/./run-unit-tests.sh
-    - stage: test
-      name: "Unit Tests (openjdk10)"
-      jdk: openjdk10
-      script: travis_retry ci/./run-unit-tests.sh
-    - stage: test
-      name: "Unit Tests (oraclejdk11)"
-      jdk: oraclejdk11
-      script: travis_retry ci/./run-unit-tests.sh
-    - stage: test
-      name: "Unit Tests (openjdk11)"
-      jdk: openjdk11
-      script: travis_retry ci/./run-unit-tests.sh
-    - stage: test
-      name: "Unit Tests (openjdk12)"
-      jdk: openjdk12
-      script: travis_retry ci/./run-unit-tests.sh
-    - stage: test
-      name: "Unit Tests (openjdk13)"
-      jdk: openjdk13
-      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: "Build"
+#      jdk: oraclejdk8
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: openjdk8
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: oraclejdk9
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: openjdk9
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: openjdk10
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: oraclejdk11
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: openjdk11
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: openjdk12
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: openjdk13
+#      script:
+#        - travis_retry ci/./build.sh
+#    - stage: "Build"
+#      jdk: openjdk14
+#      script:
+#        - travis_retry ci/./build.sh
+#    
+#    - stage: test
+#      name: "Unit Tests (oraclejdk8)"
+#      jdk: oraclejdk8
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (openjdk8)"
+#      jdk: openjdk8
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (oraclejdk9)"
+#      jdk: oraclejdk9
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (openjdk9)"
+#      jdk: openjdk9
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (openjdk10)"
+#      jdk: openjdk10
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (oraclejdk11)"
+#      jdk: oraclejdk11
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (openjdk11)"
+#      jdk: openjdk11
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (openjdk12)"
+#      jdk: openjdk12
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (openjdk13)"
+#      jdk: openjdk13
+#      script: travis_retry ci/./run-unit-tests.sh
+#    - stage: test
+#      name: "Unit Tests (openjdk14)"
+#      jdk: openjdk14
+#      script: travis_retry ci/./run-unit-tests.sh
+#
+#    - stage: test
+#      name: "Integration Tests (oraclejdk8)"
+#      jdk: oraclejdk8
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (openjdk8)"
+#      jdk: openjdk8
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (oraclejdk9)"
+#      jdk: oraclejdk9
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (openjdk9)"
+#      jdk: openjdk9
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (openjdk10)"
+#      jdk: openjdk10
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (oraclejdk11)"
+#      jdk: oraclejdk11
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (openjdk11)"
+#      jdk: openjdk11
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (openjdk12)"
+#      jdk: openjdk12
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (openjdk13)"
+#      jdk: openjdk13
+#      script: travis_retry ci/./run-integration-tests.sh
+#    - stage: test
+#      name: "Integration Tests (openjdk14)"
+#      jdk: openjdk14
+#      script: travis_retry ci/./run-integration-tests.sh
 
     - stage: test
-      name: "Integration Tests (oraclejdk8)"
-      jdk: oraclejdk8
-      script: travis_retry ci/./run-integration-tests.sh
-    - stage: test
-      name: "Integration Tests (openjdk8)"
-      jdk: openjdk8
-      script: travis_retry ci/./run-integration-tests.sh
-    - stage: test
-      name: "Integration Tests (oraclejdk9)"
-      jdk: oraclejdk9
-      script: travis_retry ci/./run-integration-tests.sh
-    - stage: test
-      name: "Integration Tests (openjdk9)"
-      jdk: openjdk9
-      script: travis_retry ci/./run-integration-tests.sh
-    - stage: test
-      name: "Integration Tests (openjdk10)"
-      jdk: openjdk10
-      script: travis_retry ci/./run-integration-tests.sh
-    - stage: test
-      name: "Integration Tests (oraclejdk11)"
-      jdk: oraclejdk11
-      script: travis_retry ci/./run-integration-tests.sh
-    - stage: test
-      name: "Integration Tests (openjdk11)"
-      jdk: openjdk11
-      script: travis_retry ci/./run-integration-tests.sh
-    - stage: test
-      name: "Integration Tests (openjdk12)"
-      jdk: openjdk12
-      script: travis_retry ci/./run-integration-tests.sh
-    - stage: test
-      name: "Integration Tests (openjdk13)"
-      jdk: openjdk13
-      script: travis_retry ci/./run-integration-tests.sh
-
-    - stage: test
-      name: "Classpath Tests (oraclejdk8)"
+      name: "Classpath Tests (oraclejdk8) [Standalone]"
       jdk: oraclejdk8
       script:
         - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8052 ci/./generate-classpath-tests.sh older-versions || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_8 travis_retry ci/./run-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8/standalone travis_retry ci/./run-classpath-tests.sh
     - stage: test
-      name: "Classpath Tests (openjdk8)"
+      name: "Classpath Tests (oraclejdk8) [Spring Boot 1.4.x]"
+      jdk: oraclejdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8052 ci/./generate-classpath-tests.sh older-versions || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-1.4.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk8) [Spring Boot 1.5.x]"
+      jdk: oraclejdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-1.5.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk8) [Spring Boot 2.1.x]"
+      jdk: oraclejdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-2.1.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk8) [Spring Boot 2.2.x]"
+      jdk: oraclejdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-2.2.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk8) [Spring Boot 2.3.x]"
+      jdk: oraclejdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-2.3.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk8) [Standalone]"
       jdk: openjdk8
       script:
         - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8052 ci/./generate-classpath-tests.sh older-versions || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_8 travis_retry ci/./run-classpath-tests.sh
+        - TEST_FOLDER=JAVA_8/standalone travis_retry ci/./run-classpath-tests.sh
     - stage: test
-      name: "Classpath Tests (oraclejdk9)"
+      name: "Classpath Tests (openjdk8) [Spring Boot 1.4.x]"
+      jdk: openjdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8052 ci/./generate-classpath-tests.sh older-versions || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-1.4.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk8) [Spring Boot 1.5.x]"
+      jdk: openjdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-1.5.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk8) [Spring Boot 2.1.x]"
+      jdk: openjdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-2.1.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk8) [Spring Boot 2.2.x]"
+      jdk: openjdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-2.2.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk8) [Spring Boot 2.3.x]"
+      jdk: openjdk8
+      script:
+        - TEST_FOLDER=JAVA_8 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_8/spring-boot-2.3.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk9) [standalone]"
       jdk: oraclejdk9
       script: 
         - TEST_FOLDER=JAVA_9 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_9 travis_retry ci/./run-classpath-tests.sh
+        - TEST_FOLDER=JAVA_9/standalone travis_retry ci/./run-classpath-tests.sh
     - stage: test
-      name: "Classpath Tests (openjdk9)"
+      name: "Classpath Tests (openjdk9) [Standalone]"
       jdk: openjdk9
       script: 
         - TEST_FOLDER=JAVA_9 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_9 travis_retry ci/./run-classpath-tests.sh
+        - TEST_FOLDER=JAVA_9/standalone travis_retry ci/./run-classpath-tests.sh
     - stage: test
-      name: "Classpath Tests (openjdk10)"
+      name: "Classpath Tests (openjdk10) [Standalone]"
       jdk: openjdk10
       script: 
         - TEST_FOLDER=JAVA_10 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_10 travis_retry ci/./run-classpath-tests.sh
+        - TEST_FOLDER=JAVA_10/standalone travis_retry ci/./run-classpath-tests.sh
     - stage: test
-      name: "Classpath Tests (oraclejdk11)"
+      name: "Classpath Tests (oraclejdk11) [Standalone]"
       jdk: oraclejdk11
       script:
         - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_11 travis_retry ci/./run-classpath-tests.sh
+        - TEST_FOLDER=JAVA_11/standalone travis_retry ci/./run-classpath-tests.sh
     - stage: test
-      name: "Classpath Tests (openjdk11)"
+      name: "Classpath Tests (oraclejdk11) [Spring Boot 2.1.x]"
+      jdk: oraclejdk11
+      script:
+        - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_11/spring-boot-2.1.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk11) [Spring Boot 2.2.x]"
+      jdk: oraclejdk11
+      script:
+        - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_11/spring-boot-2.2.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (oraclejdk11) [Spring Boot 2.3.x]"
+      jdk: oraclejdk11
+      script:
+        - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_11/spring-boot-2.3.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk11) [Standalone]"
       jdk: openjdk11
       script:
         - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_11 travis_retry ci/./run-classpath-tests.sh
+        - TEST_FOLDER=JAVA_11/standalone travis_retry ci/./run-classpath-tests.sh
     - stage: test
-      name: "Classpath Tests (openjdk12)"
+      name: "Classpath Tests (openjdk11) [Spring Boot 2.1.x]"
+      jdk: openjdk11
+      script:
+        - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_11/spring-boot-2.1.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk11) [Spring Boot 2.2.x]"
+      jdk: openjdk11
+      script:
+        - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_11/spring-boot-2.2.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk11) [Spring Boot 2.3.x]"
+      jdk: openjdk11
+      script:
+        - TEST_FOLDER=JAVA_11 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_11/spring-boot-2.3.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk12) [Standalone]"
       jdk: openjdk12
-      script: 
+      script:
         - TEST_FOLDER=JAVA_12 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_12 travis_retry ci/./run-classpath-tests.sh
+        - TEST_FOLDER=JAVA_12/standalone travis_retry ci/./run-classpath-tests.sh
     - stage: test
-      name: "Classpath Tests (openjdk13)"
-      jdk: openjdk13
-      script: 
-        - TEST_FOLDER=JAVA_13 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
-        - TEST_FOLDER=JAVA_13 travis_retry ci/./run-classpath-tests.sh
-
-    - stage: "Analyze"
-      jdk: oraclejdk8
-      script:
-        - travis_retry ci/./analyze.sh
-    
-    - stage: "Javadoc"
-      jdk: oraclejdk8
-      script:
-        - travis_retry ci/./generate-javadoc.sh
-    - stage: "Javadoc"
-      jdk: openjdk8
-      script:
-        - travis_retry ci/./generate-javadoc.sh
-    - stage: "Javadoc"
-      jdk: oraclejdk9
-      script:
-        - travis_retry ci/./generate-javadoc.sh
-    - stage: "Javadoc"
-      jdk: openjdk9
-      script:
-        - travis_retry ci/./generate-javadoc.sh
-    - stage: "Javadoc"
-      jdk: openjdk10
-      script:
-        - travis_retry ci/./generate-javadoc.sh
-    - stage: "Javadoc"
-      jdk: oraclejdk11
-      script:
-        - travis_retry ci/./generate-javadoc.sh
-    - stage: "Javadoc"
-      jdk: openjdk11
-      script:
-        - travis_retry ci/./generate-javadoc.sh
-    - stage: "Javadoc"
+      name: "Classpath Tests (openjdk12) [Spring Boot 2.1.x]"
       jdk: openjdk12
       script:
-        - travis_retry ci/./generate-javadoc.sh
-    - stage: "Javadoc"
+        - TEST_FOLDER=JAVA_12 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_12/spring-boot-2.1.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk12) [Spring Boot 2.2.x]"
+      jdk: openjdk12
+      script:
+        - TEST_FOLDER=JAVA_12 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_12/spring-boot-2.2.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk12) [Spring Boot 2.3.x]"
+      jdk: openjdk12
+      script:
+        - TEST_FOLDER=JAVA_12 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_12/spring-boot-2.3.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk13) [Standalone]"
       jdk: openjdk13
       script:
-        - travis_retry ci/./generate-javadoc.sh
-
-    - stage: "Deploy"
-      jdk: oraclejdk8
-      script: 
-        - travis_retry ./mvnw clean install deploy --settings .travis-settings.xml -DskipTests=true -B | grep -Ei '(Uploading|Downloading|Uploaded|Downloaded)'
+        - TEST_FOLDER=JAVA_13 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_13/standalone travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk13) [Spring Boot 2.2.x]"
+      jdk: openjdk13
+      script:
+        - TEST_FOLDER=JAVA_13 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_13/spring-boot-2.2.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk13) [Spring Boot 2.3.x]"
+      jdk: openjdk13
+      script:
+        - TEST_FOLDER=JAVA_13 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_13/spring-boot-2.3.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk14) [Standalone]"
+      jdk: openjdk14
+      script:
+        - TEST_FOLDER=JAVA_14 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_14/standalone travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk14) [Spring Boot 2.2.x]"
+      jdk: openjdk14
+      script:
+        - TEST_FOLDER=JAVA_14 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_14/spring-boot-2.2.x travis_retry ci/./run-classpath-tests.sh
+    - stage: test
+      name: "Classpath Tests (openjdk14) [Spring Boot 2.3.x]"
+      jdk: openjdk14
+      script:
+        - TEST_FOLDER=JAVA_14 INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+        - TEST_FOLDER=JAVA_14/spring-boot-2.3.x travis_retry ci/./run-classpath-tests.sh
+#
+#    - stage: "Analyze"
+#      jdk: oraclejdk8
+#      script:
+#        - travis_retry ci/./analyze.sh
+#    
+#    - stage: "Javadoc"
+#      jdk: oraclejdk8
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: openjdk8
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: oraclejdk9
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: openjdk9
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: openjdk10
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: oraclejdk11
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: openjdk11
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: openjdk12
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: openjdk13
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#    - stage: "Javadoc"
+#      jdk: openjdk14
+#      script:
+#        - travis_retry ci/./generate-javadoc.sh
+#
+#    - stage: "Deploy"
+#      jdk: oraclejdk8
+#      script: 
+#        - travis_retry ./mvnw clean install deploy --settings .travis-settings.xml -DskipTests=true -B | grep -Ei '(Uploading|Downloading|Uploaded|Downloaded)'
       
 stages:
-  - name: "Build"
+#  - name: "Build"
   - name: test
-  - name: "Javadoc"
-  - name: "Analyze"
-  - name: "Deploy"
-    if:  branch = master
+#  - name: "Javadoc"
+#  - name: "Analyze"
+#  - name: "Deploy"
+#    if:  branch = master
 
 notifications:
   slack:
