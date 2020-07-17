@@ -5990,6 +5990,7 @@ _____
 [role=tab]
 image:{icons-maven}
 
+.Add `ogham-test-utils` dependency to your pom.xml
 [source, xml, subs=attributes+]
 ----
 <dependency>
@@ -6006,9 +6007,15 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+
+.Add `ogham-test-utils` to your build.gradle
+[source, groovy, subs=attributes+]
+----
+dependencies {
+    testImplementation 'fr.sii.ogham:ogham-test-utils:{ogham-version}'
+}
+----
+
 
 [role=tab-container-end]
 _____
@@ -7155,7 +7162,7 @@ TODO: test sendgrid?
 ////
 
 [[testing-sms]]
-=== Tesing SMS
+=== Testing SMS
 
 
 ==== First test
@@ -7342,6 +7349,138 @@ TODO: type of number (explanation + why it is important + sample)
 TODO: numbering plan indicator (explanation + why it is important + sample)
 TODO: test ovh?
 ////
+
+
+=== Fail at end
+
+
+
+Instead of failing immediately on first assertion, Ogham also provides a way
+to run all assertions without failing and report all failures at the end.
+Here is an example with email (it is exactly the same for SMS):
+
+[role="tab-container no-max-height"]
+_____
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:52-53,68"]
+----
+package fr.sii.ogham.sample.test;
+
+import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertAll;
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isSimilarHtml;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
+
+import java.io.IOException;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+import com.icegreen.greenmail.junit.GreenMailRule;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class AssertAllEmailTestSample {
+    private MessagingService oghamService;
+    
+    @Rule
+    public final GreenMailRule greenMail = new GreenMailRule(SMTP);
+
+    @Before
+    public void setUp() throws IOException {
+        oghamService = MessagingBuilder.standard()
+                .environment()
+                    .properties()
+                        .set("ogham.email.from.default-value", "Sender Name <test.sender@sii.fr>")
+                        .set("mail.smtp.host", SMTP.getBindAddress())
+                        .set("mail.smtp.port", String.valueOf(SMTP.getPort()))
+                        .and()
+                    .and()
+                .build();
+    }
+
+    @Test
+    public void simple() throws MessagingException, javax.mail.MessagingException {
+        // @formatter:off
+        oghamService.send(new Email()
+                                .subject("Simple (assertAll)")
+                                .body().string("<html><body>Hello world!</body></html>")
+                                .to("Recipient Name <recipient@sii.fr>"));
+        assertAll(r ->                                                       // <1>
+            assertThat(greenMail, r).receivedMessages()                      // <2>
+                .count(is(1))
+                .message(0)
+                    .subject(is("Simple (assertAll)"))
+                    .from()
+                        .address(hasItems("test.sender@sii.fr"))
+                        .personal(hasItems("Sender Name")).and()
+                    .to()
+                        .address(hasItems("recipient@sii.fr"))
+                        .personal(hasItems("Recipient Name")).and()
+                    .body()
+                        .contentAsString(isSimilarHtml("<html><body>Hello world!</body></html>"))
+                        .contentType(startsWith("text/html")).and()
+                    .alternative(nullValue())
+                    .attachments(emptyIterable())
+        );
+        // @formatter:on
+    }
+}
+----
+<1> Wrap existing assertion with `OghamAssertions.assertAll`. The `r` parameter
+is then used to register failed assertions.
+<2> Pass the `r` parameter to existing `OghamAssertions.asserThat`.
+
+
+https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/AssertAllEmailTestSample.java?ts={tabsize}[Source code of the sample].
+
+[role=tab-container-end]
+_____
+
+
+When some assertions fail, Ogham also does its best to present failures in a way
+that developer can quickly understand. If we make the following changes to
+the previous sample:
+
+* Change subject (send with `Simple (assertAll)`)
+* Change from address check (`test.sender1@sii.fr` instead of `test.sender@sii.fr`)
+* Change html body check (`Goodbye` instead of `Hello world!`)
+
+Then the result is:
+
+.JUnit stacktrace view
+image::src/docs/resources/images/eclipse/tests-assertall-junit-trace.png[role="text-center"]
+
+Double-clicking on the error opens the comparison view:
+
+.JUnit comparison view
+image::src/docs/resources/images/eclipse/tests-assertall-junit-comparison.png[role="text-center"]
+
+That way, you can quickly compare HTML results.
+
+.Why HTML can be compared but not others
+[NOTE]
+====
+Hamcrest matchers throw an `AssertionError` when an assertion fails.
+
+Ogham provides some additional matchers (like `isSimilarHtml`) that add
+additional information so a comparison can be easily done and a 
+`org.junit.ComparisonFailure` is thrown instead (so JUnit eclipse plugin can
+handle it).
+====
+ 
 
 
 

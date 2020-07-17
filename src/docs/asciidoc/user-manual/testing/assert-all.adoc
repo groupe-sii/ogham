@@ -1,0 +1,60 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+Instead of failing immediately on first assertion, Ogham also provides a way
+to run all assertions without failing and report all failures at the end.
+Here is an example with email (it is exactly the same for SMS):
+
+[role="tab-container no-max-height"]
+Email sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:52-53,68"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/AssertAllEmailTestSample.java[]
+----
+<1> Wrap existing assertion with `OghamAssertions.assertAll`. The `r` parameter
+is then used to register failed assertions.
+<2> Pass the `r` parameter to existing `OghamAssertions.asserThat`.
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/AssertAllEmailTestSample.java?ts={tabsize}[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+
+When some assertions fail, Ogham also does its best to present failures in a way
+that developer can quickly understand. If we make the following changes to
+the previous sample:
+
+* Change subject (send with `Simple (assertAll)`)
+* Change from address check (`test.sender1@sii.fr` instead of `test.sender@sii.fr`)
+* Change html body check (`Goodbye` instead of `Hello world!`)
+
+Then the result is:
+
+.JUnit stacktrace view
+image::{images-dir}/eclipse/tests-assertall-junit-trace.png[role="text-center"]
+
+Double-clicking on the error opens the comparison view:
+
+.JUnit comparison view
+image::{images-dir}/eclipse/tests-assertall-junit-comparison.png[role="text-center"]
+
+That way, you can quickly compare HTML results.
+
+.Why HTML can be compared but not others
+[NOTE]
+====
+Hamcrest matchers throw an `AssertionError` when an assertion fails.
+
+Ogham provides some additional matchers (like `isSimilarHtml`) that add
+additional information so a comparison can be easily done and a 
+`org.junit.ComparisonFailure` is thrown instead (so JUnit eclipse plugin can
+handle it).
+====
+ 

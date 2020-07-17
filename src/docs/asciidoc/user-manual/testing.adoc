@@ -12,8 +12,13 @@ include::{user-manual-dir}/testing/install.adoc[leveloffset=+1]
 include::{user-manual-dir}/testing/email-testing.adoc[leveloffset=+1]
 
 [[testing-sms]]
-== Tesing SMS
+== Testing SMS
 
 include::{user-manual-dir}/testing/sms-testing.adoc[leveloffset=+1]
+
+
+== Fail at end
+
+include::{user-manual-dir}/testing/assert-all.adoc[leveloffset=+1]
 
 

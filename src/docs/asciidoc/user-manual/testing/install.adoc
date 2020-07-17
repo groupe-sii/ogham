@@ -8,6 +8,7 @@ Include Ogham test dependency
 [role=tab]
 image:{icons-maven}
 
+.Add `ogham-test-utils` dependency to your pom.xml
 [source, xml, subs=attributes+]
 ----
 <dependency>
@@ -24,9 +25,15 @@ image:{icons-maven}
 [role=tab]
 image:{icons-gradle}
 
-////
-TODO: gradle code sample
-////
+
+.Add `ogham-test-utils` to your build.gradle
+[source, groovy, subs=attributes+]
+----
+dependencies {
+	testImplementation 'fr.sii.ogham:ogham-test-utils:{ogham-version}'
+}
+----
+
 
 [role=tab-container-end]
 -
