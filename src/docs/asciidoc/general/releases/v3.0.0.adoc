@@ -14,25 +14,27 @@ See detailed migration guide to <<migration-guide.adoc#v2.0.0-v3.0.0, upgrade fr
 
 Upgrade minimum Java version to Java 8 i.e. drop support of Java 7.
 
-////
-TODO
-Update all dependencies => list all updates
-
-Supported Spring boot versions 
-////
+[role=TODO]
+====
+* List supported Java versions
+* All dependencies have been updated => list all updates ?
+* List supported Spring boot versions
+* List unsupported Spring Boot versions 
+====
 
 == API changes
 
 === Fluent builder consistency for property configuration
 
-////
-TODO
 
-Use same API for every property configuration:
-.properties()
-.defaultValue()
-...
-////
+[role=TODO]
+====
+* Indicate that all builders now use same API for every property configuration: +
+   .properties() +
+   .defaultValue() +
+   ... +
+====
+
 
 === Rename inlining attributes
 
@@ -90,11 +92,11 @@ This behavior has been removed in favor to a better auto-detection mechanism. Th
 `ogham.sms.cloudhopper.default-app-charset` and `ogham.sms.cloudhopper.smpp-charset` properties
 have been removed.
 
-////
-TODO
 
-Link to new behavior
-////
+[role=TODO]
+====
+* Add link to new behavior ?
+====
 
 === Test utilities
 
@@ -106,111 +108,120 @@ both email and SMS).
 
 === Auto-cleanup
 
+[role=TODO]
+====
+* Indicate that Ogham now auto cleans open resources
+* Add link to how it works and when it runs
+====
+
 === Fluent API for message construction
 
-////
-TODO
 
-Show new Fluent API and explain advantages
-////
+[role=TODO]
+====
+* Show new Fluent API and explain advantages
+====
 
 
 === Auto-configuration lifecycle
 
-////
-TODO
-
-Explain phases
-Explain property evaluation
-Service providers configuration
-////
+[role=TODO]
+====
+* Indicate that Ogham now provide two configuration phaes
+* Quick explanation about phases
+* Add link to full explanation
+* Explain property evaluation
+* Explain that Ogham provides some service providers. Here or dedicated section ?
+====
 
 
 
 === Relative resources
 
-////
-TODO
-////
+[role=TODO]
+====
+* Indicate that Ogham supports relative path for resources in templates
+* Link to full documentation and samples
+====
+
 
 === Templating
 
-////
-TODO
-
-* `ogham.email.thymeleaf.cache`
-* `ogham.email.template.cache`
-* `ogham.template.cache`
-* `ogham.sms.thymeleaf.cache`
-* `ogham.sms.template.cache`
-////
+[role=TODO]
+====
+* Added properties :
+  * `ogham.email.thymeleaf.cache`
+  * `ogham.email.template.cache`
+  * `ogham.template.cache`
+  * `ogham.sms.thymeleaf.cache`
+  * `ogham.sms.template.cache`
+====
 
 
 
 === SMS
 
-////
-TODO
 
-Encoding + auto-guess
-Split
-reuse session
-keep session alive (thanks to dainv85 https://github.com/dainv85 contribution)
-Short message vs TLV
-
-
-
-ogham.sms.cloudhopper.split.enable
-ogham.sms.smpp.split.enable
-ogham.sms.split.enable
-ogham.sms.cloudhopper.data-coding-scheme.auto.enable
-ogham.sms.smpp.data-coding-scheme.auto.enable
-ogham.sms.cloudhopper.user-data.use-short-message
-ogham.sms.cloudhopper.user-data.use-tlv-message-payload
-ogham.sms.smpp.user-data.use-short-message
-ogham.sms.smpp.user-data.use-tlv-message-payload
-
-
-* `ogham.sms.smpp.encoder.auto-guess.enable`
-* `ogham.sms.smpp.encoder.gsm7bit-packed.priority`
-* `ogham.sms.smpp.encoder.gsm8bit.priority`
-* `ogham.sms.smpp.encoder.ucs2.priority`
-* `ogham.sms.smpp.encoder.default-charset`
-
-* `ogham.sms.cloudhopper.encoder.auto-guess.enable`
-* `ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority`
-* `ogham.sms.cloudhopper.encoder.gsm8bit.priority`
-* `ogham.sms.cloudhopper.encoder.ucs2.priority`
-* `ogham.sms.cloudhopper.encoder.default-charset`
-
-////
-
+[role=TODO]
+====
+* Indicate that Ogham now supports different encodings of SMPP messages
+* Indicate that Ogham provides auto-guess feature for encoding
+* Indicate that Ogham can automatically split messages that are too long (according to encoding)
+* Indicate that Ogham is now able to reuse the current session
+* Indicate that Ogham is now able to keep the current session alive 
+  * Add thanks to dainv85 https://github.com/dainv85 contribution
+* Indicate that Ogham can now send message using TLV instead of short message field
+* List new properties :
+	* ogham.sms.cloudhopper.split.enable
+	* ogham.sms.smpp.split.enable
+	* ogham.sms.split.enable
+	* ogham.sms.cloudhopper.data-coding-scheme.auto.enable
+	* ogham.sms.smpp.data-coding-scheme.auto.enable
+	* ogham.sms.cloudhopper.user-data.use-short-message
+	* ogham.sms.cloudhopper.user-data.use-tlv-message-payload
+	* ogham.sms.smpp.user-data.use-short-message
+	* ogham.sms.smpp.user-data.use-tlv-message-payload
+	
+	
+	* `ogham.sms.smpp.encoder.auto-guess.enable`
+	* `ogham.sms.smpp.encoder.gsm7bit-packed.priority`
+	* `ogham.sms.smpp.encoder.gsm8bit.priority`
+	* `ogham.sms.smpp.encoder.ucs2.priority`
+	* `ogham.sms.smpp.encoder.default-charset`
+	
+	* `ogham.sms.cloudhopper.encoder.auto-guess.enable`
+	* `ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority`
+	* `ogham.sms.cloudhopper.encoder.gsm8bit.priority`
+	* `ogham.sms.cloudhopper.encoder.ucs2.priority`
+	* `ogham.sms.cloudhopper.encoder.default-charset`
+====
 
 === SmsGlobal
 
-////
-TODO
-
-Add automatic configuration
-////
+[role=TODO]
+====
+* Indicate that Ogham provides automatic configuration for SmsGlobal
+====
 
 
 === Spring integration
 
-////
-TODO
+[role=TODO]
+====
+* Ogham support access to Spring beans from templates
+* Ogham support calls to static methods
+====
 
-Access to Spring beans
-////
 
 === FreeMarker integration
 
-////
-TODO
-
-
-* added `ogham.freemarker.static-method-access.enable`
-* added `ogham.freemarker.static-method-access.variable-name`
+[role=TODO]
+====
+* Indicate that Ogham support ftlh extension
+* Indicate that Ogham provides static method access using FreeMarker
+  * List added properties
+    * added `ogham.freemarker.static-method-access.enable`
+    * added `ogham.freemarker.static-method-access.variable-name`
 
 Both properties refers to same feature so use the same "group". This is also more consistent with
 Spring `ConfigurationProperties` (only a single object that carries both pieces of information).
@@ -221,58 +232,55 @@ https://freemarker.apache.org/docs/pgui_misc_beanwrapper.html#autoid_60[FreeMark
 
 .ftlh
 see https://github.com/spring-projects/spring-boot/issues/15131
-////
+====
 
 
 === SendGrid
 
-////
-TODO
-
-* `ogham.email.sendgrid.unit-testing` (since SendGrid v3)
-* `ogham.email.sendgrid.username` (deprecated since SendGrid v3)
-* `ogham.email.sendgrid.password` (deprecated since SendGrid v3)
-
-Attachments support
-////
+[role=TODO]
+====
+* List new properties:
+	* `ogham.email.sendgrid.unit-testing` (since SendGrid v3)
+	* `ogham.email.sendgrid.username` (deprecated since SendGrid v3)
+	* `ogham.email.sendgrid.password` (deprecated since SendGrid v3)
+* Indicate thet Ogham now support attachments through SendGrid
+====
 
 
 === Miscellaneous
 
-////
-TODO
-
-* `ogham.mimetype.tika.fail-if-octet-stream` `true` by default
-* `ogham.wrap-uncaught-exceptions.enable` `true` by default
-
-////
+[role=TODO]
+====
+* List new properties:
+	* `ogham.mimetype.tika.fail-if-octet-stream` `true` by default
+	* `ogham.wrap-uncaught-exceptions.enable` `true` by default
+====
 
 === Test utilities
 
-////
-TODO
-
-Remove opensmpp (not used)
-
-Delays for SMPP simulator
-Reorganize test utils.
-Rules/extensions 
-assertAll
-////
+[role=TODO]
+====
+* Remove opensmpp package (not used)
+* Add delays for SMPP simulator to simulate slow server
+* Reorganize test utils.
+* Add JUnit rules/extensions (logging, SmppServer?, ...) 
+* Add assertAll to report all failures at end
+* Add JUnit and Spring extensions to handle random ports
+====
 
 
 == Internal improvements
 
 === Java Mail structure
 
-////
-TODO
-
-Explain new structure and tests
-////
+[role=TODO]
+====
+* Explain new structure and tests
+====
 
 === CI
 
-////
-TODO
-////
+[role=TODO]
+====
+* List automatic classpath tests (list all combinations ?)
+====

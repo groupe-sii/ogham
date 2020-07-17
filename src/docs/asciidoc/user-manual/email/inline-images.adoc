@@ -53,7 +53,7 @@ clients than base64 strategy.
 [TIP]
 ====
 Default Content-ID generation simply uses a incremental number. It is possible to
-use <<custom-cid-generation, custom Content-ID generation>>.
+use <<user-manual.adoc#custom-cid-generation, custom Content-ID generation>>.
 ====
 
 As Ogham is fully configurable, the default strategy can be changed. Therefore
@@ -65,7 +65,7 @@ the `"attach"` value directly on the `<img>` tag.
 [TIP]
 ====
 It is possible to configure Ogham to use a 
-<<custom-image-inlining-strategy, different inlining strategy by default>>.
+<<user-manual.adoc#custom-image-inlining-strategy, different inlining strategy by default>>.
 ====
 
 
@@ -136,7 +136,7 @@ attribute with the `"base64"` value directly on the `<img>` tag.
 [NOTE]
 ====
 The data URL scheme needs the mediatype information. Ogham automatically provides
-this information for you thanks to <<mimetype-detection, automatic mimetype detection>>.
+this information for you thanks to <<user-manual.adoc#mimetype-detection, automatic mimetype detection>>.
 ====
 
 

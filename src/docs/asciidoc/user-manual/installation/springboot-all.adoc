@@ -278,7 +278,7 @@ tested with Spring Boot 1.3.x
 
 
 .Spring Boot 1.4.x and WireMock
-[WARNING]
+[IMPORTANT]
 ====
 Latest WireMock versions are not compatible with Spring Boot 1.4.x. So if you
 are using Spring Boot 1.4.x, also using `ogham-test-utils` for writing tests and

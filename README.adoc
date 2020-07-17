@@ -439,7 +439,7 @@ tested with Spring Boot 1.3.x
 
 
 .Spring Boot 1.4.x and WireMock
-[WARNING]
+[IMPORTANT]
 ====
 Latest WireMock versions are not compatible with Spring Boot 1.4.x. So if you
 are using Spring Boot 1.4.x, also using `ogham-test-utils` for writing tests and
@@ -884,7 +884,7 @@ _____
 
 
 
-NOTE: All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, take a look at <<freemarker, FreeMarker section>>.
+NOTE: All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, take a look at <<user-manual.adoc#freemarker, FreeMarker section>>.
 
 
 
@@ -895,7 +895,7 @@ NOTE: All samples with templates are using ThymeLeaf as template engine. For Fre
 
 The samples are available in the https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage[sample-standard-usage sub-project].
 
-All samples shown bellow are using SMTP for sending email. See <<sendgrid, Sending email through SendGrid>> to know how to send email using SendGrid HTTP API.
+All samples shown bellow are using SMTP for sending email. See <<user-manual.adoc#sendgrid, Sending email through SendGrid>> to know how to send email using SendGrid HTTP API.
 
 ==== First email using an existing SMTP server
 
@@ -963,7 +963,17 @@ _____
 
 The construction of the email is done using a fluent API in order to chain calls and to have a more readable code.
 
-Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.
+Properties are directly provided in the code. You can instead <<user-manual.adoc#properties-handling,use a configuration file>>.
+
+
+.Email address format
+[TIP]
+====
+Ogham supports the personal information in email address. The format is `personal <address>`.
+
+For example, the address with personal `Ogham Test <ogham-test@yopmail.com>` will result in
+`ogham-test@yopmail.com` as email address and `Ogham Test` as personal.
+====
 
 [[email-template]]
 ==== Use an HTML template for email body
@@ -1074,7 +1084,7 @@ The `template` method requires two pieces of information:
 The path to the template is a string that may contain a *lookup* prefix. The lookup prefix is used to indicate 
 where to search the template (from file system, from classpath or anywhere else). Here we explicitly 
 ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, 
-classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
+classpath is used by default. See <<user-manual.adoc#resource-resolution,Resource resolution section>> for more information.
 
 The variables are any object you are using in your application. No need to convert your object to a 
 particular format. Directly use what you want.
@@ -1521,73 +1531,16 @@ footer .social a {
 [role=tab]
 image:{icons-html} Sent HTML
 
-[source, html]
-----
-TODO: code of the generated HTML with all transformations
-----
+[role=TODO]
+=====
+* Add code of the generated HTML with all transformations
+=====
 
 
 
 [role=tab-container-end]
 _____
 
-////
-TODO: image inlining
-TODO: css inlining
-TODO: rewrite html
-TODO: you have control: attributes to enable/disable rules
-
-
-
-TODO: explanation from old README
-#### Working with HTML content
-
-To be sure that most of Email clients will handle an HTML content, there are many rules to follow when writing the content. They might be very complex and time consuming. The library do all this headache work for you.
-
-All these features can be either disabled or use another implementation instead of the default one.
-
-##### Inline CSS and images
-
-For Web developers, it is important to write clean code and separate the concerns. So when writing HTML, developers want to externalize CSS files and images. This is also really important to mutualize the code of CSS files and images for reuse.
-
-However, email clients doesn't handle external CSS files. Styles can be included in a `style` tag but Gmail doesn't support it. So all rules provided in the CSS *MUST* be inlined directly in the HTML. Writing code like this is just awful and error prone. Moreover, images can be references externally but there are many constraints to use it this way. You have to know in advance what is the URL of the final image. And even then, the email client might block those images for safety purpose. Not mentioning offline issues.
-
-The library will automatically inlines CSS rules directly on the HTML tags. The images are either inlined as base64 encoded in `img` `src` attribute or images are attached with the email (with inline content disposition and references in the HTML).
-
-##### Use expanded CSS properties
-
-CSS properties can be written using shorthand version:
-```css
-padding: 4px 2px;
-```
-This is equivalent to:
-```css
-padding: 4px 2px 4px 2px;
-```
-
-Some email clients do not understand shorthand properties. So all properties written in shorthand version must be expanded in order to work everywhere.
-
-The library will automatically expand properties from shorthand versions.
-
-##### Add extra attributes for old email clients
-
-Several attributes must be added on some HTML tags in order to be compliant with email clients. For example, tables and images must have attribute `border="0"`in order to prevent an ugly border on some clients.
-
-The library will automatically add these attributes.
-
-##### Use XHTML
-
-It is recommended to write XHTML instead of HTML due to some mail clients. The library do it for you.
-
-##### Background images
-
-Background images are not correctly handled by several mail clients. And again, some workarounds to apply to fix this issue.
-
-The library will apply those workarounds to your HTML.
-
-##### Use tables for layouts
-
-////
 
 Here is the list of supported transformations:
 
@@ -1605,9 +1558,11 @@ Here is the list of supported transformations:
 * [ ] Background images on body should be moved on another node
 * [ ] Images must have `alt` attribute
 
-////
-TODO: other rules
-////
+[role=TODO]
+====
+* List all other rules
+* Indicate what will be supported and what won't and why
+====
 
 ===== Inline images
 
@@ -1664,7 +1619,7 @@ clients than base64 strategy.
 [TIP]
 ====
 Default Content-ID generation simply uses a incremental number. It is possible to
-use <<custom-cid-generation, custom Content-ID generation>>.
+use <<user-manual.adoc#custom-cid-generation, custom Content-ID generation>>.
 ====
 
 As Ogham is fully configurable, the default strategy can be changed. Therefore
@@ -1676,7 +1631,7 @@ the `"attach"` value directly on the `<img>` tag.
 [TIP]
 ====
 It is possible to configure Ogham to use a 
-<<custom-image-inlining-strategy, different inlining strategy by default>>.
+<<user-manual.adoc#custom-image-inlining-strategy, different inlining strategy by default>>.
 ====
 
 
@@ -1894,7 +1849,7 @@ attribute with the `"base64"` value directly on the `<img>` tag.
 [NOTE]
 ====
 The data URL scheme needs the mediatype information. Ogham automatically provides
-this information for you thanks to <<mimetype-detection, automatic mimetype detection>>.
+this information for you thanks to <<user-manual.adoc#mimetype-detection, automatic mimetype detection>>.
 ====
 
 
@@ -2377,20 +2332,11 @@ As `<style>` may not be supported, the styles contained in `<style>` nodes
 in the HTML are also inlined using `style` attribute.
 ====
 
-////
-TODO: explain how to change default CSS inlining strategy
-As Ogham is fully configurable, the default strategy can be changed. Therefore
-if you want to use this strategy for a particular image, you need to explicitly 
-indicate it. You can do so by setting the `data-inline-image` attribute with
-the `"attach"` value directly on the `<img>` tag.
-
-.Change default strategy
-[TIP]
+[role=TODO]
 ====
-It is possible to configure Ogham to use a 
-<<custom-image-inlining-strategy, different inlining strategy by default>>.
+* When Ogham provides several CSS inlining modes, add information about how to change
+default strategy 
 ====
-////
 
 
 [role="tab-container  no-max-height"]
@@ -3011,7 +2957,7 @@ following properties:
 
 
 .Email client support
-[WARNING]
+[IMPORTANT]
 ====
 Even if the properties `background`, `background-image`, `list-style`, 
 `list-style-image` and `cursor` can be inlined by Ogham, it doesn't mean that email
@@ -3073,7 +3019,7 @@ strategy.
 [TIP]
 ====
 Default Content-ID generation simply uses a incremental number. It is possible to
-use <<custom-cid-generation, custom Content-ID generation>>.
+use <<user-manual.adoc#custom-cid-generation, custom Content-ID generation>>.
 ====
 
 
@@ -4145,7 +4091,7 @@ _____
 
 Attaching a file to the email is quite simple. You just need to provide the path to the file. 
 The file is loaded from classpath but could also be loaded from file system or anywhere else 
-(see <<resource-resolution, resource resolution section>>). In case you are using a file, 
+(see <<user-manual.adoc#resource-resolution, resource resolution section>>). In case you are using a file, 
 the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
 
 It is often not possible to handle files directly. In that case you will use `InputStream` or 
@@ -4391,15 +4337,17 @@ See <<user-manual.adoc#gmail, Send email through GMail sample>>.
 
 ===== Custom Authenticator
 
-////
-TODO: custom Authenticator
-////
+[role=TODO]
+====
+* Explain how to add a custom Authenticator implementation
+====
 
 ==== Use SSL
 
-////
-TODO: ssl
-////
+[role=TODO]
+====
+* Add samples for ssl
+====
 
 [[gmail]]
 ==== Send email through GMail
@@ -4474,9 +4422,13 @@ Using GMail server is quite easy. This samples shows several things:
 4. Authentication is done using properties. JavaMail doesn't provide this shortcut. Without Ogham, you have to implement an http://docs.oracle.com/javaee/7/api/javax/mail/Authenticator.html[Authenticator].
 
 
-////
-TODO: configuration de l'authent pour application
-////
+[role=TODO]
+====
+* Explain that GMail now doesn't allow to use account password. It requires an application
+password
+* Show how to create application password (or just link to guide or documentation)
+* Show sample with port 587
+====
 
 
 [[sendgrid]]
@@ -4713,10 +4665,14 @@ _____
 
 
 
-////
-TODO: locale
-TODO: address format "address <personal>"
-////
+==== Internationalization
+
+[role=TODO]
+====
+* Add sample to show how to use `LocaleContext`
+* Explain ideas and future work about locale manamement
+====
+
 
 [[sms-usage]]
 === Send SMS
@@ -4725,7 +4681,7 @@ The samples are available in the https://github.com/groupe-sii/ogham/tree/v2.0.0
 
 All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS. Only a subset of SMPP properties are used in following samples. The whole list of SMPP properties is available in <<user-manual.adoc#advanced-smpp-configuration, advanced configuration>>.
 
-See <<ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
+See <<user-manual.adoc#ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
 
 ==== First SMS using an existing SMPP server
 
@@ -4793,7 +4749,7 @@ _____
 The construction of the SMS is done using a fluent API in order to chain calls and to have a more 
 readable code.
 
-Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.
+Properties are directly provided in the code. You can instead <<user-manual.adoc#properties-handling,use a configuration file>>.
 
 [[sms-template]]
 ==== Use a template for SMS content
@@ -4893,7 +4849,7 @@ The `template` method requires two pieces of information:
 The path to the template is a string with a *lookup* prefix. The lookup prefix is used to indicate 
 where to search the template (from file system, from classpath or anywhere else). Here we explicitly 
 ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, 
-classpath is used by default. See <<resource-resolution,Resource resolution section>> for more information.
+classpath is used by default. See <<user-manual.adoc#resource-resolution,Resource resolution section>> for more information.
 
 The variables are any object you are using in your application. No need to convert your object to 
 a particular format. Directly use what you want.
@@ -4962,6 +4918,7 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 _____
 
 
+.Message length depends on encoding
 [NOTE]
 ====
 Larger content (concatenated SMS, multipart or segmented SMS, or "long SMS") can be sent using 
@@ -4973,11 +4930,16 @@ as one long message. While the standard theoretically permits up to 255 segments
 messages are the practical maximum.
 ====
 
-NOTE: By default, Ogham sends the SMS using 8-bit encoding.
+.Default encoding
+[NOTE]
+====
+By default, Ogham sends the SMS using 8-bit encoding.
+====
 
-////
-TODO: explain how to use different encoding
-////
+[role=TODO]
+====
+* explain how to use different encoding
+====
 
 ==== Sending SMS through SmsGlobal
 
@@ -5042,7 +5004,7 @@ _____
 
 [TIP]
 ====
-You can notice that SMPP server port is not provided. This is because Ogham provides <<service-providers,predefined configuration for well-known service providers>> like https://www.smsglobal.com/[SmsGlobal].
+You can notice that SMPP server port is not provided. This is because Ogham provides <<user-manual.adoc#service-providers,predefined configuration for well-known service providers>> like https://www.smsglobal.com/[SmsGlobal].
 ====
 
 ==== Sending SMS through OVH
@@ -5050,12 +5012,11 @@ You can notice that SMPP server port is not provided. This is because Ogham prov
 
 You can send SMS using http://guides.ovh.com/Http2Sms[OVH] HTTP API:
 
-////
-TODO: sample
-
-TODO: limitation pour les messages longs ?
-
-////
+[role=TODO]
+====
+* Add a sample
+* Split of long messages
+====
 
 ==== Globally configure default sender phone number
 
@@ -5124,25 +5085,45 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 _____
 
 [[resource-resolution]]
-=== Resource resolution
+=== Resource handling
+
+==== Resource resolution
 
 
-Resource resolution is used to locate files using a simple path. For example, the path of a file you want to use (template, image, CSS, attachment...) could be `foo/bar/aaa.b`. But the file could be located: 
+Resource resolution is used to locate files using a simple path. For example, the 
+path of a file you want to use (template, image, CSS, attachment...) could be 
+`foo/bar/aaa.b`. But the file could be located: 
 
 * either in the classpath
 * or on the file system
 * or anywhere else (could be in a database, on a HTTP endpoint...)
 
-Ogham provides resource resolution abstraction. Any path can contain an information used to indicate which resolver to use to find and read the file content. For example, if the previous path stands for a file that is in the classpath, the Ogham path is `classpath:foo/bar/aaa.b`. On the contrary, if the path represents a file that is on file system, the Ogham path is `file:foo/bar/aaa.b`. In both cases, the path is prefixed by a string named lookup prefix (respectively `classpath:` and `file:`).
+Ogham provides resource resolution abstraction. Any path can contain an information 
+used to indicate which resolver to use to find and read the file content. For example,
+if the previous path stands for a file that is in the classpath, the Ogham path is 
+`classpath:foo/bar/aaa.b`. On the contrary, if the path represents a file that is on 
+file system, the Ogham path is `file:foo/bar/aaa.b`. In both cases, the path is 
+prefixed by a string named lookup prefix (respectively `classpath:` and `file:`).
 
-Ogham configures by default (through `MessagingBuilder.standard()` or `MessagingBuilder.minimal()`) several resource resolvers:
+Ogham configures by default (through `MessagingBuilder.standard()` or 
+`MessagingBuilder.minimal()`) several resource resolvers:
 
-* A resolver that is able to locate and read files from the file system with lookup prefix `file:`.
-* A resolver that is able to locate and read files from the classpath with lookup prefix `classpath:`.
-* A resolver that doesn't load file from path but directly uses the string as content with lookups `string:` or `s:`.
-* A default resolver with no lookup that is able to locate and read files from the classpath.
+* A resolver that is able to locate and read files from the file system with lookup 
+prefix `file:`.
+* A resolver that is able to locate and read files from the classpath with lookup 
+prefix `classpath:`.
+* A resolver that doesn't load file from path but directly uses the string as content 
+with lookups `string:` or `s:`.
+* A default resolver with no lookup that is able to locate and read files from the 
+classpath.
 
-Each resolver that is able to handle a path may also handle a path prefix and a path suffix. This is useful in order to provide only a subset of the path (only the file name for example) to Ogham and let Ogham find the real path of the file. For example if you configure Ogham with the prefix `foo/bar` and `.b` suffix for both classpath and file resolvers, you can ask Ogham to find the file `foo/bar/aaa.b` using the path `classpath:aaa` or `file:aaa`. Prefix and suffix can be changed using configuration properties (when using `MessagingBuilder.standard()` or `MessagingBuilder.minimal()`). There exists one property by message type (email or SMS), by resolver type (classpath or file), by template engine (ThymeLeaf or FreeMarker). Ogham also provides shared configuration properties (configure once for all):
+Each resolver that is able to handle a path may also handle a path prefix and a path 
+suffix. This is useful in order to provide only a subset of the path (only the file 
+name for example) to Ogham and let Ogham find the real path of the file. For example 
+if you configure Ogham with the prefix `foo/bar` and `.b` suffix for both classpath 
+and file resolvers, you can ask Ogham to find the file `foo/bar/aaa.b` using the path 
+`classpath:aaa` or `file:aaa`. Prefix and suffix can be changed using configuration 
+properties (when using `MessagingBuilder.standard()` or `MessagingBuilder.minimal()`). There exists one property by message type (email or SMS), by resolver type (classpath or file), by template engine (ThymeLeaf or FreeMarker). Ogham also provides shared configuration properties (configure once for all):
 
 [.prevent-overflow]
 ====
@@ -5238,12 +5219,27 @@ a|
 ====
 
 
-You can also <<custom-resource-resolver, define your own resource resolver>>.
+You can also <<user-manual.adoc#custom-resource-resolver, define your own resource resolver>>.
 
 
-////
-TODO: alias + exemples pour montrer cas d'usages (mixer fichier/classpath + switcher de l'un à l'autre par conf externe => ref a section suivante)
-////
+[role=TODO]
+====
+* Explain that path prefix/suffix can be useful to do something like aliases
+* Explain that only configuration (not code) need to be updated
+* Add code samples to show how to switch from classpath in tests to files in production
+* Add dedicated section ?
+====
+
+==== Resources referenced in templates
+
+
+[role=TODO]
+====
+* Explain that Ogham supports relative resources
+* Explain that relative resources are relative to the lookup mode (file:, classpath:, ...)
+* Add note for Thymeleaf fragments (extension needed for now)
+====
+
 
 [[properties-handling]]
 === Properties handling
@@ -5579,43 +5575,50 @@ Default priority values are:
 * Load property file from the classpath (`properties("classpath:...")`): 70000
 ====
 
-////
-TODO: conversions
-////
+[role=TODO]
+====
+* Explain conversions from String to target type
+* List already existing conversions
+* Explain how to register custom converter -> link to extend.adoc
+====
 
 === Templating
 
 [[freemarker]]
 ==== FreeMarker
 
-////
-TODO: exemples avec FreeMarker
-TODO: specificités FreeMarker
-TODO: configuration avancées pour FreeMarker
-////
+
+[role=TODO]
+====
+* Explain specific features supported by FreeMarker
+* Show samples with static method calls
+* Link to advanced configuration to custom FreeMarker configuration
+====
 
 [[thymeleaf]]
 ==== ThymeLeaf
 
-////
-TODO: exemples avec ThymeLeaf
-TODO: specificités ThymeLeaf
-TODO: configuration avancées pour ThymeLeaf
-////
+[role=TODO]
+====
+* Explain specific features supported by Thymeleaf
+* Show samples with static method calls
+* Link to advanced configuration to custom Thymeleaf configuration
+====
 
 ==== Mixed
 
-////
-TODO: configuration des prefix/suffix ici ou dans advanced configuration (parler de toutes les variantes) ?
-TODO: variantes ?
-////
+[role=TODO]
+====
+* Explain variants
+* Explain how to register custom variants (advanced configuration ?)
+====
 
 [[spring-boot-usage]]
 === Using Ogham in a Spring Boot application
 
 
 
-Ogham provides auto-configuration modules for Spring Boot (<<install-spring-boot, see how to include auto-configuration modules>>). To use Ogham in Spring, you can directly inject (autowire) `MessagingService` bean.
+Ogham provides auto-configuration modules for Spring Boot (<<user-manual.adoc#install-spring-boot, see how to include auto-configuration modules>>). To use Ogham in Spring, you can directly inject (autowire) `MessagingService` bean.
 
 In addition to standalone behaviors, Ogham also supports Spring Boot modules and auto-configuration:
 
@@ -5971,10 +5974,6 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-spring-usage/src/main/res
 _____
 
 
-////
-TODO: explain aim of service providers
-TODO: list implemented service providers
-////
 
 == Testing
 
@@ -7157,9 +7156,11 @@ NOTE: Only the setup differs, the test is the same.
 [role=tab-container-end]
 _____
 
-////
-TODO: test sendgrid?
-////
+[role=TODO]
+====
+* Add sample to show how to test with sendgrid?
+* Should use same assertion API (see https://github.com/groupe-sii/ogham/issues/96[])
+====
 
 [[testing-sms]]
 === Testing SMS
@@ -7344,11 +7345,13 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/j
 [role=tab-container-end]
 _____
 
-////
-TODO: type of number (explanation + why it is important + sample)
-TODO: numbering plan indicator (explanation + why it is important + sample)
-TODO: test ovh?
-////
+[role=TODO]
+====
+* Explain type of number (explanation + why it is important + sample)
+* Explain numbering plan indicator (explanation + why it is important + sample)
+* Add sample to show how to test with ovh?
+* Should use same assertion API (see https://github.com/groupe-sii/ogham/issues/96[])
+====
 
 
 === Fail at end

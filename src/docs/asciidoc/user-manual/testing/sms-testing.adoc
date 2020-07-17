@@ -62,8 +62,10 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/LongSmsTestSa
 [role=tab-container-end]
 -
 
-////
-TODO: type of number (explanation + why it is important + sample)
-TODO: numbering plan indicator (explanation + why it is important + sample)
-TODO: test ovh?
-////
+[role=TODO]
+====
+* Explain type of number (explanation + why it is important + sample)
+* Explain numbering plan indicator (explanation + why it is important + sample)
+* Add sample to show how to test with ovh?
+* Should use same assertion API (see https://github.com/groupe-sii/ogham/issues/96[])
+====

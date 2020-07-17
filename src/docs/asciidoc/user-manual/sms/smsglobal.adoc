@@ -31,5 +31,5 @@ include::{standard-sms-samples-sourcedir}/smsglobal/BasicSmsglobalSmppSample.jav
 
 [TIP]
 ====
-You can notice that SMPP server port is not provided. This is because Ogham provides <<service-providers,predefined configuration for well-known service providers>> like https://www.smsglobal.com/[SmsGlobal].
+You can notice that SMPP server port is not provided. This is because Ogham provides <<user-manual.adoc#service-providers,predefined configuration for well-known service providers>> like https://www.smsglobal.com/[SmsGlobal].
 ====

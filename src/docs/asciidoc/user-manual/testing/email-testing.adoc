@@ -383,6 +383,8 @@ NOTE: Only the setup differs, the test is the same.
 [role=tab-container-end]
 -
 
-////
-TODO: test sendgrid?
-////
+[role=TODO]
+====
+* Add sample to show how to test with sendgrid?
+* Should use same assertion API (see https://github.com/groupe-sii/ogham/issues/96[])
+====

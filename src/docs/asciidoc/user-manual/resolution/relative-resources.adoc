@@ -1,0 +1,9 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+[role=TODO]
+====
+* Explain that Ogham supports relative resources
+* Explain that relative resources are relative to the lookup mode (file:, classpath:, ...)
+* Add note for Thymeleaf fragments (extension needed for now)
+====

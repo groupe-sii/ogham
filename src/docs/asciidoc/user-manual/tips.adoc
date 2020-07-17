@@ -15,16 +15,10 @@ include::{user-manual-dir}/service-providers/predefined-service-providers.adoc[l
 
 
 
-////
-TODO: codes d'erreur connus avec aide
-TODO: toutes les propriétés de conf + valeurs par défaut + effets + description...
-TODO: props pour Spring Boot avec props supportées par Ogham et conditions de support
-
-
-TODO: problème de connexion à GMail (mettre à jour)
-## Gmail throws javax.mail.AuthenticationFailedException: 534-5.7.14
-
-You must log in via your web browser. You may have received an email asking to allow or not the connection.
-See [this post on stackoverflow](http://stackoverflow.com/questions/25341198/javax-mail-authenticationfailedexception-is-thrown-while-sending-email-in-java)
-
-////
+[role=TODO]
+====
+* List all error codes with the explanation and how to fix it (dedicated appendix ?)
+  * Example: Gmail throws javax.mail.AuthenticationFailedException: 534-5.7.14
+* Add all configuration properties (dedicated appendix ?), their default values, their effect and a description
+* Add all Spring Boot properties supported by Ogham, support conditions and their effect
+====

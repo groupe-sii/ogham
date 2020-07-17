@@ -166,9 +166,9 @@ Ogham will detect that the session is down and a new session will be used for ne
 
 
 .Expiration delay
-[WARNING]
+[CAUTION]
 ====
-If `ogham.sms.cloudhopper.session.reuse-session.last-interaction-expiration-delay` is to high, Ogham may
+If `ogham.sms.cloudhopper.session.reuse-session.last-interaction-expiration-delay` is too high, Ogham may
 consider that the session is still alive whereas the server may ignore the session (some servers
 may consider the client as outdated but without sending explicit close). In this case, no
 `enquire_link` request is sent. The message is sent using the same session. However, it will fail

@@ -2,7 +2,7 @@
 include::{docdir}/variables.adoc[]
 
 
-Ogham provides auto-configuration modules for Spring Boot (<<install-spring-boot, see how to include auto-configuration modules>>). To use Ogham in Spring, you can directly inject (autowire) `MessagingService` bean.
+Ogham provides auto-configuration modules for Spring Boot (<<user-manual.adoc#install-spring-boot, see how to include auto-configuration modules>>). To use Ogham in Spring, you can directly inject (autowire) `MessagingService` bean.
 
 In addition to standalone behaviors, Ogham also supports Spring Boot modules and auto-configuration:
 

@@ -32,4 +32,14 @@ include::{standard-email-samples-sourcedir}/BasicSample.java[]
 
 The construction of the email is done using a fluent API in order to chain calls and to have a more readable code.
 
-Properties are directly provided in the code. You can instead <<properties-handling,use a configuration file>>.
+Properties are directly provided in the code. You can instead <<user-manual.adoc#properties-handling,use a configuration file>>.
+
+
+.Email address format
+[TIP]
+====
+Ogham supports the personal information in email address. The format is `personal <address>`.
+
+For example, the address with personal `Ogham Test <ogham-test@yopmail.com>` will result in
+`ogham-test@yopmail.com` as email address and `Ogham Test` as personal.
+====

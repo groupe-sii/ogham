@@ -2,30 +2,65 @@
 include::{docdir}/variables.adoc[]
 
 
-== Create your own configurer
-
 == Custom email sender implementation
 
-////
-TODO: implementation selection
-
-Conditions:
-Classpath
-Properties
-Custom condition
-////
+[role=TODO]
+====
+* Explain how to implement custom sender (with sample)
+* Explain how to add a builder for the custom sender
+* Explain implementation selection
+  * Explain conditions (based on classpath, properties, custom conditions)
+* Explain how to add a default configurer for the sender
+====
 
 == Custom SMS sender implementation
 
+[role=TODO]
+====
+* Explain how to implement custom sender (with sample)
+* Explain how to add a builder for the custom sender
+* Explain implementation selection
+  * Explain conditions (based on classpath, properties, custom conditions)
+* Explain how to add a default configurer for the sender
+====
 
 == Use your custom template engine
 
-////
-TODO: template engine selection (detector)
-////
+[role=TODO]
+====
+* Explain how to implement custom engine (with sample)
+* Explain template engine selection (detector)
+* Explain how to add a builder for the custom engine
+* Explain how to add custom engine detector
+====
+
+
+== Create your own configurer
+
+[role=TODO]
+====
+* Explain how to implement a custom configurer
+* Explain how to register it (or how Ogham can find it automatically)
+====
+
 
 [[custom-resource-resolver]]
 == Create custom resource resolver
 
+[role=TODO]
+====
+* Explain how to register custom resource resolver
+* Explain how to associate with a lookup prefix
+* Explain how to handle template engine resolution (adapters)
+* Explain how to handle relative resources
+====
 
 == Add new type of message
+
+[role=TODO]
+====
+* Explain how to add a new king of message
+* Explain design process
+* Explain how to add a builder into main builder
+* Explain how to contribute to Ogham code
+====

@@ -21,7 +21,7 @@ include::{standard-email-samples-sourcedir}/WithAttachmentSample.java[]
 
 Attaching a file to the email is quite simple. You just need to provide the path to the file. 
 The file is loaded from classpath but could also be loaded from file system or anywhere else 
-(see <<resource-resolution, resource resolution section>>). In case you are using a file, 
+(see <<user-manual.adoc#resource-resolution, resource resolution section>>). In case you are using a file, 
 the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
 
 It is often not possible to handle files directly. In that case you will use `InputStream` or 

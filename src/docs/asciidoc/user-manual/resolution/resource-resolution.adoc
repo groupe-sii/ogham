@@ -1,22 +1,40 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
-Resource resolution is used to locate files using a simple path. For example, the path of a file you want to use (template, image, CSS, attachment...) could be `foo/bar/aaa.b`. But the file could be located: 
+Resource resolution is used to locate files using a simple path. For example, the 
+path of a file you want to use (template, image, CSS, attachment...) could be 
+`foo/bar/aaa.b`. But the file could be located: 
 
 * either in the classpath
 * or on the file system
 * or anywhere else (could be in a database, on a HTTP endpoint...)
 
-Ogham provides resource resolution abstraction. Any path can contain an information used to indicate which resolver to use to find and read the file content. For example, if the previous path stands for a file that is in the classpath, the Ogham path is `classpath:foo/bar/aaa.b`. On the contrary, if the path represents a file that is on file system, the Ogham path is `file:foo/bar/aaa.b`. In both cases, the path is prefixed by a string named lookup prefix (respectively `classpath:` and `file:`).
+Ogham provides resource resolution abstraction. Any path can contain an information 
+used to indicate which resolver to use to find and read the file content. For example,
+if the previous path stands for a file that is in the classpath, the Ogham path is 
+`classpath:foo/bar/aaa.b`. On the contrary, if the path represents a file that is on 
+file system, the Ogham path is `file:foo/bar/aaa.b`. In both cases, the path is 
+prefixed by a string named lookup prefix (respectively `classpath:` and `file:`).
 
-Ogham configures by default (through `MessagingBuilder.standard()` or `MessagingBuilder.minimal()`) several resource resolvers:
+Ogham configures by default (through `MessagingBuilder.standard()` or 
+`MessagingBuilder.minimal()`) several resource resolvers:
 
-* A resolver that is able to locate and read files from the file system with lookup prefix `file:`.
-* A resolver that is able to locate and read files from the classpath with lookup prefix `classpath:`.
-* A resolver that doesn't load file from path but directly uses the string as content with lookups `string:` or `s:`.
-* A default resolver with no lookup that is able to locate and read files from the classpath.
+* A resolver that is able to locate and read files from the file system with lookup 
+prefix `file:`.
+* A resolver that is able to locate and read files from the classpath with lookup 
+prefix `classpath:`.
+* A resolver that doesn't load file from path but directly uses the string as content 
+with lookups `string:` or `s:`.
+* A default resolver with no lookup that is able to locate and read files from the 
+classpath.
 
-Each resolver that is able to handle a path may also handle a path prefix and a path suffix. This is useful in order to provide only a subset of the path (only the file name for example) to Ogham and let Ogham find the real path of the file. For example if you configure Ogham with the prefix `foo/bar` and `.b` suffix for both classpath and file resolvers, you can ask Ogham to find the file `foo/bar/aaa.b` using the path `classpath:aaa` or `file:aaa`. Prefix and suffix can be changed using configuration properties (when using `MessagingBuilder.standard()` or `MessagingBuilder.minimal()`). There exists one property by message type (email or SMS), by resolver type (classpath or file), by template engine (ThymeLeaf or FreeMarker). Ogham also provides shared configuration properties (configure once for all):
+Each resolver that is able to handle a path may also handle a path prefix and a path 
+suffix. This is useful in order to provide only a subset of the path (only the file 
+name for example) to Ogham and let Ogham find the real path of the file. For example 
+if you configure Ogham with the prefix `foo/bar` and `.b` suffix for both classpath 
+and file resolvers, you can ask Ogham to find the file `foo/bar/aaa.b` using the path 
+`classpath:aaa` or `file:aaa`. Prefix and suffix can be changed using configuration 
+properties (when using `MessagingBuilder.standard()` or `MessagingBuilder.minimal()`). There exists one property by message type (email or SMS), by resolver type (classpath or file), by template engine (ThymeLeaf or FreeMarker). Ogham also provides shared configuration properties (configure once for all):
 
 [.prevent-overflow]
 ====
@@ -112,9 +130,13 @@ a|
 ====
 
 
-You can also <<custom-resource-resolver, define your own resource resolver>>.
+You can also <<user-manual.adoc#custom-resource-resolver, define your own resource resolver>>.
 
 
-////
-TODO: alias + exemples pour montrer cas d'usages (mixer fichier/classpath + switcher de l'un à l'autre par conf externe => ref a section suivante)
-////
+[role=TODO]
+====
+* Explain that path prefix/suffix can be useful to do something like aliases
+* Explain that only configuration (not code) need to be updated
+* Add code samples to show how to switch from classpath in tests to files in production
+* Add dedicated section ?
+====

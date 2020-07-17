@@ -1,3 +1,13 @@
 :relative-path: ../../
 include::{docdir}/variables.adoc[]
 
+[role=TODO]
+====
+* Explain that Ogham can detect mimetype automatically
+* Explain that Ogham supports several implementations
+* Explain that Ogham can use Tika
+* Explain how to configure default mimetype
+* Explain how to forbid some mimetypes
+* Explain how to replace a mimetype by another
+* Add link to extend documentation to add custom mimetype detector
+====

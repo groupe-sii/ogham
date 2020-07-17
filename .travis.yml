@@ -10,6 +10,7 @@ addons:
 branches:
   except:
   - gh-.*
+  - docs/*
 
 
 before_install:

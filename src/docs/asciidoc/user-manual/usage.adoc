@@ -2,7 +2,7 @@
 include::{docdir}/variables.adoc[]
 
 
-NOTE: All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, take a look at <<freemarker, FreeMarker section>>.
+NOTE: All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, take a look at <<user-manual.adoc#freemarker, FreeMarker section>>.
 
 
 
@@ -13,7 +13,7 @@ NOTE: All samples with templates are using ThymeLeaf as template engine. For Fre
 
 The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
 
-All samples shown bellow are using SMTP for sending email. See <<sendgrid, Sending email through SendGrid>> to know how to send email using SendGrid HTTP API.
+All samples shown bellow are using SMTP for sending email. See <<user-manual.adoc#sendgrid, Sending email through SendGrid>> to know how to send email using SendGrid HTTP API.
 
 === First email using an existing SMTP server
 
@@ -68,9 +68,10 @@ include::{user-manual-dir}/email/smtp-authentication.adoc[leveloffset=+2]
 
 === Use SSL
 
-////
-TODO: ssl
-////
+[role=TODO]
+====
+* Add samples for ssl
+====
 
 [[gmail]]
 === Send email through GMail
@@ -82,10 +83,14 @@ include::{user-manual-dir}/email/gmail.adoc[leveloffset=+2]
 
 include::{user-manual-dir}/email/sendgrid.adoc[leveloffset=+2]
 
-////
-TODO: locale
-TODO: address format "address <personal>"
-////
+=== Internationalization
+
+[role=TODO]
+====
+* Add sample to show how to use `LocaleContext`
+* Explain ideas and future work about locale manamement
+====
+
 
 [[sms-usage]]
 == Send SMS
@@ -94,7 +99,7 @@ The samples are available in the {standard-samples-url}[sample-standard-usage su
 
 All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS. Only a subset of SMPP properties are used in following samples. The whole list of SMPP properties is available in <<user-manual.adoc#advanced-smpp-configuration, advanced configuration>>.
 
-See <<ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
+See <<user-manual.adoc#ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
 
 === First SMS using an existing SMPP server
 
@@ -123,9 +128,16 @@ include::{user-manual-dir}/sms/ovh.adoc[leveloffset=+2]
 include::{user-manual-dir}/sms/global-default-values.adoc[leveloffset=+2]
 
 [[resource-resolution]]
-== Resource resolution
+== Resource handling
 
-include::{user-manual-dir}/resolution/resource-resolution.adoc[leveloffset=+1]
+=== Resource resolution
+
+include::{user-manual-dir}/resolution/resource-resolution.adoc[leveloffset=+2]
+
+=== Resources referenced in templates
+
+include::{user-manual-dir}/resolution/relative-resources.adoc[leveloffset=+2]
+
 
 [[properties-handling]]
 == Properties handling
@@ -136,36 +148,43 @@ include::{user-manual-dir}/properties/properties-variants.adoc[leveloffset=+1]
 
 include::{user-manual-dir}/properties/priorities.adoc[leveloffset=+2]
 
-////
-TODO: conversions
-////
+[role=TODO]
+====
+* Explain conversions from String to target type
+* List already existing conversions
+* Explain how to register custom converter -> link to extend.adoc
+====
 
 == Templating
 
 [[freemarker]]
 === FreeMarker
 
-////
-TODO: exemples avec FreeMarker
-TODO: specificités FreeMarker
-TODO: configuration avancées pour FreeMarker
-////
+
+[role=TODO]
+====
+* Explain specific features supported by FreeMarker
+* Show samples with static method calls
+* Link to advanced configuration to custom FreeMarker configuration
+====
 
 [[thymeleaf]]
 === ThymeLeaf
 
-////
-TODO: exemples avec ThymeLeaf
-TODO: specificités ThymeLeaf
-TODO: configuration avancées pour ThymeLeaf
-////
+[role=TODO]
+====
+* Explain specific features supported by Thymeleaf
+* Show samples with static method calls
+* Link to advanced configuration to custom Thymeleaf configuration
+====
 
 === Mixed
 
-////
-TODO: configuration des prefix/suffix ici ou dans advanced configuration (parler de toutes les variantes) ?
-TODO: variantes ?
-////
+[role=TODO]
+====
+* Explain variants
+* Explain how to register custom variants (advanced configuration ?)
+====
 
 [[spring-boot-usage]]
 == Using Ogham in a Spring Boot application
@@ -181,7 +200,3 @@ include::{user-manual-dir}/spring/email-controller-full.adoc[leveloffset=+2]
 include::{user-manual-dir}/spring/sms-controller-full.adoc[leveloffset=+2]
 
 
-////
-TODO: explain aim of service providers
-TODO: list implemented service providers
-////

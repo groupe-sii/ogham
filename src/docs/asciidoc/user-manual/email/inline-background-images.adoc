@@ -15,7 +15,7 @@ following properties:
 
 
 .Email client support
-[WARNING]
+[IMPORTANT]
 ====
 Even if the properties `background`, `background-image`, `list-style`, 
 `list-style-image` and `cursor` can be inlined by Ogham, it doesn't mean that email
@@ -77,7 +77,7 @@ strategy.
 [TIP]
 ====
 Default Content-ID generation simply uses a incremental number. It is possible to
-use <<custom-cid-generation, custom Content-ID generation>>.
+use <<user-manual.adoc#custom-cid-generation, custom Content-ID generation>>.
 ====
 
 

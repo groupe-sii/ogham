@@ -46,20 +46,11 @@ As `<style>` may not be supported, the styles contained in `<style>` nodes
 in the HTML are also inlined using `style` attribute.
 ====
 
-////
-TODO: explain how to change default CSS inlining strategy
-As Ogham is fully configurable, the default strategy can be changed. Therefore
-if you want to use this strategy for a particular image, you need to explicitly 
-indicate it. You can do so by setting the `data-inline-image` attribute with
-the `"attach"` value directly on the `<img>` tag.
-
-.Change default strategy
-[TIP]
+[role=TODO]
 ====
-It is possible to configure Ogham to use a 
-<<custom-image-inlining-strategy, different inlining strategy by default>>.
+* When Ogham provides several CSS inlining modes, add information about how to change
+default strategy 
 ====
-////
 
 
 [role="tab-container  no-max-height"]

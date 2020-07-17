@@ -59,3 +59,15 @@ h6 {
 	text-align: justify;
 }
 
+.exampleblock.TODO .content::before {
+	content: "TODO: document";
+	display: block;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+.exampleblock.TODO > .content {
+	background: #fff3d4;
+}
+.exampleblock.TODO li p {
+	margin: 0;
+}

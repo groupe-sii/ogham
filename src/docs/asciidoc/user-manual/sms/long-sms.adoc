@@ -25,6 +25,7 @@ include::{standard-sms-samples-sourcedir}/LongMessageSample.java[]
 -
 
 
+.Message length depends on encoding
 [NOTE]
 ====
 Larger content (concatenated SMS, multipart or segmented SMS, or "long SMS") can be sent using 
@@ -36,8 +37,13 @@ as one long message. While the standard theoretically permits up to 255 segments
 messages are the practical maximum.
 ====
 
-NOTE: By default, Ogham sends the SMS using 8-bit encoding.
+.Default encoding
+[NOTE]
+====
+By default, Ogham sends the SMS using 8-bit encoding.
+====
 
-////
-TODO: explain how to use different encoding
-////
+[role=TODO]
+====
+* explain how to use different encoding
+====

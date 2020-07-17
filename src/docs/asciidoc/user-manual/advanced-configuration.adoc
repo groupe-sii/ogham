@@ -25,12 +25,15 @@ include::{user-manual-dir}retry/custom-skipped-exceptions.adoc[leveloffset=+2]
 [[custom-cid-generation]]
 === Content-ID generator
 
+include::{user-manual-dir}email/custom-cid-generator.adoc[leveloffset=+2]
+
 
 === Catalog of SMTP properties
 
-////
-TODO: whole list of email properties
-////
+[role=TODO]
+====
+* Add whole list of email properties
+====
 
 == SMS
 
@@ -47,30 +50,51 @@ include::{user-manual-dir}sms/smpp-configuration.adoc[leveloffset=+2]
 
 == Use the builder to define your own behaviors
 
+[role=TODO]
+====
+* Explain what is a builder
+* Explain what is a configurer
+* Explain what is a service provider configurer
+* Explain relationship between builders and configurers
+* Explain phases ?
+* Explain how to add custom builder ? -> link to extend.adoc
+* Explain how to add custom configurer ? -> link to extend.adoc
+====
+
+
 === Standard builder
 
-////
-TODO: code des configurers par défaut
-////
+[role=TODO]
+====
+* Explain what is the "standard" builder
+* Explain what is registered
+* Should explain what is configured by each configurer ?
+====
 
 === Minimal builder
 
+[role=TODO]
+====
+* Explain what is the "minimal" builder
+* Explain what is registered
+* Should explain what is configured by each configurer ?
+====
+
 === Empty builder
 
-////
-TODO: code des configurers par défaut
-////
-
-////
-TODO: relation entre builders et configurers
-////
+[role=TODO]
+====
+* Explain what is the "empty" builder
+* Explain what is registered
+====
 
 == Intercept messages just before sending
 
-////
-TODO: custom interceptors
-////
+[role=TODO]
+====
+* Explain role of interceptors
+* Explain how to implement end register an interceptor
+====
 
-== 
 
 
