@@ -16,7 +16,6 @@ import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -25,6 +24,7 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.extension.junit.SmppServerRule;
@@ -32,7 +32,7 @@ import mock.context.SimpleBean;
 
 public class StaticMethodsAccessTest {
 	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
 
 	private AnnotationConfigApplicationContext context;
@@ -42,8 +42,8 @@ public class StaticMethodsAccessTest {
 	public void setUp() {
 		context = new AnnotationConfigApplicationContext();
 		EnvironmentTestUtils.addEnvironment(context, 
-				"mail.smtp.host="+ServerSetupTest.SMTP.getBindAddress(), 
-				"mail.smtp.port="+ServerSetupTest.SMTP.getPort(),
+				"mail.smtp.host="+greenMail.getSmtp().getBindTo(), 
+				"mail.smtp.port="+greenMail.getSmtp().getPort(),
 				"ogham.sms.smpp.host=127.0.0.1",
 				"ogham.sms.smpp.port="+smppServer.getPort(),
 				"spring.freemarker.suffix=");

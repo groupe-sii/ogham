@@ -12,7 +12,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -21,6 +20,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.extension.junit.SmppServerRule;
@@ -31,7 +31,7 @@ public class StaticMethodAccessTest {
 	private MessagingService messagingService;
 
 	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
 
 	@Before
@@ -39,8 +39,8 @@ public class StaticMethodAccessTest {
 		messagingService = MessagingBuilder.standard()
 				.environment()
 					.properties()
-						.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-						.set("mail.smtp.port", ServerSetupTest.SMTP.getPort())
+						.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+						.set("mail.smtp.port", greenMail.getSmtp().getPort())
 						.set("ogham.sms.smpp.host", "127.0.0.1")
 						.set("ogham.sms.smpp.port", smppServer.getPort())
 						.and()

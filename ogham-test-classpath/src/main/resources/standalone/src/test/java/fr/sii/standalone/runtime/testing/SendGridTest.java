@@ -8,12 +8,12 @@ import static junit.filter.Assumptions.requires;
 import java.util.Properties;
 
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import fr.sii.ogham.core.service.MessagingService;
 
@@ -21,7 +21,7 @@ import fr.sii.ogham.runtime.runner.EmailRunner;
 import fr.sii.ogham.runtime.checker.SendGridV4Checker;
 
 public class SendGridTest {
-	@ClassRule public static WireMockClassRule wiremock = new WireMockClassRule(options().dynamicPort());
+	public final @Rule WireMockRule wiremock = new WireMockRule(options().dynamicPort());
 	EmailRunner runner;
 	SendGridV4Checker checker;
 	

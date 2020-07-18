@@ -15,11 +15,9 @@ import org.jsmpp.util.AbsoluteTimeFormatter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import com.cloudhopper.smpp.SmppSession
-
 import fr.sii.ogham.testing.extension.common.LogTestInformation
+import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig
 import fr.sii.ogham.testing.sms.simulator.SmppServerException
-import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration
 import fr.sii.ogham.testing.sms.simulator.jsmpp.JSMPPServer
 import fr.sii.ogham.testing.sms.simulator.jsmpp.ServerStartupException
 import spock.lang.Requires
@@ -36,7 +34,7 @@ class JsmppSimulatorFailureSpec extends Specification {
 	def "Port already used should stop the simulator and throw an error"() {
 		given:
 			ServerSocket socket = new ServerSocket(65000);
-			JSMPPServer server = new JSMPPServer(65000, new SimulatorConfiguration())
+			JSMPPServer server = new JSMPPServer(new ServerConfig().port(65000).build())
 
 		when:
 			server.start()
@@ -55,7 +53,7 @@ class JsmppSimulatorFailureSpec extends Specification {
 	def "Start and stop server should be reliable"() {
 		when:
 			for (int i=0 ; i<ITERATIONS ; i++) {
-				JSMPPServer server = new JSMPPServer(64000, new SimulatorConfiguration())
+				JSMPPServer server = new JSMPPServer(new ServerConfig().port(64000).build())
 				server.start()
 				def session = null
 				if (i % 3 == 0) {
@@ -84,7 +82,7 @@ class JsmppSimulatorFailureSpec extends Specification {
 	def "Random interactions with server should be reliable"() {
 		when:
 			for (int i=0 ; i<ITERATIONS ; i++) {
-				JSMPPServer server = new JSMPPServer(64000, new SimulatorConfiguration())
+				JSMPPServer server = new JSMPPServer(new ServerConfig().port(64000).build())
 				server.start()
 				def session = null
 				if (executeRandomly()) {

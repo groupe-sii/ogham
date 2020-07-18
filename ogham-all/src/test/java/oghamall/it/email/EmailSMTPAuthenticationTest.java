@@ -14,12 +14,12 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class EmailSMTPAuthenticationTest {
@@ -29,7 +29,7 @@ public class EmailSMTPAuthenticationTest {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 
 	@Before
 	public void setUp() throws IOException {
@@ -38,8 +38,8 @@ public class EmailSMTPAuthenticationTest {
 				.environment()
 					.properties("/application.properties")
 					.properties()
-						.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-						.set("mail.smtp.port", ServerSetupTest.SMTP.getPort())
+						.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+						.set("mail.smtp.port", greenMail.getSmtp().getPort())
 						.set("mail.smtp.auth", "true")												// <2>
 						.set("ogham.email.javamail.authenticator.username", "test.sender")			// <3>
 						.set("ogham.email.javamail.authenticator.password", "password")				// <4>

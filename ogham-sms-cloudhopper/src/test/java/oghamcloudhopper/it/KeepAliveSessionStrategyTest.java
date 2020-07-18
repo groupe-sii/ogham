@@ -206,14 +206,14 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 	@Test
 	@SuppressWarnings("javadoc")
 	public void keepAlive() throws Exception {
-		manualServer = new JSMPPServer(8057, new ServerConfig().build());
+		manualServer = new JSMPPServer(new ServerConfig().randomPort().build());
 		manualServer.start();
 		/**
 		 * GIVEN
 		 */
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(200L)
 						.keepAlive()
@@ -346,7 +346,8 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		 * GIVEN
 		 */
 		// @formatter:off
-		manualServer = new JSMPPServer(8057, new ServerConfig()
+		manualServer = new JSMPPServer(new ServerConfig()
+				.randomPort()
 				.slow()
 					.sendEnquireLinkRespDelay(300L)
 					.and()
@@ -355,7 +356,7 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		manualServer.start();
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(200L)
 						.keepAlive()
@@ -491,12 +492,12 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		 * GIVEN
 		 */
 		// @formatter:off
-		manualServer = new JSMPPServer(8057, new ServerConfig().build());
+		manualServer = new JSMPPServer(new ServerConfig().randomPort().build());
 		// @formatter:on
 		manualServer.start();
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(500L)
 						.keepAlive()
@@ -650,12 +651,12 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		 * GIVEN
 		 */
 		// @formatter:off
-		manualServer = new JSMPPServer(8057, new ServerConfig().build());
+		manualServer = new JSMPPServer(new ServerConfig().randomPort().build());
 		// @formatter:on
 		manualServer.start();
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(200L)
 						.keepAlive()
@@ -804,7 +805,7 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		/**
 		 * GIVEN
 		 */
-		manualServer = new JSMPPServer(8057, new ServerConfig().build());
+		manualServer = new JSMPPServer(new ServerConfig().randomPort().build());
 		manualServer.start();
 		
 		/**
@@ -812,7 +813,7 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		 */
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(200L)
 						.keepAlive()
@@ -963,12 +964,12 @@ public class KeepAliveSessionStrategyTest implements Supplier<TestContext> {
 		 * GIVEN
 		 */
 		// @formatter:off
-		manualServer = new JSMPPServer(8057, new ServerConfig().build());
+		manualServer = new JSMPPServer(new ServerConfig().randomPort().build());
 		// @formatter:on
 		manualServer.start();
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(500L)
 						.keepAlive()

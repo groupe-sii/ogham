@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.icegreen.greenmail.util.ServerSetupTest;
-
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.core.util.classpath.SimpleClasspathHelper;
@@ -32,8 +30,8 @@ public class ImplementationSelectionTests {
 		helper.setClassLoader(new FilterableClassLoader(getClass().getClassLoader(), c -> !c.equals("javax.mail.Transport")));
 		ClasspathUtils.setHelper(helper);
 		Properties additionalProps = new Properties();
-		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		additionalProps.setProperty("mail.smtp.host", "localhost");
+		additionalProps.setProperty("mail.smtp.port", "25");
 		MessagingBuilder.standard()
 				.environment()
 					.properties("/application.properties")

@@ -9,9 +9,29 @@ import java.util.List;
  *
  */
 public class SimulatorConfiguration {
+	private ServerPortProvider portProvider;
 	private List<Credentials> credentials;
 	private ServerDelays serverDelays;
 	private boolean keepMessages;
+
+	/**
+	 * Get the configuration that provides a port for the server
+	 * 
+	 * @return the port configuration
+	 */
+	public ServerPortProvider getPortProvider() {
+		return portProvider;
+	}
+
+	/**
+	 * Set the configuration that provides a port for the server
+	 * 
+	 * @param port
+	 *            the port configuration
+	 */
+	public void setPort(ServerPortProvider port) {
+		this.portProvider = port;
+	}
 
 	/**
 	 * Get the allowed credentials
@@ -70,6 +90,13 @@ public class SimulatorConfiguration {
 	 */
 	public void setKeepMessages(boolean keepMessages) {
 		this.keepMessages = keepMessages;
+	}
+
+	/**
+	 * Reset the configuration to be reused by the same server
+	 */
+	public void reset() {
+		portProvider.reset();
 	}
 
 }

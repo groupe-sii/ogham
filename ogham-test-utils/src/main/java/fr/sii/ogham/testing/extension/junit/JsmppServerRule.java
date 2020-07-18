@@ -16,11 +16,10 @@ import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter;
  */
 public class JsmppServerRule extends SmppServerRule<SubmitSm> {
 	/**
-	 * Initialize the server with the default port
-	 * ({@link SmppServerRule#DEFAULT_PORT}).
+	 * Initialize the server with random port.
 	 */
 	public JsmppServerRule() {
-		this(SmppServerRule.DEFAULT_PORT);
+		this(new ServerConfig());
 	}
 
 	/**
@@ -30,35 +29,22 @@ public class JsmppServerRule extends SmppServerRule<SubmitSm> {
 	 *            the port used by the server
 	 */
 	public JsmppServerRule(int port) {
-		this(port, new ServerConfig());
+		this(new ServerConfig().port(port));
 	}
 
 	/**
-	 * Initialize the server with the default port
-	 * ({@link SmppServerRule#DEFAULT_PORT}).
+	 * Initialize the server with provided configuration.
 	 * 
 	 * @param config
 	 *            the server configuration to simulate some behavior
 	 */
 	public JsmppServerRule(ServerConfig config) {
-		this(SmppServerRule.DEFAULT_PORT, config);
-	}
-
-	/**
-	 * Initialize the server with the provided port.
-	 * 
-	 * @param port
-	 *            the port used by the server
-	 * @param config
-	 *            the server configuration to simulate some behavior
-	 */
-	public JsmppServerRule(int port, ServerConfig config) {
-		super(port, config);
+		super(config);
 	}
 
 	@Override
 	protected SmppServerSimulator<SubmitSm> initServer(SimulatorConfiguration config) {
-		return new JSMPPServer(getPort(), config);
+		return new JSMPPServer(config);
 	}
 
 	@Override

@@ -40,14 +40,10 @@ public abstract class SmppServerRule<M> implements TestRule {
 	private static final Logger LOG = LoggerFactory.getLogger(SmppServerRule.class);
 
 	/**
-	 * The default port used by the server if none is specified
+	 * Random port used by the server if none is specified
 	 */
-	public static final int DEFAULT_PORT = 8056;
+	public static final int DEFAULT_PORT = 0;
 
-	/**
-	 * The server port
-	 */
-	private int port;
 	/**
 	 * The configuration to control how server should behave
 	 */
@@ -58,23 +54,21 @@ public abstract class SmppServerRule<M> implements TestRule {
 	private SmppServerSimulator<M> server;
 
 	/**
-	 * Initializes with the port to use for the SMPP server
+	 * Initializes with the configuration to use for the SMPP server
 	 * 
-	 * @param port
-	 *            the port for server
 	 * @param builder
 	 *            the configuration for the server
 	 */
-	public SmppServerRule(int port, ServerConfig builder) {
+	public SmppServerRule(ServerConfig builder) {
 		super();
-		this.port = port;
 		this.builder = builder;
 	}
 
 	@Override
 	public Statement apply(final Statement base, final Description description) {
 		SmppServerConfig config = description.getAnnotation(SmppServerConfig.class);
-		this.server = initServer(builder.annotationConfig(config).build());
+		SimulatorConfiguration serverConfig = builder.annotationConfig(config).build();
+		server = initServer(serverConfig);
 		return new StartServerStatement(base);
 	}
 
@@ -84,7 +78,7 @@ public abstract class SmppServerRule<M> implements TestRule {
 	 * @return the port used by the server
 	 */
 	public int getPort() {
-		return port;
+		return server.getPort();
 	}
 
 	/**
@@ -132,6 +126,7 @@ public abstract class SmppServerRule<M> implements TestRule {
 		@Override
 		public void evaluate() throws Throwable {
 			LOG.info("starting SMPP server on port {}...", getPort());
+			before();
 			server.start();
 			LOG.info("SMPP server started on port {}", getPort());
 			try {
@@ -139,9 +134,18 @@ public abstract class SmppServerRule<M> implements TestRule {
 			} finally {
 				LOG.info("stopping SMPP server...");
 				server.stop();
+				after();
 				LOG.info("SMPP server stopped");
 			}
 		}
+	}
+
+	protected void before() {
+		// extension point
+	}
+
+	protected void after() {
+		// extension point
 	}
 
 }

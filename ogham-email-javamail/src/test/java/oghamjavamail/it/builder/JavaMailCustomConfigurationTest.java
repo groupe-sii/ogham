@@ -9,7 +9,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageNotSentException;
@@ -17,6 +16,7 @@ import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.builder.javamail.JavaMailBuilder;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class JavaMailCustomConfigurationTest {
@@ -24,7 +24,7 @@ public class JavaMailCustomConfigurationTest {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 	
 	@Test(expected=MessageNotSentException.class)
 	public void noHostDefinedShouldFail() throws MessagingException {
@@ -50,8 +50,8 @@ public class JavaMailCustomConfigurationTest {
 	@Test
 	public void oghamPropertyShouldOverride() throws MessagingException {
 		Properties additionalProps = new Properties();
-		additionalProps.setProperty("ogham.email.javamail.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProps.setProperty("ogham.email.javamail.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		additionalProps.setProperty("ogham.email.javamail.host", greenMail.getSmtp().getBindTo());
+		additionalProps.setProperty("ogham.email.javamail.port", String.valueOf(greenMail.getSmtp().getPort()));
 		additionalProps.setProperty("mail.smtp.host", "value of mail.smtp.host");
 		additionalProps.setProperty("mail.smtp.port", "value of mail.smtp.port");
 		additionalProps.setProperty("mail.host", "value of mail.host");
@@ -105,8 +105,8 @@ public class JavaMailCustomConfigurationTest {
 					.host().properties("${ogham.email.javamail.host}", "${mail.smtp.host}", "${mail.host}").defaultValue("default-host").and()
 					.port().properties("${ogham.email.javamail.port}", "${mail.smtp.port}", "${mail.port}").defaultValue(1).and()
 					// developer sets values explicitly
-					.host(ServerSetupTest.SMTP.getBindAddress())
-					.port(ServerSetupTest.SMTP.getPort())
+					.host(greenMail.getSmtp().getBindTo())
+					.port(greenMail.getSmtp().getPort())
 					.and()
 				.and()
 				.build();

@@ -23,6 +23,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +36,6 @@ import org.thymeleaf.exceptions.TemplateProcessingException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -45,9 +45,10 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.spring.GreenMailRandomSmtpPortInitializer;
+import fr.sii.ogham.testing.extension.spring.JsmppServerRandomPortInitializer;
 import mock.context.SimpleBean;
 import oghamspringbootv1autoconfigure.it.SpringWebBeanResolutionTest.TestApplication;
 
@@ -56,14 +57,15 @@ import oghamspringbootv1autoconfigure.it.SpringWebBeanResolutionTest.TestApplica
 				webEnvironment=RANDOM_PORT,
 				properties= {
 						"spring.mail.host=127.0.0.1", 
-						"spring.mail.port=3025",
+						"spring.mail.port=${greenmail.smtp.port}",
 						"mail.smtp.from=spring.test@foo.bar",
 						"ogham.sms.smpp.host=localhost",
-						"ogham.sms.smpp.port=2775"})
+						"ogham.sms.smpp.port=${jsmpp.server.port}"})
+@ContextConfiguration(initializers = {GreenMailRandomSmtpPortInitializer.class, JsmppServerRandomPortInitializer.class})
 public class SpringWebBeanResolutionTest {
 	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
-	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule(2775);
+	@Rule @Autowired public GreenMailRule greenMail;
+	@Rule @Autowired public SmppServerRule<SubmitSm> smppServer;
 
 
 	@Value("${local.server.port}")

@@ -3645,12 +3645,12 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class EmailPropertiesTest {
@@ -3661,13 +3661,13 @@ public class EmailPropertiesTest {
     public final LoggingTestRule loggingRule = new LoggingTestRule();
     
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+    public final GreenMailRule greenMail = new RandomPortGreenMailRule();
     
     @Before
     public void setUp() throws IOException {
         Properties additional = new Properties();
-        additional.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-        additional.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+        additional.setProperty("mail.smtp.host", greenMail.getSmtp().getBindTo());
+        additional.setProperty("mail.smtp.port", String.valueOf(greenMail.getSmtp().getPort()));
         additional.setProperty("ogham.email.from.default-value", "test.sender@sii.fr");
         additional.setProperty("ogham.email.to.default-value", "recipient.to1@sii.fr,  recipient.to2@sii.fr , recipient.to3@sii.fr");   // <1>
         additional.setProperty("ogham.email.cc.default-value", "recipient.cc1@sii.fr,recipient.cc2@sii.fr");                            // <2>
@@ -6432,12 +6432,12 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class EmailSMTPAuthenticationTest {
@@ -6447,7 +6447,7 @@ public class EmailSMTPAuthenticationTest {
     public final LoggingTestRule loggingRule = new LoggingTestRule();
 
     @Rule
-    public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+    public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 
     @Before
     public void setUp() throws IOException {
@@ -6456,8 +6456,8 @@ public class EmailSMTPAuthenticationTest {
                 .environment()
                     .properties("/application.properties")
                     .properties()
-                        .set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-                        .set("mail.smtp.port", ServerSetupTest.SMTP.getPort())
+                        .set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+                        .set("mail.smtp.port", greenMail.getSmtp().getPort())
                         .set("mail.smtp.auth", "true")                                                // <2>
                         .set("ogham.email.javamail.authenticator.username", "test.sender")            // <3>
                         .set("ogham.email.javamail.authenticator.password", "password")                // <4>

@@ -20,7 +20,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.core.exception.MessageException;
@@ -29,19 +28,20 @@ import fr.sii.ogham.email.builder.javamail.JavaMailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class JavaMailSmtpTest {
 	private JavaMailSender sender;
 	
 	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 	
 	@Before
 	public void setUp() throws IOException {
 		sender = new JavaMailBuilder()
-				.host(ServerSetupTest.SMTP.getBindAddress())
-				.port(ServerSetupTest.SMTP.getPort())
+				.host(greenMail.getSmtp().getBindTo())
+				.port(greenMail.getSmtp().getPort())
 				.mimetype()
 					.tika()
 						.failIfOctetStream(false)

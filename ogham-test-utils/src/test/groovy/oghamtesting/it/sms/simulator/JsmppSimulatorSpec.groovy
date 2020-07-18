@@ -29,7 +29,6 @@ import com.cloudhopper.commons.charset.CharsetUtil
 
 import fr.sii.ogham.testing.extension.common.LogTestInformation
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig
-import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration
 import fr.sii.ogham.testing.sms.simulator.jsmpp.JSMPPServer
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -40,7 +39,7 @@ class JsmppSimulatorSpec extends Specification {
 	
 	def "As developer I test sms sending"() {
 		given:
-			JSMPPServer server = new JSMPPServer(new SimulatorConfiguration())
+			JSMPPServer server = new JSMPPServer(new ServerConfig().build())
 			server.start()
 			def session = connect(server.getPort(), null, null)
 
@@ -154,7 +153,7 @@ class JsmppSimulatorSpec extends Specification {
 	
 	def "As developer I test sms delivery receipt"() {
 		given:
-			JSMPPServer server = new JSMPPServer(new SimulatorConfiguration())
+			JSMPPServer server = new JSMPPServer(new ServerConfig().build())
 			server.start()
 			def session = connect(server.getPort(), null, null, 120000L, 120000L)
 			AtomicBoolean receiptReceived = new AtomicBoolean()

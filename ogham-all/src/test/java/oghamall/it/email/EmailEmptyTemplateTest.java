@@ -13,7 +13,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -21,6 +20,7 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import mock.context.SimpleBean;
 
@@ -31,13 +31,13 @@ public class EmailEmptyTemplateTest {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 
 	@Before
 	public void setUp() throws IOException {
 		Properties additionalProperties = new Properties();
-		additionalProperties.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProperties.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		additionalProperties.setProperty("mail.smtp.host", greenMail.getSmtp().getBindTo());
+		additionalProperties.setProperty("mail.smtp.port", String.valueOf(greenMail.getSmtp().getPort()));
 		oghamService = MessagingBuilder.standard().environment().properties("/application.properties").properties(additionalProperties).and().build();
 	}
 

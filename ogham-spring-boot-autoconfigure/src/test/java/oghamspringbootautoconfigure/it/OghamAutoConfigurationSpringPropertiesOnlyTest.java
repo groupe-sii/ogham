@@ -10,6 +10,7 @@ import javax.mail.MessagingException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -18,23 +19,26 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.testing.assertion.email.AssertEmail;
 import fr.sii.ogham.testing.assertion.email.ExpectedContent;
 import fr.sii.ogham.testing.assertion.email.ExpectedEmail;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.spring.GreenMailRandomSmtpPortInitializer;
+import fr.sii.ogham.testing.extension.spring.JsmppServerRandomPortInitializer;
 import mock.MockApplication;
 import mock.context.NestedBean;
 import mock.context.SimpleBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = MockApplication.class, webEnvironment=RANDOM_PORT)
+@ContextConfiguration(initializers = {GreenMailRandomSmtpPortInitializer.class, JsmppServerRandomPortInitializer.class})
 @ActiveProfiles("spring-only")
 public class OghamAutoConfigurationSpringPropertiesOnlyTest {
 	private static final String BASE_URL = "/api/email";
@@ -46,7 +50,8 @@ public class OghamAutoConfigurationSpringPropertiesOnlyTest {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Autowired
+	public GreenMailRule greenMail;
 
 	@Value("${local.server.port}")
 	int port;

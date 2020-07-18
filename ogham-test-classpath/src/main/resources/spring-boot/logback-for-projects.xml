@@ -18,6 +18,8 @@
 		<appender-ref ref="TEST" />
 	</logger>
 
+	<logger name="org.reflections" level="ERROR" />
+
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>

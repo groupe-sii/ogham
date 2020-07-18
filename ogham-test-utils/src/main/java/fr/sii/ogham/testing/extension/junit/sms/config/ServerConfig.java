@@ -2,6 +2,8 @@ package fr.sii.ogham.testing.extension.junit.sms.config;
 
 import static fr.sii.ogham.testing.extension.junit.sms.config.SlowConfig.noWait;
 import static fr.sii.ogham.testing.extension.junit.sms.config.SlowConfig.waitFor;
+import static fr.sii.ogham.testing.util.RandomPortUtils.PORT_RANGE_MAX;
+import static fr.sii.ogham.testing.util.RandomPortUtils.PORT_RANGE_MIN;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
@@ -11,7 +13,9 @@ import java.util.List;
 import fr.sii.ogham.testing.sms.simulator.config.Awaiter;
 import fr.sii.ogham.testing.sms.simulator.config.Credentials;
 import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
+import fr.sii.ogham.testing.sms.simulator.config.ServerPortProvider;
 import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
+import fr.sii.ogham.testing.util.RandomPortUtils;
 
 /**
  * Builder to generate a {@link SimulatorConfiguration}.
@@ -20,10 +24,66 @@ import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
  *
  */
 public class ServerConfig {
+	private PortConfig portConfig;
 	private final List<Credentials> credentials = new ArrayList<>();
 	private SmppServerConfig annotationConfig;
 	private SlowConfig slowConfig;
 	private boolean keepMessages;
+
+	/**
+	 * Start the server with a fixed port.
+	 * 
+	 * @param port
+	 *            the port value
+	 * @return this instance for fluent chaining
+	 */
+	public ServerConfig port(int port) {
+		this.portConfig = new FixedPortConfig(port);
+		return this;
+	}
+
+	/**
+	 * Start the server with a random port.
+	 * 
+	 * The port is contained in the range
+	 * [{@link RandomPortUtils#PORT_RANGE_MIN},
+	 * {@link RandomPortUtils#PORT_RANGE_MAX}].
+	 * 
+	 * @return this instance for fluent chaining
+	 */
+	public ServerConfig randomPort() {
+		return randomPort(PORT_RANGE_MAX);
+	}
+
+	/**
+	 * Start the server with a random port.
+	 * 
+	 * The port is contained in the range
+	 * [{@link RandomPortUtils#PORT_RANGE_MIN}, {@code maxPort}].
+	 * 
+	 * @param maxPort
+	 *            the maximum port value
+	 * @return this instance for fluent chaining
+	 */
+	public ServerConfig randomPort(int maxPort) {
+		return randomPort(PORT_RANGE_MIN, maxPort);
+	}
+
+	/**
+	 * Start the server with a random port.
+	 * 
+	 * The port is contained in the range [{@code minPort}, {@code maxPort}].
+	 * 
+	 * @param minPort
+	 *            the minimum port value
+	 * @param maxPort
+	 *            the maximum port value
+	 * @return this instance for fluent chaining
+	 */
+	public ServerConfig randomPort(int minPort, int maxPort) {
+		this.portConfig = new RandomPortConfig(minPort, maxPort);
+		return this;
+	}
 
 	/**
 	 * Register allowed credentials.
@@ -89,10 +149,18 @@ public class ServerConfig {
 	 */
 	public SimulatorConfiguration build() {
 		SimulatorConfiguration config = new SimulatorConfiguration();
+		config.setPort(buildPort());
 		config.setCredentials(buildCredentials());
 		config.setServerDelays(buildServerDelays());
 		config.setKeepMessages(keepMessages);
 		return config;
+	}
+
+	private ServerPortProvider buildPort() {
+		if (portConfig == null) {
+			return new RandomPortConfig(PORT_RANGE_MIN, PORT_RANGE_MAX).build();
+		}
+		return portConfig.build();
 	}
 
 	private List<Credentials> buildCredentials() {
@@ -140,7 +208,7 @@ public class ServerConfig {
 		delays.setSendUnbindRespWaiting(toAwaiter(slow.sendUnbindRespDelay()));
 		return delays;
 	}
-	
+
 	private static Awaiter toAwaiter(long delayMs) {
 		if (delayMs == 0) {
 			return noWait();

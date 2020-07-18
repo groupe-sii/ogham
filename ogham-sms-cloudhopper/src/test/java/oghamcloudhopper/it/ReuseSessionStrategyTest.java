@@ -169,11 +169,11 @@ public class ReuseSessionStrategyTest implements Supplier<TestContext> {
 	@Test
 	@SuppressWarnings("javadoc")
 	public void reuseSession() throws Exception {
-		manualServer = new JSMPPServer(8057, new ServerConfig().build());
+		manualServer = new JSMPPServer(new ServerConfig().randomPort().build());
 		manualServer.start();
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(200L)
 						.reuseSession()
@@ -326,12 +326,12 @@ public class ReuseSessionStrategyTest implements Supplier<TestContext> {
 		 * GIVEN
 		 */
 		// @formatter:off
-		manualServer = new JSMPPServer(8057, new ServerConfig().build());
+		manualServer = new JSMPPServer(new ServerConfig().randomPort().build());
 		// @formatter:on
 		manualServer.start();
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(500L)
 						.reuseSession()
@@ -464,7 +464,8 @@ public class ReuseSessionStrategyTest implements Supplier<TestContext> {
 		 * GIVEN
 		 */
 		// @formatter:off
-		manualServer = new JSMPPServer(8057, new ServerConfig()
+		manualServer = new JSMPPServer(new ServerConfig()
+				.randomPort()
 				.slow()
 					.sendEnquireLinkRespDelay(300L)
 					.and()
@@ -473,7 +474,7 @@ public class ReuseSessionStrategyTest implements Supplier<TestContext> {
 		manualServer.start();
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.reuseSession()
 							.enable(true)
@@ -616,11 +617,11 @@ public class ReuseSessionStrategyTest implements Supplier<TestContext> {
 		/**
 		 * GIVEN
 		 */
-		manualServer = new JSMPPServer(8057, new ServerConfig().build());
+		manualServer = new JSMPPServer(new ServerConfig().randomPort().build());
 		manualServer.start();
 		// @formatter:off
 		sender = builder
-					.port(8057)
+					.port(manualServer.getPort())
 					.session()
 						.responseTimeout(500L)
 						.reuseSession()

@@ -34,7 +34,9 @@ import utils.SendGridUtils;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = MockApplication.class, webEnvironment = NONE, 
 	properties = { "ogham.sms.cloudhopper.host=localhost", 
-				   "ogham.sms.ovh.password=bar"})
+				   "ogham.sms.ovh.password=bar",
+				   "greenmail.smtp.port=3025",
+				   "jsmpp.server.port=2775"})
 @ActiveProfiles("ogham-precedence")
 public class OghamPropertiesPrecedenceTest {
 	@Rule

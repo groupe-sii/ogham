@@ -18,7 +18,6 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageException;
@@ -27,10 +26,11 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class UnreadableAttachmentTest {
-	GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	GreenMailRule greenMail = new RandomPortGreenMailRule();
 	TemporaryFolder temp = new TemporaryFolder();
 
 	@Rule public final RuleChain chain = RuleChain
@@ -48,8 +48,8 @@ public class UnreadableAttachmentTest {
 		builder
 			.environment()
 				.properties()
-					.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-					.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+					.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+					.set("mail.smtp.port", greenMail.getSmtp().getPort());
 		service = builder.build();
 		unreadable = temp.newFile("UNREADABLE");
 		unreadable.setReadable(false);

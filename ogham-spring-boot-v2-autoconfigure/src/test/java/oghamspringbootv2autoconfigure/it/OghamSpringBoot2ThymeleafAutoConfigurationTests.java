@@ -19,7 +19,6 @@ import org.springframework.core.annotation.Order;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
@@ -28,6 +27,7 @@ import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v2.autoconfigure.OghamSpringBoot2AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
 import fr.sii.ogham.testing.assertion.OghamInternalAssertions;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.extension.junit.SmppServerRule;
@@ -37,7 +37,7 @@ public class OghamSpringBoot2ThymeleafAutoConfigurationTests {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 
 	@Rule
 	public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
@@ -48,8 +48,8 @@ public class OghamSpringBoot2ThymeleafAutoConfigurationTests {
 	public void setUp() {
 		contextRunner = new ApplicationContextRunner()
 				.withPropertyValues(
-						"mail.smtp.host="+ServerSetupTest.SMTP.getBindAddress(), 
-						"mail.smtp.port="+ServerSetupTest.SMTP.getPort(),
+						"mail.smtp.host="+greenMail.getSmtp().getBindTo(), 
+						"mail.smtp.port="+greenMail.getSmtp().getPort(),
 						"ogham.sms.smpp.host=127.0.0.1",
 						"ogham.sms.smpp.port="+smppServer.getPort(),
 						"ogham.email.sendgrid.api-key=ogham",

@@ -1,14 +1,11 @@
 package fr.sii.ogham.testing.sms.simulator.jsmpp;
 
-import static fr.sii.ogham.testing.extension.junit.SmppServerRule.DEFAULT_PORT;
-
 import java.util.List;
 
 import org.jsmpp.bean.SubmitSm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
 import fr.sii.ogham.testing.sms.simulator.SmppServerException;
 import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
 import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
@@ -23,27 +20,17 @@ public class JSMPPServer implements SmppServerSimulator<SubmitSm> {
 	private final JSMPPServerSimulator simulator;
 
 	/**
-	 * Initializes with default port ({@link SmppServerRule#DEFAULT_PORT}) and
-	 * provided configuration.
+	 * Initializes with provided configuration.
 	 * 
 	 * @param config
 	 *            the server configuration
 	 */
 	public JSMPPServer(SimulatorConfiguration config) {
-		this(DEFAULT_PORT, config);
-	}
-
-	/**
-	 * Initializes with provided port and provided configuration.
-	 * 
-	 * @param port
-	 *            the port to use for server
-	 * @param config
-	 *            the server configuration
-	 */
-	public JSMPPServer(int port, SimulatorConfiguration config) {
 		super();
-		simulator = new JSMPPServerSimulator(port, config);
+		if (config.getPortProvider() == null) {
+			throw new IllegalArgumentException("Port configuration is mandatory");
+		}
+		simulator = new JSMPPServerSimulator(config.getPortProvider().getPort(), config);
 	}
 
 	@Override

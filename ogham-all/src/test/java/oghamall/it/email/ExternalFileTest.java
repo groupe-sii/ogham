@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -26,6 +25,7 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.util.IOUtils;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import mock.context.SimpleBean;
 
@@ -36,7 +36,7 @@ public class ExternalFileTest {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 	
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 	
 	@Rule
 	public final TemporaryFolder temp = new TemporaryFolder();
@@ -52,8 +52,8 @@ public class ExternalFileTest {
 				.environment()
 					.properties("/application.properties")
 					.properties()
-						.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-						.set("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()))
+						.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+						.set("mail.smtp.port", String.valueOf(greenMail.getSmtp().getPort()))
 						.set("ogham.email.template.path-prefix", folder.getParentFile().getParent()+"/")
 						.and()
 					.and()

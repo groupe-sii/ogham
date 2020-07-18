@@ -20,7 +20,7 @@ import org.thymeleaf.exceptions.TemplateProcessingException;
 
 import com.cloudhopper.smpp.type.SmppChannelConnectException;
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.sun.mail.util.MailConnectException;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
@@ -41,16 +41,18 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.ConnectionFailedException;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import freemarker.core.InvalidReferenceException;
 import mock.context.SimpleBean;
 
 public class AutoRetryTest {
 	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
-	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule(64000, ServerSetup.PROTOCOL_SMTP);
+	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule(new ServerConfig().randomPort(64000));
 
 	MessagingBuilder builder;
 	
@@ -98,8 +100,8 @@ public class AutoRetryTest {
 		builder
 			.environment()
 				.properties()
-					.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-					.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+					.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+					.set("mail.smtp.port", greenMail.getSmtp().getPort());
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
@@ -123,8 +125,8 @@ public class AutoRetryTest {
 		builder
 			.environment()
 				.properties()
-					.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-					.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+					.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+					.set("mail.smtp.port", greenMail.getSmtp().getPort());
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
@@ -148,8 +150,8 @@ public class AutoRetryTest {
 		builder
 			.environment()
 				.properties()
-					.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-					.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+					.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+					.set("mail.smtp.port", greenMail.getSmtp().getPort());
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
@@ -172,8 +174,8 @@ public class AutoRetryTest {
 		builder
 			.environment()
 				.properties()
-					.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-					.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+					.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+					.set("mail.smtp.port", greenMail.getSmtp().getPort());
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off
@@ -196,8 +198,8 @@ public class AutoRetryTest {
 		builder
 			.environment()
 				.properties()
-					.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-					.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+					.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+					.set("mail.smtp.port", greenMail.getSmtp().getPort());
 		// @formatter:on
 		MessagingService messagingService = builder.build();
 		// @formatter:off

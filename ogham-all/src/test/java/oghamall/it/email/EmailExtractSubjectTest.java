@@ -16,17 +16,17 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class EmailExtractSubjectTest {
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();;
 	@Rule public final LoggingTestRule logging = new LoggingTestRule();
 
 	private MessagingBuilder builder;
@@ -36,8 +36,8 @@ public class EmailExtractSubjectTest {
 		builder = MessagingBuilder.standard();
 		builder.environment()
 				.properties()
-					.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-					.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+					.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+					.set("mail.smtp.port", greenMail.getSmtp().getPort());
 	}
 	
 	@Test

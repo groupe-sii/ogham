@@ -10,14 +10,15 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
+import fr.sii.ogham.testing.extension.spring.WireMockRandomPortInitializer;
 
 import fr.sii.ogham.runtime.runner.EmailRunner;
 import fr.sii.ogham.runtime.checker.SendGridChecker;
@@ -26,15 +27,20 @@ import fr.sii.ogham.runtime.checker.AutoSendGridCheckerProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest({
 	"ogham.email.sendgrid.api-key=foobar",
-	"ogham.email.sendgrid.url=http://localhost:48089"
+	"ogham.email.sendgrid.url=http://localhost:${wiremock.server.port}"
 })
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@ContextConfiguration(classes = Application.class, initializers = WireMockRandomPortInitializer.class)
 public class SendGridTest {
-	@ClassRule public static WireMockClassRule wiremock = new WireMockClassRule(48089);
+	@Rule @Autowired public WireMockRule wiremock;
 	@Autowired EmailRunner runner;
 	SendGridChecker checker;
 	

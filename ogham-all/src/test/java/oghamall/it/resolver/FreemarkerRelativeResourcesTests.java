@@ -19,7 +19,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -30,6 +29,7 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.core.util.classpath.SimpleClasspathHelper;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.mock.classloader.FilterableClassLoader;
 import mock.context.SimpleBean;
@@ -42,7 +42,7 @@ public class FreemarkerRelativeResourcesTests {
 	public final LoggingTestRule loggingRule = new LoggingTestRule();
 
 	@Rule
-	public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 
 	// TODO: test prefix alone
 	// TODO: test suffix alone
@@ -51,8 +51,8 @@ public class FreemarkerRelativeResourcesTests {
 		// disable thymeleaf to be sure to use freemarker
 		disableThymeleaf();
 		Properties additionalProps = new Properties();
-		additionalProps.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		additionalProps.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		additionalProps.setProperty("mail.smtp.host", greenMail.getSmtp().getBindTo());
+		additionalProps.setProperty("mail.smtp.port", String.valueOf(greenMail.getSmtp().getPort()));
 		if(specificProps != null) {
 			for(Property prop : specificProps) {
 				additionalProps.setProperty(prop.getKey(), prop.getValue());

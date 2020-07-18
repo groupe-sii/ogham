@@ -11,7 +11,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageNotSentException;
@@ -22,11 +21,12 @@ import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.TemplateContent;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 
 public class TemplateErrorTest {
 	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 
 	
 	MessagingService service;
@@ -36,8 +36,8 @@ public class TemplateErrorTest {
 		MessagingBuilder builder = MessagingBuilder.standard();
 		builder.environment()
 			.properties()
-				.set("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress())
-				.set("mail.smtp.port", ServerSetupTest.SMTP.getPort());
+				.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+				.set("mail.smtp.port", greenMail.getSmtp().getPort());
 		service = builder.build();
 	}
 	

@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 
 import fr.sii.ogham.core.service.MessagingService;
 
@@ -17,7 +18,7 @@ import fr.sii.ogham.runtime.runner.EmailRunner;
 import fr.sii.ogham.runtime.checker.JavaMailChecker;
 
 public class JavaMailIT {
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 	
 	JavaMailChecker checker;
 	Properties props;
@@ -27,8 +28,8 @@ public class JavaMailIT {
 		requires("email-javamail");
 
 		props = new Properties();
-		props.setProperty("mail.smtp.host", ServerSetupTest.SMTP.getBindAddress());
-		props.setProperty("mail.smtp.port", String.valueOf(ServerSetupTest.SMTP.getPort()));
+		props.setProperty("mail.smtp.host", greenMail.getSmtp().getBindTo());
+		props.setProperty("mail.smtp.port", String.valueOf(greenMail.getSmtp().getPort()));
 
 		checker = new JavaMailChecker(greenMail);
 	}

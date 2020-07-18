@@ -1,6 +1,5 @@
 package oghamall.it.configuration;
 
-import static com.icegreen.greenmail.util.ServerSetupTest.SMTP;
 import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.AFTER_INIT;
 import static fr.sii.ogham.core.builder.configurer.ConfigurationPhase.BEFORE_BUILD;
 import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
@@ -21,7 +20,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
-import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageException;
@@ -45,6 +43,7 @@ import fr.sii.ogham.template.exception.NoResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
+import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
 import fr.sii.ogham.testing.extension.junit.SmppServerRule;
@@ -52,7 +51,7 @@ import mock.context.SimpleBean;
 
 public class EmptyBuilderTest {
 	@Rule public final LoggingTestRule logging = new LoggingTestRule();
-	@Rule public final GreenMailRule greenMail = new GreenMailRule(ServerSetupTest.SMTP);
+	@Rule public final GreenMailRule greenMail = new RandomPortGreenMailRule();
 	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
 	
 	
@@ -64,8 +63,8 @@ public class EmptyBuilderTest {
 		builder
 			.environment()
 				.properties()
-					.set("mail.smtp.host", SMTP.getBindAddress())
-					.set("mail.smtp.port", SMTP.getPort())
+					.set("mail.smtp.host", greenMail.getSmtp().getBindTo())
+					.set("mail.smtp.port", greenMail.getSmtp().getPort())
 					.set("ogham.email.sendgrid.api-key", "foobar")
 					.set("ogham.email.sendgrid.username", "foo")
 					.set("ogham.email.sendgrid.password", "bar")
