@@ -82,7 +82,7 @@ public class JSMPPServerSimulator extends ServerResponseDeliveryAdapter implemen
 		} catch (IOException e) {
 			if (!stopped) { // NOSONAR
 				LOG.trace("Failed to initialize SMPP server simulator", e);
-				startupFailure = new ServerStartupException("Server failed to start", e);
+				startupFailure = new ServerStartupException("Server failed to start on port "+port, e);
 				close();
 			}
 		} finally {
