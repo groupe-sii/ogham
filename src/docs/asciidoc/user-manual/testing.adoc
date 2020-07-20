@@ -16,9 +16,18 @@ include::{user-manual-dir}/testing/email-testing.adoc[leveloffset=+1]
 
 include::{user-manual-dir}/testing/sms-testing.adoc[leveloffset=+1]
 
-
+[[assertall]]
 == Fail at end
 
 include::{user-manual-dir}/testing/assert-all.adoc[leveloffset=+1]
 
+[[random-ports]]
+== Random ports
 
+=== Standalone tests
+
+include::{user-manual-dir}/testing/random-ports-standalone.adoc[leveloffset=+2]
+
+=== Spring Boot tests
+
+include::{user-manual-dir}/testing/random-ports-spring.adoc[leveloffset=+2]

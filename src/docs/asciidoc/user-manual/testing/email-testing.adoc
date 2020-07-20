@@ -32,7 +32,7 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailTestSamp
 <12> Assert that the body of the received email is exactly `string body`
 <13> Assert that the mimetype of the body of the received email starts with `text/plain`
 <14> Assert that received email has no alternative content
-<15> Assert that recevied email has no attachment
+<15> Assert that received email has no attachment
 
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailTestSample.java?ts={tabsize}[Source code of the sample].

@@ -79,6 +79,7 @@ import fr.sii.ogham.sms.builder.cloudhopper.DefaultCloudhopperConfigurer;
  */
 public final class SmsglobalServiceProviderConfigurer {
 	private static final Logger LOG = LoggerFactory.getLogger(SmsglobalServiceProviderConfigurer.class);
+	private static final String SMSGLOBAL_HOST = "smpp.smsglobal.com";
 	private static final int SMSGLOBAL_PORT = 1775;
 
 	@ConfigurerFor(targetedBuilder = "standard", priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY + 1)
@@ -122,7 +123,7 @@ public final class SmsglobalServiceProviderConfigurer {
 				return false;
 			}
 			String host = evaluate(asList("${ogham.sms.cloudhopper.host}", "${ogham.sms.smpp.host}"), propertyResolver, String.class);
-			if ("smpp.smsglobal.com".equals(host)) {
+			if (SMSGLOBAL_HOST.equals(host)) {
 				return true;
 			}
 			Boolean force = evaluate("${ogham.sms.smsglobal.service-provider.auto-conf.force}", propertyResolver, Boolean.class);

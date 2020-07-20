@@ -10,31 +10,87 @@ There are also API and internal improvements.
 This version introduces breaking changes.
 See detailed migration guide to <<migration-guide.adoc#v2.0.0-v3.0.0, upgrade from 2.0.0 to 3.0.0>>.
 
+
 == Updates
+
+=== Java support
 
 Upgrade minimum Java version to Java 8 i.e. drop support of Java 7.
 
-[role=TODO]
+Ogham now supports all Java versions from 8 and up to 14.
+
+
+.Newer Java versions
+[NOTE]
 ====
-* List supported Java versions
-* All dependencies have been updated => list all updates ?
-* List supported Spring boot versions
-* List unsupported Spring Boot versions 
+Ogham should support newer Java versions in the future without any changes.
+Currently, the latest tested version through compatibility checks is Java 14. 
 ====
+
+=== Spring Boot support
+
+Ogham 3.0+ drops support of Spring Boot 1.3.x.
+
+Ogham is compatible with Spring Boot 1.4.x+ and up to 2.3.x.
+
+
+.Compatibility check
+[TIP]
+====
+Spring Boot is pluggable. You can start with the basic and add some additional
+features to your project easily.
+
+Ogham is also pluggable and also tries to use Spring Boot features when they
+are available.
+
+To ensure that everything works as expected with any version of Spring Boot, 
+the CI runs automatic compatibility checks (tests to find possible classpath issues).
+
+See <<ci-improvements, automatically tested combinations>>.
+====
+
+
+.Newer versions of Spring Boot
+[NOTE]
+====
+New Spring Boot versions may be supported. As no tests are made, it is not 
+possible to guarantee that you don't experience a classpath issue due to
+upgrade of Spring Boot dependencies and code.
+====
+
+.Spring Boot 1.3.x
+[NOTE]
+====
+Ogham doesn't support Spring Boot 1.3.x anymore. It doesn't mean that Ogham 
+doesn't work with Spring Boot 1.3.x but it is no more tested through automatic
+compatibility checks.
+====
+
+
 
 == API changes
 
 === Fluent builder consistency for property configuration
 
+As Ogham is fully extensible, there could be an issue of priority due to registration
+order using previous Ogham version. Therefore a developer could set a configuration 
+value in its code but it could be overridden by an external property. This could be 
+particularly annoying in tests.
 
-[role=TODO]
-====
-* Indicate that all builders now use same API for every property configuration: +
-   .properties() +
-   .defaultValue() +
-   ... +
-====
+Developers that use Ogham have now a dedicated method to set the value with the right
+type.
 
+For extension developers, all builders now have a consistent API for configuration 
+of values and properties.
+They all use `ConfigurationValueBuilder` that provides the following methods:
+
+* `properties(String...)` that lets extension developers register property names to
+configure the value externally.
+* `defaultValue(V)` for extension developers that want to set a default value.
+* `defaultValue(MayOverride<V>)` for extension developers to provide a 
+value if no default value has been already set for example.
+* `value(Optional<V>)` for extension developers to set the value. It overrides any 
+value that could be set through `properties()` or `defaultValue()`.
 
 === Rename inlining attributes
 
@@ -45,6 +101,8 @@ Upgrade minimum Java version to Java 8 i.e. drop support of Java 7.
    only `skip` exists but in future versions other may come.
 
 === Properties consistency
+
+Rename some properties to be more consistent:
 
 * `ogham.email.bcc` renamed to `ogham.email.bcc.default-value`
 * `ogham.email.cc` renamed to `ogham.email.cc.default-value`
@@ -92,195 +150,574 @@ This behavior has been removed in favor to a better auto-detection mechanism. Th
 `ogham.sms.cloudhopper.default-app-charset` and `ogham.sms.cloudhopper.smpp-charset` properties
 have been removed.
 
-
-[role=TODO]
-====
-* Add link to new behavior ?
-====
+See <<new-message-encoding, new SMS encoding features>> for more details
+about the new behavior.
 
 === Test utilities
 
 Rename `receivedMessages().forEach()` into `receivedMessages().every()` in test utilities (for 
 both email and SMS).
 
+
+
 == New features
-
-
-=== Auto-cleanup
-
-[role=TODO]
-====
-* Indicate that Ogham now auto cleans open resources
-* Add link to how it works and when it runs
-====
 
 === Fluent API for message construction
 
+In previous version, developer had to search for implementations of the `Content` 
+interface or read the whole documentation. This is great for extensibility but not 
+for ease of use. 
 
-[role=TODO]
-====
-* Show new Fluent API and explain advantages
-====
+The version 3.0 introduces a fluent API for content building. The aim is to guide
+developer using code autocomplete.
+
+The documentation and samples have been updated to use the fluent API.
+
+See <<migration-guide.adoc#v2.0.0-v3.0.0#fluent-content-api, how to use new API>>.
 
 
 === Auto-configuration lifecycle
 
-[role=TODO]
-====
-* Indicate that Ogham now provide two configuration phaes
-* Quick explanation about phases
-* Add link to full explanation
-* Explain property evaluation
-* Explain that Ogham provides some service providers. Here or dedicated section ?
-====
+Ogham v3.0.0 introduces configuration phases in the configuration lifecycle
+for `MessagingBuilder.standard()` and `MessagingBuilder.minimal()` factories:
+
+* `ConfigurationPhase.AFTER_INIT` that is triggered as soon as the `MessagingBuilder`
+is created and instantiate all `MessagingConfigurer` classes found for that phase.
+* `ConfigurationPhase.BEFORE_BUILD` that is triggered when developer calls
+`MessagingBuilder.build()` method. It instantiates all `MessagingConfigurer` classes 
+found for that phase.
+
+See <<user-manual.adoc#automatic-configuration, automatic configuration section>>
+for more details about the concepts and how they interact together.
 
 
+=== CSS inlining
+
+Ogham can inline CSS rules to apply styles directly on the HTML tags (see 
+<<user-manual.adoc#css-images-inlining, CSS and image inlining>>).
+
+However, if a CSS file contains at-rules (`@` rules such as `@import`, `@media`, 
+`@charset`, ...), the file was unparseable in previous versions.
+
+Since v3.0.0, the at-rules are simply ignored instead of failing. Therefore, 
+the valid styles are inlined.
+
+Ogham can now also inline images that are referenced by the following CSS properties:
+
+* `background`
+* `background-image`
+* `list-style`
+* `list-style-image`
+* `cursor`
+
+Images are inline only if `url()` points to a relative image.
 
 === Relative resources
 
-[role=TODO]
-====
-* Indicate that Ogham supports relative path for resources in templates
-* Link to full documentation and samples
-====
+Ogham now supports relative resource resolution. A template can reference resources
+like CSS files and images. Relative resources also work for inclusion of template 
+parts.
 
+See <<user-manual.adoc#resource-resolution, resource resolution section>>
+for more details.
+
+.CSS images inlining
+[TIP]
+====
+As mentioned above, Ogham can also inline images that are referenced by CSS rules 
+(such as `background-image`).
+During inlining, if a path to an image is relative to the CSS file, the path is 
+updated to be relative to the template.
+
+See <<user-manual.adoc#css-images-inlining, CSS and image inlining>>.
+====
 
 === Templating
 
-[role=TODO]
-====
-* Added properties :
-  * `ogham.email.thymeleaf.cache`
-  * `ogham.email.template.cache`
-  * `ogham.template.cache`
-  * `ogham.sms.thymeleaf.cache`
-  * `ogham.sms.template.cache`
-====
+Ogham adds several properties to enable/disable cache for template parsing:
 
+* `ogham.email.thymeleaf.cache`: enable/disable cache for email Thymeleaf templates
+* `ogham.sms.thymeleaf.cache`: enable/disable cache for SMS Thymeleaf templates
 
+This is currently only available for Thymeleaf but Ogham also provides aliases
+for later support of template engines:
+
+* `ogham.email.template.cache`: enable/disable cache for email templates (any template
+engine)
+* `ogham.sms.template.cache`: enable/disable cache for SMS templates (any template
+engine)
+* `ogham.template.cache`: enable/disable cache for all templates
 
 === SMS
 
+There are many improvements for the SMPP protocol implementation.
 
-[role=TODO]
+[[new-message-encoding]]
+==== Message encoding
+
+Ogham now supports different encodings for SMPP messages. It means that a SMPP
+message can be sent using
+https://en.wikipedia.org/wiki/GSM_03.38[different character encodings].
+
+Developer should not have to read about SMPP protocol and encodings to be able to 
+send a simple SMS. That's why Ogham provide automatic guessing to use the best 
+encoding. It scans the characters used in the message to use the encoding
+that uses the minimum bytes while ensuring that received message is readable.
+The supported encodings are:
+
+* GSM 7-bit (packed)
+* GSM 8-bit
+* UCS-2
+* Latin-1
+
+In addition to automatic guessing, Ogham also provides a way to define a 
+default encoding (using either `ogham.sms.cloudhopper.encoder.default-charset` or
+`ogham.sms.smpp.encoder.default-charset` properties). 
+It is also possible to disable automatic guessing or
+to enable/disable some encodings:
+
+* `ogham.sms.cloudhopper.encoder.auto-guess.enable` (or its more general alias
+`ogham.sms.smpp.encoder.auto-guess.enable`) to enable/disable automatic guessing.
+* `ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority` (or its more general alias
+`ogham.sms.smpp.encoder.gsm7bit-packed.priority`) to enable/disable and set priority
+of GSM 7-bit packed encoding.
+* `ogham.sms.cloudhopper.encoder.gsm8bit.priority` (or its more general alias 
+`ogham.sms.smpp.encoder.gsm8bit.priority`) to enable/disable and set priority
+of GSM 8-bit encoding.
+* `ogham.sms.cloudhopper.encoder.ucs2.priority` (or its more general alias 
+`ogham.sms.smpp.encoder.ucs2.priority`) to enable/disable and set priority
+of UCS-2 encoding.
+* `ogham.sms.cloudhopper.encoder.latin1.priority` (or its more general alias
+`ogham.sms.smpp.encoder.latin1.priority`) to enable/disable and set priority
+of Latin-1 encoding.
+
+.GSM 7-bit packed disabled by default
+[TIP]
 ====
-* Indicate that Ogham now supports different encodings of SMPP messages
-* Indicate that Ogham provides auto-guess feature for encoding
-* Indicate that Ogham can automatically split messages that are too long (according to encoding)
-* Indicate that Ogham is now able to reuse the current session
-* Indicate that Ogham is now able to keep the current session alive 
-  * Add thanks to dainv85 https://github.com/dainv85 contribution
-* Indicate that Ogham can now send message using TLV instead of short message field
-* List new properties :
-	* ogham.sms.cloudhopper.split.enable
-	* ogham.sms.smpp.split.enable
-	* ogham.sms.split.enable
-	* ogham.sms.cloudhopper.data-coding-scheme.auto.enable
-	* ogham.sms.smpp.data-coding-scheme.auto.enable
-	* ogham.sms.cloudhopper.user-data.use-short-message
-	* ogham.sms.cloudhopper.user-data.use-tlv-message-payload
-	* ogham.sms.smpp.user-data.use-short-message
-	* ogham.sms.smpp.user-data.use-tlv-message-payload
-	
-	
-	* `ogham.sms.smpp.encoder.auto-guess.enable`
-	* `ogham.sms.smpp.encoder.gsm7bit-packed.priority`
-	* `ogham.sms.smpp.encoder.gsm8bit.priority`
-	* `ogham.sms.smpp.encoder.ucs2.priority`
-	* `ogham.sms.smpp.encoder.default-charset`
-	
-	* `ogham.sms.cloudhopper.encoder.auto-guess.enable`
-	* `ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority`
-	* `ogham.sms.cloudhopper.encoder.gsm8bit.priority`
-	* `ogham.sms.cloudhopper.encoder.ucs2.priority`
-	* `ogham.sms.cloudhopper.encoder.default-charset`
+As many SMPP services doesn't correctly handle GSM 7-bit packed encoding, this
+encoding is disabled by default.
 ====
+
+
+SMPP protocol has a field name https://en.wikipedia.org/wiki/Data_Coding_Scheme[Data Coding Scheme].
+to indicate how the recipient handset should process the received message.
+The value depends on the character table used to encode the text message.
+That's why Ogham also automatically adapts the Data Coding Scheme value according to
+selected encoding (either using automatic guessing or manually specified).
+
+The automatic algorithm to determine the Data Coding Scheme value can be disabled using
+either `ogham.sms.cloudhopper.data-coding-scheme.auto.enable` or 
+`ogham.sms.smpp.data-coding-scheme.auto.enable`. Developer can also provide
+a fixed value instead using either `ogham.sms.cloudhopper.data-coding-scheme.value`
+or `ogham.sms.smpp.data-coding-scheme.value`.
+
+
+See <<user-manual.adoc#message-encoding, SMS encoding section>> for more details.
+
+==== Carry message using `message_payload` field
+
+In initial SMPP protocol, the message text data is carried by `short message` field.
+Since SMPP v3.4, the message text data can be carried by `message_payload` TLV
+(Tag Value Length) field.
+
+Ogham lets developer choose which field to use to carry the text message using
+configuration properties:
+
+* `ogham.sms.cloudhopper.user-data.use-short-message` (or its more general alias
+`ogham.sms.smpp.user-data.use-short-message`) to use `short message` standard field.
+* `ogham.sms.cloudhopper.user-data.use-tlv-message-payload` (or its more general
+alias `ogham.sms.smpp.user-data.use-tlv-message-payload`) to use 
+`message_payload` field.
+
+.Short message by default
+[TIP]
+====
+As `message_payload` may not be supported by all SMPP servers, Ogham uses 
+`short message` field by default. 
+====
+
+==== Automatic split of messages
+
+When a message is too long to fit in one SMS (140 octets including headers and payload), 
+the message is automatically split into segments. The number of characters that can
+fit in one segment depends on the encoding.
+
+Once again, developer should not have to handle that complexity that's why
+Ogham automatically uses the right algorithm to split correctly according
+to the encoding.
+
+If you are using `message_payload` field to carry the message text data (as
+mentioned above), you may need to disable automatic split of message using one
+of `ogham.sms.cloudhopper.split.enable`, `ogham.sms.smpp.split.enable` or 
+`ogham.sms.split.enable`.
+
+==== Session management
+
+Ogham adds several algorithms to handle SMPP session:
+
+* either create a new session for each message
+* or reuse the current session if still opened
+* or reuse existing session and actively maintain it opened
+
+See <<user-manual.adoc#session-strategy, detailed explanations about session management>>.
+
+.Contribution
+[NOTE]
+====
+Many thanks to https://github.com/dainv85[dainv85] for his contribution
+to keep the session open.
+====
+
 
 === SmsGlobal
 
-[role=TODO]
-====
-* Indicate that Ogham provides automatic configuration for SmsGlobal
-====
+Ogham now provides automatic configuration for well-known services like SmsGlobal.
+
+SmsGlobal handles SMPP protocol. However, this service has some specific features.
+Therefore, Ogham detects that `smpp.smsglobal.com` is used as host and automatically
+apply a different configuration than the default one:
+
+* Use `message_payload` TLV field to carry message text data
+* Disable split as `message_payload` field is used
+* Only enable GSM 8-bit and UCS-2 encodings as others are not supported
+* Use a specific Data Coding Scheme value
+* Automatically adapt SMPP port (1775 instead of 2775 by default)
+* Use interface version 3.4 of the SMPP protocol
 
 
 === Spring integration
 
-[role=TODO]
-====
-* Ogham support access to Spring beans from templates
-* Ogham support calls to static methods
-====
+Ogham better integrates with Spring Boot features especially regarding templating
+features:
+
+* Ogham supports access to Spring beans from templates
+* Ogham correctly handle Spring additional features in a web context
 
 
 === FreeMarker integration
 
-[role=TODO]
+Ogham supports calls to static methods from FreeMarker templates.
+
+.Static method calls
+[WARNING]
 ====
-* Indicate that Ogham support ftlh extension
-* Indicate that Ogham provides static method access using FreeMarker
-  * List added properties
-    * added `ogham.freemarker.static-method-access.enable`
-    * added `ogham.freemarker.static-method-access.variable-name`
+Calls to static methods is enabled by default. This can lead to 
+https://freemarker.apache.org/docs/pgui_misc_beanwrapper.html#autoid_54[security risks]
+if templates can be modified by a person with malicious intents.
 
-Both properties refers to same feature so use the same "group". This is also more consistent with
-Spring `ConfigurationProperties` (only a single object that carries both pieces of information).
-
-https://freemarker.apache.org/docs/pgui_misc_beanwrapper.html#autoid_60[FreeMarker documentation - Accessing static methods]
-* `ogham.freemarker.static-method-access.enable` `true` by default
-* `ogham.freemarker.static-method-access.variable-name` `statics` by default
-
-.ftlh
-see https://github.com/spring-projects/spring-boot/issues/15131
+Static method calls can be disabled using 
+`ogham.freemarker.static-method-access.enable=false`.
 ====
+
+
+.Change variable name for static method calls
+[TIP]
+====
+The default variable name to access static method calls using FreeMarker is named
+`statics`.
+
+This can be changed by setting `ogham.freemarker.static-method-access.variable-name`
+property.
+====
+
+FreeMarker now adds 
+https://github.com/spring-projects/spring-boot/issues/15131[`.ftlh` extension] to
+activate HTML auto-escaping. Ogham now supports `.ftlh` extension.
 
 
 === SendGrid
 
-[role=TODO]
-====
-* List new properties:
-	* `ogham.email.sendgrid.unit-testing` (since SendGrid v3)
-	* `ogham.email.sendgrid.username` (deprecated since SendGrid v3)
-	* `ogham.email.sendgrid.password` (deprecated since SendGrid v3)
-* Indicate thet Ogham now support attachments through SendGrid
-====
+SendGrid API v3 has changed, Ogham aligns to new SendGrid API and `sendgrid-java`
+features:
+
+* `ogham.email.sendgrid.unit-testing` has been added
+* `ogham.email.sendgrid.username` is now deprecated
+* `ogham.email.sendgrid.password` is now deprecated
+
+Ogham now supports attachments through SendGrid.
+
+
+=== Auto-cleanup
+
+To release opened resources, Ogham provides automatic cleanup.
+The `MessagingService` is decorated with `CleanableMessagingService`
+to provide the additional `clean()` method. It also implements
+`Closable` interface for try-with-resource capabilities.
+
+.Manual cleanup
+[source, java]
+----
+// get Ogham instance
+MessagingService service = builder.build();
+// use Ogham to send messages
+service.send(new Email());
+service.send(new Sms());
+...
+// cleanup
+((CleanableMessagingService) service).clean();
+----
+
+.Auto-cleanup using try-with-resource
+[source, java]
+----
+try (CleanableMessagingService service = (CleanableMessagingService) builder.build()) {
+  service.send(new Email());
+}
+----
+
+.Auto-cleanup when unreferenced
+[source, java]
+----
+// get Ogham instance
+MessagingService service = builder.build();
+// use Ogham to send messages
+service.send(new Email());
+service.send(new Sms());
+...
+// unreference service
+service = null;
+... after some time the JVM will call finalize() method to cleanup resources
+----
 
 
 === Miscellaneous
 
-[role=TODO]
-====
-* List new properties:
-	* `ogham.mimetype.tika.fail-if-octet-stream` `true` by default
-	* `ogham.wrap-uncaught-exceptions.enable` `true` by default
-====
+Add some properties:
+
+* `ogham.mimetype.tika.fail-if-octet-stream`: Tika doesn't fail if it can't 
+detect mimetype accurately. It returns `application/octet-stream` instead.
+As Ogham rely on an exception to try another detection algorithm, this property
+has been added to force to fail if Tika returns `octet-stream`. This is `true` 
+by default.
+* `ogham.wrap-uncaught-exceptions.enable`: Ogham always throw checked exceptions.
+However, libraries that are used by Ogham may throw unchecked exceptions
+(`RuntimeException`). To avoid your application to fail unexpectedly due to
+uncaught error, Ogham catches `RuntimeException` and wrap them with a checked
+exception. This is `true` by default.
 
 === Test utilities
 
-[role=TODO]
-====
-* Remove opensmpp package (not used)
-* Add delays for SMPP simulator to simulate slow server
-* Reorganize test utils.
-* Add JUnit rules/extensions (logging, SmppServer?, ...) 
-* Add assertAll to report all failures at end
-* Add JUnit and Spring extensions to handle random ports
-====
+Test utilities have been reorganized and new features have been added.
+
+==== Logging
+
+When running many tests, it may be difficult to find logs corresponding
+to a particular test. Especially in a Continuous Integration environment.
+
+Ogham provides rules and extensions to help visualize quickly start and 
+end of a test:
+
+* `LoggingTestRule`: JUnit 4 rule 
+* `LoggingTestExtension`: JUnit 5 extension
+* `LoggingTestExtension`: Spock extension
+
+.Example of test output
+[source, role="highlight-lines:2-4,13-17 irrelevant-lines:5-12"]
+----
+11:37:20.443 [main] INFO   - 
+╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+║MultiContentTranslatorTest.textTemplateNotFoundShouldSkipTheErrorAndReturnOneParsedContent        ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+11:37:20.445 [main] DEBUG f.s.o.c.t.c.MultiContentTranslator - Translate the sub content using templateParser
+11:37:20.458 [main] INFO  f.s.o.c.t.c.MultiContentTranslator - null => ignoring
+fr.sii.ogham.core.exception.handler.TemplateNotFoundException: null
+11:37:20.458 [main] DEBUG f.s.o.c.t.c.MultiContentTranslator - Translate the sub content using templateParser
+11:37:20.458 [main] DEBUG f.s.o.c.t.c.MultiContentTranslator - Sub content added
+11:37:20.458 [main] INFO   - 
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│MultiContentTranslatorTest.textTemplateNotFoundShouldSkipTheErrorAndReturnOneParsedContent        │
+├──────────────────────────────────────────────────────────────────────────────────────────────────┤
+│SUCCESS                                                                                           │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+----
+
+==== SMS
+
+It is now possible to simulate a slow SMPP server by annotating the test with
+`@SmppServerConfig`:
+
+.Simulate slow SMPP bind response sent by the server
+[source, java]
+----
+	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+
+	@Test
+	@SmppServerConfig(slow = @Slow(sendBindRespDelay = 500L))       // <1>
+	public void connectionTimeout() throws MessagingException {
+		// send a SMS here
+	}
+----
+<1> This adds 500ms to the response of a bind request
+
+
+==== Make several assertions at once
+
+Instead of failing on first assertion, Ogham provides `OghamAssertions.assertAll`
+method to execute all assertions and make a complete report.
+
+See <<user-manual.adoc#assertall, details about assertAll>>.
+
+==== Use random ports
+
+To test that emails or SMS are correctly received, Ogham starts local servers.
+To run all tests in parallel, using random ports are required (otherwise tests
+will fail indicating that port is already in use).
+
+Ogham provides JUnit rules to start on random ports:
+
+* Using `RandomPortGreenMailRule` (instead of `GreenMailRule`) for testing email 
+in JUnit 4
+* Using `JsmppServerRule` for testing SMS
+
+Ogham also provides extensions for Spring Boot tests:
+
+* `GreenMailRandomSmtpPortInitializer` for starting GreenMail on random port,
+make `GreenMailRule` instance injectable in the test (with `@Autowired`) and
+provide `greenmail.smtp.port` property that is usable in Spring test and application.
+* `JsmppServerRandomPortInitializer` for starting JSMPPServer on random port,
+make `JsmppServerRule` instance injectable in the test (with `@Autowired`) and
+provide `jsmpp.server.port` property that is usable in Spring test and application.
+* `WireMockRandomPortInitializer` for starting WireMockServer on random port,
+make `WireMockRule` instance injectable in the test (with `@Autowired`) and
+provide `wiremock.server.port` property that is usable in Spring test and application.
+
+
+See <<user-manual.adoc#random-ports, more details and samples>>.
 
 
 == Internal improvements
 
 === Java Mail structure
 
-[role=TODO]
-====
-* Explain new structure and tests
-====
+Improve Mime Message structures according to included parts.
 
-=== CI
+If the source email has only one textual content (text/html for
+example), the structure is now:
 
-[role=TODO]
-====
-* List automatic classpath tests (list all combinations ?)
-====
+[source]
+----
+[text/html] (root/body)
+----
+
+If the source email has HTML content with embedded attachments
+(images for example), the structure is:
+
+[source]
+----
+[multipart/related] (root/body)
+  [text/html]
+  [image/png]       (embedded image 1)
+  [image/gif]       (embedded image 2)
+----
+
+If the source email has HTML content with attachments, the structure is:
+
+[source]
+----
+[multipart/mixed]              (root)
+  [text/html]                  (body)
+  [application/pdf]            (attached file 1)
+  [application/octet-stream]   (attached file 2)
+----
+
+If the source email has HTML content with embedded attachments
+(images for example) and additional attachments, the structure is:
+
+[source]
+----
+[multipart/mixed]              (root)
+  [multipart/related]          (body)
+    [text/html]
+    [image/png]                (embedded image 1)
+    [image/gif]                (embedded image 2)
+  [application/pdf]            (attached file 1)
+  [application/octet-stream]   (attached file 2)
+----
+
+If the source email has several textual contents (text/html and
+text/plain for example), the structure is:
+
+[source]
+----
+[multipart/alternative]  (root/body)
+  [text/plain]           (alternative body)
+  [text/html]            (main body)
+----
+
+If the source email has several textual contents (text/html and
+text/plain for example) and embedded attachments (images for example),
+the structure is:
+
+[source]
+----
+[multipart/related]          (root/body)
+  [multipart/alternative]    
+    [text/plain]             (alternative body)
+    [text/html]              (main body)
+  [image/png]                (embedded image 1)
+  [image/gif]                (embedded image 2)
+----
+
+If the source email has several textual contents (text/html and
+text/plain for example) and attachments, the structure is:
+
+[source]
+----
+[multipart/mixed]              (root)
+  [multipart/alternative]      (body)
+    [text/plain]               (alternative body)
+    [text/html]                (main body)
+  [application/pdf]            (attached file 1)
+  [application/octet-stream]   (attached file 2)
+----
+
+If the source email has several textual contents (text/html and
+text/plain for example), embedded attachment (images for example) and
+attachments, the structure is:
+
+[source]
+----
+[multipart/mixed]              (root)
+  [multipart/related]          (body)
+    [multipart/alternative]      
+      [text/plain]             (alternative body)
+      [text/html]              (main body)
+    [image/png]                (embedded image 1)
+    [image/gif]                (embedded image 2)
+  [application/pdf]            (attached file 1)
+  [application/octet-stream]   (attached file 2)
+----
+
+
+[[ci-improvements]]
+=== Continuous Integration
+
+As mentioned above, CI automatically performs many compatibility checks to ensure 
+that Ogham is compatible with Java and Spring Boot versions:
+
+* Include (or not) some Ogham features
+  - Sender implementations (Jakarta Mail, SendGrid, Cloudhopper, ...)
+  - Template engine integrations (Thymeleaf, FreeMarker, ...)
+* Include (or not) some Spring Boot features
+  - Web application
+  - Template engine (Thymeleaf, FreeMarker, ...)
+  - Spring Mail (Jakarta Mail)
+* Spring Boot versions
+  - 1.4.x
+  - 1.5.x
+  - 2.1.x
+  - 2.2.x
+  - 2.3.x
+* Java versions
+  - 8 (Oracle and OpenJDK)
+  - 9 (Oracle and OpenJDK)
+  - 10 (OpenJDK)
+  - 11 (Oracle and OpenJDK)
+  - 12 (OpenJDK)
+  - 13 (OpenJDK)
+  - 14 (OpenJDK)
+  
+It means that Ogham checks compatibility over more than 2000 combinations.

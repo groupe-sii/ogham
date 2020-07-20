@@ -1,6 +1,22 @@
 :relative-path: ../
 include::{docdir}/variables.adoc[]
 
+[[automatic-configuration]]
+== Automatic configuration
+
+Ogham automatically adapts according to the presence or not of some classes
+in the classpath and values of some configuration properties. To do so, there 
+are several concepts that have each a specific role and that interact together.
+
+=== Concepts
+
+include::{user-manual-dir}/configuration/concepts.adoc[leveloffset=+2]
+
+=== Auto-configuration lifecycle and configuration phases
+
+include::{user-manual-dir}/configuration/lifecycle.adoc[leveloffset=+2]
+
+
 [[mimetype-detection]]
 == Automatic MimeType detection
 

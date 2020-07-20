@@ -1,0 +1,17 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+[role=TODO]
+====
+* Describe SMPP protocol encodings and fields (like Data Coding Scheme)
+* Explain Ogham automatic guessing
+* Explain how to adapt automatic guessing
+* Explain how to disable automatic guessing and use a fixed encoding
+* Explain the impact on the splitting of messages
+* Note to indicate how to add custom encoding
+====
+
+include::{user-manual-dir}sms/guess-encoding.adoc[leveloffset=+2]
+
+include::{user-manual-dir}sms/guess-data-coding-scheme.adoc[leveloffset=+2]

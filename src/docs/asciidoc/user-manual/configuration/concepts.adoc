@@ -1,0 +1,75 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+== MessagingService class
+
+The `MessagingService` is the facade to send any kind of message. 
+Developer should use only `MessagingService.send()` method. 
+The actual work is then internally delegated to sender implementations
+and template engine integrations that is not visible by the developer.
+Even if internal implementations are not visible to the developer,
+Ogham behavior is fully adaptable thanks to `Builder` classes.
+
+== Builder classes
+
+Ogham is fully configurable and extensible.
+
+To adapt the behavior to the application needs, Ogham
+provides `Builder` classes. Their purpose is to separate the concerns:
+
+* Implementations are simple and do the actual work.
+* Builders create implementation instances according to the application needs.
+
+Builders hide complexity by offering methods that simplifies the construction 
+of the implementations.
+
+This follows the https://en.wikipedia.org/wiki/Builder_pattern[builder design pattern]
+principles. 
+
+== MessagingConfigurer classes
+
+A `MessagingConfigurer` is responsible to provide the best behavior by default.
+
+Each `MessagingConfigurer` calls the `Builder` methods to configure implementations 
+to provide a consistent behavior. They also register configuration properties that 
+can be  configured externally by the developer to adapt the default behavior.
+
+Each `MessagingConfigurer` may be automatically found and registered by Ogham using 
+`@ConfigurerFor` annotation. If the automatic class scanning is not enabled,
+each `MessagingConfigurer` can be registered manually. 
+
+`MessagingConfigurer` classes are central for the automatic configuration.
+
+== MessagingBuilder
+
+The purpose of `MessagingBuilder` is to provide to the developer a single entrypoint to
+configure and get a `MessagingService` instance. `MessagingBuilder`
+can automatically scan classpath to find `MessagingConfigurer` classes and
+instantiate them. 
+
+`MessagingBuilder` provides static methods to ease `MessagingBuilder`
+creation and automatic registration:
+
+* `MessagingBuilder.empty()` methods: Instantiate a `MessagingBuilder` with no 
+auto-configuration at all (no class scanning to discover `MessagingConfigurer` classes).
+* `MessagingBuilder.minimal()` methods: Instantiate a `MessagingBuilder` that 
+runs classpath scanning to find `MessagingConfigurer` classes that are annotated with
+`@ConfigurerFor` annotation. Only `MessagingConfigurer` classes that target `minimal` 
+static factory are instantiated. This is useful to benefit for general Ogham behavior 
+and features (such as template engines, automatic mimetype detection, auto-filling
+of messages, ...). Sender implementations are not automatically registered yet.
+* `MessagingBuilder.standard()` methods: Instantiate a `MessagingBuilder` that 
+runs classpath scanning to find `MessagingConfigurer` classes that are annotated with
+`@ConfigurerFor` annotation. Only `MessagingConfigurer` classes that target `standard`
+static factory are instantiated. All Ogham features are registered including all
+available sender implementations.
+
+[TIP]
+====
+A `MessagingConfigurer` targets one or several `MessagingBuilder` static factory 
+methods through the `@ConfigurerFor` annotation (using the `targetedBuilder` field). 
+====
+
+
+

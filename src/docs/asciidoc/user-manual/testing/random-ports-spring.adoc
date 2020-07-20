@@ -1,0 +1,53 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+Ogham provides Spring Boot extensions that can be used in tests
+to benefit from random ports easily.
+
+.Random ports in Spring Boot tests
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Email
+
+[source, java, role="collapse-lines:1-17 irrelevant-lines:1-17, highlight-lines:21,23,25,31"]
+----
+include::{spring-samples-testsourcedir}/fr/sii/ogham/sample/springboot/email/RandomSmtpPortTestSample.java[]
+----
+<1> The property `greenmail.smtp.port` can be used in the tested application that
+uses Ogham. 
+<2> Register `GreenMailRandomSmtpPortInitializer` to automatically start
+GreenMail SMTP service on a random port and register `GreenMailRule` bean
+in test context.
+<3> Use `@Autowired` to inject `GreenMailRule` instance that uses the
+random port.
+<4> Make assertions on GreenMail as usual.
+
+
+{spring-samples-testsourcedir-url}/fr/sii/ogham/sample/springboot/email/RandomSmtpPortTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab]
+image:{icons-java-code} SMS
+
+[source, java, role="collapse-lines:1-17 irrelevant-lines:1-17, highlight-lines:21,23,25,31"]
+----
+include::{spring-samples-testsourcedir}/fr/sii/ogham/sample/springboot/sms/RandomSmppPortTestSample.java[]
+----
+<1> The property `jsmpp.server.port` can be used in the tested application that
+uses Ogham. 
+<2> Register `JsmppServerRandomPortInitializer` to automatically start
+JSMPPServer on a random port and register `JsmppServerRule` bean
+in test context.
+<3> Use `@Autowired` to inject `JsmppServerRule` instance that uses the
+random port.
+<4> Make assertions on JSMPPServer as usual.
+
+
+{spring-samples-testsourcedir-url}/fr/sii/ogham/sample/springboot/smpp/RandomSmppPortTestSample.java?ts={tabsize}[Source code of the sample].
+
+[role=tab-container-end]
+-
+
+

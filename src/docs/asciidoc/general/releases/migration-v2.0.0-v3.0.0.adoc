@@ -3,20 +3,386 @@ include::{docdir}/variables.adoc[]
 
 == Fluent builder consistency for property configuration
 
+As Ogham is fully extensible, there could be an issue of priority due to registration
+order. Therefore a developer could set a configuration value in its code but it
+could be overridden by an external property. This could be particularly annoying in
+tests.
 
-[role=TODO]
+
+
+.Example of the issue
+[role="tab-container"]
+Issue
+
+[role=tab]
+image:{icons-java-code} Automatic configuration
+
+For example, Ogham could automatically provide a configuration for email SMTP port:
+
+[source, java]
+----
+.sender(JavaMailBuilder.class)
+  .port("${mail.smtp.port}",     // <1> 
+        "25")                    // <2>
+----
+<1> Register the property `mail.smtp.port` for the SMTP port. If the property
+is set with a value, this value is used. A property is recognize because it
+is surrounded by `${}`.
+<2> The default value to use if no value is set for the `mail.smtp.port` property.
+
+
+[role=tab]
+image:{icons-java-code} Developer code
+
+Now developer wants to set the port in its code:
+
+[source, java]
+----
+.sender(JavaMailBuilder.class)
+  .port("465")                    // <1>
+----
+<1> Explicitly set the port to `465` using the string method.
+
+
+[role=tab-container-end]
+-
+
+The result is:
+
+* If the property is set anywhere then it is used so the value set by the developer
+is not used.
+* If the property is not set then the default value (`25`) is used.
+
+The developer could still use the method `port(int)` instead that has higher priority
+but this was not the case for a string value.
+
+
+Ogham now provides different methods for configuring properties, default values and
+values provided by the developer. There is now a clear priority order:
+
+. value explicitly set by the developer
+. property that has a value set
+. default value
+
+
+.Update your code
+[role="tab-container"]
+Set value
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="diff-remove-lines:2 diff-add-lines:3"]
+----
+.sender(JavaMailBuilder.class)
+  .port("465")                 // <1>
+  .port(465)                   // <2>
+----
+<1> The old way to set the value
+<2> The new way to set the value
+
+
+[role=tab-container-end]
+-
+
+
+[TIP]
 ====
-* Explain how to update code 
-* Add a sample (+diff)
+In addition to a clearer and consistent API, the new API uses the right type instead
+of using strings.
 ====
 
-
+[[fluent-content-api]]
 == Fluent API for message construction
 
-[role=TODO]
+Ogham now provides a fuent API for message content building in order to guide
+developer.
+
+Here are examples with the new API:
+
+
+.Fluent API for email body
+[role="tab-container"]
+Fluent body API
+
+[role=tab]
+image:{icons-java-code} String body
+
+[source, java, role="diff-remove-lines:3 diff-add-lines:4"]
+----
+oghamService.send(new Email()
+  .subject("Simple")
+  .content("string body")                     // <1>
+  .body().string("string body")               // <2>
+  .to("Recipient Name <recipient@sii.fr>"));
+----
+<1> `content()` method can take a string to set the body of the email.
+<2> The new API provides a `body()` method to construct the email... body ! 
+The `body()` method provides access to several methods to set the email body.
+The sample shows how to set a simple string as the body of the email (`.string()`
+method).
+
+
+[role=tab]
+image:{icons-java-code} Templated body
+
+[source, java, role="diff-remove-lines:3 diff-add-lines:4"]
+----
+oghamService.send(new Email()
+  .subject("Simple")
+  .content(new TemplateContent("template.html", templateContext))    // <1>
+  .body().template("template.html", templateContext)                 // <2>
+  .to("Recipient Name <recipient@sii.fr>"));
+----
+<1> `content()` method can take a `TemplateContent` to set the body of the email
+using a template.
+<2> The `body()` method provides access to several methods to set the email body.
+The sample shows how to use a template for the body of the email (`.template()`
+method).
+
+
+[role=tab]
+image:{icons-java-code} body + alternative
+
+[source, java, role="diff-remove-lines:3-5 diff-add-lines:6-7"]
+----
+oghamService.send(new Email()
+  .subject("Simple")
+  .content(new MultiContent(                                    // <1>
+    new TemplateContent("altarnative.txt", templateContext),    // <2>
+    new TemplateContent("body.html", templateContext)))         // <3>
+  .html().template("body.html", templateContext)                // <4>
+  .text().template("alternative.txt", templateContext)          // <5>
+  .to("Recipient Name <recipient@sii.fr>"));
+----
+<1> `content()` method can take a `MultiContent` to set the body and alternative
+of the email.
+<2> Use a text template for the alternative (`new TemplateContent`). The order
+is important: alternative *MUST* be first sub-content.
+<3> Use an html template for the body (`new TemplateContent`). The order
+is important: body *MUST* be second sub-content.
+<4> The new API provides a `html()` method to set the html body of the email. Call 
+order doesn't matter.
+<5> The new API provides a `text()` method to set the text alternative of the email.
+Call order doesn't matter.
+
+
+.Shortcut
+[NOTE]
 ====
-* Explain how to update code 
-* Add a sample (+diff)
+The new API also provides a shortcut to set both alternative and body based
+on templates:
+
+[source, java, role="highlight-lines:3"]
+-----
+oghamService.send(new Email()
+  .subject("Simple")
+  .body().template("template", templateContext)        // <1>
+  .to("Recipient Name <recipient@sii.fr>"));
+-----
+<1> No extension is provided so Ogham can automatically use `template.html` as 
+body of the email if the template exists and use `template.txt` as the textual 
+alternative of the email if the template exists. 
+====
+
+[role=tab-container-end]
+-
+
+
+.Fluent API for SMS message
+[role="tab-container"]
+Fluent SMS message
+
+[role=tab]
+image:{icons-java-code} String message
+
+[source, java, role="diff-remove-lines:2 diff-add-lines:3"]
+----
+oghamService.send(new Sms()
+  .content("sms message")                     // <1>
+  .message().string("sms message")            // <2>
+  .to("0600000000"));
+----
+<1> `content()` method can take a string to set the message of the SMS.
+<2> The new API provides a `message()` method to construct the SMS... message ! 
+The `message()` method provides access to several methods to set the SMS message.
+The sample shows how to set a simple string as the message of the SMS (`.string()`
+method).
+
+
+[role=tab]
+image:{icons-java-code} Templated message
+
+[source, java, role="diff-remove-lines:2 diff-add-lines:3"]
+----
+oghamService.send(new Sms()
+  .content(new TemplateContent("template.txt", templateContext))    // <1>
+  .message().template("template.txt", templateContext)              // <2>
+  .to("Recipient Name <recipient@sii.fr>"));
+----
+<1> `content()` method can take a `TemplateContent` to set the message of the SMS
+using a template.
+<2> The `message()` method provides access to several methods to set the SMS message.
+The sample shows how to use a template for the message of the SMS (`.template()`
+method).
+
+[role=tab-container-end]
+-
+
+
+The old API is generic and for instance, a developer could misunderstand which class
+to use as `content()` method parameter. He could use a `MultiContent` for 
+SMS. However, a `MultiContent` for a SMS has no meaning.
+
+The new API provides adapted methods to avoid this kind of misunderstanding. 
+
+[TIP]
+====
+The old API is still available and useful for advanced behavior.
+====
+
+
+Ogham also provides a fuent API to join attachments to the email.
+Attachments are either:
+
+* attached (a file that is outside the body and is downloadable)
+* embedded (a resource that is used by the body of the email like an image for example).
+An embedded attachment *MUST* provide a `Content-ID` in order to be referenced in the
+email body. 
+
+Developers that use old API had to know which value to use for `disposition` parameter
+of `Attachment` constructors. If no disposition is specified, the default disposition 
+is `ContentDisposition.ATTACHMENT`. If a developer wanted to embed an attachment, he
+had to know that the `Content-ID` must be specified in order to work.
+Moreover, `Attachment` constructors could take a `name` parameter that is either 
+optional or mandatory depending on the type of the attached resource (optional 
+for file, mandatory for stream, mandatory for byte array).
+
+This behavior is still available but the new API is clearer:
+
+
+.Fluent API for email attachments
+[role="tab-container"]
+Fluent attachments API
+
+[role=tab]
+image:{icons-java-code} External file
+
+[source, java, role="diff-remove-lines:1-5,11,13 diff-add-lines:12,14"]
+----
+Attachment embedded = new Attachment(                          // <1>
+  new File("path-to-file.pdf"),                                // <2>
+  "description",                                               // <3>
+  ContentDisposition.INLINE));                                 // <4>
+embedded.setContentId("Content-ID");                           // <5>
+
+oghamService.send(new Email()
+  .subject("Simple")
+  .body().string("string body")
+  .to("Recipient Name <recipient@sii.fr>")
+  .attach(new Attachment(new File("path-to-file.pdf")))         // <6>
+  .attach().file(new File("path-to-file.pdf"))                  // <7>
+  .attach(embedded);                                            // <8>
+  .embed().file("Content-ID", new File("path-to-file.pdf")));   // <9>
+----
+<1> As `Attachment` constructors doesn't provide a way to set `Content-ID` for
+embedded attachments, developer has to extract to a variable to call `setContentId()`.
+<2> Indicate the file to embed.
+<3> To indicate that the `Attachment` is embedded, developer had to
+use the constructor that takes 3 parameters. So he had to set a value for description
+of the embedded resource even if it is optional.
+<4> Indicate that the `Attachment` is embedded.
+<5> Set the `Content-ID`.
+<6> Add an attachment to the email (uses `ContentDisposition.ATTACHMENT` disposition).
+<7> New API to attach a file (disposition is set to `ContentDisposition.ATTACHMENT`).
+<8> Add the embedded attachment.
+<9> New API to embed a file (disposition is set to `ContentDisposition.INLINE`). 
+As `Content-ID` is mandatory for embedded attachments, this method takes the
+`Content-ID` as first parameter.
+
+
+[role=tab]
+image:{icons-java-code} Resource
+
+[source, java, role="diff-remove-lines:1-5,11,13 diff-add-lines:12,14"]
+----
+Attachment embedded = new Attachment(                              // <1>
+  new File("path-to-file.pdf"),                                    // <2>
+  "description",                                                   // <3>
+  ContentDisposition.INLINE));                                     // <4>
+embedded.setContentId("Content-ID");                               // <5>
+
+oghamService.send(new Email()
+  .subject("Simple")
+  .body().string("string body")
+  .to("Recipient Name <recipient@sii.fr>")
+  .attach(new Attachment("classpath:path-to-file.pdf"))            // <6>
+  .attach().resource("classpath:path-to-file.pdf")                 // <7>
+  .attach(embedded);                                               // <8>
+  .embed().resource("Content-ID", "classpath:path-to-file.pdf")    // <9>
+----
+<1> As `Attachment` constructors doesn't provide a way to set `Content-ID` for
+embedded attachments, developer has to extract to a variable to call `setContentId()`.
+<2> Indicate the file to embed.
+<3> To indicate that the `Attachment` is embedded, developer had to
+use the constructor that takes 3 parameters. So he had to set a value for description
+of the embedded resource even if it is optional.
+<4> Indicate that the `Attachment` is embedded.
+<5> Set the `Content-ID`.
+<6> Add an attachment to the email (uses `ContentDisposition.ATTACHMENT` disposition).
+<7> New API to attach a file (disposition is set to `ContentDisposition.ATTACHMENT`).
+<8> Add the embedded attachment.
+<9> New API to embed a file (disposition is set to `ContentDisposition.INLINE`). 
+As `Content-ID` is mandatory for embedded attachments, this method takes the
+`Content-ID` as first parameter.
+
+
+[role=tab]
+image:{icons-java-code} Custom name
+
+[source, java, role="diff-remove-lines:5-6 diff-add-lines:7-8"]
+----
+oghamService.send(new Email()
+  .subject("Simple")
+  .body().string("string body")
+  .to("Recipient Name <recipient@sii.fr>")
+  .attach(new Attachment("custom-name.pdf",                        // <1> 
+    getClass().getResourceAsStream("path-to-file.pdf")))           // <2>
+  .attach().resource("custom-name.pdf",                            // <3>
+    "classpath:/attachment/path-to-file.pdf")                      // <4>
+----
+<1> Developer must use the constructor that takes the name as first argument
+and a `byte[]` or `InputStream` as second argument. See note below.
+<2> A simple path can't be provided, developer must write Java code. See note below.
+<3> The new API provides a method that allow to provide a custom name...
+<4> and point to a resource using a simple path.
+
+
+.Why new API is better
+[IMPORTANT]
+====
+As `Attachment` doesn't have a constructor that takes both path to a file or 
+resource with custom name, developer has to update its code to not use a path
+anymore but use directly Java code to get the an `InputStream` or a `byte[]`.
+This means that developer can't benefit from Ogham resource resolution.
+He can't make the path configurable to point either to a file in the classpath 
+or to an external file according to running environment (file present in classpath
+in tests but external file in production for instance), he has to either handle it 
+manually or change its code.
+
+On the contrary, with the new API, the developer just has to add the name parameter
+and that's it.
+====
+
+[role=tab-container-end]
+-
+
+
+.Custom Content-Type
+[TIP]
+====
+The new API also provides a simplest way to set a custom `Content-Type` for
+an attachment instead of automatic detection.
 ====
 
 
@@ -106,9 +472,8 @@ that the property is only handled by that protocol and not common to all protoco
 These properties are renamed.
 
 
+=== Properties for default values
 
-.Properties for default values
-====
 * `ogham.email.bcc` renamed to `ogham.email.bcc.default-value`
 * `ogham.email.cc` renamed to `ogham.email.cc.default-value`
 * `ogham.email.from` renamed to `ogham.email.from.default-value`
@@ -178,12 +543,9 @@ public class BasicSample {
 
 [role=tab-container-end]
 -
-====
 
+=== Properties for subject extraction
 
-
-.Properties for subject extraction
-====   
 `ogham.email.subject.text.first-line-prefix` renamed to `ogham.email.subject.extract-from-text.first-line-prefix`:
 
 This property is used to extract the first line of the text part (if first line starts with with the 
@@ -192,31 +554,143 @@ property is consistent with `ogham.email.subject.extract-html-title.enable`. Mor
 versions we could add more properties to control the subject extraction from text part using additional
 properties (`ogham.email.subject.extract-from-text.something-else` for example).
 The new name also complies with Spring property handling.
-====
 
 
+.Update your code
+[role="tab-container"]
+Update code
 
-.SendGrid properties
-====
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class BasicSample {
+
+	public static void main(String[] args) throws MessagingException {
+		// configure properties (could be stored in a properties file or defined
+		// in System properties)
+		Properties properties = new Properties();
+		properties.put("mail.smtp.host", "<your server host>");
+		properties.put("mail.smtp.port", "<your server port>");
+		properties.put("ogham.email.subject.text.first-line-prefix", "Subject:");                     // <1>
+		properties.put("ogham.email.subject.extract-from-text.first-line-prefix", "Subject:");        // <2>
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.properties()
+						.set("ogham.email.subject.text.first-line-prefix", "Subject:")                // <3>
+						.set("ogham.email.subject.extract-from-text.first-line-prefix", "Subject:")   // <4>
+						.and()
+					.and()
+				.build();
+		// send the email using fluent API
+		service.send(new Email()
+		                .from("sender@yopmail.com")
+						.body().string("email content")
+						.to("ogham-test@yopmail.com"));
+	}
+
+}
+----
+<1> The old property to enable extraction of subject from text alternative if
+is starts with the provided prefix.
+<2> The new property to enable extraction of subject from text alternative if
+is starts with the provided prefix.
+<3> The old property to enable extraction of subject from text alternative if
+is starts with the provided prefix (defined using fluent API).
+<4> The new property to enable extraction of subject from text alternative if
+is starts with the provided prefix (defined using fluent API).
+
+
+[role=tab-container-end]
+-
+
+=== SendGrid properties
+
 `ogham.email.sengrid.api-key` renamed to `ogham.email.sendgrid.api-key`
 
-Fix misspelling (missing 'd' character).
-====
+Fix misspelling (missing `d` character).
 
 
+.Update your code
+[role="tab-container"]
+Update code
 
-.FreeMarker properties
-====
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27"]
+----
+package fr.sii.ogham.sample.standard.email;
+
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+
+public class BasicSample {
+
+	public static void main(String[] args) throws MessagingException {
+		// configure properties (could be stored in a properties file or defined
+		// in System properties)
+		Properties properties = new Properties();
+		properties.put("mail.smtp.host", "<your server host>");
+		properties.put("mail.smtp.port", "<your server port>");
+		properties.put("ogham.email.sengrid.api-key", "<SendGrid API key>");           // <1>
+		properties.put("ogham.email.sendgrid.api-key", "<SendGrid API key>");          // <2>
+		// Instantiate the messaging service using default behavior and
+		// provided properties
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties(properties)
+					.properties()
+						.set("ogham.email.sengrid.api-key", "<SendGrid API key>")      // <3>
+						.set("ogham.email.sendgrid.api-key", "<SendGrid API key>")     // <4>
+						.and()
+					.and()
+				.build();
+		// send the email using fluent API
+		service.send(new Email()
+		                .from("sender@yopmail.com")
+						.body().string("email content")
+						.to("ogham-test@yopmail.com"));
+	}
+
+}
+----
+<1> The old property for SendGrid API key.
+<2> The new property for SendGrid API key.
+<3> The old property for SendGrid API key (defined using fluent API).
+<4> The new property for SendGrid API key (defined using fluent API).
+
+[role=tab-container-end]
+-
+
+=== FreeMarker properties
+
 * `ogham.sms.freemarker.prefix` renamed to `ogham.sms.freemarker.path-prefix`
 * `ogham.sms.freemarker.suffix` renamed to `ogham.sms.freemarker.path-suffix`
 
 Fix missing `path-`.
-====
 
+=== Cloudhopper session properties
 
-
-.Cloudhopper session properties
-====
 * `ogham.sms.cloudhopper.bind-timeout` renamed to `ogham.sms.cloudhopper.session.bind-timeout`,
 * `ogham.sms.cloudhopper.connect-timeout` renamed to `ogham.sms.cloudhopper.session.connect-timeout`
 * `ogham.sms.cloudhopper.response-timeout` renamed to `ogham.sms.cloudhopper.session.response-timeout`
@@ -234,46 +708,59 @@ Rename all the properties that configures Cloudhopper session for clarity.
 * `ogham.sms.cloudhopper.connect-retry-delay` renamed to `ogham.sms.cloudhopper.session.connect-retry.delay-between-attempts`
 
 Rename properties used for reconnection of session for clarity.
-====
 
+=== General SMS properties
 
-.General SMS properties
-====
 * `ogham.sms.from-format-enable-alphanumeric` renamed to `ogham.sms.from.alphanumeric-code-format.enable`
 * `ogham.sms.from-format-enable-international` renamed to `ogham.sms.from.international-format.enable`
 * `ogham.sms.from-format-enable-shortcode` renamed to `ogham.sms.from.short-code-format.enable`
 * `ogham.sms.to-format-enable-international` renamed to `ogham.sms.to.international-format.enable`
 
 Follows same convention as all other "enable" properties.
-====
 
+=== OVH SMS properties
 
-
-.OVH SMS properties
-====
 * `ogham.sms.ovh.no-stop` renamed to `ogham.sms.ovh.options.no-stop`
 * `ogham.sms.ovh.sms-coding` renamed to `ogham.sms.ovh.options.sms-coding`
 * `ogham.sms.ovh.tag` renamed to `ogham.sms.ovh.options.tag`
 
 Distinguish mandatory/important properties from options.
-====
 
 
 
 == SMS
 
+Instead of static mapping that doesn't fit SMPP behavior, Ogham now provides
+an automatic encoding guessing that is based on the characters used in the message
+to use the right character table and protocol parameters (like Data Coding Scheme).
 
-[role=TODO]
-====
-* Explain how to update code/configuration for new auto-detection
-====
+If you were using `ogham.sms.cloudhopper.smpp-charset=<charset name>` to use a fixed 
+SMPP charset, you should update your configuration like this:
+
+* You should use `ogham.sms.smpp.encoder.default-charset=<charset name>` (or its alias
+`ogham.sms.cloudhopper.encoder.default-charset`) instead of 
+`ogham.sms.cloudhopper.smpp-charset=<charset name>`.
+* You may need to disable automatic guessing `ogham.sms.smpp.encoder.auto-guess.enable=false` (or its alias 
+`ogham.sms.cloudhopper.encoder.auto-guess.enable`) to always use the default
+encoding configured above.
+* You may also need to force `0` value for Data Coding Scheme using 
+the configuration property `ogham.sms.smpp.data-coding-scheme.value=0` (or its alias
+`ogham.sms.cloudhopper.data-coding-scheme.value`).
+* You may also need to disable automatic Data Coding Scheme guessing using 
+`ogham.sms.smpp.data-coding-scheme.auto.enable=false` (or its alias 
+`ogham.sms.cloudhopper.data-coding-scheme.auto.enable`).
+
+You should also read the section that explains 
+<<user-manual.adoc#message-encoding, automatic encoding guessing>> to fully
+understand the purpose of each property.
+
+
 
 == Test utilities
 
 Ogham provides utilities for testing reception of email or SMS. In order to be concise, Ogham
 provides a method for applying the same assertions on all received messages. This method has been renamed
 from `forEach()` to `every()`.
-
 
 
 .Update your code

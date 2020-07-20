@@ -1,0 +1,36 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+`@ConfigurerFor` has a field named `phase()` to indicate when the `MessagingConfigurer`
+must be executed. There are two phases: `ConfigurationPhase.AFTER_INIT` and 
+`ConfigurationPhase.BEFORE_BUILD`.
+
+Here is the auto-configuration lifecycle:
+
+. `MessagingBuilder` instantiation (using `MessagingBuilder.standard()` or 
+`MessagingBuilder.minimal()`).
+. Search `MessagingConfigurer` classes in the classpath and register found classes 
+ordered by higher priority.
+. Trigger `ConfigurationPhase.AFTER_INIT` phase: Instantiate and configure previously 
+registered `MessagingConfigurer` classes (only configurers registered for 
+`AFTER_INIT` phase).
+. Developer can configure Ogham using `MessagingBuilder` instance (created at step 1).
+. Developer has finished configuring Ogham so he calls `MessagingBuilder.build()`.
+. Trigger `ConfigurationPhase.BEFORE_BUILD` phase: Instantiate and configure 
+previously registered `MessagingConfigurer` classes (only configurers registered for 
+`BEFORE_BUILD` phase).
+. Instantiate `MessagingService` according to `MessagingBuilder` configuration.
+. Developer gets an instance of `MessagingService` completely configured for his
+needs.
+
+.Early initialization phase and property evaluation
+[IMPORTANT]
+====
+If an Ogham extension provides a `MessagingConfigurer` that is initialized during
+`AFTER_INIT` phase and this configurer needs to evaluate a property value
+to adapt the behavior, it may not work as expected.
+
+Actually, the developer can configure value for properties at the step 4 while
+`AFTER_INIT` phase is triggered at step 3.
+====

@@ -37,6 +37,11 @@ include::{user-manual-dir}email/custom-cid-generator.adoc[leveloffset=+2]
 
 == SMS
 
+[[message-encoding]]
+=== Message encoding
+
+include::{user-manual-dir}sms/message-encoding.adoc[leveloffset=+2]
+
 [[session-strategy]]
 === Session management
 

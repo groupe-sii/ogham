@@ -22,7 +22,7 @@ import fr.sii.ogham.core.service.MessagingService;
  * {@link MessagingBuilder#build()}.</li>
  * <li><strong>Trigger {@link ConfigurationPhase#BEFORE_BUILD} phase</strong>:
  * Instantiate and configure previously registered {@link Configurer}s (only
- * configurers registered for {@code BEFORE_BUILD} phase.</li>
+ * configurers registered for {@code BEFORE_BUILD} phase).</li>
  * <li>Instantiate {@link MessagingService} according to
  * {@link MessagingBuilder} configuration.</li>
  * <li>Developer gets an instance of {@link MessagingService} completely
