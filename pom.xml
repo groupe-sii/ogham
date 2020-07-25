@@ -141,7 +141,7 @@
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
 		<!-- Plugins - mutation testing -->
-		<pit.version>1.4.12-OGHAM</pit.version>
+		<pit.version>1.5.3-OGHAM</pit.version>
 		<pitest-maven.version>${pit.version}</pitest-maven.version>
 		<pitest-junit5-plugin.version>0.7</pitest-junit5-plugin.version>
 		<pitmp-maven-plugin.version>1.3.7</pitmp-maven-plugin.version>
@@ -1230,6 +1230,11 @@
 								<groupId>com.sendgrid</groupId>
 								<artifactId>sendgrid-java</artifactId>
 								<version>${sendgrid-java-v2.version}</version>
+							</additionalDependency>
+							<additionalDependency>
+								<groupId>com.sendgrid</groupId>
+								<artifactId>sendgrid-java</artifactId>
+								<version>4.3.0</version>
 							</additionalDependency>
 							<additionalDependency>
 								<groupId>org.thymeleaf</groupId>
