@@ -1,0 +1,350 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+Comparing two HTML documents can be tricky. Indeed, the HTML attributes can be declared in a 
+different order, number of spaces/tabs can be different, some attributes may be declared differently 
+but corresponding to the same behavior (for example `disabled` attribute can be declared only 
+`disabled` with no value, `disabled="true"` or `disabled="disabled"`).
+
+Ogham provides two distinct matchers to check if:
+
+* HTML is identical (exactly the same nodes at same position and same attributes with same values)
+* HTML is similar (nodes may be at different positions, same attributes with same values)  
+
+In addition to comparison helpers, Ogham provides helpers to load files from classpath in tests 
+(`ResourceUtils.resource` and `ResourceUtils.resourceAsString`). 
+This is useful to avoid writing expected HTML content as string in your code and also avoid writing 
+the same utility function every time.
+
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-26,27-44,71-83 irrelevant-lines:1-26 highlight-lines:63"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java[]
+----
+<1> Use an HTML template
+<2> Object used to evaluate variables in the template
+<3> Assert that HTML is similar as an expected HTML content
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab]
+image:{icons-thymeleaf} HTML template
+
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/register.html[]
+----
+
+
+{standard-samples-resourcesdir-url}/template/register.html?ts={tabsize}[Source code of the template].
+
+
+[role=tab]
+image:{icons-html} Expected HTML
+
+[source, html]
+----
+include::{standard-samples-testresourcesdir}/expected/register.html[]
+----
+
+
+{standard-samples-testresourcesdir-url}/expected/register.html?ts={tabsize}[Source code of the expected HTML].
+
+
+[role=tab-container-end]
+-
+
+
+== Help in Eclipse for failing tests
+
+When your tests report errors due to HTML differences, Ogham helps with Eclipse integration. The following sample is voluntary in error due to differences between actual HTML and expected HTML (this is the expected HTML that is incorrect) in order to show how Ogham helps you.
+
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-44,71-83 irrelevant-lines:1-25"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java[]
+----
+<1> Use an HTML template
+<2> Object used to evaluate variables in the template
+<3> Assert that HTML is identical as an expected HTML content
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab]
+image:{icons-thymeleaf} HTML template
+
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/register.html[]
+----
+
+
+{standard-samples-resourcesdir-url}/template/register.html?ts={tabsize}[Source code of the template].
+
+
+[role=tab]
+image:{icons-html} Expected HTML
+
+[source, html, role="highlight-lines:4,8"]
+----
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>bar - Confirm your registration</title>
+		<meta charset="utf-8"></meta>
+	</head>
+    <body>
+		<h1 class="title" title="foo">Hello bar</h1>
+		<p class="text">42</p>
+	</body>
+</html>
+----
+
+The expected HTML is voluntary wrong:
+
+* `title` starts with `bar` instead of `foo`
+* `h1` text is `Hello bar` instead of `Hello foo`
+
+All other differences are not reported as errors as the resulting HTML interpretation will be the same.
+
+
+[role=tab-container-end]
+-
+
+.JUnit view
+image::{images-dir}/eclipse/tests-junit-error.png[role="text-center"]
+
+Double-clicking on the exception:
+
+.Exception message is clickable
+image::{images-dir}/eclipse/tests-junit-error-open-comparison.png[role="text-center"]
+
+Opens a comparison window:
+
+.Comparison window
+image::{images-dir}/eclipse/tests-comparison.png[role="text-center"]
+
+
+
+WARNING: Spaces, tag closing and attributes order are reported by the comparison window provided by Eclipse. Indeed, Eclipse just compares two strings (not HTML documents). This window is just an helper to visualize where the problems are. But the real errors to fix are displayed both in logs and in the error summary.
+
+.Useful part of the error summary
+image::{images-dir}/eclipse/tests-junit-error-useful-part.png[role="text-center"]
+
+
+== Testing email with an HTML body and text alternative
+
+Testing an email sent with two main parts (HTML and text fallback) is straightforward.
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-44,69-81 irrelevant-lines:1-25 highlight-lines:58-63"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java[]
+----
+<1> Access to main body assertions
+<2> Assert that main body message is HTML content and is similar as an expected HTML content loaded from classpath
+<3> Assert that main body message mimetype is `text/html`
+<4> Access to alternative assertions
+<5> Assert that alternative body message is text content and is exactly the expected text content loaded from classpath
+<6> Assert that alternative body message mimetype is `text/plain`
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab]
+image:{icons-thymeleaf} HTML template
+
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
+----
+
+
+{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts={tabsize}[Source code of the template].
+
+
+[role=tab]
+image:{icons-freemarker-text-template} Text template
+
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
+----
+
+
+{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the template].
+
+
+[role=tab]
+image:{icons-html} Expected HTML
+
+[source, html]
+----
+include::{standard-samples-testresourcesdir}/expected/simple_bar_42.html[]
+----
+
+
+{standard-samples-testresourcesdir-url}/expected/simple_bar_42.html?ts={tabsize}[Source code of the expected HTML].
+
+
+[role=tab]
+image:{icons-text} Expected text
+
+[source]
+----
+include::{standard-samples-testresourcesdir}/expected/simple_bar_42.txt[]
+----
+
+
+{standard-samples-testresourcesdir-url}/expected/simple_bar_42.txt?ts={tabsize}[Source code of the expected text].
+
+
+[role=tab-container-end]
+-
+
+
+
+== Testing attachments
+
+
+You can also test that attachments are sent correctly.
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:63-68"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java[]
+----
+<1> Assert that exactly one attachment is attached to the received email
+<2> Access the first attachment for defining assertions on it
+<3> Assert that the first received file is exactly the same as the sent one
+<4> Assert that the detected mimetype of the first attachment is correct
+<5> Assert that the name of the first attachment is the expected one
+<6> Assert that the attachment disposition is correct
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab-container-end]
+-
+
+
+
+
+== Testing several emails at once
+
+When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `every` method to apply defined assertions on all messages.
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-24,26-43 irrelevant-lines:1-24 highlight-lines:55"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java[]
+----
+<1> Assert that 6 distinct messages are received
+<2> `every` applies all later defined assertions to all messages (the 6 messages)
+<3> Assert that each received messages has exactly 3 `to` recipients
+<4> Assert that each received messages has exactly 2 `cc` recipients
+
+[TIP]
+====
+The `bcc` recipient is not testable. Indeed, `bcc` recipients are hidden recipients that must not be visible. So the email is received (there are 6 received messages not 5). But `bcc` field of each email are empty because they are not present in the sent email. The `bcc` field is just used for routing.
+====
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab-container-end]
+-
+
+
+Sometimes you also need to send several different emails. The emails may have some identical information (sender or subject for example). So you can mix `every` (define assertions all messages) with `message` (define assertion for one particular message).
+
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-23,25-42 irrelevant-lines:1-23 highlight-lines:60,70,78,86"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java[]
+----
+<1> Shared assertions (subject, sender and body mimetype)
+<2> Specific assertions for first sent message (recipient and message content)
+<3> Specific assertions for second sent message (recipient and message content)
+<4> Specific assertions for third sent message (recipient and message content)
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab-container-end]
+-
+
+== Testing with SMTP authentication
+
+GreenMail allows to start the SMTP server with user and credentials.
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,51-74 highlight-lines:36,43-45"]
+----
+include::{ogham-all-testsourcedir}/oghamall/it/email/EmailSMTPAuthenticationTest.java[]
+----
+<1> Configure GreenMail to register a user
+<2> Configure JavaMail to enable authentication
+<3> Configure Ogham to provide the authentication username
+<4> Configure Ogham to provide the authentication password
+
+
+{ogham-all-testsourcedir-url}/oghamall/it/email/EmailSMTPAuthenticationTest.java?ts={tabsize}[Source code of the sample].
+
+NOTE: Only the setup differs, the test is the same.
+
+[role=tab-container-end]
+-
+
+[role=TODO]
+====
+* Add sample to show how to test with sendgrid?
+* Should use same assertion API (see https://github.com/groupe-sii/ogham/issues/96[])
+====

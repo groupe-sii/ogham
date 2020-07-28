@@ -1,0 +1,28 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+You can also test that attachments are sent correctly.
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:63-68"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java[]
+----
+<1> Assert that exactly one attachment is attached to the received email
+<2> Access the first attachment for defining assertions on it
+<3> Assert that the first received file is exactly the same as the sent one
+<4> Assert that the detected mimetype of the first attachment is correct
+<5> Assert that the name of the first attachment is the expected one
+<6> Assert that the attachment disposition is correct
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab-container-end]
+-

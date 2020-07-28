@@ -17,6 +17,7 @@ public class GithubProperties {
 	private String latestReleaseBranch;
 	@NotNull
 	private String futureDevBranch = "master";
+	private String currentBranch = "master";
 	private String badgesBranch = "master";
 	private String codeBaseUrl = "https://github.com/groupe-sii/ogham/tree/";
 	private String siteUrl = "http://groupe-sii.github.io/ogham";

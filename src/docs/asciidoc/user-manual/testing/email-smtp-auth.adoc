@@ -1,0 +1,27 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+GreenMail allows to start the SMTP server with user and credentials.
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,51-74 highlight-lines:36,43-45"]
+----
+include::{ogham-all-testsourcedir}/oghamall/it/email/EmailSMTPAuthenticationTest.java[]
+----
+<1> Configure GreenMail to register a user
+<2> Configure JavaMail to enable authentication
+<3> Configure Ogham to provide the authentication username
+<4> Configure Ogham to provide the authentication password
+
+
+{ogham-all-testsourcedir-url}/oghamall/it/email/EmailSMTPAuthenticationTest.java?ts={tabsize}[Source code of the sample].
+
+NOTE: Only the setup differs, the test is the same.
+
+[role=tab-container-end]
+-

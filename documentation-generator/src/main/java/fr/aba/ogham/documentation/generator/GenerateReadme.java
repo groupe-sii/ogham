@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 @Component
 @AllArgsConstructor
 public class GenerateReadme implements ApplicationRunner {
-	private static final String INFO = "////\nDo no edit this file, it is automatically generated. Sources are in src/docs/asciidoc.\n////\n\nhttp://groupe-sii.github.io/ogham/[Full documentation]\n\n";
+	private static final String INFO = "////\nDo no edit this file, it is automatically generated. Sources are in src/docs/asciidoc.\n////\n\n";
 	
 	private final VariablesHelper variablesHelper;
 	private final ReadHelper reader;
@@ -63,8 +63,7 @@ public class GenerateReadme implements ApplicationRunner {
 		String content = reader.getContent(sourceFile);
 		String out = merger.include(asciidocDirectory, content, variables, 0);
 		out = variables.evaluate(out);
-		out = rewriter.replaceTabsBySpaces(out);
-		out = rewriter.formatTabcontainers(out);
+		out = variables.evaluate(rewriter.rewrite(out));
 		out = INFO + out;
 		// write content
 		try(BufferedWriter writer = Files.newBufferedWriter(rootDirectory.resolve(documentationProperties.getReadmeOutput()), StandardCharsets.UTF_8)) {

@@ -1,0 +1,33 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+When a long message is sent, it must be split. Each part of the message is received by the SMPP server as distinct messages. The first message doesn't have any additional information indicating that it is split. Successive messages have an additional header (contained in the body). Ogham hides this protocol specific complexity. So you can test your SMS without needing to know about the header. Ogham provides `message` method to access a particular message for doing assertions on it. Ogham also provides `every` to apply same assertions on all received messages.
+
+Sending a SMS to several recipients is the same as sending several distinct SMS. So the SMPP server receives the same number as SMS as the number of recipients. In that case, you can use `every` to make same assertions on all messages. 
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-19 irrelevant-lines:1-19,21-38 highlight-lines:56"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/LongSmsTestSample.java[]
+----
+<1> Message is split so the SMPP server receives two messages
+<2> Access first message to declare assertions on it
+<3> Assert that the first message is correctly split (contains the beginning of the message)
+<4> Access second message to declare assertions on it
+<5> Assert that the second message contains the end of the whole message
+<6> `every` applies all later defined assertions to all messages (the 2 messages here)
+<7> Assert that the sender phone number is `+33603040506` for every message
+<8> Assert that the recipient phone number is `0601020304` for every message
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/LongSmsTestSample.java?ts={tabsize}[Source code of the sample].
+
+[role=tab-container-end]
+-
+

@@ -1,7 +1,6 @@
 package fr.aba.ogham.documentation.generator.helper;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,24 +9,40 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
+import fr.aba.ogham.documentation.generator.properties.DocumentationSourceProperties;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Component
 public class VariablesHelper {
-	private static final Pattern VARIABLE_DEFINITION = Pattern.compile("^:([^:]+):\\s*(.+)$");
+	private static final Pattern VARIABLE_DEFINITION = Pattern.compile("^:([^:]+):\\s*(.+)$", Pattern.MULTILINE);
+
+	private final ReadHelper reader;
+	private final IncludeHelper merger;
+	private final DocumentationSourceProperties documentationProperties;
 
 	public Variables loadVariables(Path variablesFile) throws IOException {
+		String merged = loadVariableContentAndInclusions(variablesFile);
 		// parse file and load variables
 		Variables variables = new Variables();
-		for (String line : Files.readAllLines(variablesFile)) {
-			Matcher matcher = VARIABLE_DEFINITION.matcher(line);
-			if (matcher.matches()) {
-				variables.add(matcher.group(1), matcher.group(2));
-			}
+		Matcher matcher = VARIABLE_DEFINITION.matcher(merged);
+		while (matcher.find()) {
+			variables.add(matcher.group(1), matcher.group(2));
 		}
 		return variables;
 	}
 
+	private String loadVariableContentAndInclusions(Path variablesFile) throws IOException {
+		Path rootDirectory = documentationProperties.getRootDirectory();
+		Path asciidocDirectory = rootDirectory.resolve(documentationProperties.getAsciidocDirectory());
+		Variables loadVars = new Variables();
+		loadVars.add("docdir", asciidocDirectory.toString());
+		String content = reader.getContent(variablesFile);
+		return merger.include(asciidocDirectory, content, loadVars, 0);
+	}
+
 	public static class Variables {
-		private static final Pattern VARIABLE_REFERENCE = Pattern.compile("\\{([^}]+)\\}");
+		private static final Pattern VARIABLE_REFERENCE = Pattern.compile("\\{([^}\\s]+)\\}");
 
 		private Map<String, String> vars = new HashMap<>();
 

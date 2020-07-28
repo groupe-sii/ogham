@@ -2,7 +2,11 @@
 include::{docdir}/variables.adoc[]
 
 
-This sample is a variant of the previous one. It allows you to directly use the HTML title as subject of your email. It may be useful to use variables in the subject too, to mutualize the code and to avoid to create a new file just for one line.
+This sample is a variant of the previous one. It allows you to 
+directly use the HTML title as subject of your email. It may be 
+useful to use variables in the subject too, to mutualize the code 
+and to avoid to create a new file or to use
+a different evaluation syntax or context just for one line.
 
 [role="tab-container no-max-height"]
 Sample with template

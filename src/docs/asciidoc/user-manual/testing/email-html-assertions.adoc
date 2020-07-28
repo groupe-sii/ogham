@@ -1,0 +1,64 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+Comparing two HTML documents can be tricky. Indeed, the HTML attributes can be declared in a 
+different order, number of spaces/tabs can be different, some attributes may be declared differently 
+but corresponding to the same behavior (for example `disabled` attribute can be declared only 
+`disabled` with no value, `disabled="true"` or `disabled="disabled"`).
+
+Ogham provides two distinct matchers to check if:
+
+* HTML is identical (exactly the same nodes at same position and same attributes with same values)
+* HTML is similar (nodes may be at different positions, same attributes with same values)  
+
+In addition to comparison helpers, Ogham provides helpers to load files from classpath in tests 
+(`ResourceUtils.resource` and `ResourceUtils.resourceAsString`). 
+This is useful to avoid writing expected HTML content as string in your code and also avoid writing 
+the same utility function every time.
+
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-26,27-44,71-83 irrelevant-lines:1-26 highlight-lines:63"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java[]
+----
+<1> Use an HTML template
+<2> Object used to evaluate variables in the template
+<3> Assert that HTML is similar as an expected HTML content
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab]
+image:{icons-thymeleaf} HTML template
+
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/register.html[]
+----
+
+
+{standard-samples-resourcesdir-url}/template/register.html?ts={tabsize}[Source code of the template].
+
+
+[role=tab]
+image:{icons-html} Expected HTML
+
+[source, html]
+----
+include::{standard-samples-testresourcesdir}/expected/register.html[]
+----
+
+
+{standard-samples-testresourcesdir-url}/expected/register.html?ts={tabsize}[Source code of the expected HTML].
+
+
+[role=tab-container-end]
+-

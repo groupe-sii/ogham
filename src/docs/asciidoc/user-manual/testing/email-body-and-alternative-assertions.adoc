@@ -1,0 +1,78 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+Testing an email sent with two main parts (HTML and text fallback) is straightforward.
+
+[role="tab-container no-max-height"]
+Sample
+
+[role=tab]
+image:{icons-java-code} Java
+
+[source, java, role="collapse-lines:1-25,27-44,69-81 irrelevant-lines:1-25 highlight-lines:58-63"]
+----
+include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java[]
+----
+<1> Access to main body assertions
+<2> Assert that main body message is HTML content and is similar as an expected HTML content loaded from classpath
+<3> Assert that main body message mimetype is `text/html`
+<4> Access to alternative assertions
+<5> Assert that alternative body message is text content and is exactly the expected text content loaded from classpath
+<6> Assert that alternative body message mimetype is `text/plain`
+
+
+{standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts={tabsize}[Source code of the sample].
+
+
+[role=tab]
+image:{icons-thymeleaf} HTML template
+
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
+----
+
+
+{standard-samples-resourcesdir-url}/template/mixed/simple.html?ts={tabsize}[Source code of the template].
+
+
+[role=tab]
+image:{icons-freemarker-text-template} Text template
+
+[source, html]
+----
+include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
+----
+
+
+{standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the template].
+
+
+[role=tab]
+image:{icons-html} Expected HTML
+
+[source, html]
+----
+include::{standard-samples-testresourcesdir}/expected/simple_bar_42.html[]
+----
+
+
+{standard-samples-testresourcesdir-url}/expected/simple_bar_42.html?ts={tabsize}[Source code of the expected HTML].
+
+
+[role=tab]
+image:{icons-text} Expected text
+
+[source]
+----
+include::{standard-samples-testresourcesdir}/expected/simple_bar_42.txt[]
+----
+
+
+{standard-samples-testresourcesdir-url}/expected/simple_bar_42.txt?ts={tabsize}[Source code of the expected text].
+
+
+[role=tab-container-end]
+-
+
