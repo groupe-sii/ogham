@@ -5,22 +5,21 @@ import static fr.sii.ogham.core.CoreConstants.DEFAULT_FILE_PROPERTY_PRIORITY;
 import static fr.sii.ogham.core.CoreConstants.DEFAULT_MANUAL_PROPERTY_PRIORITY;
 import static fr.sii.ogham.core.CoreConstants.DEFAULT_SYSTEM_PROPERTY_PRIORITY;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
+import fr.sii.ogham.core.builder.env.props.AbstractProps;
+import fr.sii.ogham.core.builder.env.props.Props;
+import fr.sii.ogham.core.builder.env.props.PropsBuilder;
+import fr.sii.ogham.core.builder.env.props.PropsPath;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.env.FirstExistingPropertiesResolver;
 import fr.sii.ogham.core.env.JavaPropertiesResolver;
 import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.util.BuilderUtils;
 
@@ -75,7 +74,8 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 
 	@Override
 	public EnvironmentBuilder<P> properties(String path, int priority) {
-		props.add(new PropsPath(path, priority, currentIndex++));
+		props.add(new PropsPath(path, priority, currentIndex));
+		currentIndex++;
 		return this;
 	}
 
@@ -86,7 +86,8 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 
 	@Override
 	public SimpleEnvironmentBuilder<P> properties(Properties properties, int priority) {
-		props.add(new Props(properties, priority, currentIndex++));
+		props.add(new Props(properties, priority, currentIndex));
+		currentIndex++;
 		return this;
 	}
 
@@ -97,7 +98,8 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 
 	@Override
 	public SimpleEnvironmentBuilder<P> systemProperties(int priority) {
-		props.add(new Props(BuilderUtils.getDefaultProperties(), priority, currentIndex++));
+		props.add(new Props(BuilderUtils.getDefaultProperties(), priority, currentIndex));
+		currentIndex++;
 		return this;
 	}
 
@@ -123,7 +125,8 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 	@Override
 	public PropertiesBuilder<EnvironmentBuilder<P>> properties(int priority) {
 		PropertiesBuilder<EnvironmentBuilder<P>> propsBuilder = new SimplePropertiesBuilder<>(this);
-		props.add(new PropsBuilder(propsBuilder, priority, currentIndex++));
+		props.add(new PropsBuilder(propsBuilder, priority, currentIndex));
+		currentIndex++;
 		return propsBuilder;
 	}
 
@@ -170,85 +173,11 @@ public class SimpleEnvironmentBuilder<P> extends AbstractParent<P> implements En
 
 		@Override
 		public int compare(AbstractProps o1, AbstractProps o2) {
-			if (o1.priority == o2.priority) {
-				return o1.index <= o2.index ? -1 : 1;
+			if (o1.getPriority() == o2.getPriority()) {
+				return o1.getIndex() <= o2.getIndex() ? -1 : 1;
 			}
-			return o1.priority <= o2.priority ? 1 : -1;
+			return o1.getPriority() <= o2.getPriority() ? 1 : -1;
 		}
 
-	}
-
-	private abstract static class AbstractProps {
-		protected final int priority;
-		protected final int index;
-
-		protected AbstractProps(int priority, int index) {
-			this.priority = priority;
-			this.index = index;
-		}
-
-		public abstract Properties getProps();
-	}
-
-	private static class Props extends AbstractProps {
-		private final Properties properties;
-
-		public Props(Properties properties, int priority, int index) {
-			super(priority, index);
-			this.properties = properties;
-		}
-
-		@Override
-		public Properties getProps() {
-			return properties;
-		}
-	}
-
-	private static class PropsPath extends AbstractProps {
-		private final String path;
-
-		public PropsPath(String path, int priority, int index) {
-			super(priority, index);
-			this.path = path;
-		}
-
-		private static String getClasspathPath(String path) {
-			return path.startsWith("/") ? path.substring(1) : path;
-		}
-
-		private InputStream loadFromClasspath(String path) {
-			return getClass().getClassLoader().getResourceAsStream(getClasspathPath(path));
-		}
-
-		@Override
-		public Properties getProps() {
-			try {
-				Properties properties = new Properties();
-				if (path.startsWith("classpath:")) {
-					properties.load(loadFromClasspath(path.substring(10)));
-				} else if (path.startsWith("file:")) {
-					properties.load(new FileInputStream(new File(path.substring(5))));
-				} else {
-					properties.load(loadFromClasspath(path));
-				}
-				return properties;
-			} catch (IOException e) {
-				throw new BuildException("Failed to load properties file " + path, e);
-			}
-		}
-	}
-
-	private static class PropsBuilder extends AbstractProps {
-		private final PropertiesBuilder<?> propertiesBuilder;
-
-		public PropsBuilder(PropertiesBuilder<?> propertiesBuilder, int priority, int index) {
-			super(priority, index);
-			this.propertiesBuilder = propertiesBuilder;
-		}
-
-		@Override
-		public Properties getProps() {
-			return propertiesBuilder.build();
-		}
 	}
 }

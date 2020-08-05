@@ -6,6 +6,11 @@ import static fr.sii.ogham.core.CoreConstants.FILE_LOOKUPS;
 import static fr.sii.ogham.core.CoreConstants.STRING_LOOKUPS;
 import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
 import static fr.sii.ogham.core.builder.configurer.SendMessageRetryablePredicates.canResendMessage;
+import static java.util.Arrays.asList;
+
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -122,6 +127,22 @@ import fr.sii.ogham.sms.message.Sms;
 @ConfigurerFor(targetedBuilder = { "minimal", "standard" }, priority = DEFAULT_MESSAGING_CONFIGURER_PRIORITY)
 public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultMessagingConfigurer.class);
+	private static final Pattern LOCATIONS_SEPARATOR = Pattern.compile(",\\s*");
+	private static final Pattern PROFILES_SEPARATOR = Pattern.compile(",\\s*");
+	
+	private final Supplier<List<String>> profilesSupplier;
+	private final Supplier<List<String>> locationsSupplier;
+	
+	public DefaultMessagingConfigurer() {
+		this(() -> asList(PROFILES_SEPARATOR.split(System.getProperty("ogham.profiles.active", "default"))),
+			() -> asList(LOCATIONS_SEPARATOR.split(System.getProperty("ogham.config.location", ""))));
+	}
+	
+	public DefaultMessagingConfigurer(Supplier<List<String>> profilesSupplier, Supplier<List<String>> locationsSupplier) {
+		super();
+		this.profilesSupplier = profilesSupplier;
+		this.locationsSupplier = locationsSupplier;
+	}
 
 	@Override
 	public void configure(MessagingBuilder builder) {
@@ -138,6 +159,12 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 			.converter()
 				.defaultConverter(overrideIfNotSet(new DefaultConverter()));
 		// @formatter:on
+		List<String> profiles = profilesSupplier.get();
+		List<String> locations = locationsSupplier.get();
+		addUserDefinedConfigLocationsForProfiles(builder, locations, profiles);
+		addUserDefinedConfigLocations(builder, locations);
+		addDefaultConfigLocationsForProfiles(builder, profiles);
+		addDefaultConfigLocations(builder);
 	}
 
 	@Override
@@ -291,5 +318,48 @@ public class DefaultMessagingConfigurer extends MessagingConfigurerAdapter {
 				.and()
 			.allowed().properties("${ogham.email.image-inlining.mimetype.allowed-mimetypes}").defaultValue(overrideIfNotSet(new String[] { "image/*" }));
 		// @formatter:on
+	}
+	
+
+	protected void addDefaultConfigLocationsForProfiles(EnvironmentBuilder<?> builder, List<String> profiles) {
+		for (String profile : profiles) {
+			addConfigLocations(builder, "file:config", profile);
+			addConfigLocations(builder, "classpath:config", profile);
+		}
+	}
+
+	protected void addDefaultConfigLocations(EnvironmentBuilder<?> builder) {
+		addConfigLocations(builder, "file:config");
+		addConfigLocations(builder, "classpath:config");
+	}
+
+	protected void addUserDefinedConfigLocations(EnvironmentBuilder<?> builder, List<String> locations) {
+		for (String location : locations) {
+			addConfigLocations(builder, location);
+		}
+	}
+	
+	protected void addUserDefinedConfigLocationsForProfiles(EnvironmentBuilder<?> builder, List<String> locations, List<String> profiles) {
+		for (String location : locations) {
+			for (String profile : profiles) {
+				addConfigLocations(builder, location, profile);
+			}
+		}
+	}
+	
+	protected void addConfigLocations(EnvironmentBuilder<?> builder, String location) {
+		addConfigLocations(builder, location, null);
+	}
+	
+	protected void addConfigLocations(EnvironmentBuilder<?> builder, String location, String profile) {
+		if (location.isEmpty()) {
+			return;
+		}
+		String suffix = profile == null ? "" : ("-" + profile);
+		if (suffix.isEmpty()) {
+			builder.properties("?"+location);
+		}
+		builder.properties("?"+location+"/ogham"+suffix+".properties");
+		builder.properties("?"+location+"/application"+suffix+".properties");
 	}
 }

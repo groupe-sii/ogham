@@ -59,7 +59,7 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * @return this instance for fluent chaining
 	 */
 	EnvironmentBuilder<P> override();
-
+	
 	/**
 	 * Load a property file using its path. The properties are mixed with other
 	 * registered properties taking into account the priority.
@@ -73,6 +73,10 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * <li>{@code conf/myprops.properties}: loads a file named
 	 * "myprops.properties" in the classpath</li>
 	 * </ul>
+	 * 
+	 * <p>
+	 * The path may contain a {@literal ?} character. It means that the path
+	 * is optional and it doesn't fail if the file doesn't exist.
 	 * 
 	 * <p>
 	 * The priority of the registered properties depends on if the file is
@@ -117,6 +121,10 @@ public interface EnvironmentBuilder<P> extends Parent<P>, Builder<PropertyResolv
 	 * <li>{@code conf/myprops.properties}: loads a file named
 	 * "myprops.properties" in the classpath</li>
 	 * </ul>
+	 * 
+	 * <p>
+	 * The path may contain a {@literal ?} character. It means that the path
+	 * is optional and it doesn't fail if the file doesn't exist.
 	 * 
 	 * <p>
 	 * Indicates the priority of the registered properties. The priority is used
