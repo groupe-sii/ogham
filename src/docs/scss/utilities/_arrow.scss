@@ -1,0 +1,63 @@
+@import "props";
+	
+@mixin arrow($start-position, $end-postion, $width, $color) {
+	position: absolute;
+	box-sizing: border-box;
+	border: 5px solid $color;
+	top: value($start-position, "top");
+	left: value($start-position, "left");
+	width: $width;
+	height: value($end-postion, "top") - value($start-position, "top");
+	
+	&::after {
+		content: "";
+		position: absolute;
+		display: block;
+		width: 0;
+		height: 0;
+		border-style: solid;
+	}
+}
+
+
+@mixin arrow-down-right($start-position, $end-postion, $width: 46px, $color: gray) {
+	@include arrow($start-position, $end-postion, $width, $color);
+	
+	border-left: none;
+	border-bottom-right-radius: 200px;
+	border-top-right-radius: 200px;
+
+	&::after {
+		bottom: -17px;
+		left: -15px;
+		border-width: 15px 15px 15px 0;
+		border-color: transparent $color transparent transparent;
+	}
+}
+
+@mixin arrow-down-left($start-position, $end-postion, $width: 46px, $color: gray) {
+	@include arrow($start-position, $end-postion, $width, $color);
+	
+	border-right: none;
+	border-bottom-left-radius: 200px;
+	border-top-left-radius: 200px;
+
+	&::after {
+		bottom: -17px;
+		right: -15px;
+		border-width: 15px 0 15px 15px;
+		border-color: transparent transparent transparent $color;
+	}
+}
+
+@mixin arrow-text($size, $position, $color: gray) {
+	p {
+		position: absolute;
+		font-size: 0.8em;
+		color: $color;
+		background: rgba(0, 0, 0, 0.5);
+		top: value($position, "top");
+		left: value($position, "left");	
+		width: value($size, "width");
+	}
+}

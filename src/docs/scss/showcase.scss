@@ -1,0 +1,170 @@
+@import "utilities/arrow";
+	
+div.reveal {
+	font-size: 30px;
+}
+
+
+.reveal .slides {
+	> section.stretch {
+		height: 100%;
+	}
+
+	> section.stretch.vcenter,
+	> section > section.stretch.vcenter {
+		display: flex !important;
+		flex-direction: column;
+		justify-content: space-evenly;
+		
+		&.present {
+			display: flex !important;
+		}
+	}
+
+	section.stretch.vcenter > .slide-content {
+		margin-top: auto;
+		margin-bottom: auto;
+	}
+
+	h3 {
+		text-transform: none;
+	}
+}
+
+
+.reveal .highlight-line-diff-remove .wrapped-line {
+	background: none;
+	text-decoration: line-through rgba(255, 0, 0, 0.5);
+}
+
+
+.reveal .r-stack {
+	display: block;
+	
+	& > .content {
+		display: grid;
+		
+		& > * {
+			grid-area: 1/1;
+		}
+	}
+}
+
+
+.reveal {
+	.listingblock {
+		pre {
+			width: 98%;
+			margin-bottom: 5px;
+		}
+	
+		.title {
+			width: 98%;
+			margin: auto;
+			font-size: 0.75em;
+			background: #272822;
+			padding-bottom: 5px;
+			margin-bottom: 5px;
+			text-align: left;
+			border-bottom: 1px solid #444;
+			box-shadow: 0px 5px 0 0 #272822;
+			
+			&::before {
+				content: "";
+				display: inline-block;
+				padding-left: 5px;
+			}
+		
+			code {
+				color: #ddd;
+				font-size: 0.75em;
+				padding: 2px 5px;
+			}
+		}
+	
+		.title + .content {
+			pre {
+				margin-top: 0;
+			}
+		}
+	
+		& + .colist {
+			font-size: 0.6em;
+			margin-top: 0;
+		}
+	}
+
+	.paragraph p code,
+	.ulist li p code  {
+		background: #272822;
+		color: #ddd;
+		font-size: 0.75em;
+		padding: 2px 5px;
+	}
+
+	.paragraph + .ulist {
+		margin-top: -15px;
+		
+		p {
+			margin: 0;
+		}
+	}
+}
+
+.reveal .admonitionblock {
+	font-size: 0.8em;
+	
+	p {
+		margin: 5px 0;
+	}
+}
+
+.reveal hr {
+	margin-block-start: 1em;
+	margin-block-end: 1em;
+	border-width: 0;
+}
+
+.reveal .subobjective {
+	display: block;
+	text-transform: none;
+	border-bottom: 1px solid #333;
+}
+
+.reveal .wait {
+	visibility: hidden;
+	height: 0;
+	overflow: hidden;
+}
+
+.reveal .big {
+	font-size: 1.5em;
+}
+
+.move-subject-in-template {
+	@include arrow-down-right((top: 365px, left: 337px),
+							  (top: 534px, left: 337px),
+							  287px);
+	@include arrow-text((width: 220px),
+						(top: 2px, left: 289px));
+}
+.use-any-object-as-model {
+	@include arrow-down-left((top: 309px, left: -36px),
+							 (top: 609px, left: -36px));
+	@include arrow-text((width: 200px),
+						(top: 288px, left: -5px));
+}
+.styles-are-inlined {
+	@include arrow-down-left((top: 300px, left: -27px),
+							 (top: 620px, left: -27px));
+	@include arrow-text((width: 200px),
+						(top: 62px, left: 1px));
+}
+.image-is-attached-to-the-email-and-referenced {
+	@include arrow-down-right((top: 357px, left: 675px),
+							  (top: 600px, left: 675px));
+	@include arrow-text((width: 220px),
+						(top: 54px, left: 48px));
+}
+
+

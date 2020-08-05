@@ -1,0 +1,4 @@
+ifeval::["{mode}" == "video"]
+[.fragment.wait.attr:data-autoslide={delay}]
+-
+endif::[]

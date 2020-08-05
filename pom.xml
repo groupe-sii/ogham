@@ -79,6 +79,7 @@
 		<asciidoctorj-diagram.version>2.0.2</asciidoctorj-diagram.version>
 		<asciidoctorj.version>2.3.0</asciidoctorj.version>
 		<asciidoctorj-monotree.version>0.0.1</asciidoctorj-monotree.version>
+		<asciidoctorj-revealjs.version>4.0.1</asciidoctorj-revealjs.version>
 		<bootstrap.version>4.3.1</bootstrap.version>
 		<bootswatch.version>4.2.1</bootswatch.version>
 		<!-- Fix dependency convergence -->
@@ -823,7 +824,40 @@
 						<artifactId>asciidoctor-extension-monotree</artifactId>
 						<version>${asciidoctorj-monotree.version}</version>
 					</dependency>
+					<dependency>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctorj-revealjs</artifactId>
+						<version>${asciidoctorj-revealjs.version}</version>
+					</dependency>
 				</dependencies>
+				<configuration>
+					<sourceDirectory>${basedir}/src/docs/asciidoc</sourceDirectory>
+					<preserveDirectories>true</preserveDirectories>
+					<imagesDir />
+					<embedAssets>false</embedAssets>
+					<templateDir>${basedir}/src/docs/resources/templates</templateDir>
+					<requires>
+						<require>asciidoctor-diagram</require>
+					</requires>
+					<attributes>
+						<toc>left</toc>
+						<icons>font</icons>
+						<linkcss>true</linkcss>
+						<sectanchors>true</sectanchors>
+						<docinfo2>true</docinfo2>
+						<experimental>true</experimental>
+						<tabsize>2</tabsize>
+						<imagesdir />
+						<ogham-version>${docLatestReleaseVersion}</ogham-version>
+						<ogham-dev-version>${docFutureDevVersion}</ogham-dev-version>
+						<docdir>${basedir}/src/docs/asciidoc</docdir>
+						<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
+						<sourcedir-url>${github.code.url}</sourcedir-url>
+						<sourcedir>${basedir}</sourcedir>
+						<resourcesdir>${basedir}/src/docs/resources</resourcesdir>
+						<site-url>${site.url}</site-url>
+					</attributes>
+				</configuration>
 				<executions>
 					<execution>
 						<id>generate-docs</id>
@@ -835,31 +869,54 @@
 							<sourceDirectory>${basedir}/src/docs/asciidoc</sourceDirectory>
 							<backend>html</backend>
 							<doctype>book</doctype>
-							<preserveDirectories>true</preserveDirectories>
-							<imagesDir />
 							<sourceHighlighter>coderay</sourceHighlighter>
-							<embedAssets>false</embedAssets>
-							<templateDir>${basedir}/src/docs/resources/templates</templateDir>
+							<attributes>
+								<source-highlighter>coderay</source-highlighter>
+							</attributes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-showcase</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<sourceDocumentName>presentation/showcase.adoc</sourceDocumentName>
+							<outputFile>showcase.html</outputFile>
+							<backend>revealjs</backend>
+							<sourceHighlighter>highlight.js</sourceHighlighter>
 							<requires>
 								<require>asciidoctor-diagram</require>
+								<require>asciidoctor-revealjs</require>
 							</requires>
 							<attributes>
-								<toc>left</toc>
-								<icons>font</icons>
-								<linkcss>true</linkcss>
-								<sectanchors>true</sectanchors>
-								<docinfo2>true</docinfo2>
-								<experimental>true</experimental>
-								<tabsize>2</tabsize>
-								<imagesdir />
-								<ogham-version>${docLatestReleaseVersion}</ogham-version>
-								<ogham-dev-version>${docFutureDevVersion}</ogham-dev-version>
-								<docdir>${basedir}/src/docs/asciidoc</docdir>
-								<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
-								<sourcedir-url>${github.code.url}</sourcedir-url>
-								<sourcedir>${basedir}</sourcedir>
-								<resourcesdir>${basedir}/src/docs/resources</resourcesdir>
-								<site-url>${site.url}</site-url>
+								<revealjsdir>https://cdn.jsdelivr.net/npm/reveal.js@3.9.2</revealjsdir>
+								<source-highlighter>highlight.js</source-highlighter>
+								<mode>slides</mode>
+							</attributes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-showcase-video</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<sourceDocumentName>presentation/showcase.adoc</sourceDocumentName>
+							<outputFile>showcase-video.html</outputFile>
+							<backend>revealjs</backend>
+							<sourceHighlighter>highlight.js</sourceHighlighter>
+							<requires>
+								<require>asciidoctor-diagram</require>
+								<require>asciidoctor-revealjs</require>
+							</requires>
+							<attributes>
+								<revealjsdir>https://cdn.jsdelivr.net/npm/reveal.js@3.9.2</revealjsdir>
+								<source-highlighter>highlight.js</source-highlighter>
+								<revealjs_autoSlide>1500</revealjs_autoSlide>
+								<mode>video</mode>
 							</attributes>
 						</configuration>
 					</execution>
@@ -1105,6 +1162,12 @@
 								<directory>target/generated-scss</directory>
 							</source>
 							<destination>${project.build.directory}/ignored</destination>
+						</resource>
+						<resource>
+							<source>
+								<directory>src/docs/scss</directory>
+							</source>
+							<destination>${project.build.directory}/generated-docs/styles</destination>
 						</resource>
 						<resource>
 							<source>

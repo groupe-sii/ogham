@@ -1,0 +1,72 @@
+@function str-split($string, $separator) {
+  // empty array/list
+  $split-arr: ();
+  // first index of separator in string
+  $index : str-index($string, $separator);
+  // loop through string
+  @while $index != null {
+      // get the substring from the first character to the separator
+      $item: str-slice($string, 1, $index - 1);
+      // push item to array
+      $split-arr: append($split-arr, $item);
+      // remove item and separator from string
+      $string: str-slice($string, $index + 1);
+      // find new index of separator
+      $index : str-index($string, $separator);
+  }
+  // add the remaining string to list (the last item)
+  $split-arr: append($split-arr, $string);
+
+  @return $split-arr;
+}
+
+@function value($variable, $property, $sub-property: null) {
+  @if $variable == null {
+    @warn "variable is null", $property;
+  }
+  $keys: str-split($property, ".");
+  $value: $variable;
+  @each $key in $keys {
+    @if $value == null {
+      @warn "invalid key", $property;
+    }
+    $value: map-get($value, $key);
+  }
+  @if ($sub-property != null) {
+    $value: shorthand-value($value, $sub-property);
+  }
+  @return $value;
+}
+
+@function shorthand-value($shorthand, $sub-property) {
+  @if (length($shorthand) == 1) {
+    @return nth($shorthand, 1);
+  }
+  // shorthand       | sub-property || expected index | expected value
+  // 1px 5px         |  top         ||  1             |  1px
+  // 1px 5px         |  right       ||  2             |  5px
+  // 1px 5px         |  bottom      ||  1             |  1px
+  // 1px 5px         |  left        ||  2             |  5px
+  // 1px 5px 3px 7px |  top         ||  1             |  1px
+  // 1px 5px 3px 7px |  right       ||  2             |  5px
+  // 1px 5px 3px 7px |  bottom      ||  3             |  3px
+  // 1px 5px 3px 7px |  left        ||  4             |  7px
+  $index: map-get($shorthand-indexes, $sub-property) % length($shorthand);
+  @return nth($shorthand, $index + 1);
+}
+
+$shorthand-indexes: (
+  "top-left": 0,
+  "top-right": 1,
+  "bottom-right": 2,
+  "bottom-left": 3,
+  "top": 0,
+  "right": 1,
+  "bottom": 2,
+  "left": 3,
+  "start": 3,
+  "end": 1,
+  "border-width": 0,
+  "border-style": 1,
+  "border-color": 2,
+)
