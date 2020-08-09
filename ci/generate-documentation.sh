@@ -6,4 +6,3 @@ set -ex
 
 # FIXME: mutation testing produces surefire and failsafe reports => must build, test and generate site again...
 ./mvnw install post-site -Dmaven.test.redirectTestOutputToFile=true -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false -B
-

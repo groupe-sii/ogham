@@ -20,10 +20,11 @@ pre>code {
 
 .coming-soon {
 	font-weight: normal;
-}
-.coming-soon::after {
-	content: " (coming soon)";
-	color: #777;
+
+	&::after {
+		content: " (coming soon)";
+		color: #777;
+	}
 }
 
 
@@ -64,15 +65,41 @@ h6 {
 	text-align: justify;
 }
 
-.exampleblock.TODO .content::before {
-	content: "TODO: document";
+.exampleblock.TODO {
+	.content::before {
+		content: "TODO: document";
+		display: block;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+	> .content {
+		background: #fff3d4;
+	}
+	li p {
+		margin: 0;
+	}
+}
+
+video {
+	width: 100%;
+}
+.iframe-container {
+	overflow: hidden;
+	padding-top: 75%;
+	position: relative;
+
+	iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		border: none;
+	}
+}
+button.fullscreen {
 	display: block;
-	font-weight: bold;
-	margin-bottom: 10px;
-}
-.exampleblock.TODO > .content {
-	background: #fff3d4;
-}
-.exampleblock.TODO li p {
-	margin: 0;
+	margin-top: 5px;
+	margin-left: auto;
+	margin-right: auto;
 }

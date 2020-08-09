@@ -17,6 +17,7 @@
 @import "site-variables";
 @import "headings";
 @import "components/banner";
+@import "components/toc";
 @import "components/admonition";
 @import "components/code";
 @import "components/jumbotron";
@@ -26,6 +27,13 @@
 @import "layout";
 
 // page specifics
+.page-index,
+.page-features,
+.page-roadmap,
+.page-showcase,
+.page-showcase-video {
+	@include no-toc;
+}
 .page-index {
 	@import "pages/index";
 }

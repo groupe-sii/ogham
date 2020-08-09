@@ -159,7 +159,7 @@
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 		<maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
 		<!-- Plugins - code quality -->
-		<sonar-maven-plugin.version>3.6.0.1398</sonar-maven-plugin.version>
+		<sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
 		<!-- Plugins - release -->
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
@@ -882,8 +882,8 @@
 							<goal>process-asciidoc</goal>
 						</goals>
 						<configuration>
-							<sourceDocumentName>presentation/showcase.adoc</sourceDocumentName>
-							<outputFile>showcase.html</outputFile>
+							<sourceDocumentName>presentation/showcase-slides.adoc</sourceDocumentName>
+							<outputFile>showcase-slides.html</outputFile>
 							<backend>revealjs</backend>
 							<sourceHighlighter>highlight.js</sourceHighlighter>
 							<requires>
@@ -904,8 +904,8 @@
 							<goal>process-asciidoc</goal>
 						</goals>
 						<configuration>
-							<sourceDocumentName>presentation/showcase.adoc</sourceDocumentName>
-							<outputFile>showcase-video.html</outputFile>
+							<sourceDocumentName>presentation/showcase-slides.adoc</sourceDocumentName>
+							<outputFile>showcase-video-recording.html</outputFile>
 							<backend>revealjs</backend>
 							<sourceHighlighter>highlight.js</sourceHighlighter>
 							<requires>
@@ -915,7 +915,6 @@
 							<attributes>
 								<revealjsdir>https://cdn.jsdelivr.net/npm/reveal.js@3.9.2</revealjsdir>
 								<source-highlighter>highlight.js</source-highlighter>
-								<revealjs_autoSlide>1500</revealjs_autoSlide>
 								<mode>video</mode>
 							</attributes>
 						</configuration>

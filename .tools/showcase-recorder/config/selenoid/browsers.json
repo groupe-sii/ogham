@@ -1,0 +1,17 @@
+{
+	"chrome": {
+		"default": "84.0",
+		"versions": {
+			"84.0": {
+				"image": "selenoid/chrome:84.0",
+				"port": "4444",
+				"path": "/"
+			},
+			"84.0-VNC": {
+				"image": "selenoid/vnc:chrome_84.0",
+				"port": "4444",
+				"path": "/"
+			}
+		}
+	}
+}

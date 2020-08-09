@@ -1,0 +1,5 @@
+@mixin no-toc() {
+	#toc {
+		display: none;
+	}
+}

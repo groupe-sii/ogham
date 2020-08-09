@@ -114,8 +114,16 @@ div.reveal {
 .reveal .admonitionblock {
 	font-size: 0.8em;
 	
+	table {
+		border-color: #333;
+	}
+	
 	p {
 		margin: 5px 0;
+	}
+
+	td .paragraph + .ulist {
+		margin-top: -5px;
 	}
 }
 
@@ -137,8 +145,18 @@ div.reveal {
 	overflow: hidden;
 }
 
-.reveal .big {
+.reveal .merging {
 	font-size: 1.5em;
+	
+	p {
+		margin: 0;
+	}
+}
+
+.reveal .the-end {
+	color: transparent;
+	position: absolute;
+	bottom: 0;
 }
 
 .move-subject-in-template {

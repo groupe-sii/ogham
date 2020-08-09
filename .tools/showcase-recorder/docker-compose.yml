@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  chrome:
+    image: selenoid/chrome:84.0
+    network_mode: bridge
+    depends_on:
+      - selenoid
+    links:
+      - docs
+
+  selenoid-recorder:
+    image: selenoid/video-recorder:latest-release
+    network_mode: bridge
+    entrypoint: echo "video-recorder ready"
+    tty: true
+  
+  selenoid:
+    image: aerokube/selenoid
+    network_mode: bridge
+    depends_on:
+      - selenoid-recorder
+    links:
+      - docs
+    ports:
+      - "54444:4444"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./config/selenoid:/etc/selenoid:ro"
+      - "/tmp:/opt/selenoid/video"
+    environment:
+      - OVERRIDE_VIDEO_OUTPUT_DIR=/tmp
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video"]
+  
+  selenoid-ui:
+    image: aerokube/selenoid-ui
+    network_mode: bridge
+    links:
+      - selenoid
+    ports:
+      - "58080:8080"
+    command: ["--selenoid-uri", "http://selenoid:4444"]
+
+  docs:
+    image: nginx
+    network_mode: bridge
+    ports:
+      - "50080:80"
+    volumes:
+      - "../../target/generated-docs:/usr/share/nginx/html:ro"
+    
+  showcase-launcher:
+    build:
+      context: ./showcase-launcher
+    network_mode: bridge
+    links:
+      - docs
+      - chrome
+      - selenoid
+    volumes:
+      - "./showcase-launcher:/usr/src/app:ro"
+      - "/tmp:/tmp"
+    command: >
+      sh -c 'python "/usr/src/app/play_showcase.py" "http://docs/presentation/showcase-video-recording.html" --recorded-video /tmp/showcase.mp4 \
+              && python "/usr/src/app/rewrite_showcase.py" "/tmp/showcase.mp4" "/tmp/showcase-clipped.mp4" \
+              && python "/usr/src/app/generate_video_preview.py" "/tmp/showcase-clipped.mp4" "/tmp/showcase.png"'
+
+    

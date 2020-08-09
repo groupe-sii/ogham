@@ -322,6 +322,9 @@ jobs:
       - run:
           name: Generate reports and documentation
           command: ci/./generate-documentation.sh
+      - run:
+          name: Generate showcase video
+          command: ci/./generate-showcase-video.sh
       - persist_to_workspace:
           root: '~'
           paths:

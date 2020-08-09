@@ -31,8 +31,6 @@
 			<slogan>Sending email, sms or whatever is a piece of cake</slogan>
 			<header type="banner"></header>
 			<titleTemplate>%2$s | %1$s</titleTemplate>
-			<!-- Use Table of Contents at the top of the page (max 6 elements) -->
-			<toc numberItems="6" cssClass="border rounded">top</toc>
 			<!-- Include the documentation and tools in the top navigation (in addition 
 				to links) -->
 			<navbar filterMenu="Documentation|Samples|Versions"
@@ -86,6 +84,14 @@
 					<highlightJs>false</highlightJs>
 					<markPageHeader>false</markPageHeader>
 				</migration-guide>
+				<showcase>
+					<highlightJs>false</highlightJs>
+					<markPageHeader>false</markPageHeader>
+				</showcase>
+				<showcase-video>
+					<highlightJs>false</highlightJs>
+					<markPageHeader>false</markPageHeader>
+				</showcase-video>
 				<contribute>
 				</contribute>
 				<!-- Disable source highlighting for Maven reports -->

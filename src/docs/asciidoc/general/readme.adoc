@@ -29,14 +29,24 @@ image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aog
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=bugs["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=vulnerabilities["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 
+--
 
+image::{site-version-url}/presentation/showcase.png[Showcase, link={site-version-url}/showcase-video.html]
+
+'''
+
+--
+
+
+== Resources
 
 [%autowidth.stretch]
 |===
-| Latest release | **v{ogham-version}** | {site-version-url}[site] | {sourcedir-url}[code]
-| Current development | **v{ogham-dev-version}** | {site-dev-version-url}[site] | {sourcedir-dev-url}[code]
+| **v{ogham-version}** (Latest release)                   | **v{ogham-dev-version}** (Current development)
+| {site-version-url}[site]                                | {site-dev-version-url}[site] 
+| {sourcedir-url}[code]                                   | {sourcedir-dev-url}[code]
+| {site-version-url}/presentation/showcase.html[showcase] | {site-dev-version-url}/presentation/showcase.html[showcase]
 |=== 
-
 
 
 == Introduction

@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+[dev-packages]
+opencv-python = {ref = "4.3.0.38"}
+opencv-contrib-python = {ref = "4.3.0.38"}
+
+[packages]
+selenium = {ref = "3.141.0"}
+moviepy = {ref = "1.0.3"}
+
+[requires]
+python_version = "3.7"

@@ -13,6 +13,12 @@ endif::[]
 ifndef::resourcesdir[]
 :resourcesdir: {docdir}/../resources/
 endif::[]
+ifndef::presentation-dir[]
+:presentation-dir: {docdir}/presentation/
+endif::[]
+ifndef::presentation-relative-dir[]
+:presentation-relative-dir: {relative-path}presentation/
+endif::[]
 
 :github-url: https://github.com/groupe-sii/ogham
 :github-branch-url: {github-url}/tree

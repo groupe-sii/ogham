@@ -1,0 +1,734 @@
+:relative-path: ../
+include::{docdir}/variables.adoc[]
+
+// FIX: <revealjs_controls> defined in pom.xml does not work...
+ifeval::["{mode}" == "video"]
+:revealjs_autoSlide: 1500
+:revealjs_controls: false
+:revealjs_progress: false
+endif::[]
+
+
+
+[.attr:data-autoslide=5000]
+= Ogham
+
+The easiest way to send Email, SMS or whatever
+
+[role="stretch vcenter"]
+== Objectives
+
+[.step.attr:data-autoslide=1000]
+. Easy usage
+. Focus on *your* business code
+. Adapt to environment
+
+
+:objective-1: 1. Easy usage
+:objective-1a: Quick start
+:objective-1b: Spring Boot compatible
+:objective-2: 2. Focus on business code
+:objective-2a: Separate concerns
+:objective-2b: Get rid of technical concerns
+:objective-2c: Test your code
+:objective-3: 3. Adapt to environment
+:objective-3a: Externalize configuration
+:objective-3b: Choose email sender
+:objective-3c: Choose SMS sender
+
+== {objective-1}
+
+[transition="slide-in fade-out", role="stretch vcenter"]
+=== {objective-1} [.subobjective]#{objective-1a}#
+
+==== Add Ogham dependency
+
+[source, javascript, subs=attributes+, role="fragment irrelevant-lines:1-9"]
+----
+plugins {
+    id 'java'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'fr.sii.ogham:ogham-all:{ogham-version}'
+}
+----
+
+:delay: 1500
+include::{docdir}/presentation/delay.adoc[]
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-1} [.subobjective]#{objective-1a}#
+
+==== Initialize Ogham
+
+[source, java, role="fragment"]
+----
+MessagingService service = MessagingBuilder.standard()
+	// ... optional configuration
+	.build();
+----
+
+:delay: 2000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-1} [.subobjective]#{objective-1a}#
+
+==== Send an email
+
+[source, java, role="fragment"]
+----
+service.send(new Email()
+	.subject("Hello !")
+	.from("sender@anything.com")
+	.to("recipient@anything.com")
+	.body().string("Hello world !!"));
+----
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-1} [.subobjective]#{objective-1a}#
+
+==== Send a SMS
+
+[source, java, role="fragment"]
+----
+service.send(new Sms()
+	.from("000000000")
+	.to("999999999")
+	.message().string("Hello world !!"));
+----
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-1} [.subobjective]#{objective-1a}#
+
+That's it
+
+:delay: 1000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-1} [.subobjective]#{objective-1b}#
+
+[.fragment]
+==== Add Ogham dependency for Spring Boot
+
+[source, javascript, subs=attributes+, role="fragment irrelevant-lines:1-2,4,6-8"]
+----
+// ... Gradle configuration provided by Spring Boot
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:{ogham-version}'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+----
+
+:delay: 1500
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-1} [.subobjective]#{objective-1b}#
+
+==== Inject Ogham in your Spring components
+
+[source, java, role="fragment irrelevant-lines:1-2,4"]
+----
+@Service
+public class YourBusinessService {
+	@Autowired MessagingService service;
+}
+----
+
+:delay: 2000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade-in slide-out", role="stretch vcenter"]
+=== {objective-1} [.subobjective]#{objective-1b}#
+
+It's even easier
+
+:delay: 1000
+include::{docdir}/presentation/delay.adoc[]
+
+
+== {objective-2}
+
+[transition="slide-in fade-out", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2a}#
+
+==== Externalize content in templates
+
+[source, java, role="fragment irrelevant-lines:4,6-7 diff-remove-lines:5"]
+----
+CustomModel yourModel = new CustomModel();
+yourModel.setAnything("world");
+
+service.send(new Email()
+	.subject("Hello !")
+	.from("sender@anything.com")
+	.to("recipient@anything.com")
+	.body().template("email/hello.html.ftl", yourModel));
+----
+
+[source, html, role="fragment irrelevant-lines:1-3,5-7,9-"]
+----
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello !</title>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <h1>Hello ${anything} !!</h1>
+    </body>
+</html>
+----
+
+[.fragment.use-any-object-as-model]
+Use any of *your* object as model
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+[.fragment.move-subject-in-template]
+Externalize whole message related content by moving subject in template
+
+:delay: 5000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2a}#
+
+==== Externalize designs as usual
+
+[source, html, role="fragment irrelevant-lines:1-5,7-"]
+----
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello !</title>
+        <meta charset="utf-8" />
+        <link href="css/theme.css" rel="stylesheet" />
+    </head>
+    <body>
+        <h1>Hello ${anything} !!</h1>
+    </body>
+</html>
+----
+
+[source, css, role="fragment"]
+----
+h1 {
+	color: #fff;
+}
+----
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2a}#
+
+Keep your best practices
+
+:delay: 1000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2b}#
+
+[.fragment]
+==== Ogham handles styles and images for emails
+
+[source, css, role="fragment"]
+----
+h1 {
+	color: #fff;
+}
+body {
+	background: url(../images/email-bg.png) top center no-repeat;
+}
+----
+
+
+[.fragment]
+--
+
+'''
+
+.Generated HTML
+[source, html, role="irrelevant-lines:1-5,8-"]
+----
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+    </head>
+    <body style="background: url('cid:0') top center no-repeat">
+        <h1 style="color: #fff">Hello ${anything} !!</h1>
+    </body>
+</html>
+----
+
+--
+
+[.fragment.styles-are-inlined]
+Styles are inlined for you
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+[.fragment.image-is-attached-to-the-email-and-referenced]
+Image is attached to the email and referenced by a Content-ID
+
+:delay: 6000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2b}#
+
+==== Best encoding for minimum SMS characters
+
+[.fragment]
+--
+
+[source, java, role="irrelevant-lines:4-6"]
+----
+AnotherModel yourModel = new AnotherModel();
+yourModel.setName("World");
+
+service.send(new Sms()
+	.from("000000000")
+	.to("999999999")
+	.message().template("sms/hello.txt.ftl", yourModel));
+----
+
+[source, bash]
+----
+Hello ${name} !!
+----
+
+--
+
+[NOTE, role="fragment"]
+====
+*"World"* contains only characters of GSM 03.38 character set.
+
+*Use GSM 03.38 character set*
+====
+
+:delay: 4000
+include::{docdir}/presentation/delay.adoc[]
+
+'''
+
+[.fragment]
+--
+
+[source, java]
+----
+yourModel.setName("Hôtel");
+----
+
+[NOTE]
+====
+*"Hôtel"* contains *"ô"* character that is not in GSM 03.38 character set.
+
+*Now uses UCS-2 character set instead*
+====
+
+--
+
+:delay: 5000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2b}#
+
+==== Auto-split long SMS
+
+[.fragment]
+--
+
+[source, bash]
+----
+<#list 1..50 as i>		# <1>
+${i}) Hello world !!
+</#list>
+----
+<1> Generates a message with more than 800 characters.
+
+--
+
+:delay: 2000
+include::{docdir}/presentation/delay.adoc[]
+
+'''
+
+[.fragment]
+Splits into several messages for you !
+
+[TIP, role="fragment"]
+====
+Number of characters per SMS depends on message encoding.
+
+Ogham handles it for you !
+====
+
+:delay: 5000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2b}#
+
+Don't waste time on technical concerns anymore !!
+
+:delay: 1000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2c}#
+
+[.fragment]
+==== Start a SMTP server on a random port
+
+[source, java, role="fragment"]
+----
+@Rule
+public GreenMailRule greenMail = new RandomPortGreenMailRule();
+----
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2c}#
+
+[.fragment]
+==== Use *Ogham assertions* to ensure your business code sends email with the right information
+ 
+[source, java, role="fragment irrelevant-lines:1-2,4,17"]
+----
+@Test
+public void userShouldReceiveConfirmationEmail() {
+	// test your business code here that sends an email
+	String code = yourAccountService.newAccount(someAccount);
+	
+	// ensure that email is received with right information
+	assertThat(greenMail).receivedMessages()
+		.count(is(1))
+		.message(0)
+			.subject(is("Welcome "+someAccount.getName()+" !"))
+			.to()
+				.address(hasItems(someAccount.getEmail()))
+				.and()
+			.body()
+				.contentAsString(containsString("?confirmation="+code))
+			// ... other assertions
+}
+----
+
+:delay: 6000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2c}#
+
+==== Start a SMPP server on a random port
+
+[source, java, role="fragment"]
+----
+@Rule
+public SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
+----
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2c}#
+
+==== Use *Ogham assertions* to ensure your business code sends SMS with the right information
+
+[source, java, role="fragment irrelevant-lines:1-2,4,14"]
+----
+@Test
+public void userShouldReceiveConfirmationCode() {
+	// test your business code here that sends a SMS
+	String code = yourAccountService.newAccount(someAccount);
+	
+	// ensure that SMS is received with right information
+	assertThat(smppServer).receivedMessages()
+		.count(is(1))
+		.message(0)
+			.content(containsString("Confirmation code: "+code))
+			.to()
+				.number(is(someAccount.getPhoneNumber()))
+			// ... other assertions
+}
+----
+
+:delay: 6000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade-in slide-out", role="stretch vcenter"]
+=== {objective-2} [.subobjective]#{objective-2c}#
+
+Use testing tools to focus on testing your code !
+
+:delay: 1000
+include::{docdir}/presentation/delay.adoc[]
+
+
+== {objective-3}
+
+[transition="slide-in fade-out", role="stretch vcenter"]
+=== {objective-3} [.subobjective]#{objective-3a}#
+
+==== Default configuration files
+
+[.fragment]
+--
+In dev project classpath for default configuration:
+
+* `config/ogham.properties`
+* `config/application.properties`
+
+--
+
+'''
+
+[.fragment]
+--
+External file relative to current running directory:
+
+* `config/ogham.properties`
+* `config/application.properties` 
+
+--
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-3} [.subobjective]#{objective-3a}#
+
+==== Choose directory for configuration files
+
+[source, shell, role="fragment irrelevant-lines:1,3"]
+----
+$ java \
+		-Dogham.config.location=/etc/your-app \
+		-jar ...other command line arguments...
+	
+----
+
+:delay: 2000
+include::{docdir}/presentation/delay.adoc[]
+
+'''
+
+[TIP, role="fragment"]
+====
+Ogham also handle configuration profiles, such as:
+
+* 'dev'
+* 'test'
+* 'prod'
+* 'anything-you-want'
+====
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-3} [.subobjective]#{objective-3b}#
+
+[.fragment]
+==== Use SMTP server for development
+
+.`src/main/resources/config/ogham.properties`
+[source, python, role="fragment"]
+----
+mail.smtp.host=localhost
+mail.smtp.port=25
+----
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-3} [.subobjective]#{objective-3b}#
+
+==== Use SendGrid service in production
+
+.`src/main/resources/config/ogham.properties` (dev config is unchanged)
+[source, python, role="fragment"]
+----
+mail.smtp.host=localhost
+mail.smtp.port=25
+----
+
+
+[.fragment]
+--
+
+[.merging]
++
+
+.`/etc/your-app/ogham.properties` (external config)
+[source, python, role=""]
+----
+mail.smtp.host=                                 # <1>
+
+ogham.email.sendgrid.api-key=your-api-key
+----
+<1> Override to disable SMTP
+
+--
+
+[.fragment]
+--
+
+[.merging]
+=
+
+.merged
+[source, python]
+----
+mail.smtp.host=
+mail.smtp.port=25
+ogham.email.sendgrid.api-key=your-api-key
+----
+
+--
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-3} [.subobjective]#{objective-3c}#
+
+==== Use SMPP server for development
+
+.`src/main/resources/config/ogham.properties`
+[source, python, role="fragment"]
+----
+ogham.sms.smpp.host=localhost
+ogham.sms.smpp.port=2775
+----
+
+:delay: 2000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade", role="stretch vcenter"]
+=== {objective-3} [.subobjective]#{objective-3c}#
+
+[.fragment]
+==== Use SmsGlobal service in production
+
+.`src/main/resources/config/ogham.properties` (dev config is unchanged)
+[source, python, role="fragment"]
+----
+ogham.sms.smpp.host=localhost
+ogham.sms.smpp.port=2775
+----
+
+[.fragment]
+--
+
+[.merging]
++
+
+.`/etc/your-app/ogham.properties` (external config)
+[source, python]
+----
+ogham.sms.smpp.host=smpp.smsglobal.com
+ogham.sms.smpp.port=1775
+ogham.sms.smpp.system-id=your-smsglobal-account
+ogham.sms.smpp.password=your-smsglobal-password
+----
+
+--
+
+
+[.fragment]
+--
+
+[.merging]
+=
+
+.merged
+[source, python]
+----
+ogham.sms.smpp.host=smpp.smsglobal.com
+ogham.sms.smpp.port=1775
+ogham.sms.smpp.system-id=your-smsglobal-account
+ogham.sms.smpp.password=your-smsglobal-password
+----
+
+--
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="fade-in slide-out", role="stretch vcenter"]
+=== {objective-3}
+
+Don't change your code, don't code twice !!
+
+Just update external configuration !!!
+
+:delay: 2000
+include::{docdir}/presentation/delay.adoc[]
+
+
+[transition="slide", role="stretch vcenter"]
+== Roadmap
+
+[.step.attr:data-autoslide=1000]
+* Send RCS messages
+* Other message types
+* More service integrations
+* More template engine integrations
+* More framework integrations
+* Make it even easier
+
+
+:delay: 3000
+include::{docdir}/presentation/delay.adoc[]
+
+[.fragment.the-end]
+-
+
