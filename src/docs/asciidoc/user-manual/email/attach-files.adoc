@@ -2,10 +2,10 @@
 include::{docdir}/variables.adoc[]
 
 [role="tab-container no-max-height"]
-Sample with attachment
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-12 irrelevant-lines:1-12,14-21 highlight-lines:32-33"]
 ----
@@ -16,8 +16,8 @@ include::{standard-email-samples-sourcedir}/WithAttachmentSample.java[]
 
 {standard-email-samples-sourcedir-url}/WithAttachmentSample.java?ts={tabsize}[Source code of the sample]
 
-[role=tab-container-end]
--
+--
+====
 
 Attaching a file to the email is quite simple. You just need to provide the path to the file. 
 The file is loaded from classpath but could also be loaded from file system or anywhere else 

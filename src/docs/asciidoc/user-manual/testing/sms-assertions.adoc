@@ -4,10 +4,10 @@ include::{docdir}/variables.adoc[]
 To test your application SMS, you can start a local SMPP server. You can then use Ogham to make assertions on you SMS (recipient phone number, sender phone number and message). Ogham uses https://jsmpp.org/[jSMPP] as local SMPP server.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19"]
 ----
@@ -26,5 +26,5 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SmsTestSample
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SmsTestSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====

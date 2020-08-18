@@ -3,10 +3,10 @@ include::{docdir}/variables.adoc[]
 
 
 [role="tab-container no-max-height"]
-Include Ogham dependency for Spring Boot
-
+====
+.image:{icons-maven}
 [role=tab]
-image:{icons-maven}
+--
 
 .pom.xml
 [source, xml, subs=attributes+, role="collapse-lines:1-21,28- highlight-lines:22-26"]
@@ -64,8 +64,10 @@ image:{icons-maven}
 ----
 
 
+--
+.image:{icons-gradle}
 [role=tab]
-image:{icons-gradle}
+--
 
 .build.gradle
 [source, groovy, subs=attributes+, role="collapse-lines:1-13,17-24 highlight-lines:16"]
@@ -97,8 +99,8 @@ test {
 }
 ----
 
-[role=tab-container-end]
--
+--
+====
 
 
 This will include:
@@ -116,10 +118,10 @@ You can combine Ogham with existing Spring Boot dependencies:
 
 .Ogham adapts itself to Spring Boot features
 [role="tab-container no-max-height"]
-Ogham with Spring Boot dependencies
-
+====
+.image:{icons-maven}
 [role=tab]
-image:{icons-maven}
+--
 
 
 .pom.xml
@@ -198,8 +200,10 @@ provided by Spring Boot.
 <4> Import Mail starter as usual. Ogham will adapt to use mail features provided
 by Spring Boot.
 
+--
+.image:{icons-gradle}
 [role=tab]
-image:{icons-gradle}
+--
 
 .build.gradle
 [source, groovy, subs=attributes+, role="collapse-lines:1-13,21-27 highlight-lines:16"]
@@ -243,8 +247,8 @@ provided by Spring Boot.
 by Spring Boot.
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 Ogham will auto-configure to use Spring Boot additions and support Spring Boot 

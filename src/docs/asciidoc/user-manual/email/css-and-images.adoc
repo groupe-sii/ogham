@@ -28,10 +28,10 @@ should be able to write its HTML and CSS like as usual in Web browsers. Ogham
 simplifies image and CSS integration and is able to partially rewrite the HTML.  
 
 [role="tab-container  no-max-height"]
-Sample with template
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -43,10 +43,10 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 {standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
 
-
-
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
 [source, html, role="highlight-lines:7-8,12,18,27,39,42"]
 ----
@@ -68,9 +68,10 @@ determined
 
 {standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-css} CSS
 [role=tab]
-image:{icons-css} CSS
+--
 
 .layout.css
 [source, css]
@@ -84,21 +85,18 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/layout.cs
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css[]
 ----
 
-
-
-
+--
+.image:{icons-html} Sent HTML
 [role=tab]
-image:{icons-html} Sent HTML
+--
 
 [role=TODO]
 =====
 * Add code of the generated HTML with all transformations
 =====
 
-
-
-[role=tab-container-end]
--
+--
+====
 
 
 Here is the list of supported transformations:

@@ -34,7 +34,7 @@ include::{user-manual-dir}/service-providers/predefined-service-providers.adoc[l
 [role=TODO]
 ====
 * List all error codes with the explanation and how to fix it (dedicated appendix ?)
-  * Example: Gmail throws javax.mail.AuthenticationFailedException: 534-5.7.14
+  * Example: Gmail throws `javax.mail.AuthenticationFailedException`: 534-5.7.14
 * Add all configuration properties (dedicated appendix ?), their default values, their effect and a description
 * Add all Spring Boot properties supported by Ogham, support conditions and their effect
 ====

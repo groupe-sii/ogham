@@ -5,10 +5,10 @@ include::{docdir}/variables.adoc[]
 This sample shows how to send a basic email through GMail. Sending through GMail is simply using username/password authentication and enabling SSL.
 
 [role=tab-container no-max-height]
-GMail SSL sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:-7 irrelevant-lines:-7 highlight-lines:16-22"]
 ----
@@ -27,8 +27,8 @@ include::{standard-email-samples-sourcedir}/gmail/GmailSSLBasicSample.java[]
 
 {standard-email-samples-sourcedir-url}/gmail/GmailSSLBasicSample.java?ts={tabsize}[Source code of the sample]
 
-[role=tab-container-end]
--
+--
+====
 
 
 Using GMail server is quite easy. This samples shows several things:

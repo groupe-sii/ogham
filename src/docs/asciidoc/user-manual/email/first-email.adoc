@@ -10,10 +10,10 @@ Finally, the last line sends the email. The specified email is really basic. It 
 
 
 [role=tab-container no-max-height]
-Basic sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -26,8 +26,8 @@ include::{standard-email-samples-sourcedir}/BasicSample.java[]
 
 {standard-email-samples-sourcedir-url}/BasicSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====
 
 
 The construction of the email is done using a fluent API in order to chain calls and to have a more readable code.

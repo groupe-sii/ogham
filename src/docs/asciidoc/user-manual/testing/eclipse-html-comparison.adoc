@@ -19,10 +19,10 @@ the same utility function every time.
 
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-26,27-44,71-83 irrelevant-lines:1-26 highlight-lines:63"]
 ----
@@ -35,33 +35,32 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTest
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
 
-
+--
+.image:{icons-thymeleaf} HTML template
 [role=tab]
-image:{icons-thymeleaf} HTML template
+--
 
 [source, html]
 ----
 include::{standard-samples-resourcesdir}/template/register.html[]
 ----
 
-
 {standard-samples-resourcesdir-url}/template/register.html?ts={tabsize}[Source code of the template].
 
-
+--
+.image:{icons-html} Expected HTML
 [role=tab]
-image:{icons-html} Expected HTML
+--
 
 [source, html]
 ----
 include::{standard-samples-testresourcesdir}/expected/register.html[]
 ----
 
-
 {standard-samples-testresourcesdir-url}/expected/register.html?ts={tabsize}[Source code of the expected HTML].
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 == Help in Eclipse for failing tests
@@ -70,10 +69,10 @@ When your tests report errors due to HTML differences, Ogham helps with Eclipse 
 
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-25,27-44,71-83 irrelevant-lines:1-25"]
 ----
@@ -83,24 +82,24 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTest
 <2> Object used to evaluate variables in the template
 <3> Assert that HTML is identical as an expected HTML content
 
-
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
 
-
+--
+.image:{icons-thymeleaf} HTML template
 [role=tab]
-image:{icons-thymeleaf} HTML template
+--
 
 [source, html]
 ----
 include::{standard-samples-resourcesdir}/template/register.html[]
 ----
 
-
 {standard-samples-resourcesdir-url}/template/register.html?ts={tabsize}[Source code of the template].
 
-
+--
+.image:{icons-html} Expected HTML
 [role=tab]
-image:{icons-html} Expected HTML
+--
 
 [source, html, role="highlight-lines:4,8"]
 ----
@@ -124,9 +123,8 @@ The expected HTML is voluntary wrong:
 
 All other differences are not reported as errors as the resulting HTML interpretation will be the same.
 
-
-[role=tab-container-end]
--
+--
+====
 
 .JUnit view
 image::{images-dir}/eclipse/tests-junit-error.png[role="text-center"]
@@ -154,10 +152,10 @@ image::{images-dir}/eclipse/tests-junit-error-useful-part.png[role="text-center"
 Testing an email sent with two main parts (HTML and text fallback) is straightforward.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-25,27-44,69-81 irrelevant-lines:1-25 highlight-lines:58-63"]
 ----
@@ -173,21 +171,22 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlAndT
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts={tabsize}[Source code of the sample].
 
-
+--
+.image:{icons-thymeleaf} HTML template
 [role=tab]
-image:{icons-thymeleaf} HTML template
+--
 
 [source, html]
 ----
 include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
 ----
 
-
 {standard-samples-resourcesdir-url}/template/mixed/simple.html?ts={tabsize}[Source code of the template].
 
-
+--
+.image:{icons-freemarker-text-template} Text template
 [role=tab]
-image:{icons-freemarker-text-template} Text template
+--
 
 [source, html]
 ----
@@ -197,9 +196,10 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
 
 {standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the template].
 
-
+--
+.image:{icons-html} Expected HTML
 [role=tab]
-image:{icons-html} Expected HTML
+--
 
 [source, html]
 ----
@@ -209,21 +209,20 @@ include::{standard-samples-testresourcesdir}/expected/simple_bar_42.html[]
 
 {standard-samples-testresourcesdir-url}/expected/simple_bar_42.html?ts={tabsize}[Source code of the expected HTML].
 
-
+--
+.image:{icons-text} Expected text
 [role=tab]
-image:{icons-text} Expected text
+--
 
 [source]
 ----
 include::{standard-samples-testresourcesdir}/expected/simple_bar_42.txt[]
 ----
 
-
 {standard-samples-testresourcesdir-url}/expected/simple_bar_42.txt?ts={tabsize}[Source code of the expected text].
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 
@@ -233,10 +232,10 @@ include::{standard-samples-testresourcesdir}/expected/simple_bar_42.txt[]
 You can also test that attachments are sent correctly.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:63-68"]
 ----
@@ -252,9 +251,8 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachme
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts={tabsize}[Source code of the sample].
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 
@@ -264,10 +262,10 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachme
 When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `every` method to apply defined assertions on all messages.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-24,26-43 irrelevant-lines:1-24 highlight-lines:55"]
 ----
@@ -279,26 +277,24 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SeveralRecipi
 <4> Assert that each received messages has exactly 2 `cc` recipients
 
 [TIP]
-====
+=====
 The `bcc` recipient is not testable. Indeed, `bcc` recipients are hidden recipients that must not be visible. So the email is received (there are 6 received messages not 5). But `bcc` field of each email are empty because they are not present in the sent email. The `bcc` field is just used for routing.
-====
-
+=====
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts={tabsize}[Source code of the sample].
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 Sometimes you also need to send several different emails. The emails may have some identical information (sender or subject for example). So you can mix `every` (define assertions all messages) with `message` (define assertion for one particular message).
 
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-23,25-42 irrelevant-lines:1-23 highlight-lines:60,70,78,86"]
 ----
@@ -312,19 +308,18 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SeveralEmails
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts={tabsize}[Source code of the sample].
 
-
-[role=tab-container-end]
--
+--
+====
 
 == Testing with SMTP authentication
 
 GreenMail allows to start the SMTP server with user and credentials.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-25,27-34 irrelevant-lines:1-25,51-74 highlight-lines:36,43-45"]
 ----
@@ -340,8 +335,8 @@ include::{ogham-all-testsourcedir}/oghamall/it/email/EmailSMTPAuthenticationTest
 
 NOTE: Only the setup differs, the test is the same.
 
-[role=tab-container-end]
--
+--
+====
 
 [role=TODO]
 ====

@@ -13,7 +13,12 @@ NOTE: All samples with templates are using ThymeLeaf as template engine. For Fre
 
 The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
 
-All samples shown bellow are using SMTP for sending email. See <<user-manual.adoc#sendgrid, Sending email through SendGrid>> to know how to send email using SendGrid HTTP API.
+All samples shown bellow are using SMTP for sending email and are also
+valid for sending email using any other protocol/API. Only the configuration part
+differs.
+
+See <<user-manual.adoc#sendgrid, Sending email through SendGrid>> to know how 
+to configure Ogham for sending email using SendGrid HTTP API.
 
 === First email using an existing SMTP server
 
@@ -97,9 +102,22 @@ include::{user-manual-dir}/email/sendgrid.adoc[leveloffset=+2]
 
 The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
 
-All samples shown bellow are using SMPP for sending SMS. The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is the standard way to send SMS. Only a subset of SMPP properties are used in following samples. The whole list of SMPP properties is available in <<user-manual.adoc#advanced-smpp-configuration, advanced configuration>>.
+All samples shown bellow are using SMPP for sending SMS and are also
+valid for send SMS using any other protocol/API. Only the configuration part
+differs.
 
-See <<user-manual.adoc#ovh, Sending SMS through OVH>> to know how to send SMS using OVH HTTP API.
+See <<user-manual.adoc#ovh, Sending SMS through OVH>> to know how to 
+configure Ogham for sending SMS using OVH HTTP API.
+
+.SMPP protocol
+[TIP]
+====
+The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol is 
+the standard way to send SMS. Only a subset of SMPP properties are used in 
+following samples. The whole list of SMPP properties is available 
+in <<user-manual.adoc#advanced-smpp-configuration, advanced configuration>>.
+====
+
 
 === First SMS using an existing SMPP server
 

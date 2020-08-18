@@ -11,10 +11,10 @@ To enable keep alive strategy, just update the configuration:
 
 .Enable keep alive
 [role="tab-container no-max-height"]
-Keep alive sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -24,8 +24,10 @@ include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
 
 {standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-properties-file} Properties
 [role=tab]
-image:{icons-properties-file} Properties
+--
 
 [source, python, role="irrelevant-lines:1-5 highlight-lines:6"]
 ----
@@ -35,8 +37,8 @@ ogham.sms.cloudhopper.session.keep-alive.enable=true           # <1>
 <1> Enable active keep alive (with default values)
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 The following diagram explains how it works:
@@ -121,10 +123,10 @@ Every value is configurable to adapt to the remote server:
 
 .Custom keep alive configuration
 [role="tab-container no-max-height"]
-Keep alive configuration sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -134,8 +136,10 @@ include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
 
 {standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-properties-file} Properties
 [role=tab]
-image:{icons-properties-file} Properties
+--
 
 [source, python, role="irrelevant-lines:1-5 highlight-lines:7-10"]
 ----
@@ -153,8 +157,8 @@ instead of waiting for first message.
 <4> Change default number of consecutive `enquire_link` requests that end in timeout to 5.
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 .Connection lost

@@ -4,10 +4,10 @@ include::{docdir}/variables.adoc[]
 You can send SMS using https://www.smsglobal.com/[SmsGlobal] SMPP server:
 
 [role="tab-container no-max-height"]
-SmsGlobal sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 highlight-lines:15-18"]
 ----
@@ -25,8 +25,8 @@ include::{standard-sms-samples-sourcedir}/smsglobal/BasicSmsglobalSmppSample.jav
 {standard-sms-samples-sourcedir-url}/smsglobal/BasicSmsglobalSmppSample.java?ts={tabsize}[Source code of the sample].
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 [TIP]

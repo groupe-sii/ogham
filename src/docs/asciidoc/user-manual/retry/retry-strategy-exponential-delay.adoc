@@ -8,10 +8,10 @@ reached.
 
 .How it works
 [role="tab-container no-max-height"]
-Diagrams
-
+====
+.Message sent
 [role=tab]
-Message sent
+--
 
 This diagram shows what happens if the message can't be sent twice but can be sent the third time.
 The initial delay is configured to 5 seconds.
@@ -82,8 +82,10 @@ deactivate Ogham
 ....
 
 
+--
+.Message can't be sent
 [role=tab]
-Message can't be sent
+--
 
 This diagram shows what happens if the message can't be sent and the maximum attempts 
 is reached. The initial delay is configured to 5 seconds. The maximum attempts is configured to 4.
@@ -178,17 +180,17 @@ deactivate Ogham
 ....
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 
 .Enable re-send of email with exponential delay
 [role="tab-container no-max-height"]
-Re-send email
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -198,8 +200,10 @@ include::{standard-email-samples-sourcedir}/BasicClasspathPropertiesSample.java[
 
 {standard-email-samples-sourcedir-url}/BasicClasspathPropertiesSample.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-properties-file} Properties
 [role=tab]
-image:{icons-properties-file} Properties
+--
 
 [source, python, role="irrelevant-lines:1-3 highlight-lines:4-5"]
 ----
@@ -211,16 +215,16 @@ ogham.email.send-retry.exponential-initial-delay=5000     # <2>
 <2> Set the initial delay to `5 seconds`. After each failing attempts, the delay is doubled
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 .Enable re-send of SMS with exponential delay
 [role="tab-container no-max-height"]
-Re-send SMS
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -230,8 +234,10 @@ include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
 
 {standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-properties-file} Properties
 [role=tab]
-image:{icons-properties-file} Properties
+--
 
 [source, python, role="irrelevant-lines:1-5 highlight-lines:6-7"]
 ----
@@ -243,5 +249,5 @@ ogham.sms.send-retry.exponential-initial-delay=5000     # <2>
 <2> Set the initial delay to `5 seconds`. After each failing attempts, the delay is doubled
 
 
-[role=tab-container-end]
--
+--
+====

@@ -1,7 +1,9 @@
 pre>code {
 	width: max-content;
 }
-
+.admonitionblock>table {
+	table-layout: fixed;
+}
 
 .resource-resolution-properties li code {
 	font-size: 0.8em !important;
@@ -40,25 +42,6 @@ pre>code {
 
 #toc.toc2 ul ul.sectlevel3 {
 	font-size: 0.8em;
-}
-
-h3,
-h4,
-h5,
-h6 {
-	position: sticky;
-	top: 0;
-	z-index: 10;
-	background: white;
-}
-h4,
-h5,
-h6 {
-	padding-bottom: 0.4em;
-}
-h6 {
-	top: 2em;
-	padding-right: 20px;
 }
 
 .paragraph p {

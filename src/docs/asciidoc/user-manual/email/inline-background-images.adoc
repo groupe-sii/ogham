@@ -87,10 +87,10 @@ inlining strategy to use for a particular image. This is done through
 
 
 [role="tab-container no-max-height"]
-Attach background images
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -101,9 +101,10 @@ include::{standard-email-samples-sourcedir}/HtmlWithBackgroundImagesTemplateSamp
 
 {standard-email-samples-sourcedir-url}/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
 
-
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
 [source, html, role="highlight-lines:7,10"]
 ----
@@ -117,9 +118,10 @@ background image will be inlined (using `attach` strategy).
 
 {standard-samples-resourcesdir-url}/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-css} CSS
 [role=tab]
-image:{icons-css} CSS
+--
 
 [source, css, role="highlight-lines:2"]
 ----
@@ -134,9 +136,10 @@ is specified, the image will be inlined using `attach` strategy.
 
 {standard-samples-resourcesdir-url}/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-html} Generated HTML
 [role=tab]
-image:{icons-html} Generated HTML
+--
 
 [source, html, role="highlight-lines:7,10"]
 ----
@@ -147,9 +150,8 @@ include::{resourcesdir}/samples/email/inline-background-images-result.html[]
 <3> _
 <4> _
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 == Embed using data URL scheme
@@ -159,10 +161,10 @@ included through CSS rules directly as a base64 string. To enable it,
 you need to provide the `--inline-image` property with `base64` value.
 
 [role="tab-container no-max-height"]
-Base64 background images
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -173,9 +175,10 @@ include::{standard-email-samples-sourcedir}/HtmlWithBackgroundImagesTemplateSamp
 
 {standard-email-samples-sourcedir-url}/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
 
-
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
 [source, html, role="highlight-lines:7,16"]
 ----
@@ -189,9 +192,10 @@ background image will be inlined (using `base64` strategy).
 
 {standard-samples-resourcesdir-url}/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-css} CSS
 [role=tab]
-image:{icons-css} CSS
+--
 
 [source, css, role="highlight-lines:8,11"]
 ----
@@ -207,9 +211,10 @@ strategy is specified using `--inline-image` property on the same CSS rule.
 
 {standard-samples-resourcesdir-url}/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-html} Generated HTML
 [role=tab]
-image:{icons-html} Generated HTML
+--
 
 [source, html, role="highlight-lines:16"]
 ----
@@ -222,9 +227,8 @@ include::{resourcesdir}/samples/email/inline-background-images-result.html[]
 content converted as a base64 string (the base64 string is partially shown here
 for readability).
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 .Use different strategies for images defined in the same CSS rule
@@ -239,10 +243,10 @@ multiple background images or several properties) on the same CSS rule.
 == Skip some images
 
 [role="tab-container no-max-height"]
-Skip background images
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -253,9 +257,10 @@ include::{standard-email-samples-sourcedir}/HtmlWithBackgroundImagesTemplateSamp
 
 {standard-email-samples-sourcedir-url}/HtmlWithBackgroundImagesTemplateSample.java?ts={tabsize}[Source code of the sample]
 
-
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
 [source, html, role="highlight-lines:7,13"]
 ----
@@ -269,9 +274,10 @@ background image will not be inlined.
 
 {standard-samples-resourcesdir-url}/template/thymeleaf/background-images.html?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-css} CSS
 [role=tab]
-image:{icons-css} CSS
+--
 
 [source, css, role="highlight-lines:16,18"]
 ----
@@ -287,9 +293,10 @@ strategy is specified using `--inline-image` property on the same CSS rule.
 
 {standard-samples-resourcesdir-url}/resources/css/background-images.css?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-html} Generated HTML
 [role=tab]
-image:{icons-html} Generated HTML
+--
 
 [source, html, role="highlight-lines:13"]
 ----
@@ -301,9 +308,8 @@ include::{resourcesdir}/samples/email/inline-background-images-result.html[]
 url to the image (except for the path, see note below).
 <4> _
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 .Relative resources
@@ -340,11 +346,10 @@ the `<default strategy>`.
 
 .Same strategy for all images
 [role="tab-container no-max-height"]
-Same strategy for all images
-
-
+====
+.image:{icons-css} CSS
 [role=tab]
-image:{icons-css} CSS
+--
 
 [source, css, role="highlight-lines:6"]
 ----
@@ -363,18 +368,16 @@ relative to the CSS file.
 <3> Use the local image `disc.png` to style the list bullets.
 <4> Indicate the inlining strategy (`base64`) for the three images.
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 .Strategy per image
 [role="tab-container no-max-height"]
-Strategy per image
-
-
+====
+.image:{icons-css} CSS
 [role=tab]
-image:{icons-css} CSS
+--
 
 [source, css, role="highlight-lines:6"]
 ----
@@ -397,9 +400,8 @@ relative to the CSS file.
 * Use `attach` strategy for image `right.gif`
 * Skip inlining for image `disc.png`
 
-
-[role=tab-container-end]
--
+--
+====
 
 .Image matching
 [NOTE]
@@ -412,11 +414,10 @@ and `right.gif` while `attach` strategy is used for `disc.png` in the example ab
 
 .Strategy per image with default
 [role="tab-container no-max-height"]
-Strategy per image with default
-
-
+====
+.image:{icons-css} CSS
 [role=tab]
-image:{icons-css} CSS
+--
 
 [source, css, role="highlight-lines:6"]
 ----
@@ -439,7 +440,6 @@ relative to the CSS file.
 * Use `attach` strategy for all other images defined in the rule (`right.gif` 
 and `disc.png`)
 
-
-[role=tab-container-end]
--
+--
+====
 

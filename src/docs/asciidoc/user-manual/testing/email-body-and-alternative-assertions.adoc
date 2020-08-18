@@ -5,10 +5,10 @@ include::{docdir}/variables.adoc[]
 Testing an email sent with two main parts (HTML and text fallback) is straightforward.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-25,27-44,69-81 irrelevant-lines:1-25 highlight-lines:58-63"]
 ----
@@ -25,8 +25,10 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlAndT
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlAndTextTestSample.java?ts={tabsize}[Source code of the sample].
 
 
+--
+.image:{icons-thymeleaf} HTML template
 [role=tab]
-image:{icons-thymeleaf} HTML template
+--
 
 [source, html]
 ----
@@ -37,8 +39,10 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
 {standard-samples-resourcesdir-url}/template/mixed/simple.html?ts={tabsize}[Source code of the template].
 
 
+--
+.image:{icons-freemarker-text-template} Text template
 [role=tab]
-image:{icons-freemarker-text-template} Text template
+--
 
 [source, html]
 ----
@@ -49,8 +53,10 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
 {standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the template].
 
 
+--
+.image:{icons-html} Expected HTML
 [role=tab]
-image:{icons-html} Expected HTML
+--
 
 [source, html]
 ----
@@ -61,8 +67,10 @@ include::{standard-samples-testresourcesdir}/expected/simple_bar_42.html[]
 {standard-samples-testresourcesdir-url}/expected/simple_bar_42.html?ts={tabsize}[Source code of the expected HTML].
 
 
+--
+.image:{icons-text} Expected text
 [role=tab]
-image:{icons-text} Expected text
+--
 
 [source]
 ----
@@ -73,6 +81,6 @@ include::{standard-samples-testresourcesdir}/expected/simple_bar_42.txt[]
 {standard-samples-testresourcesdir-url}/expected/simple_bar_42.txt?ts={tabsize}[Source code of the expected text].
 
 
-[role=tab-container-end]
--
+--
+====
 

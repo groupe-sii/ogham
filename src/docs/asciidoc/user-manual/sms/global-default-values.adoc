@@ -8,10 +8,10 @@ If you explicitly specify the sender phone number, this value is used instead of
 
 
 [role=tab-container no-max-height]
-Basic sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:19,35"]
 ----
@@ -23,5 +23,5 @@ include::{standard-sms-samples-sourcedir}/OverrideDefaultSenderSample.java[]
 
 {standard-sms-samples-sourcedir-url}/OverrideDefaultSenderSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====

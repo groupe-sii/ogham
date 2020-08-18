@@ -126,8 +126,9 @@ dependencies {
 }
 ----
 
-[role=tab-container-end]
+
 _____
+
 
 
 This will include:
@@ -191,8 +192,9 @@ dependencies {
 }
 ----
 
-[role=tab-container-end]
+
 _____
+
 
 
 This will include:
@@ -280,8 +282,9 @@ provided by Spring Boot.
 by Spring Boot.
 
 
-[role=tab-container-end]
+
 _____
+
 
 
 Ogham will auto-configure to use Spring Boot additions and support Spring Boot 
@@ -412,8 +415,9 @@ public class BasicSample {
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
+
 _____
+
 
 
 The construction of the email is done using a fluent API in order to chain calls and to have a more readable code.
@@ -508,8 +512,9 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts={tabsize}[Source code of the HTML template]
 
-[role=tab-container-end]
+
 _____
+
 
 
 Using a template is straightforward. Instead of providing a string as body (using `body().string(...)`), 
@@ -606,8 +611,9 @@ NOTE: The subject of the email will be `Subject of the email - Welcome foo !`
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html?ts={tabsize}[Source code of the HTML template]
 
-[role=tab-container-end]
+
 _____
+
 
 
 
@@ -662,7 +668,6 @@ https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/j
 '''
 
 [role=tab]
-
 image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Text template
 
 [source, text, role="highlight-lines:1"]
@@ -677,8 +682,9 @@ NOTE: The subject of the email will be `Welcome foo !`
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts={tabsize}[Source code of the text template]
 
-[role=tab-container-end]
+
 _____
+
 
 ==== HTML body with CSS and images
 
@@ -755,8 +761,6 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
 
-
-
 '''
 
 [role=tab]
@@ -831,7 +835,6 @@ determined
 <7> The image is not inlined by Ogham. This can be useful to embed it manually.
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
-
 
 '''
 
@@ -917,9 +920,6 @@ footer .social a {
 }
 ----
 
-
-
-
 '''
 
 [role=tab]
@@ -928,9 +928,8 @@ image:src/docs/resources/images/icons/html.png[width=37,height=30] Sent HTML
 
 
 
-
-[role=tab-container-end]
 _____
+
 
 
 Here is the list of supported transformations:
@@ -1012,19 +1011,20 @@ the email client doesn't support HTML or as a preview of the email.
 <2> Explicitly set the HTML content (used as main body)
 
 [NOTE]
-====
+=====
 The call order between `text()` and `html()` doesn't matter (unlike using `.content(new MultiContent(...))`).
-====
+=====
 
 [NOTE]
-====
+=====
 The underlying `Content` is a `MultiContent`.
-====
+=====
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts={tabsize}[Source code of the sample]
 
-[role=tab-container-end]
+
 _____
+
 
 
 
@@ -1081,9 +1081,9 @@ extension).
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
 [NOTE]
-====
+=====
 The underlying `Content` is a `MultiTemplateContent`.
-====
+=====
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts={tabsize}[Source code of the sample]
 
@@ -1123,8 +1123,9 @@ image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] HTM
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts={tabsize}[Source code of the HTML template]
 
-[role=tab-container-end]
+
 _____
+
 
 Ogham will automatically determine file extensions to append according to the kind of message you 
 are sending. For email, Ogham will search a HTML and a text file by default:
@@ -1208,7 +1209,6 @@ ${name} ${value}
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the text template]
 
-
 '''
 
 [role=tab]
@@ -1231,8 +1231,9 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts={tabsize}[Source code of the HTML template]
 
-[role=tab-container-end]
+
 _____
+
 
 You can notice that the Java code has not changed at all (only the path for the sample). The aim is 
 to use the template engine that best suits your needs.
@@ -1284,8 +1285,9 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts={tabsize}[Source code of the sample]
 
-[role=tab-container-end]
+
 _____
+
 
 Attaching a file to the email is quite simple. You just need to provide the path to the file. 
 The file is loaded from classpath but could also be loaded from file system or anywhere else 
@@ -1389,8 +1391,9 @@ public class BasicSample {
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
+
 _____
+
 
 The construction of the SMS is done using a fluent API in order to chain calls and to have a more 
 readable code.
@@ -1464,8 +1467,9 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts={tabsize}[Source code of the template]
 
-[role=tab-container-end]
+
 _____
+
 
 
 Using a template is straightforward. Instead of providing a string content (using `.message().string(...)`),
@@ -1536,8 +1540,9 @@ public class LongMessageSample {
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java?ts={tabsize}[Source code of the sample].
 
 
-[role=tab-container-end]
+
 _____
+
 
 
 .Message length depends on encoding
@@ -1608,8 +1613,9 @@ dependencies {
 ----
 
 
-[role=tab-container-end]
+
 _____
+
 
 
 This will include:
@@ -1714,8 +1720,9 @@ public class EmailTestSample {
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailTestSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
+
 _____
+
 
 
 === Testing SMS
@@ -1785,8 +1792,9 @@ public class SmsTestSample {
 
 https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SmsTestSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
+
 _____
+
 
 
 === More testing features

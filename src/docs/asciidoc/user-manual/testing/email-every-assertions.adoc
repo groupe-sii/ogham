@@ -5,10 +5,10 @@ include::{docdir}/variables.adoc[]
 When you send an email to several recipients, there is one message per recipient. So if you send an email to 6 recipients, you may need to ensure that the 6 messages are received correctly. Ogham provides the `every` method to apply defined assertions on all messages.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-24,26-43 irrelevant-lines:1-24 highlight-lines:55"]
 ----
@@ -20,26 +20,25 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SeveralRecipi
 <4> Assert that each received messages has exactly 2 `cc` recipients
 
 [TIP]
-====
+=====
 The `bcc` recipient is not testable. Indeed, `bcc` recipients are hidden recipients that must not be visible. So the email is received (there are 6 received messages not 5). But `bcc` field of each email are empty because they are not present in the sent email. The `bcc` field is just used for routing.
-====
+=====
 
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralRecipientsTestSample.java?ts={tabsize}[Source code of the sample].
 
-
-[role=tab-container-end]
--
+--
+====
 
 
 Sometimes you also need to send several different emails. The emails may have some identical information (sender or subject for example). So you can mix `every` (define assertions all messages) with `message` (define assertion for one particular message).
 
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-23,25-42 irrelevant-lines:1-23 highlight-lines:60,70,78,86"]
 ----
@@ -53,6 +52,5 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/SeveralEmails
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/SeveralEmailsTestSample.java?ts={tabsize}[Source code of the sample].
 
-
-[role=tab-container-end]
--
+--
+====

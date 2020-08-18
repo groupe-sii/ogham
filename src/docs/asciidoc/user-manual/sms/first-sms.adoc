@@ -4,10 +4,10 @@ include::{docdir}/variables.adoc[]
 This sample defines two properties mandatory (system ID and password) by this protocol in order to use it.
 
 [role="tab-container no-max-height"]
-Simple sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -26,8 +26,8 @@ include::{standard-sms-samples-sourcedir}/BasicSample.java[]
 
 {standard-sms-samples-sourcedir-url}/BasicSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====
 
 The construction of the SMS is done using a fluent API in order to chain calls and to have a more 
 readable code.

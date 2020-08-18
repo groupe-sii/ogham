@@ -4,10 +4,10 @@ include::{docdir}/variables.adoc[]
 
 .Use custom RetryExecutor
 [role="tab-container no-max-height"]
-Custom retry executor
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-24 irrelevant-lines:1-24"]
 ----
@@ -33,8 +33,8 @@ include::{standard-advanced-samples-sourcedir}/CustomRetryExecutorSample.java[]
 {standard-advanced-samples-sourcedir-url}/CustomRetryExecutorSample.java?ts={tabsize}[Source code of the sample].
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 [NOTE]

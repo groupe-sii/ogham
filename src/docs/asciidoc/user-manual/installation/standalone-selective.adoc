@@ -9,10 +9,10 @@ That's why Ogham provides different modules so you can compose as you like:
 
 .Jakarta Mail and FreeMarker only
 [role="tab-container no-max-height"]
-Select Ogham standalone dependencies
-
+====
+.image:{icons-maven}
 [role=tab]
-image:{icons-maven}
+--
 
 .pom.xml
 [source, xml, subs=attributes+, role="collapse-lines:1-14,25-, highlight-lines:15-24"]
@@ -48,8 +48,10 @@ image:{icons-maven}
 <2> Import only dependencies needed to handle FreeMarker templates.
 
 
+--
+.image:{icons-gradle}
 [role=tab]
-image:{icons-gradle}
+--
 
 .build.gradle
 [source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11-12"]
@@ -71,17 +73,17 @@ dependencies {
 <1> Import only dependencies needed to send emails through SMTP (using Jakarta Mail).
 <2> Import only dependencies needed to handle FreeMarker templates.
 
-[role=tab-container-end]
--
+--
+====
 
 Another example for sending SMS only:
 
 .SMPP only without using templates
 [role="tab-container no-max-height"]
-Select Ogham standalone dependencies
-
+====
+.image:{icons-maven}
 [role=tab]
-image:{icons-maven}
+--
 
 .pom.xml
 [source, xml, subs=attributes+, role="collapse-lines:1-14,20- highlight-lines:15-19"]
@@ -110,8 +112,10 @@ image:{icons-maven}
 ----
 <1> Import only dependencies needed to send SMS through SMPP (using Cloudhopper).
 
+--
+.image:{icons-gradle}
 [role=tab]
-image:{icons-gradle}
+--
 
 .build.gradle
 [source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11"]
@@ -132,5 +136,5 @@ dependencies {
 <1> Import only dependencies needed to send SMS through SMPP (using Cloudhopper).
 
 
-[role=tab-container-end]
--
+--
+====

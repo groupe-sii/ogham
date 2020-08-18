@@ -7,10 +7,10 @@ When a long message is sent, it must be split. Each part of the message is recei
 Sending a SMS to several recipients is the same as sending several distinct SMS. So the SMPP server receives the same number as SMS as the number of recipients. In that case, you can use `every` to make same assertions on all messages. 
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-19 irrelevant-lines:1-19,21-38 highlight-lines:56"]
 ----
@@ -28,6 +28,6 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/LongSmsTestSa
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/LongSmsTestSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====
 

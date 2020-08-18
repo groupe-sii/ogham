@@ -12,10 +12,10 @@ This global address is used only if nothing is specified in the email. If you ex
 address in the email constructor or using the setter, this value is used instead of the global one.
 
 [role=tab-container no-max-height]
-Basic sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 highlight-lines:17,35"]
 ----
@@ -27,8 +27,8 @@ include::{standard-email-samples-sourcedir}/OverrideDefaultSenderSample.java[]
 
 {standard-email-samples-sourcedir-url}/OverrideDefaultSenderSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====
 
 TIP: `mail.from` and `mail.smtp.from` also work
 
@@ -55,10 +55,10 @@ To define several recipient addresses, you can provide a string separated by `,`
 
 
 [role=tab-container no-max-height]
-Basic sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-24,26-34,51-70 irrelevant-lines:1-24 highlight-lines:41-43"]
 ----
@@ -70,8 +70,8 @@ include::{ogham-all-testsourcedir}/oghamall/it/email/EmailPropertiesTest.java[]
 
 {ogham-all-testsourcedir-url}/oghamall/it/email/EmailPropertiesTest.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====
 
 
 [TIP] 

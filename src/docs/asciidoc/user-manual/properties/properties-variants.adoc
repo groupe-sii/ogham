@@ -4,10 +4,10 @@ include::{docdir}/variables.adoc[]
 Property configuration is a good way to separate code from configuration. Ogham allows you to configure values using builders. For example, you can configure the SMTP host and port like this:
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, highlight="4-5"]
 ----
@@ -18,8 +18,8 @@ MessagingBuilder.standard()
 			.port(25);
 ----
 
-[role=tab-container-end]
--
+--
+====
 
 
 However, when using a library, it is simpler that this library provides a way to configure some values without the need of writing code to configure it. The integration is easier. The configuration should also be done in several ways to let the developer choose what fits his needs. 
@@ -34,10 +34,10 @@ You can use configuration properties that are defined several ways:
 * define properties directly in code in a fluent way
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9,25 irrelevant-lines:1-9,25"]
 ----
@@ -51,8 +51,8 @@ include::{standard-samples-sourcedir}/fr/sii/ogham/sample/standard/PropertiesSam
 
 {standard-email-samples-sourcedir-url}/fr/sii/ogham/sample/standard/PropertiesSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====
 
 This sample shows that configuration may come from several sources (code, shared properties, file inside the application, file outside the application and from system properties).
  

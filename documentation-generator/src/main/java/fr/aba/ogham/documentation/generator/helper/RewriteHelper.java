@@ -10,8 +10,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Component
 public class RewriteHelper {
-	private static final Pattern TAB_CONTAINER = Pattern.compile("^(\\[role=\"?tab-container.*\\]$\n)^(.+)$", Pattern.MULTILINE);
-	private static final Pattern TAB = Pattern.compile("\\[role=\"?tab[^\\]-]*\\]");
+	private static final Pattern TAB_CONTAINER = Pattern.compile("(?<blockstart>\\[role=\"?tab-container[^\\]]*\\])\\s+(?<delim>={4,})(?<content>.+?)--\\s+\\2", Pattern.MULTILINE | Pattern.DOTALL);
+	private static final Pattern TAB = Pattern.compile("(--\n+)?^[.](?<title>.+)$\n(?<blockstart>\\[role=\"?tab[^\\]-]*\\]\n)\n*--", Pattern.MULTILINE);
 	private static final Pattern CROSS_REFERENCE = Pattern.compile("<<([^,#]+).adoc([^,]+),([^>]+)>>");
 	private static final Pattern TODO_BLOCKS = Pattern.compile("^(\\[role=\"?TODO.*?\\]$(\n={4,}))(.+?)\\2", Pattern.MULTILINE | Pattern.DOTALL);
 	
@@ -41,7 +41,10 @@ public class RewriteHelper {
 		Matcher m = TAB_CONTAINER.matcher(content);
 		StringBuffer sb = new StringBuffer();
 		while(m.find()) {
-			m.appendReplacement(sb, Matcher.quoteReplacement(m.group(1))+"_____");
+			m.appendReplacement(sb, Matcher.quoteReplacement(m.group("blockstart"))
+									+ "\n_____\n"
+									+ Matcher.quoteReplacement(m.group("content"))
+									+ "\n_____\n");
 		}
 		m.appendTail(sb);
 		return sb.toString();
@@ -51,7 +54,9 @@ public class RewriteHelper {
 		Matcher m = TAB.matcher(content);
 		StringBuffer sb = new StringBuffer();
 		while(m.find()) {
-			m.appendReplacement(sb, "'''\n\n"+Matcher.quoteReplacement(m.group()));
+			m.appendReplacement(sb, "'''\n\n" 
+									+ Matcher.quoteReplacement(m.group("blockstart"))
+									+ Matcher.quoteReplacement(m.group("title")));
 		}
 		m.appendTail(sb);
 		return sb.toString();

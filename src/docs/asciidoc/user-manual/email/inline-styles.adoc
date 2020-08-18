@@ -54,10 +54,10 @@ default strategy
 
 
 [role="tab-container  no-max-height"]
-Inline CSS using style attribute
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -69,10 +69,10 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 {standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
 
-
-
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
 [source, html, role="highlight-lines:7-8"]
 ----
@@ -83,9 +83,10 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 
 {standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-css} CSS files
 [role=tab]
-image:{icons-css} CSS files
+--
 
 .layout.css
 [source, css]
@@ -99,12 +100,12 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/layout.cs
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css[]
 ----
 
-
-
+--
+.image:{icons-html} Generated HTML
 [role=tab]
-image:{icons-html} Generated HTML
+--
 
-[source, html, role="collapse-lines:16-72 highlight-lines:8,9,10,12,15,74,83,84,85,88,92"]
+[source, html, role="highlight-lines:8,9,10,12,15,25,34,35,36,39,43"]
 ----
 include::{resourcesdir}/samples/email/inlining-result.html[]
 ----
@@ -121,8 +122,8 @@ from both files are merged.
 <8> _
 <9> As `footer .social a` also matches this node, the same rules as <7> are applied.
 
-[role=tab-container-end]
--
+--
+====
 
 
 == Skip some styles
@@ -138,10 +139,10 @@ nodes, the whole contained rules are not applied at all.
 ====
 
 [role="tab-container  no-max-height"]
-Skip CSS inlining on node
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -153,12 +154,12 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 {standard-email-samples-sourcedir-url}/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
 
-
-
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
-[source, html, role="highlight-lines:47"]
+[source, html, role="collapse-lines:1-44 highlight-lines:47"]
 ----
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
 ----
@@ -174,9 +175,10 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 
 {standard-samples-resourcesdir-url}/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
 
-
+--
+.image:{icons-css} CSS files
 [role=tab]
-image:{icons-css} CSS files
+--
 
 .layout.css
 [source, css]
@@ -190,12 +192,12 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/layout.cs
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/css/theme.css[]
 ----
 
-
-
+--
+.image:{icons-html} Generated HTML
 [role=tab]
-image:{icons-html} Generated HTML
+--
 
-[source, html, role="collapse-lines:9-82,84-91 highlight-lines:94"]
+[source, html, role="collapse-lines:1-42 highlight-lines:45"]
 ----
 include::{resourcesdir}/samples/email/inlining-result.html[]
 ----
@@ -212,8 +214,8 @@ include::{resourcesdir}/samples/email/inlining-result.html[]
 <11> `.white` rule defined in `theming.css` matches this node however, you can
 notice that no `style` attribute has been added
 
-[role=tab-container-end]
--
+--
+====
 
 
 

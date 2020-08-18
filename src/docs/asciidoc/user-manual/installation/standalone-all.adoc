@@ -3,10 +3,10 @@ include::{docdir}/variables.adoc[]
 
 
 [role="tab-container no-max-height"]
-Include Ogham standalone dependency
-
+====
+.image:{icons-maven}
 [role=tab]
-image:{icons-maven}
+--
 
 .pom.xml
 [source, xml, subs=attributes+, role="collapse-lines:1-14,20- highlight-lines:15-19"]
@@ -37,8 +37,10 @@ image:{icons-maven}
 {standard-samples-url}/pom.xml?ts={tabsize}[View code of an example pom.xml]
 
 
+--
+.image:{icons-gradle}
 [role=tab]
-image:{icons-gradle}
+--
 
 .build.gradle
 [source, groovy, subs=attributes+, role="collapse-lines:1-9 highlight-lines:11"]
@@ -57,8 +59,8 @@ dependencies {
 }
 ----
 
-[role=tab-container-end]
--
+--
+====
 
 
 This will include:

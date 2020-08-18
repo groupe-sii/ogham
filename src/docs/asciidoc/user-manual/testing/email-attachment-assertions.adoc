@@ -4,10 +4,10 @@ include::{docdir}/variables.adoc[]
 You can also test that attachments are sent correctly.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:63-68"]
 ----
@@ -24,5 +24,5 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailAttachme
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailAttachmentTestSample.java?ts={tabsize}[Source code of the sample].
 
 
-[role=tab-container-end]
--
+--
+====

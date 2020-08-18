@@ -8,10 +8,10 @@ split your messages into several parts the right way to be recomposed by clients
 to the message encoding). Therefore, you don't need to handle the split of messages in your code:
 
 [role="tab-container no-max-height"]
-Long SMS Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,12-21 highlight-lines:27-30"]
 ----
@@ -21,8 +21,8 @@ include::{standard-sms-samples-sourcedir}/LongMessageSample.java[]
 {standard-sms-samples-sourcedir-url}/LongMessageSample.java?ts={tabsize}[Source code of the sample].
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 .Message length depends on encoding

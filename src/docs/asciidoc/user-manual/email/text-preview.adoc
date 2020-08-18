@@ -9,10 +9,10 @@ be unreadable.
 
 
 [role="tab-container no-max-height"]
-Sample using HTML and text
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9,11-20,23-30 highlight-lines:39-40"]
 ----
@@ -23,19 +23,19 @@ the email client doesn't support HTML or as a preview of the email.
 <2> Explicitly set the HTML content (used as main body)
 
 [NOTE]
-====
+=====
 The call order between `text()` and `html()` doesn't matter (unlike using `.content(new MultiContent(...))`).
-====
+=====
 
 [NOTE]
-====
+=====
 The underlying `Content` is a `MultiContent`.
-====
+=====
 
 {standard-email-samples-sourcedir-url}/HtmlAndTextSample.java?ts={tabsize}[Source code of the sample]
 
-[role=tab-container-end]
--
+--
+====
 
 
 
@@ -44,10 +44,10 @@ that avoids specifying twice the path to the templates (a single path without ex
 and text template files).
 
 [role="tab-container no-max-height"]
-Sample using HTML and text templates
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9,37-49 irrelevant-lines:1-9,12-19 highlight-lines:31-32"]
 ----
@@ -60,14 +60,16 @@ extension).
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
 [NOTE]
-====
+=====
 The underlying `Content` is a `MultiTemplateContent`.
-====
+=====
 
 {standard-email-samples-sourcedir-url}/HtmlAndTextTemplateSample.java?ts={tabsize}[Source code of the sample]
 
+--
+.image:{icons-thymeleaf-text-template} Text template
 [role=tab]
-image:{icons-thymeleaf-text-template} Text template
+--
 
 .Text template located in `src/main/resources/template/thymeleaf/simple.txt`
 [source, txt]
@@ -78,8 +80,10 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simple.txt[]
 {standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts={tabsize}[Source code of the text template]
 
 
+--
+.image:{icons-thymeleaf-html-template} HTML template
 [role=tab]
-image:{icons-thymeleaf-html-template} HTML template
+--
 
 .HTML template located at `src/main/resources/template/thymeleaf/simple.html`
 [source, html]
@@ -89,8 +93,8 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simple.html[]
 
 {standard-samples-resourcesdir-url}/template/thymeleaf/simple.html?ts={tabsize}[Source code of the HTML template]
 
-[role=tab-container-end]
--
+--
+====
 
 Ogham will automatically determine file extensions to append according to the kind of message you 
 are sending. For email, Ogham will search a HTML and a text file by default:
@@ -112,10 +116,10 @@ the same email. Just write your templates with the engine you want.
 
 
 [role="tab-container no-max-height"]
-Sample using HTML with ThymeLeaf and text with FreeMarker
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9,37-49 irrelevant-lines:1-9,12-19 highlight-lines:31-32"]
 ----
@@ -129,8 +133,10 @@ extension). The HTML template uses Thymeleaf while the text template uses FreeMa
 
 {standard-email-samples-sourcedir-url}/HtmlAndTextMixedTemplateEnginesSample.java?ts={tabsize}[Source code of the sample]
 
+--
+.image:{icons-freemarker-text-template} Text template
 [role=tab]
-image:{icons-freemarker-text-template} Text template
+--
 
 .Text template located in `src/main/resources/template/mixed/simple.txt.ftl`
 [source, txt]
@@ -140,9 +146,10 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.txt.ftl[]
 
 {standard-samples-resourcesdir-url}/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the text template]
 
-
+--
+.image:{icons-thymeleaf} HTML template
 [role=tab]
-image:{icons-thymeleaf} HTML template
+--
 
 .HTML template located at `src/main/resources/template/mixed/simple.html`
 [source, html]
@@ -152,8 +159,8 @@ include::{standard-samples-resourcesdir}/template/mixed/simple.html[]
 
 {standard-samples-resourcesdir-url}/template/mixed/simple.html?ts={tabsize}[Source code of the HTML template]
 
-[role=tab-container-end]
--
+--
+====
 
 You can notice that the Java code has not changed at all (only the path for the sample). The aim is 
 to use the template engine that best suits your needs.

@@ -14,10 +14,10 @@ last delay is used for each remaining attempts.
 
 .How it works
 [role="tab-container no-max-height"]
-Diagrams
-
+====
+.Message sent
 [role=tab]
-Message sent
+--
 
 This diagram shows what happens if the message can't be sent twice but can be sent the third time.
 The configured delays are: 5 seconds and 25 seconds.
@@ -88,8 +88,10 @@ deactivate Ogham
 ....
 
 
+--
+.Message can't be sent
 [role=tab]
-Message can't be sent
+--
 
 This diagram shows what happens if the message can't be sent and the maximum attempts 
 is reached. The maximum attempts is configured to 4.
@@ -185,17 +187,17 @@ deactivate Ogham
 ....
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 
 .Enable re-send of email with per excecution delay
 [role="tab-container no-max-height"]
-Re-send email
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -205,8 +207,10 @@ include::{standard-email-samples-sourcedir}/BasicClasspathPropertiesSample.java[
 
 {standard-email-samples-sourcedir-url}/BasicClasspathPropertiesSample.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-properties-file} Properties
 [role=tab]
-image:{icons-properties-file} Properties
+--
 
 [source, python, role="irrelevant-lines:1-3 highlight-lines:4-5"]
 ----
@@ -219,16 +223,16 @@ ogham.email.send-retry.per-execution-delays=5000,25000,32000     # <2>
 `32 seconds` after third execution
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 .Enable re-send of SMS with per execution delay
 [role="tab-container no-max-height"]
-Re-send SMS
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -238,8 +242,10 @@ include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
 
 {standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-properties-file} Properties
 [role=tab]
-image:{icons-properties-file} Properties
+--
 
 [source, python, role="irrelevant-lines:1-5 highlight-lines:6-7"]
 ----
@@ -251,5 +257,5 @@ ogham.sms.send-retry.per-execution-delays=5000,25000,32000     # <2>
 <2> Configure the delays: `5 seconds` after first failure, `25 seconds` after second failure and
 `32 seconds` after third execution
 
-[role=tab-container-end]
--
+--
+====

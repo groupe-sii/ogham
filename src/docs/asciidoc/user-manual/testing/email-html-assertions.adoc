@@ -19,10 +19,10 @@ the same utility function every time.
 
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-26,27-44,71-83 irrelevant-lines:1-26 highlight-lines:63"]
 ----
@@ -36,8 +36,10 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailHtmlTest
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailHtmlTestSample.java?ts={tabsize}[Source code of the sample].
 
 
+--
+.image:{icons-thymeleaf} HTML template
 [role=tab]
-image:{icons-thymeleaf} HTML template
+--
 
 [source, html]
 ----
@@ -48,8 +50,10 @@ include::{standard-samples-resourcesdir}/template/register.html[]
 {standard-samples-resourcesdir-url}/template/register.html?ts={tabsize}[Source code of the template].
 
 
+--
+.image:{icons-html} Expected HTML
 [role=tab]
-image:{icons-html} Expected HTML
+--
 
 [source, html]
 ----
@@ -60,5 +64,5 @@ include::{standard-samples-testresourcesdir}/expected/register.html[]
 {standard-samples-testresourcesdir-url}/expected/register.html?ts={tabsize}[Source code of the expected HTML].
 
 
-[role=tab-container-end]
--
+--
+====

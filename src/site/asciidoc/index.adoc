@@ -216,11 +216,13 @@ to exclude some dependencies).
 
 [.code-example]
 =====
-[role=tab-container]
-Include Ogham standalone dependency
 
+[role=tab-container]
+======
+
+.image:{icons-maven}
 [role=tab]
-image:{icons-maven}
+--
 
 .Add `ogham-all` dependency to your pom.xml
 [source, xml, subs=attributes+]
@@ -232,8 +234,10 @@ image:{icons-maven}
 </dependency>
 ----
 
+--
+.image:{icons-gradle}
 [role=tab]
-image:{icons-gradle}
+--
 
 .Add `ogham-all` dependency to your build.gradle
 [source, groovy, subs=attributes+]
@@ -243,8 +247,9 @@ dependencies {
 }
 ----
 
-[role=tab-container-end]
--
+--
+======
+
 =====
 
 ====
@@ -270,11 +275,13 @@ Developers can also select features by <<user-manual.adoc#select-features-spring
 
 [.code-example]
 =====
-[role=tab-container]
-Include Ogham dependency for Spring Boot
 
+[role=tab-container]
+======
+
+.image:{icons-maven}
 [role=tab]
-image:{icons-maven}
+--
 
 .Add `ogham-spring-boot-starter-all` dependency to your pom.xml
 [source, xml, subs=attributes+]
@@ -287,8 +294,10 @@ image:{icons-maven}
 ----
 
 
+--
+.image:{icons-gradle}
 [role=tab]
-image:{icons-gradle}
+--
 
 .Add `ogham-spring-boot-starter-all` dependency to your build.gradle
 [source, groovy, subs=attributes+]
@@ -298,8 +307,9 @@ dependencies {
 }
 ----
 
-[role=tab-container-end]
--
+--
+======
+
 =====
 
 ====

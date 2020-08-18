@@ -21,10 +21,10 @@ For configuration inside the application, code has higher priority than configur
 
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9,25 irrelevant-lines:1-9,25"]
 ----
@@ -41,8 +41,10 @@ include::{standard-samples-sourcedir}/fr/sii/ogham/sample/standard/PropertiesSam
 
 
 
+--
+.image:{icons-properties-file} classpath:email.properties
 [role=tab]
-image:{icons-properties-file} classpath:email.properties
+--
 
 [source, python]
 ----
@@ -51,16 +53,20 @@ mail.smtp.port=25
 ogham.email.from.default-value=foo@test.com
 ----
 
+--
+.image:{icons-properties-file} file:/etc/app/email.properties
 [role=tab]
-image:{icons-properties-file} file:/etc/app/email.properties
+--
 
 [source, python]
 ----
 mail.smtp.host=smtp.domain.com
 ----
 
+--
+.Result
 [role=tab]
-Result
+--
 
 Running this sample with the following command line:
 
@@ -87,8 +93,8 @@ Gives the following property values:
 
 |===
 
-[role=tab-container-end]
--
+--
+====
 
 NOTE: See the {sourcedir-url}/ogham-all/src/test/java/fr/sii/ogham/it/env/PropertyOverrideTest.java?ts={tabsize}[test that ensures this order].
 
@@ -97,10 +103,10 @@ NOTE: See the {sourcedir-url}/ogham-all/src/test/java/fr/sii/ogham/it/env/Proper
 For example, if you use two configuration files defined in the classpath:
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java]
 ----
@@ -112,8 +118,10 @@ image:{icons-java-code} Java
 			.build();
 ----
 
+--
+.image:{icons-properties-file} common.properties
 [role=tab]
-image:{icons-properties-file} common.properties
+--
 
 [source, python]
 ----
@@ -121,16 +129,20 @@ mail.smtp.host=localhost
 mail.smtp.port=25
 ----
 
+--
+.image:{icons-properties-file} email.properties
 [role=tab]
-image:{icons-properties-file} email.properties
+--
 
 [source, python]
 ----
 mail.smtp.host=smtp.domain.com
 ----
 
+--
+.Result
 [role=tab]
-Result
+--
 
 [cols="2" options="header"]
 |===
@@ -145,8 +157,8 @@ Result
 
 |===
 
-[role=tab-container-end]
--
+--
+====
 
 For the same level of priority, this is the declaration order that prevails.
 
@@ -156,10 +168,10 @@ For the same level of priority, this is the declaration order that prevails.
 If you want to use a different priority order, you can explicitly register properties with a custom priority:
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java]
 ----
@@ -171,8 +183,10 @@ image:{icons-java-code} Java
 			.build();
 ----
 
+--
+.image:{icons-properties-file} common.properties
 [role=tab]
-image:{icons-properties-file} common.properties
+--
 
 [source, python]
 ----
@@ -180,16 +194,20 @@ mail.smtp.host=localhost
 mail.smtp.port=25
 ----
 
+--
+.image:{icons-properties-file} email.properties
 [role=tab]
-image:{icons-properties-file} email.properties
+--
 
 [source, python]
 ----
 mail.smtp.host=smtp.domain.com
 ----
 
+--
+.Result
 [role=tab]
-Result
+--
 
 [cols="2" options="header"]
 |===
@@ -204,8 +222,8 @@ Result
 
 |===
 
-[role=tab-container-end]
--
+--
+====
 
 You can notice that the result is now different than using default priorities.
 

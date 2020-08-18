@@ -4,10 +4,10 @@ include::{docdir}/variables.adoc[]
 You write your business code once. Ogham handles environment switching just by providing different configuration:
 
 [role="tab-container no-max-height"]
-Switch sender according to environment (tests/dev/prod)
-
+====
+.Development
 [role=tab]
-Development
+--
 
 In development phase, you may want to send email through any SMTP server (GMail for example) and SMS through any SMPP server (SmsGlobal for example).
 Your templates can be embedded in classpath.
@@ -42,8 +42,10 @@ Your templates can be embedded in classpath.
 
 
 
+--
+.Tests
 [role=tab]
-Tests
+--
 
 You can test your emails content through an embedded local SMTP.
 You can do the same with SMS through an embedded local SMPP server.
@@ -78,8 +80,10 @@ Ogham directly provides embedded servers for testing. Your templates can be embe
 ....
 
 
+--
+.Production
 [role=tab]
-Production
+--
 
 In production, your enterprise may use external services for sending emails or SMS (like SendGrid HTTP API for emails and OVH HTTP API for SMS).
 
@@ -113,8 +117,8 @@ Externalizing templates let the possibility to update them without needing to de
 ....
 
 
-[role=tab-container-end]
--
+--
+====
 
 In all cases, the code never changes. Only Ogham configuration differs.
 

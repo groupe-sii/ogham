@@ -6,10 +6,10 @@ to start on a random port instead of a fixed port.
 
 .Random SMTP port using GreenMail
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-23 irrelevant-lines:1-23, highlight-lines:28,36,37"]
 ----
@@ -35,7 +35,7 @@ random port
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/RandomPortEmailTestSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====
 
 For SMS testing, you don't have to change anything, it uses random port by default.

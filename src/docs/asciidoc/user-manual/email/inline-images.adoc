@@ -70,10 +70,10 @@ It is possible to configure Ogham to use a
 
 
 [role="tab-container  no-max-height"]
-Attach images
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -87,10 +87,12 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
-[source, html, role="collapse-lines:1-10,14-16,19-24,28-36,41-49 highlight-lines:12,27,39"]
+[source, html, role="collapse-lines:1-10,14-25,28-37,41- highlight-lines:12,27,39"]
 ----
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
 ----
@@ -106,10 +108,12 @@ be inlined (using `attach` strategy)
 
 
 
+--
+.image:{icons-html} Generated HTML
 [role=tab]
-image:{icons-html} Generated HTML
+--
 
-[source, html, role="collapse-lines:1-8,12-24,27-34,39-47 highlight-lines:10,26,37"]
+[source, html, role="collapse-lines:1-8,12-24,27-35,39- highlight-lines:10,26,37"]
 ----
 include::{resourcesdir}/samples/email/inlining-result.html[]
 ----
@@ -122,8 +126,8 @@ include::{resourcesdir}/samples/email/inlining-result.html[]
 <7> _
 <8> The image is attached and the generated Content-ID is `2`.
 
-[role=tab-container-end]
--
+--
+====
 
 
 == Embed using data URL scheme
@@ -142,10 +146,10 @@ this information for you thanks to <<user-manual.adoc#mimetype-detection, automa
 
 
 [role="tab-container  no-max-height"]
-Embed images as base64
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -159,10 +163,12 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
-[source, html, role="collapse-lines:1-16,19-24,26-49 highlight-lines:18"]
+[source, html, role="collapse-lines:1-16,19-24,26- highlight-lines:18"]
 ----
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
 ----
@@ -175,10 +181,12 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 
 
 
+--
+.image:{icons-html} Generated HTML
 [role=tab]
-image:{icons-html} Generated HTML
+--
 
-[source, html, role="collapse-lines:1-14,19-23,25-47 highlight-lines:16-18"]
+[source, html, role="collapse-lines:1-14,19-23,25- highlight-lines:16-18"]
 ----
 include::{resourcesdir}/samples/email/inlining-result.html[]
 ----
@@ -190,8 +198,8 @@ include::{resourcesdir}/samples/email/inlining-result.html[]
 the image converted to a base64 string (the base64 string is partially shown here
 for readability).
 
-[role=tab-container-end]
--
+--
+====
 
 
 == Skip some images
@@ -201,10 +209,10 @@ the image by placing the `data-inline-image` attribute with the `"skip"` value
 on the `<img>` tag.
 
 [role="tab-container  no-max-height"]
-Skip embedding
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,12-28,36-48 irrelevant-lines:1-10,12-19 highlight-lines:30-31"]
 ----
@@ -218,10 +226,12 @@ include::{standard-email-samples-sourcedir}/HtmlWithImagesAndCssTemplateSample.j
 
 
 
+--
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
-[source, html, role="collapse-lines:1-40,44-49 highlight-lines:42"]
+[source, html, role="collapse-lines:1-40,44- highlight-lines:42"]
 ----
 include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.html[]
 ----
@@ -237,10 +247,12 @@ include::{standard-samples-resourcesdir}/template/withImagesAndCss/resources.htm
 
 
 
+--
+.image:{icons-html} Generated HTML
 [role=tab]
-image:{icons-html} Generated HTML
+--
 
-[source, html, role="collapse-lines:1-38,42-47 highlight-lines:40"]
+[source, html, role="collapse-lines:1-38,42- highlight-lines:40"]
 ----
 include::{resourcesdir}/samples/email/inlining-result.html[]
 ----
@@ -255,8 +267,8 @@ include::{resourcesdir}/samples/email/inlining-result.html[]
 <9> _
 <10> The image is not inlined at all (the original `src` attribute is unchanged)
 
-[role=tab-container-end]
--
+--
+====
 
 
 

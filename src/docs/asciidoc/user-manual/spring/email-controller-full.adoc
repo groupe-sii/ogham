@@ -12,10 +12,10 @@ The following sample shows a Spring Web that exposes one simple endpoint for sen
 
 
 [role="tab-container no-max-height"]
-Email sample with Spring Boot
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-16,46-58 irrelevant-lines:1-16 highlight-lines:31,32,38-41"]
 ----
@@ -29,8 +29,10 @@ include::{spring-email-samples-sourcedir}/ThymeleafHtmlAndFreemarkerTextSample.j
 
 {spring-email-samples-sourcedir-url}/ThymeleafHtmlAndFreemarkerTextSample.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-thymeleaf} HTML template
 [role=tab]
-image:{icons-thymeleaf} HTML template
+--
 
 [source, html]
 ----
@@ -43,8 +45,10 @@ include::{spring-samples-resourcesdir}/email/mixed.html[]
 
 {spring-samples-resourcesdir-url}/email/mixed.html?ts={tabsize}[Source code of the HTML template]
 
+--
+.image:{icons-freemarker-text-template} Text template
 [role=tab]
-image:{icons-freemarker-text-template} Text template
+--
 
 [source, txt]
 ----
@@ -54,8 +58,10 @@ include::{spring-samples-resourcesdir}/email/mixed.txt.ftlh[]
 {spring-samples-resourcesdir-url}/email/mixed.txt.ftlh?ts={tabsize}[Source code of the text template]
 
 
+--
+.image:{icons-properties-file} Spring properties
 [role=tab]
-image:{icons-properties-file} Spring properties
+--
 
 [source, python]
 ----
@@ -69,5 +75,5 @@ include::{spring-samples-resourcesdir}/application-email-template.properties[]
 
 {spring-samples-resourcesdir-url}/application-email-template.properties?ts={tabsize}[Source code of the properties]
 
-[role=tab-container-end]
--
+--
+====

@@ -9,10 +9,10 @@ and to avoid to create a new file or to use
 a different evaluation syntax or context just for one line.
 
 [role="tab-container no-max-height"]
-Sample with template
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-10,35-47 irrelevant-lines:1-10,12-19"]
 ----
@@ -22,8 +22,10 @@ include::{standard-email-samples-sourcedir}/HtmlTemplateWithSubjectSample.java[]
 
 {standard-email-samples-sourcedir-url}/HtmlTemplateWithSubjectSample.java?ts={tabsize}[Source code of the sample]
 
+--
+.image:{icons-thymeleaf} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf} ThymeLeaf template
+--
 
 [source, html, role="highlight-lines:4"]
 ----
@@ -36,6 +38,6 @@ NOTE: The subject of the email will be `Subject of the email - Welcome foo !`
 
 {standard-samples-resourcesdir-url}/template/thymeleaf/simpleWithSubject.html?ts={tabsize}[Source code of the HTML template]
 
-[role=tab-container-end]
--
+--
+====
 

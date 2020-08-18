@@ -7,10 +7,10 @@ assertions on your email (right recipients, right sender, right body...). Ogham 
 http://www.icegreen.com/greenmail/[GreenMail] as local SMTP server.
 
 [role="tab-container no-max-height"]
-Sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-23 irrelevant-lines:1-23"]
 ----
@@ -35,5 +35,5 @@ include::{standard-samples-testsourcedir}/fr/sii/ogham/sample/test/EmailTestSamp
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/EmailTestSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====

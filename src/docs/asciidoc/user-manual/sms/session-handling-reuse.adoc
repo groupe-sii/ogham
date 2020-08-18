@@ -24,10 +24,10 @@ To enable reuse session strategy, update the configuration like this:
 
 .Enable reuse session
 [role="tab-container no-max-height"]
-Reuse session sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -37,8 +37,10 @@ include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
 
 {standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-properties-file} Properties
 [role=tab]
-image:{icons-properties-file} Properties
+--
 
 [source, python, role="irrelevant-lines:1-5 highlight-lines:6"]
 ----
@@ -48,8 +50,8 @@ ogham.sms.cloudhopper.session.reuse-session.enable=true           # <1>
 <1> Enable reuse session (with default values)
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 The following diagram explains how it works:
@@ -119,10 +121,10 @@ Timings are configurable:
 
 .Custom reuse session configuration
 [role="tab-container no-max-height"]
-Reuse session configuration sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9"]
 ----
@@ -132,8 +134,10 @@ include::{standard-sms-samples-sourcedir}/BasicSampleExternalProperties.java[]
 
 {standard-sms-samples-sourcedir-url}/BasicSampleExternalProperties.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-properties-file} Properties
 [role=tab]
-image:{icons-properties-file} Properties
+--
 
 [source, python, role="irrelevant-lines:1-5 highlight-lines:7-9"]
 ----
@@ -146,8 +150,8 @@ ogham.sms.cloudhopper.session.reuse-session.enquire-link-timeout=5000           
 <2> Change default response timeout to 5 seconds.
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 

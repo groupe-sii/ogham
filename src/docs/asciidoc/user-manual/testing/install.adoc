@@ -3,10 +3,10 @@ include::{docdir}/variables.adoc[]
 
 
 [role=tab-container]
-Include Ogham test dependency
-
+====
+.image:{icons-maven}
 [role=tab]
-image:{icons-maven}
+--
 
 .Add `ogham-test-utils` dependency to your pom.xml
 [source, xml, subs=attributes+]
@@ -22,8 +22,10 @@ image:{icons-maven}
 {standard-samples-url}/pom.xml?ts={tabsize}[View code of an example pom.xml]
 
 
+--
+.image:{icons-gradle}
 [role=tab]
-image:{icons-gradle}
+--
 
 
 .Add `ogham-test-utils` to your build.gradle
@@ -35,8 +37,8 @@ dependencies {
 ----
 
 
-[role=tab-container-end]
--
+--
+====
 
 
 This will include:

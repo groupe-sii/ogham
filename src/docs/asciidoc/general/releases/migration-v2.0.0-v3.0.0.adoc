@@ -12,10 +12,10 @@ tests.
 
 .Example of the issue
 [role="tab-container"]
-Issue
-
+====
+.image:{icons-java-code} Automatic configuration
 [role=tab]
-image:{icons-java-code} Automatic configuration
+--
 
 For example, Ogham could automatically provide a configuration for email SMTP port:
 
@@ -30,9 +30,10 @@ is set with a value, this value is used. A property is recognize because it
 is surrounded by `${}`.
 <2> The default value to use if no value is set for the `mail.smtp.port` property.
 
-
+--
+.image:{icons-java-code} Developer code
 [role=tab]
-image:{icons-java-code} Developer code
+--
 
 Now developer wants to set the port in its code:
 
@@ -43,9 +44,8 @@ Now developer wants to set the port in its code:
 ----
 <1> Explicitly set the port to `465` using the string method.
 
-
-[role=tab-container-end]
--
+--
+====
 
 The result is:
 
@@ -67,10 +67,10 @@ values provided by the developer. There is now a clear priority order:
 
 .Update your code
 [role="tab-container"]
-Set value
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="diff-remove-lines:2 diff-add-lines:3"]
 ----
@@ -81,10 +81,8 @@ image:{icons-java-code} Java
 <1> The old way to set the value
 <2> The new way to set the value
 
-
-[role=tab-container-end]
--
-
+--
+====
 
 [TIP]
 ====
@@ -103,10 +101,10 @@ Here are examples with the new API:
 
 .Fluent API for email body
 [role="tab-container"]
-Fluent body API
-
+====
+.image:{icons-java-code} String body
 [role=tab]
-image:{icons-java-code} String body
+--
 
 [source, java, role="diff-remove-lines:3 diff-add-lines:4"]
 ----
@@ -122,9 +120,10 @@ The `body()` method provides access to several methods to set the email body.
 The sample shows how to set a simple string as the body of the email (`.string()`
 method).
 
-
+--
+.image:{icons-java-code} Templated body
 [role=tab]
-image:{icons-java-code} Templated body
+--
 
 [source, java, role="diff-remove-lines:3 diff-add-lines:4"]
 ----
@@ -140,9 +139,10 @@ using a template.
 The sample shows how to use a template for the body of the email (`.template()`
 method).
 
-
+--
+.image:{icons-java-code} body + alternative
 [role=tab]
-image:{icons-java-code} body + alternative
+--
 
 [source, java, role="diff-remove-lines:3-5 diff-add-lines:6-7"]
 ----
@@ -169,7 +169,7 @@ Call order doesn't matter.
 
 .Shortcut
 [NOTE]
-====
+=====
 The new API also provides a shortcut to set both alternative and body based
 on templates:
 
@@ -183,18 +183,17 @@ oghamService.send(new Email()
 <1> No extension is provided so Ogham can automatically use `template.html` as 
 body of the email if the template exists and use `template.txt` as the textual 
 alternative of the email if the template exists. 
+=====
+
+--
 ====
-
-[role=tab-container-end]
--
-
 
 .Fluent API for SMS message
 [role="tab-container"]
-Fluent SMS message
-
+====
+.image:{icons-java-code} String message
 [role=tab]
-image:{icons-java-code} String message
+--
 
 [source, java, role="diff-remove-lines:2 diff-add-lines:3"]
 ----
@@ -209,9 +208,10 @@ The `message()` method provides access to several methods to set the SMS message
 The sample shows how to set a simple string as the message of the SMS (`.string()`
 method).
 
-
+--
+.image:{icons-java-code} Templated message
 [role=tab]
-image:{icons-java-code} Templated message
+--
 
 [source, java, role="diff-remove-lines:2 diff-add-lines:3"]
 ----
@@ -226,9 +226,8 @@ using a template.
 The sample shows how to use a template for the message of the SMS (`.template()`
 method).
 
-[role=tab-container-end]
--
-
+--
+====
 
 The old API is generic and for instance, a developer could misunderstand which class
 to use as `content()` method parameter. He could use a `MultiContent` for 
@@ -263,10 +262,10 @@ This behavior is still available but the new API is clearer:
 
 .Fluent API for email attachments
 [role="tab-container"]
-Fluent attachments API
-
+====
+.image:{icons-java-code} External file
 [role=tab]
-image:{icons-java-code} External file
+--
 
 [source, java, role="diff-remove-lines:1-5,11,13 diff-add-lines:12,14"]
 ----
@@ -300,9 +299,10 @@ of the embedded resource even if it is optional.
 As `Content-ID` is mandatory for embedded attachments, this method takes the
 `Content-ID` as first parameter.
 
-
+--
+.image:{icons-java-code} Resource
 [role=tab]
-image:{icons-java-code} Resource
+--
 
 [source, java, role="diff-remove-lines:1-5,11,13 diff-add-lines:12,14"]
 ----
@@ -336,9 +336,10 @@ of the embedded resource even if it is optional.
 As `Content-ID` is mandatory for embedded attachments, this method takes the
 `Content-ID` as first parameter.
 
-
+--
+.image:{icons-java-code} Custom name
 [role=tab]
-image:{icons-java-code} Custom name
+--
 
 [source, java, role="diff-remove-lines:5-6 diff-add-lines:7-8"]
 ----
@@ -360,7 +361,7 @@ and a `byte[]` or `InputStream` as second argument. See note below.
 
 .Why new API is better
 [IMPORTANT]
-====
+=====
 As `Attachment` doesn't have a constructor that takes both path to a file or 
 resource with custom name, developer has to update its code to not use a path
 anymore but use directly Java code to get the an `InputStream` or a `byte[]`.
@@ -372,10 +373,10 @@ manually or change its code.
 
 On the contrary, with the new API, the developer just has to add the name parameter
 and that's it.
-====
+=====
 
-[role=tab-container-end]
--
+--
+====
 
 
 .Custom Content-Type
@@ -404,10 +405,10 @@ the HTML using `src` attribute
 
 .Update your code
 [role="tab-container"]
-Attach images
-
+====
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
 [source, html, role="diff-remove-lines:2 diff-add-lines:3"]
 ----
@@ -422,10 +423,8 @@ image:{icons-thymeleaf-html-template} ThymeLeaf template
 <1> The old attribute name
 <2> The new attribute name
 
-
-[role=tab-container-end]
--
-
+--
+====
 
 CSS inlining was using the attribute `data-skip-inline` attribute. The name of this attribute was not
 clear on its purpose (was it for CSS or for images ?). This attribute has been removed and
@@ -438,11 +437,10 @@ available but in future versions, other may come. For now the only possible valu
 
 .Update your code
 [role="tab-container"]
-Inline CSS rules
-
-
+====
+.image:{icons-thymeleaf-html-template} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf-html-template} ThymeLeaf template
+--
 
 [source, html, role="diff-remove-lines:3 diff-add-lines:4"]
 ----
@@ -455,9 +453,8 @@ image:{icons-thymeleaf-html-template} ThymeLeaf template
 <1> The old attribute name
 <2> The new attribute name
 
-
-[role=tab-container-end]
--
+--
+====
 
 == Properties consistency
 
@@ -489,11 +486,10 @@ There is another benefit: we can use other property names for configuring other 
 
 .Update your code
 [role="tab-container"]
-Update code
-
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27"]
 ----
@@ -540,9 +536,8 @@ public class BasicSample {
 <3> The old property for default subject (defined using fluent API)
 <4> The new property for default subject (defined using fluent API)
 
-
-[role=tab-container-end]
--
+--
+====
 
 === Properties for subject extraction
 
@@ -558,11 +553,10 @@ The new name also complies with Spring property handling.
 
 .Update your code
 [role="tab-container"]
-Update code
-
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27"]
 ----
@@ -614,9 +608,8 @@ is starts with the provided prefix (defined using fluent API).
 <4> The new property to enable extraction of subject from text alternative if
 is starts with the provided prefix (defined using fluent API).
 
-
-[role=tab-container-end]
--
+--
+====
 
 === SendGrid properties
 
@@ -627,11 +620,10 @@ Fix misspelling (missing `d` character).
 
 .Update your code
 [role="tab-container"]
-Update code
-
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:18,26 diff-add-lines:19,27"]
 ----
@@ -679,8 +671,8 @@ public class BasicSample {
 <3> The old property for SendGrid API key (defined using fluent API).
 <4> The new property for SendGrid API key (defined using fluent API).
 
-[role=tab-container-end]
--
+--
+====
 
 === FreeMarker properties
 
@@ -765,11 +757,10 @@ from `forEach()` to `every()`.
 
 .Update your code
 [role="tab-container"]
-`forEach()` -> `every()`
-
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-24,26-43 irrelevant-lines:46-52 diff-remove-lines:55 diff-add-lines:56"]
 ----
@@ -852,7 +843,6 @@ public class SeveralRecipientsTestSample {
 <1> The old method
 <2> The new method
 
-
-[role=tab-container-end]
--
+--
+====
 

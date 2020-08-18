@@ -4,10 +4,10 @@ include::{docdir}/variables.adoc[]
 This sample shows how to send a SMS with a content following a template engine language.
 
 [role="tab-container no-max-height"]
-Sample with template
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-21 highlight-lines:29,30"]
 ----
@@ -23,8 +23,10 @@ set using `ogham.sms.from.default-value` property
 
 {standard-sms-samples-sourcedir-url}/TemplateSample.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-thymeleaf} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf} ThymeLeaf template
+--
 
 [source, html]
 ----
@@ -33,8 +35,8 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simple.txt[]
 
 {standard-samples-resourcesdir-url}/template/thymeleaf/simple.txt?ts={tabsize}[Source code of the template]
 
-[role=tab-container-end]
--
+--
+====
 
 
 Using a template is straightforward. Instead of providing a string content (using `.message().string(...)`),

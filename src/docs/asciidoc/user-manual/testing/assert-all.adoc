@@ -7,10 +7,10 @@ to run all assertions without failing and report all failures at the end.
 Here is an example with email (it is exactly the same for SMS):
 
 [role="tab-container no-max-height"]
-Email sample
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-25,27-44 irrelevant-lines:1-25 highlight-lines:52-53,68"]
 ----
@@ -23,8 +23,8 @@ is then used to register failed assertions.
 
 {standard-samples-testsourcedir-url}/fr/sii/ogham/sample/test/AssertAllEmailTestSample.java?ts={tabsize}[Source code of the sample].
 
-[role=tab-container-end]
--
+--
+====
 
 
 When some assertions fail, Ogham also does its best to present failures in a way

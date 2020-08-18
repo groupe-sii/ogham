@@ -5,10 +5,10 @@ include::{docdir}/variables.adoc[]
 This sample shows how to send an email with a content following a template engine language.
 
 [role="tab-container no-max-height"]
-Sample with template
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9,34-46 irrelevant-lines:1-9,12-19 highlight-lines:28-29"]
 ----
@@ -23,8 +23,10 @@ include::{standard-email-samples-sourcedir}/HtmlTemplateSample.java[]
 
 {standard-email-samples-sourcedir-url}/HtmlTemplateSample.java?ts={tabsize}[Source code of the sample].
 
+--
+.image:{icons-thymeleaf} ThymeLeaf template
 [role=tab]
-image:{icons-thymeleaf} ThymeLeaf template
+--
 
 [source, html]
 ----
@@ -36,8 +38,8 @@ include::{standard-samples-resourcesdir}/template/thymeleaf/simple.html[]
 
 {standard-samples-resourcesdir-url}/template/thymeleaf/simple.html?ts={tabsize}[Source code of the HTML template]
 
-[role=tab-container-end]
--
+--
+====
 
 
 Using a template is straightforward. Instead of providing a string as body (using `body().string(...)`), 

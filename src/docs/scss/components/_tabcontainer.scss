@@ -1,0 +1,127 @@
+@mixin tab-title($selected) {
+	display: inline-block;
+	padding: 10px;
+	border: 1px solid #ccc;
+	margin-left: -1px;
+	margin-bottom: 0;
+	position: relative;
+	left: 1px;
+	z-index: 2;
+	text-align: center;
+	box-sizing: border-box;
+	font-style: normal;
+	color: var(--color);
+	height: inherit;
+
+	@if $selected {
+		background: white;
+		border-bottom-color: white;
+	} @else {
+		background: #eee;
+		border-bottom-color: #ccc;
+	}
+
+	.image {
+		margin-right: 5px;
+		display: inline-block;
+	}
+}
+
+.tab-container {
+	&.exampleblock > .content,
+	> .content {
+		border: none;
+		padding: 0;
+		box-shadow: none;
+	}
+
+	.tab {		
+		> .title {
+			@include tab-title(true);
+		}
+	
+		> .content {
+			border: 1px solid #ccc;
+			position: relative;
+			top: -1px;
+			padding: 20px;
+		}
+	}
+
+}
+	
+.tab-container.ready {
+	&.no-max-height {
+		.tabs-content-wrapper {
+			max-height: none;
+		}
+	}
+	
+	> p:nth-of-type(1) {
+		display: none;
+	}
+	
+	> .title ~ .tabs-wrapper {
+		margin-top: 0px;
+	}
+	
+	
+	.tab {
+		float: left;
+		height: 50px;
+	
+		> [type=radio] {
+			display: none;
+		}
+		
+		> .tab-label {
+			@include tab-title(false);
+			overflow: hidden;
+		}
+		
+		> [type=radio]:checked ~ .tab-label {
+			@include tab-title(true);
+		}
+	}
+
+	.tabs-content-wrapper {
+		position: relative;
+		margin-bottom: 25px;
+		max-height: 900px;
+		clear: both;
+		
+		> .tab-content {
+			position: absolute;
+			top: -1px;
+			left: 0;
+			background: white;
+			right: 0;
+			bottom: 0;
+			padding: 20px;
+			border: 1px solid #ccc;
+			visibility: hidden;
+			overflow: auto;
+			
+			&.selected {
+				z-index: 1;
+				visibility: visible;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.tab-container.ready {
+		.tab {
+			float: none;
+		
+			> .tab-label,
+			> [type=radio]:checked ~ .tab-label {
+				display: block;
+				position: static;
+				margin-left: 0;
+				border-bottom: 1px solid white;
+			}
+		}
+	}
+}

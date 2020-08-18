@@ -120,6 +120,8 @@
 				<script src="$resourcePath/javascripts/sourcecode/collapse-lines.js"></script>
 				<script src="$resourcePath/javascripts/tabcontainer.js"></script>
 				<script src="$resourcePath/javascripts/toc.js"></script>
+				<script src="$resourcePath/javascripts/sticky-title-fix.js"></script>
+				<script src="$resourcePath/javascripts/image-viewer.js"></script>
 			</endContent>
 		</reflowSkin>
 	</custom>
@@ -136,13 +138,8 @@
 				Therefore, we need to manually provide missing icons until Asciidoctor upgrades Font Awesome.
 			-->
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-			<link rel="stylesheet" href="$resourcePath/styles/custom-styles.css" />
-			<link rel="stylesheet" href="$resourcePath/styles/toc.css" />
-			<link rel="stylesheet" href="$resourcePath/styles/progress.css" />
-			<link rel="stylesheet" href="$resourcePath/styles/tabcontainer.css" />
-			<link rel="stylesheet" href="$resourcePath/styles/sourcecode/collapse-lines.css" />
- 			<link rel="stylesheet" href="$resourcePath/styles/sourcecode/highlight-lines.css" />
-			<link rel="stylesheet" href="$resourcePath/css/site.css" />
+			<link rel="stylesheet" href="$resourcePath/styles/doc-styles.css" />
+			<link rel="stylesheet" href="$resourcePath/css/site-styles.css" />
 			]]>
 		</head>
 

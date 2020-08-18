@@ -7,10 +7,10 @@ with `Subject:` (spaces can be added after colon). Other lines are used as conte
 
 
 [role="tab-container no-max-height"]
-Sample with template
-
+====
+.image:{icons-java-code} Java
 [role=tab]
-image:{icons-java-code} Java
+--
 
 [source, java, role="collapse-lines:1-9,35-47 irrelevant-lines:1-9,12-19"]
 ----
@@ -20,9 +20,10 @@ include::{standard-email-samples-sourcedir}/TextTemplateWithSubjectSample.java[]
 
 {standard-email-samples-sourcedir-url}/TextTemplateWithSubjectSample.java?ts={tabsize}[Source code of the sample]
 
+--
+.image:{icons-freemarker-text-template} Text template
 [role=tab]
-
-image:{icons-freemarker-text-template} Text template
+--
 
 [source, text, role="highlight-lines:1"]
 ----
@@ -33,5 +34,5 @@ NOTE: The subject of the email will be `Welcome foo !`
 
 {standard-samples-resourcesdir-url}/template/freemarker/simpleWithSubject.txt.ftl?ts={tabsize}[Source code of the text template]
 
-[role=tab-container-end]
--
+--
+====
