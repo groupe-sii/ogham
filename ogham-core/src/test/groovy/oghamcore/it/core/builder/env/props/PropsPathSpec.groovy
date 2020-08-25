@@ -43,7 +43,7 @@ class PropsPathSpec extends Specification {
 			"config/props-path.properties"					|| correctlyLoaded()				| "be loaded from classpath"
 			"classpath:config/props-path.properties"		|| correctlyLoaded()				| "be loaded from classpath"
 			"unexisting.properties?"						|| skipped()						| "be skipped as it doesn't exist but marked optional"
-			"file:${confFolder}/props-path.properties"		|| correctlyLoaded()				| "be loaded from classpath"
+			"file:${confFolder}/props-path.properties"		|| correctlyLoaded()				| "be loaded from external location"
 			"file:unexisting.properties?"					|| skipped()						| "be skipped as it doesn't exist but marked optional"
 	}
 	

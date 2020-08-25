@@ -1,0 +1,118 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+By default, Ogham automatically loads configuration files placed in:
+
+* `config/ogham.properties` relative to current directory
+* `config/application.properties` relative to current directory
+* `config/ogham.properties` in the classpath
+* `config/application.properties` in the classpath
+
+This way, developer don't need to add code to explicitly load some configuration files:
+
+
+[role="tab-container no-max-height"]
+====
+.image:{icons-java-code} Use default files
+[role=tab]
+--
+
+[source, java, role="collapse-lines:1-6 irrelevant-lines:1-6"]
+----
+include::{standard-samples-sourcedir}/fr/sii/ogham/sample/standard/DefaultPropertiesLocationSample.java[]
+----
+
+{standard-email-samples-sourcedir-url}/fr/sii/ogham/sample/standard/DefaultPropertiesLocationSample.java?ts={tabsize}[Source code of the sample].
+
+--
+.image:{icons-java-code} Manual equivalence
+[role=tab]
+--
+
+[source, java, role="collapse-lines:1-9 irrelevant-lines:1-9 diff-remove-lines:13-18"]
+----
+package fr.sii.ogham.sample.standard;
+
+import java.io.IOException;
+import java.util.Properties;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+
+public class PropertiesSample {
+	public static void main(String[] args) throws MessagingException, IOException {
+		MessagingService service = MessagingBuilder.standard()
+				.environment()
+					.properties("?file:config/ogham.properties")
+					.properties("?file:config/application.properties")
+					.properties("?classpath:config/ogham.properties")
+					.properties("?classpath:config/application.properties")
+					.and()
+				.build();
+		service.send(/*your message here*/null);
+	}
+}
+----
+
+--
+====
+
+
+.Optional location
+[TIP]
+====
+Using `?` character in the path means that the configuration file is optional.
+It will not fail if the file doesn't exist.
+
+Without `?`, if the file is missing, Ogham will fail at startup to indicate that
+some configuration is missing.
+====
+
+
+In addition to default locations, you can specify a different location using
+`ogham.config.location` property:
+
+[role="tab-container no-max-height"]
+====
+.image:{icons-java-code} Custom location
+[role=tab]
+--
+
+[source, java, role="collapse-lines:1-6 irrelevant-lines:1-6"]
+----
+include::{standard-samples-sourcedir}/fr/sii/ogham/sample/standard/DefaultPropertiesLocationSample.java[]
+----
+
+Running the sample from command line:
+
+[source, shell, role="highlight-lines:3"]
+----
+cd /var/run
+java \
+	-Dogham.config.location=file:/etc/your-app \
+	... \
+	-jar ...
+----
+
+Will load files from:
+
+* `/etc/your-app/config/ogham.properties` (explicit location)
+* `/etc/your-app/config/application.properties` (explicit location)
+* `/var/run/config/ogham.properties` (default location relative to current directory)
+* `/var/run/config/application.properties` (default location relative to current directory)
+* `config/ogham.properties` in the classpath
+* `config/application.properties` in the classpath
+
+--
+====
+
+.Several locations
+[TIP]
+====
+You can set several locations at once by separating each path with a comma (`,`).
+====
+
+
+
+

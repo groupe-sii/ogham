@@ -1,0 +1,57 @@
+:relative-path: ../../
+include::{docdir}/variables.adoc[]
+
+
+In order to have the exact same code but different configurations for different
+execution environments, Ogham also supports profiles for configuration files.
+
+The aim is to have for example:
+
+* one configuration file for development (that configures Ogham to send emails using external SMTP server)
+* one configuration file for tests (that configures Ogham to send emails using embedded SMTP server)
+* one configuration file for production (that configures Ogham to send emails through SendGrid)
+
+This can be done by simply appending a suffix to the configuration file name of your choice.
+For instance, you want three profiles named `dev`, `tests`, `prod`, then
+you can create the following files:
+
+* `config/ogham-dev.properties` and/or `config/application-dev.properties`
+* `config/ogham-tests.properties` and/or `config/application-tests.properties`
+* `config/ogham-prod.properties` and/or `config/application-prod.properties`
+
+Each file can have its own configuration.
+
+
+The next step is to enable a profile. This can be done by setting `ogham.profiles.active` system property:
+
+[source, shell, role="highlight-lines:2"]
+----
+java \
+	-Dogham.profiles.active=prod \
+	... \
+	-jar ...
+----
+
+
+.Enable several profiles
+[TIP]
+====
+You can enable several profiles at once by separating each profile name with a comma (`,`).
+====
+
+
+.Default configuration
+[NOTE]
+====
+The default configuration files are still loaded but with lower priority.
+
+For instance if:
+
+* a property `foo` with a value `bar` is defined in default location (`config/ogham.properties` or 
+`config/application.properties`)
+* and the same property `foo` with the value `foobar` is defined in `dev` profile 
+(`config/ogham-dev.properties` or `config/application-dev.properties`),
+
+the value `foobar` will be used if `dev` profile is enabled. 
+====
+
