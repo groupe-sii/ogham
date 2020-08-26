@@ -12,12 +12,15 @@ aliases:
     
   - &save-pit-history
     paths:
-      - /tmp/*_pitest_history.bin
-    key: pit-history-{{ .Branch }}
+      - ~/.pitest_history
+    key: pit-history-{{ .Branch }}-<<parameters.module>>-<<parameters.part>>-{{ epoch }}
     
   - &restore-pit-history
     keys:
+      - pit-history-{{ .Branch }}-<<parameters.module>>-<<parameters.part>>-
+      - pit-history-{{ .Branch }}-<<parameters.module>>-
       - pit-history-{{ .Branch }}
+      - pit-history-
     
   - &restore-workspace
     at: '~'
@@ -33,6 +36,40 @@ defaults: &defaults
     # -Xmx3g => many OOM
     # -Xmx2g => sometimes OOM
     JAVA_TOOL_OPTIONS: '-Xmx1600m'
+
+commands:
+  run-mutation-tests:
+    parameters:
+      module:
+        type: string
+      engine:
+        default: 'gregor'
+        type: string
+      mutators:
+        default: ''
+        type: string
+      part:
+        default: 1
+        type: integer
+    steps:
+      - restore_cache: *restore-m2-cache
+      - restore_cache: *restore-pit-history
+      - run: mkdir -p ~/.pitest_history
+      - run: ls -l ~/.pitest_history
+      - run: find ~/.pitest_history/ -name "*_pitest_history.bin" -exec cp -f '{}' /tmp/ \;
+      - run: ls -l /tmp
+      - attach_workspace: *restore-workspace
+      - run: ci/./build-pitest.sh
+      - run:
+#          command: ci/./run-single-module-mutation-tests.sh "<<parameters.module>>" "<<parameters.engine>>" "<<parameters.mutators>>" "~/.pitest_history"
+          command: ci/./run-single-module-mutation-tests.sh "<<parameters.module>>" "<<parameters.engine>>" "<<parameters.mutators>>"
+          no_output_timeout: 1h
+      - persist_to_workspace: *save-for-next-step
+      - run: ls -l /tmp
+      - run: mkdir -p ~/.pitest_history
+      - run: find /tmp/ -name "*_pitest_history.bin" -exec cp -f '{}' ~/.pitest_history \;
+      - run: ls -l ~/.pitest_history
+      - save_cache: *save-pit-history
 
 version: 2.1
 orbs:
@@ -53,258 +90,28 @@ jobs:
   #--------------------------------------------
   # run mutation testing on each module
   #--------------------------------------------
-  ogham-test-utils:
+  mutation-tests:
     <<: *defaults
+    parameters:
+      module:
+        type: string
+      engine:
+        default: 'gregor'
+        type: string
+      mutators:
+        default: ''
+        type: string
+      part:
+        default: 1
+        type: integer
     steps:
       - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-test-utils gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-  
-  ogham-core:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-core gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-  
-  ogham-template-thymeleaf-common:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-template-thymeleaf-common gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-  
-  ogham-template-thymeleaf-v2:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-template-thymeleaf-v2 gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-  
-  ogham-template-thymeleaf-v3:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-template-thymeleaf-v3 gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-  
-#  ogham-template-thymeleaf:
-#    <<: *defaults
-#    steps:
-#      - checkout
-#      - restore_cache: *restore-m2-cache
-#      - restore_cache: *restore-pit-history
-#      - attach_workspace: *restore-workspace
-#      - run: ci/./build-pitest.sh
-#      - run:
-#          command: ci/./run-single-module-mutation-tests.sh ogham-template-thymeleaf gregor
-#          no_output_timeout: 1h
-#      - persist_to_workspace: *save-for-next-step
-#      - save_cache: *save-pit-history
-  
-  ogham-template-freemarker:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-template-freemarker gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-  
-  ogham-email-javamail:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-email-javamail gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-      
-#  ogham-email-sendgrid-common:
-#    <<: *defaults
-#    steps:
-#      - checkout
-#      - restore_cache: *restore-m2-cache
-#      - restore_cache: *restore-pit-history
-#      - attach_workspace: *restore-workspace
-#      - run: ci/./build-pitest.sh
-#      - run:
-#          command: ci/./run-single-module-mutation-tests.sh ogham-email-sendgrid-common gregor
-#          no_output_timeout: 1h
-#      - persist_to_workspace: *save-for-next-step
-#      - save_cache: *save-pit-history
-      
-  ogham-email-sendgrid-v2:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-email-sendgrid-v2 gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-      
-  ogham-email-sendgrid-v4:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-email-sendgrid-v4 gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
+      - run-mutation-tests:
+          module: <<parameters.module>>
+          engine: <<parameters.engine>>
+          mutators: <<parameters.mutators>>
+          part: <<parameters.part>>
        
-#  ogham-email-sendgrid:
-#    <<: *defaults
-#    steps:
-#      - checkout
-#      - restore_cache: *restore-m2-cache
-#      - restore_cache: *restore-pit-history
-#      - attach_workspace: *restore-workspace
-#      - run: ci/./build-pitest.sh
-#      - run:
-#          command: ci/./run-single-module-mutation-tests.sh ogham-email-sendgrid gregor
-#          no_output_timeout: 1h
-#      - persist_to_workspace: *save-for-next-step
-#      - save_cache: *save-pit-history
-       
-  ogham-sms-cloudhopper:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-sms-cloudhopper gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-       
-  ogham-sms-ovh:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-sms-ovh gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-       
-  ogham-sms-smsglobal:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-sms-smsglobal gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-       
-  ogham-all:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run: 
-          command: ci/./run-single-module-mutation-tests.sh ogham-all gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-       
-  ogham-spring-boot-v1-autoconfigure:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-spring-boot-v1-autoconfigure gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-       
-  ogham-spring-boot-v2-autoconfigure:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
-      - attach_workspace: *restore-workspace
-      - run: ci/./build-pitest.sh
-      - run:
-          command: ci/./run-single-module-mutation-tests.sh ogham-spring-boot-v2-autoconfigure gregor
-          no_output_timeout: 1h
-      - persist_to_workspace: *save-for-next-step
-      - save_cache: *save-pit-history
-      
   #--------------------------------------------
   # generate reports documentation and site
   #--------------------------------------------
@@ -316,7 +123,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-m2-cache
-      - restore_cache: *restore-pit-history
+      #- restore_cache: *restore-pit-history
       - attach_workspace: *restore-workspace
       - run: ci/./build-pitest.sh
       - run:
@@ -330,7 +137,7 @@ jobs:
           paths:
             - project/*/target
             - project/target
-      - save_cache: *save-pit-history
+      #- save_cache: *save-pit-history
 
   #--------------------------------------------
   # export for next build
@@ -388,58 +195,104 @@ workflows:
   generate-documentation:
     jobs:
       - prepare
-      - ogham-test-utils:
+      - mutation-tests:
+          name: ogham-test-utils
+          module: ogham-test-utils
           requires:
             - prepare
-      - ogham-core:
+      - mutation-tests:
+          name: ogham-core
+          module: ogham-core
           requires:
             - prepare
-      - ogham-template-thymeleaf-common:
+      - mutation-tests:
+          name: ogham-template-thymeleaf-common
+          module: ogham-template-thymeleaf-common
           requires:
             - prepare
-      - ogham-template-thymeleaf-v2:
+      - mutation-tests:
+          name: ogham-template-thymeleaf-v2
+          module: ogham-template-thymeleaf-v2
           requires:
             - prepare
-      - ogham-template-thymeleaf-v3:
+      - mutation-tests:
+          name: ogham-template-thymeleaf-v3
+          module: ogham-template-thymeleaf-v3
           requires:
             - prepare
 #      - ogham-template-thymeleaf:
 #          requires:
 #            - prepare
-      - ogham-template-freemarker:
+      - mutation-tests:
+          name: ogham-template-freemarker
+          module: ogham-template-freemarker
           requires:
             - prepare
-      - ogham-email-javamail:
+      - mutation-tests:
+          name: ogham-email-javamail
+          module: ogham-email-javamail
           requires:
             - prepare
 #      - ogham-email-sendgrid-common:
 #          requires:
 #            - prepare
-      - ogham-email-sendgrid-v2:
+      - mutation-tests:
+          name: ogham-email-sendgrid-v2
+          module: ogham-email-sendgrid-v2
           requires:
             - prepare
-      - ogham-email-sendgrid-v4:
+      - mutation-tests:
+          name: ogham-email-sendgrid-v4
+          module: ogham-email-sendgrid-v4
           requires:
             - prepare
 #      - ogham-email-sendgrid:
 #          requires:
 #            - prepare
-      - ogham-sms-cloudhopper:
+      - mutation-tests:
+          name: ogham-sms-cloudhopper
+          module: ogham-sms-cloudhopper
           requires:
             - prepare
-      - ogham-sms-ovh:
+      - mutation-tests:
+          name: ogham-sms-ovh
+          module: ogham-sms-ovh
           requires:
             - prepare
-      - ogham-sms-smsglobal:
+      - mutation-tests:
+          name: ogham-sms-smsglobal
+          module: ogham-sms-smsglobal
           requires:
             - prepare
-      - ogham-all:
+      - mutation-tests:
+          name: ogham-all-part-1
+          module: ogham-all
+          mutators: "CONDITIONALS_BOUNDARY,INCREMENTS,INVERT_NEGS,MATH,NEGATE_CONDITIONALS"
+          part: 1
           requires:
             - prepare
-      - ogham-spring-boot-v1-autoconfigure:
+      - mutation-tests:
+          name: ogham-all-part-2
+          module: ogham-all
+          mutators: "CONDITIONALS_BOUNDARY,INCREMENTS,INVERT_NEGS,MATH,NEGATE_CONDITIONALS,VOID_METHOD_CALLS"
+          part: 2
+          requires:
+            - ogham-all-part-1
+      - mutation-tests:
+          name: ogham-all-part-3
+          module: ogham-all
+          mutators: "CONDITIONALS_BOUNDARY,INCREMENTS,INVERT_NEGS,MATH,NEGATE_CONDITIONALS,VOID_METHOD_CALLS,EMPTY_RETURNS,FALSE_RETURNS,TRUE_RETURNS,NULL_RETURNS,PRIMITIVE_RETURNS"
+          part: 3
+          requires:
+            - ogham-all-part-2
+      - mutation-tests:
+          name: ogham-spring-boot-v1-autoconfigure
+          module: ogham-spring-boot-v1-autoconfigure
           requires:
             - prepare
-      - ogham-spring-boot-v2-autoconfigure:
+      - mutation-tests:
+          name: ogham-spring-boot-v2-autoconfigure
+          module: ogham-spring-boot-v2-autoconfigure
           requires:
             - prepare
       - generate-documentation:
@@ -459,7 +312,7 @@ workflows:
             - ogham-sms-cloudhopper
             - ogham-sms-ovh
             - ogham-sms-smsglobal
-            - ogham-all
+            - ogham-all-part-3
             - ogham-spring-boot-v1-autoconfigure
             - ogham-spring-boot-v2-autoconfigure
       - export:

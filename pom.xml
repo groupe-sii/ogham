@@ -95,6 +95,8 @@
 		<!-- Mutation testing -->
 		<pit.report.path>${project.basedir}/../target/site/pit-reports</pit.report.path>
 		<pit.mutation-engine>descartes</pit.mutation-engine>
+		<pit.history.dir>${java.io.tmpdir}</pit.history.dir>
+		<pit.history.file>${pit.history.dir}/${project.groupId}.${project.artifactId}.${project.version}_pitest_history.bin</pit.history.file>
 
 		<!-- Code coverage -->
 		<jacoco.it.execution.data.file>${project.basedir}/../target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -1354,7 +1356,8 @@
 									<outputFormat>XML</outputFormat>
 								</outputFormats>
 								<exportLineCoverage>true</exportLineCoverage>
-								<withHistory>true</withHistory>
+								<historyOutputFile>${pit.history.file}</historyOutputFile>
+								<historyInputFile>${pit.history.file}</historyInputFile>
 								<avoidCallsTo>
 									<avoidCallsTo>java.util.logging</avoidCallsTo>
 									<avoidCallsTo>org.apache.log4j</avoidCallsTo>
