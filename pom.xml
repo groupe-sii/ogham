@@ -1188,13 +1188,12 @@
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<useReleaseProfile>false</useReleaseProfile>
-					<releaseProfiles>release</releaseProfiles>
-					<goals>deploy</goals>
+					<releaseProfiles>release,mutation-testing</releaseProfiles>
+					<goals>deploy post-site site:stage</goals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
-					<preparationGoals>com.google.code.maven-replacer-plugin:replacer:replace
-						-N</preparationGoals>
-					<completionGoals>com.google.code.maven-replacer-plugin:replacer:replace
-						-N</completionGoals>
+					<preparationGoals>com.google.code.maven-replacer-plugin:replacer:replace clean install verify</preparationGoals>
+					<completionGoals>com.google.code.maven-replacer-plugin:replacer:replace</completionGoals>
+					<arguments>-Dmaven.test.redirectTestOutputToFile=true -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false</arguments>
 				</configuration>
 			</plugin>
 
@@ -1314,6 +1313,7 @@
 					<groupId>com.google.code.maven-replacer-plugin</groupId>
 					<artifactId>replacer</artifactId>
 					<version>${maven-replacer-plugin.version}</version>
+					<inherited>false</inherited>
 					<configuration>
 						<includes>
 							<include>*/pom.xml</include>
@@ -1508,6 +1508,10 @@
 		</profile>
 		<profile>
 			<id>release</id>
+			<properties>
+				<docLatestReleaseVersion>${releaseVersion}</docLatestReleaseVersion>
+				<docFutureDevVersion>${developmentVersion}</docFutureDevVersion>
+			</properties>
 			<build>
 				<plugins>
 					<!-- Deployment on maven central -->

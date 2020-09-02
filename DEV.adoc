@@ -75,19 +75,23 @@ Changing version is done in three steps:
 == Test the release
 
 ```
-./mvnw release:prepare -Prelease -DdryRun=true
+./mvnw release:prepare -DdryRun=true
 ```
 
 Check that everything works fine and then clean everything:
 
 ```
-./mvnw release:clean -Prelease
+./mvnw release:clean
 ```
 
 == Perform the release
 
 ```
-./mvnw release:prepare release:perform -Prelease
+./mvnw release:prepare release:perform \
+	-Dsite.staging.dir=<path to ogham-site> \
+	-DreleaseVersion=<release version> \
+	-DdevelopmentVersion=<next dev version> \
+	-Dtag=v<release version>
 ```
 
 
