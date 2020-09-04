@@ -68,4 +68,25 @@ public class RandomPortServerSetup extends ServerSetup {
 	public void resetPort() {
 		currentPort = 0;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+		RandomPortServerSetup other = (RandomPortServerSetup) obj;
+		if (currentPort != other.currentPort) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		return 31 * super.hashCode() + currentPort;
+	}
+
 }

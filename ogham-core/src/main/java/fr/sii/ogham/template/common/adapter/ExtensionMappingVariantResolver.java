@@ -36,7 +36,7 @@ public class ExtensionMappingVariantResolver implements VariantResolver, CanProv
 	private final Map<Variant, List<String>> mapping;
 
 	public ExtensionMappingVariantResolver(ResourceResolver resourceResolver) {
-		this(resourceResolver, new HashMap<Variant, List<String>>());
+		this(resourceResolver, new HashMap<>());
 	}
 
 	public ExtensionMappingVariantResolver(ResourceResolver resourceResolver, Map<Variant, List<String>> mapping) {

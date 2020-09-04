@@ -93,8 +93,9 @@ public class LoggingRuleTest {
 					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
-			assertThat(logs).contains(SUCCESS_HEADER);
-			assertThat(logs).contains(SUCCESS_FOOTER);
+			assertThat(logs)
+				.contains(SUCCESS_HEADER)
+				.contains(SUCCESS_FOOTER);
 		}
 		
 		@Test
@@ -105,8 +106,9 @@ public class LoggingRuleTest {
 					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(1).succeeded(0).skipped(0));
 			String logs = writer.toString();
-			assertThat(logs).contains(FAILURE_HEADER);
-			assertThat(logs).contains(FAILURE_FOOTER);
+			assertThat(logs)
+				.contains(FAILURE_HEADER)
+				.contains(FAILURE_FOOTER);
 		}
 		
 		@Test
@@ -117,8 +119,9 @@ public class LoggingRuleTest {
 					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
-			assertThat(logs).contains(CAUGHT_HEADER);
-			assertThat(logs).contains(CAUGHT_FOOTER);
+			assertThat(logs)
+				.contains(CAUGHT_HEADER)
+				.contains(CAUGHT_FOOTER);
 		}
 		
 		@Test
@@ -129,8 +132,9 @@ public class LoggingRuleTest {
 					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
-			assertThat(logs).contains(CAUGHT_ANNOTATION_HEADER);
-			assertThat(logs).contains(CAUGHT_ANNOTATION_FOOTER);
+			assertThat(logs)
+				.contains(CAUGHT_ANNOTATION_HEADER)
+				.contains(CAUGHT_ANNOTATION_FOOTER);
 		}
 		
 
@@ -198,8 +202,9 @@ public class LoggingRuleTest {
 					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
-			assertThat(logs).contains(SUCCESS_HEADER);
-			assertThat(logs).contains(SUCCESS_FOOTER);
+			assertThat(logs)
+				.contains(SUCCESS_HEADER)
+				.contains(SUCCESS_FOOTER);
 		}
 		
 		@Test
@@ -210,8 +215,9 @@ public class LoggingRuleTest {
 					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(1).succeeded(0).skipped(0));
 			String logs = writer.toString();
-			assertThat(logs).contains(FAILURE_HEADER);
-			assertThat(logs).contains(FAILURE_FOOTER);
+			assertThat(logs)
+				.contains(FAILURE_HEADER)
+				.contains(FAILURE_FOOTER);
 		}
 		
 		@Test
@@ -222,8 +228,9 @@ public class LoggingRuleTest {
 					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
-			assertThat(logs).contains(CAUGHT_HEADER);
-			assertThat(logs).contains(CAUGHT_FOOTER);
+			assertThat(logs)
+				.contains(CAUGHT_HEADER)
+				.contains(CAUGHT_FOOTER);
 		}
 		
 		@Test
@@ -234,8 +241,9 @@ public class LoggingRuleTest {
 					.testEvents()
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
-			assertThat(logs).contains(CAUGHT_ANNOTATION_HEADER);
-			assertThat(logs).contains(CAUGHT_ANNOTATION_FOOTER);
+			assertThat(logs)
+				.contains(CAUGHT_ANNOTATION_HEADER)
+				.contains(CAUGHT_ANNOTATION_FOOTER);
 		}
 	
 		@LogTestInformation(maxLength = 100, marker = "foo", printer = TestPrinterFactoryAdapter.class)

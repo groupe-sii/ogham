@@ -42,7 +42,7 @@ public class RegexAttachBackgroudImageInliner implements ImageInliner {
 	@Override
 	public ContentWithImages inline(String htmlContent, List<ImageResource> images) {
 		List<Attachment> attachments = new ArrayList<>(images.size());
-		String inlined = CssImageInlineUtils.inline(htmlContent, images, ATTACH, (decl) -> attachImage(decl.getUrl().getUrl(), decl.getImage(), attachments));
+		String inlined = CssImageInlineUtils.inline(htmlContent, images, ATTACH, decl -> attachImage(decl.getUrl().getUrl(), decl.getImage(), attachments));
 		return new ContentWithImages(inlined, attachments);
 	}
 

@@ -1,0 +1,41 @@
+{
+  "from": {
+    "name": "SENDER",
+    "email": "from@example.com"
+  },
+  "subject": "Example email",
+  "personalizations": [
+    {
+      "to": [
+        {
+          "email": "to.1@yopmail.com"
+        },
+        {
+          "email": "to.2@yopmail.com"
+        }
+      ],
+      "cc": [
+        {
+          "email": "cc.1@yopmail.com"
+        },
+        {
+          "email": "cc.2@yopmail.com"
+        }
+      ],
+      "bcc": [
+        {
+          "email": "bcc.1@yopmail.com"
+        },
+        {
+          "email": "bcc.2@yopmail.com"
+        }
+      ]
+    }
+  ],
+  "content": [
+    {
+      "type": "text/plain",
+      "value": "This is a default content."
+    }
+  ]
+}

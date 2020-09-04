@@ -226,7 +226,7 @@ public final class Conditions {
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> requiredProperty(PropertyResolver propertyResolver, String property) {
-		return new FluentCondition<>(new RequiredPropertyCondition<T>(property, propertyResolver));
+		return new FluentCondition<>(new RequiredPropertyCondition<>(property, propertyResolver));
 	}
 
 	/**
@@ -253,7 +253,7 @@ public final class Conditions {
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> requiredPropertyValue(PropertyResolver propertyResolver, String property, String value) {
-		return new FluentCondition<>(new PropertyValueCondition<T>(property, value, propertyResolver));
+		return new FluentCondition<>(new PropertyValueCondition<>(property, value, propertyResolver));
 	}
 
 	/**
@@ -280,7 +280,7 @@ public final class Conditions {
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> requiredPropertyValue(PropertyResolver propertyResolver, String property, Pattern pattern) {
-		return new FluentCondition<>(new PropertyPatternCondition<T>(property, pattern, propertyResolver));
+		return new FluentCondition<>(new PropertyPatternCondition<>(property, pattern, propertyResolver));
 	}
 
 	/**
@@ -300,7 +300,7 @@ public final class Conditions {
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> requiredClass(String className) {
-		return new FluentCondition<>(new RequiredClassCondition<T>(className));
+		return new FluentCondition<>(new RequiredClassCondition<>(className));
 	}
 
 	/**
@@ -311,7 +311,7 @@ public final class Conditions {
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> alwaysTrue() {
-		return new FluentCondition<>(new FixedCondition<T>(true));
+		return new FluentCondition<>(new FixedCondition<>(true));
 	}
 
 	/**
@@ -322,7 +322,7 @@ public final class Conditions {
 	 * @return the fluent condition
 	 */
 	public static <T> FluentCondition<T> alwaysFalse() {
-		return new FluentCondition<>(new FixedCondition<T>(false));
+		return new FluentCondition<>(new FixedCondition<>(false));
 	}
 
 	private Conditions() {

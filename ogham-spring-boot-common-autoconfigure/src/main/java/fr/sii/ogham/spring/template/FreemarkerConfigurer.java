@@ -121,7 +121,7 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 			registerSpringBeans(builder, emailConfiguration);
 		}
 		if (oghamFreemarkerProperties.getStaticMethodAccess().isEnable()) {
-			registerStatics(builder, emailConfiguration);
+			registerStatics(builder);
 		}
 	}
 
@@ -141,7 +141,7 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 			registerSpringBeans(builder, smsConfiguration);
 		}
 		if (oghamFreemarkerProperties.getStaticMethodAccess().isEnable()) {
-			registerStatics(builder, smsConfiguration);
+			registerStatics(builder);
 		}
 	}
 
@@ -219,7 +219,7 @@ public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements 
 		return new BeansWrapperBuilder(configuration.getIncompatibleImprovements()).build();
 	}
 
-	private void registerStatics(AbstractFreemarkerBuilder<?, ?> builder, Configuration configuration) {
+	private void registerStatics(AbstractFreemarkerBuilder<?, ?> builder) {
 		builder.configuration()
 			.enableStaticMethodAccess(true)
 			.staticMethodAccessVariableName(oghamFreemarkerProperties.getStaticMethodAccess().getVariableName());

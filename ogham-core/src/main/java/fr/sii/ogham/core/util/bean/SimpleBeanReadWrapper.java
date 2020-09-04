@@ -105,13 +105,13 @@ public class SimpleBeanReadWrapper implements BeanReadWrapper {
 	private static void initializeCollection(Collection<Object> collection, Map<String, Accessor<Object>> accessors) {
 		int i = 0;
 		for (Iterator<Object> it = collection.iterator(); it.hasNext(); i++) {
-			accessors.put(Integer.toString(i), new DirectAccessor<Object>(it.next()));
+			accessors.put(Integer.toString(i), new DirectAccessor<>(it.next()));
 		}
 	}
 
 	private static void initializeMap(Map<Object, Object> map, Map<String, Accessor<Object>> accessors) {
 		for (Entry<Object, Object> entry : map.entrySet()) {
-			accessors.put(entry.getKey().toString(), new DirectAccessor<Object>(entry.getValue()));
+			accessors.put(entry.getKey().toString(), new DirectAccessor<>(entry.getValue()));
 		}
 	}
 
@@ -121,7 +121,7 @@ public class SimpleBeanReadWrapper implements BeanReadWrapper {
 			String name = entry.getKey();
 			Method readMethod = entry.getValue();
 			if (readMethod != null) {
-				accessors.put(name, new ReadMethodAccessor<Object>(bean, name, readMethod));
+				accessors.put(name, new ReadMethodAccessor<>(bean, name, readMethod));
 			}
 		}
 	}

@@ -14,7 +14,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import fr.sii.ogham.core.util.Base64Utils;
-import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.html.inliner.ContentWithImages;
 import fr.sii.ogham.html.inliner.ImageInliner;
 import fr.sii.ogham.html.inliner.ImageInlinerConstants;
@@ -50,7 +49,7 @@ public class JsoupBase64ImageInliner implements ImageInliner {
 				img.attr(INLINED_ATTR, true);
 			}
 		}
-		return new ContentWithImages(doc.outerHtml(), new ArrayList<Attachment>(0));
+		return new ContentWithImages(doc.outerHtml(), new ArrayList<>(0));
 	}
 
 	private static Elements getImagesToInline(Document doc, ImageResource image) {

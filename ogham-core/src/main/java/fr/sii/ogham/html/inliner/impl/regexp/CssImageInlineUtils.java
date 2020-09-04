@@ -140,7 +140,7 @@ public final class CssImageInlineUtils {
 			LOG.debug("Skipping {}", url);
 			return null;
 		}
-		String enclosingCssRule = getEnclosingCssRule(htmlContent, matchedUrl, propertyDeclarationMatcher);
+		String enclosingCssRule = getEnclosingCssRule(htmlContent, propertyDeclarationMatcher);
 		CssImageDeclaration imageDeclaration = new CssImageDeclaration(matchedUrl, getInlineProperty(enclosingCssRule, matchedUrl), image);
 		if (!isInlineModeAllowed(imageDeclaration, mode)) {
 			return null;
@@ -187,7 +187,7 @@ public final class CssImageInlineUtils {
 		return ESCAPE_QUOTE_ENTITIES.matcher(htmlContent).replaceAll(QUOTE_TEMP_ESCAPE);
 	}
 
-	private static String getEnclosingCssRule(String htmlContent, MatchedUrl matchedUrl, Matcher propertyDeclarationMatcher) {
+	private static String getEnclosingCssRule(String htmlContent, Matcher propertyDeclarationMatcher) {
 		String untilPropertyDeclaration = htmlContent.substring(0, propertyDeclarationMatcher.start());
 		Matcher m = RULE_START.matcher(new StringBuilder(untilPropertyDeclaration).reverse());
 		int ruleStart = -1;

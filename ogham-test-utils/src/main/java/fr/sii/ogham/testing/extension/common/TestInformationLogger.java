@@ -173,7 +173,7 @@ public class TestInformationLogger {
 	}
 
 	private List<String> wrap(String text) {
-		return Arrays.asList(WordUtils.wrap(text.replaceAll("\t", "  "), maxLength - 3, "\n", true).split("\n"));
+		return Arrays.asList(WordUtils.wrap(text.replace("\t", "  "), maxLength - 3, "\n", true).split("\n"));
 	}
 
 	enum Characters {

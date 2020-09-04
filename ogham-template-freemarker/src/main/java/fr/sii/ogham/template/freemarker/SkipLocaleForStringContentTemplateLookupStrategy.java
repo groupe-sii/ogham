@@ -57,7 +57,7 @@ public class SkipLocaleForStringContentTemplateLookupStrategy extends TemplateLo
 			// standard Freemarker behavior
 			return delegate.lookup(ctx);
 		} catch (ResolverAdapterException e) {
-			LOG.debug("Failed to determine which Freemarker adapter to use for template name " + ctx.getTemplateName(), e);
+			LOG.debug("Failed to determine which Freemarker adapter to use for template name {}", ctx.getTemplateName(), e);
 			return delegate.lookup(ctx);
 		}
 	}

@@ -1,0 +1,9 @@
+{
+  "errors": [
+    {
+      "message": "The disposition of your attachment can be either 'inline' or 'attachment'.",
+      "field": "attachments.0.disposition",
+      "help": "http://sendgrid.com/docs/API_Reference/Web_API_v3/Mail/errors.html#message.attachments.disposition"
+    }
+  ]
+}

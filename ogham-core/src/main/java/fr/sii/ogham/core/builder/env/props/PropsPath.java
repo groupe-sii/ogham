@@ -50,8 +50,8 @@ public class PropsPath extends AbstractProps {
 
 	private Properties loadFromExternalFile(String path) throws IOException {
 		Properties props = new Properties();
-		try {
-			props.load(new FileInputStream(Paths.get(path).toFile()));
+		try (FileInputStream fis = new FileInputStream(Paths.get(path).toFile())) {
+			props.load(fis);
 			return props;
 		} catch (FileNotFoundException e) {
 			return failOrSkip(e, props);
@@ -74,7 +74,8 @@ public class PropsPath extends AbstractProps {
 
 	private Properties failOrSkip(FileNotFoundException e, Properties properties) {
 		if (optional) {
-			LOG.debug("Properties file {} is missing but marked as optional", path, e);
+			LOG.debug("Properties file {} is missing but marked as optional", path);
+			LOG.trace("Original exception", e);
 			return properties;
 		}
 		throw new BuildException("Properties file is required and missing: " + path, e);

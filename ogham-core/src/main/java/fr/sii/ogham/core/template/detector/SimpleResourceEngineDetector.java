@@ -69,7 +69,7 @@ public class SimpleResourceEngineDetector implements TemplateEngineDetector {
 		try {
 			return resolver.getResource(template);
 		} catch (ResourceResolutionException e) {
-			LOG.trace("resource resolution couldn't resolve template " + template + " while trying detect template engine", e);
+			LOG.trace("resource resolution couldn't resolve template {} while trying detect template engine", template, e);
 			return null;
 		}
 	}

@@ -156,47 +156,69 @@ public class JsoupCssInliner implements CssInliner {
 
 	private static String ignoreAtRules(String stylesheet) {
 		StringBuilder sb = new StringBuilder();
-		int line = 1;
-		int startLine = 0;
-		boolean inAtRule = false;
-		boolean inNestedAtRule = false;
-		int opened = 0;
-		StringBuilder rule = new StringBuilder();
+		AtRuleParserContext ctx = new AtRuleParserContext();
 		for (int i=0 ; i<stylesheet.length() ; i++) {
 			char c = stylesheet.charAt(i);
-			if (c == '\n') {
-				line++;
-			}
-			if (c == '@' && !inAtRule) {
-				inAtRule = true;
-				startLine = line;
-			}
-			if (inAtRule && c == '{') {
-				inNestedAtRule = true;
-				opened++;
-			}
-			if (inAtRule && inNestedAtRule && c == '}') {
-				opened--;
-			}
-			if (inAtRule && !inNestedAtRule && c == ';') {
-				inAtRule = false;
-				LOG.warn("{} rule is not handled by JsoupCssInliner implementation. Line {}:'{}' is skipped", rulename(rule), startLine, rule);
+			updateLineNumberIfNewLine(ctx, c);
+			markAsStartOfAtRuleIfAtChar(ctx, c);
+			markAsStartOfNestedAtRuleIfAlreadyInAtRuleAndIsOpeningBracket(ctx, c);
+			markAsEndOfNestedAtRuleIfAlreadyInAtRuleAndIsClosingBracket(ctx, c);
+			if (ignoreAtRuleIfAtEndOfAtRule(ctx, c)) {
 				continue;
 			}
-			if (inAtRule && inNestedAtRule && opened == 0) {
-				inAtRule = false;
-				inNestedAtRule = false;
-				LOG.warn("{} rule is not handled by JsoupCssInliner implementation. Lines {}-{} are skipped", rulename(rule), startLine, line);
-				continue;
-			}
-			if (!inAtRule) {
-				sb.append(c);
-				rule = new StringBuilder();
-			} else {
-				rule.append(c);
-			}
+			updateStylesAndAtRuleContent(ctx, sb, c);
 		}
 		return sb.toString();
+	}
+
+	private static boolean ignoreAtRuleIfAtEndOfAtRule(AtRuleParserContext ctx, char c) {
+		if (ctx.inAtRule && !ctx.inNestedAtRule && c == ';') {
+			ctx.inAtRule = false;
+			LOG.warn("{} rule is not handled by JsoupCssInliner implementation. Line {}:'{}' is skipped", rulename(ctx.rule), ctx.startLineOfCurrentAtRule, ctx.rule);
+			return true;
+		}
+		if (ctx.inAtRule && ctx.inNestedAtRule && ctx.numberOfOpenedAtRules == 0) {
+			ctx.inAtRule = false;
+			ctx.inNestedAtRule = false;
+			LOG.warn("{} rule is not handled by JsoupCssInliner implementation. Lines {}-{} are skipped", rulename(ctx.rule), ctx.startLineOfCurrentAtRule, ctx.line);
+			return true;
+		}
+		return false;
+	}
+
+	private static void updateStylesAndAtRuleContent(AtRuleParserContext ctx, StringBuilder sb, char c) {
+		if (!ctx.inAtRule) {
+			sb.append(c);
+			ctx.rule = new StringBuilder();
+		} else {
+			ctx.rule.append(c);
+		}
+	}
+
+	private static void markAsEndOfNestedAtRuleIfAlreadyInAtRuleAndIsClosingBracket(AtRuleParserContext ctx, char c) {
+		if (ctx.inAtRule && ctx.inNestedAtRule && c == '}') {
+			ctx.numberOfOpenedAtRules--;
+		}
+	}
+
+	private static void markAsStartOfNestedAtRuleIfAlreadyInAtRuleAndIsOpeningBracket(AtRuleParserContext ctx, char c) {
+		if (ctx.inAtRule && c == '{') {
+			ctx.inNestedAtRule = true;
+			ctx.numberOfOpenedAtRules++;
+		}
+	}
+
+	private static void markAsStartOfAtRuleIfAtChar(AtRuleParserContext ctx, char c) {
+		if (c == '@' && !ctx.inAtRule) {
+			ctx.inAtRule = true;
+			ctx.startLineOfCurrentAtRule = ctx.line;
+		}
+	}
+
+	private static void updateLineNumberIfNewLine(AtRuleParserContext ctx, char c) {
+		if (c == '\n') {
+			ctx.line++;
+		}
 	}
 	
 	private static String rulename(StringBuilder rule) {
@@ -237,4 +259,24 @@ public class JsoupCssInliner implements CssInliner {
 		return sb.toString();
 	}
 
+	private static class AtRuleParserContext {
+		protected int line;
+		protected int startLineOfCurrentAtRule;
+		protected boolean inAtRule;
+		protected boolean inNestedAtRule;
+		protected int numberOfOpenedAtRules;
+		protected StringBuilder rule;
+		
+		public AtRuleParserContext() {
+			super();
+			this.line = 1;
+			this.startLineOfCurrentAtRule = 0;
+			this.inAtRule = false;
+			this.inNestedAtRule = false;
+			this.numberOfOpenedAtRules = 0;
+			this.rule = new StringBuilder();
+		}
+		
+		
+	}
 }

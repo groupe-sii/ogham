@@ -39,7 +39,7 @@ public class ReadMethodAccessor<T> implements Accessor<T> {
 	 *            the name of the property to access
 	 */
 	public ReadMethodAccessor(Object bean, String name) {
-		this(bean, name, getReadMethod(bean, name), new FieldAccessor<T>(bean, name));
+		this(bean, name, getReadMethod(bean, name), new FieldAccessor<>(bean, name));
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class ReadMethodAccessor<T> implements Accessor<T> {
 	 *            access the property
 	 */
 	public ReadMethodAccessor(Object bean, String name, Method readMethod) {
-		this(bean, name, readMethod, new FieldAccessor<T>(bean, name));
+		this(bean, name, readMethod, new FieldAccessor<>(bean, name));
 	}
 
 	/**

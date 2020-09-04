@@ -31,7 +31,7 @@ public class RegexBase64BackgroundImageInliner implements ImageInliner {
 	@Override
 	public ContentWithImages inline(String htmlContent, List<ImageResource> images) {
 		List<Encoded> encoded = new ArrayList<>(images.size());
-		String inlined = CssImageInlineUtils.inline(htmlContent, images, BASE64, (decl) -> encodeImage(decl.getUrl().getUrl(), decl.getImage(), encoded));
+		String inlined = CssImageInlineUtils.inline(htmlContent, images, BASE64, decl -> encodeImage(decl.getUrl().getUrl(), decl.getImage(), encoded));
 		return new ContentWithImages(inlined, new ArrayList<>(0));
 	}
 

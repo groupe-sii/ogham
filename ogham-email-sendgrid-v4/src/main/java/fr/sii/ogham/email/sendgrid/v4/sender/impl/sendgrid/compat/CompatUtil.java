@@ -16,7 +16,7 @@ import fr.sii.ogham.core.util.ClasspathUtils;
  * @author Aurélien Baudet
  *
  */
-public class CompatUtil {
+public final class CompatUtil {
 	/**
 	 * {@code sendgrid-java} package version 4.3.0 declares some classes in
 	 * package {@code com.sendgrid.helpers.mail.objects} (according to source
@@ -53,5 +53,9 @@ public class CompatUtil {
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			throw new IllegalStateException("Failed to create compatibility factory for sendgrid-java v4.3.0", e);
 		}
+	}
+	
+	private CompatUtil() {
+		super();
 	}
 }

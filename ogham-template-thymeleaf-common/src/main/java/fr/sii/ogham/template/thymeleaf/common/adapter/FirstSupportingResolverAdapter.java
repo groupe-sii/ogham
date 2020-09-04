@@ -53,7 +53,7 @@ public class FirstSupportingResolverAdapter implements TemplateResolverAdapter {
 	}
 
 	public FirstSupportingResolverAdapter() {
-		this(new ArrayList<TemplateResolverAdapter>());
+		this(new ArrayList<>());
 	}
 
 	@Override

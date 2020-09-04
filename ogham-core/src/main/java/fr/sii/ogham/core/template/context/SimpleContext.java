@@ -29,7 +29,7 @@ public class SimpleContext implements Context {
 	 *            the value of the variable
 	 */
 	public SimpleContext(String variable, Object value) {
-		this(new HashMap<String, Object>());
+		this(new HashMap<>());
 		addValue(variable, value);
 	}
 

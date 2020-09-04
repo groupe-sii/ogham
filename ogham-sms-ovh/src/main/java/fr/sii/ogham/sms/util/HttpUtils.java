@@ -59,7 +59,7 @@ public final class HttpUtils {
 		// spaces are replaced by '+' but some servers doesn't handle it
 		// correctly
 		// => convert space to '%20'
-		fullUrl = fullUrl.replaceAll("\\+", "%20");
+		fullUrl = fullUrl.replace("+", "%20");
 		try {
 			LOG.debug("Sending HTTP GET request to {}", fullUrl);
 			HttpGet request = new HttpGet(fullUrl);

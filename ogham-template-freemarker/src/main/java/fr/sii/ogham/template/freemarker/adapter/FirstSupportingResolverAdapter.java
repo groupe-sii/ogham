@@ -53,7 +53,7 @@ public class FirstSupportingResolverAdapter implements TemplateLoaderAdapter {
 	}
 
 	public FirstSupportingResolverAdapter() {
-		this(new ArrayList<TemplateLoaderAdapter>());
+		this(new ArrayList<>());
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class FirstSupportingResolverAdapter implements TemplateLoaderAdapter {
 		}
 	}
 
-	private String resolverName(ResourceResolver resolver) {
+	private static String resolverName(ResourceResolver resolver) {
 		return resolver==null ? "null" : resolver.getClass().getSimpleName();
 	}
 }

@@ -73,8 +73,7 @@ public class SimilarHtmlMatcher extends BaseMatcher<String> implements ExpectedV
 		StringBuilder sb = new StringBuilder();
 		sb.append("The two HTML documents are not similar.\n");
 		sb.append("Here are the differences found:\n");
-		for(Object o : diff.getAllDifferences()) {
-			Difference d = (Difference) o;
+		for(Difference d : diff.getAllDifferences()) {
 			sb.append("  - ").append(d.toString()).append("\n");
 		}
 		sb.append("\n");
