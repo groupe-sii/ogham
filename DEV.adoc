@@ -1,28 +1,30 @@
 = Build
 
-```
+[source, shell]
+----
 ./mvnw clean install -DskipTests
-```
-
+----
 
 
 = Test
 
 == Execute Unit and Integration tests
 
-```
+[source, shell]
+----
 ./mvnw test
-```
+----
 
 
 == Test Ogham against different Java and Spring Boot versions
 
 1) First you need to start `spring-initializr`:
 
-```
+[source, shell]
+----
 cd spring-initializr
 ./mvnw spring-boot:run
-```
+----
 
 This project is just the spring-iniailizr provided by spring on http://start.spring.io
 The aim is to generate working Spring Boot projects based on real spring-initializr.
@@ -30,19 +32,23 @@ The only difference is the metadata configuration defined in `application.yml`.
 
 2) Launch `ogham-test-classpath` to generate a list of projects:
 
-```
+[source, shell]
+----
 cd ogham-test-classpath
-./mvnw spring-boot:run -Dspring-boot.run.arguments="<output directory>" -Dspring-boot.run.jvmArguments="-Dogham-version=<ogham version to test>"
-```
+./mvnw spring-boot:run \
+	-Dspring-boot.run.arguments="<output directory>" \
+	-Dspring-boot.run.jvmArguments="-Dogham-version=<ogham version to test>"
+----
 
 This project generates several projects in `<output directory>`. Each project uses a different Spring Boot version and includes or not some Spring Boot features.
 
 3) Run tests for a particular Java version:
 
-```
+[source, shell]
+----
 cd <output directory>
 /mvnw test -T 2.5C -f "<java version>/pom.xml"
-```
+----
 
 
 
@@ -52,21 +58,24 @@ Changing version is done in three steps:
 
 1) Use standard maven plugin to update version numbers for all pom.xml files:
 
-```
+[source, shell]
+----
 ./mvnw versions:set -DnewVersion=<new version> -DprocessAllModules
-```
+----
 
 2) Update all other pom.xml files that have dependencies to Ogham (samples for example):
 
-```
+[source, shell]
+----
 ./mvnw com.google.code.maven-replacer-plugin:replacer:replace -N
-```
+----
 
 3) Test that everything works fine and finish version update:
 
-```
+[source, shell]
+----
 ./mvnw versions:commit
-```
+----
 
 
 
@@ -74,26 +83,34 @@ Changing version is done in three steps:
 
 == Test the release
 
-```
+[IMPORTANT]
+====
+`maven-release-plugin` has an issue to correctly handle properties (see https://issues.apache.org/jira/browse/MRELEASE-920[]).
+You need to apply the patch and build locally the `maven-release-plugin`.
+====
+
+[source, shell]
+----
 ./mvnw release:prepare -DdryRun=true
-```
+----
 
 Check that everything works fine and then clean everything:
 
-```
+[source, shell]
+----
 ./mvnw release:clean
-```
+----
 
 == Perform the release
 
-```
+[source, shell]
+----
 ./mvnw release:prepare release:perform \
 	-Dsite.staging.dir=<path to ogham-site> \
 	-DreleaseVersion=<release version> \
 	-DdevelopmentVersion=<next dev version> \
 	-Dtag=v<release version>
-```
-
+----
 
 
 = Documentation
@@ -104,17 +121,22 @@ Check that everything works fine and then clean everything:
 
 First you need to clone `Ogham` project a second time and to checkout branch `gh-pages`:
 
-```
+[source, shell]
+----
 git clone git@github.com:groupe-sii/ogham.git ogham-site
 git checkout gh-pages
-```
+----
 
 The new folder `ogham-site` in the example will be the folder where generated documentation and site will placed.
 
 
-```
-./mvnw clean site post-site site:stage -Dsite.staging.dir=<path to ogham-site> -DdocLatestReleaseVersion=<ogham version> -DdocFutureDevVersion=<future release version with -SNAPSHOT>
-```
+[source, shell]
+----
+./mvnw clean site post-site site:stage \
+	-Dsite.staging.dir=<path to ogham-site> \
+	-DdocLatestReleaseVersion=<ogham version> \
+	-DdocFutureDevVersion=<future release version with -SNAPSHOT>
+----
 
 This generates the documentation based on Asciidoctor and also the site with reports.
 
@@ -123,10 +145,11 @@ This generates the documentation based on Asciidoctor and also the site with rep
 
 As you have generated the documentation for a new version, you need to register this version. A Python script is used for that:
 
-```
+[source, shell]
+----
 cd ogham-site
 py generate.py
-```
+----
 
 
 === Update site on Github
@@ -135,12 +158,14 @@ Once generated, just push `gh-pages` branch on Github
 
 
 
-== Update README and Wiki on Github
+== Update README and Wiki for Github
 
-```
+[source, shell]
+----
 cd documentation-generator
-./mvnw spring-boot:run -Dspring-boot.run.arguments="--generator.doc.source.root-directory=<ogham root directory>,--generator.github.latestReleaseBranch=v<release version>,--generator.ogham.latestReleaseVersion=<release version>,--generator.github.futureDevBranch=<development branch: master>,--generator.ogham.futureDevVersion=<future release version with -SNAPSHOT>,--readme,--wiki"
-```
+./mvnw spring-boot:run \
+	-Dspring-boot.run.arguments="--generator.doc.source.root-directory=<ogham root directory>,--generator.github.latestReleaseBranch=v<release version>,--generator.ogham.latestReleaseVersion=<release version>,--generator.github.futureDevBranch=<development branch: master>,--generator.ogham.futureDevVersion=<future release version with -SNAPSHOT>,--readme,--wiki"
+----
 
 Once generated, just push on Github
 
@@ -148,9 +173,10 @@ Once generated, just push on Github
 
 == Generate Asciidoctor Documentation only
 
-```
+[source, shell]
+----
 ./mvnw post-site -Dmaven.site.skip -N
-```
+----
 
 The documentation is generated in target folder
 

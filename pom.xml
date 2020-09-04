@@ -129,8 +129,10 @@
 		<doc-theme>cerulean</doc-theme>
 		<asciidoctor.skip>${maven.site.skip}</asciidoctor.skip>
 		<asciidoctor.resources.skip>${asciidoctor.skip}</asciidoctor.resources.skip>
+		<readme.skip>true</readme.skip>
 		<site.resources.skip>${maven.site.skip}</site.resources.skip>
 		<sass.skip>${maven.site.skip}</sass.skip>
+		<site.showcase-video.skip>${maven.site.skip}</site.showcase-video.skip>
 		<asciidoctor.resources.output-directory>target/generated-docs</asciidoctor.resources.output-directory>
 
 		<!-- Plugins -->
@@ -171,6 +173,7 @@
 		<maven-scm-manager-plexus.version>1.11.2</maven-scm-manager-plexus.version>
 		<wagon-gitsite.version>0.5</wagon-gitsite.version>
 		<maven-replacer-plugin.version>1.5.2</maven-replacer-plugin.version>
+		<exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
 		<!-- Plugins - others -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 	</properties>
@@ -900,7 +903,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>generate-showcase-video</id>
+						<id>generate-showcase-video-mode</id>
 						<phase>post-site</phase>
 						<goals>
 							<goal>process-asciidoc</goal>
@@ -1179,6 +1182,47 @@
 					</resources>
 				</configuration>
 			</plugin>
+			<!-- Generate readme/showcase -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec-maven-plugin.version}</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>generate-readme</id>
+						<inherited>false</inherited>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>initialize</phase>
+						<configuration>
+							<skip>${readme.skip}</skip>
+							<executable>${project.basedir}/./mvnw</executable>
+							<workingDirectory>${project.basedir}/documentation-generator</workingDirectory>
+							<arguments>
+								<argument>spring-boot:run</argument>
+								<argument>-Dspring-boot.run.arguments="--readme,--generator.doc.source.root-directory=${project.basedir},--generator.github.latest-release-branch=v${docLatestReleaseVersion},--generator.ogham.latest-release-version=${docLatestReleaseVersion},--generator.github.future-dev-branch=master,--generator.ogham.future-dev-version=${docFutureDevVersion}"</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-showcase-video</id>
+						<inherited>false</inherited>
+						<phase>post-site</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<skip>${site.showcase-video.skip}</skip>
+							<executable>${project.basedir}/ci/./generate-showcase-video.sh</executable>
+							<arguments>
+								<argument>${site.staging.dir}/v${docLatestReleaseVersion}/presentation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<!-- Release -->
 			<plugin>
@@ -1191,9 +1235,9 @@
 					<releaseProfiles>release,mutation-testing</releaseProfiles>
 					<goals>deploy post-site site:stage</goals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
-					<preparationGoals>com.google.code.maven-replacer-plugin:replacer:replace clean install verify</preparationGoals>
-					<completionGoals>com.google.code.maven-replacer-plugin:replacer:replace</completionGoals>
-					<arguments>-Dmaven.test.redirectTestOutputToFile=true -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false</arguments>
+					<preparationGoals><![CDATA[com.google.code.maven-replacer-plugin:replacer:replace clean install verify]]></preparationGoals>
+					<completionGoals><![CDATA[com.google.code.maven-replacer-plugin:replacer:replace]]></completionGoals>
+					<arguments><![CDATA[-Dmaven.test.redirectTestOutputToFile=true -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false]]></arguments>
 				</configuration>
 			</plugin>
 
@@ -1323,6 +1367,7 @@
 						<value>&lt;ogham.version&gt;${project.version}&lt;/ogham.version&gt;</value>
 					</configuration>
 				</plugin>
+
 				<!-- Mutation testing -->
 				<plugin>
 					<groupId>eu.stamp-project</groupId>
@@ -1511,6 +1556,7 @@
 			<properties>
 				<docLatestReleaseVersion>${releaseVersion}</docLatestReleaseVersion>
 				<docFutureDevVersion>${developmentVersion}</docFutureDevVersion>
+				<readme.skip>false</readme.skip>
 			</properties>
 			<build>
 				<plugins>
