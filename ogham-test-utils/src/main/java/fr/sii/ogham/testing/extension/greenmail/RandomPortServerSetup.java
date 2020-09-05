@@ -78,10 +78,7 @@ public class RandomPortServerSetup extends ServerSetup {
 			return false;
 		}
 		RandomPortServerSetup other = (RandomPortServerSetup) obj;
-		if (currentPort != other.currentPort) {
-			return false;
-		}
-		return true;
+		return currentPort == other.currentPort;
 	}
 	
 	@Override

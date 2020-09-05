@@ -3,9 +3,6 @@ package fr.sii.ogham.testing.assertion.hamcrest;
 import java.util.function.Consumer;
 
 import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Difference;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.ComparisonFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,63 +23,29 @@ import fr.sii.ogham.testing.assertion.util.HtmlUtils;
  * to be able to visualize the differences on sources directly in the IDE.
  * 
  * <p>
- * See {@link HtmlUtils} for more information about "similar" HTML.
+ * See {@link HtmlUtils} for more information about "identical" HTML.
  * 
  * @author Aurélien Baudet
  *
  */
-public class IdenticalHtmlMatcher extends BaseMatcher<String> implements ExpectedValueProvider<String>, ComparisonAwareMatcher {
+public class IdenticalHtmlMatcher extends AbstractHtmlDiffMatcher {
 	private static final Logger LOG = LoggerFactory.getLogger(IdenticalHtmlMatcher.class);
 	
-	private final String expected;
-	private final Consumer<String> printer;
-	private DetailedDiff diff;
-
 	public IdenticalHtmlMatcher(String expected) {
 		this(expected, LOG::warn);
 	}
 
 	public IdenticalHtmlMatcher(String expected, Consumer<String> printer) {
-		super();
-		this.expected = expected;
-		this.printer = printer;
+		super(expected, printer, "identical");
 	}
 
 	@Override
-	public boolean matches(Object item) {
-		diff = HtmlUtils.compare(expected, (String) item);
-		boolean identical = diff.identical();
-		if(!identical) {
-			printer.accept(comparisonMessage());
-		}
-		return identical;
-	}
-
-	@Override
-	public void describeTo(Description description) {
-		description.appendValue(expected);
-	}
-
-	@Override
-	public String getExpectedValue() {
-		return expected;
-	}
-
-	@Override
-	public String comparisonMessage() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("The two HTML documents are not identical.\n");
-		sb.append("Here are the differences found:\n");
-		for(Difference d : diff.getAllDifferences()) {
-			sb.append("  - ").append(d.toString()).append("\n");
-		}
-		sb.append("\n");
-		return sb.toString();
+	protected boolean matches(DetailedDiff diff) {
+		return diff.identical();
 	}
 
 	@Override
 	public String toString() {
 		return "isIdenticalHtml('"+expected+"')";
 	}
-	
 }

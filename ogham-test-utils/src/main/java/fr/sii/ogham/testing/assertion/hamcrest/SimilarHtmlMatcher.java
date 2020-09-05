@@ -3,9 +3,6 @@ package fr.sii.ogham.testing.assertion.hamcrest;
 import java.util.function.Consumer;
 
 import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Difference;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.ComparisonFailure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,53 +28,20 @@ import fr.sii.ogham.testing.assertion.util.HtmlUtils;
  * @author Aurélien Baudet
  *
  */
-public class SimilarHtmlMatcher extends BaseMatcher<String> implements ExpectedValueProvider<String>, ComparisonAwareMatcher {
+public class SimilarHtmlMatcher extends AbstractHtmlDiffMatcher {
 	private static final Logger LOG = LoggerFactory.getLogger(SimilarHtmlMatcher.class);
-	
-	private final String expected;
-	private final Consumer<String> printer;
-	private DetailedDiff diff;
 
 	public SimilarHtmlMatcher(String expected) {
 		this(expected, LOG::warn);
 	}
 
 	public SimilarHtmlMatcher(String expected, Consumer<String> printer) {
-		super();
-		this.expected = expected;
-		this.printer = printer;
+		super(expected, printer, "similar");
 	}
 
 	@Override
-	public boolean matches(Object item) {
-		diff = HtmlUtils.compare(expected, (String) item);
-		boolean similar = diff.similar();
-		if(!similar) {
-			printer.accept(comparisonMessage());
-		}
-		return similar;
-	}
-
-	@Override
-	public void describeTo(Description description) {
-		description.appendValue(expected);
-	}
-
-	@Override
-	public String getExpectedValue() {
-		return expected;
-	}
-
-	@Override
-	public String comparisonMessage() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("The two HTML documents are not similar.\n");
-		sb.append("Here are the differences found:\n");
-		for(Difference d : diff.getAllDifferences()) {
-			sb.append("  - ").append(d.toString()).append("\n");
-		}
-		sb.append("\n");
-		return sb.toString();
+	protected boolean matches(DetailedDiff diff) {
+		return diff.similar();
 	}
 
 	@Override
