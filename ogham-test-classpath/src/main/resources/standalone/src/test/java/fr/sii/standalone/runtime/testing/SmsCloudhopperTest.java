@@ -13,8 +13,8 @@ import fr.sii.ogham.core.service.MessagingService;
 
 import fr.sii.ogham.runtime.runner.SmsRunner;
 import fr.sii.ogham.runtime.checker.CloudhopperChecker;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 
 public class SmsCloudhopperTest {
 	@Rule public final SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();

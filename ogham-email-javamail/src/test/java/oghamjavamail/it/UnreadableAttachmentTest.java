@@ -17,7 +17,7 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageException;
@@ -26,8 +26,8 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
 import fr.sii.ogham.email.message.Email;
-import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
 
 public class UnreadableAttachmentTest {
 	GreenMailRule greenMail = new RandomPortGreenMailRule();

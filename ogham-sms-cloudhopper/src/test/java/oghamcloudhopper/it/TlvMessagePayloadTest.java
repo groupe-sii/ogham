@@ -20,9 +20,9 @@ import fr.sii.ogham.sms.message.Sender;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
 import fr.sii.ogham.testing.sms.simulator.bean.Tag;
 

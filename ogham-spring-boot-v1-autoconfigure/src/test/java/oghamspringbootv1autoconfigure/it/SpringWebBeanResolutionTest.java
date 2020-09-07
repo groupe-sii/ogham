@@ -35,7 +35,7 @@ import org.thymeleaf.exceptions.TemplateProcessingException;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 
 import fr.sii.ogham.core.exception.MessageNotSentException;
 import fr.sii.ogham.core.exception.MessagingException;
@@ -46,9 +46,9 @@ import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
-import fr.sii.ogham.testing.extension.spring.GreenMailRandomSmtpPortInitializer;
-import fr.sii.ogham.testing.extension.spring.JsmppServerRandomPortInitializer;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.spring.GreenMailInitializer;
+import fr.sii.ogham.testing.extension.spring.JsmppServerInitializer;
 import mock.context.SimpleBean;
 import oghamspringbootv1autoconfigure.it.SpringWebBeanResolutionTest.TestApplication;
 
@@ -61,7 +61,7 @@ import oghamspringbootv1autoconfigure.it.SpringWebBeanResolutionTest.TestApplica
 						"mail.smtp.from=spring.test@foo.bar",
 						"ogham.sms.smpp.host=localhost",
 						"ogham.sms.smpp.port=${jsmpp.server.port}"})
-@ContextConfiguration(initializers = {GreenMailRandomSmtpPortInitializer.class, JsmppServerRandomPortInitializer.class})
+@ContextConfiguration(initializers = {GreenMailInitializer.class, JsmppServerInitializer.class})
 public class SpringWebBeanResolutionTest {
 	@Rule public final LoggingTestRule loggingRule = new LoggingTestRule();
 	@Rule @Autowired public GreenMailRule greenMail;

@@ -66,7 +66,7 @@
 		<byte-buddy.version>1.10.13</byte-buddy.version>
 		<objenesis.version>3.1</objenesis.version>
 		<cloning.version>1.9.12</cloning.version>
-		<greenmail.version>1.5.14</greenmail.version>
+		<greenmail.version>1.6.0</greenmail.version>
 		<jsmpp.version>2.3.10</jsmpp.version>
 		<equalsverifier.version>3.1.12</equalsverifier.version>
 		<wiremock.version>2.27.1</wiremock.version>
@@ -208,6 +208,7 @@
 		<module>ogham-test-classpath-runtime</module>
 		<module>ogham-test-classpath</module>
 		<module>reporting</module>
+		<module>build-tools</module>
 	</modules>
 
 	<dependencyManagement>
@@ -331,6 +332,11 @@
 			<dependency>
 				<groupId>fr.sii.ogham.internal</groupId>
 				<artifactId>ogham-test-classpath</artifactId>
+				<version>${ogham.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.sii.ogham.internal</groupId>
+				<artifactId>ogham-test-classpath-runtime</artifactId>
 				<version>${ogham.version}</version>
 			</dependency>
 			<dependency>
@@ -593,6 +599,16 @@
 						<artifactId>javax.mail</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.icegreen</groupId>
+				<artifactId>greenmail-junit4</artifactId>
+				<version>${greenmail.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.icegreen</groupId>
+				<artifactId>greenmail-junit5</artifactId>
+				<version>${greenmail.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>nl.jqno.equalsverifier</groupId>
@@ -1182,47 +1198,6 @@
 					</resources>
 				</configuration>
 			</plugin>
-			<!-- Generate readme/showcase -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>${exec-maven-plugin.version}</version>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<id>generate-readme</id>
-						<inherited>false</inherited>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<phase>initialize</phase>
-						<configuration>
-							<skip>${readme.skip}</skip>
-							<executable>${project.basedir}/./mvnw</executable>
-							<workingDirectory>${project.basedir}/documentation-generator</workingDirectory>
-							<arguments>
-								<argument>spring-boot:run</argument>
-								<argument>-Dspring-boot.run.arguments="--readme,--generator.doc.source.root-directory=${project.basedir},--generator.github.latest-release-branch=v${docLatestReleaseVersion},--generator.ogham.latest-release-version=${docLatestReleaseVersion},--generator.github.future-dev-branch=master,--generator.ogham.future-dev-version=${docFutureDevVersion}"</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate-showcase-video</id>
-						<inherited>false</inherited>
-						<phase>post-site</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<skip>${site.showcase-video.skip}</skip>
-							<executable>${project.basedir}/ci/./generate-showcase-video.sh</executable>
-							<arguments>
-								<argument>${site.staging.dir}/v${docLatestReleaseVersion}/presentation</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 
 			<!-- Release -->
 			<plugin>
@@ -1445,6 +1420,13 @@
 						<dependencies> <dependency> <groupId>org.pitest</groupId> <artifactId>pitest-junit5-plugin</artifactId> 
 						<version>${pitest-junit5-plugin.version}</version> </dependency> </dependencies> -->
 				</plugin>
+
+				<!-- Generate readme/showcase -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>${exec-maven-plugin.version}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -1625,6 +1607,7 @@
 				<generateSitemap>false</generateSitemap>
 				<maven.javadoc.skip>true</maven.javadoc.skip>
 				<mpir.skip>true</mpir.skip>
+				<site.showcase-video.skip>true</site.showcase-video.skip>
 			</properties>
 			<build>
 				<plugins>
@@ -1649,6 +1632,7 @@
 				<generateSitemap>false</generateSitemap>
 				<maven.javadoc.skip>true</maven.javadoc.skip>
 				<mpir.skip>true</mpir.skip>
+				<site.showcase-video.skip>true</site.showcase-video.skip>
 			</properties>
 		</profile>
 		<profile>

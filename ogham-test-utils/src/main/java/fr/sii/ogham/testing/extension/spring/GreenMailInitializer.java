@@ -11,7 +11,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 
 import fr.sii.ogham.testing.util.RandomPortUtils;
 
@@ -20,21 +20,21 @@ import fr.sii.ogham.testing.util.RandomPortUtils;
  * <ul>
  * <li>{@code "greenmail.smtp.port"} property in Spring {@link Environment}</li>
  * <li>{@link GreenMailRule} bean in Spring {@link ApplicationContext} through
- * {@link GreenMailRuleTestConfiguration} in order to use the port defined by
+ * {@link GreenMailTestConfiguration} in order to use the port defined by
  * {@code "greenmail.smtp.port"} property</li>
  * </ul>
  * 
  * @author Aurélien Baudet
  *
  */
-public class GreenMailRandomSmtpPortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-	private static final Logger LOG = LoggerFactory.getLogger(GreenMailRandomSmtpPortInitializer.class);
+public class GreenMailInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+	private static final Logger LOG = LoggerFactory.getLogger(GreenMailInitializer.class);
 
 	@Override
 	public void initialize(ConfigurableApplicationContext applicationContext) {
 		if (applicationContext instanceof GenericApplicationContext) {
-			BeanDefinition configBean = new AnnotatedGenericBeanDefinition(GreenMailRuleTestConfiguration.class);
-			((GenericApplicationContext) applicationContext).registerBeanDefinition("greenMailRuleTestConfiguration", configBean);
+			BeanDefinition configBean = new AnnotatedGenericBeanDefinition(GreenMailTestConfiguration.class);
+			((GenericApplicationContext) applicationContext).registerBeanDefinition("greenMailTestConfiguration", configBean);
 		}
 		int port = RandomPortUtils.findAvailableTcpPort();
 		LOG.debug("Registering {} port for GreenMail SMTP", port);

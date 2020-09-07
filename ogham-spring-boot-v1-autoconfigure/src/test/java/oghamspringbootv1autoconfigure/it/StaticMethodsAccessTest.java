@@ -15,7 +15,7 @@ import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfigura
 import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.message.content.TemplateContent;
@@ -24,10 +24,10 @@ import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.spring.v1.autoconfigure.OghamSpringBoot1AutoConfiguration;
 import fr.sii.ogham.testing.assertion.OghamAssertions;
-import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import mock.context.SimpleBean;
 
 public class StaticMethodsAccessTest {

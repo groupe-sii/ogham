@@ -87,7 +87,8 @@ public class PropertiesConsistencyTest {
 		"mail.smtp.host",
 		"mail.smtp.port",
 		"greenmail.smtp.port",
-	   "jsmpp.server.port"
+		"jsmpp.server.port",
+		"wiremock.server.port"
 	);
 	
 	private static final List<String> ignorePropertiesDefinedInOghamWithoutSpringEquivalentValue = asList(

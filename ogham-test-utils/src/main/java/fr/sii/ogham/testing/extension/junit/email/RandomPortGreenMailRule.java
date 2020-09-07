@@ -1,4 +1,4 @@
-package fr.sii.ogham.testing.extension.greenmail;
+package fr.sii.ogham.testing.extension.junit.email;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 import com.icegreen.greenmail.server.AbstractServer;
 import com.icegreen.greenmail.util.ServerSetup;
 

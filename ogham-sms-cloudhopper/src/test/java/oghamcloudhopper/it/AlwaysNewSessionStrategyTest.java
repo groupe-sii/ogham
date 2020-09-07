@@ -34,9 +34,9 @@ import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration
 import fr.sii.ogham.testing.assertion.sms.AssertSms;
 import fr.sii.ogham.testing.assertion.sms.ExpectedAddressedPhoneNumber;
 import fr.sii.ogham.testing.assertion.sms.ExpectedSms;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import testutils.SessionStrategyTestHelper.SessionAware;
 import testutils.SessionStrategyTestHelper.TestContext;
 import testutils.TrackClientAndSessionsDecorator;

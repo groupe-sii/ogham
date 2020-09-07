@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 
 import com.cloudhopper.smpp.type.SmppChannelConnectException;
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.sun.mail.util.MailConnectException;
 
@@ -41,10 +41,10 @@ import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.ConnectionFailedException;
-import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import freemarker.core.InvalidReferenceException;
 import mock.context.SimpleBean;

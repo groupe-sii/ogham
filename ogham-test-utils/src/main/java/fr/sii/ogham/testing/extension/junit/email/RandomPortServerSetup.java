@@ -1,4 +1,4 @@
-package fr.sii.ogham.testing.extension.greenmail;
+package fr.sii.ogham.testing.extension.junit.email;
 
 import com.icegreen.greenmail.util.ServerSetup;
 

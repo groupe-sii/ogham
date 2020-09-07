@@ -7,7 +7,8 @@ import java.util.function.Consumer;
 
 import javax.mail.internet.MimeMessage;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
 
 import fr.sii.ogham.testing.assertion.email.FluentEmailsAssert;
 import fr.sii.ogham.testing.assertion.email.FluentReceivedEmailsAssert;
@@ -16,7 +17,8 @@ import fr.sii.ogham.testing.assertion.sms.FluentSmsListAssert;
 import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
 import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
 import fr.sii.ogham.testing.assertion.util.FailImmediatelyRegistry;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 
 /**
@@ -154,6 +156,78 @@ public final class OghamAssertions {
 	 * 
 	 * <pre>
 	 * {@code
+	 * assertThat(greenMail).receivedMessages()
+	 *   .count(is(1))
+	 *   .message(0)
+	 *     .subject(is("Test"))
+	 *     .from().address(hasItems("test.sender@sii.fr")).and()
+	 *     .to().address(hasItems("recipient@sii.fr")).and()
+	 *   .body()
+	 *      .contentAsString(is("body"))
+	 *      .contentType(startsWith("text/plain")).and()
+	 *   .alternative(nullValue())
+	 *   .attachments(hasSize(1))
+	 *   .attachment("04-Java-OOP-Basics.pdf")
+	 *      .content(is(resource("/attachment/04-Java-OOP-Basics.pdf")))
+	 *      .contentType(startsWith("application/pdf"))
+	 *      .filename(is("04-Java-OOP-Basics.pdf"))
+	 *      .disposition(is(ATTACHMENT_DISPOSITION));
+	 * }
+	 * </pre>
+	 * 
+	 * @param greenMail
+	 *            email server that stores received messages
+	 * @return builder for fluent assertions on received messages
+	 */
+	public static FluentReceivedEmailsAssert assertThat(GreenMailExtension greenMail) {
+		return assertThat(greenMail, new FailImmediatelyRegistry());
+	}
+
+	/**
+	 * Helper method to write assertions on mails using fluent API. For example:
+	 * 
+	 * <pre>
+	 * {@code
+	 * assertAll(registry -> 
+	 *   assertThat(greenMail, registry).receivedMessages()
+	 *     .count(is(1))
+	 *     .message(0)
+	 *       .subject(is("Test"))
+	 *       .from().address(hasItems("test.sender@sii.fr")).and()
+	 *       .to().address(hasItems("recipient@sii.fr")).and()
+	 *     .body()
+	 *        .contentAsString(is("body"))
+	 *        .contentType(startsWith("text/plain")).and()
+	 *     .alternative(nullValue())
+	 *     .attachments(hasSize(1))
+	 *     .attachment("04-Java-OOP-Basics.pdf")
+	 *        .content(is(resource("/attachment/04-Java-OOP-Basics.pdf")))
+	 *        .contentType(startsWith("application/pdf"))
+	 *        .filename(is("04-Java-OOP-Basics.pdf"))
+	 *        .disposition(is(ATTACHMENT_DISPOSITION)));
+	 * }
+	 * </pre>
+	 * 
+	 * <p>
+	 * This method is used in combination of {@link #assertAll(Consumer...)} in
+	 * order to report all exceptions/assertion failures at the end instead of
+	 * stopping at the first failure.
+	 * 
+	 * @param greenMail
+	 *            email server that stores received messages
+	 * @param registry
+	 *            the registry used to register assertions
+	 * @return builder for fluent assertions on received messages
+	 */
+	public static FluentReceivedEmailsAssert assertThat(GreenMailExtension greenMail, AssertionRegistry registry) {
+		return new FluentReceivedEmailsAssert(asList(greenMail.getReceivedMessages()), registry);
+	}
+
+	/**
+	 * Helper method to write assertions on mails using fluent API. For example:
+	 * 
+	 * <pre>
+	 * {@code
 	 * assertThat(greenMail.getReceivedMessages())
 	 *   .count(is(1))
 	 *   .message(0)
@@ -256,6 +330,36 @@ public final class OghamAssertions {
 	 * 
 	 * <pre>
 	 * {@code
+	 * assertThat(smppServer).receivedMessages()
+	 *   .count(is(1))
+	 *   .message(0)
+	 *     .content(is("sms content"))
+	 *     .from()
+	 *       .number(is(INTERNATIONAL_PHONE_NUMBER))
+	 *       .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+	 *       .numberPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()
+	 *     .to()
+	 *       .number(is(NATIONAL_PHONE_NUMBER))
+	 *       .typeOfNumber(is(TypeOfNumber.UNKNOWN))
+	 *       .numberPlanIndicator(is(NumberingPlanIndicator.ISDN));
+	 * }
+	 * </pre>
+	 * 
+	 * @param smsServer
+	 *            SMS server that stores received messages
+	 * @param <M>
+	 *            the type of messages handled by the server
+	 * @return builder for fluent assertions on received messages
+	 */
+	public static <M> FluentReceivedSmsAssert<SubmitSm> assertThat(SmppServerExtension<M> smsServer) {
+		return assertThat(smsServer, new FailImmediatelyRegistry());
+	}
+
+	/**
+	 * Helper method to write assertions on sms using fluent API. For example:
+	 * 
+	 * <pre>
+	 * {@code
 	 * assertAll(registry ->
 	 *   assertThat(smppServer, registry).receivedMessages()
 	 *     .count(is(1))
@@ -286,6 +390,44 @@ public final class OghamAssertions {
 	 * @return builder for fluent assertions on received messages
 	 */
 	public static <M> FluentReceivedSmsAssert<SubmitSm> assertThat(SmppServerRule<M> smsServer, AssertionRegistry registry) {
+		return new FluentReceivedSmsAssert<>(smsServer.getReceivedMessages(), registry);
+	}
+
+	/**
+	 * Helper method to write assertions on sms using fluent API. For example:
+	 * 
+	 * <pre>
+	 * {@code
+	 * assertAll(registry ->
+	 *   assertThat(smppServer, registry).receivedMessages()
+	 *     .count(is(1))
+	 *     .message(0)
+	 *       .content(is("sms content"))
+	 *       .from()
+	 *         .number(is(INTERNATIONAL_PHONE_NUMBER))
+	 *         .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+	 *         .numberPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()
+	 *       .to()
+	 *         .number(is(NATIONAL_PHONE_NUMBER))
+	 *         .typeOfNumber(is(TypeOfNumber.UNKNOWN))
+	 *         .numberPlanIndicator(is(NumberingPlanIndicator.ISDN)));
+	 * }
+	 * </pre>
+	 * 
+	 * <p>
+	 * This method is used in combination of {@link #assertAll(Consumer...)} in
+	 * order to report all exceptions/assertion failures at the end instead of
+	 * stopping at the first failure.
+	 * 
+	 * @param smsServer
+	 *            SMS server that stores received messages
+	 * @param registry
+	 *            the registry used to register assertions
+	 * @param <M>
+	 *            the type of messages handled by the server
+	 * @return builder for fluent assertions on received messages
+	 */
+	public static <M> FluentReceivedSmsAssert<SubmitSm> assertThat(SmppServerExtension<M> smsServer, AssertionRegistry registry) {
 		return new FluentReceivedSmsAssert<>(smsServer.getReceivedMessages(), registry);
 	}
 

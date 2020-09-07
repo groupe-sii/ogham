@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 
 import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.core.exception.MessageException;
@@ -28,8 +28,8 @@ import fr.sii.ogham.email.builder.javamail.JavaMailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
-import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
 
 public class JavaMailSmtpTest {
 	private JavaMailSender sender;

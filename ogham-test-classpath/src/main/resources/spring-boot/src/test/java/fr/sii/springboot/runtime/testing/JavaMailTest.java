@@ -9,13 +9,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
 import fr.sii.ogham.core.service.MessagingService;
 
 import fr.sii.ogham.runtime.runner.EmailRunner;
-import fr.sii.ogham.testing.extension.spring.GreenMailRandomSmtpPortInitializer;
+import fr.sii.ogham.testing.extension.spring.GreenMailInitializer;
 import fr.sii.ogham.runtime.checker.JavaMailChecker;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 	"mail.smtp.host=127.0.0.1",
 	"mail.smtp.port=${greenmail.smtp.port}"
 })
-@ContextConfiguration(classes = Application.class, initializers = GreenMailRandomSmtpPortInitializer.class)
+@ContextConfiguration(classes = Application.class, initializers = GreenMailInitializer.class)
 public class JavaMailTest {
 	@Rule @Autowired public GreenMailRule greenMail;
 	

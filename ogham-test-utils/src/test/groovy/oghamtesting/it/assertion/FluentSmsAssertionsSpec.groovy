@@ -36,7 +36,7 @@ import com.cloudhopper.commons.charset.CharsetUtil
 
 import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
 import fr.sii.ogham.testing.extension.common.LogTestInformation
-import fr.sii.ogham.testing.extension.junit.SmppServerRule
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule
 import fr.sii.ogham.testing.sms.simulator.bean.Address
 import fr.sii.ogham.testing.sms.simulator.bean.Alphabet
 import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator

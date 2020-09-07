@@ -7,17 +7,60 @@ to benefit from random ports easily.
 .Random ports in Spring Boot tests
 [role="tab-container no-max-height"]
 ====
-.image:{icons-java-code} Email
+.image:{icons-java-code} Email (JUnit 5)
 [role=tab]
 --
 
-[source, java, role="collapse-lines:1-17 irrelevant-lines:1-17, highlight-lines:21,23,25,31"]
+[source, java, role="collapse-lines:1-17,26,32-36 irrelevant-lines:1-17,26,32-36 highlight-lines:21,23,25,38"]
 ----
-include::{spring-samples-testsourcedir}/fr/sii/ogham/sample/springboot/email/RandomSmtpPortTestSample.java[]
+include::{spring-samples-testsourcedir}/fr/sii/ogham/sample/springboot/email/RandomSmtpPortJUnit5TestSample.java[]
 ----
 <1> The property `greenmail.smtp.port` can be used in the tested application that
 uses Ogham. 
-<2> Register `GreenMailRandomSmtpPortInitializer` to automatically start
+<2> Register `GreenMailInitializer` to automatically start
+GreenMail SMTP service on a random port and register `GreenMailExtension` bean
+in test context.
+<3> Use `@Autowired` to inject `GreenMailExtension` instance that uses the
+random port.
+<4> Make assertions on GreenMail as usual.
+
+
+{spring-samples-testsourcedir-url}/fr/sii/ogham/sample/springboot/email/RandomSmtpPortJUnit5TestSample.java?ts={tabsize}[Source code of the sample].
+
+
+--
+.image:{icons-java-code} SMS (JUnit 5)
+[role=tab]
+--
+
+[source, java, role="collapse-lines:1-17,26,32-35 irrelevant-lines:1-17,26,32-35 highlight-lines:21,23,25,37"]
+----
+include::{spring-samples-testsourcedir}/fr/sii/ogham/sample/springboot/sms/RandomSmppPortJUnit5TestSample.java[]
+----
+<1> The property `jsmpp.server.port` can be used in the tested application that
+uses Ogham. 
+<2> Register `JsmppServerInitializer` to automatically start
+JSMPPServer on a random port and register `JsmppServerExtension` bean
+in test context.
+<3> Use `@Autowired` to inject `JsmppServerExtension` instance that uses the
+random port.
+<4> Make assertions on JSMPPServer as usual.
+
+
+{spring-samples-testsourcedir-url}/fr/sii/ogham/sample/springboot/smpp/RandomSmppPortJUnit5TestSample.java?ts={tabsize}[Source code of the sample].
+
+--
+.image:{icons-java-code} Email (JUnit 4)
+[role=tab]
+--
+
+[source, java, role="collapse-lines:1-19,29,35-39 irrelevant-lines:1-19,29,35-39 highlight-lines:24,26,28,41"]
+----
+include::{spring-samples-testsourcedir}/fr/sii/ogham/sample/springboot/email/RandomSmtpPortJUnit4TestSample.java[]
+----
+<1> The property `greenmail.smtp.port` can be used in the tested application that
+uses Ogham. 
+<2> Register `GreenMailInitializer` to automatically start
 GreenMail SMTP service on a random port and register `GreenMailRule` bean
 in test context.
 <3> Use `@Autowired` to inject `GreenMailRule` instance that uses the
@@ -25,21 +68,21 @@ random port.
 <4> Make assertions on GreenMail as usual.
 
 
-{spring-samples-testsourcedir-url}/fr/sii/ogham/sample/springboot/email/RandomSmtpPortTestSample.java?ts={tabsize}[Source code of the sample].
+{spring-samples-testsourcedir-url}/fr/sii/ogham/sample/springboot/email/RandomSmtpPortJUnit4TestSample.java?ts={tabsize}[Source code of the sample].
 
 
 --
-.image:{icons-java-code} SMS
+.image:{icons-java-code} SMS (JUnit 4)
 [role=tab]
 --
 
-[source, java, role="collapse-lines:1-17 irrelevant-lines:1-17, highlight-lines:21,23,25,31"]
+[source, java, role="collapse-lines:1-19,29,35-38 irrelevant-lines:1-19,29,35-38 highlight-lines:24,26,28,40"]
 ----
-include::{spring-samples-testsourcedir}/fr/sii/ogham/sample/springboot/sms/RandomSmppPortTestSample.java[]
+include::{spring-samples-testsourcedir}/fr/sii/ogham/sample/springboot/sms/RandomSmppPortJUnit4TestSample.java[]
 ----
 <1> The property `jsmpp.server.port` can be used in the tested application that
 uses Ogham. 
-<2> Register `JsmppServerRandomPortInitializer` to automatically start
+<2> Register `JsmppServerInitializer` to automatically start
 JSMPPServer on a random port and register `JsmppServerRule` bean
 in test context.
 <3> Use `@Autowired` to inject `JsmppServerRule` instance that uses the
@@ -47,7 +90,7 @@ random port.
 <4> Make assertions on JSMPPServer as usual.
 
 
-{spring-samples-testsourcedir-url}/fr/sii/ogham/sample/springboot/smpp/RandomSmppPortTestSample.java?ts={tabsize}[Source code of the sample].
+{spring-samples-testsourcedir-url}/fr/sii/ogham/sample/springboot/smpp/RandomSmppPortJUnit4TestSample.java?ts={tabsize}[Source code of the sample].
 
 --
 ====

@@ -8,7 +8,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 
 /**
  * Configuration for local server used to simulate a SMPP server.

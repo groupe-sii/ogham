@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>fr.sii.ogham</groupId>
+		<artifactId>ogham-parent</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	<groupId>fr.sii.ogham.internal</groupId>
+	<artifactId>build-tools</artifactId>
+	<packaging>pom</packaging>
+
+	<properties>
+		<skip.integration.tests>true</skip.integration.tests>
+		<skip.unit.tests>true</skip.unit.tests>
+		<sonar.skip>true</sonar.skip>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+		<maven.deploy.skip>true</maven.deploy.skip>
+	</properties>
+
+	<dependencies>
+		<!-- Needed to control build order -->
+		<dependency>
+			<groupId>fr.sii.ogham</groupId>
+			<artifactId>reporting</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Generate readme/showcase -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-readme</id>
+						<inherited>false</inherited>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>initialize</phase>
+						<configuration>
+							<skip>${readme.skip}</skip>
+							<executable>${project.basedir}/.././mvnw</executable>
+							<workingDirectory>${project.basedir}/../documentation-generator</workingDirectory>
+							<arguments>
+								<argument>spring-boot:run</argument>
+								<argument>-Dspring-boot.run.arguments="--readme,--generator.doc.source.root-directory=${project.basedir},--generator.github.latest-release-branch=v${docLatestReleaseVersion},--generator.ogham.latest-release-version=${docLatestReleaseVersion},--generator.github.future-dev-branch=master,--generator.ogham.future-dev-version=${docFutureDevVersion}"</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-showcase-video</id>
+						<phase>post-site</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<skip>${site.showcase-video.skip}</skip>
+							<executable>${project.basedir}/../ci/./generate-showcase-video.sh</executable>
+							<arguments>
+								<argument>${site.output.dir}/presentation</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

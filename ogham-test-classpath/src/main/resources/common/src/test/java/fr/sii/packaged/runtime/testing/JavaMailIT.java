@@ -8,9 +8,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
 
 import fr.sii.ogham.core.service.MessagingService;
 

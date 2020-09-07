@@ -14,8 +14,8 @@ import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 
 public class LongSmsTestSample {
 	private MessagingService oghamService;

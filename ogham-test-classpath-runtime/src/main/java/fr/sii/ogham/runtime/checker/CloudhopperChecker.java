@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.jsmpp.bean.SubmitSm;
 
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
 import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
 

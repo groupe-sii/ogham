@@ -26,9 +26,9 @@ import fr.sii.ogham.core.exception.retry.UnrecoverableException;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.ConnectionFailedException;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 
 public class ConnectionFailureTest {

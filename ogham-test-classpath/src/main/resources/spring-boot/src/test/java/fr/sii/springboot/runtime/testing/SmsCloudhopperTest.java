@@ -17,9 +17,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import fr.sii.ogham.core.service.MessagingService;
 
 import fr.sii.ogham.runtime.runner.SmsRunner;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
-import fr.sii.ogham.testing.extension.spring.JsmppServerRandomPortInitializer;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.extension.spring.JsmppServerInitializer;
 import fr.sii.ogham.runtime.checker.CloudhopperChecker;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,7 +27,7 @@ import fr.sii.ogham.runtime.checker.CloudhopperChecker;
 	"ogham.sms.smpp.host=127.0.0.1",
 	"ogham.sms.smpp.port=${jsmpp.server.port}"
 })
-@ContextConfiguration(classes = Application.class, initializers = JsmppServerRandomPortInitializer.class)
+@ContextConfiguration(classes = Application.class, initializers = JsmppServerInitializer.class)
 public class SmsCloudhopperTest {
 	@Rule @Autowired public SmppServerRule<SubmitSm> smppServer;
 	

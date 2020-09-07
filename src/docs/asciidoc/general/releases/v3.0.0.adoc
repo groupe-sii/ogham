@@ -576,10 +576,10 @@ Ogham also provides extensions for Spring Boot tests:
 * `GreenMailRandomSmtpPortInitializer` for starting GreenMail on random port,
 make `GreenMailRule` instance injectable in the test (with `@Autowired`) and
 provide `greenmail.smtp.port` property that is usable in Spring test and application.
-* `JsmppServerRandomPortInitializer` for starting JSMPPServer on random port,
+* `JsmppServerInitializer` for starting JSMPPServer on random port,
 make `JsmppServerRule` instance injectable in the test (with `@Autowired`) and
 provide `jsmpp.server.port` property that is usable in Spring test and application.
-* `WireMockRandomPortInitializer` for starting WireMockServer on random port,
+* `WireMockInitializer` for starting WireMockServer on random port,
 make `WireMockRule` instance injectable in the test (with `@Autowired`) and
 provide `wiremock.server.port` property that is usable in Spring test and application.
 

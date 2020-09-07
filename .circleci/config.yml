@@ -74,6 +74,7 @@ commands:
 version: 2.1
 orbs:
   slack: circleci/slack@3.2.0
+  docker: circleci/docker@1.4.0
 jobs:
   #--------------------------------------------
   # build pitest (with report aggregation fix)
@@ -121,6 +122,13 @@ jobs:
       JAVA_TOOL_OPTIONS: '-Xmx4096m'
       MAVEN_OPTS: '-Xmx4096m'
     steps:
+#      - run:
+#          name: Install Docker Compose
+#          command: |
+#            set -x
+#            curl -L https://github.com/docker/compose/releases/download/1.25.3/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+#            chmod +x /usr/local/bin/docker-compose
+#      - setup_remote_docker
       - checkout
       - restore_cache: *restore-m2-cache
       #- restore_cache: *restore-pit-history

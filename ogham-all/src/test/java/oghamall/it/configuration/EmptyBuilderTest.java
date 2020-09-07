@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageException;
@@ -43,10 +43,10 @@ import fr.sii.ogham.template.exception.NoResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3EmailBuilder;
-import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 import mock.context.SimpleBean;
 
 public class EmptyBuilderTest {

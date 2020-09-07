@@ -1,4 +1,4 @@
-package fr.sii.ogham.testing.extension.junit;
+package fr.sii.ogham.testing.extension.junit.sms;
 
 import org.jsmpp.bean.SubmitSm;
 
@@ -9,27 +9,19 @@ import fr.sii.ogham.testing.sms.simulator.jsmpp.JSMPPServer;
 import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter;
 
 /**
- * JUnit rule that start a SMPP server based on JSMPP implementation.
+ * JUnit extension that start a SMPP server based on JSMPP implementation.
  * 
  * @author Aurélien Baudet
  *
  */
-public class JsmppServerRule extends SmppServerRule<SubmitSm> {
-	/**
-	 * Initialize the server with random port.
-	 */
-	public JsmppServerRule() {
-		this(new ServerConfig());
-	}
+public class JsmppServerExtension extends SmppServerExtension<SubmitSm> {
 
 	/**
-	 * Initialize the server with the provided port.
+	 * Initialize the server with default configuration (random port).
 	 * 
-	 * @param port
-	 *            the port used by the server
 	 */
-	public JsmppServerRule(int port) {
-		this(new ServerConfig().port(port));
+	public JsmppServerExtension() {
+		super();
 	}
 
 	/**
@@ -38,7 +30,7 @@ public class JsmppServerRule extends SmppServerRule<SubmitSm> {
 	 * @param config
 	 *            the server configuration to simulate some behavior
 	 */
-	public JsmppServerRule(ServerConfig config) {
+	public JsmppServerExtension(ServerConfig config) {
 		super(config);
 	}
 

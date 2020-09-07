@@ -24,7 +24,7 @@ import javax.mail.Multipart
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
-import com.icegreen.greenmail.junit.GreenMailRule
+import com.icegreen.greenmail.junit4.GreenMailRule
 
 import fr.sii.ogham.testing.assertion.util.MultipleAssertionError
 import fr.sii.ogham.testing.extension.common.LogTestInformation

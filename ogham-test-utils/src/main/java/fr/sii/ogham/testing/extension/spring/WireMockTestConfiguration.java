@@ -16,7 +16,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
  *
  */
 @TestConfiguration
-public class WireMockRuleTestConfiguration {
+public class WireMockTestConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(WireMockRule.class)
 	@ConditionalOnProperty("wiremock.server.port")

@@ -116,6 +116,10 @@
 			<artifactId>ogham-test-classpath</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>fr.sii.ogham.internal</groupId>
+			<artifactId>ogham-test-classpath-runtime</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>fr.sii.ogham</groupId>
 			<artifactId>ogham-test-utils</artifactId>
 		</dependency>

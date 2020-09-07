@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 import java.io.IOException;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 
 public class JavaMailChecker {
 	private final GreenMailRule greenMail;

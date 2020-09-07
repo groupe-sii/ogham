@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.icegreen.greenmail.junit.GreenMailRule;
+import com.icegreen.greenmail.junit4.GreenMailRule;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.exception.MessageNotSentException;
@@ -32,8 +32,8 @@ import fr.sii.ogham.core.id.generator.SequentialIdGenerator;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.testing.assertion.email.By;
-import fr.sii.ogham.testing.extension.greenmail.RandomPortGreenMailRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
+import fr.sii.ogham.testing.extension.junit.email.RandomPortGreenMailRule;
 import mock.context.SimpleBean;
 
 public class FluentEmailTest {

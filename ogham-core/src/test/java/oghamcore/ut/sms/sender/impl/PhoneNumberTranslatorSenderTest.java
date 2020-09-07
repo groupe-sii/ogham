@@ -24,9 +24,9 @@ import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
 import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
 import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
 import fr.sii.ogham.sms.sender.PhoneNumberTranslatorSender;
-import fr.sii.ogham.testing.extension.junit.JsmppServerRule;
 import fr.sii.ogham.testing.extension.junit.LoggingTestRule;
-import fr.sii.ogham.testing.extension.junit.SmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PhoneNumberTranslatorSenderTest {
