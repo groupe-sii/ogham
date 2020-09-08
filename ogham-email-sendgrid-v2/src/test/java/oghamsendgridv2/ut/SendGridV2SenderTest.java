@@ -18,12 +18,12 @@ import fr.sii.ogham.testing.extension.common.LogTestInformation;
 
 @LogTestInformation
 @ExtendWith(MockitoExtension.class)
-public class SendGridV2SenderTest {
+class SendGridV2SenderTest {
 	@Mock SendGridClient service;
 	@Mock SendGridContentHandler handler;
 	
 	@Test
-	public void constructionAssertions() {
+	void constructionAssertions() {
 		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> new SendGridV2Sender(null, handler), "service cannot be null");
 		assertThat("message", e.getMessage(), is("[service] cannot be null"));
 		IllegalArgumentException e2 = assertThrows(IllegalArgumentException.class, () -> new SendGridV2Sender(service, null), "handler cannot be null");
@@ -31,7 +31,7 @@ public class SendGridV2SenderTest {
 	}
 	
 	@Test
-	public void reportViolations() {
+	void reportViolations() {
 		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
 			SendGridV2Sender sender = new SendGridV2Sender(service, handler);
 			sender.send(null);

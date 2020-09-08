@@ -24,7 +24,7 @@ import fr.sii.ogham.testing.extension.common.LogTestInformation;
 @LogTestInformation
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = LENIENT)
-public class FirstSupportingResolverAdapterTest {
+class FirstSupportingResolverAdapterTest {
 	@Mock ResourceResolver resolver;
 	@Mock TemplateResolverAdapter adapter1;
 	@Mock TemplateResolverAdapter adapter2;
@@ -34,14 +34,14 @@ public class FirstSupportingResolverAdapterTest {
 	FirstSupportingResolverAdapter adapter;
 	
 	@BeforeEach
-	public void setup() throws ResolverAdapterException {
+	void setup() throws ResolverAdapterException {
 		adapter = new FirstSupportingResolverAdapter(adapter1, adapter2);
 		when(adapter1.adapt(resolver)).thenReturn(tplResolver1);
 		when(adapter2.adapt(resolver)).thenReturn(tplResolver2);
 	}
 	
 	@Test
-	public void supportsIfAtLeastOneSupports() {
+	void supportsIfAtLeastOneSupports() {
 		when(adapter1.supports(resolver)).thenReturn(false, true, false, true);
 		when(adapter2.supports(resolver)).thenReturn(false, /*false,*/ true/*, true*/);
 		assertThat("false or false", adapter.supports(resolver), is(false));
@@ -51,7 +51,7 @@ public class FirstSupportingResolverAdapterTest {
 	}
 	
 	@Test
-	public void adaptUsingFirstSupporting() throws ResolverAdapterException {
+	void adaptUsingFirstSupporting() throws ResolverAdapterException {
 		when(adapter1.supports(resolver)).thenReturn(true, false, true);
 		when(adapter2.supports(resolver)).thenReturn(/*false,*/ true/*, true*/);
 		assertThat("true or false", adapter.adapt(resolver), is(tplResolver1));
@@ -60,7 +60,7 @@ public class FirstSupportingResolverAdapterTest {
 	}
 	
 	@Test
-	public void noSupportingAdapterShouldFail() throws ResolverAdapterException {
+	void noSupportingAdapterShouldFail() throws ResolverAdapterException {
 		when(adapter1.supports(resolver)).thenReturn(false);
 		when(adapter2.supports(resolver)).thenReturn(false);
 		assertThrows(NoResolverAdapterException.class, () -> {

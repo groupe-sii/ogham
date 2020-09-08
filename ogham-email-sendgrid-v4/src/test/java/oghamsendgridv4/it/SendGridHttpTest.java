@@ -57,7 +57,7 @@ import mock.context.SimpleBean;
 @LogTestInformation
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = LENIENT)
-public class SendGridHttpTest {
+class SendGridHttpTest {
 	private static final String SUBJECT = "Example email";
 	private static final String CONTENT_TEXT = "This is a default content.";
 	private static final String NAME = "you";
@@ -73,7 +73,7 @@ public class SendGridHttpTest {
 	private WireMockServer server;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		when(generator.generate(anyString())).then(AdditionalAnswers.returnsArgAt(0));
 		server = new WireMockServer(options().dynamicPort());
 		server.start();
@@ -97,12 +97,12 @@ public class SendGridHttpTest {
 	}
 	
 	@AfterEach
-	public void clean() {
+	void clean() {
 		server.stop();
 	}
 	
 	@Test
-	public void simpleEmail() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void simpleEmail() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse().withStatus(202)));
@@ -124,7 +124,7 @@ public class SendGridHttpTest {
 	}
 	
 	@Test
-	public void recipients() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void recipients() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse().withStatus(202)));
@@ -148,7 +148,7 @@ public class SendGridHttpTest {
 	}
 
 	@Test
-	public void templatedEmail() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void templatedEmail() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse().withStatus(202)));
@@ -173,7 +173,7 @@ public class SendGridHttpTest {
 	
 	
 	@Test
-	public void emailWithAttachments() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void emailWithAttachments() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse().withStatus(202)));
@@ -197,7 +197,7 @@ public class SendGridHttpTest {
 	}
 	
 	@Test
-	public void authenticationFailed() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void authenticationFailed() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse()
@@ -230,7 +230,7 @@ public class SendGridHttpTest {
 	}
 	
 	@Test
-	public void invalidRequest() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void invalidRequest() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse()
@@ -269,7 +269,7 @@ public class SendGridHttpTest {
 	}
 	
 	@Test
-	public void tooManyRequests() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void tooManyRequests() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse()
@@ -300,7 +300,7 @@ public class SendGridHttpTest {
 	}
 	
 	@Test
-	public void internalServerError() throws MessagingException {
+	void internalServerError() throws MessagingException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse().withStatus(500)));
@@ -320,7 +320,7 @@ public class SendGridHttpTest {
 	}
 	
 	@Test
-	public void templatedEmailWithInlinedImages() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void templatedEmailWithInlinedImages() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/v3/mail/send")
 			.willReturn(aResponse().withStatus(202)));

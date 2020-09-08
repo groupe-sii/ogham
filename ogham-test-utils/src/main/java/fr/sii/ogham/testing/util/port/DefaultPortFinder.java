@@ -28,6 +28,7 @@ public class DefaultPortFinder implements PortFinder {
 	 *            Determine if the specified port for this {@code SocketType} is
 	 *            currently available on {@code localhost}.
 	 */
+	@SuppressWarnings("java:S2245")
 	public DefaultPortFinder(String protocol, IntPredicate isPortAvailable) {
 		this(protocol, isPortAvailable, new Random(System.nanoTime()));
 	}

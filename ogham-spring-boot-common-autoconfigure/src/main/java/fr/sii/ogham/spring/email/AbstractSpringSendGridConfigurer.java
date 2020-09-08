@@ -69,6 +69,7 @@ public abstract class AbstractSpringSendGridConfigurer implements SpringMessagin
 		}
 	}
 
+	@SuppressWarnings("java:S1452")
 	protected abstract Class<? extends AbstractSendGridBuilder<?, ?>> getSendGridBuilderClass();
 
 	@SuppressWarnings("deprecation")

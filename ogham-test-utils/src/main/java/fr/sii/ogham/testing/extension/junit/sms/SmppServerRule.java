@@ -1,10 +1,5 @@
 package fr.sii.ogham.testing.extension.junit.sms;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -14,8 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import fr.sii.ogham.testing.extension.junit.sms.config.SmppServerConfig;
-import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
-import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
 
 /**
@@ -36,22 +29,21 @@ import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
  * @author Aurélien Baudet
  *
  */
-public abstract class SmppServerRule<M> implements TestRule {
+public abstract class SmppServerRule<M> extends AbstractJUnitSmppServerExt<M> implements TestRule {
 	private static final Logger LOG = LoggerFactory.getLogger(SmppServerRule.class);
 
 	/**
-	 * Random port used by the server if none is specified
+	 * Initializes with the default configuration to use for the SMPP server:
+	 * <ul>
+	 * <li>Starts on random port</li>
+	 * <li>No delay</li>
+	 * <li>No credentials</li>
+	 * <li>Do not keep messages between tests</li>
+	 * </ul>
 	 */
-	public static final int DEFAULT_PORT = 0;
-
-	/**
-	 * The configuration to control how server should behave
-	 */
-	private final ServerConfig builder;
-	/**
-	 * The server simulator
-	 */
-	private SmppServerSimulator<M> server;
+	public SmppServerRule() {
+		super();
+	}
 
 	/**
 	 * Initializes with the configuration to use for the SMPP server
@@ -60,8 +52,7 @@ public abstract class SmppServerRule<M> implements TestRule {
 	 *            the configuration for the server
 	 */
 	public SmppServerRule(ServerConfig builder) {
-		super();
-		this.builder = builder;
+		super(builder);
 	}
 
 	@Override
@@ -71,50 +62,6 @@ public abstract class SmppServerRule<M> implements TestRule {
 		server = initServer(serverConfig);
 		return new StartServerStatement(base);
 	}
-
-	/**
-	 * Get the port used by the server.
-	 * 
-	 * @return the port used by the server
-	 */
-	public int getPort() {
-		return server.getPort();
-	}
-
-	/**
-	 * Provide the list of received messages during the execution of the test.
-	 * 
-	 * @return the list of received messages
-	 */
-	public List<M> getRawMessages() {
-		if (server == null) {
-			return Collections.emptyList();
-		}
-		return server.getReceivedMessages();
-	}
-
-	/**
-	 * Provide the list of received messages during the execution of the test.
-	 * 
-	 * The raw messages are converted to the common interface
-	 * ({@link SubmitSm}).
-	 * 
-	 * @return the list of received messages
-	 */
-	public List<SubmitSm> getReceivedMessages() {
-		return getRawMessages().stream().map(this::convert).collect(toList());
-	}
-
-	/**
-	 * Initialize the server with the ready to use configuration.
-	 * 
-	 * @param simulatorConfiguration
-	 *            the configuration to apply to the server
-	 * @return the server instance
-	 */
-	protected abstract SmppServerSimulator<M> initServer(SimulatorConfiguration simulatorConfiguration);
-
-	protected abstract SubmitSm convert(M raw);
 
 	private final class StartServerStatement extends Statement {
 		private final Statement base;

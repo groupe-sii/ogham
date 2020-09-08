@@ -20,11 +20,11 @@ import fr.sii.ogham.email.sendgrid.sender.exception.AttachmentReadException;
 import fr.sii.ogham.testing.extension.common.LogTestInformation;
 
 @LogTestInformation
-public class UnreadableAttachmentTest {
+class UnreadableAttachmentTest {
 	MessagingService service;
 	
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		MessagingBuilder builder = MessagingBuilder.standard();
 		builder
 			.environment()
@@ -34,7 +34,7 @@ public class UnreadableAttachmentTest {
 	}
 	
 	@Test
-	public void attachmentDoesntExist() throws MessagingException {
+	void attachmentDoesntExist() throws MessagingException {
 		MessageException e = assertThrows(MessageException.class, () -> {
 			service.send(new Email()
 					.attach(new Attachment(new File("INVALID_FILE")))

@@ -1,10 +1,5 @@
 package fr.sii.ogham.testing.extension.junit.sms;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.Extension;
@@ -15,8 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
 import fr.sii.ogham.testing.extension.junit.sms.config.SmppServerConfig;
-import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
-import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
 import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
 
 /**
@@ -38,24 +31,20 @@ import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
  * @author Aurélien Baudet
  *
  */
-public abstract class SmppServerExtension<M> implements BeforeEachCallback, AfterEachCallback {
+public abstract class SmppServerExtension<M> extends AbstractJUnitSmppServerExt<M> implements BeforeEachCallback, AfterEachCallback {
 	private static final Logger LOG = LoggerFactory.getLogger(SmppServerExtension.class);
 
 	/**
-	 * The configuration to control how server should behave
-	 */
-	private final ServerConfig builder;
-	/**
-	 * The server simulator
-	 */
-	private SmppServerSimulator<M> server;
-
-	/**
-	 * Initializes with the default configuration to use for the SMPP server
-	 * 
+	 * Initializes with the default configuration to use for the SMPP server:
+	 * <ul>
+	 * <li>Starts on random port</li>
+	 * <li>No delay</li>
+	 * <li>No credentials</li>
+	 * <li>Do not keep messages between tests</li>
+	 * </ul>
 	 */
 	public SmppServerExtension() {
-		this(new ServerConfig());
+		super();
 	}
 
 	/**
@@ -65,8 +54,7 @@ public abstract class SmppServerExtension<M> implements BeforeEachCallback, Afte
 	 *            the configuration for the server
 	 */
 	public SmppServerExtension(ServerConfig builder) {
-		super();
-		this.builder = builder;
+		super(builder);
 	}
 
 	@Override
@@ -85,48 +73,4 @@ public abstract class SmppServerExtension<M> implements BeforeEachCallback, Afte
 		server.stop();
 		LOG.info("SMPP server stopped");
 	}
-
-	/**
-	 * Get the port used by the server.
-	 * 
-	 * @return the port used by the server
-	 */
-	public int getPort() {
-		return server.getPort();
-	}
-
-	/**
-	 * Provide the list of received messages during the execution of the test.
-	 * 
-	 * @return the list of received messages
-	 */
-	public List<M> getRawMessages() {
-		if (server == null) {
-			return Collections.emptyList();
-		}
-		return server.getReceivedMessages();
-	}
-
-	/**
-	 * Provide the list of received messages during the execution of the test.
-	 * 
-	 * The raw messages are converted to the common interface
-	 * ({@link SubmitSm}).
-	 * 
-	 * @return the list of received messages
-	 */
-	public List<SubmitSm> getReceivedMessages() {
-		return getRawMessages().stream().map(this::convert).collect(toList());
-	}
-
-	/**
-	 * Initialize the server with the ready to use configuration.
-	 * 
-	 * @param simulatorConfiguration
-	 *            the configuration to apply to the server
-	 * @return the server instance
-	 */
-	protected abstract SmppServerSimulator<M> initServer(SimulatorConfiguration simulatorConfiguration);
-
-	protected abstract SubmitSm convert(M raw);
 }

@@ -20,6 +20,15 @@ import fr.sii.ogham.testing.util.RandomPortUtils;
 /**
  * Builder to generate a {@link SimulatorConfiguration}.
  * 
+ * <p>
+ * Default configuration:
+ * <ul>
+ * <li>Starts on random port</li>
+ * <li>No delay</li>
+ * <li>No credentials</li>
+ * <li>Do not keep messages between tests</li>
+ * </ul>
+ * 
  * @author Aurélien Baudet
  *
  */

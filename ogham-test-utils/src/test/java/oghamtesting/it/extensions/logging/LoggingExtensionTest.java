@@ -16,7 +16,7 @@ import org.junit.platform.testkit.engine.EngineTestKit;
 import fr.sii.ogham.testing.extension.common.LogTestInformation;
 import testutils.TestPrinterFactoryAdapter;
 
-public class LoggingExtensionTest {
+class LoggingExtensionTest {
 	static final String SUCCESS_HEADER = 
 			"╔══════════════════════════════════════════════════════════════════════════════════════════════════╗\n" + 
 			"║success()                                                                                         ║\n" + 
@@ -58,14 +58,14 @@ public class LoggingExtensionTest {
 	StringWriter writer;
 	
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		System.setProperty("execute-fake-test-for-testing-logging-extension", "true");
 		writer = new StringWriter();
 		TestPrinterFactoryAdapter.setWriter(writer);
 	}
 	
 	@AfterEach
-	public void clean() {
+	void clean() {
 		System.setProperty("execute-fake-test-for-testing-logging-extension", "");
 		TestPrinterFactoryAdapter.reset();
 	}
@@ -115,17 +115,17 @@ public class LoggingExtensionTest {
 		
 		@Test
 		@SuppressWarnings("squid:S2699")
-		public void success() {
+		void success() {
 		}
 		
 		@Test
 		@SuppressWarnings("squid:S2699")
-		public void failure() throws CustomException {
+		void failure() throws CustomException {
 			throw new CustomException("exception message", new IllegalArgumentException("cause message"));
 		}
 		
 		@Test
-		public void caught() throws CustomException {
+		void caught() throws CustomException {
 			assertThrows(CustomException.class, () -> {
 				throw new CustomException("exception message", new IllegalArgumentException("cause message"));
 			}, "thrown");

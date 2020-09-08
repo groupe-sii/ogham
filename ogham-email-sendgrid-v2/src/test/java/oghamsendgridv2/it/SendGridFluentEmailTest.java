@@ -40,7 +40,7 @@ import fr.sii.ogham.testing.extension.common.LogTestInformation;
 @LogTestInformation
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = LENIENT)
-public class SendGridFluentEmailTest {
+class SendGridFluentEmailTest {
 	private static final String SUBJECT = "Example email";
 	private static final String CONTENT_TEXT = "This is a default content.";
 	private static final String NAME = "you";
@@ -58,7 +58,7 @@ public class SendGridFluentEmailTest {
 	private WireMockServer server;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		when(generator.generate(anyString())).then(AdditionalAnswers.returnsArgAt(0));
 		server = new WireMockServer(options().dynamicPort());
 		server.start();
@@ -82,12 +82,12 @@ public class SendGridFluentEmailTest {
 	}
 	
 	@AfterEach
-	public void clean() {
+	void clean() {
 		server.stop();
 	}
 	
 	@Test
-	public void bodyString() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void bodyString() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/api/mail.send.json")
 			.withMultipartRequestBody(aMultipart("from"))
@@ -115,7 +115,7 @@ public class SendGridFluentEmailTest {
 	}
 	
 	@Test
-	public void htmlAndTextTemplates() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void htmlAndTextTemplates() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/api/mail.send.json")
 			.withMultipartRequestBody(aMultipart("from"))
@@ -147,7 +147,7 @@ public class SendGridFluentEmailTest {
 	
 	
 	@Test
-	public void attachResource() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void attachResource() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/api/mail.send.json")
 			.withMultipartRequestBody(aMultipart("from"))
@@ -182,7 +182,7 @@ public class SendGridFluentEmailTest {
 	}
 	
 	@Test
-	public void attachFile() throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	void attachFile() throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		// @formatter:off
 		server.stubFor(post("/api/mail.send.json")
 			.withMultipartRequestBody(aMultipart("from"))
