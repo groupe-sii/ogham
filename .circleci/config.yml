@@ -17,7 +17,7 @@ aliases:
     
   - &restore-pit-history
     keys:
-      - pit-history-{{ .Branch }}-<<parameters.module>>-<<parameters.part>>-
+#      - pit-history-{{ .Branch }}-<<parameters.module>>-<<parameters.part>>-
       - pit-history-{{ .Branch }}-<<parameters.module>>-
       - pit-history-{{ .Branch }}
       - pit-history-
