@@ -5,13 +5,14 @@ set -e
 SCRIPT=$(readlink -f "$0")
 SCRIPT_DIR=$(dirname "$SCRIPT")
 SHOWCASE_DIR="$SCRIPT_DIR/../.tools/showcase-recorder"
-OUT_DIR="${1:-target/site/presentation}"
-
-docker-compose -f "$SHOWCASE_DIR/docker-compose.yml" up --abort-on-container-exit
-docker-compose -f "$SHOWCASE_DIR/docker-compose.yml" down
+OUT_DIR="${1:-$SCRIPT_DIR/../target/site/presentation}"
+UID=$(id -u)
+GID=$(id -g)
 
 mkdir -p "$OUT_DIR"
-cp -f "/tmp/showcase-clipped.mp4" "$OUT_DIR/showcase.mp4"
-cp -f "/tmp/showcase.png" "$OUT_DIR/"
 
+OUTPUT_UID="$UID" OUTPUT_GID="$GID" OUTPUT_DIR="$OUT_DIR" docker-compose -f "$SHOWCASE_DIR/docker-compose.yml" up --abort-on-container-exit
+OUTPUT_UID="$UID" OUTPUT_GID="$GID" OUTPUT_DIR="$OUT_DIR" docker-compose -f "$SHOWCASE_DIR/docker-compose.yml" down
+
+echo ""
 echo "Showcase video and preview generated in '$OUT_DIR'"

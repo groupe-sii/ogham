@@ -42,17 +42,18 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>initialize</phase>
+						<phase>generate-resources</phase>
 						<configuration>
 							<skip>${readme.skip}</skip>
 							<executable>${project.basedir}/.././mvnw</executable>
 							<workingDirectory>${project.basedir}/../documentation-generator</workingDirectory>
 							<arguments>
 								<argument>spring-boot:run</argument>
-								<argument>-Dspring-boot.run.arguments="--readme,--generator.doc.source.root-directory=${project.basedir},--generator.github.latest-release-branch=v${docLatestReleaseVersion},--generator.ogham.latest-release-version=${docLatestReleaseVersion},--generator.github.future-dev-branch=master,--generator.ogham.future-dev-version=${docFutureDevVersion}"</argument>
+								<argument>-Dspring-boot.run.arguments="--readme,--generator.doc.source.root-directory=${project.basedir}/../,--generator.github.latest-release-branch=v${docLatestReleaseVersion},--generator.ogham.latest-release-version=${docLatestReleaseVersion},--generator.github.future-dev-branch=master,--generator.ogham.future-dev-version=${docFutureDevVersion}"</argument>
 							</arguments>
 						</configuration>
 					</execution>
+					<!-- TODO: replace by maven plugin when abort-on-exit is supported -->
 					<execution>
 						<id>generate-showcase-video</id>
 						<phase>post-site</phase>
@@ -63,7 +64,7 @@
 							<skip>${site.showcase-video.skip}</skip>
 							<executable>${project.basedir}/../ci/./generate-showcase-video.sh</executable>
 							<arguments>
-								<argument>${site.output.dir}/presentation</argument>
+								<argument>${site.showcase-video.output.dir}</argument>
 							</arguments>
 						</configuration>
 					</execution>

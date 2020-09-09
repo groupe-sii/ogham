@@ -123,16 +123,17 @@
 		<docLatestReleaseVersion>${project.version}</docLatestReleaseVersion>
 		<docFutureDevVersion>${project.version}</docFutureDevVersion>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
-		<site.staging.dir>${project.build.outputDirectory}/staging</site.staging.dir>
+		<site.staging.dir>${project.build.directory}/staging</site.staging.dir>
 		<site.output.version-dir>v${docLatestReleaseVersion}</site.output.version-dir>
 		<site.output.dir>${site.staging.dir}/${site.output.version-dir}</site.output.dir>
+		<site.showcase-video.output.dir>${site.output.dir}/presentation</site.showcase-video.output.dir>
 		<doc-theme>cerulean</doc-theme>
 		<asciidoctor.skip>${maven.site.skip}</asciidoctor.skip>
 		<asciidoctor.resources.skip>${asciidoctor.skip}</asciidoctor.resources.skip>
 		<readme.skip>true</readme.skip>
 		<site.resources.skip>${maven.site.skip}</site.resources.skip>
 		<sass.skip>${maven.site.skip}</sass.skip>
-		<site.showcase-video.skip>${maven.site.skip}</site.showcase-video.skip>
+		<site.showcase-video.skip>true</site.showcase-video.skip>
 		<asciidoctor.resources.output-directory>target/generated-docs</asciidoctor.resources.output-directory>
 
 		<!-- Plugins -->
@@ -159,7 +160,7 @@
 		<asciidoctor-plugin.version>2.0.0</asciidoctor-plugin.version>
 		<sass-maven-plugin.version>3.7.2</sass-maven-plugin.version>
 		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-		<maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 		<maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
 		<!-- Plugins - code quality -->
@@ -1272,6 +1273,10 @@
 					<configuration>
 						<source>${maven.compiler.source}</source>
 						<doclint>all</doclint>
+						<!-- This is needed since JUnit 5 allows default visibility, Sonar 
+							warns about unnecessary public declaration and Maven Javadoc plugin fails 
+							when aggregating due to missing public/protected test classes... -->
+						<show>package</show>
 						<additionalDependencies>
 							<additionalDependency>
 								<groupId>org.springframework.boot</groupId>
@@ -1539,6 +1544,7 @@
 				<docLatestReleaseVersion>${releaseVersion}</docLatestReleaseVersion>
 				<docFutureDevVersion>${developmentVersion}</docFutureDevVersion>
 				<readme.skip>false</readme.skip>
+				<site.showcase-video.skip>false</site.showcase-video.skip>
 			</properties>
 			<build>
 				<plugins>
@@ -1607,7 +1613,6 @@
 				<generateSitemap>false</generateSitemap>
 				<maven.javadoc.skip>true</maven.javadoc.skip>
 				<mpir.skip>true</mpir.skip>
-				<site.showcase-video.skip>true</site.showcase-video.skip>
 			</properties>
 			<build>
 				<plugins>
@@ -1632,7 +1637,6 @@
 				<generateSitemap>false</generateSitemap>
 				<maven.javadoc.skip>true</maven.javadoc.skip>
 				<mpir.skip>true</mpir.skip>
-				<site.showcase-video.skip>true</site.showcase-video.skip>
 			</properties>
 		</profile>
 		<profile>

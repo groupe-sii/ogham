@@ -25,7 +25,10 @@ fi
 
 # Generate projects
 OGHAM_VERSION=$(./mvnw -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
-./mvnw spring-boot:run -pl :ogham-test-classpath -Dspring-boot.run.arguments="$HOME/classpath-tests" -Dspring-boot.run.jvmArguments="-Drunner.parallel=false -Dogham-version=$OGHAM_VERSION -Dspring.initializer.url=http://localhost:$INITIALIZER_PORT/starter.zip $GENERATION_ARGS"
+./mvnw spring-boot:run \
+	-pl :ogham-test-classpath \
+	-Dspring-boot.run.arguments="$HOME/classpath-tests" \
+	-Dspring-boot.run.jvmArguments="-Drunner.parallel=false -Dogham-version=$OGHAM_VERSION -Dspring.initializer.url=http://localhost:$INITIALIZER_PORT/starter.zip $GENERATION_ARGS"
 
 ls -l "$HOME/classpath-tests/$TEST_FOLDER"
 

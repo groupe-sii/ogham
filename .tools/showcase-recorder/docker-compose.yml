@@ -27,9 +27,9 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./config/selenoid:/etc/selenoid:ro"
-      - "/tmp:/opt/selenoid/video"
+      - "${OUTPUT_DIR}:/opt/selenoid/video"
     environment:
-      - OVERRIDE_VIDEO_OUTPUT_DIR=/tmp
+      - OVERRIDE_VIDEO_OUTPUT_DIR=${OUTPUT_DIR}
     command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video"]
   
   selenoid-ui:
@@ -59,10 +59,12 @@ services:
       - selenoid
     volumes:
       - "./showcase-launcher:/usr/src/app:ro"
-      - "/tmp:/tmp"
+      - "${OUTPUT_DIR}:/data/showcase"
     command: >
-      sh -c 'python "/usr/src/app/play_showcase.py" "http://docs/presentation/showcase-video-recording.html" --recorded-video /tmp/showcase.mp4 \
-              && python "/usr/src/app/rewrite_showcase.py" "/tmp/showcase.mp4" "/tmp/showcase-clipped.mp4" \
-              && python "/usr/src/app/generate_video_preview.py" "/tmp/showcase-clipped.mp4" "/tmp/showcase.png"'
+      sh -c 'python "/usr/src/app/play_showcase.py" "http://docs/presentation/showcase-video-recording.html" --recorded-video /data/showcase/showcase-recording.mp4 \
+              && python "/usr/src/app/rewrite_showcase.py" "/data/showcase/showcase-recording.mp4" "/data/showcase/showcase.mp4" \
+              && python "/usr/src/app/generate_video_preview.py" "/data/showcase/showcase.mp4" "/data/showcase/showcase.png" \
+              ; chown -R ${OUTPUT_UID}:${OUTPUT_GID} "/data/showcase" \
+              ; [ -f "/data/showcase/showcase.mp4" ] || { echo "showcase.mp4 not generated" ; exit 1 ;}'
 
     

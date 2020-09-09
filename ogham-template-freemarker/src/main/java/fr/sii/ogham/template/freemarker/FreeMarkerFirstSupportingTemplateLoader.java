@@ -12,7 +12,6 @@ import fr.sii.ogham.template.exception.ResolverAdapterConfigurationException;
 import fr.sii.ogham.template.exception.ResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
 import fr.sii.ogham.template.freemarker.adapter.FirstSupportingResolverAdapter;
-import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
 
 /**
@@ -31,7 +30,6 @@ import freemarker.cache.TemplateLoader;
  * @author Cyril Dejonghe
  * @see FirstSupportingResourceResolver
  * @see FirstSupportingResolverAdapter
- * @see MultiTemplateLoader
  *
  */
 public class FreeMarkerFirstSupportingTemplateLoader implements TemplateLoader {
@@ -80,7 +78,7 @@ public class FreeMarkerFirstSupportingTemplateLoader implements TemplateLoader {
 	}
 
 	/**
-	 * @see MultiTemplateLoader.MultiSource
+	 * see freemarker.cache.MultiTemplateLoader.MultiSource
 	 */
 	static final class AdaptedSource {
 
