@@ -242,7 +242,7 @@ class SpockLoggingExtensionSpec extends Specification {
 	
 	@Unroll
 	@LogTestInformation(maxLength = 100, marker = "foo", printer = TestPrinterFactoryAdapter.class)
-	static class FakeSpec extends Specification {
+	public static class FakeSpec extends Specification {
 		
 		@Requires({ System.getProperty("execute-fake-test-for-testing-logging-extension", "").equals("success") })
 		def "success"() {
@@ -293,7 +293,7 @@ class SpockLoggingExtensionSpec extends Specification {
 				and == expected
 				
 			where:
-				a | b || expected
+				a     | b     || expected
 				false | false || true
 				false | true  || false
 				true  | false || true

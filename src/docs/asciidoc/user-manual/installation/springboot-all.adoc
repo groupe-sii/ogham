@@ -18,7 +18,7 @@ include::{docdir}/variables.adoc[]
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.1.RELEASE</version>
+		<version>2.3.3.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>samples</groupId>
@@ -73,8 +73,8 @@ include::{docdir}/variables.adoc[]
 [source, groovy, subs=attributes+, role="collapse-lines:1-13,17-24 highlight-lines:16"]
 ----
 plugins {
-	id 'org.springframework.boot' version '2.3.1.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'org.springframework.boot' version '2.3.3.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
 }
 
@@ -134,7 +134,7 @@ You can combine Ogham with existing Spring Boot dependencies:
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.1.RELEASE</version>
+		<version>2.3.3.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>samples</groupId>
@@ -209,8 +209,8 @@ by Spring Boot.
 [source, groovy, subs=attributes+, role="collapse-lines:1-13,21-27 highlight-lines:16"]
 ----
 plugins {
-	id 'org.springframework.boot' version '2.3.1.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'org.springframework.boot' version '2.3.3.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
 }
 
@@ -259,9 +259,9 @@ Ogham is compatible with following Spring Boot versions:
 
 * 1.4.x (currently automatically tested against 1.4.7.RELEASE, see note below)
 * 1.5.x (currently automatically tested against 1.5.22.RELEASE)
-* 2.1.x (currently automatically tested against 2.1.15.RELEASE)
-* 2.2.x (currently automatically tested against 2.2.8.RELEASE)
-* 2.3.x (currently automatically tested against 2.3.1.RELEASE)
+* 2.1.x (currently automatically tested against 2.1.16.RELEASE)
+* 2.2.x (currently automatically tested against 2.2.9.RELEASE)
+* 2.3.x (currently automatically tested against 2.3.3.RELEASE)
 
 .Java version compatibility
 [NOTE]

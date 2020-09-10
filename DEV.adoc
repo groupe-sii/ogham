@@ -164,7 +164,7 @@ Once generated, just push `gh-pages` branch on Github
 ----
 cd documentation-generator
 ./mvnw spring-boot:run \
-	-Dspring-boot.run.arguments="--generator.doc.source.root-directory=<ogham root directory>,--generator.github.latestReleaseBranch=v<release version>,--generator.ogham.latestReleaseVersion=<release version>,--generator.github.futureDevBranch=<development branch: master>,--generator.ogham.futureDevVersion=<future release version with -SNAPSHOT>,--readme,--wiki"
+	-Dspring-boot.run.arguments="--generator.doc.source.root-directory=<ogham root directory> --generator.github.latestReleaseBranch=v<release version> --generator.ogham.latestReleaseVersion=<release version> --generator.github.futureDevBranch=<development branch: master> --generator.ogham.futureDevVersion=<future release version with -SNAPSHOT> --readme --wiki"
 ----
 
 Once generated, just push on Github

@@ -47,10 +47,7 @@
 							<skip>${readme.skip}</skip>
 							<executable>${project.basedir}/.././mvnw</executable>
 							<workingDirectory>${project.basedir}/../documentation-generator</workingDirectory>
-							<arguments>
-								<argument>spring-boot:run</argument>
-								<argument>-Dspring-boot.run.arguments="--readme,--generator.doc.source.root-directory=${project.basedir}/../,--generator.github.latest-release-branch=v${docLatestReleaseVersion},--generator.ogham.latest-release-version=${docLatestReleaseVersion},--generator.github.future-dev-branch=master,--generator.ogham.future-dev-version=${docFutureDevVersion}"</argument>
-							</arguments>
+							<commandlineArgs>spring-boot:run -Dspring-boot.run.arguments="--generator.doc.source.root-directory=${project.basedir}/../ --generator.github.latest-release-branch=v${docLatestReleaseVersion} --generator.ogham.latest-release-version=${docLatestReleaseVersion} --generator.github.future-dev-branch=master --generator.ogham.future-dev-version=${docFutureDevVersion} --readme"</commandlineArgs>
 						</configuration>
 					</execution>
 					<!-- TODO: replace by maven plugin when abort-on-exit is supported -->
