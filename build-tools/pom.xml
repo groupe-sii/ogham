@@ -42,7 +42,7 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>generate-resources</phase>
+						<phase>initialize</phase>
 						<configuration>
 							<skip>${readme.skip}</skip>
 							<executable>${project.basedir}/.././mvnw</executable>

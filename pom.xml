@@ -1211,7 +1211,7 @@
 					<releaseProfiles>release,mutation-testing</releaseProfiles>
 					<goals>deploy post-site site:stage</goals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
-					<preparationGoals><![CDATA[com.google.code.maven-replacer-plugin:replacer:replace clean install verify]]></preparationGoals>
+					<preparationGoals><![CDATA[com.google.code.maven-replacer-plugin:replacer:replace clean verify]]></preparationGoals>
 					<completionGoals><![CDATA[com.google.code.maven-replacer-plugin:replacer:replace]]></completionGoals>
 					<arguments><![CDATA[-Dmaven.test.redirectTestOutputToFile=true -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false]]></arguments>
 				</configuration>

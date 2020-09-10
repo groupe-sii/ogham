@@ -19,7 +19,9 @@ import fr.aba.ogham.documentation.generator.properties.DocumentationSourceProper
 import fr.aba.ogham.documentation.generator.properties.GithubProperties;
 import fr.aba.ogham.documentation.generator.properties.OghamProperties;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class GenerateReadme implements ApplicationRunner {
@@ -66,10 +68,12 @@ public class GenerateReadme implements ApplicationRunner {
 		out = variables.evaluate(rewriter.rewrite(out));
 		out = INFO + out;
 		// write content
-		try(BufferedWriter writer = Files.newBufferedWriter(rootDirectory.resolve(documentationProperties.getReadmeOutput()), StandardCharsets.UTF_8)) {
+		Path outFile = rootDirectory.resolve(documentationProperties.getReadmeOutput());
+		try(BufferedWriter writer = Files.newBufferedWriter(outFile, StandardCharsets.UTF_8)) {
 			writer.write(out);
 			writer.flush();
 		}
+		log.info("Readme generated in {}", outFile);
 	}
 
 }

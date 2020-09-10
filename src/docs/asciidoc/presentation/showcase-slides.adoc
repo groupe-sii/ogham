@@ -397,7 +397,7 @@ Splits into several messages for you !
 ====
 Number of characters per SMS depends on message encoding.
 
-Ogham handles it for you !
+*Ogham handles it for you !*
 ====
 
 :delay: 5000
@@ -424,6 +424,9 @@ include::{docdir}/presentation/delay.adoc[]
 @Rule
 public GreenMailRule greenMail = new RandomPortGreenMailRule();
 ----
+
+:delay: 500
+include::{docdir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -453,7 +456,7 @@ public void userShouldReceiveConfirmationEmail() {
 }
 ----
 
-:delay: 6000
+:delay: 7000
 include::{docdir}/presentation/delay.adoc[]
 
 
@@ -467,6 +470,9 @@ include::{docdir}/presentation/delay.adoc[]
 @Rule
 public SmppServerRule<SubmitSm> smppServer = new JsmppServerRule();
 ----
+
+:delay: 500
+include::{docdir}/presentation/delay.adoc[]
 
 
 [transition="fade", role="stretch vcenter"]
@@ -492,7 +498,7 @@ public void userShouldReceiveConfirmationCode() {
 }
 ----
 
-:delay: 6000
+:delay: 7000
 include::{docdir}/presentation/delay.adoc[]
 
 
@@ -631,7 +637,7 @@ ogham.email.sendgrid.api-key=your-api-key
 
 --
 
-:delay: 3000
+:delay: 4000
 include::{docdir}/presentation/delay.adoc[]
 
 
@@ -699,7 +705,7 @@ ogham.sms.smpp.password=your-smsglobal-password
 
 --
 
-:delay: 3000
+:delay: 4000
 include::{docdir}/presentation/delay.adoc[]
 
 
@@ -727,7 +733,7 @@ include::{docdir}/presentation/delay.adoc[]
 * Make it universal (JVM, NodeJS, iOS, Android)
 
 
-:delay: 3000
+:delay: 4000
 include::{docdir}/presentation/delay.adoc[]
 
 [.fragment.the-end]
