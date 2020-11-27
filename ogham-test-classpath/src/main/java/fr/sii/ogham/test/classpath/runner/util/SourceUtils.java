@@ -1,6 +1,7 @@
 package fr.sii.ogham.test.classpath.runner.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +21,9 @@ public class SourceUtils {
 				String targetName = urlString.substring(urlString.indexOf(resourceFolder) + resourceFolder.length() + 1);
 				Path destination = generatedProjectPath.resolve(targetName);
 				Files.createDirectories(destination.getParent());
-				Files.copy(resource.getInputStream(), destination);
+				try (InputStream source = resource.getInputStream()) {
+					Files.copy(source, destination);
+				}
 			}
 		}
 	}

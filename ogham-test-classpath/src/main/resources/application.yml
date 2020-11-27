@@ -40,7 +40,7 @@ spring-matrix:
     build:
       - maven
     spring-boot-version:
-      - 2.1.16.RELEASE
+      - 2.1.18.RELEASE
     spring-boot-dependencies:
       -
       - web
@@ -74,11 +74,13 @@ spring-matrix:
       - 12
       - 13
       - 14
+      - 15
     build:
       - maven
     spring-boot-version:
-      - 2.2.9.RELEASE
-      - 2.3.3.RELEASE
+      - 2.2.11.RELEASE
+      - 2.3.5.RELEASE
+      - 2.4.0
     spring-boot-dependencies:
       -
       - web
@@ -117,6 +119,7 @@ standalone-matrix:
     - 12
     - 13
     - 14
+    - 15
   build:
     - maven
   ogham-dependencies:

@@ -1,0 +1,27 @@
+_classpath-test-spring-boot-older-versions: &classpath-test-spring-boot-older-versions
+  stage: "Classpath Tests"
+  script:
+    - JAVA_VERSION="JAVA_$(ci/./detect-java-release.sh)"
+    - SPRING_BOOT_VERSION=$version
+    - PART=$part
+    - TEST_FOLDER=$JAVA_VERSION INITIALIZER_PORT=8052 ci/./generate-classpath-tests.sh older-versions || { sleep 10s; exit 1; }
+    - PROJECT_LIST=$(ci/./generate-project-list.sh $JAVA_VERSION/spring-boot-$SPRING_BOOT_VERSION $PART)
+    - TEST_FOLDER=$JAVA_VERSION/spring-boot-$SPRING_BOOT_VERSION travis_retry ci/./run-classpath-tests.sh -pl $PROJECT_LIST
+  
+_classpath-test-spring-boot: &classpath-test-spring-boot
+  stage: "Classpath Tests"
+  script:
+    - JAVA_VERSION="JAVA_$(ci/./detect-java-release.sh)"
+    - SPRING_BOOT_VERSION=$version
+    - PART=$part
+    - TEST_FOLDER=$JAVA_VERSION INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+    - PROJECT_LIST=$(ci/./generate-project-list.sh $JAVA_VERSION/spring-boot-$SPRING_BOOT_VERSION $PART)
+    - TEST_FOLDER=$JAVA_VERSION/spring-boot-$SPRING_BOOT_VERSION travis_retry ci/./run-classpath-tests.sh -pl $PROJECT_LIST
+  
+_classpath-test-standalone: &classpath-test-standalone
+  stage: "Classpath Tests"
+  script:
+    - JAVA_VERSION="JAVA_$(ci/./detect-java-release.sh)"
+    - TEST_FOLDER=$JAVA_VERSION INITIALIZER_PORT=8050 ci/./generate-classpath-tests.sh || { sleep 10s; exit 1; }
+    - TEST_FOLDER=$JAVA_VERSION/standalone travis_retry ci/./run-classpath-tests.sh
+

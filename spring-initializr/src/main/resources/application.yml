@@ -5,16 +5,21 @@ initializr:
     - id: 1.5.22.RELEASE
       name: 1.5.22
       default: false
-    - id: 2.1.16.RELEASE
-      name: 2.1.16
+    - id: 2.1.18.RELEASE
+      name: 2.1.18
       default: true
-    - id: 2.2.9.RELEASE
-      name: 2.2.9
+    - id: 2.2.11.RELEASE
+      name: 2.2.11
       default: false
-    - id: 2.3.3.RELEASE
-      name: 2.3.3
+    - id: 2.3.5.RELEASE
+      name: 2.3.5
+      default: false
+    - id: 2.4.0
+      name: 2.4.0
       default: false
   javaVersions:
+    - id: 15
+      default: false
     - id: 14
       default: false
     - id: 13

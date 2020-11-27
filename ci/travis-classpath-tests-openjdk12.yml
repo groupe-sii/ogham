@@ -1,0 +1,57 @@
+jobs:
+  include:
+    - <<: *classpath-test-standalone
+      env: name="[standalone]   "
+      jdk: openjdk12
+      
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.1.x]   " version=2.1.x part=1/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.1.x]   " version=2.1.x part=2/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.1.x]   " version=2.1.x part=3/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.1.x]   " version=2.1.x part=4/4
+      
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.2.x]   " version=2.2.x part=1/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.2.x]   " version=2.2.x part=2/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.2.x]   " version=2.2.x part=3/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.2.x]   " version=2.2.x part=4/4
+      
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.3.x]   " version=2.3.x part=1/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.3.x]   " version=2.3.x part=2/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.3.x]   " version=2.2.x part=3/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.3.x]   " version=2.3.x part=4/4
+      
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.4.x]   " version=2.4.x part=1/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.4.x]   " version=2.4.x part=2/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.4.x]   " version=2.4.x part=3/4
+    - <<: *classpath-test-spring-boot
+      jdk: openjdk12
+      env: name="[Spring Boot 2.4.x]   " version=2.4.x part=4/4

@@ -1,0 +1,5 @@
+jobs:
+  include:
+    - <<: *classpath-test-standalone
+      env: name="[standalone]   "
+      jdk: oraclejdk9
