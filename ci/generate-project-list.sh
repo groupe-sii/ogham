@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -e${DEBUG_COMMANDS:+x}
 
 parent="$1"
 part=${2%/*}

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ex
+set -e${DEBUG_COMMANDS:+x}
 
 ./mvnw install post-site \
 	-Pmutation-testing-aggregate-report-only \

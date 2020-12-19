@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ex
+set -e${DEBUG_COMMANDS:+x}
 
 ./mvnw test \
 	-Dmaven.javadoc.skip=true \

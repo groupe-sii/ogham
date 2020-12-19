@@ -34,7 +34,7 @@ public class IdentifierGenerator {
 
 	public static String getGroupName(String identifier) {
 		if (identifier.contains(".boot-")) {
-			return identifier.replaceAll("^.+boot-(\\d+[.]\\d+)[.]\\d+[.][^.]+.*$", "spring-boot-$1.x");
+			return identifier.replaceAll("^.+boot-(\\d+[.]\\d+)[.]\\d+[.]([^.]+)?.*$", "spring-boot-$1.x");
 		}
 		return "standalone";
 	}

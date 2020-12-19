@@ -183,7 +183,7 @@ jobs:
       #--------------------------------------------
       # deploy to Github Pages
       #--------------------------------------------
-      - run: ci/./deploy-dev-reports.sh
+      - run: ci/./deploy-dev-reports.sh $CIRCLE_BRANCH
   notify:
     docker:
       - image: circleci/node:7.10

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -e${DEBUG_COMMANDS:+x}
 
 SCRIPT=$(readlink -f "$0")
 SCRIPT_DIR=$(dirname "$SCRIPT")

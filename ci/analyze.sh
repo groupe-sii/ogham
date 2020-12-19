@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -e${DEBUG_COMMANDS:+x}
 
 # Sonar
 ./mvnw clean install sonar:sonar -Dmaven.test.redirectTestOutputToFile=true -B

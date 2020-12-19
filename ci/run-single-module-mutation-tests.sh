@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ex
+set -e${DEBUG_COMMANDS:+x}
 
 module="$1"
 engine="${2:-descartes}"
