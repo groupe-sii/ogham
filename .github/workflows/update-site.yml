@@ -1,10 +1,21 @@
-name: Documentation
+name: Update site
 
 on:
-  push:
-    branches-ignore:
-      - 'gh-*'
-
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: 'Release version'
+        required: true
+        default: '2.0.0'
+      next-dev-version:
+        description: 'Next dev version'
+        required: true
+        default: '3.0.0-SNAPSHOT'
+      output-dir:
+        description: 'Directory for the version'
+        required: true
+        default: 'v3.0.0-SNAPSHOT'
+        
 jobs:
   mutation-tests:
     runs-on: ubuntu-18.04
@@ -95,46 +106,69 @@ jobs:
           timeout_minutes: 30
           max_attempts: 3
           command: ci/./generate-showcase-video.sh
-      - name: "Save generated documentation - archive"
-        run: cd target && tar -czf /tmp/generated-documentation.tar.gz site       
-      - name: "Save generated documentation - upload"
+      - name: "Save all generated files - archive"
+        run: tar -czf /tmp/maven-build.tar.gz target */target 
+      - name: "Save all generated files - upload"
         uses: actions/upload-artifact@v2
         with:
-          name: documentation
-          path: /tmp/generated-documentation.tar.gz
+          name: maven-build
+          path: /tmp/maven-build.tar.gz
         
-  deploy:
+  update-site:
     needs: [generate-documentation]
     environment: dev
     runs-on: ubuntu-18.04
-    name: "Deploy documentation"
+    name: "Update site"
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
         with:
-          fetch-depth: 0
+          java-version: 8
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
       - name: "Restore generated documentation - download"
         uses: actions/download-artifact@v2
         with:
-          name: documentation
+          name: maven-build
           path: /tmp
       - name: "Restore generated documentation - extract"
         run: |
-          mkdir target
-          tar -xzf /tmp/generated-documentation.tar.gz -C target
-      - name: "Clone ogham-dev-reports"
+          tar -xzf /tmp/maven-build.tar.gz
+      - name: "Clone gh-pages"
         uses: actions/checkout@v2
         with:
-          repository: aurelien-baudet/ogham-dev-reports
-          path: ogham-dev-reports
-          token: ${{ secrets.DEV_REPORTS_GITHUB_TOKEN }}
-      - name: "Add branch site to reports"
+          ref: gh-pages
+          path: gh-pages
+      - name: "Generate site in gh-pages"
+        run:
+          ./mvnw site:stage
+              '-Pmutation-testing'
+              '-Dsite.staging.dir=gh-pages'
+              '-Dsite.output.version-dir=${{ github.event.inputs.output-dir }}'
+              '-DdocLatestReleaseVersion=${{ github.event.inputs.release-version }}'
+              '-DdocFutureDevVersion=${{ github.event.inputs.next-dev-version }}'
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.5
+      - name: "Update list of versions"
         run: |
-          BRANCH="${GITHUB_REF#refs/heads}"
-          ci/./deploy-dev-reports.sh $BRANCH ${{ github.workspace }}/ogham-dev-reports
-        
+          python ci/site/generate-site-index-and-versions.py 'gh-pages'
+      - name: "Push site on gh-pages"
+        working-directory: gh-pages
+        run: |
+          git config user.email github-actions@github.com
+          git config user.name github-actions
+          git add .
+          git commit -m "doc(site) Add/update ${{ github.event.inputs.output-dir }}"
+          git push
+                  
   slack-success:
     if: success()
-    needs: [deploy]
+    needs: [update-site]
     runs-on: ubuntu-18.04
     name: "Slack"
     steps:
@@ -142,24 +176,17 @@ jobs:
       - uses: 8398a7/action-slack@v3
         with:
           text: |
-            :white_check_mark: :blue_book: _${{ env.BRANCH }}_
-            
-            > Generated docs and reports:
-            > • <https://aurelien-baudet.github.io/ogham-dev-reports/${{ env.BRANCH }}/index.html|Generated site>
-            > • <https://aurelien-baudet.github.io/ogham-dev-reports/${{ env.BRANCH }}/jacoco-aggregate/index.html|JaCoCo>
-            > • <https://codecov.io/gh/groupe-sii/ogham/branch/${{ env.BRANCH }}|Codecov>
-            > • <https://aurelien-baudet.github.io/ogham-dev-reports/${{ env.BRANCH }}/pit-reports/index.html|Mutation testing>
-            
+            :white_check_mark: :books: ${{ github.event.inputs.release-version }}
           status: success
           fields: workflow,ref,message
           icon_url: https://github.com/groupe-sii/ogham/raw/master/src/site/resources/img/ogham-blue-256x256.png
-          username: 'documentation'
+          username: 'site'
           author_name: ''
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   slack-failure:
     if: failure()
-    needs: [deploy]
+    needs: [update-site]
     runs-on: ubuntu-18.04
     name: "Slack"
     steps:
@@ -167,11 +194,11 @@ jobs:
       - uses: 8398a7/action-slack@v3
         with:
           text: |
-            :x: :blue_book: _${{ env.BRANCH }}_
+            :x: :books: ${{ github.event.inputs.release-version }}
           status: failure
           fields: workflow,ref,message
           icon_url: https://github.com/groupe-sii/ogham/raw/master/src/site/resources/img/ogham-blue-256x256.png
-          username: 'documentation'
+          username: 'site'
           author_name: ''
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

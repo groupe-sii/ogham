@@ -1,0 +1,19 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: 'Release version'
+        required: true
+        default: '3.0.0'
+      next-dev-version:
+        description: 'Next dev version'
+        required: true
+        default: '3.1.0-SNAPSHOT'
+        
+jobs:
+  mutation-tests:
+    runs-on: ubuntu-18.04
+    steps:
+      - run: echo "foo"

@@ -33,7 +33,20 @@ jobs:
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: ./mvnw clean install '-DskipTests=true' '-Dmaven.javadoc.skip=true' -B
+          command: 
+            ./mvnw clean install 
+                '-DskipTests=true' 
+                '-Dmaven.javadoc.skip=true' 
+                -B
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-maven-output-${{ matrix.os }}-java-${{ matrix.java }}
+          path: /tmp/maven-output.tar.gz
         
   unit-tests:
     needs: build
@@ -62,7 +75,24 @@ jobs:
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: ./mvnw test '-Dmaven.javadoc.skip=true' '-Dmaven.test.redirectTestOutputToFile=true' -fae -B
+          command: 
+            ./mvnw test 
+                '-Dmaven.javadoc.skip=true' 
+                '-Dmaven.test.redirectTestOutputToFile=true' 
+                -fae 
+                -B
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: |
+          find -name "target" -type d
+          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+          ls -l /tmp
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit-tests-maven-output-${{ matrix.os }}-java-${{ matrix.java }}
+          path: /tmp/maven-output.tar.gz
       - name: "Publish Tests Results"
         uses: scacap/action-surefire-report@v1.0.5
         if: always()
@@ -99,7 +129,25 @@ jobs:
         with:
           timeout_minutes: 60
           max_attempts: 3
-          command: ./mvnw verify '-Dmaven.javadoc.skip=true' '-Dskip.unit.tests=true' '-Dmaven.test.redirectTestOutputToFile=true' -fae -B
+          command: 
+            ./mvnw verify 
+                '-Dmaven.javadoc.skip=true' 
+                '-Dskip.unit.tests=true' 
+                '-Dmaven.test.redirectTestOutputToFile=true' 
+                -fae 
+                -B
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: |
+          find -name "target" -type d
+          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+          ls -l /tmp
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: integration-tests-maven-output-${{ matrix.os }}-java-${{ matrix.java }}
+          path: /tmp/maven-output.tar.gz
       - name: "Publish Tests Results"
         uses: scacap/action-surefire-report@v1.0.5
         if: always()
@@ -131,8 +179,29 @@ jobs:
             !~/.m2/repository/fr/sii/
           key: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}
+      - name: "Build"
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: 
+            ./mvnw clean install
+                '-Dmaven.test.redirectTestOutputToFile=true'
+                -B
       - name: "Generate javadoc"
-        run: ci/./generate-javadoc.sh
+        run: 
+          ./mvnw javadoc:javadoc
+              -fae
+              -B
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: javadoc-maven-output-${{ matrix.os }}-java-${{ matrix.java }}
+          path: /tmp/maven-output.tar.gz
 
   analyze-sonar:
     needs: [unit-tests, integration-tests]
@@ -152,20 +221,59 @@ jobs:
           key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
       - name: "Analyze"
-        run: ./mvnw clean install sonar:sonar -Dmaven.test.redirectTestOutputToFile=true -Dsonar.projectKey=fr.sii.ogham:ogham-parent -Dsonar.organization=aurelien-baudet-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -B
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: 
+            ./mvnw clean install sonar:sonar 
+                '-Dmaven.test.redirectTestOutputToFile=true' 
+                '-Dsonar.projectKey=fr.sii.ogham:ogham-parent' 
+                '-Dsonar.organization=aurelien-baudet-github' 
+                '-Dsonar.host.url=https://sonarcloud.io' 
+                -Dsonar.login=$SONAR_TOKEN 
+                -B
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: analyze-sonar-maven-output
+          path: /tmp/maven-output.tar.gz
 
-# TODO: make codecov work
-#  analyze-codecov:
-#    needs: [unit-tests, integration-tests]
-#    runs-on: ubuntu-18.04
-#    name: "Codecov"
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: "Analyze"
-#        run: bash <(curl -s https://codecov.io/bash)
+  analyze-codecov:
+    needs: [unit-tests, integration-tests]
+    runs-on: ubuntu-18.04
+    name: "Codecov"
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Build and test"
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: 
+            ./mvnw clean install
+                '-Dmaven.test.redirectTestOutputToFile=true'
+                -B
+      - name: "Analyze"
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: analyze-codecov-maven-output
+          path: /tmp/maven-output.tar.gz
 
 
   classpath-tests-standalone:
@@ -198,6 +306,18 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           command: TEST_FOLDER=JAVA_${{ matrix.java }}/standalone ci/./run-classpath-tests.sh
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: |
+          cd ~/classpath-tests/JAVA_${{ matrix.java }}/standalone
+          find -name "target" -type d
+          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: classpath-tests-maven-output-${{ matrix.os }}-java-${{ matrix.java }}-standalone
+          path: /tmp/maven-output.tar.gz
       - name: "Publish Tests Results"
         uses: scacap/action-surefire-report@v1.0.5
         if: always()
@@ -208,7 +328,7 @@ jobs:
           fail_on_test_failures: true
 
   classpath-tests-spring-boot-legacy:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -244,6 +364,23 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           command: TEST_FOLDER=JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ci/./run-classpath-tests.sh -pl ${{ steps.generate-projects.outputs.PROJECT_LIST }}
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: |
+          cd ~/classpath-tests/JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}
+          find -name "target" -type d
+          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+      - run: |
+          ESCAPED_PART="${PART/\//-}"
+          echo "ESCAPED_PART=$ESCAPED_PART" >> $GITHUB_ENV
+        env:
+          PART: ${{ matrix.part }}
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: classpath-tests-maven-output-${{ matrix.os }}-java-${{ matrix.java }}-spring-boot-${{ matrix.spring-boot }}-${{ env.ESCAPED_PART }}
+          path: /tmp/maven-output.tar.gz
       - name: "Publish Tests Results"
         uses: scacap/action-surefire-report@v1.0.5
         if: always()
@@ -254,7 +391,7 @@ jobs:
           fail_on_test_failures: true
         
   classpath-tests-spring-boot:
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/ci/')
     needs: [unit-tests, integration-tests]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -306,6 +443,23 @@ jobs:
           timeout_minutes: 60
           max_attempts: 3
           command: TEST_FOLDER=JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }} ci/./run-classpath-tests.sh -pl ${{ steps.generate-projects.outputs.PROJECT_LIST }}
+      - name: "Save Maven outuput for analysis - archive"
+        if: failure()
+        run: |
+          cd ~/classpath-tests/JAVA_${{ matrix.java }}/spring-boot-${{ matrix.spring-boot }}
+          find -name "target" -type d
+          tar -czf /tmp/maven-output.tar.gz $( find -name "target" -type d )
+      - run: |
+          ESCAPED_PART="${PART/\//-}"
+          echo "ESCAPED_PART=$ESCAPED_PART" >> $GITHUB_ENV
+        env:
+          PART: ${{ matrix.part }}
+      - name: "Save Maven outuput for analysis - upload"
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: classpath-tests-spring-output-${{ matrix.os }}-java-${{ matrix.java }}-spring-boot-${{ matrix.spring-boot }}-${{ env.ESCAPED_PART }}
+          path: /tmp/maven-output.tar.gz
       - name: "Publish Tests Results"
         uses: scacap/action-surefire-report@v1.0.5
         if: always()
@@ -317,7 +471,7 @@ jobs:
 
   deploy:
     if: github.ref == 'refs/heads/master'
-    needs: [classpath-tests-standalone, classpath-tests-spring-boot-legacy, classpath-tests-spring-boot, javadoc, analyze-sonar]#, analyze-codecov]
+    needs: [classpath-tests-standalone, classpath-tests-spring-boot-legacy, classpath-tests-spring-boot, javadoc, analyze-sonar, analyze-codecov]
     runs-on: ubuntu-18.04
     name: "Deploy"
     steps:
@@ -334,7 +488,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
       - name: "Deploy on OSS"
-        run: ./mvnw clean install deploy --settings .github/deploy-settings.xml -DskipTests=true -B | grep -Ei '(Uploading|Downloading|Uploaded|Downloaded)'
+        run: 
+          ./mvnw clean install deploy 
+              --settings .github/deploy-settings.xml 
+              '-DskipTests=true' 
+              -B 
       
   slack:
     if: always()
@@ -352,7 +510,6 @@ jobs:
             ([ "${{env.WORKFLOW_CONCLUSION}}" = "cancelled" ] && echo ":heavy_multiplication_x:") || 
             echo ":interrobang:"
            )
-           
            echo "STATUS_ICON=$ICON" >> $GITHUB_ENV
       - uses: 8398a7/action-slack@v3
         with:

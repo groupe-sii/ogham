@@ -147,8 +147,7 @@ As you have generated the documentation for a new version, you need to register 
 
 [source, shell]
 ----
-cd ogham-site
-py generate.py
+py ci/site/generate-site-index-and-versions.py <path to ogham-site>
 ----
 
 
