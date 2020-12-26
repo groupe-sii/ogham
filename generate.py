@@ -1,6 +1,7 @@
 import os
 import json
 from string import Template
+from functools import total_ordering
 
 
 def loadVersions(sitedir):
@@ -13,7 +14,7 @@ def loadVersions(sitedir):
 
 def generateVersions(sitedir, versions):
 	with open(sitedir+'/versions.json', 'w') as file:
-		json.dump(map(lambda v: v.name, versions.versions), file)
+		json.dump(versions.asList(), file)
 
 
 def generateIndex(sitedir, baseUrl, currentVersion):
@@ -22,6 +23,7 @@ def generateIndex(sitedir, baseUrl, currentVersion):
 		file.write(tpl.substitute(baseUrl=baseUrl, currentVersion=currentVersion.name))
 	
 
+@total_ordering
 class Version:
 	def __init__(self, version):
 		self.name = version
@@ -41,6 +43,12 @@ class Version:
 		if self.snapshot != other.snapshot:
 			return -1 if self.snapshot else 1
 		return 0
+	
+	def __lt__(self, other):
+		return self.__cmp__(other) < 0
+
+	def __gt__(self, other):
+		return self.__cmp__(other) > 0
 		
 
 class Versions:
@@ -58,11 +66,17 @@ class Versions:
 			if not version.snapshot:
 				return version
 		return None
+	
+	def asList(self):
+		return list(map(lambda v: v.name, self.versions))
+
+def cmp(a, b):
+    return (a > b) - (a < b) 
 
 
 sitedir = os.path.dirname(os.path.realpath(__file__))
 
 versions = loadVersions(sitedir)
-print(map(lambda v: v.name, versions.versions))
+print(versions.asList())
 generateVersions(sitedir, versions)
 generateIndex(sitedir, 'http://groupe-sii.github.io/ogham/', versions.getLastRelease())
