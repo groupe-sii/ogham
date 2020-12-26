@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamFreemarkerConfiguration.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.template</a> &gt; <span class="el_source">OghamFreemarkerConfiguration.java</span></div><h1>OghamFreemarkerConfiguration.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.template;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamFreemarkerConfiguration.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.template</a> &gt; <span class="el_source">OghamFreemarkerConfiguration.java</span></div><h1>OghamFreemarkerConfiguration.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.template;
 
 import static freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
 
@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebAppli
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
@@ -29,7 +30,7 @@ import freemarker.template.TemplateExceptionHandler;
 @Configuration
 @ConditionalOnClass({ freemarker.template.Configuration.class, FreemarkerEmailBuilder.class })
 @EnableConfigurationProperties(OghamFreemarkerProperties.class)
-<span class="fc" id="L32">public class OghamFreemarkerConfiguration {</span>
+<span class="fc" id="L33">public class OghamFreemarkerConfiguration {</span>
 
 	@Bean
 	@ConditionalOnMissingBean(FreemarkerConfigurer.class)
@@ -38,27 +39,29 @@ import freemarker.template.TemplateExceptionHandler;
 													 @Autowired(required=false) OghamCommonTemplateProperties templateProperties,
 													 @Autowired(required=false) OghamEmailProperties emailProperties,
 													 @Autowired(required=false) OghamSmsProperties smsProperties,
-													 @Autowired(required=false) FreeMarkerProperties freemarkerProperties) {
-<span class="fc" id="L42">		return new FreemarkerConfigurer(emailFreemarkerConfiguration, smsFreemarkerConfiguration, templateProperties, emailProperties, smsProperties, freemarkerProperties);</span>
+													 @Autowired(required=false) FreeMarkerProperties freemarkerProperties,
+													 @Autowired(required=false) OghamFreemarkerProperties oghamFreemarkerProperties,
+													 @Autowired ApplicationContext applicationContext) {
+<span class="fc" id="L45">		return new FreemarkerConfigurer(emailFreemarkerConfiguration, smsFreemarkerConfiguration, templateProperties, emailProperties, smsProperties, freemarkerProperties, oghamFreemarkerProperties, applicationContext);</span>
 	}
 
 	
 	@Configuration
 	@ConditionalOnNotWebApplication
 	@ConditionalOnBean({ FreeMarkerConfigurationFactoryBean.class })
-<span class="fc" id="L49">	public static class OghamFreeMarkerNonWebConfiguration {</span>
+<span class="fc" id="L52">	public static class OghamFreeMarkerNonWebConfiguration {</span>
 		@Bean
 		@Qualifier(&quot;email&quot;)
 		@ConditionalOnMissingBean(name = &quot;emailFreemarkerConfiguration&quot;)
 		public freemarker.template.Configuration emailFreemarkerConfiguration(FreeMarkerConfigurationFactoryBean factory) throws IOException, TemplateException {
-<span class="fc" id="L54">			return factory.createConfiguration();</span>
+<span class="fc" id="L57">			return factory.createConfiguration();</span>
 		}
 
 		@Bean
 		@Qualifier(&quot;sms&quot;)
 		@ConditionalOnMissingBean(name = &quot;smsFreemarkerConfiguration&quot;)
 		public freemarker.template.Configuration smsFreemarkerConfiguration(FreeMarkerConfigurationFactoryBean factory) throws IOException, TemplateException {
-<span class="fc" id="L61">			return factory.createConfiguration();</span>
+<span class="fc" id="L64">			return factory.createConfiguration();</span>
 		}
 
 	}
@@ -67,46 +70,46 @@ import freemarker.template.TemplateExceptionHandler;
 	@ConditionalOnClass({ Servlet.class, FreeMarkerConfigurer.class })
 	@ConditionalOnWebApplication
 	@ConditionalOnBean({ FreeMarkerConfigurer.class })
-<span class="fc" id="L70">	public static class OghamFreeMarkerWebConfiguration {</span>
+<span class="fc" id="L73">	public static class OghamFreeMarkerWebConfiguration {</span>
 		@Bean
 		@Qualifier(&quot;email&quot;)
 		@ConditionalOnMissingBean(name = &quot;emailFreemarkerConfiguration&quot;)
 		public freemarker.template.Configuration emailFreemarkerConfiguration(FreeMarkerConfigurer configurer) throws IOException, TemplateException {
-<span class="fc" id="L75">			return configurer.createConfiguration();</span>
+<span class="fc" id="L78">			return configurer.createConfiguration();</span>
 		}
 
 		@Bean
 		@Qualifier(&quot;sms&quot;)
 		@ConditionalOnMissingBean(name = &quot;smsFreemarkerConfiguration&quot;)
 		public freemarker.template.Configuration smsFreemarkerConfiguration(FreeMarkerConfigurer configurer) throws IOException, TemplateException {
-<span class="fc" id="L82">			return configurer.createConfiguration();</span>
+<span class="fc" id="L85">			return configurer.createConfiguration();</span>
 		}
 	}
 	
 	
 	@Configuration
-	@ConditionalOnMissingBean({FreeMarkerConfigurer.class, FreeMarkerConfigurationFactoryBean.class})
-<span class="fc" id="L89">	public static class FreeMarkerDefaultOghamConfiguration {</span>
+	@ConditionalOnMissingBean(type= {&quot;org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer&quot;, &quot;org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean&quot;})
+<span class="fc" id="L92">	public static class FreeMarkerDefaultOghamConfiguration {</span>
 		
 		@Bean
 		@Qualifier(&quot;email&quot;)
 		@ConditionalOnMissingBean(name = &quot;emailFreemarkerConfiguration&quot;)
 		public freemarker.template.Configuration emailFreemarkerConfiguration(OghamFreemarkerProperties props) {
-<span class="fc" id="L95">			return defaultConfiguration(props);</span>
+<span class="fc" id="L98">			return defaultConfiguration(props);</span>
 		}
 		
 		@Bean
 		@Qualifier(&quot;sms&quot;)
 		@ConditionalOnMissingBean(name = &quot;smsFreemarkerConfiguration&quot;)
 		public freemarker.template.Configuration smsFreemarkerConfiguration(OghamFreemarkerProperties props) {
-<span class="fc" id="L102">			return defaultConfiguration(props);</span>
+<span class="fc" id="L105">			return defaultConfiguration(props);</span>
 		}
 		
-		private freemarker.template.Configuration defaultConfiguration(OghamFreemarkerProperties props) {
-<span class="fc" id="L106">			freemarker.template.Configuration configuration = new freemarker.template.Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);</span>
-<span class="fc" id="L107">			configuration.setDefaultEncoding(props.getDefaultEncoding());</span>
-<span class="fc" id="L108">			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);</span>
-<span class="fc" id="L109">			return configuration;</span>
+		private static freemarker.template.Configuration defaultConfiguration(OghamFreemarkerProperties props) {
+<span class="fc" id="L109">			freemarker.template.Configuration configuration = new freemarker.template.Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);</span>
+<span class="fc" id="L110">			configuration.setDefaultEncoding(props.getDefaultEncoding());</span>
+<span class="fc" id="L111">			configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);</span>
+<span class="fc" id="L112">			return configuration;</span>
 		}
 	}
 }

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessageDecoder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.decode</a> &gt; <span class="el_source">MessageDecoder.java</span></div><h1>MessageDecoder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.decode;
+
+import java.util.Arrays;
+
+import org.jsmpp.bean.Alphabet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cloudhopper.commons.charset.Charset;
+import com.cloudhopper.commons.charset.CharsetUtil;
+
+import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.bean.Tag;
+
+/**
+ * Utility class that is smart enough to find which field was used to send the
+ * message. It is also able to determine if a User Data Header was used and
+ * extract real payload. It uses the right decoder to decode the message into a
+ * string.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class MessageDecoder {
+<span class="fc" id="L26">	private static final Logger LOG = LoggerFactory.getLogger(MessageDecoder.class);</span>
+
+	/**
+	 * Decode the received message to extract the text message. The
+	 * alphabet/encoding is automatically determined from the message.
+	 * 
+	 * @param submitSm
+	 *            the message to decode
+	 * @return the text message
+	 */
+	public static String decode(SubmitSm submitSm) {
+<span class="fc" id="L37">		Alphabet alphabet = Alphabet.parseDataCoding(submitSm.getDataCoding());</span>
+<span class="fc" id="L38">		Charset charset = getCharset(alphabet);</span>
+<span class="fc" id="L39">		return decode(submitSm, new CloudhopperCharsetAdapter(charset));</span>
+	}
+
+	/**
+	 * Decode the received message to extract the text message. The
+	 * alphabet/encoding is explicitly defined.
+	 * 
+	 * @param submitSm
+	 *            the message to decode
+	 * @param charset
+	 *            the charset used to decode the message
+	 * @return the text message
+	 */
+	public static String decode(SubmitSm submitSm, fr.sii.ogham.testing.sms.simulator.decode.Charset charset) {
+<span class="fc" id="L53">		byte[] shortMessage = getMessageBytes(submitSm);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		if (shortMessage == null) {</span>
+<span class="fc" id="L55">			return null;</span>
+		}
+<span class="fc bfc" id="L57" title="All 2 branches covered.">		if (submitSm.isUdhi()) {</span>
+<span class="fc" id="L58">			int headerLength = shortMessage[0] + 1;</span>
+<span class="fc" id="L59">			shortMessage = Arrays.copyOfRange(shortMessage, headerLength, shortMessage.length);</span>
+		}
+<span class="fc" id="L61">		Alphabet alphabet = Alphabet.parseDataCoding(submitSm.getDataCoding());</span>
+<span class="fc" id="L62">		LOG.trace(&quot;alphabet={}, charset={}, isUdhi={}, header={}&quot;, alphabet, charset, submitSm.isUdhi(), shortMessage);</span>
+<span class="fc" id="L63">		return charset.decode(shortMessage);</span>
+	}
+
+	@SuppressWarnings(&quot;squid:S1168&quot;)
+	private static byte[] getMessageBytes(SubmitSm submitSm) {
+<span class="fc" id="L68">		byte[] shortMessage = submitSm.getShortMessage();</span>
+<span class="fc bfc" id="L69" title="All 4 branches covered.">		if (shortMessage != null &amp;&amp; shortMessage.length &gt; 0) {</span>
+<span class="fc" id="L70">			return shortMessage;</span>
+		}
+<span class="fc" id="L72">		OptionalParameter parameter = submitSm.getOptionalParameter(Tag.MESSAGE_PAYLOAD);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">		if (parameter != null) {</span>
+<span class="fc" id="L74">			return parameter.getValue();</span>
+		}
+<span class="fc" id="L76">		return null;</span>
+	}
+
+	private static Charset getCharset(Alphabet alphabet) {
+		// @formatter:off
+<span class="pc bpc" id="L81" title="2 of 5 branches missed.">		switch (alphabet) {</span>
+<span class="fc" id="L82">			case ALPHA_DEFAULT:						return CharsetUtil.CHARSET_GSM7;</span>
+<span class="fc" id="L83">			case ALPHA_8_BIT:						return CharsetUtil.CHARSET_GSM8;</span>
+<span class="fc" id="L84">			case ALPHA_UCS2:						return CharsetUtil.CHARSET_UCS_2;</span>
+<span class="nc" id="L85">			case ALPHA_LATIN1:						return CharsetUtil.CHARSET_ISO_8859_1;</span>
+//			case ALPHA_IA5:							return CharsetUtil.;
+//			case ALPHA_CYRILLIC:					return CharsetUtil.;
+//			case ALPHA_ISO_2022_JP_MUSIC_CODES:		return CharsetUtil.;
+//			case ALPHA_JIS:							return CharsetUtil.;
+//			case ALPHA_JIS_X_0212_1990:				return CharsetUtil.;
+//			case ALPHA_KS_C_5601:					return CharsetUtil.;
+//			case ALPHA_LATIN_HEBREW:				return CharsetUtil.;
+//			case ALPHA_PICTOGRAM_ENCODING:			return CharsetUtil.;
+			default:
+<span class="nc" id="L95">				throw new IllegalStateException(&quot;The alphabet &quot; + alphabet.name() + &quot; can't be decoded because no charset implementation can handle it&quot;);</span>
+		}
+		// @formatter:on
+	}
+
+	private MessageDecoder() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

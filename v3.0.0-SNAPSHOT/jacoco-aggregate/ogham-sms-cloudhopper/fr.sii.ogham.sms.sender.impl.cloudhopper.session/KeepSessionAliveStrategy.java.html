@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>KeepSessionAliveStrategy.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.cloudhopper.session</a> &gt; <span class="el_source">KeepSessionAliveStrategy.java</span></div><h1>KeepSessionAliveStrategy.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.cloudhopper.session;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cloudhopper.smpp.SmppSession;
+import com.cloudhopper.smpp.pdu.EnquireLink;
+
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppSessionHandlerSupplier;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.SmppException;
+
+/**
+ * Strategy that regularly sends {@link EnquireLink} requests to keep session
+ * alive.
+ * 
+ * &lt;p&gt;
+ * A session is initiated either at startup or when the first message is about
+ * to be sent. Once the session is initialized, several messages can be sent
+ * using the same session. Then it may take some time before a message is sent
+ * again. In order to avoid initializing a new SMPP session again, the
+ * connection with the server is maintained. To do so, a task is started in the
+ * background in order to regularly send {@link EnquireLink} requests to the
+ * server. This way the connection is maintained actively.
+ * 
+ * &lt;p&gt;
+ * The opened session is automatically closed when the {@link MessagingService}
+ * is released or when a cleanup is explicitly requested.
+ * 
+ * &lt;p&gt;
+ * If the {@link EnquireLinkTask} fails, the error is analyzed using an
+ * {@link ErrorAnalyzer}. This analyzer indicates if the triggered error is
+ * raised because the connection with the server seems to be lost. In this case,
+ * the current connection must be closed and a new session is created.
+ * 
+ * &lt;p&gt;
+ * If a message can't be sent, the raised error is also analyzed to check
+ * whether a new session has to be created. The failed SMS is not re-sent.
+ * Instead the original error is thrown. This way, the global retry handling can
+ * be used. A new session is requested in background.
+ * 
+ * &lt;p&gt;
+ * If the reconnection fails (for example, if the server is down). The
+ * reconnection process will be attempted only once (however there may have
+ * several bind requests using the {@link RetryExecutor}). When a new message
+ * has to be sent, the reconnection will be attempted at this moment.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class KeepSessionAliveStrategy extends BaseSessionHandlingStrategy implements ErrorHandler {
+<span class="fc" id="L65">	private static final Logger LOG = LoggerFactory.getLogger(KeepSessionAliveStrategy.class);</span>
+
+	private final Supplier&lt;ScheduledExecutorService&gt; timerSupplier;
+	private final ErrorAnalyzer errorAnalyzer;
+	private final ErrorHandler reconnectionErrorHandler;
+	private ScheduledExecutorService currentTimer;
+	private ScheduledFuture&lt;?&gt; enquireLinkTask;
+	private volatile boolean reconnecting;
+
+	public KeepSessionAliveStrategy(ExtendedSmppSessionConfiguration configuration, SmppClientSupplier clientSupplier, SmppSessionHandlerSupplier smppSessionHandlerSupplier, RetryExecutor retry,
+			Supplier&lt;ScheduledExecutorService&gt; timerSupplier, ErrorAnalyzer errorAnalyzer, ErrorHandler reconnectionErrorHandler) {
+<span class="fc" id="L76">		super(LOG, configuration, clientSupplier, smppSessionHandlerSupplier, retry);</span>
+<span class="fc" id="L77">		this.timerSupplier = timerSupplier;</span>
+<span class="fc" id="L78">		this.errorAnalyzer = errorAnalyzer;</span>
+<span class="fc" id="L79">		this.reconnectionErrorHandler = reconnectionErrorHandler;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		if (configuration.getKeepAlive().isConnectAtStartup(false)) {</span>
+<span class="fc" id="L81">			tryConnect();</span>
+		}
+<span class="fc" id="L83">	}</span>
+
+	@Override
+	public SmppSession getSession() throws SmppException {
+<span class="fc" id="L87">		initSessionIfNeeded();</span>
+<span class="fc" id="L88">		return currentSession;</span>
+	}
+
+	@Override
+	public void messageSent(Sms sms) {
+		// nothing to do
+<span class="fc" id="L94">	}</span>
+
+	@Override
+	public void messageNotSent(Sms sms, SmppException e) throws MessageException {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">		if (errorAnalyzer.requiresNewConnection(e)) {</span>
+<span class="fc" id="L99">			reconnectInBackground(e);</span>
+			// Throw the original exception so that message may be handled
+			// (maybe send will be retried)
+			// Adds some contextual information if possible
+<span class="fc" id="L103">			throw new MessageException(&quot;Failed to send SMS because it seems that the current session is broken. A new SMPP session is requested in background&quot;, sms, e);</span>
+		}
+<span class="nc" id="L105">		throw new MessageException(&quot;Failed to send SMS&quot;, sms, e);</span>
+	}
+
+	@Override
+	public void handleFailure(Throwable e) {
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">		if (errorAnalyzer.requiresNewConnection(e)) {</span>
+<span class="fc" id="L111">			reconnectInBackground(e);</span>
+		}
+<span class="fc" id="L113">	}</span>
+
+	@Override
+	public void messageProcessed(Sms sms) {
+		// nothing to do
+<span class="fc" id="L118">	}</span>
+
+	@Override
+	public void clean() {
+<span class="fc" id="L122">		stopEnquiredLinkTask();</span>
+<span class="fc" id="L123">		destroySession();</span>
+<span class="fc" id="L124">		destroyClient();</span>
+<span class="fc" id="L125">	}</span>
+
+	private void tryConnect() {
+		try {
+<span class="fc" id="L129">			initSessionIfNeeded();</span>
+<span class="nc" id="L130">		} catch (SmppException e) {</span>
+<span class="nc" id="L131">			LOG.warn(&quot;Connection at startup was requested but couldn't be achived. Connection will be re-attempted when first message is sent&quot;, e);</span>
+<span class="fc" id="L132">		}</span>
+<span class="fc" id="L133">	}</span>
+
+	private void initSessionIfNeeded() throws SmppException {
+<span class="fc" id="L136">		initClient();</span>
+<span class="fc" id="L137">		initSession();</span>
+<span class="fc" id="L138">		startEnquiredLinkTask();</span>
+<span class="fc" id="L139">	}</span>
+
+	private synchronized void startEnquiredLinkTask() {
+<span class="pc bpc" id="L142" title="1 of 4 branches missed.">		if (currentSession == null || isEnquireLinkTaskRunning()) {</span>
+<span class="fc" id="L143">			return;</span>
+		}
+		// TODO: only run when no activity ? take the date of the last sent
+		// message ?
+<span class="fc" id="L147">		long enquireLinkRequestTimeout = configuration.getKeepAlive().getEnquireLinkTimeout();</span>
+<span class="fc" id="L148">		long enquireLinkInterval = configuration.getKeepAlive().getEnquireLinkInterval();</span>
+<span class="fc" id="L149">		LOG.debug(&quot;Start sending EnquireLink requests every {}ms&quot;, enquireLinkInterval);</span>
+<span class="fc" id="L150">		currentTimer = timerSupplier.get();</span>
+<span class="fc" id="L151">		enquireLinkTask = currentTimer.scheduleWithFixedDelay(new EnquireLinkTask(currentSession, this, enquireLinkRequestTimeout), enquireLinkInterval, enquireLinkInterval, MILLISECONDS);</span>
+<span class="fc" id="L152">	}</span>
+
+	private boolean isEnquireLinkTaskRunning() {
+<span class="pc bpc" id="L155" title="2 of 6 branches missed.">		return enquireLinkTask != null &amp;&amp; !enquireLinkTask.isCancelled() &amp;&amp; !enquireLinkTask.isDone();</span>
+	}
+
+	private void stopEnquiredLinkTask() {
+<span class="fc bfc" id="L159" title="All 2 branches covered.">		if (currentTimer != null) {</span>
+<span class="fc" id="L160">			currentTimer.shutdownNow();</span>
+<span class="fc" id="L161">			currentTimer = null;</span>
+		}
+<span class="fc bfc" id="L163" title="All 2 branches covered.">		if (enquireLinkTask != null) {</span>
+<span class="fc" id="L164">			LOG.debug(&quot;Stop sending EnquireLink requests&quot;);</span>
+<span class="fc" id="L165">			enquireLinkTask.cancel(true);</span>
+<span class="fc" id="L166">			enquireLinkTask = null;</span>
+		}
+<span class="fc" id="L168">	}</span>
+
+	private boolean tryReconnect(Throwable failureRequiringReconnection) {
+		try {
+<span class="fc" id="L172">			LOG.debug(&quot;Reconnecting due to error that requires a new session&quot;, failureRequiringReconnection);</span>
+<span class="fc" id="L173">			reconnect();</span>
+<span class="fc" id="L174">			LOG.debug(&quot;Reconnected&quot;);</span>
+<span class="fc" id="L175">			return true;</span>
+<span class="fc" id="L176">		} catch (SmppException se) {</span>
+<span class="fc" id="L177">			LOG.debug(&quot;Failed to reconnect. Stopping active keep alive... Reconnection and active keep alive will be attempted later (either using another strategy or when sending next message)&quot;,</span>
+					failureRequiringReconnection);
+<span class="fc" id="L179">			clean();</span>
+<span class="fc" id="L180">			reconnectionErrorHandler.handleFailure(se);</span>
+<span class="fc" id="L181">			LOG.debug(&quot;Active keep alive stopped...&quot;, se);</span>
+		}
+<span class="fc" id="L183">		return false;</span>
+	}
+
+	private void reconnect() throws SmppException {
+<span class="fc" id="L187">		clean();</span>
+<span class="fc" id="L188">		initSessionIfNeeded();</span>
+<span class="fc" id="L189">	}</span>
+
+	private boolean alreadyReconnecting() {
+<span class="fc" id="L192">		return reconnecting;</span>
+	}
+
+	private void reconnectInBackground(Throwable failureRequiringReconnection) {
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">		if (alreadyReconnecting()) {</span>
+<span class="nc" id="L197">			return;</span>
+		}
+<span class="fc" id="L199">		ExecutorService executor = Executors.newSingleThreadExecutor();</span>
+<span class="fc" id="L200">		executor.execute(new ReconnectionTask(failureRequiringReconnection));</span>
+<span class="fc" id="L201">		executor.shutdown();</span>
+<span class="fc" id="L202">	}</span>
+
+	private class ReconnectionTask implements Runnable {
+		private final Throwable failureRequiringReconnection;
+
+<span class="fc" id="L207">		public ReconnectionTask(Throwable failureRequiringReconnection) {</span>
+<span class="fc" id="L208">			super();</span>
+<span class="fc" id="L209">			this.failureRequiringReconnection = failureRequiringReconnection;</span>
+<span class="fc" id="L210">		}</span>
+
+		@Override
+		public void run() {
+<span class="fc" id="L214">			reconnecting = true;</span>
+<span class="fc" id="L215">			tryReconnect(failureRequiringReconnection);</span>
+<span class="fc" id="L216">			reconnecting = false;</span>
+<span class="fc" id="L217">		}</span>
+
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

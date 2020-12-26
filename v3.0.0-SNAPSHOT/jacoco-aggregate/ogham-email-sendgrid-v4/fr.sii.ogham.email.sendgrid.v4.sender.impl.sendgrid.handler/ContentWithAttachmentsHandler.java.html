@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ContentWithAttachmentsHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v4</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler</a> &gt; <span class="el_source">ContentWithAttachmentsHandler.java</span></div><h1>ContentWithAttachmentsHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.message.content.ContentWithAttachments;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
+
+/**
+ * Content handler that extract {@link Attachment} that are associated to the
+ * {@link ContentWithAttachments}.
+ */
+public final class ContentWithAttachmentsHandler implements SendGridContentHandler {
+<span class="fc" id="L18">	private static final Logger LOG = LoggerFactory.getLogger(ContentWithAttachmentsHandler.class);</span>
+	private final SendGridContentHandler delegate;
+
+	/**
+	 * Initialize with the {@link SendGridContentHandler} that is able to handle
+	 * the underlying content.
+	 * 
+	 * @param delegate
+	 *            the handler
+	 */
+	public ContentWithAttachmentsHandler(SendGridContentHandler delegate) {
+<span class="fc" id="L29">		super();</span>
+<span class="fc" id="L30">		this.delegate = delegate;</span>
+<span class="fc" id="L31">	}</span>
+
+	@Override
+	public void setContent(Email original, MailCompat email, Content content) throws ContentHandlerException {
+<span class="fc" id="L35">		ContentWithAttachments cwa = (ContentWithAttachments) content;</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">		for (Attachment attachment : cwa.getAttachments()) {</span>
+<span class="fc" id="L37">			LOG.debug(&quot;Attaching {} to email&quot;, attachment);</span>
+<span class="fc" id="L38">			original.attach(attachment);</span>
+<span class="fc" id="L39">		}</span>
+<span class="fc" id="L40">		delegate.setContent(original, email, cwa.getContent());</span>
+<span class="fc" id="L41">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

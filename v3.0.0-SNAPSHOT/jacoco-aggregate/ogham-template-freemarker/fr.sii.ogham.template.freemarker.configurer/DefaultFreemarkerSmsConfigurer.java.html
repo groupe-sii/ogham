@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFreemarkerSmsConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.configurer</a> &gt; <span class="el_source">DefaultFreemarkerSmsConfigurer.java</span></div><h1>DefaultFreemarkerSmsConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.configurer;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultFreemarkerSmsConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.configurer</a> &gt; <span class="el_source">DefaultFreemarkerSmsConfigurer.java</span></div><h1>DefaultFreemarkerSmsConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.configurer;
 
+import static fr.sii.ogham.core.builder.configuration.MayOverride.overrideIfNotSet;
 import static fr.sii.ogham.template.freemarker.FreemarkerConstants.DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY;
 
 import org.slf4j.Logger;
@@ -10,11 +11,10 @@ import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.util.ClasspathUtils;
 import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
-import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
 import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
 import freemarker.template.TemplateExceptionHandler;
 
@@ -34,9 +34,7 @@ import freemarker.template.TemplateExceptionHandler;
  * 
  * &lt;p&gt;
  * This configurer inherits environment configuration (see
- * {@link EnvironmentBuilder},
- * {@link FreemarkerEmailBuilder#environment(EnvironmentBuilder)} and
- * {@link FreemarkerSmsBuilder#environment(EnvironmentBuilder)}).
+ * {@link BuildContext}).
  * &lt;/p&gt;
  * &lt;p&gt;
  * It also copies resource resolution configuration of
@@ -99,75 +97,98 @@ import freemarker.template.TemplateExceptionHandler;
  * parseable by Freemarker&lt;/li&gt;
  * &lt;/ul&gt;
  * &lt;/li&gt;
+ * &lt;li&gt;Configures static method access from templates:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses property value of ${ogham.freemarker.static-method-access.enable} if
+ * provided to enable/disable static method access from templates (default is
+ * enabled is nothing is configured)&lt;/li&gt;
+ * &lt;li&gt;Uses property value of
+ * ${ogham.freemarker.static-method-access.variable-name} if provided to set the
+ * name used to access static methods from templates (default is 'statics')&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
  * &lt;/ul&gt;
  * 
  * @author Aurélien Baudet
  *
  */
-@ConfigurerFor(targetedBuilder = { &quot;minimal&quot;, &quot;standard&quot; }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
-public class DefaultFreemarkerSmsConfigurer implements MessagingConfigurer {
-<span class="fc" id="L109">	private static final Logger LOG = LoggerFactory.getLogger(DefaultFreemarkerSmsConfigurer.class);</span>
-	
-	private final MessagingConfigurerAdapter delegate;
+public final class DefaultFreemarkerSmsConfigurer {
+<span class="fc" id="L116">	private static final Logger LOG = LoggerFactory.getLogger(DefaultFreemarkerSmsConfigurer.class);</span>
 
-	public DefaultFreemarkerSmsConfigurer() {
-<span class="fc" id="L114">		this(new DefaultMessagingConfigurer());</span>
-<span class="fc" id="L115">	}</span>
+	@ConfigurerFor(targetedBuilder = { &quot;minimal&quot;, &quot;standard&quot; }, priority = DEFAULT_FREEMARKER_SMS_CONFIGURER_PRIORITY)
+	public static class FreemakerConfigurer implements MessagingConfigurer {
+		private final MessagingConfigurerAdapter delegate;
 
-	public DefaultFreemarkerSmsConfigurer(MessagingConfigurerAdapter delegate) {
-<span class="fc" id="L118">		super();</span>
-<span class="fc" id="L119">		this.delegate = delegate;</span>
-<span class="fc" id="L120">	}</span>
+		public FreemakerConfigurer() {
+<span class="fc" id="L123">			this(new DefaultMessagingConfigurer());</span>
+<span class="fc" id="L124">		}</span>
 
-	@Override
-	public void configure(MessagingBuilder msgBuilder) {
-<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		if (!canUseFreemaker()) {</span>
-<span class="nc" id="L125">			LOG.debug(&quot;[{}] skip configuration&quot;, this);</span>
-<span class="nc" id="L126">			return;</span>
+		public FreemakerConfigurer(MessagingConfigurerAdapter delegate) {
+<span class="fc" id="L127">			super();</span>
+<span class="fc" id="L128">			this.delegate = delegate;</span>
+<span class="fc" id="L129">		}</span>
+
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+<span class="fc bfc" id="L133" title="All 2 branches covered.">			if (!canUseFreemaker()) {</span>
+<span class="fc" id="L134">				LOG.debug(&quot;[{}] skip configuration&quot;, this);</span>
+<span class="fc" id="L135">				return;</span>
+			}
+<span class="fc" id="L137">			LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+<span class="fc" id="L138">			FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);</span>
+			// apply default resource resolution configuration
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">			if (delegate != null) {</span>
+<span class="fc" id="L141">				delegate.configure(builder);</span>
+			}
+			// @formatter:off
+<span class="fc" id="L144">			builder</span>
+<span class="fc" id="L145">				.classpath()</span>
+<span class="fc" id="L146">					.pathPrefix()</span>
+<span class="fc" id="L147">						.properties(&quot;${ogham.sms.freemarker.classpath.path-prefix}&quot;,</span>
+									&quot;${ogham.sms.template.classpath.path-prefix}&quot;, 
+									&quot;${ogham.sms.freemarker.path-prefix}&quot;, 
+									&quot;${ogham.sms.template.path-prefix}&quot;, 
+									&quot;${ogham.template.path-prefix}&quot;)
+<span class="fc" id="L152">						.and()</span>
+<span class="fc" id="L153">					.pathSuffix()</span>
+<span class="fc" id="L154">						.properties(&quot;${ogham.sms.freemarker.classpath.path-suffix}&quot;, </span>
+									&quot;${ogham.sms.template.classpath.path-suffix}&quot;, 
+									&quot;${ogham.sms.freemarker.path-suffix}&quot;, 
+									&quot;${ogham.sms.template.path-suffix}&quot;, 
+									&quot;${ogham.template.path-suffix}&quot;)
+<span class="fc" id="L159">						.and()</span>
+<span class="fc" id="L160">					.and()</span>
+<span class="fc" id="L161">				.file()</span>
+<span class="fc" id="L162">					.pathPrefix()</span>
+<span class="fc" id="L163">						.properties(&quot;${ogham.sms.freemarker.file.path-prefix}&quot;, </span>
+									&quot;${ogham.sms.template.file.path-prefix}&quot;, 
+									&quot;${ogham.sms.freemarker.path-prefix}&quot;, 
+									&quot;${ogham.sms.template.path-prefix}&quot;, 
+									&quot;${ogham.template.path-prefix}&quot;)
+<span class="fc" id="L168">						.and()</span>
+<span class="fc" id="L169">					.pathSuffix()</span>
+<span class="fc" id="L170">						.properties(&quot;${ogham.sms.freemarker.file.path-suffix}&quot;, </span>
+									&quot;${ogham.sms.template.file.path-suffix}&quot;, 
+									&quot;${ogham.sms.freemarker.path-suffix}&quot;, 
+									&quot;${ogham.sms.template.path-suffix}&quot;, 
+									&quot;${ogham.template.path-suffix}&quot;)
+<span class="fc" id="L175">						.and()</span>
+<span class="fc" id="L176">					.and()</span>
+<span class="fc" id="L177">				.configuration()</span>
+<span class="fc" id="L178">					.defaultEncoding().properties(&quot;${ogham.freemarker.default-encoding}&quot;).defaultValue(overrideIfNotSet(&quot;UTF-8&quot;)).and()</span>
+<span class="fc" id="L179">					.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)</span>
+<span class="fc" id="L180">					.enableStaticMethodAccess().properties(&quot;${ogham.freemarker.static-method-access.enable}&quot;).defaultValue(overrideIfNotSet(true)).and()</span>
+<span class="fc" id="L181">					.staticMethodAccessVariableName().properties(&quot;${ogham.freemarker.static-method-access.variable-name}&quot;).defaultValue(overrideIfNotSet(&quot;statics&quot;));</span>
+			// @formatter:on
+<span class="fc" id="L183">		}</span>
+
+		private static boolean canUseFreemaker() {
+<span class="pc bpc" id="L186" title="1 of 4 branches missed.">			return ClasspathUtils.exists(&quot;freemarker.template.Configuration&quot;) &amp;&amp; ClasspathUtils.exists(&quot;freemarker.template.Template&quot;);</span>
 		}
-<span class="fc" id="L128">		LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
-<span class="fc" id="L129">		FreemarkerSmsBuilder builder = msgBuilder.sms().template(FreemarkerSmsBuilder.class);</span>
-		// use same environment as parent builder
-<span class="fc" id="L131">		builder.environment(msgBuilder.environment());</span>
-		// apply default resource resolution configuration
-<span class="pc bpc" id="L133" title="1 of 2 branches missed.">		if (delegate != null) {</span>
-<span class="fc" id="L134">			delegate.configure(builder);</span>
-		}
-		// @formatter:off
-<span class="fc" id="L137">		builder</span>
-<span class="fc" id="L138">			.classpath()</span>
-<span class="fc" id="L139">				.pathPrefix(&quot;${ogham.sms.freemarker.classpath.path-prefix}&quot;,</span>
-							&quot;${ogham.sms.template.classpath.path-prefix}&quot;, 
-							&quot;${ogham.sms.freemarker.prefix}&quot;, 
-							&quot;${ogham.sms.template.path-prefix}&quot;, 
-							&quot;${ogham.template.path-prefix}&quot;)
-<span class="fc" id="L144">				.pathSuffix(&quot;${ogham.sms.freemarker.classpath.path-suffix}&quot;, </span>
-							&quot;${ogham.sms.template.classpath.path-suffix}&quot;, 
-							&quot;${ogham.sms.freemarker.suffix}&quot;, 
-							&quot;${ogham.sms.template.path-suffix}&quot;, 
-							&quot;${ogham.template.path-suffix}&quot;)
-<span class="fc" id="L149">				.and()</span>
-<span class="fc" id="L150">			.file()</span>
-<span class="fc" id="L151">				.pathPrefix(&quot;${ogham.sms.freemarker.file.path-prefix}&quot;, </span>
-							&quot;${ogham.sms.template.file.path-prefix}&quot;, 
-							&quot;${ogham.sms.freemarker.prefix}&quot;, 
-							&quot;${ogham.sms.template.path-prefix}&quot;, 
-							&quot;${ogham.template.path-prefix}&quot;)
-<span class="fc" id="L156">				.pathSuffix(&quot;${ogham.sms.freemarker.file.path-suffix}&quot;, </span>
-							&quot;${ogham.sms.template.file.path-suffix}&quot;, 
-							&quot;${ogham.sms.freemarker.suffix}&quot;, 
-							&quot;${ogham.sms.template.path-suffix}&quot;, 
-							&quot;${ogham.template.path-suffix}&quot;)
-<span class="fc" id="L161">				.and()</span>
-<span class="fc" id="L162">			.configuration()</span>
-<span class="fc" id="L163">				.defaultEncoding(&quot;${ogham.freemarker.default-encoding}&quot;, &quot;UTF-8&quot;)</span>
-<span class="fc" id="L164">				.templateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);</span>
-		// @formatter:on
-<span class="fc" id="L166">	}</span>
-
-	private boolean canUseFreemaker() {
-<span class="pc bpc" id="L169" title="2 of 4 branches missed.">		return ClasspathUtils.exists(&quot;freemarker.template.Configuration&quot;) &amp;&amp; ClasspathUtils.exists(&quot;freemarker.template.Template&quot;);</span>
 	}
 
+	private DefaultFreemarkerSmsConfigurer() {
+		super();
+	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

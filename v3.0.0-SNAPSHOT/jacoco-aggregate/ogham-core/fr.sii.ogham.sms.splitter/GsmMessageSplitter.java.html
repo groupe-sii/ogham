@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GsmMessageSplitter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.splitter</a> &gt; <span class="el_source">GsmMessageSplitter.java</span></div><h1>GsmMessageSplitter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.splitter;
+
+import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.MAXIMUM_BYTES_PER_MESSAGE;
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SegmentSizes;
+import fr.sii.ogham.sms.encoder.EncodedWithHeader;
+import fr.sii.ogham.sms.encoder.Encoder;
+import fr.sii.ogham.sms.exception.message.EncodingException;
+import fr.sii.ogham.sms.exception.message.InvalidReferenceNumberException;
+import fr.sii.ogham.sms.exception.message.ReferenceNumberGenerationException;
+import fr.sii.ogham.sms.exception.message.SplitMessageException;
+
+/**
+ * Split the message in segments if needed.
+ * 
+ * &lt;p&gt;
+ * If the size of the unencoded Java {@link String} is less than the provided
+ * maximum size then no split is done. The result is a list of only one segment
+ * with the encoded message as byte array.
+ * 
+ * &lt;p&gt;
+ * If the size of the unencoded Java {@link String} is greater than the provided
+ * maximum size then the message is split. Encoded message byte array is cut to
+ * fit the provided maximum segment size. The result is a list of segments that
+ * contains the required headers and the partial byte array.
+ * 
+ * &lt;p&gt;
+ * If the message is split, each segment contains a header and a payload. The
+ * header follows &lt;a href=&quot;https://en.wikipedia.org/wiki/User_Data_Header&quot;&gt;User
+ * Data Header&lt;/a&gt; specification.
+ * 
+ * &lt;p&gt;
+ * The specification also allows to use extended table. Even if the encoding
+ * uses only one octet (GSM 7-bit encoding and GSM 8-bit encoding), the
+ * characters that are present in the extended table must allocate two octets (1
+ * for ESC character followed with extended character). That's why this splitter
+ * may need to use a {@link LengthCounter}. If such a character is present then
+ * the number of characters that could fit in a segment is decreased by one.
+ * 
+ * &lt;p&gt;
+ * Each segment contains a reference number to identify
+ * &lt;a href=&quot;https://en.wikipedia.org/wiki/Concatenated_SMS&quot;&gt;concatenated
+ * messages&lt;/a&gt;. The reference number can be encoded on one or two octets (see
+ * {@link ReferenceNumberGenerator}). This algorithm supports both reference
+ * numbers encoded on one or two octets.
+ * 
+ * 
+ * &lt;hr&gt;
+ * &lt;strong&gt;&lt;u&gt;Explanation&lt;/u&gt;&lt;/strong&gt;
+ * 
+ * 
+ * &lt;p&gt;
+ * &lt;strong&gt;One-octet encoding&lt;/strong&gt;&lt;br&gt;
+ * If every character of the original string is encoded on one octet and the
+ * maximum size for segments is 12 octets. Then the maximum unencoded characters
+ * that can fit in a single segment is also 12.
+ * 
+ * &lt;pre&gt;
+ * {@code 
+ * String originalMessage = &quot;Hello World!&quot;
+ * // Not really encoded, just to explain. 
+ * // Use back-tick to indicate that it is the octet value of the character
+ * byte[] encoded = [`H`, `e`, `l`, `l`, `o`, ` ` , `W`, `o`, `r`, `l`, `d`, `!`]
+ * // The message can fit entirely in a single segment
+ * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┐
+ * │`H`│`e`│`l`│`l`│`o`│` `│`W`│`o`│`r`│`l`│`d`│`!`│
+ * └───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘
+ * 
+ * String originalMessage = &quot;Hello World !!&quot;
+ * // Not really encoded, just to explain. 
+ * // Use back-tick to indicate that it is the octet value of the character
+ * byte[] encoded = [`H`, `e`, `l`, `l`, `o`, ` ` , `W`, `o`, `r`, `l`, `d`, ` `, `!`, `!`]
+ * // The message can't fit entirely in a single segment so it must be split
+ * // Header (6 octets) is added on each segment
+ * // So message is split in 3 segments like this
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 1 ║`H`│`e`│`l`│`l`│`o`│` `│
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┘
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 2 ║`W`│`o`│`r`│`l`│`d`│` `│
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┘
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 3 ║`!`│`!`│   │   │   │   │
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┘
+ *   │   │   │   │   │   │ 
+ *   │   │   │   │   │ This segment's number
+ *   │   │   │   │   │ in the sequence
+ *   │   │   │   │   │ 
+ *   │   │   │   │ Total number of 
+ *   │   │   │   │ segments
+ *   │   │   │   │ 
+ *   │   │   │ CSMS reference number
+ *   │   │   │ Generated by
+ *   │   │   │ ReferenceNumberGenerator
+ *   │   │   │ 
+ *   │   │  Length of the header,
+ *   │   │  excluding the first two
+ *   │   │  fields
+ *   │   │
+ *   │  Information Element Identifier
+ *   │
+ *  Length of User Data Header
+ * }
+ * &lt;/pre&gt;
+ * 
+ * 
+ * &lt;p&gt;
+ * &lt;strong&gt;Two-octet encoding&lt;/strong&gt;&lt;br&gt;
+ * If every character of the original string is encoded on two octets and the
+ * maximum size for segments is 12 octets. Then the maximum unencoded characters
+ * that can fit in a single segment is 6 (12 / 2).
+ * 
+ * &lt;pre&gt;
+ * {@code 
+ * String originalMessage = &quot;Hello!&quot;
+ * // Each character is encoded on two octets
+ * byte[] encoded = [0, 72, 0, 101, 0, 108, 0, 108, 0, 111, 0, 33]
+ * // The message can fit entirely in a single segment
+ * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┐
+ * │ 0 │72 │ 0 │101│ 0 │108│ 0 │108│ 0 │111│ 0 │33 │
+ * └───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘
+ * 
+ * String originalMessage = &quot;Hello !!&quot;
+ * // Each character is encoded on two octets
+ * byte[] encoded = [0, 72, 0, 101, 0, 108, 0, 108, 0, 111, 0, 32, 0, 33, 0, 33]
+ * // The message can't fit entirely in a single segment so it must be split
+ * // Header (6 octets) is added on each segment
+ * // So message is split in 3 segments like this
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 1 ║ 0 │72 │ 0 │101│ 0 │108│
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┘
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 2 ║ 0 │108│ 0 │111│ 0 │32 │
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┘
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 3 ║ 0 │33 │ 0 │33 │   │   │
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┘
+ *   │   │   │   │   │   │ 
+ *   │   │   │   │   │ This segment's number
+ *   │   │   │   │   │ in the sequence
+ *   │   │   │   │   │ 
+ *   │   │   │   │ Total number of 
+ *   │   │   │   │ segments
+ *   │   │   │   │ 
+ *   │   │   │ CSMS reference number
+ *   │   │   │ Generated by
+ *   │   │   │ ReferenceNumberGenerator
+ *   │   │   │ 
+ *   │   │  Length of the header,
+ *   │   │  excluding the first two
+ *   │   │  fields
+ *   │   │
+ *   │  Information Element Identifier
+ *   │
+ *  Length of User Data Header
+ * }
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * &lt;strong&gt;7-bits encoding&lt;/strong&gt;&lt;br&gt;
+ * If every character of the original string is encoded on 7 bits and the
+ * maximum size for segments is 14 octets. Then the maximum unencoded characters
+ * that can fit in a single segment is 16.
+ * 
+ * &lt;pre&gt;
+ * {@code 
+ * String originalMessage = &quot;aaaaaaaaaaaaaaaa&quot;
+ * The message can fit entirely in a single segment
+ * encoded on 7 bits 'a' is: 1100001
+ * originalMessage encoded on 7 bits is:
+ *   1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001
+ * originalMessage packed on 8 bits is (/!\ This is not the real packing algorithm but it is simpler to understand):
+ *   11000011 10000111 00001110 00011100 00111000 01110000 11100001 11000011 10000111 00001110 00011100 00111000 01110000 11100001
+ *     #c3      #87      #0e      #1c      #38      #70      #e1       #c3      #87      #0e      #1c      #38      #70      #e1  
+ * byte[] encoded = [#c3, #87, #0e, #1c, #38, #70, #e1, #c3, #87, #0e, #1c, #38, #70, #e1]
+ * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┐
+ * │#c3│#87│#0e│#1c│#38│#70│#e1│#c3│#87│#0e│#1c│#38│#70│#e1│
+ * └───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘
+ * 
+ * String originalMessage = &quot;aaaaaaaaaaaaaaaabbbb&quot;
+ * The message can't fit entirely in a single segment so it must be split
+ * Header (6 octets) is added on each segment 
+ * so each payload can contain 9 characters: (14 octets - 6 header octets) * 8 bits / 7 bits per char
+ * originalMessage must be split like this (before encoding):
+ * ┌─────────┬─────────┬─────────┐
+ * │aaaaaaaaa│aaaaaaabb│bb       │
+ * └─────────┴─────────┴─────────┘
+ *   part1     part2     part3
+ *   
+ * encoded on 7 bits 'a' is: 1100001
+ * encoded on 7 bits 'b' is: 1100010
+ * part1 encoded on 7 bits is:
+ *   1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100001
+ * part2 encoded on 7 bits is:
+ *   1100001 1100001 1100001 1100001 1100001 1100001 1100001 1100010 1100010
+ * part3 encoded on 7 bits is:
+ *   1100010 1100010
+ * part1 packed on 8 bits is (/!\ This is not the real packing algorithm but it is simpler to understand):
+ *   11000011 10000111 00001110 00011100 00111000 01110000 11100001 1100001
+ *     #c3      #87      #0e      #1c      #38      #70      #e1       #c2   
+ * part2 packed on 8 bits is (/!\ This is not the real packing algorithm but it is simpler to understand):
+ *   11000011 10000111 00001110 00011100 00111000 01110000 11100010 1100010
+ *     #c3      #87      #0e      #1c      #38      #70      #e2       #c4   
+ * part3 packed on 8 bits is (/!\ This is not the real packing algorithm but it is simpler to understand):
+ *   11000101 100010
+ *     #c5      #88
+ * 
+ * So message is split in 3 segments like this
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 1 ║#c3│#87│#0e│#1c│#38│#70│#e1│#c2│
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┴───┴───┘
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 2 ║#c3│#87│#0e│#1c│#38│#70│#e2│#c4│
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┴───┴───┘
+ * ┌───┬───┬───┬───┬───┬───╥───┬───┬───┬───┬───┬───┬───┬───┐
+ * │#05│#00│#03│#??│ 3 │ 3 ║#c5│#88│   │   │   │   │   │   │
+ * └───┴───┴───┴───┴───┴───╨───┴───┴───┴───┴───┴───┴───┴───┘
+ *   │   │   │   │   │   │ 
+ *   │   │   │   │   │ This segment's number
+ *   │   │   │   │   │ in the sequence
+ *   │   │   │   │   │ 
+ *   │   │   │   │ Total number of 
+ *   │   │   │   │ segments
+ *   │   │   │   │ 
+ *   │   │   │ CSMS reference number
+ *   │   │   │ Generated by
+ *   │   │   │ ReferenceNumberGenerator
+ *   │   │   │ 
+ *   │   │  Length of the header,
+ *   │   │  excluding the first two
+ *   │   │  fields
+ *   │   │
+ *   │  Information Element Identifier
+ *   │
+ *  Length of User Data Header
+ * }
+ * &lt;/pre&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class GsmMessageSplitter implements MessageSplitter {
+	private static final int MAXIMUM_SEGMENTS = 255;
+	
+	private static final int USER_DATA_HEADER_SIZE_ONE_BYTE_REFERENCE_NUMBER = 6;
+	private static final byte UDHIE_HEADER_LENGTH_ONE_BYTE_REFERENCE_NUMBER = 0x05;
+	private static final byte UDHIE_IDENTIFIER_SAR_ONE_BYTE_REFERENCE_NUMBER = 0x00;
+	private static final byte UDHIE_SAR_LENGTH_ONE_BYTE_REFERENCE_NUMBER = 0x03;
+
+	private static final int USER_DATA_HEADER_SIZE_TWO_BYTES_REFERENCE_NUMBER = 7;
+	private static final byte UDHIE_HEADER_LENGTH_TWO_BYTES_REFERENCE_NUMBER = 0x06;
+	private static final byte UDHIE_IDENTIFIER_SAR_TWO_BYTES_REFERENCE_NUMBER = 0x08;
+	private static final byte UDHIE_SAR_LENGTH_TWO_BYTES_REFERENCE_NUMBER = 0x04;
+
+	private final Encoder encoder;
+	private final SegmentSizes segmentSizes;
+	private final ReferenceNumberGenerator referenceNumberGenerator;
+	private final LengthCounter lengthCounter;
+
+	/**
+	 * The splitter uses the {@link Encoder} to encode each segment.
+	 * 
+	 * &lt;p&gt;
+	 * The algorithm compares the length of the Java String (using
+	 * {@link String#length()} with
+	 * {@link SegmentSizes#getMaximumStringLengthToFitInASingleSegment()} to
+	 * check that the whole string can fit in a single segment. If it can't then
+	 * split is applied. A reference number is generated (using
+	 * {@link RandomReferenceNumberGenerator}). The algorithm uses
+	 * {@link SegmentSizes#getMaximumStringLengthPerSegment()} to compute the
+	 * remaining of characters that can fit in a segment with a header. The size
+	 * of the header depends on the size of the reference number. Once the
+	 * string is split in a segment, it is also encoded using {@link Encoder}.
+	 * 
+	 * @param encoder
+	 *            the encoder to encode message
+	 * @param segmentSizes
+	 *            the information about size that can fit in one segment
+	 *            (depends on encoder)
+	 */
+	public GsmMessageSplitter(Encoder encoder, SegmentSizes segmentSizes) {
+<span class="nc" id="L287">		this(encoder, segmentSizes, new RandomReferenceNumberGenerator());</span>
+<span class="nc" id="L288">	}</span>
+
+	/**
+	 * The splitter uses the {@link Encoder} to encode each segment.
+	 * 
+	 * &lt;p&gt;
+	 * The algorithm compares the length of the Java String (using
+	 * {@link String#length()} with
+	 * {@link SegmentSizes#getMaximumStringLengthToFitInASingleSegment()} to
+	 * check that the whole string can fit in a single segment. If it can't then
+	 * split is applied. A reference number is generated (using
+	 * {@link ReferenceNumberGenerator}). The algorithm uses
+	 * {@link SegmentSizes#getMaximumStringLengthPerSegment()} to compute the
+	 * remaining of characters that can fit in a segment with a header. The size
+	 * of the header depends on the size of the reference number. Once the
+	 * string is split in a segment, it is also encoded using {@link Encoder}.
+	 * 
+	 * @param encoder
+	 *            the encoder to encode message
+	 * @param segmentSizes
+	 *            the information about size that can fit in one segment
+	 *            (depends on encoder)
+	 * @param referenceNumberGenerator
+	 *            generates reference numbers
+	 */
+	public GsmMessageSplitter(Encoder encoder, SegmentSizes segmentSizes, ReferenceNumberGenerator referenceNumberGenerator) {
+<span class="fc" id="L314">		this(encoder, segmentSizes, referenceNumberGenerator, String::length);</span>
+<span class="fc" id="L315">	}</span>
+
+	/**
+	 * The splitter uses the {@link Encoder} to encode each segment.
+	 * 
+	 * &lt;p&gt;
+	 * The algorithm compares {@link LengthCounter#count(String)} with
+	 * {@link SegmentSizes#getMaximumStringLengthToFitInASingleSegment()} to
+	 * check that the whole string can fit in a single segment. If it can't then
+	 * split is applied. A reference number is generated (using
+	 * {@link ReferenceNumberGenerator}). The algorithm uses
+	 * {@link SegmentSizes#getMaximumStringLengthPerSegment()} to compute the
+	 * remaining of characters that can fit in a segment with a header. The size
+	 * of the header depends on the size of the reference number. Once the
+	 * string is split in a segment, it is also encoded using {@link Encoder}.
+	 * 
+	 * @param encoder
+	 *            the encoder to encode message
+	 * @param segmentSizes
+	 *            the information about size that can fit in one segment
+	 *            (depends on encoder)
+	 * @param referenceNumberGenerator
+	 *            generates reference numbers
+	 * @param lengthCounter
+	 *            used to count the number of characters in the string (some
+	 *            characters may not have the same size, using extended
+	 *            character tables for example)
+	 */
+	public GsmMessageSplitter(Encoder encoder, SegmentSizes segmentSizes, ReferenceNumberGenerator referenceNumberGenerator, LengthCounter lengthCounter) {
+<span class="fc" id="L344">		super();</span>
+<span class="fc" id="L345">		this.encoder = encoder;</span>
+<span class="fc" id="L346">		this.segmentSizes = segmentSizes;</span>
+<span class="fc" id="L347">		this.referenceNumberGenerator = referenceNumberGenerator;</span>
+<span class="fc" id="L348">		this.lengthCounter = lengthCounter;</span>
+<span class="fc" id="L349">	}</span>
+
+	@Override
+	public List&lt;Segment&gt; split(String message) throws SplitMessageException {
+<span class="fc" id="L353">		int messageLength = lengthCounter.count(message);</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">		if (messageLength &lt;= segmentSizes.getMaximumStringLengthToFitInASingleSegment()) {</span>
+<span class="fc" id="L355">			return asList(singleSegment(message));</span>
+		}
+
+		// generate new reference number
+<span class="fc" id="L359">		byte[] referenceNumber = generateReferenceNumber(message);</span>
+<span class="fc" id="L360">		int maximumStringLengthPerSegment = computeMaximumStringLengthPerSegment(referenceNumber);</span>
+
+		// split into several messages
+<span class="fc" id="L363">		int numberOfSegments = (int) Math.ceil(messageLength / (double) maximumStringLengthPerSegment);</span>
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">		if (numberOfSegments &gt; MAXIMUM_SEGMENTS) {</span>
+<span class="nc" id="L365">			throw new SplitMessageException(&quot;Can't split the message because the number of segments is greater than 255&quot;, message);</span>
+		}
+
+		// prepare list for all of the msg segments
+<span class="fc" id="L369">		List&lt;Segment&gt; segments = new ArrayList&lt;&gt;(numberOfSegments);</span>
+
+<span class="fc" id="L371">		int start = 0;</span>
+<span class="fc bfc" id="L372" title="All 2 branches covered.">		for (int i = 0; i &lt; numberOfSegments; i++) {</span>
+<span class="fc" id="L373">			String part = cutToFitInSegment(start, message, maximumStringLengthPerSegment);</span>
+<span class="fc" id="L374">			segments.add(segmentWithHeader(message, part, numberOfSegments, i + 1, referenceNumber));</span>
+<span class="fc" id="L375">			start += part.length();</span>
+		}
+<span class="fc" id="L377">		return segments;</span>
+	}
+
+	private byte[] generateReferenceNumber(String message) throws SplitMessageException {
+		try {
+<span class="fc" id="L382">			byte[] referenceNumber = referenceNumberGenerator.generateReferenceNumber();</span>
+<span class="pc bpc" id="L383" title="2 of 4 branches missed.">			if (referenceNumber == null || referenceNumber.length == 0) {</span>
+<span class="nc" id="L384">				throw new InvalidReferenceNumberException(&quot;Generated reference number byte array can't be null or empty&quot;, referenceNumber);</span>
+			}
+<span class="pc bpc" id="L386" title="1 of 2 branches missed.">			if (referenceNumber.length &gt; 2) {</span>
+<span class="nc" id="L387">				throw new InvalidReferenceNumberException(GsmMessageSplitter.class.getSimpleName() + &quot; only support one byte or two byte reference number length&quot;, referenceNumber);</span>
+			}
+<span class="fc" id="L389">			return referenceNumber;</span>
+<span class="nc" id="L390">		} catch (ReferenceNumberGenerationException e) {</span>
+<span class="nc" id="L391">			throw new SplitMessageException(&quot;Failed to split message due to reference number generation failure&quot;, message, e);</span>
+		}
+	}
+
+	private String cutToFitInSegment(int start, String message, int maximumStringLengthPerSegment) {
+<span class="fc" id="L396">		int end = start + maximumStringLengthPerSegment;</span>
+<span class="fc" id="L397">		String part = message.substring(start, Math.min(message.length(), end));</span>
+<span class="fc" id="L398">		int lengthOfPart = lengthCounter.count(part);</span>
+<span class="pc bpc" id="L399" title="1 of 4 branches missed.">		while (lengthOfPart &gt; maximumStringLengthPerSegment &amp;&amp; end &gt; start) {</span>
+<span class="fc" id="L400">			end--;</span>
+<span class="fc" id="L401">			part = message.substring(start, Math.min(message.length(), end));</span>
+<span class="fc" id="L402">			lengthOfPart = lengthCounter.count(part);</span>
+		}
+<span class="fc" id="L404">		return part;</span>
+	}
+
+	private Segment segmentWithHeader(String wholeMessage, String part, int numberOfSegments, int segmentNumber, byte[] referenceNumber) throws SplitMessageException {
+		try {
+<span class="fc" id="L409">			int headerSize = headerSize(referenceNumber);</span>
+<span class="fc" id="L410">			byte[] header = new byte[headerSize];</span>
+
+<span class="fc bfc" id="L412" title="All 2 branches covered.">			if (referenceNumber.length == 1) {</span>
+				// Field 1 (1 octet): Length of User Data Header, in this case
+				// 05.
+<span class="fc" id="L415">				header[0] = UDHIE_HEADER_LENGTH_ONE_BYTE_REFERENCE_NUMBER;</span>
+				// Field 2 (1 octet): Information Element Identifier, equal to
+				// 00 (Concatenated short messages, 8-bit reference number)
+<span class="fc" id="L418">				header[1] = UDHIE_IDENTIFIER_SAR_ONE_BYTE_REFERENCE_NUMBER;</span>
+				// Field 3 (1 octet): Length of the header, excluding the first
+				// two fields; equal to 03 for one byte reference number
+<span class="fc" id="L421">				header[2] = UDHIE_SAR_LENGTH_ONE_BYTE_REFERENCE_NUMBER;</span>
+				// Field 4 (1 octet): 00-FF, CSMS reference number, must be same
+				// for all the SMS parts in the CSMS.
+<span class="fc" id="L424">				header[3] = referenceNumber[0];</span>
+				// Field 5 (1 octet): 00-FF, total number of parts. The value
+				// shall remain constant for every short message which makes up
+				// the concatenated short message. If the value is zero then the
+				// receiving entity shall ignore the whole information element
+<span class="fc" id="L429">				header[4] = (byte) numberOfSegments;</span>
+				// Field 6 (1 octet): 00-FF, this part's number in the sequence.
+				// The value shall start at 1 and increment for every short
+				// message which makes up the concatenated short message. If the
+				// value is zero or greater than the value in Field 5 then the
+				// receiving entity shall ignore the whole information element.
+				// [ETSI Specification: GSM 03.40 Version 5.3.0: July 1996]
+<span class="fc" id="L436">				header[5] = (byte) segmentNumber;</span>
+			} else {
+				// Field 1 (1 octet): Length of User Data Header, in this case
+				// 06.
+<span class="fc" id="L440">				header[0] = UDHIE_HEADER_LENGTH_TWO_BYTES_REFERENCE_NUMBER;</span>
+				// Field 2 (1 octet): Information Element Identifier, equal to
+				// 08 (Concatenated short messages, 16-bit reference number)
+<span class="fc" id="L443">				header[1] = UDHIE_IDENTIFIER_SAR_TWO_BYTES_REFERENCE_NUMBER;</span>
+				// Field 3 (1 octet): Length of the header, excluding the first
+				// two fields; equal to 04 for one byte reference number
+<span class="fc" id="L446">				header[2] = UDHIE_SAR_LENGTH_TWO_BYTES_REFERENCE_NUMBER;</span>
+				// Field 4 (2 octets): 0000-FFFF, CSMS reference number, must be
+				// same for all the SMS parts in the CSMS.
+<span class="fc" id="L449">				header[3] = referenceNumber[0];</span>
+<span class="fc" id="L450">				header[4] = referenceNumber[1];</span>
+				// Field 6 (1 octet): 00-FF, total number of parts. The value
+				// shall remain constant for every short message which makes up
+				// the concatenated short message. If the value is zero then the
+				// receiving entity shall ignore the whole information element
+<span class="fc" id="L455">				header[5] = (byte) numberOfSegments;</span>
+				// Field 7 (1 octet): 00-FF, this part's number in the sequence.
+				// The value shall start at 1 and increment for every short
+				// message which makes up the concatenated short message. If the
+				// value is zero or greater than the value in Field 5 then the
+				// receiving entity shall ignore the whole information element.
+				// [ETSI Specification: GSM 03.40 Version 5.3.0: July 1996]
+<span class="fc" id="L462">				header[6] = (byte) segmentNumber;</span>
+			}
+
+<span class="fc" id="L465">			return new EncodedSegment(new EncodedWithHeader(header, encoder.encode(part)));</span>
+<span class="nc" id="L466">		} catch (EncodingException e) {</span>
+<span class="nc" id="L467">			throw new SplitMessageException(&quot;Failed to generate segment for &quot; + part + &quot; (segment &quot; + segmentNumber + &quot;/&quot; + numberOfSegments + &quot;) due to encoding error&quot;, wholeMessage, e);</span>
+		}
+	}
+
+	private int computeMaximumStringLengthPerSegment(byte[] referenceNumber) {
+<span class="fc" id="L472">		return (int) Math.floor((MAXIMUM_BYTES_PER_MESSAGE - headerSize(referenceNumber)) * segmentSizes.getMaximumStringLengthToFitInASingleSegment() / (double) MAXIMUM_BYTES_PER_MESSAGE);</span>
+	}
+
+	private static int headerSize(byte[] referenceNumber) {
+<span class="fc bfc" id="L476" title="All 2 branches covered.">		return referenceNumber.length == 1 ? USER_DATA_HEADER_SIZE_ONE_BYTE_REFERENCE_NUMBER : USER_DATA_HEADER_SIZE_TWO_BYTES_REFERENCE_NUMBER;</span>
+	}
+
+	private Segment singleSegment(String message) throws SplitMessageException {
+		try {
+<span class="fc" id="L481">			return new EncodedSegment(encoder.encode(message));</span>
+<span class="nc" id="L482">		} catch (EncodingException e) {</span>
+<span class="nc" id="L483">			throw new SplitMessageException(&quot;Failed to generate single segment for &quot; + message + &quot; due to encoding error&quot;, message, e);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

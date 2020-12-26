@@ -1,9 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JavaMailSender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sender.impl</a> &gt; <span class="el_source">JavaMailSender.java</span></div><h1>JavaMailSender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sender.impl;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JavaMailSender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sender.impl</a> &gt; <span class="el_source">JavaMailSender.java</span></div><h1>JavaMailSender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sender.impl;
 
+import static fr.sii.ogham.core.util.LogUtils.logString;
+import static fr.sii.ogham.email.JavaMailConstants.DEFAULT_JAVAMAIL_IMPLEMENTATION_PRIORITY;
+import static fr.sii.ogham.email.attachment.ContentDisposition.ATTACHMENT;
+import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
+import javax.mail.BodyPart;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -18,17 +25,19 @@ import javax.mail.internet.MimeMultipart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.priority.Priority;
+import fr.sii.ogham.core.env.PropertiesBridge;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.exception.InvalidMessageException;
 import fr.sii.ogham.core.exception.MessageException;
 import fr.sii.ogham.core.sender.AbstractSpecializedSender;
 import fr.sii.ogham.email.attachment.Attachment;
-import fr.sii.ogham.email.attachment.ContentDisposition;
-import fr.sii.ogham.email.exception.javamail.AttachmentResourceHandlerException;
-import fr.sii.ogham.email.exception.javamail.ContentHandlerException;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.EmailAddress;
 import fr.sii.ogham.email.message.Recipient;
-import fr.sii.ogham.email.sender.impl.javamail.JavaMailAttachmentResourceHandler;
+import fr.sii.ogham.email.sender.impl.javamail.JavaMailAttachmentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.JavaMailContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.JavaMailInterceptor;
 
@@ -38,83 +47,84 @@ import fr.sii.ogham.email.sender.impl.javamail.JavaMailInterceptor;
  * @author Aurélien Baudet
  * @see JavaMailContentHandler
  */
+@Priority(properties = &quot;${ogham.email.implementation-priority.javamail}&quot;, defaultValue = DEFAULT_JAVAMAIL_IMPLEMENTATION_PRIORITY)
 public class JavaMailSender extends AbstractSpecializedSender&lt;Email&gt; {
-<span class="fc" id="L42">	private static final Logger LOG = LoggerFactory.getLogger(JavaMailSender.class);</span>
+<span class="fc" id="L52">	private static final Logger LOG = LoggerFactory.getLogger(JavaMailSender.class);</span>
 
 	/**
 	 * Properties that is used to initialize the session
 	 */
-	private Properties properties;
+	private final Properties properties;
 
 	/**
 	 * The content handler used to add message content
 	 */
-	private JavaMailContentHandler contentHandler;
+	private final JavaMailContentHandler contentHandler;
 
 	/**
-	 * The attachment handler used to add attachments to the mail
+	 * The handler used to attach files to the email
 	 */
-	private JavaMailAttachmentResourceHandler attachmentHandler;
+	private final JavaMailAttachmentHandler attachmentHandler;
 
 	/**
 	 * Extra operations to apply on the message
 	 */
-	private JavaMailInterceptor interceptor;
+	private final JavaMailInterceptor interceptor;
 
 	/**
 	 * Authentication mechanism
 	 */
-	private Authenticator authenticator;
+	private final Authenticator authenticator;
 
-	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentResourceHandler, Authenticator authenticator) {
-<span class="nc" id="L70">		this(new PropertiesBridge(propertyResolver), contentHandler, attachmentResourceHandler, authenticator);</span>
-<span class="nc" id="L71">	}</span>
+	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentHandler attachmentHandler, Authenticator authenticator) {
+<span class="nc" id="L80">		this(new PropertiesBridge(propertyResolver), contentHandler, attachmentHandler, authenticator);</span>
+<span class="nc" id="L81">	}</span>
 
-	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator, JavaMailInterceptor interceptor) {
-<span class="nc" id="L74">		this(new PropertiesBridge(propertyResolver), contentHandler, attachmentHandler, authenticator, interceptor);</span>
-<span class="nc" id="L75">	}</span>
+	public JavaMailSender(PropertyResolver propertyResolver, JavaMailContentHandler contentHandler, JavaMailAttachmentHandler attachmentHandler, Authenticator authenticator,
+			JavaMailInterceptor interceptor) {
+<span class="nc" id="L85">		this(new PropertiesBridge(propertyResolver), contentHandler, attachmentHandler, authenticator, interceptor);</span>
+<span class="nc" id="L86">	}</span>
 
-	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentResourceHandler, Authenticator authenticator) {
-<span class="nc" id="L78">		this(properties, contentHandler, attachmentResourceHandler, authenticator, null);</span>
-<span class="nc" id="L79">	}</span>
+	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentHandler attachmentHandler, Authenticator authenticator) {
+<span class="nc" id="L89">		this(properties, contentHandler, attachmentHandler, authenticator, null);</span>
+<span class="nc" id="L90">	}</span>
 
-	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentResourceHandler attachmentHandler, Authenticator authenticator, JavaMailInterceptor interceptor) {
-<span class="fc" id="L82">		super();</span>
-<span class="fc" id="L83">		this.properties = properties;</span>
-<span class="fc" id="L84">		this.contentHandler = contentHandler;</span>
-<span class="fc" id="L85">		this.attachmentHandler = attachmentHandler;</span>
-<span class="fc" id="L86">		this.authenticator = authenticator;</span>
-<span class="fc" id="L87">		this.interceptor = interceptor;</span>
-<span class="fc" id="L88">	}</span>
+	public JavaMailSender(Properties properties, JavaMailContentHandler contentHandler, JavaMailAttachmentHandler attachmentHandler, Authenticator authenticator, JavaMailInterceptor interceptor) {
+<span class="fc" id="L93">		super();</span>
+<span class="fc" id="L94">		this.properties = properties;</span>
+<span class="fc" id="L95">		this.contentHandler = contentHandler;</span>
+<span class="fc" id="L96">		this.attachmentHandler = attachmentHandler;</span>
+<span class="fc" id="L97">		this.authenticator = authenticator;</span>
+<span class="fc" id="L98">		this.interceptor = interceptor;</span>
+<span class="fc" id="L99">	}</span>
 
 	@Override
 	public void send(Email email) throws MessageException {
 		try {
-<span class="fc" id="L93">			LOG.debug(&quot;Initialize Java mail session with authenticator {} and properties {}&quot;, authenticator, properties);</span>
-<span class="fc" id="L94">			LOG.debug(&quot;Create the mime message for email {}&quot;, email);</span>
-<span class="fc" id="L95">			MimeMessage mimeMsg = createMimeMessage();</span>
+<span class="fc" id="L104">			LOG.debug(&quot;Initialize Java mail session with authenticator {} and properties {}&quot;, authenticator, properties);</span>
+<span class="fc" id="L105">			LOG.debug(&quot;Create the mime message for email {}&quot;, logString(email));</span>
+<span class="fc" id="L106">			MimeMessage mimeMsg = createMimeMessage();</span>
 			// set the sender address
-<span class="fc" id="L97">			setFrom(email, mimeMsg);</span>
+<span class="fc" id="L108">			setFrom(email, mimeMsg);</span>
 			// set recipients (to, cc, bcc)
-<span class="fc" id="L99">			setRecipients(email, mimeMsg);</span>
+<span class="fc" id="L110">			setRecipients(email, mimeMsg);</span>
 			// set subject and content
-<span class="fc" id="L101">			mimeMsg.setSubject(email.getSubject());</span>
-<span class="fc" id="L102">			setMimeContent(email, mimeMsg);</span>
+<span class="fc" id="L112">			mimeMsg.setSubject(email.getSubject());</span>
+<span class="fc" id="L113">			setMimeContent(email, mimeMsg);</span>
 			// default behavior is done =&gt; message is ready but let possibility
 			// to add extra operations to do on the message
-<span class="pc bpc" id="L105" title="1 of 2 branches missed.">			if (interceptor != null) {</span>
-<span class="nc" id="L106">				LOG.debug(&quot;Executing extra operations for email {}&quot;, email);</span>
-<span class="nc" id="L107">				interceptor.intercept(mimeMsg, email);</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">			if (interceptor != null) {</span>
+<span class="nc" id="L117">				LOG.debug(&quot;Executing extra operations for email {}&quot;, logString(email));</span>
+<span class="nc" id="L118">				interceptor.intercept(mimeMsg, email);</span>
 			}
 			// message is ready =&gt; send it
-<span class="fc" id="L110">			LOG.info(&quot;Sending email using Java Mail API through server {}:{}...&quot;, </span>
-<span class="fc" id="L111">					properties.getProperty(&quot;mail.smtp.host&quot;, properties.getProperty(&quot;mail.host&quot;)),</span>
-<span class="fc" id="L112">					properties.getProperty(&quot;mail.smtp.port&quot;, properties.getProperty(&quot;mail.port&quot;)));</span>
-<span class="fc" id="L113">			Transport.send(mimeMsg);</span>
-<span class="nc" id="L114">		} catch (UnsupportedEncodingException | MessagingException | ContentHandlerException | AttachmentResourceHandlerException e) {</span>
-<span class="nc" id="L115">			throw new MessageException(&quot;failed to send message using Java Mail API&quot;, email, e);</span>
-<span class="fc" id="L116">		}</span>
-<span class="fc" id="L117">	}</span>
+<span class="fc" id="L121">			LOG.info(&quot;Sending email using Java Mail API through server {}:{}...&quot;, properties.getProperty(&quot;mail.smtp.host&quot;, properties.getProperty(&quot;mail.host&quot;)),</span>
+<span class="fc" id="L122">					properties.getProperty(&quot;mail.smtp.port&quot;, properties.getProperty(&quot;mail.port&quot;)));</span>
+<span class="fc" id="L123">			Transport.send(mimeMsg);</span>
+<span class="fc" id="L124">		} catch (MessagingException | ContentHandlerException | AttachmentResourceHandlerException | IOException e) {</span>
+<span class="fc" id="L125">			throw new MessageException(&quot;failed to send message using Java Mail API&quot;, email, e);</span>
+<span class="fc" id="L126">		}</span>
+<span class="fc" id="L127">	}</span>
 
 	/**
 	 * Initialize the session and create the mime message.
@@ -123,8 +133,8 @@ public class JavaMailSender extends AbstractSpecializedSender&lt;Email&gt; {
 	 */
 	private MimeMessage createMimeMessage() {
 		// prepare the message
-<span class="fc" id="L126">		Session session = Session.getInstance(properties, authenticator);</span>
-<span class="fc" id="L127">		return new MimeMessage(session);</span>
+<span class="fc" id="L136">		Session session = Session.getInstance(properties, authenticator);</span>
+<span class="fc" id="L137">		return new MimeMessage(session);</span>
 	}
 
 	/**
@@ -140,13 +150,15 @@ public class JavaMailSender extends AbstractSpecializedSender&lt;Email&gt; {
 	 *             when the email address is not valid
 	 * @throws UnsupportedEncodingException
 	 *             when the email address is not valid
+	 * @throws InvalidMessageException
+	 *             when the email address is not valid
 	 */
-	private void setFrom(Email email, MimeMessage mimeMsg) throws MessagingException, AddressException, UnsupportedEncodingException {
-<span class="fc bfc" id="L145" title="All 2 branches covered.">		if (email.getFrom() == null) {</span>
-<span class="fc" id="L146">			throw new IllegalArgumentException(&quot;The sender address has not been set&quot;);</span>
+	private static void setFrom(Email email, MimeMessage mimeMsg) throws MessagingException, UnsupportedEncodingException, InvalidMessageException {
+<span class="fc bfc" id="L157" title="All 2 branches covered.">		if (email.getFrom() == null) {</span>
+<span class="fc" id="L158">			throw new InvalidMessageException(&quot;The sender address has not been set&quot;, email, &quot;Missing sender email address&quot;);</span>
 		}
-<span class="fc" id="L148">		mimeMsg.setFrom(toInternetAddress(email.getFrom()));</span>
-<span class="fc" id="L149">	}</span>
+<span class="fc" id="L160">		mimeMsg.setFrom(toInternetAddress(email.getFrom()));</span>
+<span class="fc" id="L161">	}</span>
 
 	/**
 	 * Set the recipients addresses on the mime message.
@@ -162,61 +174,115 @@ public class JavaMailSender extends AbstractSpecializedSender&lt;Email&gt; {
 	 * @throws UnsupportedEncodingException
 	 *             when the email address is not valid
 	 */
-	private void setRecipients(Email email, MimeMessage mimeMsg) throws MessagingException, AddressException, UnsupportedEncodingException {
-<span class="fc bfc" id="L166" title="All 2 branches covered.">		for (Recipient recipient : email.getRecipients()) {</span>
-<span class="fc" id="L167">			mimeMsg.addRecipient(convert(recipient.getType()), toInternetAddress(recipient.getAddress()));</span>
-<span class="fc" id="L168">		}</span>
-<span class="fc" id="L169">	}</span>
+	private static void setRecipients(Email email, MimeMessage mimeMsg) throws MessagingException, UnsupportedEncodingException {
+<span class="fc bfc" id="L178" title="All 2 branches covered.">		for (Recipient recipient : email.getRecipients()) {</span>
+<span class="fc" id="L179">			mimeMsg.addRecipient(convert(recipient.getType()), toInternetAddress(recipient.getAddress()));</span>
+<span class="fc" id="L180">		}</span>
+<span class="fc" id="L181">	}</span>
 
 	/**
 	 * Set the content on the mime message.
 	 * 
-	 * &lt;p&gt;
-	 * If the source email has several contents (for example text and html) and
-	 * attachments (with attachment content disposition), the mime message looks
-	 * like:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If the source email has only one textual content (text/html for
+	 * example), the structure is:
 	 * 
 	 * &lt;pre&gt;
-	 *  mixed
-	 *     related
-	 *        alternative
-	 *           [text/plain] text message
-	 *           [text/html] html message
-	 *     attachment 1
-	 *     attachment 2
+	 * [text/html] (root/body)
 	 * &lt;/pre&gt;
 	 * 
-	 * &lt;p&gt;
-	 * If the source email has several contents (for example text and html) but
-	 * no attachments, the mime message looks like:
+	 * &lt;/li&gt;
+	 * &lt;li&gt;If the source email has HTML content with embedded attachments
+	 * (images for example), the structure is:
 	 * 
 	 * &lt;pre&gt;
-	 *  alternative
-	 *     [text/plain] text message
-	 *     [text/html] html message
+	 * [multipart/related] (root/body)
+	 *   [text/html]       
+	 *   [image/png]       (embedded image 1)
+	 *   [image/gif]       (embedded image 2)
 	 * &lt;/pre&gt;
 	 * 
-	 * &lt;p&gt;
-	 * If the source email has only one content (for example html) and
-	 * attachments (with attachment content disposition), the mime message looks
-	 * like:
+	 * &lt;/li&gt;
+	 * &lt;li&gt;If the source email has HTML content with attachments, the structure
+	 * is:
 	 * 
 	 * &lt;pre&gt;
-	 *  mixed
-	 *     related
-	 *        [text/html] html message
-	 *     attachment 1
-	 *     attachment 2
+	 * [multipart/mixed]              (root)
+	 *   [text/html]                  (body)
+	 *   [application/pdf]            (attached file 1)
+	 *   [application/octet-stream]   (attached file 2)
 	 * &lt;/pre&gt;
 	 * 
-	 * &lt;p&gt;
-	 * If the source email has only one content (for example html) and no
-	 * attachment, the mime message looks like:
+	 * &lt;/li&gt;
+	 * &lt;li&gt;If the source email has HTML content with embedded attachments
+	 * (images for example) and additional attachments, the structure is:
 	 * 
 	 * &lt;pre&gt;
-	 *  mixed
-	 *     [text/html] html message
+	 * [multipart/mixed]              (root)
+	 *   [multipart/related]          (body)
+	 *     [text/html]                
+	 *     [image/png]                (embedded image 1)
+	 *     [image/gif]                (embedded image 2)
+	 *   [application/pdf]            (attached file 1)
+	 *   [application/octet-stream]   (attached file 2)
 	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;li&gt;If the source email has several textual contents (text/html and
+	 * text/plain for example), the structure is:
+	 * 
+	 * &lt;pre&gt;
+	 * [multipart/alternative]  (root/body)
+	 *   [text/plain]           (alternative body)
+	 *   [text/html]            (main body)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;li&gt;If the source email has several textual contents (text/html and
+	 * text/plain for example) and embedded attachments (images for example),
+	 * the structure is:
+	 * 
+	 * &lt;pre&gt;
+	 * [multipart/related]          (root/body)
+	 *   [multipart/alternative]    
+	 *     [text/plain]             (alternative body)
+	 *     [text/html]              (main body)
+	 *   [image/png]                (embedded image 1)
+	 *   [image/gif]                (embedded image 2)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;li&gt;If the source email has several textual contents (text/html and
+	 * text/plain for example) and attachments, the structure is:
+	 * 
+	 * &lt;pre&gt;
+	 * [multipart/mixed]              (root)
+	 *   [multipart/alternative]      (body)
+	 *     [text/plain]               (alternative body)
+	 *     [text/html]                (main body)
+	 *   [application/pdf]            (attached file 1)
+	 *   [application/octet-stream]   (attached file 2)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;li&gt;If the source email has several textual contents (text/html and
+	 * text/plain for example), embedded attachment (images for example) and
+	 * attachments, the structure is:
+	 * 
+	 * &lt;pre&gt;
+	 * [multipart/mixed]              (root)
+	 *   [multipart/related]          (body)
+	 *     [multipart/alternative]      
+	 *       [text/plain]             (alternative body)
+	 *       [text/html]              (main body)
+	 *     [image/png]                (embedded image 1)
+	 *     [image/gif]                (embedded image 2)
+	 *   [application/pdf]            (attached file 1)
+	 *   [application/octet-stream]   (attached file 2)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/li&gt;
+	 * &lt;/ul&gt;
 	 * 
 	 * @param email
 	 *            the source email
@@ -228,87 +294,116 @@ public class JavaMailSender extends AbstractSpecializedSender&lt;Email&gt; {
 	 *             when the email address is not valid
 	 * @throws AttachmentResourceHandlerException
 	 *             when the email address is not valid
+	 * @throws IOException
+	 *             when the content can't be constructed
 	 */
-	private void setMimeContent(Email email, MimeMessage mimeMsg) throws MessagingException, ContentHandlerException, AttachmentResourceHandlerException {
-<span class="fc" id="L233">		LOG.debug(&quot;Add message content for email {}&quot;, email);</span>
-		// create the root as mixed
-<span class="fc" id="L235">		MimeMultipart rootContainer = new MimeMultipart(&quot;mixed&quot;);</span>
-		// create the container in case of attachments
-<span class="fc" id="L237">		MimeMultipart relatedContainer = new MimeMultipart(&quot;related&quot;);</span>
-<span class="fc" id="L238">		MimeBodyPart relatedPart = new MimeBodyPart();</span>
-<span class="fc" id="L239">		relatedPart.setContent(relatedContainer);</span>
-		// delegate content management to specialized classes
-<span class="fc" id="L241">		contentHandler.setContent(mimeMsg, relatedContainer, email, email.getContent());</span>
-		// add attachments to the root or the related container according to the
-		// disposition (inline or attached)
-<span class="fc bfc" id="L244" title="All 2 branches covered.">		for (Attachment attachment : email.getAttachments()) {</span>
-<span class="fc bfc" id="L245" title="All 2 branches covered.">			Multipart container = ContentDisposition.ATTACHMENT.equals(attachment.getDisposition()) ? rootContainer : relatedContainer;</span>
-<span class="fc" id="L246">			addAttachment(container, attachment);</span>
-<span class="fc" id="L247">		}</span>
-		// if no attachments (only text) then root is changed to point on
-		// related container
-<span class="fc bfc" id="L250" title="All 2 branches covered.">		if (email.getAttachments().isEmpty()) {</span>
-			// if no attachments and several parts =&gt; set part type to
-			// alternative instead of related
-			// if no attachments and one part =&gt; set part type to mixed instead
-			// of related
-<span class="fc" id="L255">			rootContainer = relatedContainer;</span>
-<span class="pc bpc" id="L256" title="1 of 2 branches missed.">			if (relatedContainer.getCount() == 1) {</span>
-<span class="fc" id="L257">				rootContainer.setSubType(&quot;mixed&quot;);</span>
-			} else {
-<span class="nc" id="L259">				rootContainer.setSubType(&quot;alternative&quot;);</span>
-			}
+	private void setMimeContent(Email email, MimeMessage mimeMsg) throws MessagingException, ContentHandlerException, AttachmentResourceHandlerException, IOException {
+<span class="fc" id="L301">		LOG.debug(&quot;Add message content for email {}&quot;, logString(email));</span>
+
+<span class="fc" id="L303">		Multipart mixedContainer = new MimeMultipart(&quot;mixed&quot;);</span>
+
+		// prepare the body
+<span class="fc" id="L306">		contentHandler.setContent(mimeMsg, mixedContainer, email, email.getContent());</span>
+
+		// add the attachments (either embedded or attached)
+<span class="fc" id="L309">		Multipart relatedContainer = getOrAddRelatedContainer(mixedContainer, email);</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">		for (Attachment attachment : email.getAttachments()) {</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">			Multipart attachmentContainer = isEmbeddableAttachment(attachment) ? relatedContainer : mixedContainer;</span>
+<span class="fc" id="L312">			attachmentHandler.addAttachment(attachmentContainer, attachment);</span>
+<span class="fc" id="L313">		}</span>
+
+		// set the content of the email
+<span class="fc bfc" id="L316" title="All 4 branches covered.">		if (hasDownloadableAttachments(email) || hasEmbeddableAttachments(email)) {</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">			mimeMsg.setContent(hasDownloadableAttachments(email) ? mixedContainer : relatedContainer);</span>
 		} else {
-			// there are attachments so add the related part to the root
-<span class="fc" id="L263">			rootContainer.addBodyPart(relatedPart);</span>
+			// extract the body from the container (as it is not necessary)
+			// and place the body at the root of the message
+<span class="fc" id="L321">			BodyPart body = mixedContainer.getBodyPart(0);</span>
+<span class="fc" id="L322">			mimeMsg.setContent(body.getContent(), body.getContentType());</span>
 		}
-<span class="fc" id="L265">		mimeMsg.setContent(rootContainer);</span>
-<span class="fc" id="L266">	}</span>
+<span class="fc" id="L324">	}</span>
 
-	/**
-	 * Add an attachment on the mime message.
-	 * 
-	 * @param multipart
-	 *            the mime message to fill
-	 * @param attachment
-	 *            the attachment to add
-	 * @throws AttachmentResourceHandlerException
-	 *             when the attachment couldn't be attached
-	 */
-	private void addAttachment(Multipart multipart, Attachment attachment) throws AttachmentResourceHandlerException {
-<span class="fc" id="L279">		MimeBodyPart part = new MimeBodyPart();</span>
-		try {
-<span class="fc" id="L281">			part.setFileName(attachment.getResource().getName());</span>
-<span class="fc" id="L282">			part.setDisposition(attachment.getDisposition());</span>
-<span class="fc" id="L283">			part.setDescription(attachment.getDescription());</span>
-<span class="fc" id="L284">			part.setContentID(attachment.getContentId());</span>
-<span class="fc" id="L285">			attachmentHandler.setData(part, attachment.getResource(), attachment);</span>
-<span class="fc" id="L286">			multipart.addBodyPart(part);</span>
-<span class="nc" id="L287">		} catch (MessagingException e) {</span>
-<span class="nc" id="L288">			throw new AttachmentResourceHandlerException(&quot;Failed to attach &quot; + attachment.getResource().getName(), attachment, e);</span>
-<span class="fc" id="L289">		}</span>
-<span class="fc" id="L290">	}</span>
+	private static Multipart getOrAddRelatedContainer(Multipart root, Email email) throws MessagingException, IOException {
+		// no embeddable attachments means that there is no need of the related
+		// container
+<span class="fc bfc" id="L329" title="All 2 branches covered.">		if (!hasEmbeddableAttachments(email)) {</span>
+<span class="fc" id="L330">			return null;</span>
+		}
+<span class="fc" id="L332">		Multipart related = findRelatedContainer(root);</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">		if (related == null) {</span>
+<span class="fc" id="L334">			related = new MimeMultipart(&quot;related&quot;);</span>
+<span class="fc" id="L335">			moveBodyToRelatedContainer(root, related);</span>
+<span class="fc" id="L336">			addRelatedContainer(root, related);</span>
+		}
+<span class="fc" id="L338">		return related;</span>
+	}
 
-	private RecipientType convert(fr.sii.ogham.email.message.RecipientType type) {
-<span class="pc bpc" id="L293" title="1 of 4 branches missed.">		switch (type) {</span>
-		case BCC:
-<span class="fc" id="L295">			return RecipientType.BCC;</span>
-		case CC:
-<span class="fc" id="L297">			return RecipientType.CC;</span>
-		case TO:
-<span class="fc" id="L299">			return RecipientType.TO;</span>
-		default:
-<span class="nc" id="L301">			throw new IllegalArgumentException(&quot;Invalid recipient type &quot; + type);</span>
+	private static void moveBodyToRelatedContainer(Multipart root, Multipart related) throws MessagingException {
+<span class="fc bfc" id="L342" title="All 2 branches covered.">		while (root.getCount() &gt; 0) {</span>
+<span class="fc" id="L343">			related.addBodyPart(root.getBodyPart(0));</span>
+<span class="fc" id="L344">			root.removeBodyPart(0);</span>
+		}
+<span class="fc" id="L346">	}</span>
+
+	private static void addRelatedContainer(Multipart root, Multipart related) throws MessagingException {
+<span class="fc" id="L349">		MimeBodyPart part = new MimeBodyPart();</span>
+<span class="fc" id="L350">		part.setContent(related);</span>
+<span class="fc" id="L351">		root.addBodyPart(part);</span>
+<span class="fc" id="L352">	}</span>
+
+	private static Multipart findRelatedContainer(Multipart container) throws MessagingException, IOException {
+<span class="pc bpc" id="L355" title="1 of 2 branches missed.">		if (isRelated(container)) {</span>
+<span class="nc" id="L356">			return container;</span>
+		}
+<span class="fc bfc" id="L358" title="All 2 branches covered.">		for (int i = 0; i &lt; container.getCount(); i++) {</span>
+<span class="fc" id="L359">			Object content = container.getBodyPart(i).getContent();</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">			if (content instanceof Multipart) {</span>
+<span class="fc" id="L361">				return findRelatedContainer((Multipart) content);</span>
+			}
+		}
+<span class="fc" id="L364">		return null;</span>
+	}
+
+	private static boolean isRelated(Multipart mp) {
+<span class="fc" id="L368">		return mp.getContentType().startsWith(&quot;multipart/related&quot;);</span>
+	}
+
+	private static boolean isEmbeddableAttachment(Attachment attachment) {
+<span class="fc" id="L372">		return INLINE.equals(attachment.getDisposition());</span>
+	}
+
+	private static boolean isDownloadableAttachment(Attachment attachment) {
+<span class="fc" id="L376">		return ATTACHMENT.equals(attachment.getDisposition());</span>
+	}
+
+	private static boolean hasEmbeddableAttachments(Email email) {
+<span class="fc" id="L380">		return email.getAttachments().stream().anyMatch(JavaMailSender::isEmbeddableAttachment);</span>
+	}
+
+	private static boolean hasDownloadableAttachments(Email email) {
+<span class="fc" id="L384">		return email.getAttachments().stream().anyMatch(JavaMailSender::isDownloadableAttachment);</span>
+	}
+
+	private static RecipientType convert(fr.sii.ogham.email.message.RecipientType type) {
+<span class="pc bpc" id="L388" title="1 of 4 branches missed.">		switch (type) {</span>
+			case BCC:
+<span class="fc" id="L390">				return RecipientType.BCC;</span>
+			case CC:
+<span class="fc" id="L392">				return RecipientType.CC;</span>
+			case TO:
+<span class="fc" id="L394">				return RecipientType.TO;</span>
+			default:
+<span class="nc" id="L396">				throw new IllegalArgumentException(&quot;Invalid recipient type &quot; + type);</span>
 		}
 	}
 
 	private static InternetAddress toInternetAddress(EmailAddress address) throws AddressException, UnsupportedEncodingException {
-<span class="pc bpc" id="L306" title="1 of 2 branches missed.">		return address.getPersonal() == null ? new InternetAddress(address.getAddress()) : new InternetAddress(address.getAddress(), address.getPersonal());</span>
+<span class="fc bfc" id="L401" title="All 2 branches covered.">		return address.getPersonal() == null ? new InternetAddress(address.getAddress()) : new InternetAddress(address.getAddress(), address.getPersonal());</span>
 	}
 
 	@Override
 	public String toString() {
-<span class="fc" id="L311">		return &quot;JavaMailSender&quot;;</span>
+<span class="fc" id="L406">		return &quot;JavaMailSender&quot;;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

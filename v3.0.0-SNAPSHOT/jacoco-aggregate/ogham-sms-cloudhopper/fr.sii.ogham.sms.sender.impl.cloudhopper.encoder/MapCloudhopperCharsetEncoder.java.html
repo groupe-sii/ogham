@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MapCloudhopperCharsetEncoder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.cloudhopper.encoder</a> &gt; <span class="el_source">MapCloudhopperCharsetEncoder.java</span></div><h1>MapCloudhopperCharsetEncoder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.cloudhopper.encoder;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cloudhopper.commons.charset.Charset;
+import com.cloudhopper.commons.charset.CharsetUtil;
+
+import fr.sii.ogham.core.charset.CharsetDetector;
+import fr.sii.ogham.sms.encoder.Encoded;
+import fr.sii.ogham.sms.encoder.EncodedMessage;
+import fr.sii.ogham.sms.encoder.Encoder;
+import fr.sii.ogham.sms.exception.message.EncodingException;
+
+/**
+ * Default implementation of a configurable {@link Encoder}.
+ * 
+ * @author cdejonghe
+ * 
+ */
+public class MapCloudhopperCharsetEncoder implements Encoder {
+<span class="fc" id="L26">	private static final Logger LOG = LoggerFactory.getLogger(MapCloudhopperCharsetEncoder.class);</span>
+
+	/**
+	 * The map of {@link Charset} indexed by the NIO
+	 * {@link java.nio.charset.Charset} code.
+	 */
+<span class="fc" id="L32">	private final Map&lt;String, NamedCharset&gt; mapCloudhopperCharsetByNioCharsetName = new HashMap&lt;&gt;();</span>
+
+	/** The charset provider. */
+	private final CharsetDetector charsetProvider;
+
+	public MapCloudhopperCharsetEncoder(CharsetDetector charsetProvider) {
+<span class="fc" id="L38">		super();</span>
+<span class="fc" id="L39">		this.charsetProvider = charsetProvider;</span>
+<span class="fc" id="L40">	}</span>
+
+	/**
+	 * Initializes with the map of {@link Charset} code handlers indexed indexed
+	 * by the NIO {@link java.nio.charset.Charset} code.
+	 * 
+	 * @param charsetProvider
+	 *            the charset provider that gives a charset for the message
+	 * @param mapCloudhopperNameByNioName
+	 *            the map of content handlers indexed by the content class
+	 * @throws EncodingException
+	 *             If the map contains any invalid cloudhopper charset name
+	 * 
+	 */
+	public MapCloudhopperCharsetEncoder(CharsetDetector charsetProvider, Map&lt;String, String&gt; mapCloudhopperNameByNioName) throws EncodingException {
+<span class="fc" id="L55">		this(charsetProvider);</span>
+
+<span class="fc bfc" id="L57" title="All 2 branches covered.">		for (Entry&lt;String, String&gt; nioCharset : mapCloudhopperNameByNioName.entrySet()) {</span>
+<span class="fc" id="L58">			addCharset(nioCharset.getKey(), nioCharset.getValue());</span>
+<span class="fc" id="L59">		}</span>
+<span class="fc" id="L60">	}</span>
+
+	/**
+	 * Add a charset mapping.
+	 * 
+	 * @param nioCharsetName
+	 *            Java NIO charset name
+	 * @param cloudhopperCharsetName
+	 *            Cloudhopper charset name
+	 * @see CharsetUtil
+	 * @throws EncodingException
+	 *             If Cloudhopper charset name is invalid
+	 */
+	public final void addCharset(String nioCharsetName, String cloudhopperCharsetName) throws EncodingException {
+<span class="fc" id="L74">		Charset charset = CharsetUtil.map(cloudhopperCharsetName);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">		if (charset != null) {</span>
+<span class="fc" id="L76">			addCharset(nioCharsetName, new NamedCharset(cloudhopperCharsetName, charset));</span>
+		} else {
+<span class="fc" id="L78">			throw new EncodingException(&quot;Invalid cloudhopper charset name : &quot; + cloudhopperCharsetName);</span>
+		}
+<span class="fc" id="L80">	}</span>
+
+	/**
+	 * Add a charset mapping.
+	 * 
+	 * @param nioCharsetName
+	 *            Java NIO charset name
+	 * @param cloudhopperCharset
+	 *            Cloudhopper charset
+	 */
+	public void addCharset(String nioCharsetName, NamedCharset cloudhopperCharset) {
+<span class="fc" id="L91">		LOG.debug(&quot;Added charset mapping nio {} -&gt; {}&quot;, nioCharsetName, cloudhopperCharset);</span>
+<span class="fc" id="L92">		mapCloudhopperCharsetByNioCharsetName.put(nioCharsetName, cloudhopperCharset);</span>
+<span class="fc" id="L93">	}</span>
+
+	private NamedCharset get(java.nio.charset.Charset nioCharset) throws EncodingException {
+<span class="fc" id="L96">		NamedCharset cloudhopperCharset = mapCloudhopperCharsetByNioCharsetName.get(nioCharset.name());</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">		if (cloudhopperCharset == null) {</span>
+<span class="fc" id="L98">			throw new EncodingException(&quot;No cloudhopper charset registered for nio charset : &quot; + nioCharset.name());</span>
+		}
+
+<span class="fc" id="L101">		return mapCloudhopperCharsetByNioCharsetName.get(nioCharset.name());</span>
+	}
+
+	@Override
+	public Encoded encode(String messageStringContent) throws EncodingException {
+<span class="fc" id="L106">		java.nio.charset.Charset nioCharset = charsetProvider.detect(messageStringContent);</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">		if (nioCharset == null) {</span>
+<span class="fc" id="L108">			throw new EncodingException(&quot;No charset provided for message : \n&quot; + messageStringContent);</span>
+		}
+
+<span class="fc" id="L111">		NamedCharset cloudhopperCharset = get(nioCharset);</span>
+<span class="fc" id="L112">		LOG.debug(&quot;Encoding message using mapping nio {} -&gt; {}&quot;, nioCharset, cloudhopperCharset);</span>
+<span class="fc" id="L113">		return new EncodedMessage(messageStringContent, CharsetUtil.encode(messageStringContent, cloudhopperCharset.getCharset()), cloudhopperCharset.getCharsetName());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

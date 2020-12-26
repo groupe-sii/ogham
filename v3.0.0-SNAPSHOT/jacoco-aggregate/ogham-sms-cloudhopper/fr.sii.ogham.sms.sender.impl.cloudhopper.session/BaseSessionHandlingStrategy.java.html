@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BaseSessionHandlingStrategy.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.cloudhopper.session</a> &gt; <span class="el_source">BaseSessionHandlingStrategy.java</span></div><h1>BaseSessionHandlingStrategy.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.cloudhopper.session;
+
+import static fr.sii.ogham.core.retry.NamedCallable.named;
+
+import org.slf4j.Logger;
+
+import com.cloudhopper.smpp.SmppClient;
+import com.cloudhopper.smpp.SmppSession;
+
+import fr.sii.ogham.core.exception.retry.MaximumAttemptsReachedException;
+import fr.sii.ogham.core.exception.retry.RetryException;
+import fr.sii.ogham.core.exception.retry.RetryExecutionInterruptedException;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppSessionHandlerSupplier;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.ConnectionFailedException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.SmppException;
+
+/**
+ * Base class for different session handling strategies.
+ * 
+ * &lt;p&gt;
+ * It provides useful methods to initialize a client and a session. It provides
+ * a method to connect (bind) to the SMSC with retry handling. It also provides
+ * method to cleanup. The implementations can then use this methods as they
+ * wish.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public abstract class BaseSessionHandlingStrategy implements SessionHandlingStrategy {
+	protected final Logger logger;
+	protected final ExtendedSmppSessionConfiguration configuration;
+	protected final SmppClientSupplier clientSupplier;
+	protected final SmppSessionHandlerSupplier smppSessionHandlerSupplier;
+	protected final RetryExecutor retry;
+	protected SmppClient currentClient;
+	protected SmppSession currentSession;
+
+	public BaseSessionHandlingStrategy(Logger logger, ExtendedSmppSessionConfiguration configuration, SmppClientSupplier clientSupplier, SmppSessionHandlerSupplier smppSessionHandlerSupplier,
+			RetryExecutor retry) {
+<span class="fc" id="L43">		super();</span>
+<span class="fc" id="L44">		this.logger = logger;</span>
+<span class="fc" id="L45">		this.configuration = configuration;</span>
+<span class="fc" id="L46">		this.clientSupplier = clientSupplier;</span>
+<span class="fc" id="L47">		this.smppSessionHandlerSupplier = smppSessionHandlerSupplier;</span>
+<span class="fc" id="L48">		this.retry = retry;</span>
+<span class="fc" id="L49">	}</span>
+
+	/**
+	 * Initializes a new session only if session doesn't exist (is
+	 * {@code null}).
+	 * 
+	 * &lt;p&gt;
+	 * A {@link SmppClient} instance must exist (either using
+	 * {@link #initClient()} or by manually creating it). The same
+	 * {@link SmppClient} may be used several times for different sessions.
+	 * 
+	 * &lt;p&gt;
+	 * The creation of a session is done by calling
+	 * {@link #connect(SmppClient)}.
+	 * 
+	 * @throws SmppException
+	 *             when session couldn't be created
+	 */
+	protected synchronized void initSession() throws SmppException {
+<span class="fc bfc" id="L68" title="All 2 branches covered.">		if (currentSession == null) {</span>
+<span class="fc" id="L69">			logger.debug(&quot;Requesting a new SMPP session&quot;);</span>
+<span class="fc" id="L70">			currentSession = connect(currentClient);</span>
+<span class="fc" id="L71">			logger.debug(&quot;SMPP session bound&quot;);</span>
+		}
+<span class="fc" id="L73">	}</span>
+
+	/**
+	 * Connect the client to the SMSC using a
+	 * {@link SmppClient#bind(com.cloudhopper.smpp.SmppSessionConfiguration, com.cloudhopper.smpp.SmppSessionHandler)}
+	 * request.
+	 * 
+	 * &lt;p&gt;
+	 * The configured retry strategy is used to send the bind request to the
+	 * server i.e. several attempts may be done.
+	 * 
+	 * @param client
+	 *            the client used to send to bind command
+	 * @return the created session
+	 * @throws SmppException
+	 *             when the session couldn't be bound
+	 */
+	protected synchronized SmppSession connect(final SmppClient client) throws SmppException {
+		try {
+<span class="fc" id="L92">			return retry.execute(named(&quot;Connection to SMPP server&quot;, () -&gt; client.bind(configuration, smppSessionHandlerSupplier.get())));</span>
+<span class="nc" id="L93">		} catch (RetryExecutionInterruptedException e) {</span>
+<span class="nc" id="L94">			Thread.currentThread().interrupt();</span>
+<span class="nc" id="L95">			throw new ConnectionFailedException(&quot;Failed to initialize SMPP session (interrupted)&quot;, e);</span>
+<span class="fc" id="L96">		} catch (MaximumAttemptsReachedException e) {</span>
+<span class="fc" id="L97">			throw new ConnectionFailedException(&quot;Failed to initialize SMPP session after maximum retries reached&quot;, e);</span>
+<span class="fc" id="L98">		} catch (RetryException e) {</span>
+<span class="fc" id="L99">			throw new ConnectionFailedException(&quot;Failed to initialize SMPP session&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Create a {@link SmppClient} instance of not existing (is {@code null}).
+	 */
+	protected synchronized void initClient() {
+<span class="fc bfc" id="L107" title="All 2 branches covered.">		if (currentClient == null) {</span>
+<span class="fc" id="L108">			logger.debug(&quot;Requesting a new SmppClient instance&quot;);</span>
+<span class="fc" id="L109">			currentClient = clientSupplier.get();</span>
+		}
+<span class="fc" id="L111">	}</span>
+
+	/**
+	 * Send an unbind command to the server to properly close the session, close
+	 * the session and cleanup everything related to the session. The current
+	 * session is set to {@code null}.
+	 */
+	protected synchronized void destroySession() {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">		if (currentSession != null) {</span>
+<span class="fc" id="L120">			logger.debug(&quot;Closing SMPP session&quot;);</span>
+<span class="fc" id="L121">			currentSession.unbind(configuration.getUnbindTimeout());</span>
+<span class="fc" id="L122">			currentSession.destroy();</span>
+<span class="fc" id="L123">			currentSession = null;</span>
+		}
+<span class="fc" id="L125">	}</span>
+
+	/**
+	 * Destroy (cleanup everything) the client. The client is set to
+	 * {@code null}.
+	 */
+	protected synchronized void destroyClient() {
+<span class="fc bfc" id="L132" title="All 2 branches covered.">		if (currentClient != null) {</span>
+<span class="fc" id="L133">			logger.debug(&quot;Destroying SMPP client&quot;);</span>
+<span class="fc" id="L134">			currentClient.destroy();</span>
+<span class="fc" id="L135">			currentClient = null;</span>
+		}
+<span class="fc" id="L137">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractDefaultThymeleafEmailConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common.configure</a> &gt; <span class="el_source">AbstractDefaultThymeleafEmailConfigurer.java</span></div><h1>AbstractDefaultThymeleafEmailConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common.configure;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractDefaultThymeleafEmailConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common.configure</a> &gt; <span class="el_source">AbstractDefaultThymeleafEmailConfigurer.java</span></div><h1>AbstractDefaultThymeleafEmailConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common.configure;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.sii.ogham.core.builder.MessagingBuilder;
 import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
@@ -97,65 +96,76 @@ import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiConte
  *
  */
 public abstract class AbstractDefaultThymeleafEmailConfigurer implements MessagingConfigurer {
-<span class="fc" id="L100">	private static final Logger LOG = LoggerFactory.getLogger(AbstractDefaultThymeleafEmailConfigurer.class);</span>
-	
+	private final Logger log;
 	private final MessagingConfigurerAdapter delegate;
 
-	public AbstractDefaultThymeleafEmailConfigurer() {
-<span class="fc" id="L105">		this(new DefaultMessagingConfigurer());</span>
-<span class="fc" id="L106">	}</span>
+	public AbstractDefaultThymeleafEmailConfigurer(Logger log) {
+<span class="fc" id="L103">		this(log, new DefaultMessagingConfigurer());</span>
+<span class="fc" id="L104">	}</span>
 
-	public AbstractDefaultThymeleafEmailConfigurer(MessagingConfigurerAdapter delegate) {
-<span class="fc" id="L109">		super();</span>
-<span class="fc" id="L110">		this.delegate = delegate;</span>
-<span class="fc" id="L111">	}</span>
+	public AbstractDefaultThymeleafEmailConfigurer(Logger log, MessagingConfigurerAdapter delegate) {
+<span class="fc" id="L107">		super();</span>
+<span class="fc" id="L108">		this.log = log;</span>
+<span class="fc" id="L109">		this.delegate = delegate;</span>
+<span class="fc" id="L110">	}</span>
 
 	@Override
 	public void configure(MessagingBuilder msgBuilder) {
-<span class="fc bfc" id="L115" title="All 2 branches covered.">		if (!canUseThymeleaf()) {</span>
-<span class="fc" id="L116">			LOG.debug(&quot;[{}] skip configuration&quot;, this);</span>
-<span class="fc" id="L117">			return;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">		if (!canUseThymeleaf()) {</span>
+<span class="fc" id="L115">			log.debug(&quot;[{}] skip configuration&quot;, this);</span>
+<span class="fc" id="L116">			return;</span>
 		}
-<span class="fc" id="L119">		LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
-<span class="fc" id="L120">		AbstractThymeleafMultiContentBuilder&lt;?, ?, ?&gt; builder = msgBuilder.email().template(getBuilderClass());</span>
-		// use same environment as parent builder
-<span class="fc" id="L122">		builder.environment(msgBuilder.environment());</span>
+<span class="fc" id="L118">		log.debug(&quot;[{}] apply configuration&quot;, this);</span>
+<span class="fc" id="L119">		AbstractThymeleafMultiContentBuilder&lt;?, ?, ?&gt; builder = msgBuilder.email().template(getBuilderClass());</span>
 		// apply default resource resolution configuration
-<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		if (delegate != null) {</span>
-<span class="fc" id="L125">			delegate.configure(builder);</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">		if (delegate != null) {</span>
+<span class="fc" id="L122">			delegate.configure(builder);</span>
 		}
 		// @formatter:off
-<span class="fc" id="L128">		builder</span>
-<span class="fc" id="L129">			.classpath()</span>
-<span class="fc" id="L130">				.pathPrefix(&quot;${ogham.email.thymeleaf.classpath.path-prefix}&quot;, </span>
-							&quot;${ogham.email.template.classpath.path-prefix}&quot;, 
-							&quot;${ogham.email.thymeleaf.path-prefix}&quot;, 
-							&quot;${ogham.email.template.path-prefix}&quot;, 
-							&quot;${ogham.template.path-prefix}&quot;)
-<span class="fc" id="L135">				.pathSuffix(&quot;${ogham.email.thymeleaf.classpath.path-suffix}&quot;, </span>
-							&quot;${ogham.email.template.classpath.path-suffix}&quot;, 
-							&quot;${ogham.email.thymeleaf.path-suffix}&quot;, 
-							&quot;${ogham.email.template.path-suffix}&quot;, 
-							&quot;${ogham.template.path-suffix}&quot;)
-<span class="fc" id="L140">				.and()</span>
-<span class="fc" id="L141">			.file()</span>
-<span class="fc" id="L142">				.pathPrefix(&quot;${ogham.email.thymeleaf.file.path-prefix}&quot;, </span>
-							&quot;${ogham.email.template.file.path-prefix}&quot;, 
-							&quot;${ogham.email.thymeleaf.path-prefix}&quot;, 
-							&quot;${ogham.email.template.path-prefix}&quot;, 
-							&quot;${ogham.template.path-prefix}&quot;)
-<span class="fc" id="L147">				.pathSuffix(&quot;${ogham.email.thymeleaf.file.path-suffix}&quot;, </span>
-							&quot;${ogham.email.template.file.path-suffix}&quot;, 
-							&quot;${ogham.email.thymeleaf.path-suffix}&quot;, 
-							&quot;${ogham.email.template.path-suffix}&quot;, 
-							&quot;${ogham.template.path-suffix}&quot;)
-<span class="fc" id="L152">				.and()</span>
-<span class="fc" id="L153">			.string()</span>
-<span class="fc" id="L154">				.and()</span>
-<span class="fc" id="L155">			.variant(EmailVariant.HTML, &quot;html&quot;)</span>
-<span class="fc" id="L156">			.variant(EmailVariant.TEXT, &quot;txt&quot;);</span>
+<span class="fc" id="L125">		builder</span>
+<span class="fc" id="L126">			.classpath()</span>
+<span class="fc" id="L127">				.pathPrefix()</span>
+<span class="fc" id="L128">					.properties(&quot;${ogham.email.thymeleaf.classpath.path-prefix}&quot;, </span>
+								&quot;${ogham.email.template.classpath.path-prefix}&quot;, 
+								&quot;${ogham.email.thymeleaf.path-prefix}&quot;, 
+								&quot;${ogham.email.template.path-prefix}&quot;, 
+								&quot;${ogham.template.path-prefix}&quot;)
+<span class="fc" id="L133">					.and()</span>
+<span class="fc" id="L134">				.pathSuffix()</span>
+<span class="fc" id="L135">					.properties(&quot;${ogham.email.thymeleaf.classpath.path-suffix}&quot;, </span>
+								&quot;${ogham.email.template.classpath.path-suffix}&quot;, 
+								&quot;${ogham.email.thymeleaf.path-suffix}&quot;, 
+								&quot;${ogham.email.template.path-suffix}&quot;, 
+								&quot;${ogham.template.path-suffix}&quot;)
+<span class="fc" id="L140">					.and()</span>
+<span class="fc" id="L141">				.and()</span>
+<span class="fc" id="L142">			.file()</span>
+<span class="fc" id="L143">				.pathPrefix()</span>
+<span class="fc" id="L144">					.properties(&quot;${ogham.email.thymeleaf.file.path-prefix}&quot;, </span>
+								&quot;${ogham.email.template.file.path-prefix}&quot;, 
+								&quot;${ogham.email.thymeleaf.path-prefix}&quot;, 
+								&quot;${ogham.email.template.path-prefix}&quot;, 
+								&quot;${ogham.template.path-prefix}&quot;)
+<span class="fc" id="L149">					.and()</span>
+<span class="fc" id="L150">				.pathSuffix()</span>
+<span class="fc" id="L151">					.properties(&quot;${ogham.email.thymeleaf.file.path-suffix}&quot;, </span>
+								&quot;${ogham.email.template.file.path-suffix}&quot;, 
+								&quot;${ogham.email.thymeleaf.path-suffix}&quot;, 
+								&quot;${ogham.email.template.path-suffix}&quot;, 
+								&quot;${ogham.template.path-suffix}&quot;)
+<span class="fc" id="L156">					.and()</span>
+<span class="fc" id="L157">				.and()</span>
+<span class="fc" id="L158">			.string()</span>
+<span class="fc" id="L159">				.and()</span>
+<span class="fc" id="L160">			.variant(EmailVariant.HTML, &quot;html&quot;)</span>
+<span class="fc" id="L161">			.variant(EmailVariant.HTML, &quot;xhtml&quot;)</span>
+<span class="fc" id="L162">			.variant(EmailVariant.TEXT, &quot;txt&quot;)</span>
+<span class="fc" id="L163">			.cache()</span>
+<span class="fc" id="L164">				.properties(&quot;${ogham.email.thymeleaf.cache}&quot;,</span>
+							&quot;${ogham.email.template.cache}&quot;,
+							&quot;${ogham.template.cache}&quot;);
 		// @formatter:on
-<span class="fc" id="L158">	}</span>
+<span class="fc" id="L168">	}</span>
 
 	protected abstract Class&lt;? extends AbstractThymeleafMultiContentBuilder&lt;?, ?, ?&gt;&gt; getBuilderClass();
 

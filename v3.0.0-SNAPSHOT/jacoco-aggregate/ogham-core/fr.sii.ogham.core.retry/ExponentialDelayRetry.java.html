@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ExponentialDelayRetry.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.retry</a> &gt; <span class="el_source">ExponentialDelayRetry.java</span></div><h1>ExponentialDelayRetry.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.retry;
+
+import java.time.Instant;
+
+/**
+ * Retry several times with an initial delay to wait after the last execution
+ * failure. The following delays are doubled until the maximum attempts is
+ * reached.
+ * 
+ * If maximum attempts are set to five, the initial delay is set to 500ms and
+ * the action (named &quot;connect&quot; for the example) takes 100ms to execute before
+ * failing, it will result in:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;0: connect&lt;/li&gt;
+ * &lt;li&gt;100: timeout&lt;/li&gt;
+ * &lt;li&gt;600: connect&lt;/li&gt;
+ * &lt;li&gt;700: timeout&lt;/li&gt;
+ * &lt;li&gt;1700: connect&lt;/li&gt;
+ * &lt;li&gt;1800: timeout&lt;/li&gt;
+ * &lt;li&gt;3800: connect&lt;/li&gt;
+ * &lt;li&gt;3900: timeout&lt;/li&gt;
+ * &lt;li&gt;7900: connect&lt;/li&gt;
+ * &lt;li&gt;8000: timeout&lt;/li&gt;
+ * &lt;li&gt;16000: connect&lt;/li&gt;
+ * &lt;li&gt;16100: timeout&lt;/li&gt;
+ * &lt;li&gt;fail&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ExponentialDelayRetry implements RetryStrategy {
+	private final int maxRetries;
+	private final long initialDelay;
+	private int retries;
+	private int retried;
+
+	/**
+	 * Initializes with the maximum attempts and the initial delay to wait after
+	 * a failure.
+	 * 
+	 * @param maxRetries
+	 *            the maximum attempts
+	 * @param initialDelay
+	 *            the initial delay that will be doubled for each attempt
+	 */
+	public ExponentialDelayRetry(int maxRetries, long initialDelay) {
+<span class="fc" id="L49">		super();</span>
+<span class="fc" id="L50">		this.maxRetries = maxRetries;</span>
+<span class="fc" id="L51">		this.initialDelay = initialDelay;</span>
+<span class="fc" id="L52">		retries = maxRetries;</span>
+<span class="fc" id="L53">	}</span>
+
+	@Override
+	public boolean terminated() {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">		return retries &lt;= 0;</span>
+	}
+
+	@Override
+	public Instant nextDate(Instant executionStartTime, Instant executionFailureTime) {
+<span class="fc" id="L62">		retries--;</span>
+<span class="fc" id="L63">		long delay = (long) Math.scalb(initialDelay, retried);</span>
+<span class="fc" id="L64">		retried++;</span>
+<span class="fc" id="L65">		return executionFailureTime.plusMillis(delay);</span>
+	}
+
+	public int getRemainingRetries() {
+<span class="fc" id="L69">		return retries;</span>
+	}
+
+	public int getMaxRetries() {
+<span class="nc" id="L73">		return maxRetries;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

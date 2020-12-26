@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentReceivedSmsAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">FluentReceivedSmsAssert.java</span></div><h1>FluentReceivedSmsAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.overrideDescription;
+import static org.hamcrest.Matchers.lessThan;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+
+/**
+ * Make assertions on received messages
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;S&gt;
+ *            the type of the {@link SubmitSm} to make assertions on
+ */
+public class FluentReceivedSmsAssert&lt;S extends SubmitSm&gt; {
+	/**
+	 * List of received messages
+	 */
+	private final List&lt;S&gt; actual;
+	/**
+	 * the registry for assertions
+	 */
+	private final AssertionRegistry registry;
+
+	/**
+	 * Initializes with the list of received messages
+	 * 
+	 * @param actual
+	 *            received messages
+	 * @param registry
+	 *            used to register assertions
+	 */
+<span class="fc" id="L41">	public FluentReceivedSmsAssert(List&lt;S&gt; actual, AssertionRegistry registry) {</span>
+<span class="fc" id="L42">		this.actual = actual;</span>
+<span class="fc" id="L43">		this.registry = registry;</span>
+<span class="fc" id="L44">	}</span>
+
+	/**
+	 * Access fluent API to write assertions on a particular received message.
+	 * 
+	 * If you want to make assertions on several messages, you may prefer using:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *                       .content(is(&quot;foobar&quot;))
+	 *                    .and()
+	 *                    .message(1)
+	 *                       .content(is(&quot;bar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * @param index
+	 *            the index of the received message
+	 * @return the fluent API for assertions on the particular message
+	 */
+	public FluentSmsAssert&lt;FluentReceivedSmsAssert&lt;S&gt;, S&gt; receivedMessage(int index) {
+<span class="fc" id="L64">		registry.register(() -&gt; assertThat(index, overrideDescription(&quot;Assertions on message &quot;+index+&quot; can't be executed because &quot;+actual.size()+&quot; messages were received&quot;, lessThan(actual.size()))));</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		return new FluentSmsAssert&lt;&gt;(index&lt;actual.size() ? actual.get(index) : null, index, this, registry);</span>
+	}
+
+	/**
+	 * Fluent API to write assertions on received messages.
+	 * 
+	 * You can write assertions for all messages or a particular message.
+	 * 
+	 * For example, for writing assertion on a single message, you can write:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *                       .content(is(&quot;foobar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * For writing assertions that are applied on every received message, you
+	 * can write:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *                       .content(is(&quot;foobar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that content of every message is &quot;foobar&quot;.
+	 * 
+	 * &lt;p&gt;
+	 * You can use this method to factorize several assertions on a message and
+	 * then make dedicated assertions on some messages:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *                       .content(is(&quot;foobar&quot;))
+	 *                    .and()
+	 *                    .message(0)
+	 *                       .from().number(is(&quot;+33102030405&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that content of every message is &quot;foobar&quot; and that phone
+	 * nuumber of sender of first received message is &quot;+33102030405&quot;.
+	 * 
+	 * @return the fluent API for assertions on messages
+	 */
+	public FluentSmsListAssert&lt;FluentReceivedSmsAssert&lt;S&gt;, S&gt; receivedMessages() {
+<span class="fc" id="L108">		return new FluentSmsListAssert&lt;&gt;(actual, this, registry);</span>
+	}
+
+	/**
+	 * Fluent API to write assertions on received messages.
+	 * 
+	 * Make an assertion on received messages list (JavaMail message).
+	 * 
+	 * For example, for writing assertion on a single message, you can write:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages(is(Matchers.&amp;lt;Message&amp;gt;empty()))
+	 * &lt;/pre&gt;
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on message list
+	 * @return the fluent API for assertions on messages
+	 */
+	public FluentSmsListAssert&lt;FluentReceivedSmsAssert&lt;S&gt;, S&gt; receivedMessages(Matcher&lt;Collection&lt;? extends S&gt;&gt; matcher) {
+<span class="fc" id="L127">		registry.register(() -&gt; assertThat(&quot;Received messages&quot;, actual, matcher));</span>
+<span class="fc" id="L128">		return receivedMessages();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

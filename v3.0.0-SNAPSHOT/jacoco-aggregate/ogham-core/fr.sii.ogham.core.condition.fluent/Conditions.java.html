@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Conditions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.fluent</a> &gt; <span class="el_source">Conditions.java</span></div><h1>Conditions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.fluent;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Conditions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.fluent</a> &gt; <span class="el_source">Conditions.java</span></div><h1>Conditions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.fluent;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -34,7 +34,7 @@ import fr.sii.ogham.core.env.PropertyResolver;
  * @author Aurélien Baudet
  *
  */
-public class Conditions {
+public final class Conditions {
 	/**
 	 * Parenthesis operator to handle priorities:
 	 * 
@@ -65,8 +65,9 @@ public class Conditions {
 	 *            the type of the object that is under condition
 	 * @return the fluent condition
 	 */
+	@SuppressWarnings(&quot;squid:S00100&quot;)
 	public static &lt;T&gt; FluentCondition&lt;T&gt; $(Condition&lt;T&gt; condition) {
-<span class="fc" id="L69">		return new FluentCondition&lt;&gt;(condition);</span>
+<span class="fc" id="L70">		return new FluentCondition&lt;&gt;(condition);</span>
 	}
 
 	/**
@@ -93,7 +94,7 @@ public class Conditions {
 	 */
 	@SafeVarargs
 	public static &lt;T&gt; FluentCondition&lt;T&gt; and(Condition&lt;T&gt;... conditions) {
-<span class="fc" id="L96">		return new FluentCondition&lt;&gt;(new AndCondition&lt;&gt;(conditions));</span>
+<span class="fc" id="L97">		return new FluentCondition&lt;&gt;(new AndCondition&lt;&gt;(conditions));</span>
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; and(List&lt;Condition&lt;T&gt;&gt; conditions) {
-<span class="fc" id="L127">		return new FluentCondition&lt;&gt;(new AndCondition&lt;&gt;(conditions));</span>
+<span class="fc" id="L128">		return new FluentCondition&lt;&gt;(new AndCondition&lt;&gt;(conditions));</span>
 	}
 
 	/**
@@ -151,7 +152,7 @@ public class Conditions {
 	 */
 	@SafeVarargs
 	public static &lt;T&gt; FluentCondition&lt;T&gt; or(Condition&lt;T&gt;... conditions) {
-<span class="fc" id="L154">		return new FluentCondition&lt;&gt;(new OrCondition&lt;&gt;(conditions));</span>
+<span class="fc" id="L155">		return new FluentCondition&lt;&gt;(new OrCondition&lt;&gt;(conditions));</span>
 	}
 
 	/**
@@ -182,7 +183,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; or(List&lt;Condition&lt;T&gt;&gt; conditions) {
-<span class="fc" id="L185">		return new FluentCondition&lt;&gt;(new OrCondition&lt;&gt;(conditions));</span>
+<span class="fc" id="L186">		return new FluentCondition&lt;&gt;(new OrCondition&lt;&gt;(conditions));</span>
 	}
 
 	/**
@@ -202,7 +203,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; not(Condition&lt;T&gt; condition) {
-<span class="fc" id="L205">		return new FluentCondition&lt;&gt;(new NotCondition&lt;&gt;(condition));</span>
+<span class="fc" id="L206">		return new FluentCondition&lt;&gt;(new NotCondition&lt;&gt;(condition));</span>
 	}
 
 	/**
@@ -225,7 +226,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; requiredProperty(PropertyResolver propertyResolver, String property) {
-<span class="fc" id="L228">		return new FluentCondition&lt;&gt;(new RequiredPropertyCondition&lt;T&gt;(property, propertyResolver));</span>
+<span class="fc" id="L229">		return new FluentCondition&lt;&gt;(new RequiredPropertyCondition&lt;&gt;(property, propertyResolver));</span>
 	}
 
 	/**
@@ -252,7 +253,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; requiredPropertyValue(PropertyResolver propertyResolver, String property, String value) {
-<span class="fc" id="L255">		return new FluentCondition&lt;&gt;(new PropertyValueCondition&lt;T&gt;(property, value, propertyResolver));</span>
+<span class="fc" id="L256">		return new FluentCondition&lt;&gt;(new PropertyValueCondition&lt;&gt;(property, value, propertyResolver));</span>
 	}
 
 	/**
@@ -279,7 +280,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; requiredPropertyValue(PropertyResolver propertyResolver, String property, Pattern pattern) {
-<span class="fc" id="L282">		return new FluentCondition&lt;&gt;(new PropertyPatternCondition&lt;T&gt;(property, pattern, propertyResolver));</span>
+<span class="fc" id="L283">		return new FluentCondition&lt;&gt;(new PropertyPatternCondition&lt;&gt;(property, pattern, propertyResolver));</span>
 	}
 
 	/**
@@ -299,7 +300,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; requiredClass(String className) {
-<span class="fc" id="L302">		return new FluentCondition&lt;&gt;(new RequiredClassCondition&lt;T&gt;(className));</span>
+<span class="fc" id="L303">		return new FluentCondition&lt;&gt;(new RequiredClassCondition&lt;&gt;(className));</span>
 	}
 
 	/**
@@ -310,7 +311,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; alwaysTrue() {
-<span class="fc" id="L313">		return new FluentCondition&lt;&gt;(new FixedCondition&lt;T&gt;(true));</span>
+<span class="fc" id="L314">		return new FluentCondition&lt;&gt;(new FixedCondition&lt;&gt;(true));</span>
 	}
 
 	/**
@@ -321,7 +322,7 @@ public class Conditions {
 	 * @return the fluent condition
 	 */
 	public static &lt;T&gt; FluentCondition&lt;T&gt; alwaysFalse() {
-<span class="fc" id="L324">		return new FluentCondition&lt;&gt;(new FixedCondition&lt;T&gt;(false));</span>
+<span class="fc" id="L325">		return new FluentCondition&lt;&gt;(new FixedCondition&lt;&gt;(false));</span>
 	}
 
 	private Conditions() {

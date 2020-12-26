@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Attachment.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.attachment</a> &gt; <span class="el_source">Attachment.java</span></div><h1>Attachment.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.attachment;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Attachment.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.attachment</a> &gt; <span class="el_source">Attachment.java</span></div><h1>Attachment.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.attachment;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +51,11 @@ public class Attachment {
 	private String contentId;
 
 	/**
+	 * The content-type of the attachment (automatically guessed by default)
+	 */
+	private String contentType;
+
+	/**
 	 * Initialize the attachment with the provided resource (content and name),
 	 * the description of the attachment and the disposition (how to include the
 	 * attachment into the mail).
@@ -65,12 +70,12 @@ public class Attachment {
 	 *            the unique id of the content (may not null)
 	 */
 	public Attachment(NamedResource resource, String description, String disposition, String contentId) {
-<span class="fc" id="L68">		super();</span>
-<span class="fc" id="L69">		this.resource = resource;</span>
-<span class="fc" id="L70">		this.description = description;</span>
-<span class="fc" id="L71">		this.disposition = disposition;</span>
-<span class="fc" id="L72">		this.contentId = contentId;</span>
-<span class="fc" id="L73">	}</span>
+<span class="fc" id="L73">		super();</span>
+<span class="fc" id="L74">		this.resource = resource;</span>
+<span class="fc" id="L75">		this.description = description;</span>
+<span class="fc" id="L76">		this.disposition = disposition;</span>
+<span class="fc" id="L77">		this.contentId = contentId;</span>
+<span class="fc" id="L78">	}</span>
 
 	/**
 	 * Initialize the attachment with the provided resource (content and name),
@@ -85,8 +90,8 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(NamedResource resource, String description, String disposition) {
-<span class="fc" id="L88">		this(resource, description, disposition, null);</span>
-<span class="fc" id="L89">	}</span>
+<span class="fc" id="L93">		this(resource, description, disposition, null);</span>
+<span class="fc" id="L94">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -103,8 +108,8 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(NamedResource resource, String description) {
-<span class="fc" id="L106">		this(resource, description, ContentDisposition.ATTACHMENT);</span>
-<span class="fc" id="L107">	}</span>
+<span class="fc" id="L111">		this(resource, description, ContentDisposition.ATTACHMENT);</span>
+<span class="fc" id="L112">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -121,8 +126,8 @@ public class Attachment {
 	 *            the resource of the attachment
 	 */
 	public Attachment(NamedResource resource) {
-<span class="fc" id="L124">		this(resource, null);</span>
-<span class="fc" id="L125">	}</span>
+<span class="fc" id="L129">		this(resource, null);</span>
+<span class="fc" id="L130">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -146,8 +151,8 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(String path, String description, String disposition) {
-<span class="nc" id="L149">		this(new UnresolvedPath(path), description, disposition);</span>
-<span class="nc" id="L150">	}</span>
+<span class="nc" id="L154">		this(new UnresolvedPath(path), description, disposition);</span>
+<span class="nc" id="L155">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -172,8 +177,8 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(String path, String description) {
-<span class="nc" id="L175">		this(new UnresolvedPath(path), description);</span>
-<span class="nc" id="L176">	}</span>
+<span class="nc" id="L180">		this(new UnresolvedPath(path), description);</span>
+<span class="nc" id="L181">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -198,8 +203,8 @@ public class Attachment {
 	 *            the path to the attachment
 	 */
 	public Attachment(String path) {
-<span class="fc" id="L201">		this(new UnresolvedPath(path));</span>
-<span class="fc" id="L202">	}</span>
+<span class="fc" id="L206">		this(new UnresolvedPath(path));</span>
+<span class="fc" id="L207">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -223,8 +228,8 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(ResourcePath path, String description, String disposition) {
-<span class="nc" id="L226">		this(new LookupResource(path), description, disposition);</span>
-<span class="nc" id="L227">	}</span>
+<span class="nc" id="L231">		this(new LookupResource(path), description, disposition);</span>
+<span class="nc" id="L232">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -249,8 +254,8 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(ResourcePath path, String description) {
-<span class="nc" id="L252">		this(new LookupResource(path), description);</span>
-<span class="nc" id="L253">	}</span>
+<span class="nc" id="L257">		this(new LookupResource(path), description);</span>
+<span class="nc" id="L258">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -275,8 +280,8 @@ public class Attachment {
 	 *            the path to the attachment
 	 */
 	public Attachment(ResourcePath path) {
-<span class="fc" id="L278">		this(new LookupResource(path));</span>
-<span class="fc" id="L279">	}</span>
+<span class="fc" id="L283">		this(new LookupResource(path));</span>
+<span class="fc" id="L284">	}</span>
 
 	/**
 	 * Initialize the attachment with the provided content, name, description of
@@ -295,8 +300,8 @@ public class Attachment {
 	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream, String description, String disposition) throws IOException {
-<span class="nc" id="L298">		this(new ByteResource(name, stream), description, disposition);</span>
-<span class="nc" id="L299">	}</span>
+<span class="nc" id="L303">		this(new ByteResource(name, stream), description, disposition);</span>
+<span class="nc" id="L304">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -317,8 +322,8 @@ public class Attachment {
 	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream, String description) throws IOException {
-<span class="nc" id="L320">		this(new ByteResource(name, stream), description);</span>
-<span class="nc" id="L321">	}</span>
+<span class="nc" id="L325">		this(new ByteResource(name, stream), description);</span>
+<span class="nc" id="L326">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -339,8 +344,8 @@ public class Attachment {
 	 *             when the content of the stream can't be read
 	 */
 	public Attachment(String name, InputStream stream) throws IOException {
-<span class="fc" id="L342">		this(new ByteResource(name, stream));</span>
-<span class="fc" id="L343">	}</span>
+<span class="fc" id="L347">		this(new ByteResource(name, stream));</span>
+<span class="fc" id="L348">	}</span>
 
 	/**
 	 * Initialize the attachment with the provided content, name, description of
@@ -357,8 +362,8 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(String name, byte[] content, String description, String disposition) {
-<span class="nc" id="L360">		this(new ByteResource(name, content), description, disposition);</span>
-<span class="nc" id="L361">	}</span>
+<span class="nc" id="L365">		this(new ByteResource(name, content), description, disposition);</span>
+<span class="nc" id="L366">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -377,8 +382,8 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(String name, byte[] content, String description) {
-<span class="nc" id="L380">		this(new ByteResource(name, content), description);</span>
-<span class="nc" id="L381">	}</span>
+<span class="nc" id="L385">		this(new ByteResource(name, content), description);</span>
+<span class="nc" id="L386">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -397,8 +402,8 @@ public class Attachment {
 	 *            the content of the attachment
 	 */
 	public Attachment(String name, byte[] content) {
-<span class="nc" id="L400">		this(new ByteResource(name, content));</span>
-<span class="nc" id="L401">	}</span>
+<span class="fc" id="L405">		this(new ByteResource(name, content));</span>
+<span class="fc" id="L406">	}</span>
 
 	/**
 	 * Initialize the attachment with the provided file, description of the
@@ -415,8 +420,8 @@ public class Attachment {
 	 *            the disposition of the attachment
 	 */
 	public Attachment(File file, String description, String disposition) {
-<span class="nc" id="L418">		this(new FileResource(file), description, disposition);</span>
-<span class="nc" id="L419">	}</span>
+<span class="fc" id="L423">		this(new FileResource(file), description, disposition);</span>
+<span class="fc" id="L424">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -436,8 +441,8 @@ public class Attachment {
 	 *            the description of the attachment (may be null)
 	 */
 	public Attachment(File file, String description) {
-<span class="nc" id="L439">		this(new FileResource(file), description);</span>
-<span class="nc" id="L440">	}</span>
+<span class="nc" id="L444">		this(new FileResource(file), description);</span>
+<span class="nc" id="L445">	}</span>
 
 	/**
 	 * &lt;p&gt;
@@ -457,63 +462,74 @@ public class Attachment {
 	 *            the file to attach
 	 */
 	public Attachment(File file) {
-<span class="fc" id="L460">		this(new FileResource(file));</span>
-<span class="fc" id="L461">	}</span>
+<span class="fc" id="L465">		this(new FileResource(file));</span>
+<span class="fc" id="L466">	}</span>
 
 	public String getDescription() {
-<span class="fc" id="L464">		return description;</span>
+<span class="fc" id="L469">		return description;</span>
 	}
 
 	public void setDescription(String description) {
-<span class="nc" id="L468">		this.description = description;</span>
-<span class="nc" id="L469">	}</span>
+<span class="nc" id="L473">		this.description = description;</span>
+<span class="nc" id="L474">	}</span>
 
 	public String getDisposition() {
-<span class="fc" id="L472">		return disposition;</span>
+<span class="fc" id="L477">		return disposition;</span>
 	}
 
 	public void setDisposition(String disposition) {
-<span class="nc" id="L476">		this.disposition = disposition;</span>
-<span class="nc" id="L477">	}</span>
+<span class="fc" id="L481">		this.disposition = disposition;</span>
+<span class="fc" id="L482">	}</span>
 
 	public NamedResource getResource() {
-<span class="fc" id="L480">		return resource;</span>
+<span class="fc" id="L485">		return resource;</span>
 	}
 
 	public void setResource(NamedResource resource) {
-<span class="fc" id="L484">		this.resource = resource;</span>
-<span class="fc" id="L485">	}</span>
+<span class="fc" id="L489">		this.resource = resource;</span>
+<span class="fc" id="L490">	}</span>
 
 	public String getContentId() {
-<span class="fc" id="L488">		return contentId;</span>
+<span class="fc" id="L493">		return contentId;</span>
 	}
 
 	public void setContentId(String contentId) {
-<span class="nc" id="L492">		this.contentId = contentId;</span>
-<span class="nc" id="L493">	}</span>
+<span class="fc" id="L497">		this.contentId = contentId;</span>
+<span class="fc" id="L498">	}</span>
+
+	public String getContentType() {
+<span class="fc" id="L501">		return contentType;</span>
+	}
+
+	public void setContentType(String contentType) {
+<span class="fc" id="L505">		this.contentType = contentType;</span>
+<span class="fc" id="L506">	}</span>
 
 	@Override
 	public String toString() {
-<span class="fc" id="L497">		StringBuilder builder = new StringBuilder();</span>
-<span class="fc" id="L498">		builder.append(&quot;&lt;&quot;).append(resource.getName());</span>
-<span class="pc bpc" id="L499" title="1 of 2 branches missed.">		if (description != null) {</span>
-<span class="nc" id="L500">			builder.append(&quot; )&quot;).append(description).append(&quot;)&quot;);</span>
+<span class="fc" id="L510">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L511">		builder.append(&quot;&lt;&quot;).append(resource.getName());</span>
+<span class="fc bfc" id="L512" title="All 2 branches covered.">		if (contentType != null) {</span>
+<span class="fc" id="L513">			builder.append(&quot; [&quot;).append(contentType).append(&quot;]&quot;);</span>
 		}
-<span class="fc bfc" id="L502" title="All 2 branches covered.">		if (contentId != null) {</span>
-<span class="fc" id="L503">			builder.append(&quot;{&quot;).append(contentId).append(&quot;}&gt;&quot;);</span>
+<span class="fc bfc" id="L515" title="All 2 branches covered.">		if (description != null) {</span>
+<span class="fc" id="L516">			builder.append(&quot;(&quot;).append(description).append(&quot;)&quot;);</span>
 		}
-<span class="fc" id="L505">		builder.append(&quot;[&quot;).append(disposition).append(&quot;]&gt;&quot;);</span>
-<span class="fc" id="L506">		return builder.toString();</span>
+<span class="fc bfc" id="L518" title="All 2 branches covered.">		if (contentId != null) {</span>
+<span class="fc" id="L519">			builder.append(&quot;{&quot;).append(contentId).append(&quot;}&gt;&quot;);</span>
+		}
+<span class="fc" id="L521">		builder.append(&quot;|&quot;).append(disposition).append(&quot;|&gt;&quot;);</span>
+<span class="fc" id="L522">		return builder.toString();</span>
 	}
 
 	@Override
 	public int hashCode() {
-<span class="fc" id="L511">		return new HashCodeBuilder().append(resource, description, disposition, contentId).hashCode();</span>
+<span class="fc" id="L527">		return new HashCodeBuilder().append(resource, description, disposition, contentId, contentType).hashCode();</span>
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-<span class="fc" id="L516">		return new EqualsBuilder(this, obj).appendFields(&quot;resource&quot;, &quot;description&quot;, &quot;disposition&quot;, &quot;contentId&quot;).isEqual();</span>
+<span class="fc" id="L532">		return new EqualsBuilder(this, obj).appendFields(&quot;resource&quot;, &quot;description&quot;, &quot;disposition&quot;, &quot;contentId&quot;, &quot;contentType&quot;).isEqual();</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

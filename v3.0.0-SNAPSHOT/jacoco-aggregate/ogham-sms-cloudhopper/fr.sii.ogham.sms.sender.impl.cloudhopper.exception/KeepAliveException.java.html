@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>KeepAliveException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.cloudhopper.exception</a> &gt; <span class="el_source">KeepAliveException.java</span></div><h1>KeepAliveException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.cloudhopper.exception;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+import com.cloudhopper.smpp.pdu.EnquireLink;
+
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.ErrorAnalyzer;
+
+/**
+ * In order to avoid creating a new session for each message to send, Ogha
+ * provides different strategies to handle the sessions. One of them is to
+ * actively maintain the current session alive by sending {@link EnquireLink}
+ * PDUs.
+ * 
+ * This exception is dedicated to this strategy and indicates how many
+ * {@link EnquireLink} have failed to be sent. This is used by
+ * {@link ErrorAnalyzer} to determine if the current session has to be closed
+ * and a new one is required or not.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class KeepAliveException extends SmppException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	private final int consecutiveFailures;
+
+	public KeepAliveException(String message, Throwable cause, int consecutiveFailures) {
+<span class="fc" id="L28">		super(message, cause);</span>
+<span class="fc" id="L29">		this.consecutiveFailures = consecutiveFailures;</span>
+<span class="fc" id="L30">	}</span>
+
+	public int getConsecutiveFailures() {
+<span class="fc" id="L33">		return consecutiveFailures;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

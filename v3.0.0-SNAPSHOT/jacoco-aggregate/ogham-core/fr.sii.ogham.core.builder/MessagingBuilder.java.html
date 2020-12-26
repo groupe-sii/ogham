@@ -1,15 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessagingBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder</a> &gt; <span class="el_source">MessagingBuilder.java</span></div><h1>MessagingBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessagingBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder</a> &gt; <span class="el_source">MessagingBuilder.java</span></div><h1>MessagingBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder;
 
 import static java.util.Arrays.asList;
 
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -18,20 +19,31 @@ import org.reflections.scanners.SubTypesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
+import fr.sii.ogham.core.builder.configurer.Configurer;
 import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.EnvBuilderBasedContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.registry.CleanableRegistry;
+import fr.sii.ogham.core.builder.registry.Registry;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.StandaloneResourceResolutionBuilder;
+import fr.sii.ogham.core.clean.Cleanable;
 import fr.sii.ogham.core.exception.MessagingException;
 import fr.sii.ogham.core.exception.builder.BuildException;
 import fr.sii.ogham.core.sender.ConditionalSender;
+import fr.sii.ogham.core.service.CleanableMessagingService;
 import fr.sii.ogham.core.service.EverySupportingMessagingService;
 import fr.sii.ogham.core.service.MessagingService;
 import fr.sii.ogham.core.service.WrapExceptionMessagingService;
+import fr.sii.ogham.core.util.PriorizedList;
 import fr.sii.ogham.email.builder.EmailBuilder;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.sms.builder.SmsBuilder;
@@ -83,9 +95,9 @@ import fr.sii.ogham.sms.message.Sms;
  *   .build();
  * // send the email
  * service.send(new Email()
- *   .content(new MultiTemplateContent(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .body().template(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42))
  *   .to(&quot;Foo Bar &amp;lt;foo.bar@sii.fr&amp;gt;&quot;))
- *   .attach(new Attachment(&quot;file:/data/reports/report1.pdf&quot;));
+ *   .attach().file(&quot;file:/data/reports/report1.pdf&quot;);
  * &lt;/code&gt;
  * &lt;/pre&gt;
  * 
@@ -103,13 +115,13 @@ import fr.sii.ogham.sms.message.Sms;
  * replaced by values provided by a simple bean object (no conversion is
  * needed). As &quot;ogham-template-thymeleaf&quot; is used and the template is a
  * Thymeleaf template (Thymeleaf directive on &amp;lt;html&amp;gt; tag), this template
- * is parse by Thymeleaf&lt;/li&gt;
+ * is parsed by Thymeleaf&lt;/li&gt;
  * &lt;li&gt;The text content comes from a template located in the classpath
  * (email/sample.txt.ftl) and variables that are present in the template are
  * replaced by values provided by a simple bean object (no conversion is
  * needed). As &quot;ogham-template-freemarker&quot; is used and the template is a
- * Freemarker template (&quot;.ftl&quot; extension), this template is parse by
- * Thymeleaf&lt;/li&gt;
+ * Freemarker template (&quot;.ftl&quot; extension), this template is parsed by
+ * Freemarker&lt;/li&gt;
  * &lt;/ul&gt;
  * &lt;/li&gt;
  * &lt;li&gt;The HTML template has CSS styles that are inlined (CSS are forbidden by
@@ -121,7 +133,7 @@ import fr.sii.ogham.sms.message.Sms;
  * has been automatically detected and indicated to the sent message&lt;/li&gt;
  * &lt;li&gt;The subject is provided by the &amp;lt;title&amp;gt; tag of the HTML&lt;/li&gt;
  * &lt;li&gt;The sender email address is provided by the system property
- * &quot;ogham.email.from&quot;&lt;/li&gt;
+ * &quot;ogham.email.from.default-value&quot;&lt;/li&gt;
  * &lt;/ul&gt;
  * 
  * &lt;p&gt;
@@ -135,9 +147,9 @@ import fr.sii.ogham.sms.message.Sms;
  * MessagingService service = MessagingBuilder.minimal()
  *   .email()
  *     .sender(JavaMailBuilder.class)
- *       .host(&quot;${mail.host}&quot;)
- *       .port(&quot;${mail.port}&quot;)
- *       .charset(&quot;${ogham.email.javamail.body.charset}&quot;, &quot;UTF-8&quot;)
+ *       .host().properties(&quot;${mail.host}&quot;).and()
+ *       .port().properties(&quot;${mail.port}&quot;).and()
+ *       .charset().properties(&quot;${ogham.email.javamail.body.charset}&quot;).defaultValue(&quot;UTF-8&quot;).and()
  *       .mimetype()
  *         .tika()
  *           .failIfOctetStream(false)
@@ -148,9 +160,9 @@ import fr.sii.ogham.sms.message.Sms;
  *   .build();
  * // send the email
  * service.send(new Email()
- *   .content(new MultiTemplateContent(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .body().template(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42))
  *   .to(&quot;Foo Bar &amp;lt;foo.bar@sii.fr&amp;gt;&quot;))
- *   .attach(new Attachment(&quot;file:/data/reports/report1.pdf&quot;));
+ *   .attach().file(&quot;file:/data/reports/report1.pdf&quot;);
  * &lt;/code&gt;
  * &lt;/pre&gt;
  * 
@@ -173,9 +185,9 @@ import fr.sii.ogham.sms.message.Sms;
  *   .build();
  * // send the email
  * service.send(new Email()
- *   .content(new MultiTemplateContent(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .body().template(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42))
  *   .to(&quot;Foo Bar &amp;lt;foo.bar@sii.fr&amp;gt;&quot;))
- *   .attach(new Attachment(&quot;file:/data/reports/report1.pdf&quot;));
+ *   .attach().file(&quot;file:/data/reports/report1.pdf&quot;);
  * &lt;/code&gt;
  * &lt;/pre&gt;
  * 
@@ -212,9 +224,9 @@ import fr.sii.ogham.sms.message.Sms;
  *   .build();
  * // send the email
  * service.send(new Email()
- *   .content(new MultiTemplateContent(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .body().template(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42))
  *   .to(&quot;Foo Bar &amp;lt;foo.bar@sii.fr&amp;gt;&quot;))
- *   .attach(new Attachment(&quot;file:/data/reports/report1.pdf&quot;));
+ *   .attach().file(&quot;file:/data/reports/report1.pdf&quot;);
  * &lt;/code&gt;
  * &lt;/pre&gt;
  * 
@@ -226,20 +238,36 @@ import fr.sii.ogham.sms.message.Sms;
  * when mimetype detection is not enough accurate&lt;/li&gt;
  * &lt;/ul&gt;
  * 
+ * 
+ * &lt;p&gt;
+ * The {@link MessagingService} may open some resources (files, sockets, ...).
+ * The built {@link MessagingService} is wrapped by
+ * {@link CleanableMessagingService}. This way the instantiated service can
+ * clean opened resources either manually (if developer explicitly calls
+ * {@link CleanableMessagingService#clean()}) or automatically (see
+ * {@link CleanableMessagingService} for more information).
+ * 
+ * 
  * @author Aurélien Baudet
  *
  */
 public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
-<span class="fc" id="L233">	private static final Logger LOG = LoggerFactory.getLogger(MessagingBuilder.class);</span>
-	private static final String BASE_PACKAGE = &quot;fr.sii.ogham&quot;;
+<span class="fc" id="L255">	private static final Logger LOG = LoggerFactory.getLogger(MessagingBuilder.class);</span>
+	public static final String BASE_PACKAGE = &quot;fr.sii.ogham&quot;;
 
-	private List&lt;PrioritizedConfigurer&gt; configurers;
-	private EnvironmentBuilder&lt;MessagingBuilder&gt; environmentBuilder;
-	private MimetypeDetectionBuilder&lt;MessagingBuilder&gt; mimetypeBuilder;
-	private StandaloneResourceResolutionBuilder&lt;MessagingBuilder&gt; resourceBuilder;
-	private EmailBuilder emailBuilder;
-	private SmsBuilder smsBuilder;
-	private boolean wrapUncaught;
+	protected final boolean autoconfigure;
+	protected final Map&lt;ConfigurationPhase, Boolean&gt; alreadyConfigured;
+	protected final PriorizedList&lt;ConfigurerWithPhase&gt; configurers;
+	protected final EnvironmentBuilder&lt;MessagingBuilder&gt; environmentBuilder;
+	protected final BuildContext buildContext;
+	protected final Registry&lt;Object&gt; registry;
+	protected final Cleanable cleaner;
+	protected CleanableRegistry cleanableRegistry;
+	protected MimetypeDetectionBuilder&lt;MessagingBuilder&gt; mimetypeBuilder;
+	protected StandaloneResourceResolutionBuilder&lt;MessagingBuilder&gt; resourceBuilder;
+	protected EmailBuilder emailBuilder;
+	protected SmsBuilder smsBuilder;
+	protected final ConfigurationValueBuilderHelper&lt;MessagingBuilder, Boolean&gt; wrapUncaughtValueBuilder;
 
 	/**
 	 * Initializes the builder with minimal requirements:
@@ -249,14 +277,33 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * &lt;li&gt;an empty {@link ResourceResolutionBuilder}&lt;/li&gt;
 	 * &lt;/ul&gt;
 	 * 
+	 * 
+	 * &lt;p&gt;
+	 * If {@code autoconfigure} parameter is true, it applies all registered
+	 * configurers on this builder instance.
+	 * 
+	 * When using {@link #standard()} and {@link #minimal()} factory methods,
+	 * {@code autoconfigure} parameter is set to true.
+	 * 
+	 * 
+	 * @param autoconfigure
+	 *            Trigger configuration automatically if true (for all phases).
+	 *            If false, you have to call
+	 *            {@link #configure(ConfigurationPhase)} manually.
 	 */
-	public MessagingBuilder() {
-<span class="fc" id="L254">		super();</span>
-<span class="fc" id="L255">		configurers = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L256">		environmentBuilder = new SimpleEnvironmentBuilder&lt;&gt;(this);</span>
-<span class="fc" id="L257">		mimetypeBuilder = new SimpleMimetypeDetectionBuilder&lt;&gt;(this, environmentBuilder);</span>
-<span class="fc" id="L258">		resourceBuilder = new StandaloneResourceResolutionBuilder&lt;&gt;(this, environmentBuilder);</span>
-<span class="fc" id="L259">	}</span>
+	public MessagingBuilder(boolean autoconfigure) {
+<span class="fc" id="L295">		super();</span>
+<span class="fc" id="L296">		this.autoconfigure = autoconfigure;</span>
+<span class="fc" id="L297">		alreadyConfigured = new EnumMap&lt;&gt;(ConfigurationPhase.class);</span>
+<span class="fc" id="L298">		configurers = new PriorizedList&lt;&gt;();</span>
+<span class="fc" id="L299">		environmentBuilder = createEnvironmentBuilder();</span>
+<span class="fc" id="L300">		registry = createRegistry();</span>
+<span class="fc" id="L301">		cleaner = createCleanable();</span>
+<span class="fc" id="L302">		buildContext = createBuildContext();</span>
+<span class="fc" id="L303">		mimetypeBuilder = createMimetypeBuilder();</span>
+<span class="fc" id="L304">		resourceBuilder = createResourceResolutionBuilder();</span>
+<span class="fc" id="L305">		wrapUncaughtValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L306">	}</span>
 
 	/**
 	 * Registers a configurer with a priority. Configuration order may be
@@ -264,7 +311,36 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * configurer with highest priority (applied first) has the greatest value.
 	 * 
 	 * The configurer is applied on a this builder instance to configure it
-	 * (when {@link #configure()} is called).
+	 * (when {@link #configure(ConfigurationPhase)} is called).
+	 * 
+	 * &lt;p&gt;
+	 * When using {@link #standard()} and {@link #minimal()} factory methods,
+	 * the list of configurers are automatically loaded from the classpath and
+	 * registered. The priority is indicated through the {@link ConfigurerFor}
+	 * annotation.
+	 * 
+	 * &lt;p&gt;
+	 * The registered configurer will be executed at
+	 * {@link ConfigurationPhase#BEFORE_BUILD} phase.
+	 * 
+	 * 
+	 * @param configurer
+	 *            the configurer to register
+	 * @param priority
+	 *            the configurer priority
+	 * @return this instance for fluent chaining
+	 */
+	public MessagingBuilder register(MessagingConfigurer configurer, int priority) {
+<span class="fc" id="L334">		return register(configurer, priority, ConfigurationPhase.BEFORE_BUILD);</span>
+	}
+
+	/**
+	 * Registers a configurer with a priority. Configuration order may be
+	 * important. The priority is used to apply configurers in order. The
+	 * configurer with highest priority (applied first) has the greatest value.
+	 * 
+	 * The configurer is applied on a this builder instance to configure it
+	 * (when {@link #configure(ConfigurationPhase)} is called).
 	 * 
 	 * &lt;p&gt;
 	 * When using {@link #standard()} and {@link #minimal()} factory methods,
@@ -277,28 +353,40 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *            the configurer to register
 	 * @param priority
 	 *            the configurer priority
+	 * @param phase
+	 *            register the configurer to be executed at the defined the
+	 *            configuration phase
 	 * @return this instance for fluent chaining
 	 */
-	public MessagingBuilder register(MessagingConfigurer configurer, int priority) {
-<span class="fc" id="L283">		LOG.debug(&quot;[{}] registered with priority={}&quot;, configurer, priority);</span>
-<span class="fc" id="L284">		configurers.add(new PrioritizedConfigurer(priority, configurer));</span>
-<span class="fc" id="L285">		return this;</span>
+	public MessagingBuilder register(MessagingConfigurer configurer, int priority, ConfigurationPhase phase) {
+<span class="fc" id="L362">		LOG.debug(&quot;[{}] registered for phase {} with priority={}&quot;, configurer, phase, priority);</span>
+<span class="fc" id="L363">		configurers.register(new ConfigurerWithPhase(configurer, phase), priority);</span>
+<span class="fc" id="L364">		return this;</span>
 	}
 
 	/**
-	 * Apply all registered configurers on this builder instance.
+	 * Apply all registered configurers on this builder instance for the
+	 * {@link ConfigurationPhase}.
 	 * 
 	 * &lt;p&gt;
 	 * When using {@link #standard()} and {@link #minimal()} factory methods,
 	 * this method is automatically called.
+	 * 
+	 * @param phase
+	 *            the configuration phase
 	 */
-	public void configure() {
-<span class="fc" id="L296">		Collections.sort(configurers, new PriorityComparator());</span>
-<span class="fc bfc" id="L297" title="All 2 branches covered.">		for (PrioritizedConfigurer configurer : configurers) {</span>
-<span class="fc" id="L298">			LOG.debug(&quot;[{}] configuring...&quot;, configurer);</span>
-<span class="fc" id="L299">			configurer.getConfigurer().configure(this);</span>
-<span class="fc" id="L300">		}</span>
-<span class="fc" id="L301">	}</span>
+	public void configure(ConfigurationPhase phase) {
+<span class="pc bpc" id="L379" title="1 of 2 branches missed.">		if (alreadyConfigured(phase)) {</span>
+<span class="nc" id="L380">			return;</span>
+		}
+<span class="fc bfc" id="L382" title="All 2 branches covered.">		for (ConfigurerWithPhase configurerWithPhase : configurers.getOrdered()) {</span>
+<span class="fc bfc" id="L383" title="All 2 branches covered.">			if (phase == configurerWithPhase.getPhase()) {</span>
+<span class="fc" id="L384">				LOG.debug(&quot;[{}] configuring for phase {}...&quot;, configurerWithPhase.getConfigurer(), phase);</span>
+<span class="fc" id="L385">				configurerWithPhase.getConfigurer().configure(this);</span>
+			}
+<span class="fc" id="L387">		}</span>
+<span class="fc" id="L388">		alreadyConfigured.put(phase, true);</span>
+<span class="fc" id="L389">	}</span>
 
 	/**
 	 * Configures environment for the builder (and sub-builders if inherited).
@@ -346,7 +434,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the builder to configure properties handling
 	 */
 	public EnvironmentBuilder&lt;MessagingBuilder&gt; environment() {
-<span class="fc" id="L349">		return environmentBuilder;</span>
+<span class="fc" id="L437">		return environmentBuilder;</span>
 	}
 
 	/**
@@ -414,7 +502,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the builder to configure resource resolution
 	 */
 	public StandaloneResourceResolutionBuilder&lt;MessagingBuilder&gt; resource() {
-<span class="fc" id="L417">		return resourceBuilder;</span>
+<span class="fc" id="L505">		return resourceBuilder;</span>
 	}
 
 	/**
@@ -466,7 +554,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the builder to configure mimetype detection
 	 */
 	public MimetypeDetectionBuilder&lt;MessagingBuilder&gt; mimetype() {
-<span class="fc" id="L469">		return mimetypeBuilder;</span>
+<span class="fc" id="L557">		return mimetypeBuilder;</span>
 	}
 
 	/**
@@ -493,13 +581,103 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * all exceptions including {@link RuntimeException}. It wraps any
 	 * exceptions into a {@link MessagingException}.
 	 * 
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #wrapUncaught()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .wrapUncaught(false)
+	 * .wrapUncaught()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .wrapUncaught(false)
+	 * .wrapUncaught()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code wrapUncaught(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
 	 * @param enable
-	 *            enable or disable wrapping of exceptions
+	 *            enable or disable catching of unchecked exceptions
 	 * @return this instance for fluent chaining
 	 */
-	public MessagingBuilder wrapUncaught(boolean enable) {
-<span class="fc" id="L501">		wrapUncaught = enable;</span>
-<span class="fc" id="L502">		return this;</span>
+	public MessagingBuilder wrapUncaught(Boolean enable) {
+<span class="nc" id="L617">		wrapUncaughtValueBuilder.setValue(enable);</span>
+<span class="nc" id="L618">		return this;</span>
+	}
+
+	/**
+	 * There are technical exceptions that are thrown by libraries used by
+	 * Ogham. Those exceptions are often {@link RuntimeException}s. It can be
+	 * difficult for developers of a big application to quickly identify what
+	 * caused this {@link RuntimeException}. The stack trace doesn't always help
+	 * to find the real source of the error. If enables, this option ensures
+	 * that work done by Ogham will always throw a {@link MessagingException}
+	 * even if it was a {@link RuntimeException} thrown by any component. It
+	 * then helps the developer to know that the error comes from Ogham or a any
+	 * used library and not something else in its application. The other benefit
+	 * is that in your code you only catch a {@link MessagingException} and you
+	 * are sure that it will handle all cases, no surprise with an unchecked
+	 * exception that could make a big failure in your system because you didn't
+	 * know this could happen. Sending a message is often not critical (if
+	 * message can't be sent now, it can be sent later or manually). It it fails
+	 * the whole system must keep on working. With this option enabled, your
+	 * system will never fail due to an unchecked exception and you can handle
+	 * the failure the same way as with checked exceptions.
+	 * 
+	 * Concretely, call of
+	 * {@link MessagingService#send(fr.sii.ogham.core.message.Message)} catches
+	 * all exceptions including {@link RuntimeException}. It wraps any
+	 * exceptions into a {@link MessagingException}.
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .wrapUncaught()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #wrapUncaught(Boolean)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .wrapUncaught(false)
+	 * .wrapUncaught()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;MessagingBuilder, Boolean&gt; wrapUncaught() {
+<span class="fc" id="L680">		return wrapUncaughtValueBuilder;</span>
 	}
 
 	/**
@@ -594,8 +772,8 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *     .and()
 	 *   .email()
 	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
-	 *       .host(&quot;${mail.host}&quot;)
-	 *       .port(&quot;${mail.port}&quot;)
+	 *       .host().properties(&quot;${mail.host}&quot;).and()
+	 *       .port().properties(&quot;${mail.port}&quot;).and()
 	 *       .and()
 	 *     .and()
 	 *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
@@ -634,12 +812,12 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *     .and()
 	 *   .email()
 	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
-	 *       .host(&quot;${mail.host}&quot;)
-	 *       .port(&quot;${mail.port}&quot;)
+	 *       .host().properties(&quot;${mail.host}&quot;).and()
+	 *       .port().properties(&quot;${mail.port}&quot;).and()
 	 *       .and()
 	 *     .autofill()    // enables and configures autofilling
 	 *       .from()
-	 *         .defaultValueProperty(&quot;${email.sender.address}&quot;)
+	 *         .defaultValue().properties(&quot;${email.sender.address}&quot;).and()
 	 *         .and()
 	 *     .and()
 	 *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
@@ -677,12 +855,12 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *     .and()
 	 *   .email()
 	 *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
-	 *       .host(&quot;${mail.host}&quot;)
-	 *       .port(&quot;${mail.port}&quot;)
+	 *       .host().properties(&quot;${mail.host}&quot;).and()
+	 *       .port().properties(&quot;${mail.port}&quot;).and()
 	 *       .and()
 	 *     .autofill()    // enables and configures autofilling
 	 *       .from()
-	 *         .defaultValueProperty(&quot;${email.sender.address}&quot;)
+	 *         .defaultValue().properties(&quot;${email.sender.address}&quot;).and()
 	 *         .and()
 	 *       .subject()
 	 *         .htmlTitle(true)    // enables use of html title tag as subject
@@ -757,7 +935,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * &lt;pre&gt;
 	 * mail.host=your STMP server host
 	 * mail.port=your STMP server port
-	 * ogham.email.from=sender email address
+	 * ogham.email.from.default-value=sender email address
 	 * &lt;/pre&gt;
 	 * 
 	 * &lt;p&gt;
@@ -774,7 +952,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *   .email()
 	 *     .autofill()
 	 *       .from()
-	 *         .defaultValueProperty(&quot;${email.sender.address}&quot;)   // overrides default sender email address property
+	 *         .defaultValue().properties(&quot;${email.sender.address}&quot;).and()   // overrides default sender email address property
 	 *         .and()
 	 *       .and()
 	 *     .and()
@@ -798,10 +976,10 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the builder to configure how Email are handled
 	 */
 	public EmailBuilder email() {
-<span class="fc bfc" id="L801" title="All 2 branches covered.">		if (emailBuilder == null) {</span>
-<span class="fc" id="L802">			emailBuilder = new EmailBuilder(this, environmentBuilder);</span>
+<span class="fc bfc" id="L979" title="All 2 branches covered.">		if (emailBuilder == null) {</span>
+<span class="fc" id="L980">			emailBuilder = new EmailBuilder(this, buildContext);</span>
 		}
-<span class="fc" id="L804">		return emailBuilder;</span>
+<span class="fc" id="L982">		return emailBuilder;</span>
 	}
 
 	/**
@@ -890,10 +1068,10 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *     .and()
 	 *   .sms()
 	 *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
-	 *       .host(&quot;${smpp.host}&quot;)
-	 *       .port(&quot;${smpp.port}&quot;)
-	 *       .systemId(&quot;${smpp.system-id}&quot;)
-	 *       .password(&quot;${smpp.password}&quot;)
+	 *       .host().properties(&quot;${smpp.host}&quot;).and()
+	 *       .port().properties(&quot;${smpp.port}&quot;).and()
+	 *       .systemId().properties(&quot;${smpp.system-id}&quot;).and()
+	 *       .password().properties(&quot;${smpp.password}&quot;).and()
 	 *       .and()
 	 *     .and()
 	 *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
@@ -933,14 +1111,14 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *     .and()
 	 *   .sms()
 	 *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
-	 *       .host(&quot;${smpp.host}&quot;)
-	 *       .port(&quot;${smpp.port}&quot;)
-	 *       .systemId(&quot;${smpp.system-id}&quot;)
-	 *       .password(&quot;${smpp.password}&quot;)
+	 *       .host().properties(&quot;${smpp.host}&quot;).and()
+	 *       .port().properties(&quot;${smpp.port}&quot;).and()
+	 *       .systemId().properties(&quot;${smpp.system-id}&quot;).and()
+	 *       .password().properties(&quot;${smpp.password}&quot;).and()
 	 *       .and()
 	 *     .autofill()    // enables and configures autofilling
 	 *       .from()
-	 *         .defaultValueProperty(&quot;${sms.sender.number}&quot;)
+	 *         .defaultValue().properties(&quot;${sms.sender.number}&quot;).and()
 	 *         .and()
 	 *       .and()
 	 *     .and()
@@ -1000,7 +1178,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * ogham.sms.smpp.port=your SMPP server port
 	 * ogham.sms.smpp.system-id=your SMPP system_id
 	 * ogham.sms.smpp.password=an optional password
-	 * ogham.sms.from=the sender phone number
+	 * ogham.sms.from.default-value=the sender phone number
 	 * &lt;/pre&gt;
 	 * 
 	 * &lt;p&gt;
@@ -1017,7 +1195,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *   .sms()
 	 *     .autofill()
 	 *       .from()
-	 *         .defaultValueProperty(&quot;${sms.sender.number}&quot;)   // overrides default sender phone number property
+	 *         .defaultValue().properties(&quot;${sms.sender.number}&quot;).and()   // overrides default sender phone number property
 	 *         .and()
 	 *       .and()
 	 *     .and()
@@ -1042,10 +1220,10 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the builder to configure how SMS are handled
 	 */
 	public SmsBuilder sms() {
-<span class="fc bfc" id="L1045" title="All 2 branches covered.">		if (smsBuilder == null) {</span>
-<span class="fc" id="L1046">			smsBuilder = new SmsBuilder(this, environmentBuilder);</span>
+<span class="fc bfc" id="L1223" title="All 2 branches covered.">		if (smsBuilder == null) {</span>
+<span class="fc" id="L1224">			smsBuilder = new SmsBuilder(this, buildContext);</span>
 		}
-<span class="fc" id="L1048">		return smsBuilder;</span>
+<span class="fc" id="L1226">		return smsBuilder;</span>
 	}
 
 	/**
@@ -1069,16 +1247,53 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *             when service couldn't be instantiated and configured
 	 */
 	@Override
+	@SuppressWarnings(&quot;squid:S5411&quot;)
 	public MessagingService build() {
-<span class="fc" id="L1073">		LOG.info(&quot;Using service that calls all registered senders&quot;);</span>
-<span class="fc" id="L1074">		List&lt;ConditionalSender&gt; senders = buildSenders();</span>
-<span class="fc" id="L1075">		LOG.debug(&quot;Registered senders: {}&quot;, senders);</span>
-<span class="fc" id="L1076">		MessagingService service = new EverySupportingMessagingService(senders);</span>
-<span class="fc bfc" id="L1077" title="All 2 branches covered.">		if (wrapUncaught) {</span>
-<span class="fc" id="L1078">			service = new WrapExceptionMessagingService(service);</span>
+<span class="fc bfc" id="L1252" title="All 2 branches covered.">		if (autoconfigure) {</span>
+<span class="fc" id="L1253">			configure(ConfigurationPhase.BEFORE_BUILD);</span>
 		}
-<span class="fc" id="L1080">		return service;</span>
+<span class="fc" id="L1255">		LOG.info(&quot;Using service that calls all registered senders&quot;);</span>
+<span class="fc" id="L1256">		List&lt;ConditionalSender&gt; senders = buildSenders();</span>
+<span class="fc" id="L1257">		LOG.debug(&quot;Registered senders: {}&quot;, senders);</span>
+<span class="fc" id="L1258">		MessagingService service = new EverySupportingMessagingService(senders);</span>
+<span class="fc bfc" id="L1259" title="All 2 branches covered.">		if (wrapUncaughtValueBuilder.getValue(false)) {</span>
+<span class="fc" id="L1260">			service = new WrapExceptionMessagingService(service);</span>
+		}
+<span class="fc" id="L1262">		service = new CleanableMessagingService(service, cleaner);</span>
+<span class="fc" id="L1263">		return service;</span>
 	}
+	
+	protected StandaloneResourceResolutionBuilder&lt;MessagingBuilder&gt; createResourceResolutionBuilder() {
+<span class="fc" id="L1267">		return new StandaloneResourceResolutionBuilder&lt;&gt;(this, buildContext);</span>
+	}
+	
+	protected MimetypeDetectionBuilder&lt;MessagingBuilder&gt; createMimetypeBuilder() {
+<span class="fc" id="L1271">		return new SimpleMimetypeDetectionBuilder&lt;&gt;(this, buildContext);</span>
+	}
+	
+	protected Cleanable createCleanable() {
+<span class="fc" id="L1275">		return getOrCreateCleanableRegistry();</span>
+	}
+	
+	protected Registry&lt;Object&gt; createRegistry() {
+<span class="fc" id="L1279">		return getOrCreateCleanableRegistry();</span>
+	}
+	
+	protected CleanableRegistry getOrCreateCleanableRegistry() {
+<span class="fc bfc" id="L1283" title="All 2 branches covered.">		if (cleanableRegistry == null) {</span>
+<span class="fc" id="L1284">			cleanableRegistry = new CleanableRegistry();</span>
+		}
+<span class="fc" id="L1286">		return cleanableRegistry;</span>
+	}
+	
+	protected EnvironmentBuilder&lt;MessagingBuilder&gt; createEnvironmentBuilder() {
+<span class="fc" id="L1290">		return new SimpleEnvironmentBuilder&lt;&gt;(this);</span>
+	}
+	
+	protected BuildContext createBuildContext() {
+<span class="fc" id="L1294">		return new EnvBuilderBasedContext(environmentBuilder, registry);</span>
+	}
+
 
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
@@ -1088,7 +1303,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *         be configured
 	 */
 	public static MessagingBuilder empty() {
-<span class="fc" id="L1091">		return new MessagingBuilder();</span>
+<span class="fc" id="L1306">		return new MessagingBuilder(false);</span>
 	}
 
 	/**
@@ -1180,7 +1395,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder standard() {
-<span class="fc" id="L1183">		return standard(BASE_PACKAGE);</span>
+<span class="fc" id="L1398">		return standard(BASE_PACKAGE);</span>
 	}
 
 	/**
@@ -1274,14 +1489,14 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder standard(String... basePackages) {
-<span class="fc" id="L1277">		return standard(true, basePackages);</span>
+<span class="fc" id="L1492">		return standard(true, basePackages);</span>
 	}
 
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
 	 * instance and registers auto-configures but doesn't apply them if
-	 * autoconfigure parameter is false. The {@link #configure()} method must be
-	 * called manually.
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
 	 * 
 	 * Usage example:
 	 * 
@@ -1366,18 +1581,19 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * 
 	 * @param autoconfigure
 	 *            true to automatically apply found configurers, false to
-	 *            configure manually later by calling {@link #configure()}
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder standard(boolean autoconfigure) {
-<span class="fc" id="L1373">		return standard(autoconfigure, BASE_PACKAGE);</span>
+<span class="nc" id="L1589">		return standard(autoconfigure, BASE_PACKAGE);</span>
 	}
 
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
 	 * instance and registers auto-configures but doesn't apply them if
-	 * autoconfigure parameter is false. The {@link #configure()} method must be
-	 * called manually.
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
 	 * 
 	 * Usage example:
 	 * 
@@ -1461,19 +1677,132 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * 
 	 * @param autoconfigure
 	 *            true to automatically apply found configurers, false to
-	 *            configure manually later by calling {@link #configure()}
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
 	 * @param basePackages
 	 *            the base packages that are scanned to find
 	 *            {@link MessagingConfigurer} implementations
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder standard(boolean autoconfigure, String... basePackages) {
-<span class="fc" id="L1471">		MessagingBuilder builder = new MessagingBuilder();</span>
-<span class="fc" id="L1472">		findAndRegister(builder, &quot;standard&quot;, basePackages);</span>
-<span class="fc bfc" id="L1473" title="All 2 branches covered.">		if (autoconfigure) {</span>
-<span class="fc" id="L1474">			builder.configure();</span>
+<span class="fc" id="L1688">		return standard(() -&gt; new MessagingBuilder(autoconfigure), autoconfigure, basePackages);</span>
+	}
+
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and registers auto-configures but doesn't apply them if
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
+	 * 
+	 * &lt;p&gt;
+	 * This method allows to use a custom {@link MessagingBuilder}
+	 * implementation.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; This is for advanced usage only.
+	 * 
+	 * Usage example:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties(&quot;application.properties&quot;)
+	 *     .and()
+	 *   .build();
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Basically, the standard behavior:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enables all template engines that are present in the classpath and
+	 * configures them&lt;/li&gt;
+	 * &lt;li&gt;Enables all {@link Email} sender implementations that are present in
+	 * the classpath and configures them&lt;/li&gt;
+	 * &lt;li&gt;Enables all {@link Sms} sender implementations that are present in
+	 * the classpath and configures them&lt;/li&gt;
+	 * &lt;li&gt;Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception&lt;/li&gt;
+	 * &lt;li&gt;Uses system properties&lt;/li&gt;
+	 * &lt;li&gt;Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)&lt;/li&gt;
+	 * &lt;li&gt;Enables mimetype detection&lt;/li&gt;
+	 * &lt;li&gt;Enables locating templates, css, images and all other resources using
+	 * lookup prefix (&quot;file:&quot; for files that are present on the filesystem,
+	 * &quot;classpath:&quot; and &quot;&quot; for files that are present in the classpath)&lt;/li&gt;
+	 * &lt;li&gt;Enables use of some properties to provide path prefix/suffix for
+	 * locating resources&lt;/li&gt;
+	 * &lt;li&gt;Enables images and css inlining used by HTML {@link Email}s&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in the provided
+	 * packages and sub-packages are loaded. Some Ogham modules are optional
+	 * meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the &quot;standard&quot; builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to &quot;standard&quot;).
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultMessagingConfigurer&lt;/code&gt;: 100000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultThymeleafEmailConfigurer&lt;/code&gt;: 90000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultFreemarkerEmailConfigurer&lt;/code&gt;: 80000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultThymeleafSmsConfigurer&lt;/code&gt;: 70000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultFreemarkerSmsConfigurer&lt;/code&gt;: 60000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultJavaMailConfigurer&lt;/code&gt;: 50000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultCloudhopperConfigurer&lt;/code&gt;: 40000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultSendGridConfigurer&lt;/code&gt;: 30000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultOvhSmsConfigurer&lt;/code&gt;: 20000&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * TODO: link to whole configuration that is applied by standard
+	 * 
+	 * &lt;p&gt;
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior that fits 95% of usages. You can still override some behaviors
+	 * for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 * MessagingService service = MessagingBuilder.standard()
+	 *   .environment()
+	 *     .properties(&quot;application.properties&quot;)
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * @param factory
+	 *            the factory used to create the {@link MessagingBuilder}
+	 *            instance
+	 * @param autoconfigure
+	 *            true to automatically apply found configurers, false to
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
+	 * @param basePackages
+	 *            the base packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 * @param &lt;T&gt;
+	 *            the type of final {@link MessagingBuilder}
+	 * @return the messaging builder that can be customized
+	 */
+	public static &lt;T extends MessagingBuilder&gt; T standard(Supplier&lt;T&gt; factory, boolean autoconfigure, String... basePackages) {
+<span class="fc" id="L1800">		T builder = factory.get();</span>
+<span class="fc" id="L1801">		findAndRegister(builder, &quot;standard&quot;, basePackages);</span>
+<span class="fc bfc" id="L1802" title="All 2 branches covered.">		if (autoconfigure) {</span>
+<span class="fc" id="L1803">			builder.configure(ConfigurationPhase.AFTER_INIT);</span>
 		}
-<span class="fc" id="L1476">		return builder;</span>
+<span class="fc" id="L1805">		return builder;</span>
 	}
 
 	/**
@@ -1561,7 +1890,7 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder minimal() {
-<span class="nc" id="L1564">		return minimal(BASE_PACKAGE);</span>
+<span class="fc" id="L1893">		return minimal(BASE_PACKAGE);</span>
 	}
 
 	/**
@@ -1651,14 +1980,14 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder minimal(String... basePackages) {
-<span class="nc" id="L1654">		return minimal(true, basePackages);</span>
+<span class="fc" id="L1983">		return minimal(true, basePackages);</span>
 	}
 
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
 	 * instance and registers auto-configures but doesn't apply them if
-	 * autoconfigure parameter is false. The {@link #configure()} method must be
-	 * called manually.
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
 	 * 
 	 * Usage example:
 	 * 
@@ -1739,18 +2068,19 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * 
 	 * @param autoconfigure
 	 *            true to automatically apply found configurers, false to
-	 *            configure manually later by calling {@link #configure()}
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder minimal(boolean autoconfigure) {
-<span class="nc" id="L1746">		return minimal(autoconfigure, BASE_PACKAGE);</span>
+<span class="nc" id="L2076">		return minimal(autoconfigure, BASE_PACKAGE);</span>
 	}
 
 	/**
 	 * Static factory method that initializes a {@link MessagingBuilder}
 	 * instance and registers auto-configures but doesn't apply them if
-	 * autoconfigure parameter is false. The {@link #configure()} method must be
-	 * called manually.
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
 	 * 
 	 * 
 	 * Usage example:
@@ -1831,19 +2161,128 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 * 
 	 * @param autoconfigure
 	 *            true to automatically apply found configurers, false to
-	 *            configure manually later by calling {@link #configure()}
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
 	 * @param basePackages
 	 *            the base packages that are scanned to find
 	 *            {@link MessagingConfigurer} implementations
 	 * @return the messaging builder that can be customized
 	 */
 	public static MessagingBuilder minimal(boolean autoconfigure, String... basePackages) {
-<span class="nc" id="L1841">		MessagingBuilder builder = new MessagingBuilder();</span>
-<span class="nc" id="L1842">		findAndRegister(builder, &quot;minimal&quot;, basePackages);</span>
-<span class="nc bnc" id="L1843" title="All 2 branches missed.">		if (autoconfigure) {</span>
-<span class="nc" id="L1844">			builder.configure();</span>
+<span class="fc" id="L2172">		return minimal(() -&gt; new MessagingBuilder(autoconfigure), autoconfigure, basePackages);</span>
+	}
+
+	/**
+	 * Static factory method that initializes a {@link MessagingBuilder}
+	 * instance and registers auto-configures but doesn't apply them if
+	 * autoconfigure parameter is false. The
+	 * {@link #configure(ConfigurationPhase)} method must be called manually.
+	 * 
+	 * &lt;p&gt;
+	 * This method allows to use a custom {@link MessagingBuilder}
+	 * implementation.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; This is for advanced usage only.
+	 * 
+	 * 
+	 * Usage example:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties(&quot;application.properties&quot;)
+	 *     .and()
+	 *   .build();
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Basically, the minimal behavior:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enables all template engines that are present in the classpath and
+	 * configures them&lt;/li&gt;
+	 * &lt;li&gt;Catches all uncaught exception to wrap them in order to avoid
+	 * unwanted unchecked exception&lt;/li&gt;
+	 * &lt;li&gt;Uses system properties&lt;/li&gt;
+	 * &lt;li&gt;Enables and configures useful auto-filling mechanisms (using property
+	 * values and providing email subject from templates)&lt;/li&gt;
+	 * &lt;li&gt;Enables mimetype detection&lt;/li&gt;
+	 * &lt;li&gt;Enables locating templates, css, images and all other resources using
+	 * lookup prefix (&quot;file:&quot; for files that are present on the filesystem,
+	 * &quot;classpath:&quot; and &quot;&quot; for files that are present in the classpath)&lt;/li&gt;
+	 * &lt;li&gt;Enables use of some properties to provide path prefix/suffix for
+	 * locating resources&lt;/li&gt;
+	 * &lt;li&gt;Enables images and css inlining used by HTML {@link Email}s&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * The minimal behavior doesn't automatically auto-configure sender
+	 * implementations.
+	 * 
+	 * &lt;p&gt;
+	 * The auto-configurers ( {@link MessagingConfigurer}s) are automatically
+	 * loaded from the classpath. Only configurers that are in the provided
+	 * packages and sub-packages are loaded. Some Ogham modules are optional
+	 * meaning that according to used modules, the behavior will vary.
+	 * 
+	 * Loaded {@link MessagingConfigurer}s are applied to the
+	 * {@link MessagingBuilder} only if they are for the &quot;minimal&quot; builder. It
+	 * is accomplished thanks to the {@link ConfigurerFor} annotation (only
+	 * configurers annotated and with {@link ConfigurerFor#targetedBuilder()}
+	 * set to &quot;minimal&quot;).
+	 * 
+	 * Loaded configurers with priorities are (if all Ogham modules are used):
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultMessagingConfigurer&lt;/code&gt;: 100000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultThymeleafEmailConfigurer&lt;/code&gt;: 90000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultFreemarkerEmailConfigurer&lt;/code&gt;: 80000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultThymeleafSmsConfigurer&lt;/code&gt;: 70000&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;DefaultFreemarkerSmsConfigurer&lt;/code&gt;: 60000&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * TODO: link to whole configuration that is applied by minimal
+	 * 
+	 * &lt;p&gt;
+	 * The auto-configured {@link MessagingBuilder} will provide a default
+	 * behavior with no sender implementation. This is useful if you only want
+	 * to use a particular implementation or your custom sender implementation.
+	 * You can still override some behaviors for your needs.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 * MessagingService service = MessagingBuilder.minimal()
+	 *   .environment()
+	 *     .properties(&quot;application.properties&quot;)
+	 *     .and()
+	 *   .wrapUncaught(false)    // overrides and disables wrapUncaught option
+	 *   .build();
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * @param factory
+	 *            the factory used to create the {@link MessagingBuilder}
+	 *            instance
+	 * @param autoconfigure
+	 *            true to automatically apply found configurers, false to
+	 *            configure manually later by calling
+	 *            {@link #configure(ConfigurationPhase)}
+	 * @param basePackages
+	 *            the base packages that are scanned to find
+	 *            {@link MessagingConfigurer} implementations
+	 * @param &lt;T&gt;
+	 *            the type of final {@link MessagingBuilder}
+	 * @return the messaging builder that can be customized
+	 */
+	public static &lt;T extends MessagingBuilder&gt; T minimal(Supplier&lt;T&gt; factory, boolean autoconfigure, String... basePackages) {
+<span class="fc" id="L2280">		T builder = factory.get();</span>
+<span class="fc" id="L2281">		findAndRegister(builder, &quot;minimal&quot;, basePackages);</span>
+<span class="pc bpc" id="L2282" title="1 of 2 branches missed.">		if (autoconfigure) {</span>
+<span class="fc" id="L2283">			builder.configure(ConfigurationPhase.AFTER_INIT);</span>
 		}
-<span class="nc" id="L1846">		return builder;</span>
+<span class="fc" id="L2285">		return builder;</span>
 	}
 
 	/**
@@ -1873,63 +2312,60 @@ public class MessagingBuilder implements Builder&lt;MessagingService&gt; {
 	 *            {@link MessagingConfigurer} implementations
 	 */
 	public static void findAndRegister(MessagingBuilder builder, String builderName, String... basePackages) {
-<span class="fc" id="L1876">		Reflections reflections = new Reflections(basePackages, new SubTypesScanner());</span>
-<span class="fc" id="L1877">		Set&lt;Class&lt;? extends MessagingConfigurer&gt;&gt; configurerClasses = reflections.getSubTypesOf(MessagingConfigurer.class);</span>
-<span class="fc bfc" id="L1878" title="All 2 branches covered.">		for (Class&lt;? extends MessagingConfigurer&gt; configurerClass : configurerClasses) {</span>
-<span class="fc" id="L1879">			ConfigurerFor annotation = configurerClass.getAnnotation(ConfigurerFor.class);</span>
-<span class="pc bpc" id="L1880" title="1 of 4 branches missed.">			if (annotation != null &amp;&amp; asList(annotation.targetedBuilder()).contains(builderName)) {</span>
-				try {
-<span class="fc" id="L1882">					builder.register(configurerClass.newInstance(), annotation.priority());</span>
-<span class="nc" id="L1883">				} catch (InstantiationException | IllegalAccessException e) {</span>
-<span class="nc" id="L1884">					throw new BuildException(&quot;Failed to register custom auto-discovered configurer (&quot; + configurerClass.getSimpleName() + &quot;) for standard messaging builder&quot;, e);</span>
-<span class="fc" id="L1885">				}</span>
+<span class="fc" id="L2315">		Reflections reflections = new Reflections(basePackages, new SubTypesScanner());</span>
+<span class="fc" id="L2316">		Set&lt;Class&lt;? extends MessagingConfigurer&gt;&gt; configurerClasses = reflections.getSubTypesOf(MessagingConfigurer.class);</span>
+<span class="fc bfc" id="L2317" title="All 2 branches covered.">		for (Class&lt;? extends MessagingConfigurer&gt; configurerClass : configurerClasses) {</span>
+<span class="fc" id="L2318">			ConfigurerFor annotation = configurerClass.getAnnotation(ConfigurerFor.class);</span>
+<span class="pc bpc" id="L2319" title="1 of 4 branches missed.">			if (annotation != null &amp;&amp; asList(annotation.targetedBuilder()).contains(builderName)) {</span>
+<span class="fc" id="L2320">				register(builder, builderName, configurerClass, annotation);</span>
 			}
-<span class="fc" id="L1887">		}</span>
-<span class="fc" id="L1888">	}</span>
+<span class="fc" id="L2322">		}</span>
+<span class="fc" id="L2323">	}</span>
+
+	private static void register(MessagingBuilder builder, String builderName, Class&lt;? extends MessagingConfigurer&gt; configurerClass, ConfigurerFor annotation) {
+		try {
+<span class="fc" id="L2327">			builder.register(configurerClass.newInstance(), annotation.priority(), annotation.phase());</span>
+<span class="nc" id="L2328">		} catch (InstantiationException | IllegalAccessException e) {</span>
+<span class="nc" id="L2329">			throw new BuildException(&quot;Failed to register custom auto-discovered configurer (&quot; + configurerClass.getSimpleName() + &quot;) for &quot; + builderName + &quot; messaging builder&quot;, e);</span>
+<span class="fc" id="L2330">		}</span>
+<span class="fc" id="L2331">	}</span>
 
 	private List&lt;ConditionalSender&gt; buildSenders() {
-<span class="fc" id="L1891">		List&lt;ConditionalSender&gt; senders = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L1892" title="1 of 2 branches missed.">		if (emailBuilder != null) {</span>
-<span class="fc" id="L1893">			LOG.debug(&quot;building email sender with {}&quot;, emailBuilder);</span>
-<span class="fc" id="L1894">			senders.add(emailBuilder.build());</span>
+<span class="fc" id="L2334">		List&lt;ConditionalSender&gt; senders = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L2335" title="All 2 branches covered.">		if (emailBuilder != null) {</span>
+<span class="fc" id="L2336">			LOG.debug(&quot;building email sender with {}&quot;, emailBuilder);</span>
+<span class="fc" id="L2337">			senders.add(emailBuilder.build());</span>
 		}
-<span class="fc bfc" id="L1896" title="All 2 branches covered.">		if (smsBuilder != null) {</span>
-<span class="fc" id="L1897">			LOG.debug(&quot;building email sender with {}&quot;, emailBuilder);</span>
-<span class="fc" id="L1898">			senders.add(smsBuilder.build());</span>
+<span class="fc bfc" id="L2339" title="All 2 branches covered.">		if (smsBuilder != null) {</span>
+<span class="fc" id="L2340">			LOG.debug(&quot;building email sender with {}&quot;, emailBuilder);</span>
+<span class="fc" id="L2341">			senders.add(smsBuilder.build());</span>
 		}
-<span class="fc" id="L1900">		return senders;</span>
+<span class="fc" id="L2343">		return senders;</span>
 	}
 
-	private static class PriorityComparator implements Comparator&lt;PrioritizedConfigurer&gt; {
-		@Override
-		public int compare(PrioritizedConfigurer o1, PrioritizedConfigurer o2) {
-<span class="fc" id="L1906">			return -Integer.compare(o1.getPriority(), o2.getPriority());</span>
-		}
+	private boolean alreadyConfigured(ConfigurationPhase phase) {
+<span class="fc" id="L2347">		Boolean configured = alreadyConfigured.get(phase);</span>
+<span class="pc bpc" id="L2348" title="3 of 4 branches missed.">		return configured != null &amp;&amp; configured;</span>
 	}
 
-	private static class PrioritizedConfigurer {
-		private final int priority;
+	private static class ConfigurerWithPhase {
 		private final MessagingConfigurer configurer;
+		private final ConfigurationPhase phase;
 
-		public PrioritizedConfigurer(int priority, MessagingConfigurer configurer) {
-<span class="fc" id="L1915">			super();</span>
-<span class="fc" id="L1916">			this.priority = priority;</span>
-<span class="fc" id="L1917">			this.configurer = configurer;</span>
-<span class="fc" id="L1918">		}</span>
-
-		public int getPriority() {
-<span class="fc" id="L1921">			return priority;</span>
-		}
+		public ConfigurerWithPhase(MessagingConfigurer configurer, ConfigurationPhase phase) {
+<span class="fc" id="L2356">			super();</span>
+<span class="fc" id="L2357">			this.configurer = configurer;</span>
+<span class="fc" id="L2358">			this.phase = phase;</span>
+<span class="fc" id="L2359">		}</span>
 
 		public MessagingConfigurer getConfigurer() {
-<span class="fc" id="L1925">			return configurer;</span>
+<span class="fc" id="L2362">			return configurer;</span>
 		}
 
-		@Override
-		public String toString() {
-<span class="fc" id="L1930">			return configurer.toString();</span>
+		public ConfigurationPhase getPhase() {
+<span class="fc" id="L2366">			return phase;</span>
 		}
+
 	}
-
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

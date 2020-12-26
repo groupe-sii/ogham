@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Alphabet.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.bean</a> &gt; <span class="el_source">Alphabet.java</span></div><h1>Alphabet.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.bean;
+
+/**
+ * This is enum of the alphabet type.
+ *
+ * Alphabet represents the lower 4 bits of the data_coding field in the PDU, as
+ * specified in s5.2.19 of the SMPP v3.4 specification.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L13">public enum Alphabet {</span>
+	/**
+	 * SMSC alphabet default
+	 */
+<span class="fc" id="L17">	ALPHA_DEFAULT((byte) 0x00),</span>
+
+	/**
+	 * IA5 (CCITT T.50)/ASCII (ANSI X3.4)
+	 */
+<span class="fc" id="L22">	ALPHA_IA5((byte) 0x01),</span>
+
+	/**
+	 * 8-bit binary octet unspecified coding.
+	 */
+<span class="fc" id="L27">	ALPHA_UNSPECIFIED_2((byte) 0x02),</span>
+
+	/**
+	 * Latin 1 (ISO-8859-1)
+	 */
+<span class="fc" id="L32">	ALPHA_LATIN1((byte) 0x03),</span>
+
+	/**
+	 * 8-bit binary octet unspecified coding.
+	 */
+<span class="fc" id="L37">	ALPHA_8_BIT((byte) 0x04),</span>
+
+	/**
+	 * JIS (X 0208-1990)
+	 */
+<span class="fc" id="L42">	ALPHA_JIS((byte) 0x05),</span>
+
+	/**
+	 * Cyrllic (ISO-8859-5)
+	 */
+<span class="fc" id="L47">	ALPHA_CYRILLIC((byte) 0x06),</span>
+
+	/**
+	 * Latin/Hebrew (ISO-8859-8)
+	 */
+<span class="fc" id="L52">	ALPHA_LATIN_HEBREW((byte) 0x07),</span>
+
+	/**
+	 * UCS2 alphabet coding (16-bit)
+	 */
+<span class="fc" id="L57">	ALPHA_UCS2((byte) 0x08),</span>
+
+	/**
+	 * Pictogram Encoding
+	 */
+<span class="fc" id="L62">	ALPHA_PICTOGRAM_ENCODING((byte) 0x09),</span>
+
+	/**
+	 * ISO-2022-JP (Music Codes)
+	 */
+<span class="fc" id="L67">	ALPHA_ISO_2022_JP_MUSIC_CODES((byte) 0x0a),</span>
+
+	/**
+	 * Unused.
+	 */
+<span class="fc" id="L72">	ALPHA_RESERVED_11((byte) 0x0b),</span>
+
+	/**
+	 * Unused.
+	 */
+<span class="fc" id="L77">	ALPHA_RESERVED_12((byte) 0x0c),</span>
+
+	/**
+	 * Extended Kanji JIS(X 0212-1990)
+	 */
+<span class="fc" id="L82">	ALPHA_JIS_X_0212_1990((byte) 0x0d),</span>
+
+	/**
+	 * KS C 5601 (now known as KS X 1001 but referred to by the old name in the
+	 * SMPP v3.4 spec)
+	 */
+<span class="fc" id="L88">	ALPHA_KS_C_5601((byte) 0x0e),</span>
+
+	/**
+	 * Unused.
+	 */
+<span class="fc" id="L93">	ALPHA_RESERVED_15((byte) 0x0f);</span>
+
+	private final byte value;
+
+<span class="fc" id="L97">	Alphabet(byte alphabetValue) {</span>
+<span class="fc" id="L98">		this.value = alphabetValue;</span>
+<span class="fc" id="L99">	}</span>
+
+	/**
+	 * Initialize the Alphabet from the byte value
+	 * 
+	 * @param alphabetValue
+	 *            the alphabet value
+	 * @return the Alphabet enum
+	 */
+	public static Alphabet from(byte alphabetValue) {
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">		for (Alphabet alphabet : values()) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">			if (alphabet.value() == alphabetValue) {</span>
+<span class="fc" id="L111">				return alphabet;</span>
+			}
+		}
+<span class="nc" id="L114">		throw new IllegalArgumentException(&quot;No enum const Alphabet with value &quot; + alphabetValue);</span>
+	}
+
+	/**
+	 * The alphabet value
+	 * 
+	 * @return the alphabet value
+	 */
+	public byte value() {
+<span class="fc" id="L123">		return value;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

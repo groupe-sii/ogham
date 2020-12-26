@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>InvalidMessageException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.exception</a> &gt; <span class="el_source">InvalidMessageException.java</span></div><h1>InvalidMessageException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.exception;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import fr.sii.ogham.core.message.Message;
+
+/**
+ * Specialized exception that is thrown when a message is not valid (some fields
+ * are required or need to conform a particular format). This exception provides
+ * the violations.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class InvalidMessageException extends MessageException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	private final Set&lt;String&gt; violations;
+
+	public InvalidMessageException(String message, Message msg, Set&lt;String&gt; violations) {
+<span class="fc" id="L24">		super(message, msg);</span>
+<span class="fc" id="L25">		this.violations = violations;</span>
+<span class="fc" id="L26">	}</span>
+
+	public InvalidMessageException(String message, Message msg, String violation) {
+<span class="fc" id="L29">		this(message, msg, new HashSet&lt;&gt;());</span>
+<span class="fc" id="L30">		violations.add(violation);</span>
+<span class="fc" id="L31">	}</span>
+
+	public Set&lt;String&gt; getViolations() {
+<span class="nc" id="L34">		return violations;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

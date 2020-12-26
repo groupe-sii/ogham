@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessagingProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.general</a> &gt; <span class="el_source">MessagingProperties.java</span></div><h1>MessagingProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.general;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+
+@ConfigurationProperties(&quot;ogham&quot;)
+<span class="fc" id="L10">public class MessagingProperties {</span>
+<span class="fc" id="L11">	@NestedConfigurationProperty</span>
+	private WrapUncaughtExceptionsProperties wrapUncaughtExceptions = new WrapUncaughtExceptionsProperties();
+
+	public WrapUncaughtExceptionsProperties getWrapUncaughtExceptions() {
+<span class="fc" id="L15">		return wrapUncaughtExceptions;</span>
+	}
+
+	public void setWrapUncaughtExceptions(WrapUncaughtExceptionsProperties wrapUncaughtExceptions) {
+<span class="fc" id="L19">		this.wrapUncaughtExceptions = wrapUncaughtExceptions;</span>
+<span class="fc" id="L20">	}</span>
+
+<span class="fc" id="L22">	public static class WrapUncaughtExceptionsProperties {</span>
+		/**
+		 * There are technical exceptions that are thrown by libraries used by
+		 * Ogham. Those exceptions are often {@link RuntimeException}s. It can
+		 * be difficult for developers of a big application to quickly identify
+		 * what caused this {@link RuntimeException}. The stack trace doesn't
+		 * always help to find the real source of the error. If enables, this
+		 * option ensures that work done by Ogham will always throw a
+		 * {@link MessagingException} even if it was a {@link RuntimeException}
+		 * thrown by any component. It then helps the developer to know that the
+		 * error comes from Ogham or a any used library and not something else
+		 * in its application. The other benefit is that in your code you only
+		 * catch a {@link MessagingException} and you are sure that it will
+		 * handle all cases, no surprise with an unchecked exception that could
+		 * make a big failure in your system because you didn't know this could
+		 * happen. Sending a message is often not critical (if message can't be
+		 * sent now, it can be sent later or manually). It it fails the whole
+		 * system must keep on working. With this option enabled, your system
+		 * will never fail due to an unchecked exception and you can handle the
+		 * failure the same way as with checked exceptions.
+		 * 
+		 * Concretely, call of
+		 * {@link MessagingService#send(fr.sii.ogham.core.message.Message)}
+		 * catches all exceptions including {@link RuntimeException}. It wraps
+		 * any exceptions into a {@link MessagingException}.
+		 * 
+		 */
+<span class="fc" id="L49">		private boolean enable = true;</span>
+
+		public boolean isEnable() {
+<span class="fc" id="L52">			return enable;</span>
+		}
+
+		public void setEnable(boolean enable) {
+<span class="fc" id="L56">			this.enable = enable;</span>
+<span class="fc" id="L57">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

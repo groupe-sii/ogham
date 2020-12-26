@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AttachBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.message.fluent</a> &gt; <span class="el_source">AttachBuilder.java</span></div><h1>AttachBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.message.fluent;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.sii.ogham.core.resource.FileResource;
+import fr.sii.ogham.core.resource.LookupResource;
+import fr.sii.ogham.core.resource.OverrideNameWrapper;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.attachment.ContentDisposition;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * Fluent API to attach a file to the email.
+ * 
+ * @author Aurélien Baudet
+ * @since 3.0.0
+ */
+public class AttachBuilder {
+	private final Email parent;
+	private final List&lt;Attachment&gt; attachments;
+
+	/**
+	 * Initializes with the parent to go back to.
+	 * 
+	 * @param parent
+	 *            the parent instance
+	 */
+	public AttachBuilder(Email parent) {
+<span class="fc" id="L36">		super();</span>
+<span class="fc" id="L37">		this.parent = parent;</span>
+<span class="fc" id="L38">		this.attachments = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L39">	}</span>
+
+	/**
+	 * Attach a file to the email. The name of the attachment uses the name of
+	 * the file.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param file
+	 *            the file to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(File file) {
+<span class="fc" id="L57">		return file(file, null);</span>
+	}
+
+	/**
+	 * Attach a file to the email. The name of the attachment uses the name of
+	 * the file.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param file
+	 *            the file to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(File file, String contentType) {
+<span class="fc" id="L78">		attach(new Attachment(file), contentType);</span>
+<span class="fc" id="L79">		return parent;</span>
+	}
+
+	/**
+	 * Attach a file to the email. The name of the attachment is explicitly
+	 * specified.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param customName
+	 *            the name to use for the attachment
+	 * @param file
+	 *            the file to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(String customName, File file) {
+<span class="fc" id="L100">		return file(customName, file, null);</span>
+	}
+
+	/**
+	 * Attach a file to the email. The name of the attachment is explicitly
+	 * specified.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param customName
+	 *            the name to use for the attachment
+	 * @param file
+	 *            the file to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(String customName, File file, String contentType) {
+<span class="fc" id="L123">		attach(new Attachment(new FileResource(file, customName)), contentType);</span>
+<span class="fc" id="L124">		return parent;</span>
+	}
+
+	/**
+	 * Attach a file to the email. The name of the attachment uses the name of
+	 * the file.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param path
+	 *            the path to the file to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(Path path) {
+<span class="nc" id="L143">		return file(path, null);</span>
+	}
+
+	/**
+	 * Attach a file to the email. The name of the attachment uses the name of
+	 * the file.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param path
+	 *            the path to the file to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(Path path, String contentType) {
+<span class="nc" id="L164">		return file(path.toFile(), contentType);</span>
+	}
+
+	/**
+	 * Attach a file to the email. The name of the attachment is explicitly
+	 * specified.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param customName
+	 *            the name to use for the attachment
+	 * @param path
+	 *            the path to the file to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(String customName, Path path) {
+<span class="nc" id="L185">		return file(customName, path, null);</span>
+	}
+
+	/**
+	 * Attach a file to the email. The name of the attachment is explicitly
+	 * specified.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param customName
+	 *            the name to use for the attachment
+	 * @param path
+	 *            the path to the file to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(String customName, Path path, String contentType) {
+<span class="nc" id="L208">		return file(customName, path.toFile(), contentType);</span>
+	}
+
+	/**
+	 * Attach a resource loaded from a path to the email. The name of the
+	 * attachment uses the name of the resource (extracted from the path).
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param path
+	 *            the path to the resource to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String path) {
+<span class="fc" id="L239">		attach(new Attachment(path), null);</span>
+<span class="fc" id="L240">		return parent;</span>
+	}
+
+	/**
+	 * Attach a resource loaded from a path to the email. The name of the
+	 * attachment is explicitly set.
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param customName
+	 *            the name to use for the attachment
+	 * @param path
+	 *            the path to the resource to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String customName, String path) {
+<span class="fc" id="L273">		return resource(customName, path, null);</span>
+	}
+
+	/**
+	 * Attach a resource loaded from a path to the email. The name of the
+	 * attachment is explicitly set.
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param customName
+	 *            the name to use for the attachment
+	 * @param path
+	 *            the path to the resource to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String customName, String path, String contentType) {
+<span class="fc" id="L308">		return resource(customName, new UnresolvedPath(path), contentType);</span>
+	}
+
+	/**
+	 * Attach a resource loaded from a path to the email. The name of the
+	 * attachment uses the name of the resource (extracted from the path).
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param path
+	 *            the path to the resource to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(ResourcePath path) {
+<span class="nc" id="L339">		return resource(path, null);</span>
+	}
+
+	/**
+	 * Attach a resource loaded from a path to the email. The name of the
+	 * attachment uses the name of the resource (extracted from the path).
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param path
+	 *            the path to the resource to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(ResourcePath path, String contentType) {
+<span class="nc" id="L372">		attach(new Attachment(path), contentType);</span>
+<span class="nc" id="L373">		return parent;</span>
+	}
+
+	/**
+	 * Attach a resource loaded from a path to the email. The name of the
+	 * attachment is explicitly set.
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param customName
+	 *            the name to use for the attachment
+	 * @param path
+	 *            the path to the resource to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String customName, ResourcePath path) {
+<span class="nc" id="L406">		return resource(customName, path, null);</span>
+	}
+
+	/**
+	 * Attach a resource loaded from a path to the email. The name of the
+	 * attachment is explicitly set.
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param customName
+	 *            the name to use for the attachment
+	 * @param path
+	 *            the path to the resource to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String customName, ResourcePath path, String contentType) {
+<span class="fc" id="L441">		attach(new Attachment(new OverrideNameWrapper(new LookupResource(path), customName)), contentType);</span>
+<span class="fc" id="L442">		return parent;</span>
+	}
+
+	/**
+	 * Attach a resource to the email directly using the bytes. The name of the
+	 * attachment must be explicitly set.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param attachmentName
+	 *            the name of the attachment
+	 * @param bytes
+	 *            the content of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email bytes(String attachmentName, byte[] bytes) {
+<span class="fc" id="L463">		return bytes(attachmentName, bytes, null);</span>
+	}
+
+	/**
+	 * Attach a resource to the email directly using the bytes. The name of the
+	 * attachment must be explicitly set.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param attachmentName
+	 *            the name of the attachment
+	 * @param bytes
+	 *            the content of the attachment
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email bytes(String attachmentName, byte[] bytes, String contentType) {
+<span class="fc" id="L486">		attach(new Attachment(attachmentName, bytes), contentType);</span>
+<span class="fc" id="L487">		return parent;</span>
+	}
+
+	/**
+	 * Attach a resource to the email directly using the bytes read from the
+	 * {@link InputStream}. The {@link InputStream} is immediately read and
+	 * converted to a byte array. The name of the attachment must be explicitly
+	 * set.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;IMPORTANT:&lt;/strong&gt; You need to manually close the stream.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param attachmentName
+	 *            the name of the attachment
+	 * @param stream
+	 *            the content of the attachment
+	 * @return the email instance for fluent chaining
+	 * @throws IOException
+	 *             when the {@link InputStream} can't be read
+	 */
+	public Email stream(String attachmentName, InputStream stream) throws IOException {
+<span class="fc" id="L515">		return stream(attachmentName, stream, null);</span>
+	}
+
+	/**
+	 * Attach a resource to the email directly using the bytes read from the
+	 * {@link InputStream}. The {@link InputStream} is immediately read and
+	 * converted to a byte array. The name of the attachment must be explicitly
+	 * set.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;IMPORTANT:&lt;/strong&gt; You need to manually close the stream.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#ATTACHMENT}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param attachmentName
+	 *            the name of the attachment
+	 * @param stream
+	 *            the content of the attachment
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 * @throws IOException
+	 *             when the {@link InputStream} can't be read
+	 */
+	public Email stream(String attachmentName, InputStream stream, String contentType) throws IOException {
+<span class="fc" id="L545">		attach(new Attachment(attachmentName, stream), contentType);</span>
+<span class="fc" id="L546">		return parent;</span>
+	}
+
+	/**
+	 * Provides the list of attachments.
+	 * 
+	 * @return the list of attachments
+	 */
+	public List&lt;Attachment&gt; build() {
+<span class="fc" id="L555">		return attachments;</span>
+	}
+
+	private void attach(Attachment attachment, String contentType) {
+<span class="fc" id="L559">		attachment.setContentType(contentType);</span>
+<span class="fc" id="L560">		attachments.add(attachment);</span>
+<span class="fc" id="L561">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

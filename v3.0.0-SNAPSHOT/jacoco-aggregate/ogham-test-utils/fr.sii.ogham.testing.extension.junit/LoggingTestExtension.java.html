@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LoggingTestExtension.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.junit</a> &gt; <span class="el_source">LoggingTestExtension.java</span></div><h1>LoggingTestExtension.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.junit;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.platform.commons.support.AnnotationSupport;
+
+import fr.sii.ogham.testing.extension.common.LogTestInformation;
+import fr.sii.ogham.testing.extension.common.Printer;
+import fr.sii.ogham.testing.extension.common.TestInformationLogger;
+
+/**
+ * Write information about test. This is useful when there are many tests:
+ * &lt;ul&gt;
+ * &lt;li&gt;To quickly find the logs for the test&lt;/li&gt;
+ * &lt;li&gt;To quickly know if the test has failed or succeeded&lt;/li&gt;
+ * &lt;li&gt;To quickly identify the test failure&lt;/li&gt;
+ * &lt;li&gt;To quickly find failed tests&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class LoggingTestExtension implements BeforeEachCallback, AfterEachCallback, BeforeAllCallback {
+	private TestInformationLogger logger;
+
+	/**
+	 * No logger initialized (it will be initialized using annotation). If you
+	 * use {@link RegisterExtension} annotation, please use another constructor.
+	 * 
+	 */
+	public LoggingTestExtension() {
+<span class="fc" id="L37">		super();</span>
+<span class="fc" id="L38">	}</span>
+
+	/**
+	 * Initializes with the provided max line length.
+	 * 
+	 * Uses Slf4j logger and default marker (&quot;test-info&quot;).
+	 * 
+	 * @param maxLength
+	 *            the length of each line
+	 */
+	public LoggingTestExtension(int maxLength) {
+<span class="nc" id="L49">		super();</span>
+<span class="nc" id="L50">		this.logger = new TestInformationLogger(maxLength);</span>
+<span class="nc" id="L51">	}</span>
+
+	/**
+	 * Initializes with the provided max line length and marker.
+	 * 
+	 * Uses Slf4j logger.
+	 * 
+	 * @param maxLength
+	 *            the length of each line
+	 * @param marker
+	 *            the marker for logs
+	 */
+	public LoggingTestExtension(int maxLength, String marker) {
+<span class="nc" id="L64">		super();</span>
+<span class="nc" id="L65">		this.logger = new TestInformationLogger(maxLength, marker);</span>
+<span class="nc" id="L66">	}</span>
+
+	/**
+	 * 
+	 * @param maxLength
+	 *            the length of each line
+	 * @param marker
+	 *            the marker for logs
+	 * @param logger
+	 *            the logger
+	 */
+	public LoggingTestExtension(int maxLength, String marker, Printer logger) {
+<span class="nc" id="L78">		super();</span>
+<span class="nc" id="L79">		this.logger = new TestInformationLogger(maxLength, marker, logger);</span>
+<span class="nc" id="L80">	}</span>
+
+	@Override
+	public void beforeAll(ExtensionContext context) throws InstantiationException, IllegalAccessException {
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">		if (logger != null) {</span>
+<span class="nc" id="L85">			return;</span>
+		}
+<span class="fc" id="L87">		LogTestInformation annotation = AnnotationSupport.findAnnotation(context.getElement(), LogTestInformation.class).orElse(null);</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">		if (annotation == null) {</span>
+<span class="nc" id="L89">			logger = new TestInformationLogger();</span>
+		} else {
+<span class="fc" id="L91">			logger = new TestInformationLogger(annotation.maxLength(), annotation.marker(), annotation.printer().newInstance());</span>
+		}
+<span class="fc" id="L93">	}</span>
+
+	@Override
+	public void beforeEach(ExtensionContext context) throws Exception {
+<span class="fc" id="L97">		logger.writeStart(context.getDisplayName());</span>
+<span class="fc" id="L98">	}</span>
+
+	@Override
+	public void afterEach(ExtensionContext context) throws Exception {
+<span class="fc" id="L102">		Optional&lt;Throwable&gt; executionException = context.getExecutionException();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		if (executionException.isPresent()) {</span>
+<span class="fc" id="L104">			logger.writeFailure(context.getDisplayName(), executionException.get());</span>
+		} else {
+<span class="fc" id="L106">			logger.writeSuccess(context.getDisplayName());</span>
+		}
+<span class="fc" id="L108">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

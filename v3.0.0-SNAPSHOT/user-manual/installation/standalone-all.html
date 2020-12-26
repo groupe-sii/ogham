@@ -2,25 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.6.1">
+<meta name="generator" content="Asciidoctor 2.0.10">
 <title>Untitled</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../..//javascripts/steps.js"></script>
 <script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
 <script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
 <script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
 <script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
-<link rel="stylesheet" type="text/css" href="../..//styles/custom-styles.css" />
-<link rel="stylesheet" type="text/css" href="../..//styles/tabcontainer.css" />
-<link rel="stylesheet" type="text/css" href="../..//styles/steps.css" />
-<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/collapse-lines.css" />
-<link rel="stylesheet" type="text/css" href="../..//styles/sourcecode/highlight-lines.css" />
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
 </head>
 <body class="book">
 <div id="header">
@@ -28,29 +26,65 @@
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
-<div class="paragraph tab-container">
-<p>Include Ogham standalone dependency</p>
-</div>
-<div class="paragraph tab">
-<p><span class="image"><img src="../../images//icons/maven-logo.png" alt="Maven" width="118" height="30"></span></p>
-</div>
-<div class="listingblock">
+<div class="exampleblock tab-container no-max-height">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
-    <span class="tag">&lt;groupId&gt;</span>fr.sii.ogham<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>ogham-all<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.0.0<span class="tag">&lt;/version&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span></code></pre>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/maven-logo.png" alt="Maven" width="118" height="30"></span></div>
+<div class="content">
+<div class="listingblock collapse-lines:1-14,20- highlight-lines:15-19">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="tag">&lt;project</span> <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0</span><span class="delimiter">&quot;</span></span>
+    <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;modelVersion&gt;</span>4.0.0<span class="tag">&lt;/modelVersion&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>sample<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>all<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;properties&gt;</span>
+    <span class="tag">&lt;project.reporting.outputEncoding&gt;</span>UTF-8<span class="tag">&lt;/project.reporting.outputEncoding&gt;</span>
+    <span class="tag">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="tag">&lt;/project.build.sourceEncoding&gt;</span>
+    <span class="tag">&lt;maven.compiler.source&gt;</span>1.8<span class="tag">&lt;/maven.compiler.source&gt;</span>
+    <span class="tag">&lt;maven.compiler.target&gt;</span>1.8<span class="tag">&lt;/maven.compiler.target&gt;</span>
+  <span class="tag">&lt;/properties&gt;</span>
+  <span class="tag">&lt;dependencies&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>fr.sii.ogham<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>ogham-all<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;version&gt;</span>3.0.0-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+  <span class="tag">&lt;/dependencies&gt;</span>
+<span class="tag">&lt;/project&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/pom.xml?ts=4">View code of an example pom.xml</a></p>
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-standard-usage/pom.xml?ts=2">View code of an example pom.xml</a></p>
 </div>
-<div class="paragraph tab">
-<p><span class="image"><img src="../../images//icons/gradlephant-logo.png" alt="Gradle" width="114" height="30"></span></p>
 </div>
-<div class="paragraph tab-container-end">
-<p>-</p>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/gradlephant-logo.png" alt="Gradle" width="114" height="30"></span></div>
+<div class="content">
+<div class="listingblock collapse-lines:1-9 highlight-lines:11">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+    id <span class="string"><span class="delimiter">'</span><span class="content">java</span><span class="delimiter">'</span></span>
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+dependencies {
+  implementation <span class="string"><span class="delimiter">'</span><span class="content">fr.sii.ogham:ogham-all:3.0.0-SNAPSHOT</span><span class="delimiter">'</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>This will include:</p>
@@ -58,7 +92,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Sending email through SMTP server (using <a href="https://javaee.github.io/javamail/">JavaMail</a>)</p>
+<p>Sending email through SMTP server (using <a href="https://eclipse-ee4j.github.io/mail/">Jakarta Mail</a>, formely JavaMail)</p>
 </li>
 <li>
 <p>Sending email through <a href="https://sendgrid.com/">SendGrid</a></p>
@@ -77,13 +111,29 @@
 </li>
 </ul>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Java version compatibility</div>
+<div class="paragraph">
+<p>Ogham is compatible with Java 8 and up to Java 14 (included).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-11-22 22:41:06 RET
+Last updated 2020-12-26 08:00:07 UTC
 </div>
 </div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
 </body>
 </html>

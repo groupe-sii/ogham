@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">StringUtils.java</span></div><h1>StringUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">StringUtils.java</span></div><h1>StringUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
 
 /**
  * Helper class for string manipulation:
@@ -102,10 +102,35 @@ public final class StringUtils {
 	 *            the character to pad with
 	 * @return left padded String or original String if no padding is necessary,
 	 *         {@code null} if null String input
-	 * @since 2.0
 	 */
 	public static String leftPad(String str, int size, char padChar) {
-<span class="fc" id="L108">		return org.apache.commons.lang3.StringUtils.leftPad(str, size, padChar);</span>
+<span class="fc" id="L107">		return org.apache.commons.lang3.StringUtils.leftPad(str, size, padChar);</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Capitalizes a String changing the first character to title case. No other
+	 * characters are changed.
+	 * &lt;/p&gt;
+	 *
+	 * &lt;p&gt;
+	 * A {@code null} input String returns {@code null}.
+	 * &lt;/p&gt;
+	 *
+	 * &lt;pre&gt;
+	 * StringUtils.capitalize(null)  = null
+	 * StringUtils.capitalize(&quot;&quot;)    = &quot;&quot;
+	 * StringUtils.capitalize(&quot;cat&quot;) = &quot;Cat&quot;
+	 * StringUtils.capitalize(&quot;cAt&quot;) = &quot;CAt&quot;
+	 * StringUtils.capitalize(&quot;'cat'&quot;) = &quot;'cat'&quot;
+	 * &lt;/pre&gt;
+	 *
+	 * @param str
+	 *            the String to capitalize, may be null
+	 * @return the capitalized String, {@code null} if null String input
+	 */
+	public static String capitalize(String str) {
+<span class="fc" id="L133">		return org.apache.commons.lang3.StringUtils.capitalize(str);</span>
 	}
 
 	private StringUtils() {

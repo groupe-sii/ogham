@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImageInliningBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">ImageInliningBuilder.java</span></div><h1>ImageInliningBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImageInliningBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">ImageInliningBuilder.java</span></div><h1>ImageInliningBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -9,8 +9,8 @@ import javax.activation.MimetypesFileTypeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
@@ -20,6 +20,7 @@ import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
 import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
 import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
 import fr.sii.ogham.core.resource.path.LookupAwareRelativePathResolver;
 import fr.sii.ogham.core.resource.path.RelativePathResolver;
@@ -55,7 +56,7 @@ import fr.sii.ogham.html.translator.InlineImageTranslator;
  * 
  * &lt;pre&gt;
  * {@code
- *    &lt;img src=&quot;classpath:/foo.png&quot; ogham-inline-mode=&quot;attach&quot; /&gt;
+ *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;attach&quot; /&gt;
  * }
  * &lt;/pre&gt;
  * 
@@ -71,7 +72,7 @@ import fr.sii.ogham.html.translator.InlineImageTranslator;
  * 
  * &lt;pre&gt;
  * {@code
- *    &lt;img src=&quot;classpath:/foo.png&quot; ogham-inline-mode=&quot;base64&quot; /&gt;
+ *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;base64&quot; /&gt;
  * }
  * &lt;/pre&gt;
  * 
@@ -80,11 +81,11 @@ import fr.sii.ogham.html.translator.InlineImageTranslator;
  * 
  * &lt;p&gt;
  * If you don't want to inline a particular image, you can set the
- * &quot;ogham-inline-mode&quot; attribute to &quot;skip&quot;:
+ * &quot;data-inline-image&quot; attribute to &quot;skip&quot;:
  * 
  * &lt;pre&gt;
  * {@code
- *    &lt;img src=&quot;classpath:/foo.png&quot; ogham-inline-mode=&quot;skip&quot; /&gt;
+ *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;skip&quot; /&gt;
  * }
  * &lt;/pre&gt;
  * 
@@ -117,13 +118,13 @@ import fr.sii.ogham.html.translator.InlineImageTranslator;
  *
  */
 public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder&gt; implements ResourceResolutionBuilder&lt;ImageInliningBuilder&gt;, Builder&lt;ContentTranslator&gt; {
-<span class="fc" id="L120">	private static final Logger LOG = LoggerFactory.getLogger(ImageInliningBuilder.class);</span>
+<span class="fc" id="L121">	private static final Logger LOG = LoggerFactory.getLogger(ImageInliningBuilder.class);</span>
 
-	private ResourceResolutionBuilderHelper&lt;ImageInliningBuilder&gt; resourceResolutionBuilderHelper;
+	private final BuildContext buildContext;
+	private final ResourceResolutionBuilderHelper&lt;ImageInliningBuilder&gt; resourceResolutionBuilderHelper;
 	private AttachImageBuilder attachBuilder;
 	private Base64InliningBuilder base64Builder;
 	private MimetypeDetectionBuilder&lt;ImageInliningBuilder&gt; mimetypeBuilder;
-	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -132,14 +133,14 @@ public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public ImageInliningBuilder(ImageHandlingBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
-<span class="fc" id="L139">		super(parent);</span>
-<span class="fc" id="L140">		this.environmentBuilder = environmentBuilder;</span>
-<span class="fc" id="L141">		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper&lt;&gt;(this, environmentBuilder);</span>
-<span class="fc" id="L142">	}</span>
+	public ImageInliningBuilder(ImageHandlingBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L140">		super(parent);</span>
+<span class="fc" id="L141">		this.buildContext = buildContext;</span>
+<span class="fc" id="L142">		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L143">	}</span>
 
 	/**
 	 * Configures how attachment of images is handled.
@@ -155,12 +156,40 @@ public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder
 	 * 
 	 * &lt;pre&gt;
 	 * {@code
-	 *    &lt;img src=&quot;classpath:/foo.png&quot; ogham-inline-mode=&quot;attach&quot; /&gt;
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;attach&quot; /&gt;
 	 * }
 	 * &lt;/pre&gt;
 	 * 
 	 * Then the image will be loaded from the classpath and attached to the
 	 * email. The src attribute will be replaced by the Content-ID.
+	 * 
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * In the same way, if your template contains the following code:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *  &amp;lt;style&amp;gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: attach;
+	 *     }
+	 *  &amp;lt;/style&amp;gt;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 	&lt;div style=
+	&quot;background: url('classpath:/foo.png'); --inline-image: attach;&quot;&gt;&lt;/div&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and attached to the
+	 * email. The url will be replaced by the Content-ID.
 	 * 
 	 * &lt;p&gt;
 	 * If no inline mode is defined, image attachment is used by default:
@@ -171,17 +200,37 @@ public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder
 	 * }
 	 * &lt;/pre&gt;
 	 * 
-	 * The example above as the same result as the example that explicitly
+	 * Or:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *  &amp;lt;style&amp;gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *     }
+	 *  &amp;lt;/style&amp;gt;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Or:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 	&lt;div style=&quot;background: url('classpath:/foo.png');&quot;&gt;&lt;/div&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * The examples above have the same result as the example that explicitly
 	 * defines the inline mode.
 	 * 
 	 * 
 	 * @return the builder to configure how images are automatically attached
 	 */
 	public AttachImageBuilder attach() {
-<span class="pc bpc" id="L181" title="1 of 2 branches missed.">		if (attachBuilder == null) {</span>
-<span class="fc" id="L182">			attachBuilder = new AttachImageBuilder(this);</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">		if (attachBuilder == null) {</span>
+<span class="fc" id="L231">			attachBuilder = new AttachImageBuilder(this, buildContext);</span>
 		}
-<span class="fc" id="L184">		return attachBuilder;</span>
+<span class="fc" id="L233">		return attachBuilder;</span>
 	}
 
 	/**
@@ -195,7 +244,7 @@ public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder
 	 * 
 	 * &lt;pre&gt;
 	 * {@code
-	 *    &lt;img src=&quot;classpath:/foo.png&quot; ogham-inline-mode=&quot;base64&quot; /&gt;
+	 *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;base64&quot; /&gt;
 	 * }
 	 * &lt;/pre&gt;
 	 * 
@@ -203,6 +252,31 @@ public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder
 	 * base64 string. This base64 string is used in the src attribute of the
 	 * {@code &lt;img&gt;}.
 	 * 
+	 * 
+	 * &lt;p&gt;
+	 * In the same way, if your template contains the following code:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *  &amp;lt;style&amp;gt;
+	 *     .some-class {
+	 *       background: url('classpath:/foo.png');
+	 *       --inline-image: base64;
+	 *     }
+	 *  &amp;lt;/style&amp;gt;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Or directly on {@code style} attribute:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 	&lt;div style=&quot;background: url('classpath:/foo.png'); --inline-image: base64;&quot;&gt;&lt;/div&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Then the image will be loaded from the classpath and encoded into a
+	 * base64 string. The url is updated with the base64 string.
 	 * 
 	 * &lt;p&gt;
 	 * If no inline mode is defined &lt;strong&gt;and&lt;/strong&gt; image attachment is not
@@ -222,10 +296,10 @@ public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder
 	 *         to base64
 	 */
 	public Base64InliningBuilder base64() {
-<span class="pc bpc" id="L225" title="1 of 2 branches missed.">		if (base64Builder == null) {</span>
-<span class="fc" id="L226">			base64Builder = new Base64InliningBuilder(this);</span>
+<span class="pc bpc" id="L299" title="1 of 2 branches missed.">		if (base64Builder == null) {</span>
+<span class="fc" id="L300">			base64Builder = new Base64InliningBuilder(this, buildContext);</span>
 		}
-<span class="fc" id="L228">		return base64Builder;</span>
+<span class="fc" id="L302">		return base64Builder;</span>
 	}
 
 	/**
@@ -277,10 +351,10 @@ public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder
 	 * @return the builder to configure mimetype detection
 	 */
 	public MimetypeDetectionBuilder&lt;ImageInliningBuilder&gt; mimetype() {
-<span class="pc bpc" id="L280" title="1 of 2 branches missed.">		if (mimetypeBuilder == null) {</span>
-<span class="fc" id="L281">			mimetypeBuilder = new SimpleMimetypeDetectionBuilder&lt;&gt;(this, environmentBuilder);</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">		if (mimetypeBuilder == null) {</span>
+<span class="fc" id="L355">			mimetypeBuilder = new SimpleMimetypeDetectionBuilder&lt;&gt;(this, buildContext);</span>
 		}
-<span class="fc" id="L283">		return mimetypeBuilder;</span>
+<span class="fc" id="L357">		return mimetypeBuilder;</span>
 	}
 
 	/**
@@ -302,68 +376,66 @@ public class ImageInliningBuilder extends AbstractParent&lt;ImageHandlingBuilder
 	 * @return this instance for fluent chaining
 	 */
 	public ImageInliningBuilder mimetype(MimetypeDetectionBuilder&lt;?&gt; builder) {
-<span class="nc" id="L305">		mimetypeBuilder = new MimetypeDetectionBuilderDelegate&lt;&gt;(this, builder);</span>
-<span class="nc" id="L306">		return this;</span>
+<span class="nc" id="L379">		mimetypeBuilder = new MimetypeDetectionBuilderDelegate&lt;&gt;(this, builder);</span>
+<span class="nc" id="L380">		return this;</span>
 	}
 
 	@Override
 	public ClassPathResolutionBuilder&lt;ImageInliningBuilder&gt; classpath() {
-<span class="fc" id="L311">		return resourceResolutionBuilderHelper.classpath();</span>
+<span class="fc" id="L385">		return resourceResolutionBuilderHelper.classpath();</span>
 	}
 
 	@Override
 	public FileResolutionBuilder&lt;ImageInliningBuilder&gt; file() {
-<span class="fc" id="L316">		return resourceResolutionBuilderHelper.file();</span>
+<span class="fc" id="L390">		return resourceResolutionBuilderHelper.file();</span>
 	}
 
 	@Override
 	public StringResolutionBuilder&lt;ImageInliningBuilder&gt; string() {
-<span class="fc" id="L321">		return resourceResolutionBuilderHelper.string();</span>
+<span class="fc" id="L395">		return resourceResolutionBuilderHelper.string();</span>
 	}
 
 	@Override
 	public ImageInliningBuilder resolver(ResourceResolver resolver) {
-<span class="nc" id="L326">		return resourceResolutionBuilderHelper.resolver(resolver);</span>
+<span class="nc" id="L400">		return resourceResolutionBuilderHelper.resolver(resolver);</span>
 	}
 
 	@Override
 	public ContentTranslator build() {
-<span class="fc" id="L331">		ResourceResolver resourceResolver = buildResolver();</span>
-<span class="fc" id="L332">		ImageInliner imageInliner = buildInliner();</span>
-<span class="fc" id="L333">		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();</span>
-<span class="pc bpc" id="L334" title="1 of 2 branches missed.">		if (mimetypeProvider == null) {</span>
-<span class="nc" id="L335">			LOG.info(&quot;Images won't be inlined because no mimetype detector is configured&quot;);</span>
-<span class="nc" id="L336">			return null;</span>
+<span class="fc" id="L405">		MimeTypeProvider mimetypeProvider = buildMimetypeProvider();</span>
+<span class="pc bpc" id="L406" title="1 of 2 branches missed.">		if (mimetypeProvider == null) {</span>
+<span class="nc" id="L407">			LOG.info(&quot;Images won't be inlined because no mimetype detector is configured&quot;);</span>
+<span class="nc" id="L408">			return null;</span>
 		}
-<span class="fc" id="L338">		LOG.info(&quot;Images will be inlined&quot;);</span>
-<span class="fc" id="L339">		return new InlineImageTranslator(imageInliner, resourceResolver, mimetypeProvider, buildRelativePathProvider());</span>
+<span class="fc" id="L410">		LOG.info(&quot;Images will be inlined&quot;);</span>
+<span class="fc" id="L411">		return buildContext.register(new InlineImageTranslator(buildInliner(), buildResolver(), mimetypeProvider, buildRelativePathProvider()));</span>
 	}
 
 	private MimeTypeProvider buildMimetypeProvider() {
-<span class="pc bpc" id="L343" title="1 of 2 branches missed.">		if (mimetypeBuilder == null) {</span>
-<span class="nc" id="L344">			return null;</span>
+<span class="pc bpc" id="L415" title="1 of 2 branches missed.">		if (mimetypeBuilder == null) {</span>
+<span class="nc" id="L416">			return null;</span>
 		}
-<span class="fc" id="L346">		return mimetypeBuilder.build();</span>
+<span class="fc" id="L418">		return mimetypeBuilder.build();</span>
 	}
 
 	private ImageInliner buildInliner() {
-<span class="fc" id="L350">		EveryImageInliner inliner = new EveryImageInliner();</span>
-<span class="pc bpc" id="L351" title="1 of 2 branches missed.">		if (attachBuilder != null) {</span>
-<span class="fc" id="L352">			inliner.addInliner(attachBuilder.build());</span>
+<span class="fc" id="L422">		EveryImageInliner inliner = buildContext.register(new EveryImageInliner());</span>
+<span class="pc bpc" id="L423" title="1 of 2 branches missed.">		if (attachBuilder != null) {</span>
+<span class="fc" id="L424">			inliner.addInliner(attachBuilder.build());</span>
 		}
-<span class="pc bpc" id="L354" title="1 of 2 branches missed.">		if (base64Builder != null) {</span>
-<span class="fc" id="L355">			inliner.addInliner(base64Builder.build());</span>
+<span class="fc bfc" id="L426" title="All 2 branches covered.">		if (base64Builder != null) {</span>
+<span class="fc" id="L427">			inliner.addInliner(base64Builder.build());</span>
 		}
-<span class="fc" id="L357">		return inliner;</span>
+<span class="fc" id="L429">		return inliner;</span>
 	}
 
 	private ResourceResolver buildResolver() {
-<span class="fc" id="L361">		List&lt;ResourceResolver&gt; resolvers = resourceResolutionBuilderHelper.buildResolvers();</span>
-<span class="fc" id="L362">		return new FirstSupportingResourceResolver(resolvers);</span>
+<span class="fc" id="L433">		List&lt;ResourceResolver&gt; resolvers = resourceResolutionBuilderHelper.buildResolvers();</span>
+<span class="fc" id="L434">		return buildContext.register(new FirstSupportingResourceResolver(resolvers));</span>
 	}
 
 	private RelativePathResolver buildRelativePathProvider() {
-<span class="fc" id="L366">		return new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups());</span>
+<span class="fc" id="L438">		return buildContext.register(new LookupAwareRelativePathResolver(resourceResolutionBuilderHelper.getAllLookups()));</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JsmppServerRule.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.junit.sms</a> &gt; <span class="el_source">JsmppServerRule.java</span></div><h1>JsmppServerRule.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.junit.sms;
+
+import org.jsmpp.bean.SubmitSm;
+
+import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
+import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
+import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
+import fr.sii.ogham.testing.sms.simulator.jsmpp.JSMPPServer;
+import fr.sii.ogham.testing.sms.simulator.jsmpp.SubmitSmAdapter;
+
+/**
+ * JUnit rule that start a SMPP server based on JSMPP implementation.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class JsmppServerRule extends SmppServerRule&lt;SubmitSm&gt; {
+	/**
+	 * Initialize the server with random port.
+	 */
+	public JsmppServerRule() {
+<span class="fc" id="L22">		this(new ServerConfig());</span>
+<span class="fc" id="L23">	}</span>
+
+	/**
+	 * Initialize the server with the provided port.
+	 * 
+	 * @param port
+	 *            the port used by the server
+	 */
+	public JsmppServerRule(int port) {
+<span class="nc" id="L32">		this(new ServerConfig().port(port));</span>
+<span class="nc" id="L33">	}</span>
+
+	/**
+	 * Initialize the server with provided configuration.
+	 * 
+	 * @param config
+	 *            the server configuration to simulate some behavior
+	 */
+	public JsmppServerRule(ServerConfig config) {
+<span class="fc" id="L42">		super(config);</span>
+<span class="fc" id="L43">	}</span>
+
+	@Override
+	protected SmppServerSimulator&lt;SubmitSm&gt; initServer(SimulatorConfiguration config) {
+<span class="fc" id="L47">		return new JSMPPServer(config);</span>
+	}
+
+	@Override
+	protected fr.sii.ogham.testing.sms.simulator.bean.SubmitSm convert(SubmitSm raw) {
+<span class="fc" id="L52">		return new SubmitSmAdapter(raw);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

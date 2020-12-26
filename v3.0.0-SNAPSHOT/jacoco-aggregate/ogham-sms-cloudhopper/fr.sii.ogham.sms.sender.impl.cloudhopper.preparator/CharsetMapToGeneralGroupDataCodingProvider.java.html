@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CharsetMapToGeneralGroupDataCodingProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.cloudhopper.preparator</a> &gt; <span class="el_source">CharsetMapToGeneralGroupDataCodingProvider.java</span></div><h1>CharsetMapToGeneralGroupDataCodingProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.cloudhopper.preparator;
+
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM7;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM8;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_PACKED_GSM;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
+import static com.cloudhopper.commons.gsm.DataCoding.CHAR_ENC_8BIT;
+import static com.cloudhopper.commons.gsm.DataCoding.CHAR_ENC_DEFAULT;
+import static com.cloudhopper.commons.gsm.DataCoding.CHAR_ENC_UCS2;
+import static java.util.Collections.unmodifiableMap;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.cloudhopper.commons.charset.Charset;
+import com.cloudhopper.commons.charset.CharsetUtil;
+import com.cloudhopper.commons.gsm.DataCoding;
+
+import fr.sii.ogham.sms.encoder.Encoded;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.DataCodingException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.UnsupportedCharsetException;
+
+/**
+ * Provide a Data Coding Scheme according to charset used to encode the message.
+ * The resulting encoding is &lt;b&gt;General Data Coding Group&lt;/b&gt;:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;If Bits 4 {@literal &amp;} 5 are 0 {@literal &amp;} 0 then see above &quot;0000
+ * Character Encoding Group&quot;&lt;/li&gt;
+ * &lt;li&gt;Message Class (Bit 0 {@literal &amp;} 1) (default 0, 0)&lt;/li&gt;
+ * &lt;li&gt;Alphabet (Bit 2 {@literal &amp;} 3) (default 0, 0)&lt;/li&gt;
+ * &lt;li&gt;Message Class Present (Bit 4) (whether bits 0 {@literal &amp;} 1 have
+ * meaning)&lt;/li&gt;
+ * &lt;li&gt;Compression Flag (Bit 5) (0 - uncompressed, 1 - compressed)&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * &lt;strong&gt;WARNING:&lt;/strong&gt; This provider only supports GSM 7-bit, GSM 8-bit
+ * and UCS-2 charsets. This is due to use of
+ * {@link DataCoding#createGeneralGroup(byte, Byte, boolean)} that only accepts
+ * {@link DataCoding#CHAR_ENC_DEFAULT}, {@link DataCoding#CHAR_ENC_8BIT},
+ * {@link DataCoding#CHAR_ENC_UCS2}.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class CharsetMapToGeneralGroupDataCodingProvider implements DataCodingProvider {
+	private final boolean failIfUnknown;
+	private final Map&lt;String, Byte&gt; alphabetIndexedByCharsetName;
+	private final Byte messageClass;
+	private final boolean compressed;
+
+	/**
+	 * Provides {@link DataCoding} based on the charset used to encode the
+	 * message.
+	 * 
+	 * &lt;p&gt;
+	 * The default map is used (charset name {@literal -&gt;} alphabet):
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM7} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_PACKED_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM8} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_UCS_2} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_UCS2}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * The message class is set to {@code null}.
+	 * 
+	 * &lt;p&gt;
+	 * The compressed field is set to false.
+	 * 
+	 * @param failIfUnknown
+	 *            if true it throws {@link UnsupportedCharsetException}, if
+	 *            false is returns null to let other
+	 *            {@link DataCodingProvider}(s) being executed.
+	 * 
+	 */
+	public CharsetMapToGeneralGroupDataCodingProvider(boolean failIfUnknown) {
+<span class="fc" id="L89">		this(failIfUnknown, defaultMap());</span>
+<span class="fc" id="L90">	}</span>
+
+	/**
+	 * Provides {@link DataCoding} based on the charset used to encode the
+	 * message.
+	 * 
+	 * &lt;p&gt;
+	 * It uses the provided map to determine alphabet from the charset used to
+	 * encode the message.
+	 * 
+	 * &lt;p&gt;
+	 * The message class is set to {@code null}.
+	 * 
+	 * &lt;p&gt;
+	 * The compressed field is set to false.
+	 * 
+	 * 
+	 * 
+	 * @param failIfUnknown
+	 *            if true it throws {@link UnsupportedCharsetException}, if
+	 *            false is returns null to let other
+	 *            {@link DataCodingProvider}(s) being executed.
+	 * @param alphabetIndexedByCharsetName
+	 *            the map used to determine Data Coding Alphabet from charset
+	 *            name
+	 */
+	public CharsetMapToGeneralGroupDataCodingProvider(boolean failIfUnknown, Map&lt;String, Byte&gt; alphabetIndexedByCharsetName) {
+<span class="fc" id="L117">		this(failIfUnknown, alphabetIndexedByCharsetName, null, false);</span>
+<span class="fc" id="L118">	}</span>
+
+	/**
+	 * Provides {@link DataCoding} based on the charset used to encode the
+	 * message.
+	 * 
+	 * &lt;p&gt;
+	 * It uses the provided map to determine alphabet from the charset used to
+	 * encode the message.
+	 * 
+	 * &lt;p&gt;
+	 * It uses the provided message class to use for the Data Coding scheme. The
+	 * Message Class bit and Message Class Present bit are both determined from
+	 * the provided class. If {@code null}, the &quot;message class&quot; not active flag
+	 * will not be set.
+	 * 
+	 * &lt;p&gt;
+	 * It uses the provided compressed value to indicate if the message is
+	 * compressed or not.
+	 * 
+	 * 
+	 * 
+	 * @param failIfUnknown
+	 *            if true it throws {@link UnsupportedCharsetException}, if
+	 *            false is returns null to let other
+	 *            {@link DataCodingProvider}(s) being executed.
+	 * @param alphabetIndexedByCharsetName
+	 *            the map used to determine Data Coding Alphabet from charset
+	 *            name
+	 * @param messageClass
+	 *            the message class value to use
+	 * @param compressed
+	 *            indicate if message is compressed or not
+	 */
+	public CharsetMapToGeneralGroupDataCodingProvider(boolean failIfUnknown, Map&lt;String, Byte&gt; alphabetIndexedByCharsetName, Byte messageClass, boolean compressed) {
+<span class="fc" id="L153">		super();</span>
+<span class="fc" id="L154">		this.failIfUnknown = failIfUnknown;</span>
+<span class="fc" id="L155">		this.alphabetIndexedByCharsetName = alphabetIndexedByCharsetName;</span>
+<span class="fc" id="L156">		this.messageClass = messageClass;</span>
+<span class="fc" id="L157">		this.compressed = compressed;</span>
+<span class="fc" id="L158">	}</span>
+
+	@Override
+	public DataCoding provide(Encoded encoded) throws DataCodingException {
+<span class="fc" id="L162">		NamedCharset charset = NamedCharset.from(encoded.getCharsetName());</span>
+<span class="fc" id="L163">		Byte encoding = alphabetIndexedByCharsetName.get(charset.getCharsetName());</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">		if (encoding == null) {</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">			if (failIfUnknown) {</span>
+<span class="fc" id="L166">				throw new UnsupportedCharsetException(encoded.getCharsetName() + &quot; charset not supported for General Group Data Coding Scheme&quot;, encoded);</span>
+			}
+<span class="fc" id="L168">			return null;</span>
+		}
+<span class="fc" id="L170">		return DataCoding.createGeneralGroup(encoding, messageClass, compressed);</span>
+	}
+
+	/**
+	 * Default mapping used to determine {@link DataCoding} encoding value from
+	 * {@link Charset}:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM7} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_PACKED_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_GSM8} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+	 * &lt;li&gt;{@link CharsetUtil#NAME_UCS_2} {@literal -&gt;}
+	 * {@link DataCoding#CHAR_ENC_UCS2}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the mapping
+	 */
+	public static Map&lt;String, Byte&gt; defaultMap() {
+<span class="fc" id="L192">		Map&lt;String, Byte&gt; map = new HashMap&lt;&gt;();</span>
+		// @formatter:off
+		// standards only are supported (due to DataCoding.createGeneralGroup)
+<span class="fc" id="L195">		map.put(NAME_GSM7, 			CHAR_ENC_DEFAULT);</span>
+<span class="fc" id="L196">		map.put(NAME_PACKED_GSM, 	CHAR_ENC_DEFAULT);</span>
+<span class="fc" id="L197">		map.put(NAME_GSM, 			CHAR_ENC_8BIT);</span>
+<span class="fc" id="L198">		map.put(NAME_GSM8, 			CHAR_ENC_8BIT);</span>
+<span class="fc" id="L199">		map.put(NAME_UCS_2, 		CHAR_ENC_UCS2);</span>
+		// @formatter:on
+<span class="fc" id="L201">		return unmodifiableMap(map);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

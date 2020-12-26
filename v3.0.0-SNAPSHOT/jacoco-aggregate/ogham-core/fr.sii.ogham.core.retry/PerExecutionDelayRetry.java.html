@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PerExecutionDelayRetry.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.retry</a> &gt; <span class="el_source">PerExecutionDelayRetry.java</span></div><h1>PerExecutionDelayRetry.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.retry;
+
+import java.time.Instant;
+import java.util.List;
+
+/**
+ * Retry several times with a fixed delay to wait after the last execution
+ * failure until the maximum attempts is reached. A specific delay is used
+ * between each execution. If there are more attempts than the configured
+ * delays, the last delay is used for remaining attempts.
+ * 
+ * If maximum attempts are set to 5 and delays are configured like this:
+ * &lt;ol&gt;
+ * &lt;li&gt;500ms&lt;/li&gt;
+ * &lt;li&gt;750ms&lt;/li&gt;
+ * &lt;li&gt;1800ms&lt;/li&gt;
+ * &lt;/ol&gt;
+ * 
+ * If the action (named &quot;connect&quot; for the example) takes 100ms to execute before
+ * failing, here is what happens:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;0: connect&lt;/li&gt;
+ * &lt;li&gt;100: timeout&lt;/li&gt;
+ * &lt;li&gt;600: connect&lt;/li&gt;
+ * &lt;li&gt;700: timeout&lt;/li&gt;
+ * &lt;li&gt;1450: connect&lt;/li&gt;
+ * &lt;li&gt;1550: timeout&lt;/li&gt;
+ * &lt;li&gt;3350: connect&lt;/li&gt;
+ * &lt;li&gt;3450: timeout&lt;/li&gt;
+ * &lt;li&gt;5250: connect&lt;/li&gt;
+ * &lt;li&gt;5350: timeout&lt;/li&gt;
+ * &lt;li&gt;7150: connect&lt;/li&gt;
+ * &lt;li&gt;7250: timeout&lt;/li&gt;
+ * &lt;li&gt;fail&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class PerExecutionDelayRetry implements RetryStrategy {
+	private final int maxRetries;
+	private final List&lt;Long&gt; delays;
+	private int retries;
+	private int delayIdx;
+
+	/**
+	 * Initializes with the maximum attempts and the delays to wait after a
+	 * failure.
+	 * 
+	 * @param maxRetries
+	 *            the maximum attempts
+	 * @param delays
+	 *            the delays to wait after failure to do another attempt
+	 */
+	public PerExecutionDelayRetry(int maxRetries, List&lt;Long&gt; delays) {
+<span class="fc" id="L58">		super();</span>
+<span class="fc" id="L59">		this.maxRetries = maxRetries;</span>
+<span class="fc" id="L60">		this.delays = delays;</span>
+<span class="fc" id="L61">		retries = maxRetries;</span>
+<span class="fc" id="L62">	}</span>
+
+	@Override
+	public boolean terminated() {
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		return retries &lt;= 0;</span>
+	}
+
+	@Override
+	public Instant nextDate(Instant executionStartTime, Instant executionFailureTime) {
+<span class="fc" id="L71">		retries--;</span>
+<span class="fc" id="L72">		return executionFailureTime.plusMillis(getNextDelay());</span>
+	}
+
+	public int getRemainingRetries() {
+<span class="fc" id="L76">		return retries;</span>
+	}
+
+	public int getMaxRetries() {
+<span class="nc" id="L80">		return maxRetries;</span>
+	}
+
+	public List&lt;Long&gt; getDelays() {
+<span class="nc" id="L84">		return delays;</span>
+	}
+
+	private long getNextDelay() {
+<span class="fc bfc" id="L88" title="All 2 branches covered.">		if (delayIdx &gt;= delays.size()) {</span>
+<span class="fc" id="L89">			return delays.get(delays.size() - 1);</span>
+		}
+<span class="fc" id="L91">		long delay = delays.get(delayIdx);</span>
+<span class="fc" id="L92">		delayIdx++;</span>
+<span class="fc" id="L93">		return delay;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

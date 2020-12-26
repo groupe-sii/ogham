@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FixedDelayRetry.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.retry</a> &gt; <span class="el_source">FixedDelayRetry.java</span></div><h1>FixedDelayRetry.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.retry;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FixedDelayRetry.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.retry</a> &gt; <span class="el_source">FixedDelayRetry.java</span></div><h1>FixedDelayRetry.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.retry;
+
+import java.time.Instant;
 
 /**
- * Retry several times with a fixed delay between each try until the maximum
- * attempts is reached.
+ * Retry several times with a fixed delay to wait after the last execution
+ * failure until the maximum attempts is reached.
  * 
  * If delay is 500ms and max retries is 5, it means that a retry will be
  * attempted every 500ms until 5 attempts are reached (inclusive). For example,
@@ -35,33 +37,43 @@ public class FixedDelayRetry implements RetryStrategy {
 	private final long delay;
 	private int retries;
 
+	/**
+	 * Initializes with the maximum attempts and the delay to wait after a
+	 * failure.
+	 * 
+	 * @param maxRetries
+	 *            the maximum attempts
+	 * @param delay
+	 *            the delay to wait after failure to do another attempt
+	 */
 	public FixedDelayRetry(int maxRetries, long delay) {
-<span class="fc" id="L39">		super();</span>
-<span class="fc" id="L40">		this.maxRetries = maxRetries;</span>
-<span class="fc" id="L41">		this.delay = delay;</span>
-<span class="fc" id="L42">		retries = maxRetries;</span>
-<span class="fc" id="L43">	}</span>
+<span class="fc" id="L50">		super();</span>
+<span class="fc" id="L51">		this.maxRetries = maxRetries;</span>
+<span class="fc" id="L52">		this.delay = delay;</span>
+<span class="fc" id="L53">		retries = maxRetries;</span>
+<span class="fc" id="L54">	}</span>
 
 	@Override
 	public boolean terminated() {
-<span class="nc bnc" id="L47" title="All 2 branches missed.">		return retries-- &lt; 0;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		return retries &lt;= 0;</span>
 	}
 
 	@Override
-	public long nextDate() {
-<span class="nc" id="L52">		return System.currentTimeMillis() + delay;</span>
+	public Instant nextDate(Instant executionStartTime, Instant executionFailureTime) {
+<span class="fc" id="L63">		retries--;</span>
+<span class="fc" id="L64">		return executionFailureTime.plusMillis(delay);</span>
 	}
 
 	public int getRemainingRetries() {
-<span class="nc" id="L56">		return retries;</span>
+<span class="fc" id="L68">		return retries;</span>
 	}
 
 	public int getMaxRetries() {
-<span class="nc" id="L60">		return maxRetries;</span>
+<span class="nc" id="L72">		return maxRetries;</span>
 	}
 
 	public long getDelay() {
-<span class="nc" id="L64">		return delay;</span>
+<span class="nc" id="L76">		return delay;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

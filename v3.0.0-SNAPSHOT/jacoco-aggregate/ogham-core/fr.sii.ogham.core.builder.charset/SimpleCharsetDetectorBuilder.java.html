@@ -1,20 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleCharsetDetectorBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.charset</a> &gt; <span class="el_source">SimpleCharsetDetectorBuilder.java</span></div><h1>SimpleCharsetDetectorBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.charset;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleCharsetDetectorBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.charset</a> &gt; <span class="el_source">SimpleCharsetDetectorBuilder.java</span></div><h1>SimpleCharsetDetectorBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.charset;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
 import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.charset.FixedCharsetDetector;
-import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 public class SimpleCharsetDetectorBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements CharsetDetectorBuilder&lt;P&gt; {
-	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
-	private final List&lt;String&gt; charsets;
+	private final ConfigurationValueBuilderHelper&lt;SimpleCharsetDetectorBuilder&lt;P&gt;, String&gt; charsetValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -23,33 +21,36 @@ public class SimpleCharsetDetectorBuilder&lt;P&gt; extends AbstractParent&lt;P&g
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public SimpleCharsetDetectorBuilder(P parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
-<span class="fc" id="L30">		super(parent);</span>
-<span class="fc" id="L31">		this.environmentBuilder = environmentBuilder;</span>
-<span class="fc" id="L32">		charsets = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L33">	}</span>
+	public SimpleCharsetDetectorBuilder(P parent, BuildContext buildContext) {
+<span class="nc" id="L28">		super(parent);</span>
+<span class="nc" id="L29">		charsetValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="nc" id="L30">	}</span>
 
 	@Override
-	public CharsetDetectorBuilder&lt;P&gt; defaultCharset(String... charsets) {
-<span class="fc" id="L37">		this.charsets.addAll(Arrays.asList(charsets));</span>
-<span class="fc" id="L38">		return this;</span>
+	public CharsetDetectorBuilder&lt;P&gt; defaultCharset(String charsetName) {
+<span class="nc" id="L34">		charsetValueBuilder.setValue(charsetName);</span>
+<span class="nc" id="L35">		return this;</span>
+	}
+
+	@Override
+	public ConfigurationValueBuilder&lt;CharsetDetectorBuilder&lt;P&gt;, String&gt; defaultCharset() {
+<span class="nc" id="L40">		return new ConfigurationValueBuilderDelegate&lt;&gt;(this, charsetValueBuilder);</span>
 	}
 
 	@Override
 	public CharsetDetector build() {
-<span class="fc" id="L43">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
-<span class="fc" id="L44">		return new FixedCharsetDetector(getDefaultCharset(propertyResolver, charsets));</span>
+<span class="nc" id="L45">		return new FixedCharsetDetector(getDefaultCharset(charsetValueBuilder));</span>
 	}
 
-	private Charset getDefaultCharset(PropertyResolver propertyResolver, List&lt;String&gt; charsets) {
-<span class="fc" id="L48">		String charset = BuilderUtils.evaluate(charsets, propertyResolver, String.class);</span>
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">		if (charset != null) {</span>
-<span class="fc" id="L50">			return Charset.forName(charset);</span>
+	private static Charset getDefaultCharset(ConfigurationValueBuilderHelper&lt;?, String&gt; valueBuilder) {
+<span class="nc" id="L49">		String charset = valueBuilder.getValue();</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">		if (charset != null) {</span>
+<span class="nc" id="L51">			return Charset.forName(charset);</span>
 		}
-<span class="nc" id="L52">		return Charset.defaultCharset();</span>
+<span class="nc" id="L53">		return Charset.defaultCharset();</span>
 	}
 
 }

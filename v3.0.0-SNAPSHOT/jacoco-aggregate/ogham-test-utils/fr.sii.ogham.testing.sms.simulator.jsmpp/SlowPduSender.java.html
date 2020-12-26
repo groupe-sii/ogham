@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SlowPduSender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.jsmpp</a> &gt; <span class="el_source">SlowPduSender.java</span></div><h1>SlowPduSender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.jsmpp;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.jsmpp.InvalidNumberOfDestinationsException;
+import org.jsmpp.PDUSender;
+import org.jsmpp.PDUStringException;
+import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DestinationAddress;
+import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.InterfaceVersion;
+import org.jsmpp.bean.MessageState;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.ReplaceIfPresentFlag;
+import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.UnsuccessDelivery;
+
+import fr.sii.ogham.testing.sms.simulator.config.Awaiter;
+import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
+
+/**
+ * Decorate a real {@link PDUSender}. If delay is configured, it waits for that
+ * delay before sending the real PDU.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SlowPduSender implements PDUSender {
+	private final PDUSender delegate;
+	private final ServerDelays delays;
+
+	public SlowPduSender(PDUSender delegate, ServerDelays delays) {
+<span class="fc" id="L37">		super();</span>
+<span class="fc" id="L38">		this.delegate = delegate;</span>
+<span class="fc" id="L39">		this.delays = delays;</span>
+<span class="fc" id="L40">	}</span>
+
+	@Override
+	public byte[] sendHeader(OutputStream os, int commandId, int commandStatus, int sequenceNumber) throws IOException {
+<span class="nc" id="L44">		await(delays.getSendHeaderWaiting());</span>
+<span class="nc" id="L45">		return delegate.sendHeader(os, commandId, commandStatus, sequenceNumber);</span>
+	}
+
+	@Override
+	public byte[] sendBind(OutputStream os, BindType bindType, int sequenceNumber, String systemId, String password, String systemType, InterfaceVersion interfaceVersion, TypeOfNumber addrTon,
+			NumberingPlanIndicator addrNpi, String addressRange) throws PDUStringException, IOException {
+<span class="nc" id="L51">		await(delays.getSendBindWaiting());</span>
+<span class="nc" id="L52">		return delegate.sendBind(os, bindType, sequenceNumber, systemId, password, systemType, interfaceVersion, addrTon, addrNpi, addressRange);</span>
+	}
+
+	@Override
+	public byte[] sendBindResp(OutputStream os, int commandId, int sequenceNumber, String systemId, InterfaceVersion interfaceVersion) throws PDUStringException, IOException {
+<span class="fc" id="L57">		await(delays.getSendBindRespWaiting());</span>
+<span class="fc" id="L58">		return delegate.sendBindResp(os, commandId, sequenceNumber, systemId, interfaceVersion);</span>
+	}
+
+	@Override
+	public byte[] sendOutbind(OutputStream os, int sequenceNumber, String systemId, String password) throws PDUStringException, IOException {
+<span class="nc" id="L63">		await(delays.getSendOutbindWaiting());</span>
+<span class="nc" id="L64">		return delegate.sendOutbind(os, sequenceNumber, systemId, password);</span>
+	}
+
+	@Override
+	public byte[] sendUnbind(OutputStream os, int sequenceNumber) throws IOException {
+<span class="nc" id="L69">		await(delays.getSendUnbindWaiting());</span>
+<span class="nc" id="L70">		return delegate.sendUnbind(os, sequenceNumber);</span>
+	}
+
+	@Override
+	public byte[] sendGenericNack(OutputStream os, int commandStatus, int sequenceNumber) throws IOException {
+<span class="nc" id="L75">		await(delays.getSendGenericNackWaiting());</span>
+<span class="nc" id="L76">		return delegate.sendGenericNack(os, commandStatus, sequenceNumber);</span>
+	}
+
+	@Override
+	public byte[] sendUnbindResp(OutputStream os, int commandStatus, int sequenceNumber) throws IOException {
+<span class="fc" id="L81">		await(delays.getSendUnbindRespWaiting());</span>
+<span class="fc" id="L82">		return delegate.sendUnbindResp(os, commandStatus, sequenceNumber);</span>
+	}
+
+	@Override
+	public byte[] sendEnquireLink(OutputStream os, int sequenceNumber) throws IOException {
+<span class="nc" id="L87">		await(delays.getSendEnquireLinkWaiting());</span>
+<span class="nc" id="L88">		return delegate.sendEnquireLink(os, sequenceNumber);</span>
+	}
+
+	@Override
+	public byte[] sendEnquireLinkResp(OutputStream os, int sequenceNumber) throws IOException {
+<span class="fc" id="L93">		await(delays.getSendEnquireLinkRespWaiting());</span>
+<span class="nc" id="L94">		return delegate.sendEnquireLinkResp(os, sequenceNumber);</span>
+	}
+
+	@Override
+	public byte[] sendSubmitSm(OutputStream os, int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon,
+			NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocolId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod,
+			RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... optionalParameters)
+			throws PDUStringException, IOException {
+<span class="nc" id="L102">		await(delays.getSendSubmitSmWaiting());</span>
+<span class="nc" id="L103">		return delegate.sendSubmitSm(os, sequenceNumber, serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi, destinationAddr, esmClass, protocolId, priorityFlag,</span>
+				scheduleDeliveryTime, validityPeriod, registeredDelivery, replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage, optionalParameters);
+	}
+
+	@Override
+	public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber, String messageId) throws PDUStringException, IOException {
+<span class="fc" id="L109">		await(delays.getSendSubmitSmRespWaiting());</span>
+<span class="fc" id="L110">		return delegate.sendSubmitSmResp(os, sequenceNumber, messageId);</span>
+	}
+
+	@Override
+	public byte[] sendQuerySm(OutputStream os, int sequenceNumber, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
+			throws PDUStringException, IOException {
+<span class="nc" id="L116">		await(delays.getSendQuerySmWaiting());</span>
+<span class="nc" id="L117">		return delegate.sendQuerySm(os, sequenceNumber, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);</span>
+	}
+
+	@Override
+	public byte[] sendQuerySmResp(OutputStream os, int sequenceNumber, String messageId, String finalDate, MessageState messageState, byte errorCode) throws PDUStringException, IOException {
+<span class="nc" id="L122">		await(delays.getSendQuerySmRespWaiting());</span>
+<span class="nc" id="L123">		return delegate.sendQuerySmResp(os, sequenceNumber, messageId, finalDate, messageState, errorCode);</span>
+	}
+
+	@Override
+	public byte[] sendDeliverSm(OutputStream os, int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon,
+			NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocoId, byte priorityFlag, RegisteredDelivery registeredDelivery, DataCoding dataCoding,
+			byte[] shortMessage, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+<span class="nc" id="L130">		await(delays.getSendDeliverSmWaiting());</span>
+<span class="nc" id="L131">		return delegate.sendDeliverSm(os, sequenceNumber, serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi, destinationAddr, esmClass, protocoId, priorityFlag,</span>
+				registeredDelivery, dataCoding, shortMessage, optionalParameters);
+	}
+
+	@Override
+	public byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber, String messageId) throws IOException {
+<span class="nc" id="L137">		await(delays.getSendDeliverSmRespWaiting());</span>
+<span class="nc" id="L138">		return delegate.sendDeliverSmResp(os, commandStatus, sequenceNumber, messageId);</span>
+	}
+
+	@Override
+	public byte[] sendDataSm(OutputStream os, int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon,
+			NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, RegisteredDelivery registeredDelivery, DataCoding dataCoding, OptionalParameter... optionalParameters)
+			throws PDUStringException, IOException {
+<span class="nc" id="L145">		await(delays.getSendDataSmWaiting());</span>
+<span class="nc" id="L146">		return delegate.sendDataSm(os, sequenceNumber, serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi, destinationAddr, esmClass, registeredDelivery, dataCoding,</span>
+				optionalParameters);
+	}
+
+	@Override
+	public byte[] sendDataSmResp(OutputStream os, int sequenceNumber, String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+<span class="nc" id="L152">		await(delays.getSendDataSmRespWaiting());</span>
+<span class="nc" id="L153">		return delegate.sendDataSmResp(os, sequenceNumber, messageId, optionalParameters);</span>
+	}
+
+	@Override
+	public byte[] sendCancelSm(OutputStream os, int sequenceNumber, String serviceType, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+			TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi, String destinationAddr) throws PDUStringException, IOException {
+<span class="nc" id="L159">		await(delays.getSendCancelSmWaiting());</span>
+<span class="nc" id="L160">		return delegate.sendCancelSm(os, sequenceNumber, serviceType, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi, destinationAddr);</span>
+	}
+
+	@Override
+	public byte[] sendCancelSmResp(OutputStream os, int sequenceNumber) throws IOException {
+<span class="nc" id="L165">		await(delays.getSendCancelSmRespWaiting());</span>
+<span class="nc" id="L166">		return delegate.sendCancelSmResp(os, sequenceNumber);</span>
+	}
+
+	@Override
+	public byte[] sendReplaceSm(OutputStream os, int sequenceNumber, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, String scheduleDeliveryTime,
+			String validityPeriod, RegisteredDelivery registeredDelivery, byte smDefaultMsgId, byte[] shortMessage) throws PDUStringException, IOException {
+<span class="nc" id="L172">		await(delays.getSendReplaceSmWaiting());</span>
+<span class="nc" id="L173">		return delegate.sendReplaceSm(os, sequenceNumber, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr, scheduleDeliveryTime, validityPeriod, registeredDelivery, smDefaultMsgId, shortMessage);</span>
+	}
+
+	@Override
+	public byte[] sendReplaceSmResp(OutputStream os, int sequenceNumber) throws IOException {
+<span class="nc" id="L178">		await(delays.getSendReplaceSmRespWaiting());</span>
+<span class="nc" id="L179">		return delegate.sendReplaceSmResp(os, sequenceNumber);</span>
+	}
+
+	@Override
+	public byte[] sendSubmiMulti(OutputStream os, int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+			DestinationAddress[] destinationAddresses, ESMClass esmClass, byte protocolId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, RegisteredDelivery registeredDelivery,
+			ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... optionalParameters)
+			throws PDUStringException, InvalidNumberOfDestinationsException, IOException {
+<span class="nc" id="L187">		await(delays.getSendSubmiMultiWaiting());</span>
+<span class="nc" id="L188">		return delegate.sendSubmiMulti(os, sequenceNumber, serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destinationAddresses, esmClass, protocolId, priorityFlag, scheduleDeliveryTime,</span>
+				validityPeriod, registeredDelivery, replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage, optionalParameters);
+	}
+
+	@Override
+	public byte[] sendSubmitMultiResp(OutputStream os, int sequenceNumber, String messageId, UnsuccessDelivery... unsuccessDeliveries) throws PDUStringException, IOException {
+<span class="nc" id="L194">		await(delays.getSendSubmitMultiRespWaiting());</span>
+<span class="nc" id="L195">		return delegate.sendSubmitMultiResp(os, sequenceNumber, messageId, unsuccessDeliveries);</span>
+	}
+
+	@Override
+	public byte[] sendAlertNotification(OutputStream os, int sequenceNumber, byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr, byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
+			OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+<span class="nc" id="L201">		await(delays.getSendAlertNotificationWaiting());</span>
+<span class="nc" id="L202">		return delegate.sendAlertNotification(os, sequenceNumber, sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr, optionalParameters);</span>
+	}
+
+	private static void await(Awaiter waiting) {
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">		if (waiting == null) {</span>
+<span class="nc" id="L207">			return;</span>
+		}
+<span class="fc" id="L209">		waiting.await();</span>
+<span class="fc" id="L210">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RegexBase64BackgroundImageInliner.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.inliner.impl.regexp</a> &gt; <span class="el_source">RegexBase64BackgroundImageInliner.java</span></div><h1>RegexBase64BackgroundImageInliner.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.inliner.impl.regexp;
+
+import static fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.InlineModes.BASE64;
+import static java.text.MessageFormat.format;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.sii.ogham.core.util.Base64Utils;
+import fr.sii.ogham.html.inliner.ContentWithImages;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.inliner.ImageResource;
+import fr.sii.ogham.html.inliner.impl.regexp.CssImageInlinerConstants.InlineModes;
+
+/**
+ * Image inliner that reads the image and converts it into a base64 string. The
+ * string is then included directly in the HTML content in place of the previous URL/path.
+ * 
+ * &lt;p&gt;
+ * The inlining using base64 is only applied if the attribute
+ * {@link CssImageInlinerConstants#INLINE_MODE_PROPERTY} is set to
+ * {@link InlineModes#BASE64}.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L28">public class RegexBase64BackgroundImageInliner implements ImageInliner {</span>
+	private static final String BASE64_URI = &quot;data:{0};base64,{1}&quot;;
+
+	@Override
+	public ContentWithImages inline(String htmlContent, List&lt;ImageResource&gt; images) {
+<span class="fc" id="L33">		List&lt;Encoded&gt; encoded = new ArrayList&lt;&gt;(images.size());</span>
+<span class="fc" id="L34">		String inlined = CssImageInlineUtils.inline(htmlContent, images, BASE64, decl -&gt; encodeImage(decl.getUrl().getUrl(), decl.getImage(), encoded));</span>
+<span class="fc" id="L35">		return new ContentWithImages(inlined, new ArrayList&lt;&gt;(0));</span>
+	}
+
+	private String encodeImage(String imageUrl, ImageResource image, List&lt;Encoded&gt; encoded) {
+<span class="fc" id="L39">		Encoded alreadyEncoded = getEncodedForUrl(imageUrl, encoded);</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">		if (alreadyEncoded != null) {</span>
+<span class="fc" id="L41">			return alreadyEncoded.getEncodedUrl();</span>
+		}
+<span class="fc" id="L43">		String encodedUrl = format(BASE64_URI, image.getMimetype(), Base64Utils.encodeToString(image.getContent()));</span>
+<span class="fc" id="L44">		encoded.add(new Encoded(imageUrl, encodedUrl));</span>
+<span class="fc" id="L45">		return encodedUrl;</span>
+	}
+
+	private Encoded getEncodedForUrl(String imageUrl, List&lt;Encoded&gt; encoded) {
+		// @formatter:off
+<span class="fc" id="L50">		return encoded.stream()</span>
+<span class="fc" id="L51">				.filter(e -&gt; imageUrl.equals(e.getMatchedUrl()))</span>
+<span class="fc" id="L52">				.findFirst()</span>
+<span class="fc" id="L53">				.orElse(null);</span>
+		// @formatter:on
+	}
+
+	private static class Encoded {
+		private final String matchedUrl;
+		private final String encodedUrl;
+
+		public Encoded(String matchedUrl, String encodedUrl) {
+<span class="fc" id="L62">			super();</span>
+<span class="fc" id="L63">			this.matchedUrl = matchedUrl;</span>
+<span class="fc" id="L64">			this.encodedUrl = encodedUrl;</span>
+<span class="fc" id="L65">		}</span>
+
+		public String getMatchedUrl() {
+<span class="fc" id="L68">			return matchedUrl;</span>
+		}
+
+		public String getEncodedUrl() {
+<span class="fc" id="L72">			return encodedUrl;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

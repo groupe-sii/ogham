@@ -1,10 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OverrideJavaMailResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder.javamail</a> &gt; <span class="el_source">OverrideJavaMailResolver.java</span></div><h1>OverrideJavaMailResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder.javamail;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OverrideJavaMailResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder.javamail</a> &gt; <span class="el_source">OverrideJavaMailResolver.java</span></div><h1>OverrideJavaMailResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder.javamail;
 
-import static fr.sii.ogham.core.util.BuilderUtils.getPropertyKey;
-import static fr.sii.ogham.core.util.BuilderUtils.isExpression;
-
-import java.util.List;
-
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.env.PropertyResolver;
 
@@ -21,8 +17,7 @@ import fr.sii.ogham.core.env.PropertyResolver;
  * &lt;li&gt;the value of &quot;mail.host&quot; otherwise&lt;/li&gt;
  * &lt;/ul&gt;
  * 
- * It works the same for ports but in addition, if the port value is defined as
- * an integer, it is used directly.
+ * It works the same for ports.
  * 
  * @author Aurélien Baudet
  *
@@ -30,135 +25,107 @@ import fr.sii.ogham.core.env.PropertyResolver;
 public class OverrideJavaMailResolver implements PropertyResolver {
 	private final PropertyResolver delegate;
 	private final Converter converter;
-	private final List&lt;String&gt; hosts;
-	private final List&lt;String&gt; ports;
-	private final Integer port;
+	private final ConfigurationValueBuilderHelper&lt;?, String&gt; host;
+	private final ConfigurationValueBuilderHelper&lt;?, Integer&gt; port;
 
-	public OverrideJavaMailResolver(PropertyResolver delegate, Converter converter, List&lt;String&gt; hosts, List&lt;String&gt; ports, Integer port) {
-<span class="fc" id="L38">		super();</span>
-<span class="fc" id="L39">		this.delegate = delegate;</span>
-<span class="fc" id="L40">		this.converter = converter;</span>
-<span class="fc" id="L41">		this.hosts = hosts;</span>
-<span class="fc" id="L42">		this.ports = ports;</span>
-<span class="fc" id="L43">		this.port = port;</span>
-<span class="fc" id="L44">	}</span>
+	public OverrideJavaMailResolver(PropertyResolver delegate, Converter converter, ConfigurationValueBuilderHelper&lt;?, String&gt; host, ConfigurationValueBuilderHelper&lt;?, Integer&gt; port) {
+<span class="fc" id="L32">		super();</span>
+<span class="fc" id="L33">		this.delegate = delegate;</span>
+<span class="fc" id="L34">		this.converter = converter;</span>
+<span class="fc" id="L35">		this.host = host;</span>
+<span class="fc" id="L36">		this.port = port;</span>
+<span class="fc" id="L37">	}</span>
 
 	@Override
 	public boolean containsProperty(String key) {
-<span class="fc bfc" id="L48" title="All 2 branches covered.">		if (getDirectValue(key) != null) {</span>
-<span class="fc" id="L49">			return true;</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">		if (getValue(key) != null) {</span>
+<span class="fc" id="L42">			return true;</span>
 		}
-<span class="fc" id="L51">		return delegate.containsProperty(getOverridenKey((String) key));</span>
+<span class="fc" id="L44">		return delegate.containsProperty(key);</span>
 	}
 
 	@Override
 	public String getProperty(String key) {
-<span class="fc" id="L56">		String value = getDirectValue(key);</span>
-<span class="fc bfc" id="L57" title="All 2 branches covered.">		if (value != null) {</span>
-<span class="fc" id="L58">			return value;</span>
+<span class="fc" id="L49">		String value = getValue(key);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">		if (value != null) {</span>
+<span class="fc" id="L51">			return value;</span>
 		}
-<span class="fc" id="L60">		return delegate.getProperty(getOverridenKey(key));</span>
+<span class="fc" id="L53">		return delegate.getProperty(key);</span>
 	}
 
 	@Override
 	public String getProperty(String key, String defaultValue) {
-<span class="fc" id="L65">		String value = getDirectValue(key);</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">		if (value != null) {</span>
-<span class="fc" id="L67">			return value;</span>
+<span class="fc" id="L58">		String value = getValue(key);</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">		if (value != null) {</span>
+<span class="fc" id="L60">			return value;</span>
 		}
-<span class="fc" id="L69">		return delegate.getProperty((String) getOverridenKey(key), defaultValue);</span>
+<span class="fc" id="L62">		return delegate.getProperty(key, defaultValue);</span>
 	}
 
 	@Override
 	public &lt;T&gt; T getProperty(String key, Class&lt;T&gt; targetType) {
-<span class="fc" id="L74">		String value = getDirectValue(key);</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">		if (value != null) {</span>
-<span class="fc" id="L76">			return converter.convert(value, targetType);</span>
+<span class="fc" id="L67">		String value = getValue(key);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">		if (value != null) {</span>
+<span class="fc" id="L69">			return converter.convert(value, targetType);</span>
 		}
-<span class="fc" id="L78">		return delegate.getProperty(getOverridenKey(key), targetType);</span>
+<span class="fc" id="L71">		return delegate.getProperty(key, targetType);</span>
 	}
 
 	@Override
 	public &lt;T&gt; T getProperty(String key, Class&lt;T&gt; targetType, T defaultValue) {
-<span class="nc" id="L83">		String value = getDirectValue(key);</span>
-<span class="nc bnc" id="L84" title="All 2 branches missed.">		if (value != null) {</span>
-<span class="nc" id="L85">			return converter.convert(value, targetType);</span>
+<span class="nc" id="L76">		String value = getValue(key);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">		if (value != null) {</span>
+<span class="nc" id="L78">			return converter.convert(value, targetType);</span>
 		}
-<span class="nc" id="L87">		return delegate.getProperty(getOverridenKey(key), targetType, defaultValue);</span>
+<span class="nc" id="L80">		return delegate.getProperty(key, targetType, defaultValue);</span>
 	}
 
 	@Override
-	public String getRequiredProperty(String key) throws IllegalStateException {
-<span class="nc" id="L92">		String value = getDirectValue(key);</span>
-<span class="nc bnc" id="L93" title="All 2 branches missed.">		if (value != null) {</span>
-<span class="nc" id="L94">			return value;</span>
+	public String getRequiredProperty(String key) {
+<span class="nc" id="L85">		String value = getValue(key);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">		if (value != null) {</span>
+<span class="nc" id="L87">			return value;</span>
 		}
-<span class="nc" id="L96">		return delegate.getRequiredProperty(getOverridenKey(key));</span>
+<span class="nc" id="L89">		return delegate.getRequiredProperty(key);</span>
 	}
 
 	@Override
-	public &lt;T&gt; T getRequiredProperty(String key, Class&lt;T&gt; targetType) throws IllegalStateException {
-<span class="nc" id="L101">		String value = getDirectValue(key);</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">		if (value != null) {</span>
-<span class="nc" id="L103">			return converter.convert(value, targetType);</span>
+	public &lt;T&gt; T getRequiredProperty(String key, Class&lt;T&gt; targetType) {
+<span class="nc" id="L94">		String value = getValue(key);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">		if (value != null) {</span>
+<span class="nc" id="L96">			return converter.convert(value, targetType);</span>
 		}
-<span class="nc" id="L105">		return delegate.getRequiredProperty(getOverridenKey(key), targetType);</span>
+<span class="nc" id="L98">		return delegate.getRequiredProperty(key, targetType);</span>
 	}
 
-	private String getDirectValue(String key) {
-<span class="fc bfc" id="L109" title="All 4 branches covered.">		if (isPortKey(key) &amp;&amp; getPortValue() != null) {</span>
-<span class="fc" id="L110">			return getPortValue();</span>
+	private String getValue(String key) {
+<span class="fc bfc" id="L102" title="All 4 branches covered.">		if (isPortKey(key) &amp;&amp; getPortValue() != null) {</span>
+<span class="fc" id="L103">			return getPortValue();</span>
 		}
-<span class="fc bfc" id="L112" title="All 4 branches covered.">		if (isHostKey(key) &amp;&amp; getHostValue() != null) {</span>
-<span class="fc" id="L113">			return getHostValue();</span>
+<span class="fc bfc" id="L105" title="All 4 branches covered.">		if (isHostKey(key) &amp;&amp; getHostValue() != null) {</span>
+<span class="fc" id="L106">			return getHostValue();</span>
 		}
-<span class="fc" id="L115">		return null;</span>
+<span class="fc" id="L108">		return null;</span>
 	}
 
 	private String getPortValue() {
-<span class="fc bfc" id="L119" title="All 2 branches covered.">		return port == null ? null : port.toString();</span>
+<span class="fc" id="L112">		Integer value = port.getValue();</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		if (value == null) {</span>
+<span class="fc" id="L114">			return null;</span>
+		}
+<span class="fc" id="L116">		return String.valueOf(value);</span>
 	}
 
-	private boolean isHostKey(Object key) {
-<span class="fc bfc" id="L123" title="All 4 branches covered.">		return &quot;mail.smtp.host&quot;.equals(key) || &quot;mail.host&quot;.equals(key);</span>
+	private static boolean isHostKey(Object key) {
+<span class="fc bfc" id="L120" title="All 4 branches covered.">		return &quot;mail.smtp.host&quot;.equals(key) || &quot;mail.host&quot;.equals(key);</span>
 	}
 
-	private boolean isPortKey(Object key) {
-<span class="fc bfc" id="L127" title="All 4 branches covered.">		return &quot;mail.smtp.port&quot;.equals(key) || &quot;mail.port&quot;.equals(key);</span>
-	}
-
-	private boolean containsPropertyExpression(String prop) {
-<span class="fc bfc" id="L131" title="All 4 branches covered.">		return isExpression(prop) &amp;&amp; delegate.containsProperty(getPropertyKey(prop));</span>
+	private static boolean isPortKey(Object key) {
+<span class="fc bfc" id="L124" title="All 4 branches covered.">		return &quot;mail.smtp.port&quot;.equals(key) || &quot;mail.port&quot;.equals(key);</span>
 	}
 
 	private String getHostValue() {
-<span class="fc bfc" id="L135" title="All 2 branches covered.">		for (String host : hosts) {</span>
-<span class="fc bfc" id="L136" title="All 2 branches covered.">			if (!isExpression(host)) {</span>
-<span class="fc" id="L137">				return host;</span>
-			}
-<span class="fc" id="L139">		}</span>
-<span class="fc" id="L140">		return null;</span>
-	}
-
-	private String getOverridenKey(String key) {
-<span class="fc" id="L144">		String overrideKey = key;</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">		if (isHostKey(key)) {</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">			for (String hostProp : hosts) {</span>
-<span class="fc bfc" id="L147" title="All 2 branches covered.">				if (containsPropertyExpression(hostProp)) {</span>
-<span class="fc" id="L148">					overrideKey = getPropertyKey(hostProp);</span>
-<span class="fc" id="L149">					break;</span>
-				}
-<span class="fc" id="L151">			}</span>
-		}
-<span class="fc bfc" id="L153" title="All 2 branches covered.">		if (isPortKey(key)) {</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">			for (String portProp : ports) {</span>
-<span class="fc bfc" id="L155" title="All 2 branches covered.">				if (containsPropertyExpression(portProp)) {</span>
-<span class="fc" id="L156">					overrideKey = getPropertyKey(portProp);</span>
-<span class="fc" id="L157">					break;</span>
-				}
-<span class="fc" id="L159">			}</span>
-		}
-<span class="fc" id="L161">		return overrideKey;</span>
+<span class="fc" id="L128">		return host.getValue();</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

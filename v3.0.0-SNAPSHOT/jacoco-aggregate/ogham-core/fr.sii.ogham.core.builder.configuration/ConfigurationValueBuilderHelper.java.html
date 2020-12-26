@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ConfigurationValueBuilderHelper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.configuration</a> &gt; <span class="el_source">ConfigurationValueBuilderHelper.java</span></div><h1>ConfigurationValueBuilderHelper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.configuration;
+
+import static fr.sii.ogham.core.util.BuilderUtils.isExpression;
+import static java.util.Optional.empty;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.fluent.AbstractParent;
+
+/**
+ * Helper that allow registration of properties and default value but also
+ * registers the value set by the developer.
+ * 
+ * &lt;p&gt;
+ * If a value is explicitly set by developer, it means that the value is
+ * hard-coded in its own code. This value can't be overridden by a property or
+ * default value so the developer value always takes precedence.
+ * 
+ * For example, Ogham could be configured like this:
+ * 
+ * &lt;pre&gt;
+ * .port()
+ *   .properties(&quot;mail.smtp.port&quot;, &quot;mail.port&quot;)
+ *   .devaultValue(25)
+ * &lt;/pre&gt;
+ * 
+ * The developer can configure Ogham using a configuration file in the classpath
+ * to provide values for local development environment. Example of content of
+ * the configuration file:
+ * 
+ * &lt;pre&gt;
+ * mail.smtp.port = 557
+ * &lt;/pre&gt;
+ * 
+ * The developer may want to test its code and may need to have a different port
+ * value in test:
+ * 
+ * &lt;pre&gt;
+ * &amp;#64;Test
+ * public void testMail() {
+ *   MessagingBuilder builder = MessagingBuilder.standard();
+ *   builder
+ *     .email().sender(JavaMailBuilder.class)
+ *       .port(10025)
+ *   ...
+ * &lt;/pre&gt;
+ * 
+ * The value {@code 10025} must be the value available in the test regardless of
+ * the value of the properties and default value.
+ * 
+ * &lt;p&gt;
+ * &lt;strong&gt;NOTE:&lt;/strong&gt; This class is for internal use (or extensions for
+ * Ogham). The developer that uses Ogham should not see
+ * {@link #setValue(Object)} and {@link #getValue()} methods.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent
+ * @param &lt;V&gt;
+ *            the type of the value
+ */
+public class ConfigurationValueBuilderHelper&lt;P, V&gt; extends AbstractParent&lt;P&gt; implements ConfigurationValueBuilder&lt;P, V&gt; {
+	private final Class&lt;V&gt; valueClass;
+	private final BuildContext buildContext;
+	private final List&lt;String&gt; properties;
+	private V defaultValue;
+	private V value;
+	private Optional&lt;V&gt; optionalValue;
+
+	/**
+	 * Initializes with the parent builder and the type of the value used for
+	 * conversion.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param valueClass
+	 *            the type of the value
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public ConfigurationValueBuilderHelper(P parent, Class&lt;V&gt; valueClass, BuildContext buildContext) {
+<span class="fc" id="L88">		super(parent);</span>
+<span class="fc" id="L89">		this.valueClass = valueClass;</span>
+<span class="fc" id="L90">		this.buildContext = buildContext;</span>
+<span class="fc" id="L91">		properties = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L92">		optionalValue = empty();</span>
+<span class="fc" id="L93">	}</span>
+
+	@Override
+	public ConfigurationValueBuilderHelper&lt;P, V&gt; properties(String... properties) {
+<span class="fc bfc" id="L97" title="All 2 branches covered.">		for (String property : properties) {</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">			if (!isExpression(property)) {</span>
+<span class="nc" id="L99">				property = &quot;${&quot; + property + &quot;}&quot;;</span>
+			}
+<span class="fc" id="L101">			this.properties.add(property);</span>
+		}
+<span class="fc" id="L103">		return this;</span>
+	}
+
+	@Override
+	public ConfigurationValueBuilderHelper&lt;P, V&gt; defaultValue(V value) {
+<span class="fc" id="L108">		defaultValue = value;</span>
+<span class="fc" id="L109">		return this;</span>
+	}
+
+	@Override
+	public ConfigurationValueBuilderHelper&lt;P, V&gt; defaultValue(MayOverride&lt;V&gt; possibleNewValue) {
+<span class="fc" id="L114">		defaultValue = possibleNewValue.override(defaultValue);</span>
+<span class="fc" id="L115">		return this;</span>
+	}
+
+	@Override
+	@SuppressWarnings(&quot;squid:S3553&quot;)
+	public ConfigurationValueBuilderHelper&lt;P, V&gt; value(Optional&lt;V&gt; optionalValue) {
+<span class="fc bfc" id="L121" title="All 2 branches covered.">		if (optionalValue.isPresent()) {</span>
+<span class="fc" id="L122">			this.optionalValue = optionalValue;</span>
+		}
+<span class="fc" id="L124">		return this;</span>
+	}
+
+	/**
+	 * If a value is explicitly set by developer, it means that the value is
+	 * hard-coded in its own code. This value can't be overridden by a property
+	 * or default value so the developer value always takes precedence.
+	 * 
+	 * For example, Ogham could be configured like this:
+	 * 
+	 * &lt;pre&gt;
+	 * .port()
+	 *   .properties(&quot;mail.smtp.port&quot;, &quot;mail.port&quot;)
+	 *   .devaultValue(25)
+	 * &lt;/pre&gt;
+	 * 
+	 * The developer can configure Ogham using a configuration file in the
+	 * classpath to provide values for local development environment. Example of
+	 * content of the configuration file:
+	 * 
+	 * &lt;pre&gt;
+	 * mail.smtp.port = 557
+	 * &lt;/pre&gt;
+	 * 
+	 * The developer may want to test its code and may need to have a different
+	 * port value in test:
+	 * 
+	 * &lt;pre&gt;
+	 * &amp;#64;Test
+	 * public void testMail() {
+	 *   MessagingBuilder builder = MessagingBuilder.standard();
+	 *   builder
+	 *     .email().sender(JavaMailBuilder.class)
+	 *       .port(10025)
+	 *   ...
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 10025} must be the value available in the test
+	 * regardless of the value of the properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;IMPORTANT:&lt;/strong&gt; {@link Configurer}s &lt;strong&gt;should
+	 * not&lt;/strong&gt; use this method directly because it prevents the possibility
+	 * to override the value from external configuration.
+	 * 
+	 * @param value
+	 *            the value set by the developer in its own code
+	 */
+	public void setValue(V value) {
+<span class="fc" id="L173">		this.value = value;</span>
+<span class="fc" id="L174">	}</span>
+
+	/**
+	 * Get the final value. The first non-null value is returned:
+	 * 
+	 * &lt;ol&gt;
+	 * &lt;li&gt;If the a non-null value has been set using {@link #setValue(Object)},
+	 * this value is returned&lt;/li&gt;
+	 * &lt;li&gt;If an optional value has been set using {@link #value(Optional)}, and
+	 * {@link Optional#isPresent()} returns true this value is returned&lt;/li&gt;
+	 * &lt;li&gt;If property keys have been registered and one has been evaluated to a
+	 * non-null value, this value is returned&lt;/li&gt;
+	 * &lt;li&gt;If a default value has been registered, the default value is
+	 * returned&lt;/li&gt;
+	 * &lt;li&gt;null is returned&lt;/li&gt;
+	 * &lt;/ol&gt;
+	 * 
+	 * @return the value
+	 */
+	public V getValue() {
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		if (value != null) {</span>
+<span class="fc" id="L195">			return value;</span>
+		}
+<span class="fc bfc" id="L197" title="All 2 branches covered.">		if (optionalValue.isPresent()) {</span>
+<span class="fc" id="L198">			return optionalValue.get();</span>
+		}
+<span class="fc" id="L200">		V prop = buildContext.evaluate(properties, valueClass);</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		if (prop != null) {</span>
+<span class="fc" id="L202">			return prop;</span>
+		}
+<span class="fc" id="L204">		return defaultValue;</span>
+	}
+
+	/**
+	 * Get the final value. The first non-null value is returned:
+	 * 
+	 * &lt;ol&gt;
+	 * &lt;li&gt;If the a non-null value has been set using {@link #setValue(Object)},
+	 * this value is returned&lt;/li&gt;
+	 * &lt;li&gt;If an optional value has been set using {@link #value(Optional)}, and
+	 * {@link Optional#isPresent()} returns true this value is returned&lt;/li&gt;
+	 * &lt;li&gt;If property keys have been registered and one has been evaluated to a
+	 * non-null value, this value is returned&lt;/li&gt;
+	 * &lt;li&gt;If a default value has been registered, the default value is
+	 * returned&lt;/li&gt;
+	 * &lt;li&gt;The default value provided as parameter is used&lt;/li&gt;
+	 * &lt;/ol&gt;
+	 * 
+	 * @param defaultValue
+	 *            the default value to use if there isn't a non-null value
+	 * @return the value
+	 */
+	public V getValue(V defaultValue) {
+<span class="fc" id="L227">		V configuredValue = getValue();</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">		if (configuredValue != null) {</span>
+<span class="fc" id="L229">			return configuredValue;</span>
+		}
+<span class="fc" id="L231">		return defaultValue;</span>
+	}
+
+	/**
+	 * Returns true if a value, default value or properties have been set.
+	 * 
+	 * @return true if there is a value, default value or at least one property
+	 */
+	public boolean hasValueOrProperties() {
+<span class="nc bnc" id="L240" title="All 6 branches missed.">		return value != null || !properties.isEmpty() || defaultValue != null;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

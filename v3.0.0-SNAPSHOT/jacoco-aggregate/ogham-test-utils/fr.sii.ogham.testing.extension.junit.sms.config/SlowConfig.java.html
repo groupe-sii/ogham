@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SlowConfig.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.junit.sms.config</a> &gt; <span class="el_source">SlowConfig.java</span></div><h1>SlowConfig.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.junit.sms.config;
+
+import static org.awaitility.Awaitility.await;
+
+import java.util.function.BiConsumer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.testing.sms.simulator.config.Awaiter;
+import fr.sii.ogham.testing.sms.simulator.config.ServerDelays;
+import fr.sii.ogham.testing.util.HasParent;
+
+public class SlowConfig extends HasParent&lt;ServerConfig&gt; {
+<span class="fc" id="L15">	private static final Logger LOG = LoggerFactory.getLogger(SlowConfig.class);</span>
+	
+	private final WaitingConfHelper sendAlertNotification;
+	private final WaitingConfHelper sendBind;
+	private final WaitingConfHelper sendBindResp;
+	private final WaitingConfHelper sendCancelSm;
+	private final WaitingConfHelper sendCancelSmResp;
+	private final WaitingConfHelper sendDataSm;
+	private final WaitingConfHelper sendDataSmResp;
+	private final WaitingConfHelper sendDeliverSm;
+	private final WaitingConfHelper sendDeliverSmResp;
+	private final WaitingConfHelper sendEnquireLink;
+	private final WaitingConfHelper sendEnquireLinkResp;
+	private final WaitingConfHelper sendGenericNack;
+	private final WaitingConfHelper sendHeader;
+	private final WaitingConfHelper sendOutbind;
+	private final WaitingConfHelper sendQuerySm;
+	private final WaitingConfHelper sendQuerySmResp;
+	private final WaitingConfHelper sendReplaceSm;
+	private final WaitingConfHelper sendReplaceSmResp;
+	private final WaitingConfHelper sendSubmitMulti;
+	private final WaitingConfHelper sendSubmitMultiResp;
+	private final WaitingConfHelper sendSubmitSm;
+	private final WaitingConfHelper sendSubmitSmResp;
+	private final WaitingConfHelper sendUnbind;
+	private final WaitingConfHelper sendUnbindResp;
+
+	public SlowConfig(ServerConfig parent) {
+<span class="fc" id="L43">		super(parent);</span>
+<span class="fc" id="L44">		sendAlertNotification = new WaitingConfHelper(ServerDelays::setSendAlertNotificationWaiting);</span>
+<span class="fc" id="L45">		sendBind = new WaitingConfHelper(ServerDelays::setSendBindWaiting);</span>
+<span class="fc" id="L46">		sendBindResp = new WaitingConfHelper(ServerDelays::setSendBindRespWaiting);</span>
+<span class="fc" id="L47">		sendCancelSm = new WaitingConfHelper(ServerDelays::setSendCancelSmWaiting);</span>
+<span class="fc" id="L48">		sendCancelSmResp = new WaitingConfHelper(ServerDelays::setSendCancelSmRespWaiting);</span>
+<span class="fc" id="L49">		sendDataSm = new WaitingConfHelper(ServerDelays::setSendDataSmWaiting);</span>
+<span class="fc" id="L50">		sendDataSmResp = new WaitingConfHelper(ServerDelays::setSendDataSmRespWaiting);</span>
+<span class="fc" id="L51">		sendDeliverSm = new WaitingConfHelper(ServerDelays::setSendDeliverSmWaiting);</span>
+<span class="fc" id="L52">		sendDeliverSmResp = new WaitingConfHelper(ServerDelays::setSendDeliverSmRespWaiting);</span>
+<span class="fc" id="L53">		sendEnquireLink = new WaitingConfHelper(ServerDelays::setSendEnquireLinkWaiting);</span>
+<span class="fc" id="L54">		sendEnquireLinkResp = new WaitingConfHelper(ServerDelays::setSendEnquireLinkRespWaiting);</span>
+<span class="fc" id="L55">		sendGenericNack = new WaitingConfHelper(ServerDelays::setSendGenericNackWaiting);</span>
+<span class="fc" id="L56">		sendHeader = new WaitingConfHelper(ServerDelays::setSendHeaderWaiting);</span>
+<span class="fc" id="L57">		sendOutbind = new WaitingConfHelper(ServerDelays::setSendOutbindWaiting);</span>
+<span class="fc" id="L58">		sendQuerySm = new WaitingConfHelper(ServerDelays::setSendQuerySmWaiting);</span>
+<span class="fc" id="L59">		sendQuerySmResp = new WaitingConfHelper(ServerDelays::setSendQuerySmRespWaiting);</span>
+<span class="fc" id="L60">		sendReplaceSm = new WaitingConfHelper(ServerDelays::setSendReplaceSmRespWaiting);</span>
+<span class="fc" id="L61">		sendReplaceSmResp = new WaitingConfHelper(ServerDelays::setSendReplaceSmRespWaiting);</span>
+<span class="fc" id="L62">		sendSubmitMulti = new WaitingConfHelper(ServerDelays::setSendSubmiMultiWaiting);</span>
+<span class="fc" id="L63">		sendSubmitMultiResp = new WaitingConfHelper(ServerDelays::setSendSubmitMultiRespWaiting);</span>
+<span class="fc" id="L64">		sendSubmitSm = new WaitingConfHelper(ServerDelays::setSendSubmitSmWaiting);</span>
+<span class="fc" id="L65">		sendSubmitSmResp = new WaitingConfHelper(ServerDelays::setSendSubmitSmRespWaiting);</span>
+<span class="fc" id="L66">		sendUnbind = new WaitingConfHelper(ServerDelays::setSendUnbindWaiting);</span>
+<span class="fc" id="L67">		sendUnbindResp = new WaitingConfHelper(ServerDelays::setSendUnbindRespWaiting);</span>
+<span class="fc" id="L68">	}</span>
+
+	/**
+	 * Simulate slow server by waiting {@code sendAlertNotificationDelay}
+	 * milliseconds before sending data
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendAlertNotificationWaiting(Awaiter)}
+	 * is also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendAlertNotificationDelay(long delayMs) {
+<span class="nc" id="L82">		sendAlertNotification.setDelay(delayMs);</span>
+<span class="nc" id="L83">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendAlertNotificationWaiting}
+	 * function before sending data
+	 * 
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendAlertNotificationDelay(long)}
+	 * has no effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendAlertNotificationWaiting(Awaiter waiting) {
+<span class="nc" id="L99">		sendAlertNotification.setWaiting(waiting);</span>
+<span class="nc" id="L100">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendBindDelay} milliseconds before
+	 * sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendBindWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendBindDelay(long delayMs) {
+<span class="nc" id="L115">		sendBind.setDelay(delayMs);</span>
+<span class="nc" id="L116">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendBindWaiting} function before
+	 * sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendBindDelay(long)} has no effect
+	 * if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendBindWaiting(Awaiter waiting) {
+<span class="nc" id="L131">		sendBind.setWaiting(waiting);</span>
+<span class="nc" id="L132">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendBindRespDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendBindRespWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendBindRespDelay(long delayMs) {
+<span class="fc" id="L147">		sendBindResp.setDelay(delayMs);</span>
+<span class="fc" id="L148">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendBindRespWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendBindRespDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendBindRespWaiting(Awaiter waiting) {
+<span class="nc" id="L163">		sendBindResp.setWaiting(waiting);</span>
+<span class="nc" id="L164">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendCancelSmDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendCancelSmWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendCancelSmDelay(long delayMs) {
+<span class="nc" id="L179">		sendCancelSm.setDelay(delayMs);</span>
+<span class="nc" id="L180">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendCancelSmWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendCancelSmDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendCancelSmWaiting(Awaiter waiting) {
+<span class="nc" id="L195">		sendCancelSm.setWaiting(waiting);</span>
+<span class="nc" id="L196">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendCancelSmRespDelay}
+	 * milliseconds before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendCancelSmRespWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendCancelSmRespDelay(long delayMs) {
+<span class="nc" id="L211">		sendCancelSmResp.setDelay(delayMs);</span>
+<span class="nc" id="L212">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendCancelSmRespWaiting}
+	 * function before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendCancelSmRespDelay(long)} has
+	 * no effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendCancelSmRespWaiting(Awaiter waiting) {
+<span class="nc" id="L227">		sendCancelSmResp.setWaiting(waiting);</span>
+<span class="nc" id="L228">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendDataSmDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendDataSmWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendDataSmDelay(long delayMs) {
+<span class="nc" id="L243">		sendDataSm.setDelay(delayMs);</span>
+<span class="nc" id="L244">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendDataSmWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendDataSmDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendDataSmWaiting(Awaiter waiting) {
+<span class="nc" id="L259">		sendDataSm.setWaiting(waiting);</span>
+<span class="nc" id="L260">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendDataSmRespDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendDataSmRespWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendDataSmRespDelay(long delayMs) {
+<span class="nc" id="L275">		sendDataSmResp.setDelay(delayMs);</span>
+<span class="nc" id="L276">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendDataSmRespWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendDataSmRespDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendDataSmRespWaiting(Awaiter waiting) {
+<span class="nc" id="L291">		sendDataSmResp.setWaiting(waiting);</span>
+<span class="nc" id="L292">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendDeliverSmDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendDeliverSmWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendDeliverSmDelay(long delayMs) {
+<span class="nc" id="L307">		sendDeliverSm.setDelay(delayMs);</span>
+<span class="nc" id="L308">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendDeliverSmWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendDeliverSmDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendDeliverSmWaiting(Awaiter waiting) {
+<span class="nc" id="L323">		sendDeliverSm.setWaiting(waiting);</span>
+<span class="nc" id="L324">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendDeliverSmRespDelay}
+	 * milliseconds before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendDeliverSmRespWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendDeliverSmRespDelay(long delayMs) {
+<span class="nc" id="L339">		sendDeliverSmResp.setDelay(delayMs);</span>
+<span class="nc" id="L340">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendDeliverSmRespWaiting}
+	 * function before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendDeliverSmRespDelay(long)} has
+	 * no effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendDeliverSmRespWaiting(Awaiter waiting) {
+<span class="nc" id="L355">		sendDeliverSmResp.setWaiting(waiting);</span>
+<span class="nc" id="L356">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendEnquireLinkDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendEnquireLinkWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendEnquireLinkDelay(long delayMs) {
+<span class="nc" id="L371">		sendEnquireLink.setDelay(delayMs);</span>
+<span class="nc" id="L372">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendEnquireLinkWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendEnquireLinkDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendEnquireLinkWaiting(Awaiter waiting) {
+<span class="nc" id="L387">		sendEnquireLink.setWaiting(waiting);</span>
+<span class="nc" id="L388">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendEnquireLinkRespDelay}
+	 * milliseconds before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendEnquireLinkRespWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendEnquireLinkRespDelay(long delayMs) {
+<span class="fc" id="L403">		sendEnquireLinkResp.setDelay(delayMs);</span>
+<span class="fc" id="L404">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendEnquireLinkRespWaiting}
+	 * function before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendEnquireLinkRespDelay(long)}
+	 * has no effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendEnquireLinkRespWaiting(Awaiter waiting) {
+<span class="nc" id="L419">		sendEnquireLinkResp.setWaiting(waiting);</span>
+<span class="nc" id="L420">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendGenericNackDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendGenericNackWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendGenericNackDelay(long delayMs) {
+<span class="nc" id="L435">		sendGenericNack.setDelay(delayMs);</span>
+<span class="nc" id="L436">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendGenericNackWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendGenericNackDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendGenericNackWaiting(Awaiter waiting) {
+<span class="nc" id="L451">		sendGenericNack.setWaiting(waiting);</span>
+<span class="nc" id="L452">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendHeaderDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendHeaderWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendHeaderDelay(long delayMs) {
+<span class="nc" id="L467">		sendHeader.setDelay(delayMs);</span>
+<span class="nc" id="L468">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendHeaderWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendHeaderDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendHeaderWaiting(Awaiter waiting) {
+<span class="nc" id="L483">		sendHeader.setWaiting(waiting);</span>
+<span class="nc" id="L484">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendOutbindDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendOutbindWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendOutbindDelay(long delayMs) {
+<span class="nc" id="L499">		sendOutbind.setDelay(delayMs);</span>
+<span class="nc" id="L500">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendOutbindWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendOutbindDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendOutbindWaiting(Awaiter waiting) {
+<span class="nc" id="L515">		sendOutbind.setWaiting(waiting);</span>
+<span class="nc" id="L516">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendQuerySmDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendQuerySmWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendQuerySmDelay(long delayMs) {
+<span class="nc" id="L531">		sendQuerySm.setDelay(delayMs);</span>
+<span class="nc" id="L532">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendQuerySmWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendQuerySmDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendQuerySmWaiting(Awaiter waiting) {
+<span class="nc" id="L547">		sendQuerySm.setWaiting(waiting);</span>
+<span class="nc" id="L548">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendQuerySmRespDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendQuerySmRespWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendQuerySmRespDelay(long delayMs) {
+<span class="nc" id="L563">		sendQuerySmResp.setDelay(delayMs);</span>
+<span class="nc" id="L564">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendQuerySmRespWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendQuerySmRespDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendQuerySmRespWaiting(Awaiter waiting) {
+<span class="nc" id="L579">		sendQuerySmResp.setWaiting(waiting);</span>
+<span class="nc" id="L580">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendReplaceSmDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendReplaceSmWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendReplaceSmDelay(long delayMs) {
+<span class="nc" id="L595">		sendReplaceSm.setDelay(delayMs);</span>
+<span class="nc" id="L596">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendReplaceSmWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendReplaceSmDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendReplaceSmWaiting(Awaiter waiting) {
+<span class="nc" id="L611">		sendReplaceSm.setWaiting(waiting);</span>
+<span class="nc" id="L612">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendReplaceSmRespDelay}
+	 * milliseconds before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendReplaceSmRespWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendReplaceSmRespDelay(long delayMs) {
+<span class="nc" id="L627">		sendReplaceSmResp.setDelay(delayMs);</span>
+<span class="nc" id="L628">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendReplaceSmRespWaiting}
+	 * function before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendReplaceSmRespDelay(long)} has
+	 * no effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendReplaceSmRespWaiting(Awaiter waiting) {
+<span class="nc" id="L643">		sendReplaceSmResp.setWaiting(waiting);</span>
+<span class="nc" id="L644">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendSubmitMultiDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendSubmitMultiWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendSubmitMultiDelay(long delayMs) {
+<span class="nc" id="L659">		sendSubmitMulti.setDelay(delayMs);</span>
+<span class="nc" id="L660">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendSubmitMultiWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendSubmitMultiDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendSubmitMultiWaiting(Awaiter waiting) {
+<span class="nc" id="L675">		sendSubmitMulti.setWaiting(waiting);</span>
+<span class="nc" id="L676">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendSubmitMultiRespDelay}
+	 * milliseconds before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendSubmitMultiRespWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendSubmitMultiRespDelay(long delayMs) {
+<span class="nc" id="L691">		sendSubmitMultiResp.setDelay(delayMs);</span>
+<span class="nc" id="L692">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendSubmitMultiRespWaiting}
+	 * function before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendSubmitMultiRespDelay(long)}
+	 * has no effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendSubmitMultiRespWaiting(Awaiter waiting) {
+<span class="nc" id="L707">		sendSubmitMultiResp.setWaiting(waiting);</span>
+<span class="nc" id="L708">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendSubmitSmDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendSubmitSmWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendSubmitSmDelay(long delayMs) {
+<span class="nc" id="L723">		sendSubmitSm.setDelay(delayMs);</span>
+<span class="nc" id="L724">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendSubmitSmWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendSubmitSmDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendSubmitSmWaiting(Awaiter waiting) {
+<span class="nc" id="L739">		sendSubmitSm.setWaiting(waiting);</span>
+<span class="nc" id="L740">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendSubmitSmRespDelay}
+	 * milliseconds before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendSubmitSmRespWaiting(Awaiter)} is
+	 * also called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendSubmitSmRespDelay(long delayMs) {
+<span class="fc" id="L755">		sendSubmitSmResp.setDelay(delayMs);</span>
+<span class="fc" id="L756">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendSubmitSmRespWaiting}
+	 * function before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendSubmitSmRespDelay(long)} has
+	 * no effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendSubmitSmRespWaiting(Awaiter waiting) {
+<span class="nc" id="L771">		sendSubmitSmResp.setWaiting(waiting);</span>
+<span class="nc" id="L772">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendUnbindDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendUnbindWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendUnbindDelay(long delayMs) {
+<span class="nc" id="L787">		sendUnbind.setDelay(delayMs);</span>
+<span class="nc" id="L788">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendUnbindWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendUnbindDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendUnbindWaiting(Awaiter waiting) {
+<span class="nc" id="L803">		sendUnbind.setWaiting(waiting);</span>
+<span class="nc" id="L804">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by waiting {@code sendUnbindRespDelay} milliseconds
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; If {@link #sendUnbindRespWaiting(Awaiter)} is also
+	 * called then this delay has no effect.
+	 * 
+	 * @param delayMs
+	 *            the time to wait before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendUnbindRespDelay(long delayMs) {
+<span class="nc" id="L819">		sendUnbindResp.setDelay(delayMs);</span>
+<span class="nc" id="L820">		return this;</span>
+	}
+
+	/**
+	 * Simulate slow server by executing {@code sendUnbindRespWaiting} function
+	 * before sending data.
+	 *
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; Calling {@link #sendUnbindRespDelay(long)} has no
+	 * effect if waiting function is set.
+	 * 
+	 * @param waiting
+	 *            the function to execute to simulate delay before sending data
+	 * @return this instance for fluent chaining
+	 */
+	public SlowConfig sendUnbindRespWaiting(Awaiter waiting) {
+<span class="nc" id="L835">		sendUnbindResp.setWaiting(waiting);</span>
+<span class="nc" id="L836">		return this;</span>
+	}
+
+	public ServerDelays build() {
+<span class="fc" id="L840">		ServerDelays delays = new ServerDelays();</span>
+<span class="fc" id="L841">		sendAlertNotification.apply(delays);</span>
+<span class="fc" id="L842">		sendBind.apply(delays);</span>
+<span class="fc" id="L843">		sendBindResp.apply(delays);</span>
+<span class="fc" id="L844">		sendCancelSm.apply(delays);</span>
+<span class="fc" id="L845">		sendCancelSmResp.apply(delays);</span>
+<span class="fc" id="L846">		sendDataSm.apply(delays);</span>
+<span class="fc" id="L847">		sendDataSmResp.apply(delays);</span>
+<span class="fc" id="L848">		sendDeliverSm.apply(delays);</span>
+<span class="fc" id="L849">		sendDeliverSmResp.apply(delays);</span>
+<span class="fc" id="L850">		sendEnquireLink.apply(delays);</span>
+<span class="fc" id="L851">		sendEnquireLinkResp.apply(delays);</span>
+<span class="fc" id="L852">		sendGenericNack.apply(delays);</span>
+<span class="fc" id="L853">		sendHeader.apply(delays);</span>
+<span class="fc" id="L854">		sendOutbind.apply(delays);</span>
+<span class="fc" id="L855">		sendQuerySm.apply(delays);</span>
+<span class="fc" id="L856">		sendQuerySmResp.apply(delays);</span>
+<span class="fc" id="L857">		sendReplaceSm.apply(delays);</span>
+<span class="fc" id="L858">		sendReplaceSmResp.apply(delays);</span>
+<span class="fc" id="L859">		sendSubmitMulti.apply(delays);</span>
+<span class="fc" id="L860">		sendSubmitMultiResp.apply(delays);</span>
+<span class="fc" id="L861">		sendSubmitSm.apply(delays);</span>
+<span class="fc" id="L862">		sendSubmitSmResp.apply(delays);</span>
+<span class="fc" id="L863">		sendUnbind.apply(delays);</span>
+<span class="fc" id="L864">		sendUnbindResp.apply(delays);</span>
+<span class="fc" id="L865">		return delays;</span>
+	}
+
+	public static Awaiter waitFor(long delay) {
+<span class="fc" id="L869">		return () -&gt; {</span>
+<span class="fc" id="L870">			LOG.debug(&quot;Waiting for {}ms...&quot;, delay);</span>
+<span class="fc" id="L871">			final long end = System.currentTimeMillis() + delay;</span>
+<span class="fc bfc" id="L872" title="All 2 branches covered.">			await().until(() -&gt; System.currentTimeMillis() &gt;= end);</span>
+<span class="fc" id="L873">		};</span>
+	}
+
+	public static Awaiter noWait() {
+<span class="fc" id="L877">		return () -&gt; {};</span>
+	}
+
+	private static class WaitingConfHelper {
+		private final BiConsumer&lt;ServerDelays, Awaiter&gt; setter;
+		private Long delay;
+		private Awaiter waiting;
+
+		public WaitingConfHelper(BiConsumer&lt;ServerDelays, Awaiter&gt; setter) {
+<span class="fc" id="L886">			super();</span>
+<span class="fc" id="L887">			this.setter = setter;</span>
+<span class="fc" id="L888">		}</span>
+
+		public void setDelay(Long delay) {
+<span class="fc" id="L891">			this.delay = delay;</span>
+<span class="fc" id="L892">		}</span>
+
+		public void setWaiting(Awaiter waiting) {
+<span class="nc" id="L895">			this.waiting = waiting;</span>
+<span class="nc" id="L896">		}</span>
+
+		public void apply(ServerDelays delays) {
+<span class="pc bpc" id="L899" title="1 of 2 branches missed.">			if (waiting != null) {</span>
+<span class="nc" id="L900">				setter.accept(delays, waiting);</span>
+			}
+<span class="pc bpc" id="L902" title="1 of 4 branches missed.">			setter.accept(delays, delay == null || delay == 0 ? noWait() : waitFor(delay));</span>
+<span class="fc" id="L903">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

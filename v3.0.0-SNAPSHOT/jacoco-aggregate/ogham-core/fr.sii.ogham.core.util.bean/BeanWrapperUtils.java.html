@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BeanWrapperUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util.bean</a> &gt; <span class="el_source">BeanWrapperUtils.java</span></div><h1>BeanWrapperUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util.bean;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BeanWrapperUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util.bean</a> &gt; <span class="el_source">BeanWrapperUtils.java</span></div><h1>BeanWrapperUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util.bean;
 
 import static org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper;
 
@@ -20,7 +20,7 @@ import fr.sii.ogham.core.exception.util.BeanWrapperException;
  * @author Aurélien Baudet
  *
  */
-public class BeanWrapperUtils {
+public final class BeanWrapperUtils {
 
 <span class="fc" id="L25">	private static final List&lt;Class&lt;?&gt;&gt; INVALID_TYPES = new ArrayList&lt;&gt;();</span>
 	static {
@@ -35,13 +35,14 @@ public class BeanWrapperUtils {
 	 *            the bean instance
 	 * @return false if null or valid type, true if primitive type or string
 	 */
+	@SuppressWarnings(&quot;squid:S2250&quot;)
 	public static boolean isInvalid(Object bean) {
-<span class="pc bpc" id="L39" title="1 of 2 branches missed.">		if (bean == null) {</span>
-<span class="nc" id="L40">			return false;</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">		if (bean == null) {</span>
+<span class="nc" id="L41">			return false;</span>
 		}
-<span class="fc bfc" id="L42" title="All 2 branches covered.">		return isPrimitiveOrWrapper(bean.getClass()) </span>
-<span class="fc bfc" id="L43" title="All 2 branches covered.">				|| INVALID_TYPES.contains(bean.getClass())</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">				|| isInstanceOfInvalid(bean.getClass());</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">		return isPrimitiveOrWrapper(bean.getClass()) </span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">				|| INVALID_TYPES.contains(bean.getClass())</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">				|| isInstanceOfInvalid(bean.getClass());</span>
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class BeanWrapperUtils {
 	 * @return the class of the bean
 	 */
 	public static String getClassName(Object bean) {
-<span class="pc bpc" id="L55" title="1 of 2 branches missed.">		return bean == null ? &quot;null&quot; : bean.getClass().getName();</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">		return bean == null ? &quot;null&quot; : bean.getClass().getName();</span>
 	}
 
 	/**
@@ -63,26 +64,17 @@ public class BeanWrapperUtils {
 	 * @return the map of bean property getters (indexed by property name)
 	 */
 	public static Map&lt;String, Method&gt; getReadMethods(Object bean) {
-<span class="fc" id="L66">		Class&lt;? extends Object&gt; beanClass = bean.getClass();</span>
+<span class="fc" id="L67">		Class&lt;? extends Object&gt; beanClass = bean.getClass();</span>
 		try {
-<span class="fc" id="L68">			Map&lt;String, Method&gt; readMethods = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L69">			final BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);</span>
-<span class="fc" id="L70">			final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">			if (propertyDescriptors != null) {</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">				for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">					if (propertyDescriptor != null) {</span>
-<span class="fc" id="L74">						final String name = propertyDescriptor.getName();</span>
-<span class="fc" id="L75">						final Method readMethod = propertyDescriptor.getReadMethod();</span>
-
-<span class="pc bpc" id="L77" title="1 of 2 branches missed.">						if (readMethod != null) {</span>
-<span class="fc" id="L78">							readMethods.put(name, readMethod);</span>
-						}
-					}
-				}
+<span class="fc" id="L69">			Map&lt;String, Method&gt; readMethods = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L70">			final BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);</span>
+<span class="fc" id="L71">			final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">			if (propertyDescriptors != null) {</span>
+<span class="fc" id="L73">				putReadMethods(readMethods, propertyDescriptors);</span>
 			}
-<span class="fc" id="L83">			return readMethods;</span>
-<span class="nc" id="L84">		} catch (final IntrospectionException e) {</span>
-<span class="nc" id="L85">			throw new BeanWrapperException(&quot;Failed to initialize bean wrapper on &quot; + beanClass, e);</span>
+<span class="fc" id="L75">			return readMethods;</span>
+<span class="nc" id="L76">		} catch (final IntrospectionException e) {</span>
+<span class="nc" id="L77">			throw new BeanWrapperException(&quot;Failed to initialize bean wrapper on &quot; + beanClass, e);</span>
 		}
 	}
 
@@ -96,16 +88,29 @@ public class BeanWrapperUtils {
 	 * @return the getter method for the property
 	 */
 	public static Method getReadMethod(Object bean, String name) {
-<span class="fc" id="L99">		return getReadMethods(bean).get(name);</span>
+<span class="fc" id="L91">		return getReadMethods(bean).get(name);</span>
 	}
 
-	private static boolean isInstanceOfInvalid(Class&lt;?&gt; clazz) {
-<span class="fc bfc" id="L103" title="All 2 branches covered.">		for(Class&lt;?&gt; c : INVALID_TYPES) {</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">			if(c.isAssignableFrom(clazz)) {</span>
-<span class="fc" id="L105">				return true;</span>
+	private static void putReadMethods(Map&lt;String, Method&gt; readMethods, final PropertyDescriptor[] propertyDescriptors) {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">			if (propertyDescriptor != null) {</span>
+<span class="fc" id="L97">				final String name = propertyDescriptor.getName();</span>
+<span class="fc" id="L98">				final Method readMethod = propertyDescriptor.getReadMethod();</span>
+
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">				if (readMethod != null) {</span>
+<span class="fc" id="L101">					readMethods.put(name, readMethod);</span>
+				}
 			}
-<span class="fc" id="L107">		}</span>
-<span class="fc" id="L108">		return false;</span>
+		}
+<span class="fc" id="L105">	}</span>
+
+	private static boolean isInstanceOfInvalid(Class&lt;?&gt; clazz) {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">		for(Class&lt;?&gt; c : INVALID_TYPES) {</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">			if(c.isAssignableFrom(clazz)) {</span>
+<span class="fc" id="L110">				return true;</span>
+			}
+<span class="fc" id="L112">		}</span>
+<span class="fc" id="L113">		return false;</span>
 	}
 
 	private BeanWrapperUtils() {

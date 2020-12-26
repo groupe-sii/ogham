@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AttachmentResourceHandlerException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.exception.handler</a> &gt; <span class="el_source">AttachmentResourceHandlerException.java</span></div><h1>AttachmentResourceHandlerException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.exception.handler;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.email.attachment.Attachment;
+
+/**
+ * Attachments are referenced using a resource path. Therefore the resource must
+ * be resolved and it's content read. This is done using a resource handlers.
+ * 
+ * This exception is general and has subclasses to identify the reason why the
+ * attachment resource handling has failed.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @see NoAttachmentResourceHandlerException
+ * @see UnresolvableAttachmentResourceHandlerException
+ */
+public class AttachmentResourceHandlerException extends MessagingException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	private final transient Attachment attachment;
+
+	public AttachmentResourceHandlerException(String message, Attachment attachment, Throwable cause) {
+<span class="fc" id="L26">		super(message, cause);</span>
+<span class="fc" id="L27">		this.attachment = attachment;</span>
+<span class="fc" id="L28">	}</span>
+
+	public AttachmentResourceHandlerException(String message, Attachment attachment) {
+<span class="fc" id="L31">		super(message);</span>
+<span class="fc" id="L32">		this.attachment = attachment;</span>
+<span class="fc" id="L33">	}</span>
+
+	public AttachmentResourceHandlerException(Throwable cause, Attachment attachment) {
+<span class="nc" id="L36">		super(cause);</span>
+<span class="nc" id="L37">		this.attachment = attachment;</span>
+<span class="nc" id="L38">	}</span>
+
+	public Attachment getAttachment() {
+<span class="nc" id="L41">		return attachment;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

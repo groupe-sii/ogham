@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DelegateSendGridClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v4</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client</a> &gt; <span class="el_source">DelegateSendGridClient.java</span></div><h1>DelegateSendGridClient.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DelegateSendGridClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v4</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client</a> &gt; <span class="el_source">DelegateSendGridClient.java</span></div><h1>DelegateSendGridClient.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client;
 
 import static java.util.stream.Collectors.toList;
 
@@ -14,10 +14,10 @@ import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 import com.sendgrid.SendGridAPI;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Email;
 
-import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.SendGridException;
+import fr.sii.ogham.email.sendgrid.sender.exception.SendGridException;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.EmailCompat;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
 
 /**
  * Facade wrapping the {@link SendGrid} object.
@@ -45,7 +45,7 @@ public final class DelegateSendGridClient implements SendGridClient {
 <span class="fc" id="L45">	}</span>
 
 	@Override
-	public void send(final Mail email) throws SendGridException {
+	public void send(final MailCompat email) throws SendGridException {
 <span class="fc bfc" id="L49" title="All 2 branches covered.">		if (email == null) {</span>
 <span class="fc" id="L50">			throw new IllegalArgumentException(&quot;[email] cannot be null&quot;);</span>
 		}
@@ -56,42 +56,61 @@ public final class DelegateSendGridClient implements SendGridClient {
 <span class="fc" id="L56">			LOG.debug(&quot;Sending to SendGrid client: SUBJECT {}&quot;, email.getSubject());</span>
 		}
 
+<span class="fc" id="L59">		final Response response = callApi(email);</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		if (isSuccess(response.getStatusCode())) {</span>
+<span class="fc" id="L62">			LOG.debug(&quot;Response from SendGrid client: ({}) {}&quot;, response.getStatusCode(), response.getBody());</span>
+		} else {
+<span class="fc" id="L64">			throw new SendGridException(new IOException(&quot;Sending to SendGrid failed: (&quot; + response.getStatusCode() + &quot;) &quot; + response.getBody()));</span>
+		}
+<span class="fc" id="L66">	}</span>
+
+	private Response callApi(final MailCompat email) throws SendGridException {
 		try {
-<span class="fc" id="L60">			Request request = new Request();</span>
-<span class="fc" id="L61">			request.setMethod(Method.POST);</span>
-<span class="fc" id="L62">			request.setEndpoint(&quot;mail/send&quot;);</span>
-<span class="fc" id="L63">			request.setBody(email.build());</span>
-<span class="fc" id="L64">			final Response response = delegate.api(request);</span>
-
-<span class="fc bfc" id="L66" title="All 2 branches covered.">			if (isSuccess(response.getStatusCode())) {</span>
-<span class="fc" id="L67">				LOG.debug(&quot;Response from SendGrid client: ({}) {}&quot;, response.getStatusCode(), response.getBody());</span>
-			} else {
-<span class="fc" id="L69">				throw new SendGridException(new IOException(&quot;Sending to SendGrid failed: (&quot; + response.getStatusCode() + &quot;) &quot; + response.getBody()));</span>
-			}
-<span class="nc" id="L71">		} catch (IOException e) {</span>
-<span class="nc" id="L72">			throw new SendGridException(&quot;Preparing email for SendGrid failed&quot;, e);</span>
-<span class="fc" id="L73">		}</span>
-<span class="fc" id="L74">	}</span>
-
-	private boolean isSuccess(int statusCode) {
-<span class="pc bpc" id="L77" title="1 of 4 branches missed.">		return statusCode &gt;= 200 &amp;&amp; statusCode &lt; 300;</span>
+<span class="fc" id="L70">			Request request = prepareRequest(email);</span>
+<span class="fc" id="L71">			return delegate.api(request);</span>
+<span class="nc" id="L72">		} catch (IOException e) {</span>
+<span class="nc" id="L73">			throw new SendGridException(&quot;Sending email to SendGrid failed&quot;, e);</span>
+		}
 	}
 
-	private String debug(Email address) {
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">		if (address == null) {</span>
-<span class="fc" id="L82">			return null;</span>
-		}
-<span class="nc bnc" id="L84" title="All 2 branches missed.">		if (address.getName() != null) {</span>
-<span class="nc" id="L85">			return address.getName() + &quot;&lt;&quot; + address.getEmail() + &quot;&gt;&quot;;</span>
-		}
-<span class="nc" id="L87">		return address.getEmail();</span>
+	private static Request prepareRequest(final MailCompat email) throws SendGridException {
+<span class="fc" id="L78">		Request request = new Request();</span>
+<span class="fc" id="L79">		request.setMethod(Method.POST);</span>
+<span class="fc" id="L80">		request.setEndpoint(&quot;mail/send&quot;);</span>
+		try {
+<span class="fc" id="L82">			request.setBody(email.build());</span>
+<span class="nc" id="L83">		} catch (IOException e) {</span>
+<span class="nc" id="L84">			throw new SendGridException(&quot;Preparing email for SendGrid failed&quot;, e);</span>
+<span class="fc" id="L85">		}</span>
+<span class="fc" id="L86">		return request;</span>
 	}
 
-	private List&lt;String&gt; debug(final Mail email) {
-<span class="pc bpc" id="L91" title="1 of 2 branches missed.">		if (email.getPersonalization() == null) {</span>
-<span class="fc" id="L92">			return null;	// NOSONAR</span>
+	private static boolean isSuccess(int statusCode) {
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">		return statusCode &gt;= 200 &amp;&amp; statusCode &lt; 300;</span>
+	}
+
+	private static String debug(EmailCompat address) {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if (address == null) {</span>
+<span class="fc" id="L95">			return null;</span>
 		}
-<span class="nc bnc" id="L94" title="All 2 branches missed.">		return email.getPersonalization().stream().flatMap(p -&gt; p.getTos() == null ? Stream.empty() : p.getTos().stream()).map(this::debug).collect(toList());</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">		if (address.getName() != null) {</span>
+<span class="fc" id="L98">			return address.getName() + &quot;&lt;&quot; + address.getEmail() + &quot;&gt;&quot;;</span>
+		}
+<span class="fc" id="L100">		return address.getEmail();</span>
+	}
+
+	private static List&lt;String&gt; debug(final MailCompat email) {
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		if (email.getPersonalization() == null) {</span>
+<span class="fc" id="L105">			return null; // NOSONAR</span>
+		}
+		// @formatter:off
+<span class="fc" id="L108">		return email.getPersonalization()</span>
+<span class="fc" id="L109">				.stream()</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">				.flatMap(p -&gt; p.getTos() == null ? Stream.empty() : p.getTos().stream())</span>
+<span class="fc" id="L111">				.map(DelegateSendGridClient::debug)</span>
+<span class="fc" id="L112">				.collect(toList());</span>
+		// @formatter:on
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

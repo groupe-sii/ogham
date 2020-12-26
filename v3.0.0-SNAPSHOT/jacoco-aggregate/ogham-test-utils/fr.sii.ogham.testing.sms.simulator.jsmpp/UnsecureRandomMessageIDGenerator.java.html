@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>UnsecureRandomMessageIDGenerator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.jsmpp</a> &gt; <span class="el_source">UnsecureRandomMessageIDGenerator.java</span></div><h1>UnsecureRandomMessageIDGenerator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.jsmpp;
+
+import java.security.SecureRandom;
+import java.util.Random;
+
+import org.jsmpp.PDUStringException;
+import org.jsmpp.util.MessageIDGenerator;
+import org.jsmpp.util.MessageId;
+import org.jsmpp.util.RandomMessageIDGenerator;
+
+/**
+ * This implementation doesn't use {@link SecureRandom} (unlike
+ * {@link RandomMessageIDGenerator}). {@link SecureRandom} can potentially block
+ * the simulator process because on some operating systems /dev/random waits for
+ * a certain amount of &quot;noise&quot; to be generated on the host machine before
+ * returning a result.
+ * 
+ * &lt;p&gt;
+ * jSMPP is used in tests so timeouts have small values that's why we can't wait
+ * until enough &quot;noise&quot; is generated.
+ * 
+ * @author Aurélien Baudet
+ * @see RandomMessageIDGenerator
+ * @see SecureRandom
+ * @see &quot;https://docs.oracle.com/cd/E13209_01/wlcp/wlss30/configwlss/jvmrand.html&quot;
+ */
+public class UnsecureRandomMessageIDGenerator implements MessageIDGenerator {
+	private final Random random;
+
+	@SuppressWarnings(&quot;java:S2245&quot;)
+<span class="fc" id="L31">	public UnsecureRandomMessageIDGenerator() {</span>
+<span class="fc" id="L32">		random = new Random();</span>
+<span class="fc" id="L33">	}</span>
+
+	@SuppressWarnings({ &quot;squid:S00112&quot;, &quot;squid:S109&quot; })  // code copied from Cloudhopper
+	@Override
+	public MessageId newMessageId() {
+		/*
+		 * use database sequence convert into hex representation or if not using
+		 * database using random
+		 */
+		try {
+<span class="fc" id="L43">			synchronized (random) {</span>
+<span class="fc" id="L44">				return new MessageId(Integer.toString(random.nextInt(Integer.MAX_VALUE), 16));</span>
+			}
+<span class="nc" id="L46">		} catch (PDUStringException e) {</span>
+<span class="nc" id="L47">			throw new RuntimeException(&quot;Failed creating message id&quot;, e);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

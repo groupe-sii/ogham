@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleConverterBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.env</a> &gt; <span class="el_source">SimpleConverterBuilder.java</span></div><h1>SimpleConverterBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.env;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleConverterBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.env</a> &gt; <span class="el_source">SimpleConverterBuilder.java</span></div><h1>SimpleConverterBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.env;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.builder.configuration.MayOverride;
 import fr.sii.ogham.core.convert.Converter;
 import fr.sii.ogham.core.convert.ConverterRegistry;
 import fr.sii.ogham.core.convert.DefaultConverter;
 import fr.sii.ogham.core.convert.SupportingConverter;
+import fr.sii.ogham.core.fluent.AbstractParent;
 
 /**
  * A {@link ConverterBuilder} that builds the converter:
@@ -26,8 +27,9 @@ import fr.sii.ogham.core.convert.SupportingConverter;
  *            method)
  */
 public class SimpleConverterBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements ConverterBuilder&lt;P&gt; {
-	private Converter converter;
 	private List&lt;SupportingConverter&gt; delegates;
+	private Converter converter;
+	private Converter defaultConverter;
 
 	/**
 	 * Initializes the builder with the provided parent. The list of
@@ -37,9 +39,9 @@ public class SimpleConverterBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; imp
 	 *            the parent builder
 	 */
 	public SimpleConverterBuilder(P parent) {
-<span class="fc" id="L40">		super(parent);</span>
-<span class="fc" id="L41">		delegates = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L42">	}</span>
+<span class="fc" id="L42">		super(parent);</span>
+<span class="fc" id="L43">		delegates = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L44">	}</span>
 
 	/**
 	 * Copies values from other parameter to this instance.
@@ -50,21 +52,27 @@ public class SimpleConverterBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; imp
 	 *            the other builder that needs to be copied
 	 */
 	public SimpleConverterBuilder(P parent, SimpleConverterBuilder&lt;?&gt; other) {
-<span class="nc" id="L53">		this(parent);</span>
-<span class="nc" id="L54">		this.converter = other.converter;</span>
-<span class="nc" id="L55">		this.delegates = new ArrayList&lt;&gt;(other.delegates);</span>
-<span class="nc" id="L56">	}</span>
+<span class="nc" id="L55">		this(parent);</span>
+<span class="nc" id="L56">		this.converter = other.converter;</span>
+<span class="nc" id="L57">		this.delegates = new ArrayList&lt;&gt;(other.delegates);</span>
+<span class="nc" id="L58">	}</span>
 
 	@Override
 	public SimpleConverterBuilder&lt;P&gt; override(Converter converter) {
-<span class="fc" id="L60">		this.converter = converter;</span>
-<span class="fc" id="L61">		return this;</span>
+<span class="fc" id="L62">		this.converter = converter;</span>
+<span class="fc" id="L63">		return this;</span>
 	}
 
 	@Override
 	public SimpleConverterBuilder&lt;P&gt; register(SupportingConverter converter) {
-<span class="nc" id="L66">		delegates.add(converter);</span>
-<span class="nc" id="L67">		return this;</span>
+<span class="fc" id="L68">		delegates.add(converter);</span>
+<span class="fc" id="L69">		return this;</span>
+	}
+
+	@Override
+	public ConverterBuilder&lt;P&gt; defaultConverter(MayOverride&lt;Converter&gt; converter) {
+<span class="fc" id="L74">		defaultConverter = converter.override(defaultConverter);</span>
+<span class="fc" id="L75">		return this;</span>
 	}
 
 	/**
@@ -79,16 +87,23 @@ public class SimpleConverterBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; imp
 	 */
 	@Override
 	public Converter build() {
-<span class="fc" id="L82">		Converter builtConverter = this.converter;</span>
-<span class="fc bfc" id="L83" title="All 2 branches covered.">		if (builtConverter == null) {</span>
-<span class="fc" id="L84">			builtConverter = new DefaultConverter();</span>
+<span class="fc" id="L90">		Converter builtConverter = buildBaseConverter();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		if (builtConverter instanceof ConverterRegistry) {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">			for (SupportingConverter conv : delegates) {</span>
+<span class="fc" id="L93">				((ConverterRegistry) builtConverter).register(conv);</span>
+<span class="fc" id="L94">			}</span>
 		}
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">		if (builtConverter instanceof ConverterRegistry) {</span>
-<span class="pc bpc" id="L87" title="1 of 2 branches missed.">			for (SupportingConverter conv : delegates) {</span>
-<span class="nc" id="L88">				((ConverterRegistry) builtConverter).register(conv);</span>
-<span class="nc" id="L89">			}</span>
+<span class="fc" id="L96">		return builtConverter;</span>
+	}
+
+	private Converter buildBaseConverter() {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">		if (converter != null) {</span>
+<span class="fc" id="L101">			return converter;</span>
 		}
-<span class="fc" id="L91">		return builtConverter;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		if (defaultConverter != null) {</span>
+<span class="fc" id="L104">			return defaultConverter;</span>
+		}
+<span class="fc" id="L106">		return new DefaultConverter();</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

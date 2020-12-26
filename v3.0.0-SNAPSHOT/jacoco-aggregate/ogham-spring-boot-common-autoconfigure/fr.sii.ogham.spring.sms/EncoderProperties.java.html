@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EncoderProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">EncoderProperties.java</span></div><h1>EncoderProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+<span class="fc" id="L5">public class EncoderProperties {</span>
+<span class="fc" id="L6">	@NestedConfigurationProperty</span>
+	private AutoGuessProperties autoGuess = new AutoGuessProperties();
+	/**
+	 * Set which Cloudhopper Charset should be used if nothing else is
+	 * configured.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * Default: &lt;i&gt;&quot;GSM&quot;&lt;/i&gt;
+	 */
+	private String defaultCharset;
+<span class="fc" id="L15">	@NestedConfigurationProperty</span>
+	private Gsm7bitPackedProperties gsm7bitPacked = new Gsm7bitPackedProperties();
+<span class="fc" id="L17">	@NestedConfigurationProperty</span>
+	private Gsm8bitProperties gsm8bit = new Gsm8bitProperties();
+<span class="fc" id="L19">	@NestedConfigurationProperty</span>
+	private Latin1Properties latin1 = new Latin1Properties();
+<span class="fc" id="L21">	@NestedConfigurationProperty</span>
+	private Ucs2Properties ucs2 = new Ucs2Properties();
+
+<span class="fc" id="L24">	public static class AutoGuessProperties {</span>
+		/**
+		 * Enable/disable automatic guessing of message encoding.
+		 * 
+		 * &lt;p&gt;
+		 * If enables, it automatically guess the best supported encoding in
+		 * order to use the minimum octets:
+		 * &lt;ul&gt;
+		 * &lt;li&gt;It encodes using GSM 7-bit default alphabet if the message
+		 * contains only characters defined in the table. Message is packed so
+		 * the message can have a maximum length of 160 characters. This is
+		 * enable only if automatic guessing is enabled (using
+		 * {@link #autoGuess(Boolean)}) and GSM 7-bit is enabled (using
+		 * {@link #gsm7bitPacked(Integer)}).&lt;/li&gt;
+		 * &lt;li&gt;It encodes using GSM 8-bit data encoding if the message contains
+		 * only characters that can be encoded on one octet. This is enable only
+		 * if automatic guessing is enabled (using {@link #autoGuess(Boolean)}
+		 * and GSM 8-bit is enabled (using {@link #gsm8bit(Integer)}).&lt;/li&gt;
+		 * &lt;li&gt;It encodes using Latin 1 (ISO-8859-1) data encoding if the
+		 * message contains only characters that can be encoded on one octet.
+		 * This is enable only if automatic guessing is enabled (using
+		 * {@link #autoGuess(Boolean)} and GSM 8-bit is enabled (using
+		 * {@link #latin1(Integer)}).&lt;/li&gt;
+		 * &lt;li&gt;It encodes using UCS-2 encoding if the message contains special
+		 * characters that can't be encoded on one octet. Each character is
+		 * encoded on two octets. This is enable only if automatic guessing is
+		 * enabled (using {@link #autoGuess(Boolean)}) and UCS-2 is enabled
+		 * (using {@link #ucs2(Integer)}).&lt;/li&gt;
+		 * &lt;/ul&gt;
+		 * 
+		 * Default: &lt;i&gt;true&lt;/i&gt;
+		 */
+		private Boolean enable;
+
+		public Boolean getEnable() {
+<span class="fc" id="L59">			return enable;</span>
+		}
+
+		public void setEnable(Boolean enable) {
+<span class="fc" id="L63">			this.enable = enable;</span>
+<span class="fc" id="L64">		}</span>
+
+	}
+
+<span class="fc" id="L68">	public static class Gsm7bitPackedProperties {</span>
+		/**
+		 * Set priority for encoding text messages using GSM 7-bit encoding. GSM
+		 * 7-bit encoding and GSM 8-bit encoding use the same character tables.
+		 * Only 7 bits are necessary to represents characters. In GSM 8-bit
+		 * encoding a leading 0 is added. However, GSM 7-bit encoding is packed.
+		 * Every character is &quot;merged&quot; with the next one in order to use more
+		 * characters for the same number of octets.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * If priority value is 0 or negative, it disables GSM 7-bit
+		 * encoding.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * It is disabled by default as most services doesn't support it.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;0&lt;/i&gt;
+		 */
+		private Integer priority;
+
+		public Integer getPriority() {
+<span class="fc" id="L90">			return priority;</span>
+		}
+
+		public void setPriority(Integer priority) {
+<span class="fc" id="L94">			this.priority = priority;</span>
+<span class="fc" id="L95">		}</span>
+	}
+
+<span class="fc" id="L98">	public static class Gsm8bitProperties {</span>
+		/**
+		 * Set priority for encoding text messages using GSM 8-bit encoding. GSM
+		 * 7-bit encoding and GSM 8-bit encoding use the same character tables.
+		 * Only 7 bits are necessary to represents characters. In GSM 8-bit
+		 * encoding a leading 0 is added.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * If priority value is 0 or negative, it disables GSM 8-bit
+		 * encoding.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;99000&lt;/i&gt;
+		 * 
+		 */
+		private Integer priority;
+
+		public Integer getPriority() {
+<span class="fc" id="L116">			return priority;</span>
+		}
+
+		public void setPriority(Integer priority) {
+<span class="fc" id="L120">			this.priority = priority;</span>
+<span class="fc" id="L121">		}</span>
+	}
+
+<span class="fc" id="L124">	public static class Latin1Properties {</span>
+		/**
+		 * Set priority for encoding text messages using Latin-1
+		 * (ISO-8859-1).&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * If priority value is 0 or negative, it disables Latin-1
+		 * encoding.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;98000&lt;/i&gt;
+		 */
+		private Integer priority;
+
+		public Integer getPriority() {
+<span class="fc" id="L139">			return priority;</span>
+		}
+
+		public void setPriority(Integer priority) {
+<span class="fc" id="L143">			this.priority = priority;</span>
+<span class="fc" id="L144">		}</span>
+	}
+
+<span class="fc" id="L147">	public static class Ucs2Properties {</span>
+		/**
+		 * Set priority for encoding text messages using UCS-2. UCS-2 uses two
+		 * octets per character.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * If priority value is 0 or negative, it disables UCS-2 encoding.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;90000&lt;/i&gt;
+		 * 
+		 */
+		private Integer priority;
+
+		public Integer getPriority() {
+<span class="fc" id="L162">			return priority;</span>
+		}
+
+		public void setPriority(Integer priority) {
+<span class="fc" id="L166">			this.priority = priority;</span>
+<span class="fc" id="L167">		}</span>
+	}
+
+	public AutoGuessProperties getAutoGuess() {
+<span class="fc" id="L171">		return autoGuess;</span>
+	}
+
+	public void setAutoGuess(AutoGuessProperties autoGuess) {
+<span class="fc" id="L175">		this.autoGuess = autoGuess;</span>
+<span class="fc" id="L176">	}</span>
+
+	public String getDefaultCharset() {
+<span class="fc" id="L179">		return defaultCharset;</span>
+	}
+
+	public void setDefaultCharset(String defaultCharset) {
+<span class="fc" id="L183">		this.defaultCharset = defaultCharset;</span>
+<span class="fc" id="L184">	}</span>
+
+	public Gsm7bitPackedProperties getGsm7bitPacked() {
+<span class="fc" id="L187">		return gsm7bitPacked;</span>
+	}
+
+	public void setGsm7bitPacked(Gsm7bitPackedProperties gsm7bitPacked) {
+<span class="fc" id="L191">		this.gsm7bitPacked = gsm7bitPacked;</span>
+<span class="fc" id="L192">	}</span>
+
+	public Gsm8bitProperties getGsm8bit() {
+<span class="fc" id="L195">		return gsm8bit;</span>
+	}
+
+	public void setGsm8bitPacked(Gsm8bitProperties gsm8bitPacked) {
+<span class="nc" id="L199">		this.gsm8bit = gsm8bitPacked;</span>
+<span class="nc" id="L200">	}</span>
+
+	public Latin1Properties getLatin1() {
+<span class="fc" id="L203">		return latin1;</span>
+	}
+
+	public void setLatin1(Latin1Properties latin1) {
+<span class="fc" id="L207">		this.latin1 = latin1;</span>
+<span class="fc" id="L208">	}</span>
+
+	public Ucs2Properties getUcs2() {
+<span class="fc" id="L211">		return ucs2;</span>
+	}
+
+	public void setUcs2(Ucs2Properties ucs2) {
+<span class="fc" id="L215">		this.ucs2 = ucs2;</span>
+<span class="fc" id="L216">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

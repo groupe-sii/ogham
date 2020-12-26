@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JsmppServerInitializer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.spring</a> &gt; <span class="el_source">JsmppServerInitializer.java</span></div><h1>JsmppServerInitializer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.spring;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.support.TestPropertySourceUtils;
+
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.util.RandomPortUtils;
+
+/**
+ * Initializer for Spring Boot tests that registers:
+ * &lt;ul&gt;
+ * &lt;li&gt;{@code &quot;jsmpp.server.port&quot;} property in Spring {@link Environment}&lt;/li&gt;
+ * &lt;li&gt;{@link JsmppServerRule} bean in Spring {@link ApplicationContext} through
+ * {@link JsmppServerTestConfiguration} in order to use the port defined by
+ * {@code &quot;jsmpp.server.port&quot;} property&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L29">public class JsmppServerInitializer implements ApplicationContextInitializer&lt;ConfigurableApplicationContext&gt; {</span>
+<span class="fc" id="L30">	private static final Logger LOG = LoggerFactory.getLogger(JsmppServerInitializer.class);</span>
+
+	@Override
+	public void initialize(ConfigurableApplicationContext applicationContext) {
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">		if (applicationContext instanceof GenericApplicationContext) {</span>
+<span class="fc" id="L35">			BeanDefinition configBean = new AnnotatedGenericBeanDefinition(JsmppServerTestConfiguration.class);</span>
+<span class="fc" id="L36">			((GenericApplicationContext) applicationContext).registerBeanDefinition(&quot;jsmppServerTestConfiguration&quot;, configBean);</span>
+		}
+<span class="fc" id="L38">		int port = RandomPortUtils.findAvailableTcpPort();</span>
+<span class="fc" id="L39">		LOG.debug(&quot;Registering {} port for JSMPP server&quot;, port);</span>
+<span class="fc" id="L40">		TestPropertySourceUtils.addInlinedPropertiesToEnvironment(applicationContext, &quot;jsmpp.server.port=&quot; + port);</span>
+<span class="fc" id="L41">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

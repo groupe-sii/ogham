@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SmsglobalServiceProviderConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-smsglobal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.smsglobal</a> &gt; <span class="el_source">SmsglobalServiceProviderConfigurer.java</span></div><h1>SmsglobalServiceProviderConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.smsglobal;
+
+import static fr.sii.ogham.core.util.BuilderUtils.evaluate;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_GSM8_ENCODING_PRIORITY;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_UCS2_ENCODING_PRIORITY;
+import static fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion.VERSION_3_4;
+import static java.util.Arrays.asList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.util.ClasspathUtils;
+import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
+import fr.sii.ogham.sms.builder.cloudhopper.DefaultCloudhopperConfigurer;
+
+/**
+ * Default configurer for Cloudhoppder that is automatically applied every time
+ * a {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 40001 in order to be applied before
+ * {@link DefaultCloudhopperConfigurer}.
+ * &lt;/p&gt;
+ * 
+ * This configurer is applied only if:
+ * &lt;ul&gt;
+ * &lt;li&gt;{@code com.cloudhopper.smpp.SmppClient} is present in the classpath&lt;/li&gt;
+ * &lt;li&gt;and the property
+ * &quot;ogham.sms.automatic-service-provider-configuration.enable&quot; is true (default
+ * value)&lt;/li&gt;
+ * &lt;li&gt;and the property &quot;ogham.sms.cloudhopper.host&quot; or &quot;ogham.sms.smpp.host&quot;
+ * equals &quot;smpp.smsglobal.com&quot;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * This configurer inherits environment configuration (see
+ * {@link BuildContext}).
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This configurer applies the following configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configures SMSGlobal service info:
+ * &lt;ul&gt;
+ * &lt;li&gt;Set &quot;ogham.sms.cloudhopper.port&quot; property value to 1175&lt;/li&gt;
+ * &lt;li&gt;Set &quot;ogham.sms.cloudhopper.interface-version&quot; property value to
+ * &quot;3.4&quot;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures encoding:
+ * &lt;ul&gt;
+ * &lt;li&gt;Set &quot;ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority&quot; property to 0
+ * to disable GSM 7-bit encoding (not supported by SMSGlobal)&lt;/li&gt;
+ * &lt;li&gt;Let default value for &quot;ogham.sms.cloudhopper.encoder.gsm8bit.priority&quot; to
+ * enable GSM 8-bit data encoding if the message contains only characters that
+ * can be encoded on one octet.&lt;/li&gt;
+ * &lt;li&gt;Let default value for &quot;ogham.sms.cloudhopper.encoder.ucs2.priority&quot; to
+ * enable UCS-2 encoding if the message contains special characters that can't
+ * be encoded on one octet. Each character is encoded on two octets.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures message splitting:
+ * &lt;ul&gt;
+ * &lt;li&gt;Split is not done by Ogham but directly by Smsglobal instead. The message
+ * is transmitted using &quot;message_payload&quot; TLV parameter.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class SmsglobalServiceProviderConfigurer {
+<span class="fc" id="L81">	private static final Logger LOG = LoggerFactory.getLogger(SmsglobalServiceProviderConfigurer.class);</span>
+	private static final String SMSGLOBAL_HOST = &quot;smpp.smsglobal.com&quot;;
+	private static final int SMSGLOBAL_PORT = 1775;
+
+	@ConfigurerFor(targetedBuilder = &quot;standard&quot;, priority = DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY + 1)
+<span class="fc" id="L86">	public static class SmsglobalConfigurer implements MessagingConfigurer {</span>
+
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">			if (!canUseCloudhopper() || !usingSmsGlobal(msgBuilder.environment().build())) {</span>
+<span class="fc" id="L91">				LOG.debug(&quot;[{}] skip service provider configuration&quot;, this);</span>
+<span class="fc" id="L92">				return;</span>
+			}
+<span class="fc" id="L94">			LOG.debug(&quot;[{}] apply service provider configuration&quot;, this);</span>
+<span class="fc" id="L95">			CloudhopperBuilder builder = msgBuilder.sms().sender(CloudhopperBuilder.class);</span>
+			// @formatter:off
+<span class="fc" id="L97">			builder</span>
+<span class="fc" id="L98">				.userData()</span>
+					// both supported but to benefit from 160 characters messages, we have to use Tlv message_payload because GSM 7-bit is not supported
+<span class="fc" id="L100">					.useShortMessage().defaultValue(false).and()</span>
+<span class="fc" id="L101">					.useTlvMessagePayload().defaultValue(true).and()</span>
+<span class="fc" id="L102">					.and()</span>
+<span class="fc" id="L103">				.encoder()</span>
+<span class="fc" id="L104">					.gsm7bitPacked().defaultValue(0).and()	// not supported by SmsGlobal</span>
+<span class="fc" id="L105">					.latin1().defaultValue(0).and()			// not supported by SmsGlobal</span>
+<span class="fc" id="L106">					.gsm8bit().defaultValue(DEFAULT_GSM8_ENCODING_PRIORITY).and()</span>
+<span class="fc" id="L107">					.ucs2().defaultValue(DEFAULT_UCS2_ENCODING_PRIORITY).and()</span>
+<span class="fc" id="L108">					.and()</span>
+<span class="fc" id="L109">				.dataCodingScheme()</span>
+<span class="fc" id="L110">					.custom(new SmsGlobalDataCodingProvider())</span>
+<span class="fc" id="L111">					.and()</span>
+<span class="fc" id="L112">				.splitter()</span>
+<span class="fc" id="L113">					.enable().defaultValue(false).and()		// do not split when using Tlv message_payload</span>
+<span class="fc" id="L114">					.and()</span>
+<span class="fc" id="L115">				.port().defaultValue(SMSGLOBAL_PORT).and()</span>
+<span class="fc" id="L116">				.interfaceVersion().defaultValue(VERSION_3_4);</span>
+			// @formatter:on
+<span class="fc" id="L118">		}</span>
+
+		private static boolean usingSmsGlobal(PropertyResolver propertyResolver) {
+<span class="fc" id="L121">			Boolean skip = evaluate(asList(&quot;${ogham.sms.smsglobal.service-provider.auto-conf.skip}&quot;), propertyResolver, Boolean.class);</span>
+<span class="pc bpc" id="L122" title="1 of 4 branches missed.">			if (skip != null &amp;&amp; !skip) {</span>
+<span class="fc" id="L123">				return false;</span>
+			}
+<span class="fc" id="L125">			String host = evaluate(asList(&quot;${ogham.sms.cloudhopper.host}&quot;, &quot;${ogham.sms.smpp.host}&quot;), propertyResolver, String.class);</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">			if (SMSGLOBAL_HOST.equals(host)) {</span>
+<span class="fc" id="L127">				return true;</span>
+			}
+<span class="fc" id="L129">			Boolean force = evaluate(&quot;${ogham.sms.smsglobal.service-provider.auto-conf.force}&quot;, propertyResolver, Boolean.class);</span>
+<span class="pc bpc" id="L130" title="1 of 4 branches missed.">			return force != null &amp;&amp; force;</span>
+		}
+
+		private static boolean canUseCloudhopper() {
+<span class="fc" id="L134">			return ClasspathUtils.exists(&quot;com.cloudhopper.smpp.SmppClient&quot;);</span>
+		}
+	}
+
+	private SmsglobalServiceProviderConfigurer() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

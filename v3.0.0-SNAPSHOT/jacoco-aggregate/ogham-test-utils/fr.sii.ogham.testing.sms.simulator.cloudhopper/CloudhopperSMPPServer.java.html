@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CloudhopperSMPPServer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.cloudhopper</a> &gt; <span class="el_source">CloudhopperSMPPServer.java</span></div><h1>CloudhopperSMPPServer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.cloudhopper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.cloudhopper.smpp.SmppServerConfiguration;
+import com.cloudhopper.smpp.SmppServerHandler;
+import com.cloudhopper.smpp.impl.DefaultSmppServer;
+import com.cloudhopper.smpp.pdu.PduRequest;
+import com.cloudhopper.smpp.type.SmppChannelException;
+
+import fr.sii.ogham.testing.sms.simulator.SmppServerException;
+import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
+
+@SuppressWarnings({&quot;rawtypes&quot;, &quot;java:S3740&quot;})
+public class CloudhopperSMPPServer implements SmppServerSimulator&lt;PduRequest&gt; {
+	private DefaultSmppServer server;
+	private TestSmppServerHandler serverHandler;
+	
+	protected CloudhopperSMPPServer(int port, TestSmppServerHandler serverHandler) {
+<span class="nc" id="L21">		super();</span>
+<span class="nc" id="L22">		this.server = createSmppServer(port, serverHandler);</span>
+<span class="nc" id="L23">		this.serverHandler = serverHandler;</span>
+<span class="nc" id="L24">	}</span>
+	
+	public CloudhopperSMPPServer(int port, String systemId, String password) {
+<span class="nc" id="L27">		this(port, new TestSmppServerHandler(systemId, password));</span>
+<span class="nc" id="L28">	}</span>
+
+	public CloudhopperSMPPServer(int port) {
+<span class="nc" id="L31">		this(port, &quot;systemId&quot;, &quot;password&quot;);</span>
+<span class="nc" id="L32">	}</span>
+
+	@Override
+	public void start() throws SmppServerException {
+		try {
+<span class="nc" id="L37">			server.start();</span>
+<span class="nc" id="L38">		} catch (SmppChannelException e) {</span>
+<span class="nc" id="L39">			throw new SmppServerException(&quot;failed to start SMPP server&quot;, e);</span>
+<span class="nc" id="L40">		}</span>
+<span class="nc" id="L41">	}</span>
+
+	@Override
+	public void stop() {
+<span class="nc" id="L45">		server.destroy();</span>
+<span class="nc" id="L46">	}</span>
+
+	@Override
+	public int getPort() {
+<span class="nc" id="L50">		return server.getConfiguration().getPort();</span>
+	}
+
+	@Override
+	public List&lt;PduRequest&gt; getReceivedMessages() {
+<span class="nc" id="L55">		return new ArrayList&lt;&gt;(serverHandler.getSessionHandler().getReceivedPduRequests());</span>
+	}
+	
+	private static SmppServerConfiguration createSmppServerConfiguration(int port) {
+<span class="nc" id="L59">		SmppServerConfiguration configuration = new SmppServerConfiguration();</span>
+<span class="nc" id="L60">		configuration.setPort(port);</span>
+<span class="nc" id="L61">		configuration.setSystemId(&quot;cloudhopper&quot;);</span>
+<span class="nc" id="L62">		return configuration;</span>
+	}
+
+	private static DefaultSmppServer createSmppServer(int port, SmppServerHandler serverHandler) {
+<span class="nc" id="L66">		SmppServerConfiguration configuration = createSmppServerConfiguration(port);</span>
+<span class="nc" id="L67">		return new DefaultSmppServer(configuration, serverHandler);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

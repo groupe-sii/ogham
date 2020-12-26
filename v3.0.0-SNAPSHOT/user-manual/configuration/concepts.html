@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>MessagingService class</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_messagingservice_class">MessagingService class</a></li>
+<li><a href="#_builder_classes">Builder classes</a></li>
+<li><a href="#_messagingconfigurer_classes">MessagingConfigurer classes</a></li>
+<li><a href="#_messagingbuilder">MessagingBuilder</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_messagingservice_class"><a class="anchor" href="#_messagingservice_class"></a>MessagingService class</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>MessagingService</code> is the facade to send any kind of message.
+Developer should use only <code>MessagingService.send()</code> method.
+The actual work is then internally delegated to sender implementations
+and template engine integrations that is not visible by the developer.
+Even if internal implementations are not visible to the developer,
+Ogham behavior is fully adaptable thanks to <code>Builder</code> classes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_builder_classes"><a class="anchor" href="#_builder_classes"></a>Builder classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ogham is fully configurable and extensible.</p>
+</div>
+<div class="paragraph">
+<p>To adapt the behavior to the application needs, Ogham
+provides <code>Builder</code> classes. Their purpose is to separate the concerns:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Implementations are simple and do the actual work.</p>
+</li>
+<li>
+<p>Builders create implementation instances according to the application needs.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Builders hide complexity by offering methods that simplifies the construction
+of the implementations.</p>
+</div>
+<div class="paragraph">
+<p>This follows the <a href="https://en.wikipedia.org/wiki/Builder_pattern">builder design pattern</a>
+principles.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_messagingconfigurer_classes"><a class="anchor" href="#_messagingconfigurer_classes"></a>MessagingConfigurer classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A <code>MessagingConfigurer</code> is responsible to provide the best behavior by default.</p>
+</div>
+<div class="paragraph">
+<p>Each <code>MessagingConfigurer</code> calls the <code>Builder</code> methods to configure implementations
+to provide a consistent behavior. They also register configuration properties that
+can be  configured externally by the developer to adapt the default behavior.</p>
+</div>
+<div class="paragraph">
+<p>Each <code>MessagingConfigurer</code> may be automatically found and registered by Ogham using
+<code>@ConfigurerFor</code> annotation. If the automatic class scanning is not enabled,
+each <code>MessagingConfigurer</code> can be registered manually.</p>
+</div>
+<div class="paragraph">
+<p><code>MessagingConfigurer</code> classes are central for the automatic configuration.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_messagingbuilder"><a class="anchor" href="#_messagingbuilder"></a>MessagingBuilder</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The purpose of <code>MessagingBuilder</code> is to provide to the developer a single entrypoint to
+configure and get a <code>MessagingService</code> instance. <code>MessagingBuilder</code>
+can automatically scan classpath to find <code>MessagingConfigurer</code> classes and
+instantiate them.</p>
+</div>
+<div class="paragraph">
+<p><code>MessagingBuilder</code> provides static methods to ease <code>MessagingBuilder</code>
+creation and automatic registration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>MessagingBuilder.empty()</code> methods: Instantiate a <code>MessagingBuilder</code> with no
+auto-configuration at all (no class scanning to discover <code>MessagingConfigurer</code> classes).</p>
+</li>
+<li>
+<p><code>MessagingBuilder.minimal()</code> methods: Instantiate a <code>MessagingBuilder</code> that
+runs classpath scanning to find <code>MessagingConfigurer</code> classes that are annotated with
+<code>@ConfigurerFor</code> annotation. Only <code>MessagingConfigurer</code> classes that target <code>minimal</code>
+static factory are instantiated. This is useful to benefit for general Ogham behavior
+and features (such as template engines, automatic mimetype detection, auto-filling
+of messages, &#8230;&#8203;). Sender implementations are not automatically registered yet.</p>
+</li>
+<li>
+<p><code>MessagingBuilder.standard()</code> methods: Instantiate a <code>MessagingBuilder</code> that
+runs classpath scanning to find <code>MessagingConfigurer</code> classes that are annotated with
+<code>@ConfigurerFor</code> annotation. Only <code>MessagingConfigurer</code> classes that target <code>standard</code>
+static factory are instantiated. All Ogham features are registered including all
+available sender implementations.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>A <code>MessagingConfigurer</code> targets one or several <code>MessagingBuilder</code> static factory
+methods through the <code>@ConfigurerFor</code> annotation (using the <code>targetedBuilder</code> field).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2020-12-26 08:00:07 UTC
+</div>
+</div>
+</body>
+</html>

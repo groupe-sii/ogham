@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SingleContentBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.message.fluent</a> &gt; <span class="el_source">SingleContentBuilder.java</span></div><h1>SingleContentBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.message.fluent;
+
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.StringContent;
+import fr.sii.ogham.core.message.content.StringTemplateContent;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.template.context.Context;
+
+/**
+ * Fluent API to build a single content based on:
+ * &lt;ul&gt;
+ * &lt;li&gt;Either a string&lt;/li&gt;
+ * &lt;li&gt;Or a template string&lt;/li&gt;
+ * &lt;li&gt;Or a template loaded from a path&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent for fluent chaining
+ * @since 3.0.0
+ */
+public class SingleContentBuilder&lt;P&gt; {
+	private final P parent;
+	private Content content;
+
+	/**
+	 * Initializes with the parent to go back to.
+	 * 
+	 * @param parent
+	 *            the parent instance
+	 */
+	public SingleContentBuilder(P parent) {
+<span class="fc" id="L35">		super();</span>
+<span class="fc" id="L36">		this.parent = parent;</span>
+<span class="fc" id="L37">	}</span>
+
+	/**
+	 * Set the content directly as a simple string.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param content
+	 *            the content as a string
+	 * @return the instance for fluent chaining
+	 */
+	public P string(String content) {
+<span class="fc" id="L54">		this.content = new StringContent(content);</span>
+<span class="fc" id="L55">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using a template (directly provided as a string). The
+	 * template contains variables that are evaluated against the bean object.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param template
+	 *            the template directly provided as a string
+	 * @param bean
+	 *            the object that contains the variables that are referenced in
+	 *            the template
+	 * @return the instance for fluent chaining
+	 */
+	public P templateString(String template, Object bean) {
+<span class="fc" id="L77">		this.content = new StringTemplateContent(template, bean);</span>
+<span class="fc" id="L78">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using a template (directly provided as a string). The
+	 * template contains variables that are evaluated against the evaluation
+	 * context. The context contains at least the values of the variables but
+	 * can also contain additional information for parsing the template.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param template
+	 *            the template directly provided as a string
+	 * @param context
+	 *            contains at least the variables that are referenced in the
+	 *            template and may contain additional information to parse the
+	 *            template
+	 * @return the instance for fluent chaining
+	 */
+	public P templateString(String template, Context context) {
+<span class="fc" id="L103">		this.content = new StringTemplateContent(template, context);</span>
+<span class="fc" id="L104">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using a template loaded from a path. The template
+	 * contains variables that are evaluated against the bean object.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param templatePath
+	 *            the path to the template
+	 * @param bean
+	 *            the object that contains the variables that are referenced in
+	 *            the template
+	 * @return the instance for fluent chaining
+	 */
+	public P template(String templatePath, Object bean) {
+<span class="fc" id="L126">		this.content = new TemplateContent(templatePath, bean);</span>
+<span class="fc" id="L127">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using a template loaded from a path. The template
+	 * contains variables that are evaluated against the bean object.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param templatePath
+	 *            the path to the template
+	 * @param bean
+	 *            the object that contains the variables that are referenced in
+	 *            the template
+	 * @return the instance for fluent chaining
+	 */
+	public P template(ResourcePath templatePath, Object bean) {
+<span class="nc" id="L149">		this.content = new TemplateContent(templatePath, bean);</span>
+<span class="nc" id="L150">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using a template loaded from a path. The template
+	 * contains variables that are evaluated against the evaluation context. The
+	 * context contains at least the values of the variables but can also
+	 * contain additional information for parsing the template.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param templatePath
+	 *            the path to the template
+	 * @param context
+	 *            contains at least the variables that are referenced in the
+	 *            template and may contain additional information to parse the
+	 *            template
+	 * @return the instance for fluent chaining
+	 */
+	public P template(String templatePath, Context context) {
+<span class="fc" id="L175">		this.content = new TemplateContent(templatePath, context);</span>
+<span class="fc" id="L176">		return parent;</span>
+	}
+
+	/**
+	 * Set the content using a template loaded from a path. The template
+	 * contains variables that are evaluated against the evaluation context. The
+	 * context contains at least the values of the variables but can also
+	 * contain additional information for parsing the template.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If any other method of this class was called before calling this method,
+	 * only the value of this method is used.
+	 * 
+	 * @param templatePath
+	 *            the path to the template
+	 * @param context
+	 *            contains at least the variables that are referenced in the
+	 *            template and may contain additional information to parse the
+	 *            template
+	 * @return the instance for fluent chaining
+	 */
+	public P template(ResourcePath templatePath, Context context) {
+<span class="nc" id="L201">		this.content = new TemplateContent(templatePath, context);</span>
+<span class="nc" id="L202">		return parent;</span>
+	}
+
+	/**
+	 * Build the final {@link Content}. Only the last registered content is used
+	 * (the last call to any method of this class)
+	 * 
+	 * @return the built content
+	 */
+	public Content build() {
+<span class="fc" id="L212">		return content;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

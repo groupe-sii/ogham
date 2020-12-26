@@ -1,26 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SmsBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">SmsBuilder.java</span></div><h1>SmsBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SmsBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">SmsBuilder.java</span></div><h1>SmsBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.AbstractParent;
+import fr.sii.ogham.core.async.Awaiter;
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
-import fr.sii.ogham.core.builder.annotation.RequiredClass;
-import fr.sii.ogham.core.builder.annotation.RequiredClasses;
-import fr.sii.ogham.core.builder.annotation.RequiredProperties;
-import fr.sii.ogham.core.builder.annotation.RequiredProperty;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
 import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.retry.RetryBuilder;
 import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
 import fr.sii.ogham.core.builder.template.DetectorBuilder;
 import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
 import fr.sii.ogham.core.builder.template.VariantBuilder;
+import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.condition.fluent.MessageConditions;
 import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.message.content.MultiTemplateContent;
 import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.retry.ExponentialDelayRetry;
+import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.retry.FixedIntervalRetry;
+import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.sender.AutoRetrySender;
 import fr.sii.ogham.core.sender.ConditionalSender;
 import fr.sii.ogham.core.sender.ContentTranslatorSender;
 import fr.sii.ogham.core.sender.FillerSender;
@@ -29,6 +38,7 @@ import fr.sii.ogham.core.template.parser.TemplateParser;
 import fr.sii.ogham.core.translator.content.ContentTranslator;
 import fr.sii.ogham.core.translator.content.EveryContentTranslator;
 import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
+import fr.sii.ogham.core.util.BuilderUtils;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.Sms;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
@@ -164,14 +174,14 @@ import fr.sii.ogham.sms.sender.SmsSender;
  *     .and()
  *   .sms()
  *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
- *       .host(&quot;${smpp.host}&quot;)
- *       .port(&quot;${smpp.port}&quot;)
- *       .systemId(&quot;${smpp.system-id}&quot;)
- *       .password(&quot;${smpp.password}&quot;)
+ *       .host().properties(&quot;${smpp.host}&quot;).and()
+ *       .port().properties(&quot;${smpp.port}&quot;).and()
+ *       .systemId().properties(&quot;${smpp.system-id}&quot;).and()
+ *       .password().properties(&quot;${smpp.password}&quot;).and()
  *       .and()
  *     .autofill()    // enables and configures autofilling
  *       .from()
- *         .defaultValueProperty(&quot;${sms.sender.number}&quot;)
+ *         .defaultValue().properties(&quot;${sms.sender.number}&quot;).and()
  *         .and()
  *       .and()
  *     .and()
@@ -230,7 +240,7 @@ import fr.sii.ogham.sms.sender.SmsSender;
  * ogham.sms.smpp.port=your SMPP server port
  * ogham.sms.smpp.system-id=your SMPP system_id
  * ogham.sms.smpp.password=an optional password
- * ogham.sms.from=the sender phone number
+ * ogham.sms.from.default-value=the sender phone number
  * &lt;/pre&gt;
  * 
  * &lt;p&gt;
@@ -247,7 +257,7 @@ import fr.sii.ogham.sms.sender.SmsSender;
  *   .sms()
  *     .autofill()
  *       .from()
- *         .defaultValueProperty(&quot;${sms.sender.number}&quot;)   // overrides default sender phone number property
+ *         .defaultValue().properties(&quot;${sms.sender.number}&quot;).and()   // overrides default sender phone number property
  *         .and()
  *       .and()
  *     .and()
@@ -273,30 +283,31 @@ import fr.sii.ogham.sms.sender.SmsSender;
  *
  */
 public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implements Builder&lt;ConditionalSender&gt; {
-<span class="fc" id="L276">	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);</span>
+<span class="fc" id="L286">	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);</span>
 
-	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
+	private final BuildContext buildContext;
 	private final TemplateBuilderHelper&lt;SmsBuilder&gt; templateBuilderHelper;
 	private final SenderImplementationBuilderHelper&lt;SmsBuilder&gt; senderBuilderHelper;
 	private AutofillSmsBuilder autofillBuilder;
 	private PhoneNumbersBuilder phoneNumbersBuilder;
+	private RetryBuilder&lt;SmsBuilder&gt; retryBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
-	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
-	 * used to evaluate properties when {@link #build()} method is called.
+	 * when calling {@link #and()} method. The {@link BuildContext} is used to
+	 * evaluate properties when {@link #build()} method is called.
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public SmsBuilder(MessagingBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
-<span class="fc" id="L295">		super(parent);</span>
-<span class="fc" id="L296">		this.environmentBuilder = environmentBuilder;</span>
-<span class="fc" id="L297">		templateBuilderHelper = new TemplateBuilderHelper&lt;&gt;(this, environmentBuilder);</span>
-<span class="fc" id="L298">		senderBuilderHelper = new SenderImplementationBuilderHelper&lt;&gt;(this, environmentBuilder);</span>
-<span class="fc" id="L299">	}</span>
+	public SmsBuilder(MessagingBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L306">		super(parent);</span>
+<span class="fc" id="L307">		this.buildContext = buildContext;</span>
+<span class="fc" id="L308">		templateBuilderHelper = new TemplateBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L309">		senderBuilderHelper = new SenderImplementationBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L310">	}</span>
 
 	/**
 	 * Configures how Ogham will add default values to the {@link Sms} if some
@@ -313,10 +324,10 @@ public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implement
 	 *	builder
 	 *	  .autofill()
 	 *	    .from()
-	 *	      .defaultValueProperty(&quot;${ogham.sms.from}&quot;)
+	 *	      .defaultValue().properties(&quot;${ogham.sms.from.default-value}&quot;).and()
 	 *	        .and()
 	 *	    .to()
-	 *	      .defaultValueProperty(&quot;${ogham.sms.to}&quot;)
+	 *	      .defaultValue().properties(&quot;${ogham.sms.to.default-value}&quot;).and()
 	 *	        .and()
 	 *	    .and()
 	 * &lt;/code&gt;
@@ -325,10 +336,10 @@ public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implement
 	 * @return the builder to configure autofilling of SMS
 	 */
 	public AutofillSmsBuilder autofill() {
-<span class="pc bpc" id="L328" title="1 of 2 branches missed.">		if (autofillBuilder == null) {</span>
-<span class="fc" id="L329">			autofillBuilder = new AutofillSmsBuilder(this, environmentBuilder);</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">		if (autofillBuilder == null) {</span>
+<span class="fc" id="L340">			autofillBuilder = new AutofillSmsBuilder(this, buildContext);</span>
 		}
-<span class="fc" id="L331">		return autofillBuilder;</span>
+<span class="fc" id="L342">		return autofillBuilder;</span>
 	}
 
 	/**
@@ -349,24 +360,24 @@ public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implement
 	 *	  .numbers()
 	 *	    .from()
 	 *	      .format()
-	 *	        .alphanumericCode(&quot;${ogham.sms.from-format-enable-alphanumeric}&quot;, &quot;true&quot;)
-	 *	        .shortCode(&quot;${ogham.sms.from-format-enable-shortcode}&quot;, &quot;true&quot;)
-	 *	        .internationalNumber(&quot;${ogham.sms.from-format-enable-international}&quot;, &quot;true&quot;)
+	 *	        .alphanumericCode().properties(&quot;${ogham.sms.from.alphanumeric-code-format.enable}&quot;).defaultValue(true).and()
+	 *	        .shortCode().properties(&quot;${ogham.sms.from.short-code-format.enable}&quot;).defaultValue(true).and()
+	 *	        .internationalNumber().properties(&quot;${ogham.sms.from.international-format.enable}&quot;).defaultValue(true).and()
 	 *	        .and()
 	 *	      .and()
 	 *	    .to()
 	 *	      .format()
-	 *	        .internationalNumber(&quot;${ogham.sms.to-format-enable-international}&quot;, &quot;true&quot;);
+	 *	        .internationalNumber().properties(&quot;${ogham.sms.to.international-format.enable}&quot;).defaultValue(true);
 	 * &lt;/code&gt;
 	 * &lt;/pre&gt;
 	 * 
 	 * @return the builder to configure phone number formats
 	 */
 	public PhoneNumbersBuilder numbers() {
-<span class="pc bpc" id="L366" title="1 of 2 branches missed.">		if (phoneNumbersBuilder == null) {</span>
-<span class="fc" id="L367">			phoneNumbersBuilder = new PhoneNumbersBuilder(this, environmentBuilder);</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">		if (phoneNumbersBuilder == null) {</span>
+<span class="fc" id="L378">			phoneNumbersBuilder = new PhoneNumbersBuilder(this, buildContext);</span>
 		}
-<span class="fc" id="L369">		return phoneNumbersBuilder;</span>
+<span class="fc" id="L380">		return phoneNumbersBuilder;</span>
 	}
 
 	/**
@@ -399,7 +410,7 @@ public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implement
 	 * constructor with two arguments:
 	 * &lt;ul&gt;
 	 * &lt;li&gt;The type of the parent builder ({@code &amp;lt;P&amp;gt;})&lt;/li&gt;
-	 * &lt;li&gt;The {@link EnvironmentBuilder} instance&lt;/li&gt;
+	 * &lt;li&gt;The {@link BuildContext} instance&lt;/li&gt;
 	 * &lt;/ul&gt;
 	 * If you don't care about chaining, just provide a default constructor.
 	 * 
@@ -410,7 +421,7 @@ public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implement
 	 * @return the builder to configure the implementation
 	 */
 	public &lt;T extends Builder&lt;? extends TemplateParser&gt;&gt; T template(Class&lt;T&gt; builderClass) {
-<span class="fc" id="L413">		return templateBuilderHelper.register(builderClass);</span>
+<span class="fc" id="L424">		return templateBuilderHelper.register(builderClass);</span>
 	}
 
 	/**
@@ -447,8 +458,8 @@ public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implement
 	 * @return this instance for fluent chaining
 	 */
 	public SmsBuilder customSender(MessageSender sender) {
-<span class="fc" id="L450">		senderBuilderHelper.customSender(sender);</span>
-<span class="fc" id="L451">		return this;</span>
+<span class="fc" id="L461">		senderBuilderHelper.customSender(sender);</span>
+<span class="fc" id="L462">		return this;</span>
 	}
 
 	/**
@@ -508,45 +519,94 @@ public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implement
 	 * @return the builder to configure the implementation
 	 */
 	public &lt;T extends Builder&lt;? extends MessageSender&gt;&gt; T sender(Class&lt;T&gt; builderClass) {
-<span class="fc" id="L511">		return senderBuilderHelper.register(builderClass);</span>
+<span class="fc" id="L522">		return senderBuilderHelper.register(builderClass);</span>
+	}
+
+	/**
+	 * Configure automatic retry if message couldn't be sent.
+	 * 
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .autoRetry()
+	 *   .fixedDelay()
+	 *     .maxRetries().properties(&quot;${ogham.sms.send-retry.max-attempts}&quot;).and()
+	 *     .delay().properties(&quot;${ogham.sms.send-retry.delay-between-attempts}&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * This builder lets you configure:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The retry strategy:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link FixedDelayRetry}: wait for a fixed delay after the last
+	 * failure&lt;/li&gt;
+	 * &lt;li&gt;{@link FixedIntervalRetry}: wait for a fixed delay between executions
+	 * (do not wait for the end of the action)&lt;/li&gt;
+	 * &lt;li&gt;{@link ExponentialDelayRetry}: start with a delay, the next delay
+	 * will be doubled on so on&lt;/li&gt;
+	 * &lt;li&gt;{@link PerExecutionDelayRetry}: provide a custom delay for each
+	 * execution&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;/li&gt;
+	 * &lt;li&gt;The {@link RetryExecutor} implementation&lt;/li&gt;
+	 * &lt;li&gt;The {@link Awaiter} implementation&lt;/li&gt;
+	 * &lt;li&gt;The {@link Condition} used to determine if the raised error should
+	 * trigger a retry or not&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the builder to configure retry management
+	 */
+	public RetryBuilder&lt;SmsBuilder&gt; autoRetry() {
+<span class="fc bfc" id="L563" title="All 2 branches covered.">		if (retryBuilder == null) {</span>
+<span class="fc" id="L564">			retryBuilder = new RetryBuilder&lt;&gt;(this, buildContext);</span>
+		}
+<span class="fc" id="L566">		return retryBuilder;</span>
 	}
 
 	@Override
 	public ConditionalSender build() {
-<span class="fc" id="L516">		SmsSender smsSender = new SmsSender();</span>
-<span class="fc" id="L517">		ConditionalSender sender = smsSender;</span>
-<span class="fc" id="L518">		senderBuilderHelper.addSenders(smsSender);</span>
-<span class="pc bpc" id="L519" title="1 of 2 branches missed.">		if (templateBuilderHelper.hasRegisteredTemplates()) {</span>
-<span class="fc" id="L520">			ContentTranslator translator = buildContentTranslator();</span>
-<span class="fc" id="L521">			LOG.debug(&quot;Content translation enabled {}&quot;, translator);</span>
-<span class="fc" id="L522">			sender = new ContentTranslatorSender(translator, sender);</span>
+<span class="fc" id="L571">		SmsSender smsSender = buildContext.register(new SmsSender());</span>
+<span class="fc" id="L572">		ConditionalSender sender = smsSender;</span>
+<span class="fc" id="L573">		senderBuilderHelper.addSenders(smsSender);</span>
+<span class="fc bfc" id="L574" title="All 2 branches covered.">		if (templateBuilderHelper.hasRegisteredTemplates()) {</span>
+<span class="fc" id="L575">			ContentTranslator translator = buildContentTranslator();</span>
+<span class="fc" id="L576">			LOG.debug(&quot;Content translation enabled {}&quot;, translator);</span>
+<span class="fc" id="L577">			sender = buildContext.register(new ContentTranslatorSender(translator, sender));</span>
 		}
-<span class="pc bpc" id="L524" title="1 of 2 branches missed.">		if (phoneNumbersBuilder != null) {</span>
-<span class="fc" id="L525">			PhoneNumberTranslatorPair pair = phoneNumbersBuilder.build();</span>
-<span class="fc" id="L526">			sender = new PhoneNumberTranslatorSender(pair.getSender(), pair.getRecipient(), sender);</span>
+<span class="pc bpc" id="L579" title="1 of 2 branches missed.">		if (phoneNumbersBuilder != null) {</span>
+<span class="fc" id="L580">			PhoneNumberTranslatorPair pair = phoneNumbersBuilder.build();</span>
+<span class="fc" id="L581">			sender = buildContext.register(new PhoneNumberTranslatorSender(pair.getSender(), pair.getRecipient(), sender));</span>
 		}
-<span class="pc bpc" id="L528" title="1 of 2 branches missed.">		if (autofillBuilder != null) {</span>
-<span class="fc" id="L529">			MessageFiller messageFiller = autofillBuilder.build();</span>
-<span class="fc" id="L530">			LOG.debug(&quot;Automatic filling of message enabled {}&quot;, messageFiller);</span>
-<span class="fc" id="L531">			sender = new FillerSender(messageFiller, sender);</span>
+<span class="pc bpc" id="L583" title="1 of 2 branches missed.">		if (autofillBuilder != null) {</span>
+<span class="fc" id="L584">			MessageFiller messageFiller = autofillBuilder.build();</span>
+<span class="fc" id="L585">			LOG.debug(&quot;Automatic filling of message enabled {}&quot;, messageFiller);</span>
+<span class="fc" id="L586">			sender = buildContext.register(new FillerSender(messageFiller, sender));</span>
 		}
-<span class="fc" id="L533">		return sender;</span>
+<span class="fc" id="L588">		RetryExecutor retryExecutor = BuilderUtils.build(retryBuilder);</span>
+<span class="fc bfc" id="L589" title="All 2 branches covered.">		if (retryExecutor != null) {</span>
+<span class="fc" id="L590">			LOG.debug(&quot;Automatic retry of message sending enabled {}&quot;, retryExecutor);</span>
+<span class="fc" id="L591">			sender = buildContext.register(new AutoRetrySender(sender, retryExecutor));</span>
+		}
+<span class="fc" id="L593">		return sender;</span>
 	}
 
 	private ContentTranslator buildContentTranslator() {
-<span class="fc" id="L537">		EveryContentTranslator translator = new EveryContentTranslator();</span>
-<span class="fc" id="L538">		addTemplateTranslator(translator);</span>
-<span class="fc" id="L539">		return translator;</span>
+<span class="fc" id="L597">		EveryContentTranslator translator = buildContext.register(new EveryContentTranslator());</span>
+<span class="fc" id="L598">		addTemplateTranslator(translator);</span>
+<span class="fc" id="L599">		return translator;</span>
 	}
 
 	private void addTemplateTranslator(EveryContentTranslator translator) {
-<span class="pc bpc" id="L543" title="1 of 2 branches missed.">		if (!templateBuilderHelper.hasRegisteredTemplates()) {</span>
-<span class="nc" id="L544">			return;</span>
+<span class="pc bpc" id="L603" title="1 of 2 branches missed.">		if (!templateBuilderHelper.hasRegisteredTemplates()) {</span>
+<span class="nc" id="L604">			return;</span>
 		}
-<span class="fc" id="L546">		TemplateParser templateParser = templateBuilderHelper.buildTemplateParser();</span>
-<span class="fc" id="L547">		LOG.debug(&quot;Registering content translator that parses templates using {}&quot;, templateParser);</span>
-<span class="fc" id="L548">		translator.addTranslator(new TemplateContentTranslator(templateParser));</span>
-<span class="fc" id="L549">	}</span>
+<span class="fc" id="L606">		TemplateParser templateParser = templateBuilderHelper.buildTemplateParser();</span>
+<span class="fc" id="L607">		LOG.debug(&quot;Registering content translator that parses templates using {}&quot;, templateParser);</span>
+<span class="fc" id="L608">		translator.addTranslator(buildContext.register(new TemplateContentTranslator(templateParser)));</span>
+<span class="fc" id="L609">	}</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

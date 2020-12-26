@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PerExecutionDelayBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.retry</a> &gt; <span class="el_source">PerExecutionDelayBuilder.java</span></div><h1>PerExecutionDelayBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.retry;
+
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
+import fr.sii.ogham.core.retry.RetryStrategy;
+
+/**
+ * Configures retry handling based on a specific delay for each execution.
+ * 
+ * Retry several times with a fixed delay to wait after the last execution
+ * failure until the maximum attempts is reached. A specific delay is used for
+ * each execution. If there are more attempts than the configured delays, the
+ * last delays is used for remaining attempts.
+ * 
+ * 
+ * For example:
+ * 
+ * &lt;pre&gt;
+ *    .delays(500, 750, 1800)
+ *    .maxRetries(5)
+ * &lt;/pre&gt;
+ * 
+ * Means that a retry will be attempted with specified delays until 5 attempts
+ * are reached (inclusive). For example, you want to connect to an external
+ * system at t1=0 and the connection timeout (100ms) is triggered at t2=100ms.
+ * Using this retry will provide the following behavior:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;0: connect&lt;/li&gt;
+ * &lt;li&gt;100: timeout&lt;/li&gt;
+ * &lt;li&gt;600: connect&lt;/li&gt;
+ * &lt;li&gt;700: timeout&lt;/li&gt;
+ * &lt;li&gt;1450: connect&lt;/li&gt;
+ * &lt;li&gt;1550: timeout&lt;/li&gt;
+ * &lt;li&gt;3350: connect&lt;/li&gt;
+ * &lt;li&gt;3450: timeout&lt;/li&gt;
+ * &lt;li&gt;5250: connect&lt;/li&gt;
+ * &lt;li&gt;5350: timeout&lt;/li&gt;
+ * &lt;li&gt;7150: connect&lt;/li&gt;
+ * &lt;li&gt;7250: timeout&lt;/li&gt;
+ * &lt;li&gt;fail&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class PerExecutionDelayBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements Builder&lt;RetryStrategy&gt; {
+	private final BuildContext buildContext;
+	private final ConfigurationValueBuilderHelper&lt;PerExecutionDelayBuilder&lt;P&gt;, Integer&gt; maxRetriesValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;PerExecutionDelayBuilder&lt;P&gt;, Long[]&gt; delaysValueBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public PerExecutionDelayBuilder(P parent, BuildContext buildContext) {
+<span class="fc" id="L75">		super(parent);</span>
+<span class="fc" id="L76">		this.buildContext = buildContext;</span>
+<span class="fc" id="L77">		maxRetriesValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);</span>
+<span class="fc" id="L78">		delaysValueBuilder = buildContext.newConfigurationValueBuilder(this, Long[].class);</span>
+<span class="fc" id="L79">	}</span>
+
+	/**
+	 * Set the maximum number of attempts.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #maxRetries()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code maxRetries(10)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param maxRetries
+	 *            the maximum number of attempts
+	 * @return this instance for fluent chaining
+	 */
+	public PerExecutionDelayBuilder&lt;P&gt; maxRetries(Integer maxRetries) {
+<span class="fc" id="L116">		this.maxRetriesValueBuilder.setValue(maxRetries);</span>
+<span class="fc" id="L117">		return this;</span>
+	}
+
+	/**
+	 * Set the maximum number of attempts.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .maxRetries()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #maxRetries(Integer)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .maxRetries(10)
+	 * .maxRetries()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 10} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;PerExecutionDelayBuilder&lt;P&gt;, Integer&gt; maxRetries() {
+<span class="fc" id="L157">		return maxRetriesValueBuilder;</span>
+	}
+
+	/**
+	 * Set specific delays (in milliseconds) used for each execution. If there
+	 * are more attempts than the configured delays, the last delays is used for
+	 * remaining attempts.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #delays()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .delays(5000L)
+	 * .delays()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .delays(5000L)
+	 * .delays()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code delays(5000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param delays
+	 *            the delays for each execution
+	 * @return this instance for fluent chaining
+	 */
+	public PerExecutionDelayBuilder&lt;P&gt; delays(List&lt;Long&gt; delays) {
+<span class="fc bfc" id="L197" title="All 2 branches covered.">		delaysValueBuilder.setValue(delays == null ? null : delays.toArray(new Long[delays.size()]));</span>
+<span class="fc" id="L198">		return this;</span>
+	}
+
+	/**
+	 * Set specific delays (in milliseconds) used for each execution. If there
+	 * are more attempts than the configured delays, the last delays is used for
+	 * remaining attempts.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #delays()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .delays(5000L)
+	 * .delays()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .delays(5000L)
+	 * .delays()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code delays(5000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param delays
+	 *            the delays for each execution
+	 * @return this instance for fluent chaining
+	 */
+	public PerExecutionDelayBuilder&lt;P&gt; delays(Long... delays) {
+<span class="nc" id="L238">		delaysValueBuilder.setValue(delays);</span>
+<span class="nc" id="L239">		return this;</span>
+	}
+
+	/**
+	 * Set specific delays (in milliseconds) used for each new execution. If
+	 * there are more attempts than the configured delays, the last delay is
+	 * used for remaining attempts.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .delays()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #delays(Long...)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .delays(5000L)
+	 * .delays()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 5000L} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;PerExecutionDelayBuilder&lt;P&gt;, Long[]&gt; delays() {
+<span class="fc" id="L281">		return delaysValueBuilder;</span>
+	}
+
+	@Override
+	public RetryStrategy build() {
+<span class="fc" id="L286">		int evaluatedMaxRetries = buildMaxRetries();</span>
+<span class="fc" id="L287">		List&lt;Long&gt; evaluatedDelays = buildDelays();</span>
+<span class="fc bfc" id="L288" title="All 4 branches covered.">		if (evaluatedMaxRetries == 0 || evaluatedDelays.isEmpty()) {</span>
+<span class="fc" id="L289">			return null;</span>
+		}
+<span class="fc" id="L291">		return buildContext.register(new PerExecutionDelayRetry(evaluatedMaxRetries, evaluatedDelays));</span>
+	}
+
+	private int buildMaxRetries() {
+<span class="fc" id="L295">		return maxRetriesValueBuilder.getValue(0);</span>
+	}
+
+	private List&lt;Long&gt; buildDelays() {
+<span class="fc" id="L299">		Long[] delays = delaysValueBuilder.getValue(new Long[0]);</span>
+<span class="fc" id="L300">		return Arrays.asList(delays);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

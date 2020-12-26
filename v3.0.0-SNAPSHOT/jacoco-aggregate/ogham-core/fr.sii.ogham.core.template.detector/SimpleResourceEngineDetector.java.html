@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleResourceEngineDetector.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.template.detector</a> &gt; <span class="el_source">SimpleResourceEngineDetector.java</span></div><h1>SimpleResourceEngineDetector.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.template.detector;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleResourceEngineDetector.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.template.detector</a> &gt; <span class="el_source">SimpleResourceEngineDetector.java</span></div><h1>SimpleResourceEngineDetector.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.template.detector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import fr.sii.ogham.core.template.context.Context;
 
 /**
  * A template engine detector that indicates it can parse the template if the
- * resource represented byt the template name corresponds to a
+ * resource represented by the template name corresponds to a
  * {@link SimpleResource}.
  * 
  * This is useful when the template name is not a path but directly the template
@@ -50,8 +50,8 @@ public class SimpleResourceEngineDetector implements TemplateEngineDetector {
 <span class="fc" id="L50">		Resource resource = getResource(template);</span>
 		// no resource matches requested template
 		// =&gt; can't parse (we need a SimpleResource)
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">		if (resource == null) {</span>
-<span class="nc" id="L54">			return false;</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">		if (resource == null) {</span>
+<span class="fc" id="L54">			return false;</span>
 		}
 
 		// resource found but not a SimpleResource
@@ -68,9 +68,9 @@ public class SimpleResourceEngineDetector implements TemplateEngineDetector {
 	private Resource getResource(ResourcePath template) {
 		try {
 <span class="fc" id="L70">			return resolver.getResource(template);</span>
-<span class="nc" id="L71">		} catch (ResourceResolutionException e) {</span>
-<span class="nc" id="L72">			LOG.trace(&quot;resource resolution couldn't resolve template &quot; + template + &quot; while trying detect template engine&quot;, e);</span>
-<span class="nc" id="L73">			return null;</span>
+<span class="fc" id="L71">		} catch (ResourceResolutionException e) {</span>
+<span class="fc" id="L72">			LOG.trace(&quot;resource resolution couldn't resolve template {} while trying detect template engine&quot;, template, e);</span>
+<span class="fc" id="L73">			return null;</span>
 		}
 	}
 

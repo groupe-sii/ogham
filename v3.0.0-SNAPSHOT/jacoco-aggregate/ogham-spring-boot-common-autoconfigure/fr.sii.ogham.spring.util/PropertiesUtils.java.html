@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PropertiesUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.util</a> &gt; <span class="el_source">PropertiesUtils.java</span></div><h1>PropertiesUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.util;
+
+import java.lang.reflect.Array;
+import java.util.List;
+
+/**
+ * Some utility functions to handle properties
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class PropertiesUtils {
+
+	/**
+	 * Converts the list of values to an array.
+	 * 
+	 * &lt;p&gt;
+	 * If the list is {@code null}, {@code null} is returned.
+	 * 
+	 * 
+	 * @param &lt;E&gt;
+	 *            the type of elements
+	 * @param list
+	 *            the list to convert
+	 * @param type
+	 *            the type of the elements (can't be determined automatically
+	 *            through reflection)
+	 * @return the array
+	 */
+	@SuppressWarnings({ &quot;unchecked&quot;, &quot;squid:S1168&quot; })
+	public static &lt;E&gt; E[] asArray(List&lt;? extends E&gt; list, Class&lt;E&gt; type) {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">		if (list == null) {</span>
+<span class="fc" id="L33">			return null;</span>
+		}
+<span class="fc" id="L35">		return list.toArray((E[]) Array.newInstance(type, list.size()));</span>
+	}
+
+	private PropertiesUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

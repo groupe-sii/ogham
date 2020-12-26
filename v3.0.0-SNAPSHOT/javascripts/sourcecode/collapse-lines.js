@@ -40,11 +40,11 @@
 	var decorate = function(/*Array*/sourceLines, /*int*/start, /*int*/end) {
 		sourceLines[start] = decorateStart(sourceLines[start]);
 		sourceLines[end] = decorateEnd(sourceLines[end]);
-		console.log(start, end, sourceLines[start], sourceLines[end]);
+		//console.log(start, end, sourceLines[start], sourceLines[end]);
 	};
 	
 	var decorateStart = function(/*String*/line) {
-		return '<span class="collapsed closed" title="click to show hidden code"><span class="collapsed-text">...</span><span class="collapsed-lines">'+line;
+		return '<span class="collapsed closed" title="click to show hidden code"><span class="collapsed-text">show hidden code</span><span class="collapsed-lines">'+line;
 	};
 	
 	var decorateEnd = function(/*String*/line) {

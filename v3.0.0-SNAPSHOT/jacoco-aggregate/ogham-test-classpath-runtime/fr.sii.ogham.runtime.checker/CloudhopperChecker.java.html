@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CloudhopperChecker.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-classpath-runtime</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.runtime.checker</a> &gt; <span class="el_source">CloudhopperChecker.java</span></div><h1>CloudhopperChecker.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.runtime.checker;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static org.hamcrest.Matchers.is;
+
+import java.io.IOException;
+
+import org.jsmpp.bean.SubmitSm;
+
+import fr.sii.ogham.testing.extension.junit.sms.SmppServerRule;
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+
+
+public class CloudhopperChecker {
+	private final SmppServerRule&lt;SubmitSm&gt; smppServer;
+	
+	public CloudhopperChecker(SmppServerRule&lt;SubmitSm&gt; smppServer) {
+<span class="nc" id="L19">		super();</span>
+<span class="nc" id="L20">		this.smppServer = smppServer;</span>
+<span class="nc" id="L21">	}</span>
+
+	public void assertSmsWithoutTemplate() {
+<span class="nc" id="L24">		assertThat(smppServer).receivedMessages()</span>
+<span class="nc" id="L25">			.count(is(1))</span>
+<span class="nc" id="L26">				.message(0)</span>
+<span class="nc" id="L27">					.content(is(&quot;Hello world !!&quot;))</span>
+<span class="nc" id="L28">					.from()</span>
+<span class="nc" id="L29">						.number(is(&quot;+33601020304&quot;))</span>
+<span class="nc" id="L30">						.typeOfNumber(is(TypeOfNumber.INTERNATIONAL))</span>
+<span class="nc" id="L31">						.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()</span>
+<span class="nc" id="L32">					.to()</span>
+<span class="nc" id="L33">						.number(is(&quot;0709080706&quot;))</span>
+<span class="nc" id="L34">						.typeOfNumber(is(TypeOfNumber.UNKNOWN))</span>
+<span class="nc" id="L35">						.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN));</span>
+<span class="nc" id="L36">	}</span>
+	
+	public void assertSmsWithThymeleaf() throws IOException {
+<span class="nc" id="L39">		assertSmsWithTemplates(&quot;thymeleaf&quot;);</span>
+<span class="nc" id="L40">	}</span>
+
+	public void assertSmsWithFreemarker() throws IOException {
+<span class="nc" id="L43">		assertSmsWithTemplates(&quot;freemarker&quot;);</span>
+<span class="nc" id="L44">	}</span>
+	
+	private void assertSmsWithTemplates(String templateEngine) throws IOException {
+<span class="nc" id="L47">		assertThat(smppServer).receivedMessages()</span>
+<span class="nc" id="L48">			.count(is(1))</span>
+<span class="nc" id="L49">				.message(0)</span>
+<span class="nc" id="L50">					.content(is(&quot;Hello foo !\nYou have 42€&quot;))</span>
+<span class="nc" id="L51">					.from()</span>
+<span class="nc" id="L52">						.number(is(&quot;+33601020304&quot;))</span>
+<span class="nc" id="L53">						.typeOfNumber(is(TypeOfNumber.INTERNATIONAL))</span>
+<span class="nc" id="L54">						.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN)).and()</span>
+<span class="nc" id="L55">					.to()</span>
+<span class="nc" id="L56">						.number(is(&quot;0709080706&quot;))</span>
+<span class="nc" id="L57">						.typeOfNumber(is(TypeOfNumber.UNKNOWN))</span>
+<span class="nc" id="L58">						.numberingPlanIndicator(is(NumberingPlanIndicator.ISDN));</span>
+<span class="nc" id="L59">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

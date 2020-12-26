@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>KeepAliveBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">KeepAliveBuilder.java</span></div><h1>KeepAliveBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+
+import com.cloudhopper.smpp.pdu.EnquireLink;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.KeepAliveOptions;
+
+/**
+ * Builder to configure how keep alive session management should behave.
+ * 
+ * &lt;p&gt;
+ * Keep alive actively maintains the session opened by sending regularly
+ * {@link EnquireLink} messages.
+ * 
+ * This builder let you configure:
+ * &lt;ul&gt;
+ * &lt;li&gt;Enable/disable active keep alive management&lt;/li&gt;
+ * &lt;li&gt;The time to wait between two {@link EnquireLink} messages&lt;/li&gt;
+ * &lt;li&gt;The maximum time to wait for a response from the server for
+ * {@link EnquireLink} request&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class KeepAliveBuilder extends AbstractParent&lt;SessionBuilder&gt; implements Builder&lt;KeepAliveOptions&gt; {
+<span class="fc" id="L38">	private static final AtomicInteger enquireLinkThreadCounter = new AtomicInteger();</span>
+
+	private final ConfigurationValueBuilderHelper&lt;KeepAliveBuilder, Boolean&gt; enableValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;KeepAliveBuilder, Long&gt; enquireLinkIntervalValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;KeepAliveBuilder, Long&gt; enquireLinkTimeoutValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;KeepAliveBuilder, Boolean&gt; connectAtStartupValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;KeepAliveBuilder, Integer&gt; maxConsecutiveTimeoutsValueBuilder;
+	private Supplier&lt;ScheduledExecutorService&gt; executorFactory;
+
+	public KeepAliveBuilder(SessionBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L48">		super(parent);</span>
+<span class="fc" id="L49">		this.enableValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L50">		this.enquireLinkIntervalValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L51">		this.enquireLinkTimeoutValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L52">		this.connectAtStartupValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L53">		this.maxConsecutiveTimeoutsValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);</span>
+<span class="fc" id="L54">	}</span>
+
+	/**
+	 * Enable or disable sending of {@link EnquireLink} messages to keep the
+	 * session alive.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #enable()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code enable(true)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            true to enable sending requests to keep the session alive
+	 * @return this instance for fluent chaining
+	 */
+	public KeepAliveBuilder enable(Boolean enable) {
+<span class="fc" id="L92">		enableValueBuilder.setValue(enable);</span>
+<span class="fc" id="L93">		return this;</span>
+	}
+
+	/**
+	 * Enable or disable sending of {@link EnquireLink} messages to keep the
+	 * session alive.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #enable(Boolean)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;KeepAliveBuilder, Boolean&gt; enable() {
+<span class="fc" id="L134">		return enableValueBuilder;</span>
+	}
+
+	/**
+	 * The fixed delay (in milliseconds) between two {@link EnquireLink}
+	 * messages.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #interval()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .interval(60000L)
+	 * .interval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(30000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .interval(60000L)
+	 * .interval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(30000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code interval(60000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param delay
+	 *            the amount of time to wait between two {@link EnquireLink}
+	 *            messages
+	 * @return this instance for fluent chaining
+	 */
+	public KeepAliveBuilder interval(Long delay) {
+<span class="fc" id="L174">		enquireLinkIntervalValueBuilder.setValue(delay);</span>
+<span class="fc" id="L175">		return this;</span>
+	}
+
+	/**
+	 * The fixed delay (in milliseconds) between two {@link EnquireLink}
+	 * messages.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .interval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(30000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #interval(Long)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .interval(60000L)
+	 * .interval()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(30000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 60000L} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;KeepAliveBuilder, Long&gt; interval() {
+<span class="fc" id="L216">		return enquireLinkIntervalValueBuilder;</span>
+	}
+
+	/**
+	 * The maximum amount of time (in milliseconds) to wait for receiving a
+	 * response from the server to an {@link EnquireLink} request.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #responseTimeout()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(5000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(5000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code responseTimeout(5000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the maximum amount of time to wait for the response
+	 * @return this instance for fluent chaining
+	 */
+	public KeepAliveBuilder responseTimeout(Long timeout) {
+<span class="fc" id="L255">		enquireLinkTimeoutValueBuilder.setValue(timeout);</span>
+<span class="fc" id="L256">		return this;</span>
+	}
+
+	/**
+	 * The maximum amount of time (in milliseconds) to wait for receiving a
+	 * response from the server to an {@link EnquireLink} request.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #responseTimeout(Long)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(5000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(10000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 5000L} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;KeepAliveBuilder, Long&gt; responseTimeout() {
+<span class="fc" id="L297">		return enquireLinkTimeoutValueBuilder;</span>
+	}
+
+	/**
+	 * Connect to the server directly when the client is ready (if true).
+	 * Otherwise, the connection is done when the first message is sent.
+	 * 
+	 * This may be useful to avoid a latency for the first message.
+	 * 
+	 * If connection fails at startup, then a new attempt is done when first
+	 * message is sent.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #connectAtStartup()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .connectAtStartup(true)
+	 * .connectAtStartup()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .connectAtStartup(true)
+	 * .connectAtStartup()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code connectAtStartup(true)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param connectAtStartup
+	 *            try to connect when client is ready
+	 * @return this instance for fluent chaining
+	 */
+	public KeepAliveBuilder connectAtStartup(Boolean connectAtStartup) {
+<span class="fc" id="L341">		connectAtStartupValueBuilder.setValue(connectAtStartup);</span>
+<span class="fc" id="L342">		return this;</span>
+	}
+
+	/**
+	 * Connect to the server directly when the client is ready (if true).
+	 * Otherwise, the connection is done when the first message is sent.
+	 * 
+	 * This may be useful to avoid a latency for the first message.
+	 * 
+	 * If connection fails at startup, then a new attempt is done when first
+	 * message is sent.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .connectAtStartup()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #connectAtStartup(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .connectAtStartup(true)
+	 * .connectAtStartup()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;KeepAliveBuilder, Boolean&gt; connectAtStartup() {
+<span class="fc" id="L388">		return connectAtStartupValueBuilder;</span>
+	}
+
+	/**
+	 * Provides a factory that creates an {@link ScheduledExecutorService}. The
+	 * created executor is then used to schedule the task that sends
+	 * {@link EnquireLink} requests.
+	 * 
+	 * The factory should use one of:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link Executors#newSingleThreadScheduledExecutor()}&lt;/li&gt;
+	 * &lt;li&gt;{@link Executors#newSingleThreadScheduledExecutor(java.util.concurrent.ThreadFactory)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Executors#newScheduledThreadPool(int)}&lt;/li&gt;
+	 * &lt;li&gt;{@link Executors#newScheduledThreadPool(int, java.util.concurrent.ThreadFactory)}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param executorFactory
+	 *            the factory that creates an executor to use
+	 * @return this instance for fluent chaining
+	 */
+	public KeepAliveBuilder executor(Supplier&lt;ScheduledExecutorService&gt; executorFactory) {
+<span class="fc" id="L412">		this.executorFactory = executorFactory;</span>
+<span class="fc" id="L413">		return this;</span>
+	}
+
+	/**
+	 * Provides an {@link ScheduledExecutorService}. The executor is then used
+	 * to schedule the task that sends {@link EnquireLink} requests.
+	 * 
+	 * &lt;p&gt;
+	 * This method is a shortcut to {@code executor(() -&gt; executor)}.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * @param executor
+	 *            the executor to use
+	 * @return this instance for fluent chaining
+	 */
+	public KeepAliveBuilder executor(ScheduledExecutorService executor) {
+<span class="nc" id="L431">		return executor(() -&gt; executor);</span>
+	}
+
+	/**
+	 * The maximum number of consecutive timeouts to {@link EnquireLink}
+	 * requests to consider that a new session is required.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #maxConsecutiveTimeouts()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .maxConsecutiveTimeouts(5)
+	 * .maxConsecutiveTimeouts()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(3)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .maxConsecutiveTimeouts(5)
+	 * .maxConsecutiveTimeouts()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(3)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code maxConsecutiveTimeouts(5)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param max
+	 *            the maximum consecutive timeouts
+	 * @return this instance for fluent chaining
+	 */
+	public KeepAliveBuilder maxConsecutiveTimeouts(Integer max) {
+<span class="fc" id="L470">		maxConsecutiveTimeoutsValueBuilder.setValue(max);</span>
+<span class="fc" id="L471">		return this;</span>
+	}
+
+	/**
+	 * The maximum number of consecutive timeouts to {@link EnquireLink}
+	 * requests to consider that a new session is required.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .maxConsecutiveTimeouts()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(3)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #maxConsecutiveTimeouts(Integer)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .maxConsecutiveTimeouts(5)
+	 * .maxConsecutiveTimeouts()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(3)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 5} is used regardless of the value of the properties and
+	 * default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;KeepAliveBuilder, Integer&gt; maxConsecutiveTimeouts() {
+<span class="fc" id="L512">		return maxConsecutiveTimeoutsValueBuilder;</span>
+	}
+
+	@Override
+	public KeepAliveOptions build() {
+<span class="fc" id="L517">		KeepAliveOptions keepAliveOptions = new KeepAliveOptions();</span>
+<span class="fc" id="L518">		keepAliveOptions.setEnable(enableValueBuilder.getValue());</span>
+<span class="fc" id="L519">		keepAliveOptions.setEnquireLinkInterval(enquireLinkIntervalValueBuilder.getValue());</span>
+<span class="fc" id="L520">		keepAliveOptions.setEnquireLinkTimeout(enquireLinkTimeoutValueBuilder.getValue());</span>
+<span class="fc" id="L521">		keepAliveOptions.setConnectAtStartup(connectAtStartupValueBuilder.getValue());</span>
+<span class="fc bfc" id="L522" title="All 2 branches covered.">		keepAliveOptions.setExecutor(executorFactory != null ? executorFactory : defaultEnquireLinkTimerFactory());</span>
+<span class="fc" id="L523">		keepAliveOptions.setMaxConsecutiveTimeouts(maxConsecutiveTimeoutsValueBuilder.getValue());</span>
+<span class="fc" id="L524">		return keepAliveOptions;</span>
+	}
+
+	/**
+	 * Default factory that provides a {@link ScheduledExecutorService}
+	 * executor. As only one thread is needed (only one task) to regularly send
+	 * {@link EnquireLink}s, it uses
+	 * {@link Executors#newSingleThreadScheduledExecutor(ThreadFactory)}.
+	 * 
+	 * &lt;p&gt;
+	 * The thread is named {@code EnquireLink-&lt;generated number&gt;}.
+	 * 
+	 * @return the factory
+	 */
+	public static Supplier&lt;ScheduledExecutorService&gt; defaultEnquireLinkTimerFactory() {
+<span class="pc" id="L539">		return () -&gt; Executors.newSingleThreadScheduledExecutor(KeepAliveBuilder::newThread);</span>
+	}
+
+	private static Thread newThread(Runnable runnable) {
+<span class="nc" id="L543">		Thread thread = new Thread(runnable);</span>
+<span class="nc" id="L544">		thread.setName(&quot;EnquireLink-&quot; + enquireLinkThreadCounter.incrementAndGet());</span>
+<span class="nc" id="L545">		return thread;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

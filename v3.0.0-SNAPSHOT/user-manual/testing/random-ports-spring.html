@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Ogham provides Spring Boot extensions that can be used in tests
+to benefit from random ports easily.</p>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 1. Random ports in Spring Boot tests</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Email (JUnit 5)</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-17,26,32-36 irrelevant-lines:1-17,26,32-36 highlight-lines:21,23,25,38">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.springboot.email</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.testing.assertion.OghamAssertions.assertThat</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.is</span>;
+
+<span class="keyword">import</span> <span class="include">org.junit.jupiter.api.Test</span>;
+<span class="keyword">import</span> <span class="include">org.junit.jupiter.api.extension.RegisterExtension</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.beans.factory.annotation.Autowired</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.test.context.SpringBootTest</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.test.context.ContextConfiguration</span>;
+
+<span class="keyword">import</span> <span class="include">com.icegreen.greenmail.junit5.GreenMailExtension</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.testing.extension.spring.GreenMailInitializer</span>;
+<span class="keyword">import</span> <span class="include">mock.MockApplication</span>;
+
+<span class="annotation">@SpringBootTest</span>(classes = MockApplication.class, properties = {
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host=127.0.0.1</span><span class="delimiter">&quot;</span></span>,
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port=${greenmail.smtp.port}</span><span class="delimiter">&quot;</span></span>                              <i class="conum" data-value="1"></i><b>(1)</b>
+})
+<span class="annotation">@ContextConfiguration</span>(initializers = GreenMailInitializer.class)         <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">RandomSmtpPortJUnit5TestSample</span> {
+  <span class="annotation">@RegisterExtension</span> <span class="annotation">@Autowired</span> <span class="directive">public</span> GreenMailExtension greenMail;   <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="annotation">@Autowired</span> MessagingService messagingService;
+
+  <span class="annotation">@Test</span>
+  <span class="directive">public</span> <span class="type">void</span> foo() <span class="directive">throws</span> <span class="exception">Exception</span> {
+    <span class="comment">// some code to test your application here</span>
+    <span class="comment">// that sends email through SMTP</span>
+    messagingService.send(<span class="keyword">new</span> Email()
+        .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Random port</span><span class="delimiter">&quot;</span></span>)
+        .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo@yopmail.com</span><span class="delimiter">&quot;</span></span>)
+        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">bar@yopmail.com</span><span class="delimiter">&quot;</span></span>)
+        .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">Random port sample</span><span class="delimiter">&quot;</span></span>));
+    <span class="comment">// make assertions</span>
+    assertThat(greenMail).receivedMessages()                         <i class="conum" data-value="4"></i><b>(4)</b>
+      .count(is(<span class="integer">1</span>));
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The property <code>greenmail.smtp.port</code> can be used in the tested application that
+uses Ogham.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register <code>GreenMailInitializer</code> to automatically start
+GreenMail SMTP service on a random port and register <code>GreenMailExtension</code> bean
+in test context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@Autowired</code> to inject <code>GreenMailExtension</code> instance that uses the
+random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Make assertions on GreenMail as usual.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/test/java/fr/sii/ogham/sample/springboot/email/RandomSmtpPortJUnit5TestSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> SMS (JUnit 5)</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-17,26,32-35 irrelevant-lines:1-17,26,32-35 highlight-lines:21,23,25,37">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.springboot.sms</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.testing.assertion.OghamAssertions.assertThat</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.is</span>;
+
+<span class="keyword">import</span> <span class="include">org.jsmpp.bean.SubmitSm</span>;
+<span class="keyword">import</span> <span class="include">org.junit.jupiter.api.Test</span>;
+<span class="keyword">import</span> <span class="include">org.junit.jupiter.api.extension.RegisterExtension</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.beans.factory.annotation.Autowired</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.test.context.SpringBootTest</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.test.context.ContextConfiguration</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.testing.extension.junit.sms.SmppServerExtension</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.testing.extension.spring.JsmppServerInitializer</span>;
+<span class="keyword">import</span> <span class="include">mock.MockApplication</span>;
+
+<span class="annotation">@SpringBootTest</span>(classes = MockApplication.class, properties = {
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.host=127.0.0.1</span><span class="delimiter">&quot;</span></span>,
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.port=${jsmpp.server.port}</span><span class="delimiter">&quot;</span></span>                                        <i class="conum" data-value="1"></i><b>(1)</b>
+})
+<span class="annotation">@ContextConfiguration</span>(initializers = JsmppServerInitializer.class)                    <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">RandomSmppPortJUnit5TestSample</span> {
+  <span class="annotation">@RegisterExtension</span> <span class="annotation">@Autowired</span> <span class="directive">public</span> SmppServerExtension&lt;SubmitSm&gt; smppServer;    <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="annotation">@Autowired</span> MessagingService messagingService;
+
+  <span class="annotation">@Test</span>
+  <span class="directive">public</span> <span class="type">void</span> foo() <span class="directive">throws</span> <span class="exception">Exception</span> {
+    <span class="comment">// some code to test your application here</span>
+    <span class="comment">// that sends SMS through SMPP</span>
+    messagingService.send(<span class="keyword">new</span> Sms()
+        .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">0000000000</span><span class="delimiter">&quot;</span></span>)
+        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">1111111111</span><span class="delimiter">&quot;</span></span>)
+        .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">Random port</span><span class="delimiter">&quot;</span></span>));
+    <span class="comment">// make assertions</span>
+    assertThat(smppServer).receivedMessages()                                     <i class="conum" data-value="4"></i><b>(4)</b>
+      .count(is(<span class="integer">1</span>));
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The property <code>jsmpp.server.port</code> can be used in the tested application that
+uses Ogham.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register <code>JsmppServerInitializer</code> to automatically start
+JSMPPServer on a random port and register <code>JsmppServerExtension</code> bean
+in test context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@Autowired</code> to inject <code>JsmppServerExtension</code> instance that uses the
+random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Make assertions on JSMPPServer as usual.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/test/java/fr/sii/ogham/sample/springboot/smpp/RandomSmppPortJUnit5TestSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> Email (JUnit 4)</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-19,29,35-39 irrelevant-lines:1-19,29,35-39 highlight-lines:24,26,28,41">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.springboot.email</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.testing.assertion.OghamAssertions.assertThat</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.is</span>;
+
+<span class="keyword">import</span> <span class="include">org.junit.Rule</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
+<span class="keyword">import</span> <span class="include">org.junit.runner.RunWith</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.beans.factory.annotation.Autowired</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.test.context.SpringBootTest</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.test.context.ContextConfiguration</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.test.context.junit4.SpringJUnit4ClassRunner</span>;
+
+<span class="keyword">import</span> <span class="include">com.icegreen.greenmail.junit4.GreenMailRule</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.email.message.Email</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.testing.extension.spring.GreenMailInitializer</span>;
+<span class="keyword">import</span> <span class="include">mock.MockApplication</span>;
+
+<span class="annotation">@RunWith</span>(SpringJUnit4ClassRunner.class)
+<span class="annotation">@SpringBootTest</span>(classes = MockApplication.class, properties = {
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.host=127.0.0.1</span><span class="delimiter">&quot;</span></span>,
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">mail.smtp.port=${greenmail.smtp.port}</span><span class="delimiter">&quot;</span></span>                              <i class="conum" data-value="1"></i><b>(1)</b>
+})
+<span class="annotation">@ContextConfiguration</span>(initializers = GreenMailInitializer.class)         <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">RandomSmtpPortJUnit4TestSample</span> {
+  <span class="annotation">@Rule</span> <span class="annotation">@Autowired</span> <span class="directive">public</span> GreenMailRule greenMail;                     <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="annotation">@Autowired</span> MessagingService messagingService;
+
+  <span class="annotation">@Test</span>
+  <span class="directive">public</span> <span class="type">void</span> foo() <span class="directive">throws</span> <span class="exception">Exception</span> {
+    <span class="comment">// some code to test your application here</span>
+    <span class="comment">// that sends email through SMTP</span>
+    messagingService.send(<span class="keyword">new</span> Email()
+        .subject(<span class="string"><span class="delimiter">&quot;</span><span class="content">Random port</span><span class="delimiter">&quot;</span></span>)
+        .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">foo@yopmail.com</span><span class="delimiter">&quot;</span></span>)
+        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">bar@yopmail.com</span><span class="delimiter">&quot;</span></span>)
+        .body().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">Random port sample</span><span class="delimiter">&quot;</span></span>));
+    <span class="comment">// make assertions</span>
+    assertThat(greenMail).receivedMessages()                         <i class="conum" data-value="4"></i><b>(4)</b>
+      .count(is(<span class="integer">1</span>));
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The property <code>greenmail.smtp.port</code> can be used in the tested application that
+uses Ogham.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register <code>GreenMailInitializer</code> to automatically start
+GreenMail SMTP service on a random port and register <code>GreenMailRule</code> bean
+in test context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@Autowired</code> to inject <code>GreenMailRule</code> instance that uses the
+random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Make assertions on GreenMail as usual.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/test/java/fr/sii/ogham/sample/springboot/email/RandomSmtpPortJUnit4TestSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/java-logo.png" alt="java logo" width="16" height="30"></span> SMS (JUnit 4)</div>
+<div class="content">
+<div class="listingblock collapse-lines:1-19,29,35-38 irrelevant-lines:1-19,29,35-38 highlight-lines:24,26,28,40">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">fr.sii.ogham.sample.springboot.sms</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">fr.sii.ogham.testing.assertion.OghamAssertions.assertThat</span>;
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.hamcrest.Matchers.is</span>;
+
+<span class="keyword">import</span> <span class="include">org.jsmpp.bean.SubmitSm</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Rule</span>;
+<span class="keyword">import</span> <span class="include">org.junit.Test</span>;
+<span class="keyword">import</span> <span class="include">org.junit.runner.RunWith</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.beans.factory.annotation.Autowired</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.boot.test.context.SpringBootTest</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.test.context.ContextConfiguration</span>;
+<span class="keyword">import</span> <span class="include">org.springframework.test.context.junit4.SpringJUnit4ClassRunner</span>;
+
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.core.service.MessagingService</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.sms.message.Sms</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.testing.extension.junit.sms.SmppServerRule</span>;
+<span class="keyword">import</span> <span class="include">fr.sii.ogham.testing.extension.spring.JsmppServerInitializer</span>;
+<span class="keyword">import</span> <span class="include">mock.MockApplication</span>;
+
+<span class="annotation">@RunWith</span>(SpringJUnit4ClassRunner.class)
+<span class="annotation">@SpringBootTest</span>(classes = MockApplication.class, properties = {
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.host=127.0.0.1</span><span class="delimiter">&quot;</span></span>,
+  <span class="string"><span class="delimiter">&quot;</span><span class="content">ogham.sms.smpp.port=${jsmpp.server.port}</span><span class="delimiter">&quot;</span></span>                                   <i class="conum" data-value="1"></i><b>(1)</b>
+})
+<span class="annotation">@ContextConfiguration</span>(initializers = JsmppServerInitializer.class)               <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">RandomSmppPortJUnit4TestSample</span> {
+  <span class="annotation">@Rule</span> <span class="annotation">@Autowired</span> <span class="directive">public</span> SmppServerRule&lt;SubmitSm&gt; smppServer;                 <i class="conum" data-value="3"></i><b>(3)</b>
+  <span class="annotation">@Autowired</span> MessagingService messagingService;
+
+  <span class="annotation">@Test</span>
+  <span class="directive">public</span> <span class="type">void</span> foo() <span class="directive">throws</span> <span class="exception">Exception</span> {
+    <span class="comment">// some code to test your application here</span>
+    <span class="comment">// that sends SMS through SMPP</span>
+    messagingService.send(<span class="keyword">new</span> Sms()
+        .from(<span class="string"><span class="delimiter">&quot;</span><span class="content">0000000000</span><span class="delimiter">&quot;</span></span>)
+        .to(<span class="string"><span class="delimiter">&quot;</span><span class="content">1111111111</span><span class="delimiter">&quot;</span></span>)
+        .message().string(<span class="string"><span class="delimiter">&quot;</span><span class="content">Random port</span><span class="delimiter">&quot;</span></span>));
+    <span class="comment">// make assertions</span>
+    assertThat(smppServer).receivedMessages()                                <i class="conum" data-value="4"></i><b>(4)</b>
+      .count(is(<span class="integer">1</span>));
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The property <code>jsmpp.server.port</code> can be used in the tested application that
+uses Ogham.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Register <code>JsmppServerInitializer</code> to automatically start
+JSMPPServer on a random port and register <code>JsmppServerRule</code> bean
+in test context.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use <code>@Autowired</code> to inject <code>JsmppServerRule</code> instance that uses the
+random port.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Make assertions on JSMPPServer as usual.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/groupe-sii/ogham/blob/master/sample-spring-usage/src/test/java/fr/sii/ogham/sample/springboot/smpp/RandomSmppPortJUnit4TestSample.java?ts=2">Source code of the sample</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2020-12-26 08:00:07 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FirstSupportingResolverAdapter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common.adapter</a> &gt; <span class="el_source">FirstSupportingResolverAdapter.java</span></div><h1>FirstSupportingResolverAdapter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common.adapter;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FirstSupportingResolverAdapter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common.adapter</a> &gt; <span class="el_source">FirstSupportingResolverAdapter.java</span></div><h1>FirstSupportingResolverAdapter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common.adapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,8 +37,8 @@ public class FirstSupportingResolverAdapter implements TemplateResolverAdapter {
 	 *            the adapters to register
 	 */
 	public FirstSupportingResolverAdapter(TemplateResolverAdapter... adapters) {
-<span class="nc" id="L40">		this(new ArrayList&lt;&gt;(Arrays.asList(adapters)));</span>
-<span class="nc" id="L41">	}</span>
+<span class="fc" id="L40">		this(new ArrayList&lt;&gt;(Arrays.asList(adapters)));</span>
+<span class="fc" id="L41">	}</span>
 
 	/**
 	 * Initialize the decorator with the provided resolver adapter
@@ -53,27 +53,27 @@ public class FirstSupportingResolverAdapter implements TemplateResolverAdapter {
 <span class="fc" id="L53">	}</span>
 
 	public FirstSupportingResolverAdapter() {
-<span class="fc" id="L56">		this(new ArrayList&lt;TemplateResolverAdapter&gt;());</span>
+<span class="fc" id="L56">		this(new ArrayList&lt;&gt;());</span>
 <span class="fc" id="L57">	}</span>
 
 	@Override
 	public boolean supports(ResourceResolver resolver) {
-<span class="nc bnc" id="L61" title="All 2 branches missed.">		for (TemplateResolverAdapter adapter : adapters) {</span>
-<span class="nc bnc" id="L62" title="All 2 branches missed.">			if (adapter.supports(resolver)) {</span>
-<span class="nc" id="L63">				return true;</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		for (TemplateResolverAdapter adapter : adapters) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">			if (adapter.supports(resolver)) {</span>
+<span class="fc" id="L63">				return true;</span>
 			}
-<span class="nc" id="L65">		}</span>
-<span class="nc" id="L66">		return false;</span>
+<span class="fc" id="L65">		}</span>
+<span class="fc" id="L66">		return false;</span>
 	}
 
 	@Override
 	public ITemplateResolver adapt(ResourceResolver resolver) throws NoResolverAdapterException {
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">		for (TemplateResolverAdapter adapter : adapters) {</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">		for (TemplateResolverAdapter adapter : adapters) {</span>
 <span class="fc bfc" id="L72" title="All 2 branches covered.">			if (adapter.supports(resolver)) {</span>
 <span class="fc" id="L73">				return adapter.adapt(resolver);</span>
 			}
 <span class="fc" id="L75">		}</span>
-<span class="nc" id="L76">		throw new NoResolverAdapterException(&quot;No resolver adapter found for the provided resolver: &quot; + resolver.getClass().getSimpleName(), resolver);</span>
+<span class="fc" id="L76">		throw new NoResolverAdapterException(&quot;No resolver adapter found for the provided resolver: &quot; + resolver.getClass().getSimpleName(), resolver);</span>
 	}
 
 	/**

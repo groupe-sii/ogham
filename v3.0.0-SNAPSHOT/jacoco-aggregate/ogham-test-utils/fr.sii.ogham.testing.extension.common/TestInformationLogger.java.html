@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TestInformationLogger.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.common</a> &gt; <span class="el_source">TestInformationLogger.java</span></div><h1>TestInformationLogger.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.common;
+
+import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.BOTTOM_LEFT;
+import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.BOTTOM_RIGHT;
+import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.HORIZONTAL;
+import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.TOP_LEFT;
+import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.TOP_RIGHT;
+import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.VERTICAL;
+import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.VERTICAL_LEFT;
+import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.VERTICAL_RIGHT;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.github.jknack.handlebars.internal.text.WordUtils;
+
+/**
+ * Write information about test. This is useful when there are many tests:
+ * &lt;ul&gt;
+ * &lt;li&gt;To quickly find the logs for the test&lt;/li&gt;
+ * &lt;li&gt;To quickly know if the test has failed or succeeded&lt;/li&gt;
+ * &lt;li&gt;To quickly identify the test failure&lt;/li&gt;
+ * &lt;li&gt;To quickly find failed tests&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@SuppressWarnings(&quot;squid:S1312&quot;)
+public class TestInformationLogger {
+	public static final int DEFAULT_MAX_LENGTH = 100;
+	public static final String DEFAULT_MARKER = &quot;test-info&quot;;
+<span class="fc" id="L36">	private static final String[] SINGLE = { &quot;┌&quot;, &quot;┐&quot;, &quot;└&quot;, &quot;┘&quot;, &quot;─&quot;, &quot;│&quot;, &quot;├&quot;, &quot;┤&quot; };</span>
+<span class="fc" id="L37">	private static final String[] DOUBLE = { &quot;╔&quot;, &quot;╗&quot;, &quot;╚&quot;, &quot;╝&quot;, &quot;═&quot;, &quot;║&quot;, &quot;╠&quot;, &quot;╣&quot; };</span>
+
+	private final int maxLength;
+	private final Printer printer;
+	private final String marker;
+
+	/**
+	 * Initializes with the default max line length (100), uses this logger as
+	 * printer and mark logs with &quot;test-info&quot; marker
+	 */
+	public TestInformationLogger() {
+<span class="fc" id="L48">		this(DEFAULT_MAX_LENGTH);</span>
+<span class="fc" id="L49">	}</span>
+
+	/**
+	 * Initializes with the provided max line length.
+	 * 
+	 * Uses this logger as printer and default marker (&quot;test-info&quot;).
+	 * 
+	 * @param maxLength
+	 *            the length of each line
+	 */
+	public TestInformationLogger(int maxLength) {
+<span class="fc" id="L60">		this(maxLength, DEFAULT_MARKER);</span>
+<span class="fc" id="L61">	}</span>
+
+	/**
+	 * Initializes with the provided max line length and marker.
+	 * 
+	 * Uses this logger as printer.
+	 * 
+	 * @param maxLength
+	 *            the length of each line
+	 * @param marker
+	 *            the marker for logs
+	 */
+	public TestInformationLogger(int maxLength, String marker) {
+<span class="fc" id="L74">		this(maxLength, marker, new Slf4jPrinter());</span>
+<span class="fc" id="L75">	}</span>
+
+	/**
+	 * 
+	 * @param maxLength
+	 *            the length of each line
+	 * @param marker
+	 *            the marker for logs
+	 * @param printer
+	 *            the printer
+	 */
+	public TestInformationLogger(int maxLength, String marker, Printer printer) {
+<span class="fc" id="L87">		super();</span>
+<span class="fc" id="L88">		this.maxLength = maxLength;</span>
+<span class="fc" id="L89">		this.printer = printer;</span>
+<span class="fc" id="L90">		this.marker = marker;</span>
+<span class="fc" id="L91">	}</span>
+
+	/**
+	 * Write the name of the test. The name is boxed to quickly see the test
+	 * name in long logs.
+	 * 
+	 * @param testName
+	 *            the name of the test
+	 */
+	public void writeStart(String testName) {
+		// @formatter:off
+<span class="fc" id="L102">		printer.printHeader(marker, </span>
+<span class="fc" id="L103">				borderTop(DOUBLE)+&quot;\n&quot;+ </span>
+<span class="fc" id="L104">				format(testName, DOUBLE)+&quot;\n&quot;+ </span>
+<span class="fc" id="L105">				borderBottom(DOUBLE));</span>
+		// @formatter:on
+<span class="fc" id="L107">	}</span>
+
+	/**
+	 * Write the name of the test and &quot;SUCCESS&quot; message. The name is boxed to
+	 * quickly see the test name in long logs.
+	 * 
+	 * @param testName
+	 *            the name of the test
+	 */
+	public void writeSuccess(String testName) {
+		// @formatter:off
+<span class="fc" id="L118">		printer.printSucess(marker,</span>
+<span class="fc" id="L119">					borderTop(SINGLE)+&quot;\n&quot;+ </span>
+<span class="fc" id="L120">					format(testName, SINGLE)+&quot;\n&quot;+ </span>
+<span class="fc" id="L121">					borderMiddle(SINGLE)+&quot;\n&quot;+</span>
+<span class="fc" id="L122">					format(&quot;SUCCESS&quot;, SINGLE)+&quot;\n&quot;+ </span>
+<span class="fc" id="L123">					borderBottom(SINGLE));</span>
+		// @formatter:on
+<span class="fc" id="L125">	}</span>
+
+	/**
+	 * Write the name of the test, &quot;FAILED&quot; message and failure information. The
+	 * name is boxed to quickly see the test name in long logs.
+	 * 
+	 * @param testName
+	 *            the name of the test
+	 * @param e
+	 *            the thrown exception
+	 */
+	@SuppressWarnings(&quot;squid:S4142&quot;)
+	public void writeFailure(String testName, Throwable e) {
+		// @formatter:off
+<span class="fc" id="L139">		printer.printFailure(marker,</span>
+<span class="fc" id="L140">				borderTop(SINGLE)+&quot;\n&quot;+</span>
+<span class="fc" id="L141">				format(testName, SINGLE)+&quot;\n&quot;+ </span>
+<span class="fc" id="L142">				borderMiddle(SINGLE)+&quot;\n&quot;+</span>
+<span class="fc" id="L143">				format(&quot;FAILED&quot;, SINGLE)+&quot;\n&quot;+</span>
+<span class="fc" id="L144">				borderMiddle(SINGLE)+&quot;\n&quot;+</span>
+<span class="fc" id="L145">				format(e.toString(), SINGLE)+&quot;\n&quot;+ </span>
+<span class="fc" id="L146">				borderBottom(SINGLE), e);</span>
+		// @formatter:on
+<span class="fc" id="L148">	}</span>
+
+	private String borderTop(String[] characters) {
+<span class="fc" id="L151">		return TOP_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + TOP_RIGHT.character(characters);</span>
+	}
+
+	private String borderMiddle(String[] characters) {
+<span class="fc" id="L155">		return VERTICAL_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + VERTICAL_RIGHT.character(characters);</span>
+	}
+
+	private String borderBottom(String[] characters) {
+<span class="fc" id="L159">		return BOTTOM_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + BOTTOM_RIGHT.character(characters);</span>
+	}
+
+	private String dashLine(String character) {
+<span class="fc" id="L163">		return StringUtils.repeat(character, maxLength - 2);</span>
+	}
+
+	private String format(String text, String[] characters) {
+<span class="fc" id="L167">		String vertical = VERTICAL.character(characters);</span>
+<span class="fc" id="L168">		StringJoiner joiner = new StringJoiner(vertical + &quot;\n&quot; + vertical, vertical, vertical);</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">		for (String line : wrap(text)) {</span>
+<span class="fc" id="L170">			joiner.add(StringUtils.rightPad(line, maxLength - 2));</span>
+<span class="fc" id="L171">		}</span>
+<span class="fc" id="L172">		return joiner.toString();</span>
+	}
+
+	private List&lt;String&gt; wrap(String text) {
+<span class="fc" id="L176">		return Arrays.asList(WordUtils.wrap(text.replace(&quot;\t&quot;, &quot;  &quot;), maxLength - 3, &quot;\n&quot;, true).split(&quot;\n&quot;));</span>
+	}
+
+<span class="fc" id="L179">	enum Characters {</span>
+<span class="fc" id="L180">		TOP_LEFT(0),</span>
+<span class="fc" id="L181">		TOP_RIGHT(1),</span>
+<span class="fc" id="L182">		BOTTOM_LEFT(2),</span>
+<span class="fc" id="L183">		BOTTOM_RIGHT(3),</span>
+<span class="fc" id="L184">		HORIZONTAL(4),</span>
+<span class="fc" id="L185">		VERTICAL(5),</span>
+<span class="fc" id="L186">		VERTICAL_LEFT(6),</span>
+<span class="fc" id="L187">		VERTICAL_RIGHT(7);</span>
+
+		private final int pos;
+
+<span class="fc" id="L191">		Characters(int pos) {</span>
+<span class="fc" id="L192">			this.pos = pos;</span>
+<span class="fc" id="L193">		}</span>
+
+		public String character(String[] characters) {
+<span class="fc" id="L196">			return characters[pos];</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

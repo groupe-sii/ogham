@@ -1,14 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SenderNumberFormatBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">SenderNumberFormatBuilder.java</span></div><h1>SenderNumberFormatBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SenderNumberFormatBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">SenderNumberFormatBuilder.java</span></div><h1>SenderNumberFormatBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.env.PropertyResolver;
-import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.sms.message.PhoneNumber;
 import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
 import fr.sii.ogham.sms.message.addressing.translator.AlphanumericCodeNumberFormatHandler;
@@ -26,13 +24,10 @@ import fr.sii.ogham.sms.message.addressing.translator.ShortCodeNumberFormatHandl
  *
  */
 public class SenderNumberFormatBuilder extends AbstractParent&lt;SenderNumberBuilder&gt; implements Builder&lt;PhoneNumberTranslator&gt; {
-	private EnvironmentBuilder&lt;?&gt; environmentBuilder;
-	private Boolean enableAplhanumeric;
-	private Boolean enableShortCode;
-	private Boolean enableInternational;
-	private List&lt;String&gt; enableAlphanumericProps;
-	private List&lt;String&gt; enableShortCodeProps;
-	private List&lt;String&gt; enableInternationalProps;
+	private final BuildContext buildContext;
+	private final ConfigurationValueBuilderHelper&lt;SenderNumberFormatBuilder, Boolean&gt; enableAlphanumericValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SenderNumberFormatBuilder, Boolean&gt; enableShortCodeValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;SenderNumberFormatBuilder, Boolean&gt; enableInternationalValueBuilder;
 
 	/**
 	 * Initializes the builder with a parent builder. The parent builder is used
@@ -41,43 +36,56 @@ public class SenderNumberFormatBuilder extends AbstractParent&lt;SenderNumberBui
 	 * 
 	 * @param parent
 	 *            the parent builder
-	 * @param environmentBuilder
-	 *            the configuration for property resolution and evaluation
+	 * @param buildContext
+	 *            for registering instances and property evaluation
 	 */
-	public SenderNumberFormatBuilder(SenderNumberBuilder parent, EnvironmentBuilder&lt;?&gt; environmentBuilder) {
-<span class="fc" id="L48">		super(parent);</span>
-<span class="fc" id="L49">		this.environmentBuilder = environmentBuilder;</span>
-<span class="fc" id="L50">		enableAlphanumericProps = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L51">		enableShortCodeProps = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L52">		enableInternationalProps = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L53">	}</span>
+	public SenderNumberFormatBuilder(SenderNumberBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L43">		super(parent);</span>
+<span class="fc" id="L44">		this.buildContext = buildContext;</span>
+<span class="fc" id="L45">		enableAlphanumericValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L46">		enableShortCodeValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L47">		enableInternationalValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L48">	}</span>
 
 	/**
 	 * Enable/disable alphanumeric code conversion: if the sender address is
 	 * alphanumeric (contains both letters and numbers) or non-numeric, TON is
 	 * set to 5 and NPI to 0.
 	 * 
-	 * You can specify one or several property keys. For example:
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #alphanumericCode()}.
 	 * 
 	 * &lt;pre&gt;
-	 * .charset(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * .alphanumericCode(false)
+	 * .alphanumericCode()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
 	 * &lt;/pre&gt;
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * &lt;pre&gt;
+	 * .alphanumericCode(false)
+	 * .alphanumericCode()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * In both cases, {@code alphanumericCode(false)} is used.
 	 * 
-	 * @param properties
-	 *            one or several property keys
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable alphanumeric code convertion
 	 * @return this instance for fluent chaining
 	 */
-	public SenderNumberFormatBuilder alphanumericCode(String... properties) {
-<span class="fc" id="L79">		enableAlphanumericProps.addAll(Arrays.asList(properties));</span>
-<span class="fc" id="L80">		return this;</span>
+	public SenderNumberFormatBuilder alphanumericCode(Boolean enable) {
+<span class="fc" id="L87">		enableAlphanumericValueBuilder.setValue(enable);</span>
+<span class="fc" id="L88">		return this;</span>
 	}
 
 	/**
@@ -85,13 +93,41 @@ public class SenderNumberFormatBuilder extends AbstractParent&lt;SenderNumberBui
 	 * alphanumeric (contains both letters and numbers) or non-numeric, TON is
 	 * set to 5 and NPI to 0.
 	 * 
-	 * @param enable
-	 *            true to enable the conversion, false to disable
-	 * @return this instance for fluent chaining
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .alphanumericCode()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #alphanumericCode(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .alphanumericCode(true)
+	 * .alphanumericCode()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public SenderNumberFormatBuilder alphanumericCode(boolean enable) {
-<span class="fc" id="L93">		enableAplhanumeric = enable;</span>
-<span class="fc" id="L94">		return this;</span>
+	public ConfigurationValueBuilder&lt;SenderNumberFormatBuilder, Boolean&gt; alphanumericCode() {
+<span class="fc" id="L130">		return enableAlphanumericValueBuilder;</span>
 	}
 
 	/**
@@ -99,27 +135,40 @@ public class SenderNumberFormatBuilder extends AbstractParent&lt;SenderNumberBui
 	 * code, TON is set to 3, and NPI is set to 0. A number is considered to be
 	 * a short code if the length of the number is 5 digits or less.
 	 * 
-	 * You can specify one or several property keys. For example:
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #shortCode()}.
 	 * 
 	 * &lt;pre&gt;
-	 * .charset(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * .shortCode(false)
+	 * .shortCode()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
 	 * &lt;/pre&gt;
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * &lt;pre&gt;
+	 * .shortCode(false)
+	 * .shortCode()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * In both cases, {@code shortCode(false)} is used.
 	 * 
-	 * @param properties
-	 *            one or several property keys
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable short code conversion
 	 * @return this instance for fluent chaining
 	 */
-	public SenderNumberFormatBuilder shortCode(String... properties) {
-<span class="fc" id="L121">		enableShortCodeProps.addAll(Arrays.asList(properties));</span>
-<span class="fc" id="L122">		return this;</span>
+	public SenderNumberFormatBuilder shortCode(Boolean enable) {
+<span class="fc" id="L170">		enableShortCodeValueBuilder.setValue(enable);</span>
+<span class="fc" id="L171">		return this;</span>
 	}
 
 	/**
@@ -127,78 +176,142 @@ public class SenderNumberFormatBuilder extends AbstractParent&lt;SenderNumberBui
 	 * code, TON is set to 3, and NPI is set to 0. A number is considered to be
 	 * a short code if the length of the number is 5 digits or less.
 	 * 
-	 * @param enable
-	 *            true to enable the conversion, false to disable
-	 * @return this instance for fluent chaining
-	 */
-	public SenderNumberFormatBuilder shortCode(boolean enable) {
-<span class="fc" id="L135">		enableShortCode = enable;</span>
-<span class="fc" id="L136">		return this;</span>
-	}
-
-	/**
-	 * Enable/disable international number conversion: if the sender starts with
-	 * a &quot;+&quot;, TON is set to 1, and NPI is set to 1.
-	 * 
-	 * You can specify one or several property keys. For example:
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * &lt;pre&gt;
-	 * .charset(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * .shortCode()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
 	 * &lt;/pre&gt;
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #shortCode(Boolean)} takes precedence
+	 * over property values and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * &lt;pre&gt;
+	 * .shortCode(false)
+	 * .shortCode()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
 	 * 
-	 * @param properties
-	 *            one or several property keys
-	 * @return this instance for fluent chaining
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public SenderNumberFormatBuilder internationalNumber(String... properties) {
-<span class="fc" id="L162">		enableInternationalProps.addAll(Arrays.asList(properties));</span>
-<span class="fc" id="L163">		return this;</span>
+	public ConfigurationValueBuilder&lt;SenderNumberFormatBuilder, Boolean&gt; shortCode() {
+<span class="fc" id="L213">		return enableShortCodeValueBuilder;</span>
 	}
 
 	/**
 	 * Enable/disable international number conversion: if the sender starts with
 	 * a &quot;+&quot;, TON is set to 1, and NPI is set to 1.
 	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #internationalNumber()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code internationalNumber(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
 	 * @param enable
-	 *            true to enable the conversion, false to disable
+	 *            enable or disable international number conversion
 	 * @return this instance for fluent chaining
 	 */
-	public SenderNumberFormatBuilder internationalNumber(boolean enable) {
-<span class="fc" id="L175">		enableInternational = enable;</span>
-<span class="fc" id="L176">		return this;</span>
+	public SenderNumberFormatBuilder internationalNumber(Boolean enable) {
+<span class="fc" id="L252">		enableInternationalValueBuilder.setValue(enable);</span>
+<span class="fc" id="L253">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable international number conversion: if the sender starts with
+	 * a &quot;+&quot;, TON is set to 1, and NPI is set to 1.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .internationalNumber()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #internationalNumber(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SenderNumberFormatBuilder, Boolean&gt; internationalNumber() {
+<span class="fc" id="L294">		return enableInternationalValueBuilder;</span>
 	}
 
 	@Override
 	public PhoneNumberTranslator build() {
-<span class="fc" id="L181">		CompositePhoneNumberTranslator translator = new CompositePhoneNumberTranslator();</span>
-<span class="pc bpc" id="L182" title="1 of 2 branches missed.">		if (enabled(enableAplhanumeric, enableAlphanumericProps)) {</span>
-<span class="fc" id="L183">			translator.add(new AlphanumericCodeNumberFormatHandler());</span>
+<span class="fc" id="L299">		CompositePhoneNumberTranslator translator = buildContext.register(new CompositePhoneNumberTranslator());</span>
+<span class="pc bpc" id="L300" title="1 of 2 branches missed.">		if (enabled(enableAlphanumericValueBuilder)) {</span>
+<span class="fc" id="L301">			translator.add(buildContext.register(new AlphanumericCodeNumberFormatHandler()));</span>
 		}
-<span class="pc bpc" id="L185" title="1 of 2 branches missed.">		if (enabled(enableShortCode, enableShortCodeProps)) {</span>
-<span class="fc" id="L186">			translator.add(new ShortCodeNumberFormatHandler());</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">		if (enabled(enableShortCodeValueBuilder)) {</span>
+<span class="fc" id="L304">			translator.add(buildContext.register(new ShortCodeNumberFormatHandler()));</span>
 		}
-<span class="pc bpc" id="L188" title="1 of 2 branches missed.">		if (enabled(enableInternational, enableInternationalProps)) {</span>
-<span class="fc" id="L189">			translator.add(new InternationalNumberFormatHandler());</span>
+<span class="pc bpc" id="L306" title="1 of 2 branches missed.">		if (enabled(enableInternationalValueBuilder)) {</span>
+<span class="fc" id="L307">			translator.add(buildContext.register(new InternationalNumberFormatHandler()));</span>
 		}
-<span class="fc" id="L191">		translator.add(new DefaultHandler());</span>
-<span class="fc" id="L192">		return translator;</span>
+<span class="fc" id="L309">		translator.add(buildContext.register(new DefaultHandler()));</span>
+<span class="fc" id="L310">		return translator;</span>
 	}
 
-	private boolean enabled(Boolean enable, List&lt;String&gt; enableProps) {
-<span class="pc bpc" id="L196" title="1 of 4 branches missed.">		if (enable != null &amp;&amp; enable) {</span>
-<span class="fc" id="L197">			return true;</span>
-		}
-<span class="fc" id="L199">		PropertyResolver propertyResolver = environmentBuilder.build();</span>
-<span class="fc" id="L200">		Boolean value = BuilderUtils.evaluate(enableProps, propertyResolver, Boolean.class);</span>
-<span class="pc bpc" id="L201" title="2 of 4 branches missed.">		return value != null &amp;&amp; value;</span>
+	private static boolean enabled(ConfigurationValueBuilderHelper&lt;?, Boolean&gt; props) {
+<span class="fc" id="L314">		return props.getValue(false);</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

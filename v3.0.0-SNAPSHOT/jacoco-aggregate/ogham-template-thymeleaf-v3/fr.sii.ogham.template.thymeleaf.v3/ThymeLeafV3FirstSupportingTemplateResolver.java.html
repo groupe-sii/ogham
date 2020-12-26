@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeLeafV3FirstSupportingTemplateResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v3</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v3</a> &gt; <span class="el_source">ThymeLeafV3FirstSupportingTemplateResolver.java</span></div><h1>ThymeLeafV3FirstSupportingTemplateResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v3;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeLeafV3FirstSupportingTemplateResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v3</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v3</a> &gt; <span class="el_source">ThymeLeafV3FirstSupportingTemplateResolver.java</span></div><h1>ThymeLeafV3FirstSupportingTemplateResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v3;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ import fr.sii.ogham.core.resource.resolver.ResourceResolver;
 import fr.sii.ogham.template.exception.NoResolverAdapterException;
 import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
 import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
-import fr.sii.ogham.template.thymeleaf.v3.exception.TemplateResolutionException;
+import fr.sii.ogham.template.thymeleaf.common.exception.TemplateResolutionException;
 
 /**
  * &lt;p&gt;
@@ -65,8 +65,8 @@ public class ThymeLeafV3FirstSupportingTemplateResolver implements ITemplateReso
 <span class="fc" id="L65">			ResolvedPath resourcePath = supportingResolver.resolve(new UnresolvedPath(template));</span>
 <span class="fc" id="L66">			String resolvedPath = resourcePath.getResolvedPath();</span>
 <span class="fc" id="L67">			TemplateResolution resolution = templateResolver.resolveTemplate(configuration, ownerTemplate, resolvedPath, templateResolutionAttributes);</span>
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">			if(!templateExists(resolution)) {</span>
-<span class="nc" id="L69">				throw new TemplateResolutionException(&quot;Failed to find template &quot;+template+&quot; (&quot;+resolvedPath+&quot;)&quot;, template, resourcePath);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">			if(!templateExists(resolution)) {</span>
+<span class="fc" id="L69">				throw new TemplateResolutionException(&quot;Failed to find template &quot;+template+&quot; (&quot;+resolvedPath+&quot;)&quot;, template, resourcePath);</span>
 			}
 <span class="fc" id="L71">			return resolution;</span>
 <span class="nc" id="L72">		} catch (NoResolverAdapterException e) {</span>
@@ -75,7 +75,7 @@ public class ThymeLeafV3FirstSupportingTemplateResolver implements ITemplateReso
 		}
 	}
 
-	private boolean templateExists(TemplateResolution resolution) {
+	private static boolean templateExists(TemplateResolution resolution) {
 		// Thymeleaf can check existence of template but only if option is set.
 		// If set and the template doesn't exist, resolution will be null.
 <span class="pc bpc" id="L81" title="1 of 2 branches missed.">		if(resolution == null) {</span>

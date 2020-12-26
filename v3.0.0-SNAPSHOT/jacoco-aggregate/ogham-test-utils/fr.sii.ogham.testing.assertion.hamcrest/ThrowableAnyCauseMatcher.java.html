@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThrowableAnyCauseMatcher.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.hamcrest</a> &gt; <span class="el_source">ThrowableAnyCauseMatcher.java</span></div><h1>ThrowableAnyCauseMatcher.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.hamcrest;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+
+/**
+ * A matcher that applies a delegate matcher to the cause of the current
+ * Throwable, returning the result of that match.
+ *
+ * @param &lt;T&gt;
+ *            the type of the throwable being matched
+ */
+public class ThrowableAnyCauseMatcher&lt;T extends Throwable&gt; extends TypeSafeMatcher&lt;T&gt; {
+	private final Matcher&lt;? extends Throwable&gt; causeFinder;
+	private final Matcher&lt;? extends Throwable&gt; causeMatcher;
+
+<span class="fc" id="L18">	public ThrowableAnyCauseMatcher(Matcher&lt;? extends Throwable&gt; causeFinder, Matcher&lt;? extends Throwable&gt; causeMatcher) {</span>
+<span class="fc" id="L19">		this.causeFinder = causeFinder;</span>
+<span class="fc" id="L20">		this.causeMatcher = causeMatcher;</span>
+<span class="fc" id="L21">	}</span>
+
+	public void describeTo(Description description) {
+<span class="fc" id="L24">		description.appendText(&quot;exception with cause matching &quot;);</span>
+<span class="fc" id="L25">		description.appendDescriptionOf(causeFinder);</span>
+<span class="fc" id="L26">		description.appendText(&quot; and matched cause &quot;);</span>
+<span class="fc" id="L27">		description.appendDescriptionOf(causeMatcher);</span>
+<span class="fc" id="L28">	}</span>
+
+	@Override
+	protected boolean matchesSafely(T item) {
+<span class="fc" id="L32">		Throwable cause = item;</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">		while (cause != null) {</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">			if (causeFinder.matches(cause)) {</span>
+<span class="fc" id="L35">				return causeMatcher.matches(cause);</span>
+			}
+<span class="fc" id="L37">			cause = cause.getCause();</span>
+		}
+<span class="fc" id="L39">		return false;</span>
+	}
+
+	@Override
+	protected void describeMismatchSafely(T item, Description description) {
+<span class="fc" id="L44">		Throwable cause = item;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		while (cause != null) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">			if (causeFinder.matches(cause)) {</span>
+<span class="fc" id="L47">				break;</span>
+			}
+<span class="fc" id="L49">			cause = cause.getCause();</span>
+		}
+<span class="fc bfc" id="L51" title="All 2 branches covered.">		if (cause == null) {</span>
+<span class="fc" id="L52">			description.appendText(&quot;was not found in exception stack&quot;);</span>
+		} else {
+<span class="fc" id="L54">			causeMatcher.describeMismatch(cause, description);</span>
+		}
+<span class="fc" id="L56">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

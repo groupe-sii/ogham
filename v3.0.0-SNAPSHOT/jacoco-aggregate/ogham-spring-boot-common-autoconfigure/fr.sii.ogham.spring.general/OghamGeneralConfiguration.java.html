@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamGeneralConfiguration.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.general</a> &gt; <span class="el_source">OghamGeneralConfiguration.java</span></div><h1>OghamGeneralConfiguration.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.general;
+
+import java.util.List;
+import java.util.function.Supplier;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurationPhase;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.spring.common.OghamMimetypeProperties;
+import fr.sii.ogham.spring.common.SpringEnvironmentConfigurer;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
+import fr.sii.ogham.spring.email.OghamEmailProperties;
+import fr.sii.ogham.spring.sms.OghamSmsProperties;
+import fr.sii.ogham.spring.template.OghamCommonTemplateProperties;
+
+//@formatter:off
+@Configuration
+@EnableConfigurationProperties({ 
+	MessagingProperties.class, 
+	OghamEmailProperties.class, 
+	OghamSmsProperties.class, 
+	OghamMimetypeProperties.class, 
+	OghamCommonTemplateProperties.class })
+//@formatter:on
+<span class="fc" id="L33">public class OghamGeneralConfiguration {</span>
+
+	/**
+	 * Configures the Messaging service and the {@link TemplateParser}. A
+	 * ThymeLeaf parser will be configured. If we find SpringTemplateEngine, we
+	 * will set it as its template engine implementation. If we find a
+	 * FreeMarker configuration already configured by spring-boot, we will add a
+	 * FreeMarker parser.
+	 * 
+	 * @param builder
+	 *            The builder used to create the messaging service
+	 * 
+	 * @return A configured messaging service
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	public MessagingService messagingService(MessagingBuilder builder) {
+<span class="fc" id="L50">		builder.configure(ConfigurationPhase.BEFORE_BUILD);</span>
+<span class="fc" id="L51">		return builder.build();</span>
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public Supplier&lt;MessagingBuilder&gt; messagingBuilderFactory() {
+<span class="fc" id="L57">		return () -&gt; new MessagingBuilder(false);</span>
+	}
+	
+	@Bean
+	@ConditionalOnMissingBean
+	public MessagingBuilder defaultMessagingBuilder(Supplier&lt;MessagingBuilder&gt; messagingBuilderFactory, List&lt;SpringMessagingConfigurer&gt; configurers) {
+<span class="fc" id="L63">		MessagingBuilder builder = MessagingBuilder.standard(messagingBuilderFactory, false, MessagingBuilder.BASE_PACKAGE);</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		for (SpringMessagingConfigurer configurer : configurers) {</span>
+<span class="fc" id="L65">			builder.register(configurer, configurer.getOrder());</span>
+<span class="fc" id="L66">		}</span>
+<span class="fc" id="L67">		builder.configure(ConfigurationPhase.AFTER_INIT);</span>
+<span class="fc" id="L68">		return builder;</span>
+	}
+
+	@Bean
+	public SpringEnvironmentConfigurer springEnvironmentConfigurer(Environment environment) {
+<span class="fc" id="L73">		return new SpringEnvironmentConfigurer(environment);</span>
+	}
+
+	// @formatter:off
+	@Bean
+	@ConditionalOnMissingBean(SpringGeneralMessagingConfigurer.class)
+	public SpringGeneralMessagingConfigurer springGeneralMessagingConfigurer(
+			@Autowired(required = false) MessagingProperties generalProperties,
+			@Autowired(required = false) OghamEmailProperties emailProperties,
+			@Autowired(required = false) OghamSmsProperties smsProperties,
+			@Autowired(required = false) OghamMimetypeProperties mimetypeProperties) {
+<span class="fc" id="L84">		return new SpringGeneralMessagingConfigurer(generalProperties, emailProperties, smsProperties, mimetypeProperties);</span>
+	}
+	// @formatter:on
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

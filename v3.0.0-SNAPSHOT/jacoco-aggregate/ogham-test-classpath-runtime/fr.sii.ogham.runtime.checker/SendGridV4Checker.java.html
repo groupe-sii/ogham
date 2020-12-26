@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SendGridV4Checker.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-classpath-runtime</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.runtime.checker</a> &gt; <span class="el_source">SendGridV4Checker.java</span></div><h1>SendGridV4Checker.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.runtime.checker;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+
+import java.io.IOException;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+
+public class SendGridV4Checker implements SendGridChecker {
+	private final WireMockServer server;
+	
+	public SendGridV4Checker(WireMockServer server) {
+<span class="nc" id="L16">		super();</span>
+<span class="nc" id="L17">		this.server = server;</span>
+<span class="nc" id="L18">	}</span>
+
+	@Override
+	public void assertEmailWithoutTemplate() throws IOException {
+<span class="nc" id="L22">		server.verify(postRequestedFor(urlEqualTo(&quot;/v3/mail/send&quot;))</span>
+<span class="nc" id="L23">				.withRequestBody(equalToJson(resourceAsString(&quot;/email/sendgrid/expected/no-template.json&quot;), false, true)));</span>
+<span class="nc" id="L24">	}</span>
+	
+	@Override
+	public void assertEmailWithThymeleaf() throws IOException {
+<span class="nc" id="L28">		server.verify(postRequestedFor(urlEqualTo(&quot;/v3/mail/send&quot;))</span>
+<span class="nc" id="L29">				.withRequestBody(equalToJson(resourceAsString(&quot;/email/sendgrid/expected/thymeleaf.json&quot;), false, true)));</span>
+<span class="nc" id="L30">	}</span>
+
+	@Override
+	public void assertEmailWithFreemarker() throws IOException {
+<span class="nc" id="L34">		server.verify(postRequestedFor(urlEqualTo(&quot;/v3/mail/send&quot;))</span>
+<span class="nc" id="L35">				.withRequestBody(equalToJson(resourceAsString(&quot;/email/sendgrid/expected/freemarker.json&quot;), false, true)));</span>
+<span class="nc" id="L36">	}</span>
+
+	@Override
+	public void assertEmailWithThymeleafAndFreemarker() throws IOException {
+<span class="nc" id="L40">		server.verify(postRequestedFor(urlEqualTo(&quot;/v3/mail/send&quot;))</span>
+<span class="nc" id="L41">				.withRequestBody(equalToJson(resourceAsString(&quot;/email/sendgrid/expected/thymeleaf-and-freemarker.json&quot;), false, true)));</span>
+<span class="nc" id="L42">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

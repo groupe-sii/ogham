@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SendRetryProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.common</a> &gt; <span class="el_source">SendRetryProperties.java</span></div><h1>SendRetryProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.common;
+
+import java.util.List;
+
+<span class="fc" id="L5">public class SendRetryProperties {</span>
+	/**
+	 * Set the maximum number of attempts for sending a message.
+	 */
+	private Integer maxAttempts;
+	/**
+	 * Set the delay between two attempts for sending a message (in
+	 * milliseconds).
+	 */
+	private Long delayBetweenAttempts;
+
+	/**
+	 * Set the initial delay between two executions (in milliseconds). This
+	 * delay will be doubled for each try.
+	 */
+	private Long exponentialInitialDelay;
+
+	/**
+	 * Set specific delays (in milliseconds) used for each new execution. If
+	 * there are more attempts than the configured delays, the last delay is
+	 * used for remaining attempts.
+	 */
+	private List&lt;Long&gt; perExecutionDelays;
+
+	/**
+	 * Retry several times with a fixed delay between each try (no matter how
+	 * long the execution of the action lasts) until the maximum attempts is
+	 * reached. The next execution date is based on the execution start date of
+	 * the first execution.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * Set the interval between two executions (in milliseconds).
+	 */
+	private Long executionInterval;
+
+	public Integer getMaxAttempts() {
+<span class="fc" id="L40">		return maxAttempts;</span>
+	}
+
+	public void setMaxAttempts(Integer maxAttempts) {
+<span class="fc" id="L44">		this.maxAttempts = maxAttempts;</span>
+<span class="fc" id="L45">	}</span>
+
+	public Long getDelayBetweenAttempts() {
+<span class="fc" id="L48">		return delayBetweenAttempts;</span>
+	}
+
+	public void setDelayBetweenAttempts(Long delayBetweenAttempts) {
+<span class="fc" id="L52">		this.delayBetweenAttempts = delayBetweenAttempts;</span>
+<span class="fc" id="L53">	}</span>
+
+	public Long getExponentialInitialDelay() {
+<span class="fc" id="L56">		return exponentialInitialDelay;</span>
+	}
+
+	public void setExponentialInitialDelay(Long exponentialInitialDelay) {
+<span class="fc" id="L60">		this.exponentialInitialDelay = exponentialInitialDelay;</span>
+<span class="fc" id="L61">	}</span>
+
+	public List&lt;Long&gt; getPerExecutionDelays() {
+<span class="fc" id="L64">		return perExecutionDelays;</span>
+	}
+
+	public void setPerExecutionDelays(List&lt;Long&gt; perExecutionDelays) {
+<span class="fc" id="L68">		this.perExecutionDelays = perExecutionDelays;</span>
+<span class="fc" id="L69">	}</span>
+
+	public Long getExecutionInterval() {
+<span class="fc" id="L72">		return executionInterval;</span>
+	}
+
+	public void setExecutionInterval(Long executionInterval) {
+<span class="fc" id="L76">		this.executionInterval = executionInterval;</span>
+<span class="fc" id="L77">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

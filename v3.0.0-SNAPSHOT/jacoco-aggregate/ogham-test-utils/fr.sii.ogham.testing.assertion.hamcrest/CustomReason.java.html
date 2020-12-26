@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CustomReason.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.hamcrest</a> &gt; <span class="el_source">CustomReason.java</span></div><h1>CustomReason.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.hamcrest;
+
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+
+/**
+ * Decorates a Hamcrest matcher in order to provide a different reason.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;T&gt;
+ *            the type of the actual value
+ */
+public class CustomReason&lt;T&gt; extends BaseMatcher&lt;T&gt; implements DecoratorMatcher&lt;T&gt; {
+	private final String reason;
+	private final Matcher&lt;T&gt; matcher;
+
+	public CustomReason(String reason, Matcher&lt;T&gt; matcher) {
+<span class="fc" id="L20">		super();</span>
+<span class="fc" id="L21">		this.reason = reason;</span>
+<span class="fc" id="L22">		this.matcher = matcher;</span>
+<span class="fc" id="L23">	}</span>
+
+	@Override
+	public boolean matches(Object item) {
+<span class="fc" id="L27">		return matcher.matches(item);</span>
+	}
+
+	@Override
+	public void describeTo(Description description) {
+<span class="fc" id="L32">		matcher.describeTo(description);</span>
+<span class="fc" id="L33">	}</span>
+
+	public String getReason() {
+<span class="fc" id="L36">		return reason;</span>
+	}
+
+	public Matcher&lt;T&gt; getDecoree() {
+<span class="fc" id="L40">		return matcher;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

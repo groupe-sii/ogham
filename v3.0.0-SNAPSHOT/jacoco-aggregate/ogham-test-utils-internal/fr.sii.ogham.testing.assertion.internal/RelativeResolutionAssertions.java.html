@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RelativeResolutionAssertions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.internal</a> &gt; <span class="el_source">RelativeResolutionAssertions.java</span></div><h1>RelativeResolutionAssertions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.internal;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.core.resource.resolver.RelativeResolver;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Make assertions on resource resolution.
+ * 
+ * &lt;pre&gt;
+ * {@code
+ * .pathPrefix(is(&quot;/custom/&quot;))
+ * .pathSuffix(is(&quot;.html&quot;))
+ * }
+ * &lt;/pre&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the parent type
+ */
+public class RelativeResolutionAssertions&lt;P&gt; extends HasParent&lt;P&gt; {
+	private final String name;
+	private final Set&lt;RelativeResolver&gt; relativeResolvers;
+
+	public RelativeResolutionAssertions(P parent, String name, Set&lt;RelativeResolver&gt; relativeResolvers) {
+<span class="fc" id="L34">		super(parent);</span>
+<span class="fc" id="L35">		this.name = name;</span>
+<span class="fc" id="L36">		this.relativeResolvers = relativeResolvers;</span>
+<span class="fc" id="L37">	}</span>
+
+	/**
+	 * Ensures that path prefix is correctly configured.
+	 * 
+	 * @param matcher
+	 *            the matcher to ensure that path prefix is correct
+	 * @return this instance for fluent chaining
+	 */
+	public RelativeResolutionAssertions&lt;P&gt; pathPrefix(Matcher&lt;? super String&gt; matcher) {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">		for (RelativeResolver resolver : relativeResolvers) {</span>
+<span class="fc" id="L48">			assertThat(name + &quot; prefix&quot;, getPrefix(resolver), matcher);</span>
+<span class="fc" id="L49">		}</span>
+<span class="fc" id="L50">		return this;</span>
+	}
+
+	/**
+	 * Ensures that path suffix is correctly configured.
+	 * 
+	 * @param matcher
+	 *            the matcher to ensure that path suffix is correct
+	 * @return this instance for fluent chaining
+	 */
+	public RelativeResolutionAssertions&lt;P&gt; pathSuffix(Matcher&lt;? super String&gt; matcher) {
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		for (RelativeResolver resolver : relativeResolvers) {</span>
+<span class="fc" id="L62">			assertThat(name + &quot; suffix&quot;, getSuffix(resolver), matcher);</span>
+<span class="fc" id="L63">		}</span>
+<span class="fc" id="L64">		return this;</span>
+	}
+
+	/**
+	 * Ensures that lookup prefixes (&quot;classpath:&quot;, &quot;file:&quot;, ...) are correctly
+	 * configured.
+	 * 
+	 * @param matcher
+	 *            the matcher to ensure that lookup prefixes are correct
+	 * @return this instance for fluent chaining
+	 */
+	public RelativeResolutionAssertions&lt;P&gt; lookup(Matcher&lt;? super List&lt;String&gt;&gt; matcher) {
+<span class="fc bfc" id="L76" title="All 2 branches covered.">		for (RelativeResolver resolver : relativeResolvers) {</span>
+<span class="fc" id="L77">			assertThat(name + &quot; lookups&quot;, getLookups(resolver), matcher);</span>
+<span class="fc" id="L78">		}</span>
+<span class="fc" id="L79">		return this;</span>
+	}
+
+	private static String getPrefix(RelativeResolver resolver) {
+		try {
+<span class="fc" id="L84">			return (String) FieldUtils.readField(resolver, &quot;parentPath&quot;, true);</span>
+<span class="nc" id="L85">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L86">			throw new IllegalStateException(&quot;Failed to get 'parentPath' field of RelativeResolver&quot;, e);</span>
+		}
+	}
+
+	private static String getSuffix(RelativeResolver resolver) {
+		try {
+<span class="fc" id="L92">			return (String) FieldUtils.readField(resolver, &quot;extension&quot;, true);</span>
+<span class="nc" id="L93">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L94">			throw new IllegalStateException(&quot;Failed to get 'extension' field of RelativeResolver&quot;, e);</span>
+		}
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static List&lt;String&gt; getLookups(RelativeResolver resolver) {
+		try {
+<span class="fc" id="L101">			return (List&lt;String&gt;) FieldUtils.readField(resolver.getActualResourceResolver(), &quot;lookups&quot;, true);</span>
+<span class="nc" id="L102">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L103">			throw new IllegalStateException(&quot;Failed to get 'lookups' field of &quot; + resolver.getClass().getSimpleName(), e);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

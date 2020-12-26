@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>NumberingPlanIndicator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.bean</a> &gt; <span class="el_source">NumberingPlanIndicator.java</span></div><h1>NumberingPlanIndicator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.bean;
+
+/**
+ * This enum is defined Numbering Plan Indicator.
+ * 
+ * @author Aurélien Baudet
+ */
+<span class="fc" id="L8">public enum NumberingPlanIndicator {</span>
+<span class="fc" id="L9">	UNKNOWN((byte) 0x00), </span>
+<span class="fc" id="L10">	ISDN((byte) 0x01), </span>
+<span class="fc" id="L11">	DATA((byte) 0x03), </span>
+<span class="fc" id="L12">	TELEX((byte) 0x04), </span>
+<span class="fc" id="L13">	LAND_MOBILE((byte) 0x06), </span>
+<span class="fc" id="L14">	NATIONAL((byte) 0x08), </span>
+<span class="fc" id="L15">	PRIVATE((byte) 0x09), </span>
+<span class="fc" id="L16">	ERMES((byte) 0x0a), </span>
+<span class="fc" id="L17">	INTERNET((byte) 0x0e), </span>
+<span class="fc" id="L18">	WAP((byte) 0x12);</span>
+	
+	private final byte value;
+
+<span class="fc" id="L22">	NumberingPlanIndicator(byte value) {</span>
+<span class="fc" id="L23">		this.value = value;</span>
+<span class="fc" id="L24">	}</span>
+
+	/**
+	 * Return the value of NPI.
+	 * 
+	 * @return the value of NPI.
+	 */
+	public byte value() {
+<span class="fc" id="L32">		return value;</span>
+	}
+
+	/**
+	 * Get the associated {@link NumberingPlanIndicator} by it's value.
+	 * 
+	 * @param value
+	 *            is the value.
+	 * @return the associated enum const for specified value.
+	 * @throws IllegalArgumentException
+	 *             if there is no enum const associated with specified
+	 *             {@code value}.
+	 */
+	public static NumberingPlanIndicator valueOf(byte value) {
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">		for (NumberingPlanIndicator val : values()) {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">			if (val.value == value) {</span>
+<span class="fc" id="L48">				return val;</span>
+			}
+		}
+<span class="nc" id="L51">		throw new IllegalArgumentException(&quot;No enum const NumberingPlanIndicator with value &quot; + value);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

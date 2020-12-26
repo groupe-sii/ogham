@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FailAtEndRegistry.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.util</a> &gt; <span class="el_source">FailAtEndRegistry.java</span></div><h1>FailAtEndRegistry.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.util;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.ComparisonFailure;
+
+/**
+ * The aim of this registry is to report all errors at once.
+ * 
+ * It registers all functions but doesn't execute them.
+ * 
+ * When {@link #execute()} method is called, then all functions are executed.
+ * All failures/failed assertions are collected and reported using a
+ * {@link MultipleAssertionError}.
+ * 
+ * &lt;p&gt;
+ * A {@link ComparisonFailure} exception is thrown. Therefore Eclipse can handle
+ * this exception and provide a comparison view with all differences.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FailAtEndRegistry implements AssertionRegistry {
+	private final List&lt;Executable&lt;?&gt;&gt; assertions;
+	private final boolean convertToComparisonFailure;
+
+	/**
+	 * Initializes an empty registry.
+	 * 
+	 * If the system property
+	 * {@code &quot;ogham.testing.assertions.fail-at-end.throw-comparison-failure&quot;}
+	 * is set to true (or not set at all), a {@link ComparisonFailure} exception
+	 * is thrown. Using a {@link ComparisonFailure} lets Eclipse handle it
+	 * specifically and provides a comparison view (Eclipse doesn't handle
+	 * sub-classes of {@link ComparisonFailure}).
+	 * 
+	 * To throw {@link MultipleAssertionError} instead of
+	 * {@link ComparisonFailure}, you can set the
+	 * {@code &quot;ogham.testing.assertions.fail-at-end.throw-comparison-failure&quot;}
+	 * system property to {@code &quot;false&quot;}. This can be useful if you need to
+	 * manually handle every failure/failed assertions.
+	 */
+	public FailAtEndRegistry() {
+<span class="fc" id="L45">		this(Boolean.valueOf(System.getProperty(&quot;ogham.testing.assertions.fail-at-end.throw-comparison-failure&quot;, &quot;true&quot;)));</span>
+<span class="fc" id="L46">	}</span>
+
+	/**
+	 * Initializes an empty registry.
+	 * 
+	 * If {@code convertToComparisonFailure} parameter is set to true, a
+	 * {@link ComparisonFailure} exception is thrown. Using a
+	 * {@link ComparisonFailure} lets Eclipse handle it specifically and
+	 * provides a comparison view (Eclipse doesn't handle sub-classes of
+	 * {@link ComparisonFailure}).
+	 * 
+	 * @param convertToComparisonFailure
+	 *            true to generate a {@link ComparisonFailure} to let Eclipse
+	 *            display a comparison view.
+	 */
+	public FailAtEndRegistry(boolean convertToComparisonFailure) {
+<span class="fc" id="L62">		super();</span>
+<span class="fc" id="L63">		assertions = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L64">		this.convertToComparisonFailure = convertToComparisonFailure;</span>
+<span class="fc" id="L65">	}</span>
+
+	public &lt;E extends Exception&gt; void register(Executable&lt;E&gt; executable) throws E {
+<span class="fc" id="L68">		assertions.add(executable);</span>
+<span class="fc" id="L69">	}</span>
+
+	@SuppressWarnings(&quot;squid:S2221&quot;) // we can't know which exception may be
+										// thrown so we have to catch all
+										// exceptions
+	public void execute() {
+<span class="fc" id="L75">		List&lt;Throwable&gt; failures = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">		for (Executable&lt;?&gt; executable : assertions) {</span>
+			try {
+<span class="fc" id="L78">				executable.run();</span>
+<span class="fc" id="L79">			} catch (Exception | AssertionError e) {</span>
+<span class="fc" id="L80">				failures.add(e);</span>
+<span class="fc" id="L81">			}</span>
+<span class="fc" id="L82">		}</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		if (!failures.isEmpty()) {</span>
+<span class="nc" id="L84">			throwFailures(failures);</span>
+		}
+<span class="fc" id="L86">	}</span>
+
+	private void throwFailures(List&lt;Throwable&gt; failures) {
+<span class="fc" id="L89">		MultipleAssertionError e = new MultipleAssertionError(failures);</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">		if (convertToComparisonFailure) {</span>
+<span class="nc" id="L91">			throw e.toComparisonFailure();</span>
+		}
+<span class="fc" id="L93">		throw e;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

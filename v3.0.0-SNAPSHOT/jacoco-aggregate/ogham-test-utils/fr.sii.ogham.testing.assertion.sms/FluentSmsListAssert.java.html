@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentSmsListAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">FluentSmsListAssert.java</span></div><h1>FluentSmsListAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.overrideDescription;
+import static org.hamcrest.Matchers.lessThan;
+
+import java.util.List;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Make assertions on received messages
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the parent type
+ * @param &lt;S&gt;
+ *            the type of {@link SubmitSm}
+ */
+public class FluentSmsListAssert&lt;P, S extends SubmitSm&gt; extends HasParent&lt;P&gt; {
+	/**
+	 * The list of messages that will be used for assertions
+	 */
+	private final List&lt;S&gt; actual;
+	private final AssertionRegistry registry;
+
+	/**
+	 * @param actual
+	 *            the received messages
+	 * @param parent
+	 *            the parent
+	 * @param registry
+	 *            used to register assertions
+	 */
+	public FluentSmsListAssert(List&lt;S&gt; actual, P parent, AssertionRegistry registry) {
+<span class="fc" id="L41">		super(parent);</span>
+<span class="fc" id="L42">		this.actual = actual;</span>
+<span class="fc" id="L43">		this.registry = registry;</span>
+<span class="fc" id="L44">	}</span>
+
+	/**
+	 * Assertion on the number of received messages:
+	 * 
+	 * &lt;pre&gt;
+	 * .count(is(1))
+	 * &lt;/pre&gt;
+	 * 
+	 * @param matcher
+	 *            the assertion applied on the number of received messages
+	 * @return the fluent API for chaining assertions on received messages
+	 */
+	public FluentSmsListAssert&lt;P, S&gt; count(Matcher&lt;Integer&gt; matcher) {
+<span class="fc" id="L58">		registry.register(() -&gt; assertThat(&quot;Received messages count&quot;, actual.size(), matcher));</span>
+<span class="fc" id="L59">		return this;</span>
+	}
+
+	/**
+	 * Access a particular message to write assertions for it:
+	 * 
+	 * &lt;pre&gt;
+	 * .message(0).content(is(&quot;foobar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * You can use this method to chain several assertions on different
+	 * messages:
+	 * 
+	 * &lt;pre&gt;
+	 * .message(0).content(is(&quot;foobar&quot;))
+	 * .and()
+	 * .message(1).content(is(&quot;toto&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * @param index
+	 *            the index of the message in the received list
+	 * @return the fluent API for chaining assertions on received messages
+	 */
+	public FluentSmsAssert&lt;FluentSmsListAssert&lt;P, S&gt;, S&gt; message(int index) {
+<span class="fc" id="L84">		registry.register(() -&gt; assertThat(index, overrideDescription(&quot;Assertions on message &quot;+index+&quot; can't be executed because &quot;+actual.size()+&quot; messages were received&quot;, lessThan(actual.size()))));</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">		return new FluentSmsAssert&lt;&gt;(index&lt;actual.size() ? actual.get(index) : null, index, this, registry);</span>
+	}
+
+	/**
+	 * Fluent API to write assertions on every received messages. Any defined
+	 * assertion will be applied on every message:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().content(is(&quot;foobar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that content of every message is &quot;foobar&quot;.
+	 * 
+	 * &lt;p&gt;
+	 * You can use this method to factorize several assertions on a message and
+	 * then make dedicated assertions on some messages:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *                       .content(is(&quot;foobar&quot;))
+	 *                    .and()
+	 *                    .message(0)
+	 *                       .from().number(is(&quot;+33102030405&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check that content of every message is &quot;foobar&quot; and that body of
+	 * first received message is &quot;+33102030405&quot;.
+	 * 
+	 * @return the fluent API for chaining assertions on received messages
+	 */
+	public FluentSmsAssert&lt;FluentSmsListAssert&lt;P, S&gt;, S&gt; every() {
+<span class="fc" id="L116">		return new FluentSmsAssert&lt;&gt;(actual, this, registry);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

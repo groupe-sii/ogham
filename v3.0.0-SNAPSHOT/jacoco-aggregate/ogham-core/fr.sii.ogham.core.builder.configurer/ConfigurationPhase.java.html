@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ConfigurationPhase.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.configurer</a> &gt; <span class="el_source">ConfigurationPhase.java</span></div><h1>ConfigurationPhase.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.configurer;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.env.PropertiesBuilder;
+import fr.sii.ogham.core.service.MessagingService;
+
+/**
+ * Enumeration for Ogham configuration phases for auto-configuration lifecycle:
+ * 
+ * &lt;ol&gt;
+ * &lt;li&gt;{@link MessagingBuilder} instantiation (using
+ * {@link MessagingBuilder#standard()} or
+ * {@link MessagingBuilder#minimal()}).&lt;/li&gt;
+ * &lt;li&gt;Search {@link MessagingConfigurer} classes in the classpath and register
+ * found classes ordered by higher priority.&lt;/li&gt;
+ * &lt;li&gt;&lt;strong&gt;Trigger {@link ConfigurationPhase#AFTER_INIT} phase&lt;/strong&gt;:
+ * Instantiate and configure previously registered {@link Configurer}s (only
+ * configurers registered for {@code AFTER_INIT} phase).&lt;/li&gt;
+ * &lt;li&gt;Developer can configure Ogham using {@link MessagingBuilder}
+ * instance.&lt;/li&gt;
+ * &lt;li&gt;Developer has finished configuring Ogham so he calls
+ * {@link MessagingBuilder#build()}.&lt;/li&gt;
+ * &lt;li&gt;&lt;strong&gt;Trigger {@link ConfigurationPhase#BEFORE_BUILD} phase&lt;/strong&gt;:
+ * Instantiate and configure previously registered {@link Configurer}s (only
+ * configurers registered for {@code BEFORE_BUILD} phase).&lt;/li&gt;
+ * &lt;li&gt;Instantiate {@link MessagingService} according to
+ * {@link MessagingBuilder} configuration.&lt;/li&gt;
+ * &lt;li&gt;Developer gets an instance of {@link MessagingService} completely
+ * configured.&lt;/li&gt;
+ * &lt;/ol&gt;
+ * 
+ * @see ConfigurerFor
+ * @see MessagingBuilder#register(MessagingConfigurer, int, ConfigurationPhase)
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L37">public enum ConfigurationPhase {</span>
+	/**
+	 * Early configuration phase.
+	 * 
+	 * &lt;p&gt;
+	 * Property values provided by developer are not available because this
+	 * phase is executed &lt;strong&gt;immediately&lt;/strong&gt; when calling
+	 * {@link MessagingBuilder#standard()} or
+	 * {@link MessagingBuilder#minimal()}.
+	 * {@link PropertiesBuilder#set(String, String)} used to set property values
+	 * from code is called &lt;strong&gt;after&lt;/strong&gt;.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;WARNING&lt;/strong&gt;: Configuration set at this phase may not be
+	 * overridable by developer.
+	 * &lt;/p&gt;
+	 */
+<span class="fc" id="L55">	AFTER_INIT,</span>
+
+	/**
+	 * Configuration applied just before building {@link MessagingService}.
+	 * 
+	 * &lt;p&gt;
+	 * At this time, all property values can be safely used.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Any configuration set at this phase has lower priority than any
+	 * configuration provided by developer or configuration initialized during
+	 * {@link ConfigurationPhase#AFTER_INIT} phase.
+	 * &lt;/p&gt;
+	 */
+<span class="fc" id="L70">	BEFORE_BUILD;</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

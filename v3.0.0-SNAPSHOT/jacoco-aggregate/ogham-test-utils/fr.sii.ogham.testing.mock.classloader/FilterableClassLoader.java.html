@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FilterableClassLoader.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.mock.classloader</a> &gt; <span class="el_source">FilterableClassLoader.java</span></div><h1>FilterableClassLoader.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.mock.classloader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.function.Predicate;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class FilterableClassLoader extends ClassLoader {
+<span class="fc" id="L14">	private static final Logger LOG = LoggerFactory.getLogger(FilterableClassLoader.class);</span>
+	
+	private ClassLoader delegate;
+	private Predicate&lt;String&gt; predicate;
+
+	public FilterableClassLoader(ClassLoader delegate, Predicate&lt;String&gt; predicate) {
+<span class="fc" id="L20">		super();</span>
+<span class="fc" id="L21">		this.delegate = delegate;</span>
+<span class="fc" id="L22">		this.predicate = predicate;</span>
+<span class="fc" id="L23">	}</span>
+
+	@Override
+	public Class&lt;?&gt; loadClass(String name) throws ClassNotFoundException {
+<span class="fc bfc" id="L27" title="All 2 branches covered.">		if(predicate.test(name)) {</span>
+<span class="fc" id="L28">			return delegate.loadClass(name);</span>
+		} else {
+<span class="fc" id="L30">			LOG.info(&quot;Class {} not accepted&quot;, name);</span>
+<span class="fc" id="L31">			throw new ClassNotFoundException(&quot;Class &quot;+name+&quot; not accepted&quot;);</span>
+		}
+	}
+
+	@Override
+	public URL getResource(String name) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		if(predicate.test(name)) {</span>
+<span class="fc" id="L38">			return delegate.getResource(name);</span>
+		} else {
+<span class="fc" id="L40">			LOG.info(&quot;Resource {} not accepted&quot;, name);</span>
+<span class="fc" id="L41">			return null;</span>
+		}
+	}
+
+	@Override
+	public Enumeration&lt;URL&gt; getResources(String name) throws IOException {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">		if(predicate.test(name)) {</span>
+<span class="fc" id="L48">			return delegate.getResources(name);</span>
+		} else {
+<span class="fc" id="L50">			LOG.info(&quot;Resources {} not accepted&quot;, name);</span>
+<span class="fc" id="L51">			return Collections.emptyEnumeration();</span>
+		}
+	}
+
+	@Override
+	public InputStream getResourceAsStream(String name) {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">		if(predicate.test(name)) {</span>
+<span class="fc" id="L58">			return delegate.getResourceAsStream(name);</span>
+		} else {
+<span class="fc" id="L60">			LOG.info(&quot;Resource {} not accepted&quot;, name);</span>
+<span class="fc" id="L61">			return null;</span>
+		}
+	}
+
+	@Override
+	public void setDefaultAssertionStatus(boolean enabled) {
+<span class="nc" id="L67">		delegate.setDefaultAssertionStatus(enabled);</span>
+<span class="nc" id="L68">	}</span>
+
+	@Override
+	public void setPackageAssertionStatus(String packageName, boolean enabled) {
+<span class="nc" id="L72">		delegate.setPackageAssertionStatus(packageName, enabled);</span>
+<span class="nc" id="L73">	}</span>
+
+	@Override
+	public void setClassAssertionStatus(String className, boolean enabled) {
+<span class="nc" id="L77">		delegate.setClassAssertionStatus(className, enabled);</span>
+<span class="nc" id="L78">	}</span>
+
+	@Override
+	public void clearAssertionStatus() {
+<span class="nc" id="L82">		delegate.clearAssertionStatus();</span>
+<span class="nc" id="L83">	}</span>
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

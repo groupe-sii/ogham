@@ -1,13 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JavaMailBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder.javamail</a> &gt; <span class="el_source">JavaMailBuilder.java</span></div><h1>JavaMailBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder.javamail;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JavaMailBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder.javamail</a> &gt; <span class="el_source">JavaMailBuilder.java</span></div><h1>JavaMailBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder.javamail;
 
 import static fr.sii.ogham.core.condition.fluent.MessageConditions.requiredProperty;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
+import java.util.function.BiFunction;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.mail.Authenticator;
@@ -18,13 +20,15 @@ import javax.mail.internet.MimeMultipart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.sii.ogham.core.builder.AbstractParent;
 import fr.sii.ogham.core.builder.ActivableAtRuntime;
 import fr.sii.ogham.core.builder.Builder;
 import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
 import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
-import fr.sii.ogham.core.builder.env.EnvironmentBuilderDelegate;
-import fr.sii.ogham.core.builder.env.SimpleEnvironmentBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
 import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
 import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
@@ -32,27 +36,35 @@ import fr.sii.ogham.core.charset.CharsetDetector;
 import fr.sii.ogham.core.charset.FixedCharsetDetector;
 import fr.sii.ogham.core.condition.Condition;
 import fr.sii.ogham.core.convert.Converter;
-import fr.sii.ogham.core.convert.DefaultConverter;
+import fr.sii.ogham.core.env.FirstExistingPropertiesResolver;
+import fr.sii.ogham.core.env.JavaPropertiesResolver;
+import fr.sii.ogham.core.env.PropertiesBridge;
 import fr.sii.ogham.core.env.PropertyResolver;
+import fr.sii.ogham.core.fluent.AbstractParent;
 import fr.sii.ogham.core.message.Message;
 import fr.sii.ogham.core.message.content.MayHaveStringContent;
 import fr.sii.ogham.core.message.content.MultiContent;
 import fr.sii.ogham.core.mimetype.MimeTypeProvider;
-import fr.sii.ogham.core.resource.ByteResource;
 import fr.sii.ogham.core.resource.FileResource;
-import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.core.resource.LookupResource;
+import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.core.resource.OverrideNameWrapper;
 import fr.sii.ogham.email.attachment.Attachment;
 import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.UnresolvableAttachmentResourceHandlerException;
 import fr.sii.ogham.email.message.Email;
 import fr.sii.ogham.email.message.content.ContentWithAttachments;
 import fr.sii.ogham.email.sender.impl.JavaMailSender;
-import fr.sii.ogham.email.sender.impl.PropertiesBridge;
 import fr.sii.ogham.email.sender.impl.javamail.ContentWithAttachmentsHandler;
+import fr.sii.ogham.email.sender.impl.javamail.FailResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.FileResourceHandler;
+import fr.sii.ogham.email.sender.impl.javamail.JavaMailAttachmentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.JavaMailInterceptor;
 import fr.sii.ogham.email.sender.impl.javamail.MapAttachmentResourceHandler;
-import fr.sii.ogham.email.sender.impl.javamail.MapContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.MultiContentHandler;
+import fr.sii.ogham.email.sender.impl.javamail.OverrideNameWrapperResourceHandler;
+import fr.sii.ogham.email.sender.impl.javamail.PriorizedContentHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StreamResourceHandler;
 import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
 
@@ -94,7 +106,8 @@ import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
  *    .and()
  * .email()
  *    .sender(JavaMailBuilder.class)    // registers the builder and accesses to that builder for configuring it
- *       .host(&quot;${custom.property.for.host}&quot;)
+ *       .host()
+ *       	.properties(&quot;${custom.property.for.host}&quot;)
  * &lt;/code&gt;
  * &lt;/pre&gt;
  * 
@@ -148,18 +161,17 @@ import fr.sii.ogham.email.sender.impl.javamail.StringContentHandler;
  *
  */
 public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implements Builder&lt;JavaMailSender&gt;, ActivableAtRuntime {
-<span class="fc" id="L151">	private static final Logger LOG = LoggerFactory.getLogger(JavaMailBuilder.class);</span>
+<span class="fc" id="L164">	private static final Logger LOG = LoggerFactory.getLogger(JavaMailBuilder.class);</span>
 
-	private EnvironmentBuilder&lt;JavaMailBuilder&gt; environmentBuilder;
-	private List&lt;String&gt; hosts;
-	private List&lt;String&gt; ports;
-	private Integer port;
+	private final BuildContext buildContext;
+	private final ConfigurationValueBuilderHelper&lt;JavaMailBuilder, String&gt; hostValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;JavaMailBuilder, Integer&gt; portValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;JavaMailBuilder, Charset&gt; charsetValueBuilder;
+	private final Properties additionalProperties;
 	private Authenticator authenticator;
 	private UsernamePasswordAuthenticatorBuilder authenticatorBuilder;
 	private JavaMailInterceptor interceptor;
 	private MimetypeDetectionBuilder&lt;JavaMailBuilder&gt; mimetypeBuilder;
-	private List&lt;String&gt; charsets;
-	private Charset charset;
 	private CharsetDetector charsetDetector;
 
 	/**
@@ -168,10 +180,9 @@ public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implemen
 	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
 	 */
 	public JavaMailBuilder() {
-<span class="fc" id="L171">		this(null);</span>
-<span class="fc" id="L172">		environment();</span>
-<span class="fc" id="L173">		mimetype();</span>
-<span class="fc" id="L174">	}</span>
+<span class="fc" id="L183">		this(null, new DefaultBuildContext());</span>
+<span class="fc" id="L184">		mimetype();</span>
+<span class="fc" id="L185">	}</span>
 
 	/**
 	 * Constructor that is called when using Ogham builder:
@@ -183,179 +194,261 @@ public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implemen
 	 *    .sender(JavaMailBuilder.class)
 	 * &lt;/pre&gt;
 	 * 
+	 * &lt;p&gt;
+	 * Initializes the builder with the parent instance (used by the
+	 * {@link #and()} method) and the {@link EnvironmentBuilder}. The
+	 * {@link EnvironmentBuilder} is used to evaluate property values when
+	 * {@link #build()} is called.
+	 * 
 	 * @param parent
 	 *            the parent builder instance for fluent chaining
+	 * @param buildContext
+	 *            used to evaluate property values
 	 */
-	public JavaMailBuilder(EmailBuilder parent) {
-<span class="fc" id="L190">		super(parent);</span>
-<span class="fc" id="L191">		hosts = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L192">		ports = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L193">		charsets = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L194">	}</span>
+	public JavaMailBuilder(EmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L209">		super(parent);</span>
+<span class="fc" id="L210">		this.buildContext = buildContext;</span>
+<span class="fc" id="L211">		hostValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="fc" id="L212">		portValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);</span>
+<span class="fc" id="L213">		charsetValueBuilder = buildContext.newConfigurationValueBuilder(this, Charset.class);</span>
+<span class="fc" id="L214">		additionalProperties = new Properties();</span>
+<span class="fc" id="L215">	}</span>
 
 	/**
 	 * Set the mail server address host (IP or hostname).
 	 * 
-	 * You can specify a direct value. For example:
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #host()}.
 	 * 
 	 * &lt;pre&gt;
-	 * .host(&quot;localhost&quot;);
+	 * .host(&quot;smtp.gmail.com&quot;)
+	 * .host()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;localhost&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .host(&quot;smtp.gmail.com&quot;)
+	 * .host()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;localhost&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code host(&quot;smtp.gmail.com&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param host
+	 *            the host of the mail server
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder host(String host) {
+<span class="fc" id="L252">		hostValueBuilder.setValue(host);</span>
+<span class="fc" id="L253">		return this;</span>
+	}
+
+	/**
+	 * Set the mail server address host (IP or hostname).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .host()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;localhost&quot;)
 	 * &lt;/pre&gt;
 	 * 
 	 * &lt;p&gt;
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #host(String)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * &lt;pre&gt;
-	 * .host(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * .host(&quot;smtp.gmail.com&quot;)
+	 * .host()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;localhost&quot;)
 	 * &lt;/pre&gt;
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code &quot;smtp.gmail.com&quot;} is used regardless of the value of the
+	 * properties and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param host
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public JavaMailBuilder host(String... host) {
-<span class="fc bfc" id="L225" title="All 2 branches covered.">		for (String h : host) {</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">			if (h != null) {</span>
-<span class="fc" id="L227">				hosts.add(h);</span>
-			}
-		}
-<span class="fc" id="L230">		return this;</span>
+	public ConfigurationValueBuilder&lt;JavaMailBuilder, String&gt; host() {
+<span class="fc" id="L293">		return hostValueBuilder;</span>
 	}
 
 	/**
 	 * Set the mail server port.
 	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #port(String...)} method.
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #port()}.
 	 * 
+	 * &lt;pre&gt;
+	 * .port(10025)
+	 * .port()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(25)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .port(10025)
+	 * .port()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(25)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code port(10025)} is used.
+	 * 
+	 * &lt;p&gt;
 	 * If this method is called several times, only the last value is used.
 	 * 
-	 * @param port
-	 *            the port to use
-	 * @return this instance for fluent chaining
-	 */
-	public JavaMailBuilder port(int port) {
-<span class="fc" id="L246">		this.port = port;</span>
-<span class="fc" id="L247">		return this;</span>
-	}
-
-	/**
-	 * Set the mail server port. This version allows {@code null} value. In this
-	 * case, the {@code null} value is skipped.
-	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #port(String...)} method.
-	 * 
-	 * If this method is called several times, only the last value is used.
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
 	 * 
 	 * @param port
-	 *            the port to use (may be null)
+	 *            the port of mail server
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder port(Integer port) {
-<span class="pc bpc" id="L264" title="1 of 2 branches missed.">		if (port != null) {</span>
-<span class="nc" id="L265">			this.port = port;</span>
-		}
-<span class="fc" id="L267">		return this;</span>
+<span class="fc" id="L331">		portValueBuilder.setValue(port);</span>
+<span class="fc" id="L332">		return this;</span>
 	}
 
 	/**
-	 * Set the mail server port.
+	 * Set the mail server port
 	 * 
-	 * You can specify a direct value. For example:
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
 	 * 
 	 * &lt;pre&gt;
-	 * .port(&quot;25&quot;);
+	 * .port()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(25)
 	 * &lt;/pre&gt;
 	 * 
 	 * &lt;p&gt;
-	 * You can also specify one or several property keys. For example:
+	 * Non-null value set using {@link #port(Integer)} takes precedence over
+	 * property values and default value.
 	 * 
 	 * &lt;pre&gt;
-	 * .port(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
+	 * .port(10025)
+	 * .port()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(25)
 	 * &lt;/pre&gt;
 	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
+	 * The value {@code 10025} is used regardless of the value of the properties
+	 * and default value.
 	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
 	 * 
-	 * @param port
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
+	 * 
+	 * @return the builder to configure property keys/default value
 	 */
-	public JavaMailBuilder port(String... port) {
-<span class="fc bfc" id="L299" title="All 2 branches covered.">		for (String p : port) {</span>
-<span class="pc bpc" id="L300" title="1 of 2 branches missed.">			if (p != null) {</span>
-<span class="fc" id="L301">				ports.add(p);</span>
-			}
-		}
-<span class="fc" id="L304">		return this;</span>
+	public ConfigurationValueBuilder&lt;JavaMailBuilder, Integer&gt; port() {
+<span class="fc" id="L372">		return portValueBuilder;</span>
 	}
 
 	/**
 	 * Set charset to use for email body.
 	 * 
-	 * You can specify a direct value. For example:
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #charset()}.
 	 * 
 	 * &lt;pre&gt;
-	 * .charset(&quot;UTF-8&quot;);
+	 * .charset(StandardCharsets.UTF_16)
+	 * .charset()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(StandardCharsets.UTF_8)
 	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .charset(StandardCharsets.UTF_16)
+	 * .charset()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(StandardCharsets.UTF_8)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code charset(StandardCharsets.UTF_16)} is used.
 	 * 
 	 * &lt;p&gt;
-	 * You can also specify one or several property keys. For example:
-	 * 
-	 * &lt;pre&gt;
-	 * .charset(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;);
-	 * &lt;/pre&gt;
-	 * 
-	 * The properties are not immediately evaluated. The evaluation will be done
-	 * when the {@link #build()} method is called.
-	 * 
-	 * If you provide several property keys, evaluation will be done on the
-	 * first key and if the property exists (see {@link EnvironmentBuilder}),
-	 * its value is used. If the first property doesn't exist in properties,
-	 * then it tries with the second one and so on.
-	 * 
-	 * @param charsets
-	 *            one value, or one or several property keys
-	 * @return this instance for fluent chaining
-	 */
-	public JavaMailBuilder charset(String... charsets) {
-<span class="fc bfc" id="L336" title="All 2 branches covered.">		for (String c : charsets) {</span>
-<span class="pc bpc" id="L337" title="1 of 2 branches missed.">			if (c != null) {</span>
-<span class="fc" id="L338">				this.charsets.add(c);</span>
-			}
-		}
-<span class="fc" id="L341">		return this;</span>
-	}
-
-	/**
-	 * Set charset to use for email body.
-	 * 
-	 * This value preempts any other value defined by calling
-	 * {@link #charset(String...)} method.
-	 * 
 	 * If this method is called several times, only the last value is used.
 	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
 	 * @param charset
-	 *            the charset value to use
+	 *            the charset to use for email body
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder charset(Charset charset) {
-<span class="fc" id="L357">		this.charset = charset;</span>
-<span class="fc" id="L358">		return this;</span>
+<span class="nc" id="L410">		charsetValueBuilder.setValue(charset);</span>
+<span class="nc" id="L411">		return this;</span>
+	}
+
+	/**
+	 * Set charset to use for email body
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .charset()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(StandardCharsets.UTF_8)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #charset(Charset)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .charset(StandardCharsets.UTF_16)
+	 * .charset()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(StandardCharsets.UTF_8)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code StandardCharsets.UTF_16} is used regardless of the value
+	 * of the properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;JavaMailBuilder, Charset&gt; charset() {
+<span class="fc" id="L451">		return charsetValueBuilder;</span>
 	}
 
 	/**
@@ -372,8 +465,8 @@ public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implemen
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder charset(CharsetDetector charsetDetector) {
-<span class="nc" id="L375">		this.charsetDetector = charsetDetector;</span>
-<span class="nc" id="L376">		return this;</span>
+<span class="nc" id="L468">		this.charsetDetector = charsetDetector;</span>
+<span class="nc" id="L469">		return this;</span>
 	}
 
 	/**
@@ -391,10 +484,10 @@ public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implemen
 	 * @return the builder to configure username/password authentication
 	 */
 	public UsernamePasswordAuthenticatorBuilder authenticator() {
-<span class="fc bfc" id="L394" title="All 2 branches covered.">		if (authenticatorBuilder == null) {</span>
-<span class="fc" id="L395">			authenticatorBuilder = new UsernamePasswordAuthenticatorBuilder(this);</span>
+<span class="fc bfc" id="L487" title="All 2 branches covered.">		if (authenticatorBuilder == null) {</span>
+<span class="fc" id="L488">			authenticatorBuilder = new UsernamePasswordAuthenticatorBuilder(this, buildContext);</span>
 		}
-<span class="fc" id="L397">		return authenticatorBuilder;</span>
+<span class="fc" id="L490">		return authenticatorBuilder;</span>
 	}
 
 	/**
@@ -413,83 +506,8 @@ public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implemen
 	 * @return the builder to configure username/password authentication
 	 */
 	public JavaMailBuilder authenticator(Authenticator authenticator) {
-<span class="nc" id="L416">		this.authenticator = authenticator;</span>
-<span class="nc" id="L417">		return this;</span>
-	}
-
-	/**
-	 * Configures environment for the builder (and sub-builders). Environment
-	 * consists of configuration properties/values that are used to configure
-	 * the system (see {@link EnvironmentBuilder} for more information).
-	 * 
-	 * You can use system properties:
-	 * 
-	 * &lt;pre&gt;
-	 * .environment()
-	 *    .systemProperties();
-	 * &lt;/pre&gt;
-	 * 
-	 * Or, you can load properties from a file:
-	 * 
-	 * &lt;pre&gt;
-	 * .environment()
-	 *    .properties(&quot;/path/to/file.properties&quot;)
-	 * &lt;/pre&gt;
-	 * 
-	 * Or using directly a {@link Properties} object:
-	 * 
-	 * &lt;pre&gt;
-	 * Properties myprops = new Properties();
-	 * myprops.setProperty(&quot;foo&quot;, &quot;bar&quot;);
-	 * .environment()
-	 *    .properties(myprops)
-	 * &lt;/pre&gt;
-	 * 
-	 * Or defining directly properties:
-	 * 
-	 * &lt;pre&gt;
-	 * .environment()
-	 *    .properties()
-	 *       .set(&quot;foo&quot;, &quot;bar&quot;)
-	 * &lt;/pre&gt;
-	 * 
-	 * 
-	 * &lt;p&gt;
-	 * If no environment was previously used, it creates a new one. Then each
-	 * time you call {@link #environment()}, the same instance is used.
-	 * &lt;/p&gt;
-	 * 
-	 * @return the builder to configure properties handling
-	 */
-	public EnvironmentBuilder&lt;JavaMailBuilder&gt; environment() {
-<span class="fc bfc" id="L465" title="All 2 branches covered.">		if (environmentBuilder == null) {</span>
-<span class="fc" id="L466">			environmentBuilder = new SimpleEnvironmentBuilder&lt;&gt;(this);</span>
-		}
-<span class="fc" id="L468">		return environmentBuilder;</span>
-	}
-
-	/**
-	 * NOTE: this is mostly for advance usage (when creating a custom module).
-	 * 
-	 * Inherits environment configuration from another builder. This is useful
-	 * for configuring independently different parts of Ogham but keeping a
-	 * whole coherence (see {@link DefaultJavaMailConfigurer} for an example of
-	 * use).
-	 * 
-	 * The same instance is shared meaning that all changes done here will also
-	 * impact the other builder.
-	 * 
-	 * &lt;p&gt;
-	 * If a previous builder was defined (by calling {@link #environment()} for
-	 * example), the new builder will override it.
-	 * 
-	 * @param builder
-	 *            the builder to inherit
-	 * @return this instance for fluent chaining
-	 */
-	public JavaMailBuilder environment(EnvironmentBuilder&lt;?&gt; builder) {
-<span class="fc" id="L491">		environmentBuilder = new EnvironmentBuilderDelegate&lt;&gt;(this, builder);</span>
-<span class="fc" id="L492">		return this;</span>
+<span class="nc" id="L509">		this.authenticator = authenticator;</span>
+<span class="nc" id="L510">		return this;</span>
 	}
 
 	/**
@@ -512,8 +530,8 @@ public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implemen
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder intercept(JavaMailInterceptor interceptor) {
-<span class="nc" id="L515">		this.interceptor = interceptor;</span>
-<span class="nc" id="L516">		return this;</span>
+<span class="nc" id="L533">		this.interceptor = interceptor;</span>
+<span class="nc" id="L534">		return this;</span>
 	}
 
 	/**
@@ -566,10 +584,10 @@ public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implemen
 	 * @return the builder to configure mimetype detection
 	 */
 	public MimetypeDetectionBuilder&lt;JavaMailBuilder&gt; mimetype() {
-<span class="fc bfc" id="L569" title="All 2 branches covered.">		if (mimetypeBuilder == null) {</span>
-<span class="fc" id="L570">			mimetypeBuilder = new SimpleMimetypeDetectionBuilder&lt;&gt;(this, environmentBuilder);</span>
+<span class="fc bfc" id="L587" title="All 2 branches covered.">		if (mimetypeBuilder == null) {</span>
+<span class="fc" id="L588">			mimetypeBuilder = new SimpleMimetypeDetectionBuilder&lt;&gt;(this, buildContext);</span>
 		}
-<span class="fc" id="L572">		return mimetypeBuilder;</span>
+<span class="fc" id="L590">		return mimetypeBuilder;</span>
 	}
 
 	/**
@@ -591,85 +609,134 @@ public class JavaMailBuilder extends AbstractParent&lt;EmailBuilder&gt; implemen
 	 * @return this instance for fluent chaining
 	 */
 	public JavaMailBuilder mimetype(MimetypeDetectionBuilder&lt;?&gt; builder) {
-<span class="nc" id="L594">		mimetypeBuilder = new MimetypeDetectionBuilderDelegate&lt;&gt;(this, builder);</span>
-<span class="nc" id="L595">		return this;</span>
+<span class="nc" id="L612">		mimetypeBuilder = new MimetypeDetectionBuilderDelegate&lt;&gt;(this, builder);</span>
+<span class="nc" id="L613">		return this;</span>
+	}
+
+	/**
+	 * Register additional properties that are used by JavaMail session.
+	 * 
+	 * &lt;p&gt;
+	 * If a key was previously registered, it is replaced by the new value.
+	 * 
+	 * &lt;p&gt;
+	 * If the value is {@code null}, the key is removed.
+	 * 
+	 * @param props
+	 *            the properties to register
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder properties(Properties props) {
+<span class="nc" id="L630">		updateProperties(props.entrySet());</span>
+<span class="nc" id="L631">		return this;</span>
+	}
+
+	/**
+	 * Register additional properties that are used by JavaMail session.
+	 * 
+	 * &lt;p&gt;
+	 * If a key was previously registered, it is replaced by the new value.
+	 * 
+	 * &lt;p&gt;
+	 * If the value is {@code null}, the key is removed.
+	 * 
+	 * 
+	 * @param props
+	 *            the properties to register
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailBuilder properties(Map&lt;String, String&gt; props) {
+<span class="fc" id="L649">		updateProperties(props.entrySet());</span>
+<span class="fc" id="L650">		return this;</span>
 	}
 
 	@Override
 	public JavaMailSender build() {
-<span class="fc" id="L600">		Properties props = buildProperties();</span>
-<span class="fc" id="L601">		MimeTypeProvider mimetypeProvider = mimetype().build();</span>
-<span class="fc" id="L602">		LOG.info(&quot;Sending email using JavaMail API is registered&quot;);</span>
-<span class="fc" id="L603">		LOG.debug(&quot;SMTP server address: {}:{}&quot;, props.getProperty(&quot;mail.host&quot;), props.getProperty(&quot;mail.port&quot;));</span>
-<span class="fc" id="L604">		return new JavaMailSender(props, buildContentHandler(mimetypeProvider), buildAttachmentHandler(mimetypeProvider), buildAuthenticator(), interceptor);</span>
+<span class="fc" id="L655">		Properties props = buildProperties();</span>
+<span class="fc" id="L656">		MimeTypeProvider mimetypeProvider = mimetype().build();</span>
+<span class="fc" id="L657">		LOG.info(&quot;Sending email using JavaMail API is registered&quot;);</span>
+<span class="fc" id="L658">		LOG.debug(&quot;SMTP server address: {}:{}&quot;, props.getProperty(&quot;mail.host&quot;), props.getProperty(&quot;mail.port&quot;));</span>
+<span class="fc" id="L659">		JavaMailAttachmentHandler attachmentHandler = buildAttachmentHandler(mimetypeProvider);</span>
+<span class="fc" id="L660">		return buildContext.register(new JavaMailSender(props, buildContentHandler(mimetypeProvider, attachmentHandler), attachmentHandler, buildAuthenticator(), interceptor));</span>
 	}
 
 	@Override
 	public Condition&lt;Message&gt; getCondition() {
-<span class="fc" id="L609">		PropertyResolver propertyResolver = buildPropertyResolver();</span>
-<span class="fc" id="L610">		return requiredProperty(propertyResolver, &quot;mail.host&quot;).or(requiredProperty(propertyResolver, &quot;mail.smtp.host&quot;));</span>
+<span class="fc" id="L665">		PropertyResolver propertyResolver = buildPropertyResolver();</span>
+<span class="fc" id="L666">		return requiredProperty(propertyResolver, &quot;mail.host&quot;).or(requiredProperty(propertyResolver, &quot;mail.smtp.host&quot;));</span>
 	}
 
 	private Properties buildProperties() {
-<span class="fc" id="L614">		return new PropertiesBridge(buildPropertyResolver());</span>
+<span class="fc" id="L670">		return buildContext.register(new PropertiesBridge(new FirstExistingPropertiesResolver(buildPropertyResolver(), new JavaPropertiesResolver(additionalProperties, getConverter()))));</span>
 	}
 
 	private OverrideJavaMailResolver buildPropertyResolver() {
-<span class="fc" id="L618">		return new OverrideJavaMailResolver(getPropertyResolver(), getConverter(), hosts, ports, port);</span>
+<span class="fc" id="L674">		return buildContext.register(new OverrideJavaMailResolver(getPropertyResolver(), getConverter(), hostValueBuilder, portValueBuilder));</span>
 	}
 
 	private Converter getConverter() {
-<span class="fc bfc" id="L622" title="All 2 branches covered.">		if (environmentBuilder == null) {</span>
-<span class="fc" id="L623">			return new DefaultConverter();</span>
-		}
-<span class="fc" id="L625">		return environmentBuilder.converter().build();</span>
+<span class="fc" id="L678">		return buildContext.getConverter();</span>
 	}
 
 	private Authenticator buildAuthenticator() {
-<span class="pc bpc" id="L629" title="1 of 2 branches missed.">		if (this.authenticator != null) {</span>
-<span class="nc" id="L630">			return this.authenticator;</span>
+<span class="pc bpc" id="L682" title="1 of 2 branches missed.">		if (this.authenticator != null) {</span>
+<span class="nc" id="L683">			return this.authenticator;</span>
 		}
-<span class="fc bfc" id="L632" title="All 2 branches covered.">		if (authenticatorBuilder != null) {</span>
-<span class="fc" id="L633">			return authenticatorBuilder.build();</span>
+<span class="fc bfc" id="L685" title="All 2 branches covered.">		if (authenticatorBuilder != null) {</span>
+<span class="fc" id="L686">			return authenticatorBuilder.build();</span>
 		}
-<span class="fc" id="L635">		return null;</span>
+<span class="fc" id="L688">		return null;</span>
 	}
 
-	private MapContentHandler buildContentHandler(MimeTypeProvider mimetypeProvider) {
-<span class="fc" id="L639">		MapContentHandler contentHandler = new MapContentHandler();</span>
-<span class="fc" id="L640">		contentHandler.addContentHandler(MultiContent.class, new MultiContentHandler(contentHandler));</span>
-<span class="fc" id="L641">		contentHandler.addContentHandler(ContentWithAttachments.class, new ContentWithAttachmentsHandler(contentHandler));</span>
-<span class="fc" id="L642">		contentHandler.addContentHandler(MayHaveStringContent.class, new StringContentHandler(mimetypeProvider, buildCharset()));</span>
-<span class="fc" id="L643">		return contentHandler;</span>
+	private PriorizedContentHandler buildContentHandler(MimeTypeProvider mimetypeProvider, JavaMailAttachmentHandler attachmentHandler) {
+<span class="fc" id="L692">		PriorizedContentHandler contentHandler = buildContext.register(new PriorizedContentHandler());</span>
+<span class="fc" id="L693">		contentHandler.register(MultiContent.class, buildContext.register(new MultiContentHandler(contentHandler)));</span>
+<span class="fc" id="L694">		contentHandler.register(ContentWithAttachments.class, buildContext.register(new ContentWithAttachmentsHandler(contentHandler, attachmentHandler)));</span>
+<span class="fc" id="L695">		contentHandler.register(MayHaveStringContent.class, buildContext.register(new StringContentHandler(mimetypeProvider, buildCharset())));</span>
+<span class="fc" id="L696">		return contentHandler;</span>
 	}
 
 	private CharsetDetector buildCharset() {
-<span class="pc bpc" id="L647" title="1 of 2 branches missed.">		if (this.charsetDetector != null) {</span>
-<span class="nc" id="L648">			return this.charsetDetector;</span>
+<span class="pc bpc" id="L700" title="1 of 2 branches missed.">		if (this.charsetDetector != null) {</span>
+<span class="nc" id="L701">			return this.charsetDetector;</span>
 		}
-<span class="pc bpc" id="L650" title="1 of 2 branches missed.">		if (charset != null) {</span>
-<span class="nc" id="L651">			return new FixedCharsetDetector(charset);</span>
+<span class="fc" id="L703">		Charset charset = this.charsetValueBuilder.getValue();</span>
+<span class="fc bfc" id="L704" title="All 2 branches covered.">		if (charset != null) {</span>
+<span class="fc" id="L705">			return buildContext.register(new FixedCharsetDetector(charset));</span>
 		}
-<span class="fc bfc" id="L653" title="All 2 branches covered.">		if (!charsets.isEmpty()) {</span>
-<span class="fc" id="L654">			String charsetValue = BuilderUtils.evaluate(charsets, getPropertyResolver(), String.class);</span>
-<span class="fc" id="L655">			return new FixedCharsetDetector(Charset.forName(charsetValue));</span>
-		}
-<span class="fc" id="L657">		return new FixedCharsetDetector();</span>
+<span class="fc" id="L707">		return buildContext.register(new FixedCharsetDetector());</span>
 	}
 
 	private PropertyResolver getPropertyResolver() {
-<span class="fc bfc" id="L661" title="All 2 branches covered.">		if (environmentBuilder != null) {</span>
-<span class="fc" id="L662">			return environmentBuilder.build();</span>
-		}
-<span class="fc" id="L664">		return BuilderUtils.getDefaultPropertyResolver(BuilderUtils.getDefaultProperties());</span>
+<span class="fc" id="L711">		return buildContext.getPropertyResolver();</span>
 	}
 
-	private MapAttachmentResourceHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
-<span class="fc" id="L668">		MapAttachmentResourceHandler attachmentHandler = new MapAttachmentResourceHandler();</span>
-<span class="fc" id="L669">		attachmentHandler.addResourceHandler(ByteResource.class, new StreamResourceHandler(mimetypeProvider));</span>
-<span class="fc" id="L670">		attachmentHandler.addResourceHandler(FileResource.class, new FileResourceHandler(mimetypeProvider));</span>
-<span class="fc" id="L671">		return attachmentHandler;</span>
+	private JavaMailAttachmentHandler buildAttachmentHandler(MimeTypeProvider mimetypeProvider) {
+<span class="fc" id="L715">		return buildContext.register(new JavaMailAttachmentHandler(buildAttachmentResourceHandler(mimetypeProvider)));</span>
 	}
 
+	private MapAttachmentResourceHandler buildAttachmentResourceHandler(MimeTypeProvider mimetypeProvider) {
+<span class="fc" id="L719">		MapAttachmentResourceHandler resourceHandler = buildContext.register(new MapAttachmentResourceHandler());</span>
+<span class="fc" id="L720">		resourceHandler.registerResourceHandler(FileResource.class, buildContext.register(new FileResourceHandler(mimetypeProvider)));</span>
+<span class="fc" id="L721">		resourceHandler.registerResourceHandler(OverrideNameWrapper.class, buildContext.register(new OverrideNameWrapperResourceHandler(resourceHandler)));</span>
+<span class="fc" id="L722">		resourceHandler.registerResourceHandler(LookupResource.class, buildContext.register(new FailResourceHandler(noResourceResolverConfigured())));</span>
+<span class="fc" id="L723">		resourceHandler.registerResourceHandler(NamedResource.class, buildContext.register(new StreamResourceHandler(mimetypeProvider)));</span>
+<span class="fc" id="L724">		return resourceHandler;</span>
+	}
+
+	private static BiFunction&lt;NamedResource, Attachment, AttachmentResourceHandlerException&gt; noResourceResolverConfigured() {
+<span class="fc" id="L728">		return (resource, attachment) -&gt; new UnresolvableAttachmentResourceHandlerException(</span>
+<span class="fc" id="L729">				&quot;Failed to attach &quot; + resource.getName() + &quot; because it points to a path but no resource resolver has been configured.&quot;, attachment);</span>
+	}
+
+	private void updateProperties(Set&lt;? extends Entry&lt;?, ?&gt;&gt; entrySet) {
+<span class="pc bpc" id="L733" title="1 of 2 branches missed.">		for (Entry&lt;?, ?&gt; prop : entrySet) {</span>
+<span class="nc bnc" id="L734" title="All 2 branches missed.">			if (prop.getValue() == null) {</span>
+<span class="nc" id="L735">				additionalProperties.remove(prop.getKey());</span>
+			} else {
+<span class="nc" id="L737">				additionalProperties.setProperty(prop.getKey().toString(), prop.getValue().toString());</span>
+			}
+<span class="nc" id="L739">		}</span>
+<span class="fc" id="L740">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

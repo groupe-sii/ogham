@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FixedIntervalRetry.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.retry</a> &gt; <span class="el_source">FixedIntervalRetry.java</span></div><h1>FixedIntervalRetry.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.retry;
+
+import java.time.Instant;
+
+/**
+ * Retry several times with a fixed delay between each try until the maximum
+ * attempts is reached. The next execution is based on the execution start date.
+ * 
+ * If delay is 500ms and max retries is 5, it means that a retry will be
+ * attempted every 500ms until 5 attempts are reached (inclusive). For example,
+ * you want to connect to an external system at t1=0 and the connection timeout
+ * (100ms) is triggered at t2=100ms. Using this retry will provide the following
+ * behavior:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;0: connect&lt;/li&gt;
+ * &lt;li&gt;100: timeout&lt;/li&gt;
+ * &lt;li&gt;500: connect&lt;/li&gt;
+ * &lt;li&gt;600: timeout&lt;/li&gt;
+ * &lt;li&gt;1000: connect&lt;/li&gt;
+ * &lt;li&gt;1100: timeout&lt;/li&gt;
+ * &lt;li&gt;1500: connect&lt;/li&gt;
+ * &lt;li&gt;1600: timeout&lt;/li&gt;
+ * &lt;li&gt;2000: connect&lt;/li&gt;
+ * &lt;li&gt;2100: timeout&lt;/li&gt;
+ * &lt;li&gt;2500: connect&lt;/li&gt;
+ * &lt;li&gt;2600: timeout&lt;/li&gt;
+ * &lt;li&gt;fail&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * &lt;strong&gt;NOTE:&lt;/strong&gt; The provided date doesn't take the duration of the
+ * execution in account. If an execution takes 1s to execute while retry delay
+ * is set to 500ms, there may have several executions in parallel. However, this
+ * totally depends on the {@link RetryExecutor} implementation. For example
+ * {@link SimpleRetryExecutor} won't run several executions in parallel. In this
+ * case, it will execute the action as soon as the previous one has failed
+ * therefore the delay may not be complied.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FixedIntervalRetry implements RetryStrategy {
+	private final int maxRetries;
+	private final long interval;
+	private Instant firstExecutionTime;
+	private int retries;
+	private int remainingRetries;
+
+	/**
+	 * Initializes with the maximum attempts and the delay between each attempt.
+	 * 
+	 * @param maxRetries
+	 *            the maximum attempts
+	 * @param interval
+	 *            the interval between attempts
+	 */
+	public FixedIntervalRetry(int maxRetries, long interval) {
+<span class="fc" id="L59">		super();</span>
+<span class="fc" id="L60">		this.maxRetries = maxRetries;</span>
+<span class="fc" id="L61">		this.interval = interval;</span>
+<span class="fc" id="L62">		remainingRetries = maxRetries;</span>
+<span class="fc" id="L63">	}</span>
+
+	@Override
+	public boolean terminated() {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">		return remainingRetries &lt;= 0;</span>
+	}
+
+	@Override
+	public Instant nextDate(Instant executionStartTime, Instant executionFailureTime) {
+<span class="fc" id="L72">		remainingRetries--;</span>
+<span class="fc" id="L73">		retries++;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		if (firstExecutionTime == null) {</span>
+<span class="fc" id="L75">			firstExecutionTime = executionStartTime;</span>
+		}
+<span class="fc" id="L77">		return firstExecutionTime.plusMillis(interval * retries);</span>
+	}
+
+	public int getRemainingRetries() {
+<span class="fc" id="L81">		return remainingRetries;</span>
+	}
+
+	public int getMaxRetries() {
+<span class="nc" id="L85">		return maxRetries;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

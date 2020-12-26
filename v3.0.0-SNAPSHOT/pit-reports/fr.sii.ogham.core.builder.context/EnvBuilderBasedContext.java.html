@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>EnvBuilderBasedContext.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package fr.sii.ogham.core.builder.context;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.List;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.function.Function;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.builder.env.EnvironmentBuilder;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.builder.registry.Registry;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.convert.Converter;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.env.PropertyResolver;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.core.util.BuilderUtils;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_14'/>
+14
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_14'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>/**</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * Context that uses a shared {@link EnvironmentBuilder} to evaluate the</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * properties. The converter is the same as used by the</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * {@link EnvironmentBuilder}.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * &#60;p&#62;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_20'/>
+20
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_20'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * This implementation delegates registration of instances to the provided</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_21'/>
+21
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_21'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * registry. Any instance may be registered.</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * </span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_23'/>
+23
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_23'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> * @author Aur&#233;lien Baudet</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_24'/>
+24
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_24'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> *</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''> */</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_26'/>
+26
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_26'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>public class EnvBuilderBasedContext implements BuildContext {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_27'/>
+27
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_27'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final EnvironmentBuilder&#60;?&#62; environmentBuilder;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_28'/>
+28
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_28'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final Registry&#60;Object&#62; registry;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_29'/>
+29
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_29'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_30'/>
+30
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_30'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public EnvBuilderBasedContext(EnvironmentBuilder&#60;?&#62; environmentBuilder, Registry&#60;Object&#62; registry) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_31'/>
+31
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_31'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;super();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_32'/>
+32
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_32'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.environmentBuilder = environmentBuilder;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_33'/>
+33
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_33'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.registry = registry;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_34'/>
+34
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_34'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_35'/>
+35
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_35'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_36'/>
+36
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_36'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_37'/>
+37
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_37'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public &#60;T&#62; T register(T instance) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_38'/>
+38
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_38'>4</a>
+<span>
+1. register : removed call to fr/sii/ogham/core/builder/registry/Registry::register &rarr; NO_COVERAGE<br/>
+2. register : removed call to fr/sii/ogham/core/builder/registry/Registry::register &rarr; SURVIVED<br/>
+3. register : removed call to fr/sii/ogham/core/builder/registry/Registry::register &rarr; TIMED_OUT<br/>
+4. register : removed call to fr/sii/ogham/core/builder/registry/Registry::register &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;registry.register(instance);</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_39'/>
+39
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_39'>7</a>
+<span>
+1. register : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; NO_COVERAGE<br/>
+2. register : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; TIMED_OUT<br/>
+3. register : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED<br/>
+4. register : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED<br/>
+5. register : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED<br/>
+6. register : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED<br/>
+7. register : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return instance;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_40'/>
+40
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_40'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_41'/>
+41
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_41'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_42'/>
+42
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_42'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_43'/>
+43
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_43'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public &#60;T&#62; T evaluate(List&#60;String&#62; properties, Class&#60;T&#62; resultClass) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_44'/>
+44
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_44'>8</a>
+<span>
+1. evaluate : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; NO_COVERAGE<br/>
+2. evaluate : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; TIMED_OUT<br/>
+3. evaluate : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED<br/>
+4. evaluate : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED<br/>
+5. evaluate : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED<br/>
+6. evaluate : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED<br/>
+7. evaluate : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED<br/>
+8. evaluate : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return BuilderUtils.evaluate(properties, getPropertyResolver(), resultClass);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_45'/>
+45
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_45'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_46'/>
+46
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_46'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_47'/>
+47
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_47'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_48'/>
+48
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_48'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public PropertyResolver getPropertyResolver() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_49'/>
+49
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_49'>8</a>
+<span>
+1. getPropertyResolver : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; NO_COVERAGE<br/>
+2. getPropertyResolver : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; TIMED_OUT<br/>
+3. getPropertyResolver : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED<br/>
+4. getPropertyResolver : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED<br/>
+5. getPropertyResolver : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED<br/>
+6. getPropertyResolver : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED<br/>
+7. getPropertyResolver : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED<br/>
+8. getPropertyResolver : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return environmentBuilder.build();</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_50'/>
+50
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_50'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_51'/>
+51
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_51'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_52'/>
+52
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_52'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_53'/>
+53
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_53'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public Converter getConverter() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_54'/>
+54
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_54'>5</a>
+<span>
+1. getConverter : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; NO_COVERAGE<br/>
+2. getConverter : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; KILLED<br/>
+3. getConverter : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; KILLED<br/>
+4. getConverter : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; KILLED<br/>
+5. getConverter : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return environmentBuilder.converter().build();</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_55'/>
+55
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_55'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_56'/>
+56
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_56'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_57'/>
+57
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_57'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_58'/>
+58
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_58'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@SuppressWarnings(&#34;unchecked&#34;)</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_59'/>
+59
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_59'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public &#60;P, V, T extends ConfigurationValueBuilder&#60;P, V&#62;&#62; T newConfigurationValueBuilder(P parent, Class&#60;V&#62; valueClass) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_60'/>
+60
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_60'>16</a>
+<span>
+1. lambda$newConfigurationValueBuilder$0 : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; NO_COVERAGE<br/>
+2. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; NO_COVERAGE<br/>
+3. lambda$newConfigurationValueBuilder$0 : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED<br/>
+4. lambda$newConfigurationValueBuilder$0 : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED<br/>
+5. lambda$newConfigurationValueBuilder$0 : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED<br/>
+6. lambda$newConfigurationValueBuilder$0 : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED<br/>
+7. lambda$newConfigurationValueBuilder$0 : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED<br/>
+8. lambda$newConfigurationValueBuilder$0 : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED<br/>
+9. lambda$newConfigurationValueBuilder$0 : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED<br/>
+10. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+11. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+12. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+13. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+14. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+15. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+16. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return newConfigurationValueBuilder(ctx -&#62; (T) new ConfigurationValueBuilderHelper&#60;&#62;(parent, valueClass, ctx));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_61'/>
+61
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_61'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_62'/>
+62
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_62'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_63'/>
+63
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_63'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;@Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_64'/>
+64
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_64'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public &#60;P, V, T extends ConfigurationValueBuilder&#60;P, V&#62;&#62; T newConfigurationValueBuilder(Function&#60;BuildContext, T&#62; factory) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_65'/>
+65
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_65'>8</a>
+<span>
+1. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; NO_COVERAGE<br/>
+2. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+3. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+4. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+5. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+6. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+7. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+8. newConfigurationValueBuilder : replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return factory.apply(this);</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_66'/>
+66
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_66'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@7ad31c15_67'/>
+67
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_67'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@7ad31c15_38'>38</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_38'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>register<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/builder/registry/Registry::register &rarr; NO_COVERAGE</p> <p class='SURVIVED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>register<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/builder/registry/Registry::register &rarr; SURVIVED</p> <p class='TIMED_OUT'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>register<br/><b>Killed by : </b>none</span></span> removed call to fr/sii/ogham/core/builder/registry/Registry::register &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>register<br/><b>Killed by : </b>oghamcore.it.core.service.CleanupTest.severalCleanupShouldCleanOnlyOnce(oghamcore.it.core.service.CleanupTest)</span></span> removed call to fr/sii/ogham/core/builder/registry/Registry::register &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@7ad31c15_39'>39</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_39'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>register<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>register<br/><b>Killed by : </b>oghamjavamail.it.builder.JavaMailCustomConfigurationTest.noHostDefinedShouldFail(oghamjavamail.it.builder.JavaMailCustomConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>register<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; NO_COVERAGE</p> <p class='TIMED_OUT'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>register<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>register<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>register<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>register<br/><b>Killed by : </b>oghamcore.it.core.convert.CustomConverterTest.asDeveloperIUseMyCustomConverter(oghamcore.it.core.convert.CustomConverterTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::register &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@7ad31c15_44'>44</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_44'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>evaluate<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>evaluate<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>evaluate<br/><b>Killed by : </b>oghamall.it.configuration.SendGridConfigurationTest.asDeveloperIDefineApiKeyUsingProperties(oghamall.it.configuration.SendGridConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>evaluate<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>evaluate<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>evaluate<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overrideProperties(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>evaluate<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>evaluate<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.StaticMethodAccessTest.smsUsingFreemarkerTemplateAndStaticMethodAccessDisabledShouldFail(oghamspringbootv2autoconfigure.it.StaticMethodAccessTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::evaluate &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@7ad31c15_49'>49</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_49'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getPropertyResolver<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getPropertyResolver<br/><b>Killed by : </b>oghamcore.it.core.configuration.ConfigurationLifecycleSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getPropertyResolver<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.SpringWebBeanResolutionTest.smsUsingThymeleafTemplateShouldResolveBeansAndUrls(oghamspringbootv2autoconfigure.it.SpringWebBeanResolutionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED</p> <p class='TIMED_OUT'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getPropertyResolver<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; TIMED_OUT</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getPropertyResolver<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getPropertyResolver<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.emailSenderManuallyRegisteredButUnconfiguredTemplateParsersCantHandleTemplateContent(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getPropertyResolver<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getPropertyResolver<br/><b>Killed by : </b>oghamjavamail.it.builder.OverridePropertiesTest.overridePropertiesWithEmptyProps(oghamjavamail.it.builder.OverridePropertiesTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getPropertyResolver &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@7ad31c15_54'>54</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_54'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getConverter<br/><b>Killed by : </b>oghamall.it.email.FluentEmailTest.bodyString(oghamall.it.email.FluentEmailTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getConverter<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getConverter<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1SendGridAutoConfigurationTests.oghamWithoutSendGridAutoConfigWithoutOghamPropertiesShouldUseOghamSendGridClientWithSpringProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1SendGridAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getConverter<br/><b>Killed by : </b>oghamjavamail.it.builder.JavaMailCustomConfigurationTest.directValueShouldOverride(oghamjavamail.it.builder.JavaMailCustomConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getConverter<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.StaticMethodAccessTest.emailUsingFreemarkerTemplateShouldBeAbleToCallStaticMethodsWithCustomVariableName(oghamspringbootv2autoconfigure.it.StaticMethodAccessTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::getConverter &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@7ad31c15_60'>60</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_60'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>lambda$newConfigurationValueBuilder$0<br/><b>Killed by : </b>oghamcore.it.core.convert.CustomConverterTest.asDeveloperIUseMyCustomConverter(oghamcore.it.core.convert.CustomConverterTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>lambda$newConfigurationValueBuilder$0<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>lambda$newConfigurationValueBuilder$0<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>lambda$newConfigurationValueBuilder$0<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests.oghamWithSpringPropsShouldUseSpringProperties(oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>lambda$newConfigurationValueBuilder$0<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.unconfiguredServiceCantSendSms(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>lambda$newConfigurationValueBuilder$0<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests.oghamWithJavaMailAutoConfigShouldUseSpringProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>lambda$newConfigurationValueBuilder$0<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>lambda$newConfigurationValueBuilder$0<br/><b>Killed by : </b>oghamjavamail.it.builder.JavaMailCustomConfigurationTest.noHostDefinedShouldFail(oghamjavamail.it.builder.JavaMailCustomConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::lambda$newConfigurationValueBuilder$0 &rarr; KILLED</p> <p class='KILLED'><span class='pop'>9.<span><b>9</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamcore.it.core.convert.CustomConverterTest.asDeveloperIUseMyCustomConverter(oghamcore.it.core.convert.CustomConverterTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>10.<span><b>10</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests.oghamWithJavaMailAutoConfigShouldUseSpringProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>11.<span><b>11</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.unconfiguredServiceCantSendSms(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>12.<span><b>12</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamjavamail.it.builder.JavaMailCustomConfigurationTest.noHostDefinedShouldFail(oghamjavamail.it.builder.JavaMailCustomConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>13.<span><b>13</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>14.<span><b>14</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>15.<span><b>15</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests.oghamWithSpringPropsShouldUseSpringProperties(oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>16.<span><b>16</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@7ad31c15_65'>65</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@7ad31c15_65'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamsmsglobal.it.SmsglobalServiceProviderConfigurerSpec</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamjavamail.it.builder.JavaMailCustomConfigurationTest.noHostDefinedShouldFail(oghamjavamail.it.builder.JavaMailCustomConfigurationTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamall.it.configuration.EmptyBuilderTest.unconfiguredServiceCantSendSms(oghamall.it.configuration.EmptyBuilderTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests.oghamWithJavaMailAutoConfigShouldUseSpringProperties(oghamspringbootv1autoconfigure.it.OghamSpringBoot1JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamcloudhopper.it.AutoRetryExtensionTest.smsNotRetriedDueToCloudhopperError(oghamcloudhopper.it.AutoRetryExtensionTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests.oghamWithSpringPropsShouldUseSpringProperties(oghamspringbootv2autoconfigure.it.OghamSpringBoot2JavaMailAutoConfigurationTests)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>newConfigurationValueBuilder<br/><b>Killed by : </b>oghamcore.it.core.convert.CustomConverterTest.asDeveloperIUseMyCustomConverter(oghamcore.it.core.convert.CustomConverterTest)</span></span> replaced return value with null for fr/sii/ogham/core/builder/context/EnvBuilderBasedContext::newConfigurationValueBuilder &rarr; KILLED</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+</ul>
+
+<br/>
+
+Report generated by <a href='http://pitest.org'>PIT</a> OGHAM
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RandomPortGreenMailRule.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.junit.email</a> &gt; <span class="el_source">RandomPortGreenMailRule.java</span></div><h1>RandomPortGreenMailRule.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.junit.email;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
+
+import com.icegreen.greenmail.junit4.GreenMailRule;
+import com.icegreen.greenmail.server.AbstractServer;
+import com.icegreen.greenmail.util.ServerSetup;
+
+import fr.sii.ogham.testing.util.RandomPortUtils;
+
+/**
+ * Just an extension for {@link GreenMailRule} to handle random port instead of
+ * fixed port.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class RandomPortGreenMailRule extends GreenMailRule {
+
+	/**
+	 * Initialize the rule for the SMTP protocol only (random port).
+	 */
+	public RandomPortGreenMailRule() {
+<span class="fc" id="L30">		this(ServerSetup.PROTOCOL_SMTP);</span>
+<span class="fc" id="L31">	}</span>
+
+	/**
+	 * Initialize the rule for the provided protocols (random port for each
+	 * protocol).
+	 * 
+	 * The random port range is [{@link RandomPortUtils#PORT_RANGE_MIN},
+	 * {@link RandomPortUtils#PORT_RANGE_MAX}].
+	 * 
+	 * @param protocols
+	 *            the list of protocols to start
+	 */
+	public RandomPortGreenMailRule(String... protocols) {
+<span class="fc" id="L44">		this(RandomPortUtils.PORT_RANGE_MIN, RandomPortUtils.PORT_RANGE_MAX, protocols);</span>
+<span class="fc" id="L45">	}</span>
+
+	/**
+	 * Initialize the rule for the provided protocols (random port for each
+	 * protocol).
+	 * 
+	 * The random port range is [{@link RandomPortUtils#PORT_RANGE_MIN},
+	 * maxPort].
+	 * 
+	 * @param maxPort
+	 *            the maximum port
+	 * @param protocols
+	 *            the list of protocols to start
+	 */
+	public RandomPortGreenMailRule(int maxPort, String... protocols) {
+<span class="fc" id="L60">		this(RandomPortUtils.PORT_RANGE_MIN, maxPort, protocols);</span>
+<span class="fc" id="L61">	}</span>
+
+	/**
+	 * Initialize the rule for the provided protocols (random port for each
+	 * protocol).
+	 * 
+	 * The random port range is [minPort, maxPort].
+	 * 
+	 * @param minPort
+	 *            the minimum port
+	 * @param maxPort
+	 *            the maximum port
+	 * @param protocols
+	 *            the list of protocols to start
+	 */
+	public RandomPortGreenMailRule(int minPort, int maxPort, String... protocols) {
+<span class="fc" id="L77">		super(toServerSetup(minPort, maxPort, protocols));</span>
+<span class="fc" id="L78">	}</span>
+
+	@Override
+	public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+<span class="fc" id="L82">		return super.apply(new Statement() {</span>
+			@Override
+			public void evaluate() throws Throwable {
+				try {
+<span class="fc" id="L86">					base.evaluate();</span>
+				} finally {
+<span class="fc" id="L88">					resetPorts();</span>
+				}
+<span class="fc" id="L90">			}</span>
+		}, method, target);
+	}
+
+	private void resetPorts() {
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">		if (getGreenMail() != null) {</span>
+<span class="fc" id="L96">			resetPort(getGreenMail().getImap());</span>
+<span class="fc" id="L97">			resetPort(getGreenMail().getImaps());</span>
+<span class="fc" id="L98">			resetPort(getGreenMail().getPop3());</span>
+<span class="fc" id="L99">			resetPort(getGreenMail().getPop3s());</span>
+<span class="fc" id="L100">			resetPort(getGreenMail().getSmtp());</span>
+<span class="fc" id="L101">			resetPort(getGreenMail().getSmtps());</span>
+		}
+<span class="fc" id="L103">	}</span>
+
+	private static void resetPort(AbstractServer server) {
+<span class="fc bfc" id="L106" title="All 2 branches covered.">		if (server != null) {</span>
+<span class="fc" id="L107">			resetPort(server.getServerSetup());</span>
+		}
+<span class="fc" id="L109">	}</span>
+
+	private static void resetPort(ServerSetup setup) {
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">		if (setup instanceof RandomPortServerSetup) {</span>
+<span class="fc" id="L113">			((RandomPortServerSetup) setup).resetPort();</span>
+		}
+<span class="fc" id="L115">	}</span>
+
+	private static ServerSetup[] toServerSetup(int minPort, int maxPort, String... protocols) {
+<span class="fc" id="L118">		List&lt;ServerSetup&gt; list = stream(protocols).map(p -&gt; new RandomPortServerSetup(minPort, maxPort, p)).collect(toList());</span>
+<span class="fc" id="L119">		return list.toArray(new ServerSetup[list.size()]);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

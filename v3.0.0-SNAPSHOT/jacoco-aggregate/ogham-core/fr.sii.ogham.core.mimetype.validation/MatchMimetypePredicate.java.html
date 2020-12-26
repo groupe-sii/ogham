@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MatchMimetypePredicate.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.mimetype.validation</a> &gt; <span class="el_source">MatchMimetypePredicate.java</span></div><h1>MatchMimetypePredicate.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.mimetype.validation;
+
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
+import javax.activation.MimeType;
+
+/**
+ * Default predicate that checks if the mimetype matches the provided string or
+ * not.
+ * 
+ * &lt;p&gt;
+ * The match string may contain {@code &quot;*&quot;}. The match string is converted to a
+ * regular expression where {@code &quot;*&quot;} is used to match anything.
+ * 
+ * &lt;p&gt;
+ * MimeType parameters (such as {@code &quot;;charset=&quot;}) are ignored.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MatchMimetypePredicate implements Predicate&lt;MimeType&gt; {
+<span class="fc" id="L23">	private static final Pattern PARAMETERS = Pattern.compile(&quot;;.*&quot;);</span>
+	private final Pattern matches;
+
+	public MatchMimetypePredicate(String matches) {
+<span class="fc" id="L27">		this(Pattern.compile(toPattern(matches)));</span>
+<span class="fc" id="L28">	}</span>
+
+	public MatchMimetypePredicate(Pattern matches) {
+<span class="fc" id="L31">		super();</span>
+<span class="fc" id="L32">		this.matches = matches;</span>
+<span class="fc" id="L33">	}</span>
+
+	@Override
+	public boolean test(MimeType t) {
+<span class="fc" id="L37">		return matches.matcher(sanitize(t.toString())).matches();</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L42">		return &quot;(&quot; + matches + &quot;?)&quot;;</span>
+	}
+	
+	private static String sanitize(String mimetype) {
+<span class="fc" id="L46">		return PARAMETERS.matcher(mimetype).replaceAll(&quot;&quot;);</span>
+	}
+
+	private static String toPattern(String matches) {
+<span class="fc" id="L50">		StringBuilder regex = new StringBuilder();</span>
+<span class="fc" id="L51">		int starIdx = 0;</span>
+<span class="fc" id="L52">		int previousStarIdx = 0;</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">		while ((starIdx = matches.indexOf('*', previousStarIdx)) &gt;= 0) {</span>
+<span class="fc" id="L54">			regex.append(Pattern.quote(matches.substring(previousStarIdx, starIdx)));</span>
+<span class="fc" id="L55">			regex.append(&quot;.*&quot;);</span>
+<span class="fc" id="L56">			previousStarIdx = starIdx + 1;</span>
+		}
+<span class="fc" id="L58">		regex.append(Pattern.quote(matches.substring(previousStarIdx)));</span>
+<span class="fc" id="L59">		return regex.toString();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

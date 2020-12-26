@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AssertHtml.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.html</a> &gt; <span class="el_source">AssertHtml.java</span></div><h1>AssertHtml.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.html;
+
+import java.util.List;
+
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Difference;
+import org.junit.ComparisonFailure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+
+import fr.sii.ogham.testing.assertion.util.HtmlUtils;
+
+/**
+ * Utility class for checking HTML content.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class AssertHtml {
+<span class="fc" id="L21">	private static final Logger LOG = LoggerFactory.getLogger(AssertHtml.class);</span>
+
+	/**
+	 * Check if the HTML is identical to the expected. The HTML strings are
+	 * parsed into {@link Document}s. Two documents are considered to be
+	 * &quot;identical&quot; if they contain the same elements and attributes in the same
+	 * order.
+	 * &lt;p&gt;
+	 * For each difference, the difference will be logged with error level. It
+	 * will generate a {@link ComparisonFailure} with the expected string and
+	 * actual string in order to be able to visualize the differences on sources
+	 * directly in the IDE.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expected
+	 *            the expected HTML
+	 * @param actual
+	 *            the HTML content to check
+	 */
+	public static void assertEquals(String expected, String actual) {
+<span class="fc" id="L41">		DetailedDiff diff = HtmlUtils.compare(expected, actual);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">		if (!diff.identical()) {</span>
+<span class="fc" id="L43">			logDifferences(diff);</span>
+<span class="fc" id="L44">			throw new ComparisonFailure(&quot;HTML element different to expected one. See logs for details about found differences.\n&quot;, expected, actual);</span>
+		}
+<span class="fc" id="L46">	}</span>
+
+	/**
+	 * Check if the HTML is similar to the expected. The HTML strings are parsed
+	 * into {@link Document}s. Two documents are considered to be &quot;similar&quot; if
+	 * they contain the same elements and attributes regardless of order.
+	 * &lt;p&gt;
+	 * For each difference, the difference will be logged with error level. It
+	 * will generate a {@link ComparisonFailure} with the expected string and
+	 * actual string in order to be able to visualize the differences on sources
+	 * directly in the IDE.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expected
+	 *            the expected HTML
+	 * @param actual
+	 *            the HTML content to check
+	 */
+	public static void assertSimilar(String expected, String actual) {
+<span class="fc" id="L65">		DetailedDiff diff = HtmlUtils.compare(expected, actual);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		if (!diff.similar()) {</span>
+<span class="fc" id="L67">			logUnrecoverableDifferences(diff);</span>
+<span class="fc" id="L68">			throw new ComparisonFailure(&quot;HTML element different to expected one. See logs for details about found differences.\n&quot;, expected, actual);</span>
+		}
+<span class="fc" id="L70">	}</span>
+
+	private static void logDifferences(DetailedDiff diff) {
+<span class="fc bfc" id="L73" title="All 2 branches covered.">		for (Difference difference : (List&lt;Difference&gt;) diff.getAllDifferences()) {</span>
+<span class="fc" id="L74">			LOG.error(difference.toString()); // NOSONAR</span>
+<span class="fc" id="L75">		}</span>
+<span class="fc" id="L76">	}</span>
+
+	private static void logUnrecoverableDifferences(DetailedDiff diff) {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">		for (Difference difference : (List&lt;Difference&gt;) diff.getAllDifferences()) {</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">			if (!difference.isRecoverable()) {</span>
+<span class="fc" id="L81">				LOG.error(difference.toString()); // NOSONAR</span>
+			}
+<span class="fc" id="L83">		}</span>
+<span class="fc" id="L84">	}</span>
+
+	private AssertHtml() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
