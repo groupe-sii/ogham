@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.After;
 import org.junit.Assume;
@@ -69,6 +71,57 @@ public class LoggingRuleTest {
 			"│SUCCESS                                                                                           │\n" + 
 			"└──────────────────────────────────────────────────────────────────────────────────────────────────┘";
 	
+
+
+	static final String SUCCESS_HEADER_ASCII = 
+			"+==================================================================================================+\n" + 
+			"|FakeTest.success                                                                                  |\n" + 
+			"+==================================================================================================+";
+	static final String SUCCESS_FOOTER_ASCII =
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|FakeTest.success                                                                                  |\n" + 
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|SUCCESS                                                                                           |\n" + 
+			"+--------------------------------------------------------------------------------------------------+";
+	
+	
+	static final String FAILURE_HEADER_ASCII = 
+			"+==================================================================================================+\n" + 
+			"║FakeTest.failure                                                                                  |\n" + 
+			"+==================================================================================================+";
+	static final String FAILURE_FOOTER_ASCII =
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|FakeTest.failure                                                                                  |\n" + 
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|FAILED                                                                                            |\n" + 
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|oghamtesting.it.extensions.logging.LoggingRuleTest$CustomException: exception message             |\n" + 
+			"+--------------------------------------------------------------------------------------------------+";
+	
+
+	static final String CAUGHT_HEADER_ASCII = 
+			"+==================================================================================================+\n" + 
+			"|FakeTest.caught                                                                                   |\n" + 
+			"+==================================================================================================+";
+	static final String CAUGHT_FOOTER_ASCII =
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|FakeTest.caught                                                                                   |\n" + 
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|SUCCESS                                                                                           |\n" + 
+			"+--------------------------------------------------------------------------------------------------+";
+
+	
+	static final String CAUGHT_ANNOTATION_HEADER_ASCII = 
+			"+==================================================================================================+\n" + 
+			"║FakeTest.caughtByAnnotation                                                                       ║\n" + 
+			"+==================================================================================================╝";
+	static final String CAUGHT_ANNOTATION_FOOTER_ASCII =
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"+FakeTest.caughtByAnnotation                                                                       +\n" + 
+			"├--------------------------------------------------------------------------------------------------┤\n" + 
+			"+SUCCESS                                                                                           +\n" + 
+			"+--------------------------------------------------------------------------------------------------┘";
+	
 	public static class UsingJunitRuleAnnotation {
 		StringWriter writer;
 		
@@ -94,8 +147,8 @@ public class LoggingRuleTest {
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs)
-				.contains(SUCCESS_HEADER)
-				.contains(SUCCESS_FOOTER);
+				.contains(isAscii() ? SUCCESS_HEADER_ASCII : SUCCESS_HEADER)
+				.contains(isAscii() ? SUCCESS_FOOTER_ASCII : SUCCESS_FOOTER);
 		}
 		
 		@Test
@@ -107,8 +160,8 @@ public class LoggingRuleTest {
 						.assertStatistics(s -> s.aborted(0).failed(1).succeeded(0).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs)
-				.contains(FAILURE_HEADER)
-				.contains(FAILURE_FOOTER);
+				.contains(isAscii() ? FAILURE_HEADER_ASCII : FAILURE_HEADER)
+				.contains(isAscii() ? FAILURE_FOOTER_ASCII : FAILURE_FOOTER);
 		}
 		
 		@Test
@@ -120,8 +173,8 @@ public class LoggingRuleTest {
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs)
-				.contains(CAUGHT_HEADER)
-				.contains(CAUGHT_FOOTER);
+				.contains(isAscii() ? CAUGHT_HEADER_ASCII : CAUGHT_HEADER)
+				.contains(isAscii() ? CAUGHT_FOOTER_ASCII : CAUGHT_FOOTER);
 		}
 		
 		@Test
@@ -133,8 +186,8 @@ public class LoggingRuleTest {
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs)
-				.contains(CAUGHT_ANNOTATION_HEADER)
-				.contains(CAUGHT_ANNOTATION_FOOTER);
+				.contains(isAscii() ? CAUGHT_ANNOTATION_HEADER_ASCII : CAUGHT_ANNOTATION_HEADER)
+				.contains(isAscii() ? CAUGHT_ANNOTATION_FOOTER_ASCII : CAUGHT_ANNOTATION_FOOTER);
 		}
 		
 
@@ -203,8 +256,8 @@ public class LoggingRuleTest {
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs)
-				.contains(SUCCESS_HEADER)
-				.contains(SUCCESS_FOOTER);
+				.contains(isAscii() ? SUCCESS_HEADER_ASCII : SUCCESS_HEADER)
+				.contains(isAscii() ? SUCCESS_FOOTER_ASCII : SUCCESS_FOOTER);
 		}
 		
 		@Test
@@ -216,8 +269,8 @@ public class LoggingRuleTest {
 						.assertStatistics(s -> s.aborted(0).failed(1).succeeded(0).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs)
-				.contains(FAILURE_HEADER)
-				.contains(FAILURE_FOOTER);
+				.contains(isAscii() ? FAILURE_HEADER_ASCII : FAILURE_HEADER)
+				.contains(isAscii() ? FAILURE_FOOTER_ASCII : FAILURE_FOOTER);
 		}
 		
 		@Test
@@ -229,8 +282,8 @@ public class LoggingRuleTest {
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs)
-				.contains(CAUGHT_HEADER)
-				.contains(CAUGHT_FOOTER);
+				.contains(isAscii() ? CAUGHT_HEADER_ASCII : CAUGHT_HEADER)
+				.contains(isAscii() ? CAUGHT_FOOTER_ASCII : CAUGHT_FOOTER);
 		}
 		
 		@Test
@@ -242,8 +295,8 @@ public class LoggingRuleTest {
 						.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 			String logs = writer.toString();
 			assertThat(logs)
-				.contains(CAUGHT_ANNOTATION_HEADER)
-				.contains(CAUGHT_ANNOTATION_FOOTER);
+				.contains(isAscii() ? CAUGHT_ANNOTATION_HEADER_ASCII : CAUGHT_ANNOTATION_HEADER)
+				.contains(isAscii() ? CAUGHT_ANNOTATION_FOOTER_ASCII : CAUGHT_ANNOTATION_FOOTER);
 		}
 	
 		@LogTestInformation(maxLength = 100, marker = "foo", printer = TestPrinterFactoryAdapter.class)
@@ -284,5 +337,9 @@ public class LoggingRuleTest {
 		public CustomException(String message, Throwable cause) {
 			super(message, cause);
 		}
+	}
+
+	private static boolean isAscii() {
+		return !Charset.defaultCharset().contains(StandardCharsets.UTF_8);
 	}
 }

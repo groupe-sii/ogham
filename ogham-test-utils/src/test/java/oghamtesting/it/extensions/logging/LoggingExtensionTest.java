@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +56,47 @@ class LoggingExtensionTest {
 			"├──────────────────────────────────────────────────────────────────────────────────────────────────┤\n" + 
 			"│SUCCESS                                                                                           │\n" + 
 			"└──────────────────────────────────────────────────────────────────────────────────────────────────┘";
+
 	
+	
+	static final String SUCCESS_HEADER_ASCII = 
+			"+==================================================================================================+\n" + 
+			"|success()                                                                                         |\n" + 
+			"+==================================================================================================+";
+	static final String SUCCESS_FOOTER_ASCII =
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|success()                                                                                         |\n" + 
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|SUCCESS                                                                                           |\n" + 
+			"+--------------------------------------------------------------------------------------------------+";
+	
+	
+	static final String FAILURE_HEADER_ASCII = 
+			"+==================================================================================================+\n" + 
+			"|failure()                                                                                         |\n" + 
+			"+==================================================================================================+";
+	static final String FAILURE_FOOTER_ASCII =
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|failure()                                                                                         |\n" + 
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|FAILED                                                                                            |\n" + 
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|oghamtesting.it.extensions.logging.LoggingExtensionTest$FakeTest$CustomException: exception       |\n" + 
+			"|message                                                                                           |\n" +
+			"+--------------------------------------------------------------------------------------------------+";
+	
+	
+	static final String CAUGHT_HEADER_ASCII = 
+			"+==================================================================================================+\n" + 
+			"|caught()                                                                                          |\n" + 
+			"+==================================================================================================+";
+	static final String CAUGHT_FOOTER_ASCII =
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|caught()                                                                                          |\n" + 
+			"+--------------------------------------------------------------------------------------------------+\n" + 
+			"|SUCCESS                                                                                           |\n" + 
+			"+--------------------------------------------------------------------------------------------------+";
+
 	StringWriter writer;
 	
 	@BeforeEach
@@ -79,8 +121,8 @@ class LoggingExtensionTest {
 					.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 		String logs = writer.toString();
 		assertThat(logs)
-			.contains(SUCCESS_HEADER)
-			.contains(SUCCESS_FOOTER);
+			.contains(isAscii() ? SUCCESS_HEADER_ASCII : SUCCESS_HEADER)
+			.contains(isAscii() ? SUCCESS_FOOTER_ASCII : SUCCESS_FOOTER);
 	}
 	
 	@Test
@@ -92,8 +134,8 @@ class LoggingExtensionTest {
 					.assertStatistics(s -> s.aborted(0).failed(1).succeeded(0).skipped(0));
 		String logs = writer.toString();
 		assertThat(logs)
-			.contains(FAILURE_HEADER)
-			.contains(FAILURE_FOOTER);
+			.contains(isAscii() ? FAILURE_HEADER_ASCII : FAILURE_HEADER)
+			.contains(isAscii() ? FAILURE_FOOTER_ASCII : FAILURE_FOOTER);
 	}
 	
 	@Test
@@ -105,8 +147,8 @@ class LoggingExtensionTest {
 					.assertStatistics(s -> s.aborted(0).failed(0).succeeded(1).skipped(0));
 		String logs = writer.toString();
 		assertThat(logs)
-			.contains(CAUGHT_HEADER)
-			.contains(CAUGHT_FOOTER);
+			.contains(isAscii() ? CAUGHT_HEADER_ASCII : CAUGHT_HEADER)
+			.contains(isAscii() ? CAUGHT_FOOTER_ASCII : CAUGHT_FOOTER);
 	}
 	
 	@LogTestInformation(maxLength = 100, marker = "foo", printer = TestPrinterFactoryAdapter.class)
@@ -139,4 +181,7 @@ class LoggingExtensionTest {
 		}
 	}
 
+	private static boolean isAscii() {
+		return !Charset.defaultCharset().contains(StandardCharsets.UTF_8);
+	}
 }

@@ -9,6 +9,8 @@ import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Charac
 import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.VERTICAL_LEFT;
 import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.VERTICAL_RIGHT;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
@@ -33,12 +35,16 @@ import com.github.jknack.handlebars.internal.text.WordUtils;
 public class TestInformationLogger {
 	public static final int DEFAULT_MAX_LENGTH = 100;
 	public static final String DEFAULT_MARKER = "test-info";
-	private static final String[] SINGLE = { "┌", "┐", "└", "┘", "─", "│", "├", "┤" };
-	private static final String[] DOUBLE = { "╔", "╗", "╚", "╝", "═", "║", "╠", "╣" };
+	private static final String[] SINGLE_UTF8 = { "┌", "┐", "└", "┘", "─", "│", "├", "┤" };
+	private static final String[] DOUBLE_UTF8 = { "╔", "╗", "╚", "╝", "═", "║", "╠", "╣" };
+	private static final String[] SINGLE_ASCII = { "+", "+", "+", "+", "-", "|", "+", "+" };
+	private static final String[] DOUBLE_ASCII = { "+", "+", "+", "+", "=", "|", "+", "+" };
 
 	private final int maxLength;
 	private final Printer printer;
 	private final String marker;
+	private final String[] singleChars;
+	private final String[] doubleChars;
 
 	/**
 	 * Initializes with the default max line length (100), uses this logger as
@@ -88,6 +94,8 @@ public class TestInformationLogger {
 		this.maxLength = maxLength;
 		this.printer = printer;
 		this.marker = marker;
+		this.singleChars = Charset.defaultCharset().contains(StandardCharsets.UTF_8) ? SINGLE_UTF8 : SINGLE_ASCII;
+		this.doubleChars = Charset.defaultCharset().contains(StandardCharsets.UTF_8) ? DOUBLE_UTF8 : DOUBLE_ASCII;
 	}
 
 	/**
@@ -100,9 +108,9 @@ public class TestInformationLogger {
 	public void writeStart(String testName) {
 		// @formatter:off
 		printer.printHeader(marker, 
-				borderTop(DOUBLE)+"\n"+ 
-				format(testName, DOUBLE)+"\n"+ 
-				borderBottom(DOUBLE));
+				borderTop(doubleChars)+"\n"+ 
+				format(testName, doubleChars)+"\n"+ 
+				borderBottom(doubleChars));
 		// @formatter:on
 	}
 
@@ -116,11 +124,11 @@ public class TestInformationLogger {
 	public void writeSuccess(String testName) {
 		// @formatter:off
 		printer.printSucess(marker,
-					borderTop(SINGLE)+"\n"+ 
-					format(testName, SINGLE)+"\n"+ 
-					borderMiddle(SINGLE)+"\n"+
-					format("SUCCESS", SINGLE)+"\n"+ 
-					borderBottom(SINGLE));
+					borderTop(singleChars)+"\n"+ 
+					format(testName, singleChars)+"\n"+ 
+					borderMiddle(singleChars)+"\n"+
+					format("SUCCESS", singleChars)+"\n"+ 
+					borderBottom(singleChars));
 		// @formatter:on
 	}
 
@@ -137,13 +145,13 @@ public class TestInformationLogger {
 	public void writeFailure(String testName, Throwable e) {
 		// @formatter:off
 		printer.printFailure(marker,
-				borderTop(SINGLE)+"\n"+
-				format(testName, SINGLE)+"\n"+ 
-				borderMiddle(SINGLE)+"\n"+
-				format("FAILED", SINGLE)+"\n"+
-				borderMiddle(SINGLE)+"\n"+
-				format(e.toString(), SINGLE)+"\n"+ 
-				borderBottom(SINGLE), e);
+				borderTop(singleChars)+"\n"+
+				format(testName, singleChars)+"\n"+ 
+				borderMiddle(singleChars)+"\n"+
+				format("FAILED", singleChars)+"\n"+
+				borderMiddle(singleChars)+"\n"+
+				format(e.toString(), singleChars)+"\n"+ 
+				borderBottom(singleChars), e);
 		// @formatter:on
 	}
 
