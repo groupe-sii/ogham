@@ -14,7 +14,9 @@ import lombok.Data;
 @ConfigurationProperties("generator.ogham")
 public class OghamProperties {
 	@NotNull
-	private String latestReleaseVersion;
-	@NotNull
-	private String futureDevVersion;
+	private String currentVersion;
+//	@NotNull
+//	private String latestReleaseVersion;
+//	@NotNull
+//	private String futureDevVersion;
 }

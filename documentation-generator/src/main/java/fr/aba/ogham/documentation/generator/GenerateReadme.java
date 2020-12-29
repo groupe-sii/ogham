@@ -53,14 +53,10 @@ public class GenerateReadme implements ApplicationRunner {
 		variables.add("docdir", asciidocDirectory.toString());
 		variables.add("sourcedir", rootDirectory.toString());
 		variables.add("images-dir", rootDirectory.relativize(imagesDirectory).toString());
-		variables.add("sourcedir-url", githubProperties.getCodeBaseUrl()+githubProperties.getLatestReleaseBranch());
-		variables.add("sourcedir-dev-url", githubProperties.getCodeBaseUrl()+githubProperties.getFutureDevBranch());
+		variables.add("sourcedir-url", githubProperties.getCodeBaseUrl()+githubProperties.getCurrentBranch());
 		variables.add("site-url", githubProperties.getSiteUrl());
-		variables.add("ogham-version", oghamProperties.getLatestReleaseVersion());
-		variables.add("ogham-dev-version", oghamProperties.getFutureDevVersion());
-		variables.add("git-branch", githubProperties.getLatestReleaseBranch());
-		variables.add("git-dev-branch", githubProperties.getFutureDevBranch());
-		variables.add("badges-branch", githubProperties.getBadgesBranch());
+		variables.add("ogham-version", oghamProperties.getCurrentVersion());
+		variables.add("git-branch", githubProperties.getCurrentBranch());
 		// load content, merge includes and rewrite some parts
 		String content = reader.getContent(sourceFile);
 		String out = merger.include(asciidocDirectory, content, variables, 0);

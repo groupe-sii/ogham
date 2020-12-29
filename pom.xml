@@ -121,11 +121,10 @@
 		<site.deploy.url>gitsite:git@github.com/groupe-sii/ogham.git</site.deploy.url>
 
 		<!-- Documentation -->
-		<docLatestReleaseVersion>${project.version}</docLatestReleaseVersion>
-		<docFutureDevVersion>${project.version}</docFutureDevVersion>
+		<docOghamVersion>${project.version}</docOghamVersion>
 		<dependency.locations.enabled>false</dependency.locations.enabled>
 		<site.staging.dir>${project.build.directory}/staging</site.staging.dir>
-		<site.output.version-dir>v${docLatestReleaseVersion}</site.output.version-dir>
+		<site.output.version-dir>v${docOghamVersion}</site.output.version-dir>
 		<site.output.dir>${site.staging.dir}/${site.output.version-dir}</site.output.dir>
 		<site.showcase-video.output.dir>${site.output.dir}/presentation</site.showcase-video.output.dir>
 		<doc-theme>cerulean</doc-theme>
@@ -911,8 +910,7 @@
 						<experimental>true</experimental>
 						<tabsize>2</tabsize>
 						<imagesdir />
-						<ogham-version>${docLatestReleaseVersion}</ogham-version>
-						<ogham-dev-version>${docFutureDevVersion}</ogham-dev-version>
+						<ogham-version>${docOghamVersion}</ogham-version>
 						<docdir>${basedir}/src/docs/asciidoc</docdir>
 						<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 						<sourcedir-url>${github.code.url}</sourcedir-url>
@@ -1073,9 +1071,7 @@
 							<experimental>true</experimental>
 							<tabsize>2</tabsize>
 							<imagesdir />
-							<ogham-version>${docLatestReleaseVersion}</ogham-version>
-							<ogham-dev-version>${docFutureDevVersion}</ogham-dev-version>
-							<badges-branch>${git.branch}</badges-branch>
+							<ogham-version>${docOghamVersion}</ogham-version>
 							<docdir>${basedir}/src/docs/asciidoc</docdir>
 							<templatesdir>${basedir}/src/docs/resources/templates</templatesdir>
 							<sourcedir-url>${github.code.url}</sourcedir-url>
@@ -1250,7 +1246,7 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<useReleaseProfile>false</useReleaseProfile>
 					<releaseProfiles>release,mutation-testing</releaseProfiles>
-					<goals>deploy post-site site:stage</goals>
+					<goals>deploy</goals>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<preparationGoals><![CDATA[com.google.code.maven-replacer-plugin:replacer:replace clean verify]]></preparationGoals>
 					<completionGoals><![CDATA[com.google.code.maven-replacer-plugin:replacer:replace]]></completionGoals>
@@ -1582,8 +1578,8 @@
 		<profile>
 			<id>release</id>
 			<properties>
-				<docLatestReleaseVersion>${releaseVersion}</docLatestReleaseVersion>
-				<docFutureDevVersion>${developmentVersion}</docFutureDevVersion>
+				<docOghamVersion>${releaseVersion}</docOghamVersion>
+				<git.branch>v${releaseVersion}</git.branch>
 				<readme.skip>false</readme.skip>
 				<site.showcase-video.skip>false</site.showcase-video.skip>
 			</properties>
@@ -1598,7 +1594,7 @@
 						<configuration>
 							<serverId>ossrh</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<autoReleaseAfterClose>false</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
 					<plugin>

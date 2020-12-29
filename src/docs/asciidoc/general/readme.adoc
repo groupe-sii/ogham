@@ -11,13 +11,13 @@ ifdef::env-github[]
 endif::[]
 
 
-= Ogham
+= image:{images-dir}/logo.png[logo,30,30] Ogham
 :toc: preamble
 :toclevels: 3
 
-image:https://img.shields.io/maven-central/v/fr.sii.ogham/ogham-all.svg["Latest Release Standalone", link="https://mvnrepository.com/artifact/fr.sii.ogham/ogham-all/{ogham-version}"]
+image:https://img.shields.io/maven-central/v/fr.sii.ogham/ogham-all.svg["Latest Release Standalone", link="{maven-repository-standalone-url}"]
 image:https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg["License", link="https://opensource.org/licenses/Apache-2.0"]
-image:https://github.com/groupe-sii/ogham/workflows/Build/badge.svg?branch={badges-branch}["Build Status", link="https://github.com/groupe-sii/ogham/actions?query=workflow%3ABuild"]
+image:https://github.com/groupe-sii/ogham/workflows/Build/badge.svg?branch={git-branch}["Build Status", link="https://github.com/groupe-sii/ogham/actions?query=workflow%3ABuild"]
 
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=alert_status["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=sqale_rating["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
@@ -31,7 +31,7 @@ image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aog
 
 --
 
-image::{site-version-url}/presentation/showcase.png[Showcase, link={site-version-url}/showcase-video.html]
+image::{current-version-site-base-url}/presentation/showcase.png[Showcase, link={current-version-site-base-url}/showcase-video.html]
 
 '''
 
@@ -40,13 +40,27 @@ image::{site-version-url}/presentation/showcase.png[Showcase, link={site-version
 
 == Resources
 
-[%autowidth.stretch]
+
+
+[cols=3, %autowidth.stretch]
 |===
-| **v{ogham-version}** (Latest release)                   | **v{ogham-dev-version}** (Current development)
-| {site-version-url}[site]                                | {site-dev-version-url}[site] 
-| {sourcedir-url}[code]                                   | {sourcedir-dev-url}[code]
-| {site-version-url}/presentation/showcase.html[showcase] | {site-dev-version-url}/presentation/showcase.html[showcase]
+| image:{latest-release-version-badge}[Latest Release, link="{latest-release-site-base-url}"]
+| image:{current-version-badge}[This version, link="{current-version-site-base-url}"]
+| image:{nightly-build-version-badge}[Nightly build, link="{nightly-build-site-base-url}"]
+
+| {latest-release-site-base-url}[site]
+| {current-version-site-base-url}[site]
+| {nightly-build-site-base-url}[site]
+
+| {latest-release-sourcedir-url}[code]
+| {current-version-sourcedir-url}[code]
+| {nightly-build-sourcedir-url}[code]
+
+| {latest-release-site-showcase-url}[showcase]
+| {current-version-site-showcase-url}[showcase]
+| {nightly-build-site-showcase-url}[showcase]
 |=== 
+
 
 
 == Introduction
@@ -61,7 +75,11 @@ include::{user-manual-dir}/installation/standalone-all.adoc[leveloffset=+2]
 
 === With Spring Boot
 
+.Quick start with Spring Boot
+[%collapsible]
+==========
 include::{user-manual-dir}/installation/springboot-all.adoc[leveloffset=+2]
+==========
 
 == Select the features you need
 
@@ -70,7 +88,7 @@ is easy but may import dependencies that you
 don't need. For example, you may only need FreeMarker but not Thymeleaf. Or
 you may only need to send emails through SMTP but never use SendGrid.
 
-See how to {site-version-url}/user-manual.html#select-features-standalone[select features].
+See how to {current-version-site-base-url}/user-manual.html#select-features-standalone[select features].
 
 
 == Usage
@@ -79,7 +97,7 @@ See how to {site-version-url}/user-manual.html#select-features-standalone[select
 [NOTE]
 ====
 All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, 
-take a look at {site-version-url}/user-manual.html#freemarker[FreeMarker section].
+take a look at {current-version-site-base-url}/user-manual.html#freemarker[FreeMarker section].
 ====
 
 === Send Email
@@ -89,38 +107,62 @@ take a look at {site-version-url}/user-manual.html#freemarker[FreeMarker section
 The samples are available in the {standard-samples-url}[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMTP for sending email. 
-See {site-version-url}/user-manual.html#sendgrid[Sending email through SendGrid] 
+See {current-version-site-base-url}/user-manual.html#sendgrid[Sending email through SendGrid] 
 to know how to send email using SendGrid HTTP API.
 ====
 
 ==== First email using an existing SMTP server
 
+.First email using an existing SMTP server
+[%collapsible]
+==========
 include::{user-manual-dir}/email/first-email.adoc[leveloffset=+3]
+==========
 
 ==== Use an HTML template for email body
 
+.Use an HTML template for email body
+[%collapsible]
+==========
 include::{user-manual-dir}/email/template-body.adoc[leveloffset=+3]
+==========
 
 ==== Use HTML title as email subject
 
+.Use HTML title as email subject
+[%collapsible]
+==========
 include::{user-manual-dir}/email/html-title-subject.adoc[leveloffset=+3]
 include::{user-manual-dir}/email/text-first-line-subject.adoc[leveloffset=+3]
+==========
 
 ==== HTML body with CSS and images
 
+.HTML body with CSS and images
+[%collapsible]
+==========
 include::{user-manual-dir}/email/css-and-images.adoc[leveloffset=+3]
+==========
 
 ==== A working preview of the HTML body (text alternative)
 
+.A working preview of the HTML body (text alternative)
+[%collapsible]
+==========
 include::{user-manual-dir}/email/text-preview.adoc[leveloffset=+3]
+==========
 
 ==== Attach files to the email
 
+.Attach files to the email
+[%collapsible]
+==========
 include::{user-manual-dir}/email/attach-files.adoc[leveloffset=+3]
+==========
 
 ==== Other email features
 
-See user guide to read about {site-version-url}/user-manual.html#email-usage[the many other features]. 
+See user guide to read about {current-version-site-base-url}/user-manual.html#email-usage[the many other features]. 
 
 === Send SMS
 
@@ -132,69 +174,93 @@ All samples shown bellow are using SMPP for sending SMS.
 The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol 
 is the standard way to send SMS. Only a subset of SMPP properties are used 
 in following samples. The whole list of SMPP properties is available 
-in {site-version-url}/user-manual.html#advanced-smpp-configuration[advanced configuration].
+in {current-version-site-base-url}/user-manual.html#advanced-smpp-configuration[advanced configuration].
 
-See {site-version-url}/user-manual.html#ovh[Sending SMS through OVH] to know how to send SMS using OVH HTTP API.
+See {current-version-site-base-url}/user-manual.html#ovh[Sending SMS through OVH] to know how to send SMS using OVH HTTP API.
 ====
 
 ==== First SMS using an existing SMPP server
 
+.First SMS using an existing SMPP server
+[%collapsible]
+==========
 include::{user-manual-dir}/sms/first-sms.adoc[leveloffset=+3]
+==========
 
 ==== Use a template for SMS content
 
+.Use a template for SMS content
+[%collapsible]
+==========
 include::{user-manual-dir}/sms/template-content.adoc[leveloffset=+3]
+==========
 
 ==== Send a long SMS
 
+.Send a long SMS
+[%collapsible]
+==========
 include::{user-manual-dir}/sms/long-sms.adoc[leveloffset=+3]
+==========
 
 ==== Other SMS features
 
-Ogham provides {site-version-url}/user-manual.html#sms-usage[many other features]. 
+Ogham provides {current-version-site-base-url}/user-manual.html#sms-usage[many other features]. 
 
 
 == Testing
 
 === Include test utilities
 
+.Include test utilities
+[%collapsible]
+==========
 include::{user-manual-dir}/testing/install.adoc[leveloffset=+2]
 
 [TIP]
 ====
 You can 
-{site-version-url}/user-manual.html#testing-tools-eclipse-static-imports[configure Eclipse]
+{current-version-site-base-url}/user-manual.html#testing-tools-eclipse-static-imports[configure Eclipse]
 to provide autocompletion for static imports.
 ====
+==========
 
 === Testing emails
 
+.Testing emails
+[%collapsible]
+==========
 include::{user-manual-dir}/testing/email-assertions.adoc[leveloffset=+1]
+==========
 
 
 === Testing SMS
 
+.Testing SMS
+[%collapsible]
+==========
 include::{user-manual-dir}/testing/sms-assertions.adoc[leveloffset=+1]
+==========
 
 
 === More testing features
 
 Ogham provides many other tool features:
 
-* {site-version-url}/user-manual.html#testing-email[Email assertions and tools].
-* {site-version-url}/user-manual.html#testing-sms[SMS assertions and tools].
-* {site-version-url}/user-manual.html#random-ports[Use random ports to parallelize tests].
+* {current-version-site-base-url}/user-manual.html#testing-email[Email assertions and tools].
+* {current-version-site-base-url}/user-manual.html#testing-sms[SMS assertions and tools].
+* {current-version-site-base-url}/user-manual.html#random-ports[Use random ports to parallelize tests].
 
 
 == Advanced configuration
 
-{site-version-url}/user-manual.html#section-advanced-configuration[See advanced configuration in full documentation]
+{current-version-site-base-url}/user-manual.html#section-advanced-configuration[See advanced configuration in full documentation]
 
 == Extend
 
-{site-version-url}/user-manual.html#section-extend[See how to extend in full documentation]
+{current-version-site-base-url}/user-manual.html#section-extend[See how to extend in full documentation]
 
 == Tips
 
-{site-version-url}/user-manual.html#section-tips[See tips in full documentation]
+{current-version-site-base-url}/user-manual.html#section-tips[See tips in full documentation]
 

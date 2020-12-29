@@ -13,13 +13,13 @@ ifdef::env-github[]
 endif::[]
 
 
-= Ogham
+= image:src/docs/resources/images/logo.png[logo,30,30] Ogham
 :toc: preamble
 :toclevels: 3
 
-image:https://img.shields.io/maven-central/v/fr.sii.ogham/ogham-all.svg["Latest Release Standalone", link="https://mvnrepository.com/artifact/fr.sii.ogham/ogham-all/2.0.0"]
+image:https://img.shields.io/maven-central/v/fr.sii.ogham/ogham-all.svg["Latest Release Standalone", link="https://mvnrepository.com/artifact/fr.sii.ogham/ogham-all/"]
 image:https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg["License", link="https://opensource.org/licenses/Apache-2.0"]
-image:https://github.com/groupe-sii/ogham/workflows/Build/badge.svg?branch=master["Build Status", link="https://github.com/groupe-sii/ogham/actions?query=workflow%3ABuild"]
+image:https://github.com/groupe-sii/ogham/workflows/Build/badge.svg?branch=ci/github-actions/setup["Build Status", link="https://github.com/groupe-sii/ogham/actions?query=workflow%3ABuild"]
 
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=alert_status["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=sqale_rating["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
@@ -33,7 +33,7 @@ image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aog
 
 --
 
-image::http://groupe-sii.github.io/ogham/v2.0.0/presentation/showcase.png[Showcase, link=http://groupe-sii.github.io/ogham/v2.0.0/showcase-video.html]
+image::https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/presentation/showcase.png[Showcase, link=https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/showcase-video.html]
 
 '''
 
@@ -42,13 +42,27 @@ image::http://groupe-sii.github.io/ogham/v2.0.0/presentation/showcase.png[Showca
 
 == Resources
 
-[%autowidth.stretch]
+
+
+[cols=3, %autowidth.stretch]
 |===
-| **v2.0.0** (Latest release)                   | **v3.0.0-SNAPSHOT** (Current development)
-| http://groupe-sii.github.io/ogham/v2.0.0[site]                                | http://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT[site] 
-| https://github.com/groupe-sii/ogham/tree/v2.0.0[code]                                   | https://github.com/groupe-sii/ogham/tree/master[code]
-| http://groupe-sii.github.io/ogham/v2.0.0/presentation/showcase.html[showcase] | http://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/presentation/showcase.html[showcase]
+| image:https://img.shields.io/endpoint?url=https://groupe-sii.github.io/ogham/badges/latest-release-version.json[Latest Release, link="https://groupe-sii.github.io/ogham/redirects/latest-release-site.html"]
+| image:https://img.shields.io/static/v1?label=This%20version&message=v3.0.0-SNAPSHOT[This version, link="https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT"]
+| image:https://img.shields.io/endpoint?url=https://groupe-sii.github.io/ogham/badges/nightly-build-version.json[Nightly build, link="https://groupe-sii.github.io/ogham/redirects/nightly-build-site.html"]
+
+| https://groupe-sii.github.io/ogham/redirects/latest-release-site.html[site]
+| https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT[site]
+| https://groupe-sii.github.io/ogham/redirects/nightly-build-site.html[site]
+
+| https://groupe-sii.github.io/ogham/redirects/latest-release-code.html[code]
+| https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup[code]
+| https://github.com/groupe-sii/ogham/tree/master[code]
+
+| https://groupe-sii.github.io/ogham/redirects/latest-release-showcase.html[showcase]
+| https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/presentation/showcase.html[showcase]
+| https://groupe-sii.github.io/ogham/redirects/nightly-build-showcase.html[showcase]
 |=== 
+
 
 
 == Introduction
@@ -104,12 +118,12 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
     <dependency>
       <groupId>fr.sii.ogham</groupId>
       <artifactId>ogham-all</artifactId>
-      <version>2.0.0</version>
+      <version>3.0.0-SNAPSHOT</version>
     </dependency>
 ...
 ----
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts={tabsize}[View code of an example pom.xml]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/pom.xml?ts=2[View code of an example pom.xml]
 
 
 '''
@@ -122,7 +136,7 @@ image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,heig
 ----
 ...
 dependencies {
-    implementation 'fr.sii.ogham:ogham-all:2.0.0'
+    implementation 'fr.sii.ogham:ogham-all:3.0.0-SNAPSHOT'
 }
 ----
 
@@ -145,13 +159,16 @@ This will include:
 .Java version compatibility
 [NOTE]
 ====
-Ogham is compatible with Java 8 and up to Java 14 (included).
+Ogham is compatible with Java 8 and up to Java 15 (included).
 ====
 
 
 
 === With Spring Boot
 
+.Quick start with Spring Boot
+[%collapsible]
+==========
 
 
 [role="tab-container no-max-height"]
@@ -169,7 +186,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
         <dependency>
             <groupId>fr.sii.ogham</groupId>
             <artifactId>ogham-spring-boot-starter-all</artifactId>
-            <version>2.0.0</version>
+            <version>3.0.0-SNAPSHOT</version>
         </dependency>
 
 ...
@@ -187,7 +204,7 @@ image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,heig
 ...
 
 dependencies {
-    implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:2.0.0'
+    implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:3.0.0-SNAPSHOT'
 ...
 }
 ----
@@ -227,7 +244,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
         <dependency>
             <groupId>fr.sii.ogham</groupId>
             <artifactId>ogham-spring-boot-starter-all</artifactId>    <!--1-->
-            <version>2.0.0</version>
+            <version>3.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -264,7 +281,7 @@ image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,heig
 ...
 
 dependencies {
-    implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:2.0.0'   // <1>
+    implementation 'fr.sii.ogham:ogham-spring-boot-starter-all:3.0.0-SNAPSHOT'   // <1>
     
     implementation 'org.springframework.boot:spring-boot-starter-freemarker'      // <2>
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'       // <3>
@@ -295,14 +312,15 @@ Ogham is compatible with following Spring Boot versions:
 
 * 1.4.x (currently automatically tested against 1.4.7.RELEASE, see note below)
 * 1.5.x (currently automatically tested against 1.5.22.RELEASE)
-* 2.1.x (currently automatically tested against 2.1.16.RELEASE)
-* 2.2.x (currently automatically tested against 2.2.9.RELEASE)
-* 2.3.x (currently automatically tested against 2.3.3.RELEASE)
+* 2.1.x (currently automatically tested against 2.1.18.RELEASE)
+* 2.2.x (currently automatically tested against 2.2.11.RELEASE)
+* 2.3.x (currently automatically tested against 2.3.5.RELEASE)
+* 2.4.x (currently automatically tested against 2.4.0.RELEASE)
 
 .Java version compatibility
 [NOTE]
 ====
-Ogham is compatible with Java 8 and up to Java 14 (included).
+Ogham is compatible with Java 8 and up to Java 15 (included).
 
 However, Spring Boot may not be compatible with some Java versions (depending on
 Spring Boot version).
@@ -330,6 +348,7 @@ In this case, just use a different version of WireMock by manually adding the de
 previous WireMock version that is compatible with Spring Boot 1.4.x.
 ====
 
+==========
 
 == Select the features you need
 
@@ -338,7 +357,7 @@ is easy but may import dependencies that you
 don't need. For example, you may only need FreeMarker but not Thymeleaf. Or
 you may only need to send emails through SMTP but never use SendGrid.
 
-See how to http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#select-features-standalone[select features].
+See how to https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#select-features-standalone[select features].
 
 
 == Usage
@@ -347,22 +366,25 @@ See how to http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#select-feat
 [NOTE]
 ====
 All samples with templates are using ThymeLeaf as template engine. For FreeMarker samples, 
-take a look at http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#freemarker[FreeMarker section].
+take a look at https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#freemarker[FreeMarker section].
 ====
 
 === Send Email
 
 [NOTE]
 ====
-The samples are available in the https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage[sample-standard-usage sub-project].
+The samples are available in the https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMTP for sending email. 
-See http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#sendgrid[Sending email through SendGrid] 
+See https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#sendgrid[Sending email through SendGrid] 
 to know how to send email using SendGrid HTTP API.
 ====
 
 ==== First email using an existing SMTP server
 
+.First email using an existing SMTP server
+[%collapsible]
+==========
 
 
 This sample shows how to send a basic email.
@@ -413,7 +435,7 @@ public class BasicSample {
 <3> Create a MessagingService instance
 <4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from.default-value` property
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java?ts={tabsize}[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java?ts=2[Source code of the sample].
 
 
 _____
@@ -422,7 +444,7 @@ _____
 
 The construction of the email is done using a fluent API in order to chain calls and to have a more readable code.
 
-Properties are directly provided in the code. You can instead http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#properties-handling[use a configuration file].
+Properties are directly provided in the code. You can instead https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#properties-handling[use a configuration file].
 
 
 .Email address format
@@ -433,9 +455,13 @@ Ogham supports the personal information in email address. The format is `persona
 For example, the address with personal `Ogham Test <ogham-test@yopmail.com>` will result in
 `ogham-test@yopmail.com` as email address and `Ogham Test` as personal.
 ====
+==========
 
 ==== Use an HTML template for email body
 
+.Use an HTML template for email body
+[%collapsible]
+==========
 
 
 This sample shows how to send an email with a content following a template engine language.
@@ -486,7 +512,7 @@ public class HtmlTemplateSample {
 <5> Indicate the path to the HTML template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java?ts={tabsize}[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java?ts=2[Source code of the sample].
 
 '''
 
@@ -510,7 +536,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 <2> Use the `name` attribute value in the template
 <3> Use the `value` attribute value in the template
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts={tabsize}[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=2[Source code of the HTML template]
 
 
 _____
@@ -527,13 +553,17 @@ The `template` method requires two pieces of information:
 The path to the template is a string that may contain a *lookup* prefix. The lookup prefix is used to indicate 
 where to search the template (from file system, from classpath or anywhere else). Here we explicitly 
 ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, 
-classpath is used by default. See http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#resource-resolution[Resource resolution section] for more information.
+classpath is used by default. See https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#resource-resolution[Resource resolution section] for more information.
 
 The variables are any object you are using in your application. No need to convert your object to a 
 particular format. Directly use what you want.
+==========
 
 ==== Use HTML title as email subject
 
+.Use HTML title as email subject
+[%collapsible]
+==========
 
 
 This sample is a variant of the previous one. It allows you to 
@@ -583,7 +613,7 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 ----
 <1> Subject is no more in Java code
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateWithSubjectSample.java?ts={tabsize}[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateWithSubjectSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -609,7 +639,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 
 NOTE: The subject of the email will be `Subject of the email - Welcome foo !`
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html?ts={tabsize}[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html?ts=2[Source code of the HTML template]
 
 
 _____
@@ -663,7 +693,7 @@ public class TextTemplateWithSubjectSample {
 ----
 <1> Subject is no more in Java code
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/TextTemplateWithSubjectSample.java?ts={tabsize}[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/TextTemplateWithSubjectSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -680,14 +710,18 @@ Foo bar ${value}
 
 NOTE: The subject of the email will be `Welcome foo !`
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts={tabsize}[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts=2[Source code of the text template]
 
 
 _____
 
+==========
 
 ==== HTML body with CSS and images
 
+.HTML body with CSS and images
+[%collapsible]
+==========
 
 When you develop a Web application, you can use HTML for the content and CSS for 
 layout and theming. HTML and CSS can use images to make a beautiful Web page. 
@@ -759,7 +793,7 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 `/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
 <2> The template context
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts={tabsize}[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -834,7 +868,7 @@ determined
 <6> Same as <3>
 <7> The image is not inlined by Ogham. This can be useful to embed it manually.
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts={tabsize}[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts=2[Source code of the HTML template]
 
 '''
 
@@ -949,9 +983,13 @@ Here is the list of supported transformations:
 * [ ] Images must have `alt` attribute
 
 
+==========
 
 ==== A working preview of the HTML body (text alternative)
 
+.A working preview of the HTML body (text alternative)
+[%collapsible]
+==========
 
 
 Sending an email with HTML content **and** text content might be really important, at least for 
@@ -1020,7 +1058,7 @@ The call order between `text()` and `html()` doesn't matter (unlike using `.cont
 The underlying `Content` is a `MultiContent`.
 =====
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts={tabsize}[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts=2[Source code of the sample]
 
 
 _____
@@ -1085,7 +1123,7 @@ extension).
 The underlying `Content` is a `MultiTemplateContent`.
 =====
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts={tabsize}[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -1098,7 +1136,7 @@ image:src/docs/resources/images/icons/thymeleaf-text.jpg[width=30,height=30] Tex
 [[${name}]] [[${value}]]
 ----
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts={tabsize}[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=2[Source code of the text template]
 
 
 '''
@@ -1121,7 +1159,7 @@ image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] HTM
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts={tabsize}[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=2[Source code of the HTML template]
 
 
 _____
@@ -1194,7 +1232,7 @@ for HTML located at `/template/thymeleaf/simple.html` and one for text located a
 extension). The HTML template uses Thymeleaf while the text template uses FreeMarker.
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts={tabsize}[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -1207,7 +1245,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 ${name} ${value}
 ----
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts={tabsize}[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=2[Source code of the text template]
 
 '''
 
@@ -1229,7 +1267,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts={tabsize}[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=2[Source code of the HTML template]
 
 
 _____
@@ -1237,9 +1275,13 @@ _____
 
 You can notice that the Java code has not changed at all (only the path for the sample). The aim is 
 to use the template engine that best suits your needs.
+==========
 
 ==== Attach files to the email
 
+.Attach files to the email
+[%collapsible]
+==========
 
 [role="tab-container no-max-height"]
 _____
@@ -1283,7 +1325,7 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 <1> Attach a PDF file that exists in the classpath to the email. The name of the attachment uses the name of the file
 <2> Use an `InputStream` and name the attachment
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts={tabsize}[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts=2[Source code of the sample]
 
 
 _____
@@ -1291,7 +1333,7 @@ _____
 
 Attaching a file to the email is quite simple. You just need to provide the path to the file. 
 The file is loaded from classpath but could also be loaded from file system or anywhere else 
-(see http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#resource-resolution[ resource resolution section]). In case you are using a file, 
+(see https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#resource-resolution[ resource resolution section]). In case you are using a file, 
 the name of the attachment displayed in the email is automatically determined (`test.pdf` in the example).
 
 It is often not possible to handle files directly. In that case you will use `InputStream` or 
@@ -1317,28 +1359,32 @@ https://tools.ietf.org/html/rfc4021#section-2.2.2[Content-ID (or CID)]. The link
 must provide the Content-ID header with the same CID (automatically set by Ogham). The embedded attachment 
 disposition is automatically set to `ContentDisposition.INLINE`.
 ====
+==========
 
 ==== Other email features
 
-See user guide to read about http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#email-usage[the many other features]. 
+See user guide to read about https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#email-usage[the many other features]. 
 
 === Send SMS
 
 [NOTE]
 ====
-The samples are available in the https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage[sample-standard-usage sub-project].
+The samples are available in the https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMPP for sending SMS. 
 The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol 
 is the standard way to send SMS. Only a subset of SMPP properties are used 
 in following samples. The whole list of SMPP properties is available 
-in http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#advanced-smpp-configuration[advanced configuration].
+in https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#advanced-smpp-configuration[advanced configuration].
 
-See http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#ovh[Sending SMS through OVH] to know how to send SMS using OVH HTTP API.
+See https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#ovh[Sending SMS through OVH] to know how to send SMS using OVH HTTP API.
 ====
 
 ==== First SMS using an existing SMPP server
 
+.First SMS using an existing SMPP server
+[%collapsible]
+==========
 
 This sample defines two properties mandatory (system ID and password) by this protocol in order to use it.
 
@@ -1389,7 +1435,7 @@ public class BasicSample {
 <9> Send a SMS with a simple message. The sender phone number is automatically set using 
 `ogham.sms.from.default-value` property
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts={tabsize}[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts=2[Source code of the sample].
 
 
 _____
@@ -1398,10 +1444,14 @@ _____
 The construction of the SMS is done using a fluent API in order to chain calls and to have a more 
 readable code.
 
-Properties are directly provided in the code. You can instead http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#properties-handling[use a configuration file].
+Properties are directly provided in the code. You can instead https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#properties-handling[use a configuration file].
+==========
 
 ==== Use a template for SMS content
 
+.Use a template for SMS content
+[%collapsible]
+==========
 
 This sample shows how to send a SMS with a content following a template engine language.
 
@@ -1453,7 +1503,7 @@ set using `ogham.sms.from.default-value` property
 <5> Indicate the path to the template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java?ts={tabsize}[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java?ts=2[Source code of the sample].
 
 '''
 
@@ -1465,7 +1515,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 [[${name}]] [[${value}]]
 ----
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts={tabsize}[Source code of the template]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=2[Source code of the template]
 
 
 _____
@@ -1482,13 +1532,17 @@ The `template` method requires two pieces of information:
 The path to the template is a string with a *lookup* prefix. The lookup prefix is used to indicate 
 where to search the template (from file system, from classpath or anywhere else). Here we explicitly 
 ask to load the template from classpath (using prefix `classpath:`). If no lookup is defined, 
-classpath is used by default. See http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#resource-resolution[Resource resolution section] for more information.
+classpath is used by default. See https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#resource-resolution[Resource resolution section] for more information.
 
 The variables are any object you are using in your application. No need to convert your object to 
 a particular format. Directly use what you want.
+==========
 
 ==== Send a long SMS
 
+.Send a long SMS
+[%collapsible]
+==========
 
 As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum 
 of 160 characters if character encoding is using 7bits. Using a 8-bit character encoding decreases 
@@ -1537,7 +1591,7 @@ public class LongMessageSample {
 }
 ----
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java?ts={tabsize}[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java?ts=2[Source code of the sample].
 
 
 
@@ -1564,16 +1618,20 @@ By default, Ogham sends the SMS using 8-bit encoding.
 ====
 
 
+==========
 
 ==== Other SMS features
 
-Ogham provides http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#sms-usage[many other features]. 
+Ogham provides https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#sms-usage[many other features]. 
 
 
 == Testing
 
 === Include test utilities
 
+.Include test utilities
+[%collapsible]
+==========
 
 
 [role=tab-container]
@@ -1590,12 +1648,12 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 <dependency>
     <groupId>fr.sii.ogham</groupId>
     <artifactId>ogham-test-utils</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0-SNAPSHOT</version>
     <scope>test</scope>
 </dependency>
 ----
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/pom.xml?ts={tabsize}[View code of an example pom.xml]
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/pom.xml?ts=2[View code of an example pom.xml]
 
 
 '''
@@ -1608,7 +1666,7 @@ image:src/docs/resources/images/icons/gradlephant-logo.png[Gradle,width=114,heig
 [source, groovy, subs=attributes+]
 ----
 dependencies {
-    testImplementation 'fr.sii.ogham:ogham-test-utils:2.0.0'
+    testImplementation 'fr.sii.ogham:ogham-test-utils:3.0.0-SNAPSHOT'
 }
 ----
 
@@ -1633,12 +1691,16 @@ This will include:
 [TIP]
 ====
 You can 
-http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#testing-tools-eclipse-static-imports[configure Eclipse]
+https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#testing-tools-eclipse-static-imports[configure Eclipse]
 to provide autocompletion for static imports.
 ====
+==========
 
 === Testing emails
 
+.Testing emails
+[%collapsible]
+==========
 
 
 To test your application emails, you can start a local SMTP server. You can then use Ogham to make 
@@ -1718,15 +1780,19 @@ public class EmailTestSample {
 <15> Assert that received email has no attachment
 
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailTestSample.java?ts={tabsize}[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailTestSample.java?ts=2[Source code of the sample].
 
 
 _____
 
+==========
 
 
 === Testing SMS
 
+.Testing SMS
+[%collapsible]
+==========
 
 To test your application SMS, you can start a local SMPP server. You can then use Ogham to make assertions on you SMS (recipient phone number, sender phone number and message). Ogham uses https://jsmpp.org/[jSMPP] as local SMPP server.
 
@@ -1790,30 +1856,31 @@ public class SmsTestSample {
 <9> Assert that the recipient phone number is `0601020304`
 
 
-https://github.com/groupe-sii/ogham/tree/v2.0.0/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SmsTestSample.java?ts={tabsize}[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SmsTestSample.java?ts=2[Source code of the sample].
 
 
 _____
 
+==========
 
 
 === More testing features
 
 Ogham provides many other tool features:
 
-* http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#testing-email[Email assertions and tools].
-* http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#testing-sms[SMS assertions and tools].
-* http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#random-ports[Use random ports to parallelize tests].
+* https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#testing-email[Email assertions and tools].
+* https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#testing-sms[SMS assertions and tools].
+* https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#random-ports[Use random ports to parallelize tests].
 
 
 == Advanced configuration
 
-http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#section-advanced-configuration[See advanced configuration in full documentation]
+https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#section-advanced-configuration[See advanced configuration in full documentation]
 
 == Extend
 
-http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#section-extend[See how to extend in full documentation]
+https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#section-extend[See how to extend in full documentation]
 
 == Tips
 
-http://groupe-sii.github.io/ogham/v2.0.0/user-manual.html#section-tips[See tips in full documentation]
+https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#section-tips[See tips in full documentation]

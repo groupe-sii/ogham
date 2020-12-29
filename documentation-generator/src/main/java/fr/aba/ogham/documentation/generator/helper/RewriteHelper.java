@@ -70,7 +70,7 @@ public class RewriteHelper {
 		Matcher m = CROSS_REFERENCE.matcher(content);
 		StringBuffer sb = new StringBuffer();
 		while(m.find()) {
-			m.appendReplacement(sb, "{site-version-url}/"+Matcher.quoteReplacement(m.group(1))+".html"
+			m.appendReplacement(sb, "{current-version-site-base-url}/"+Matcher.quoteReplacement(m.group(1))+".html"
 									+Matcher.quoteReplacement(m.group(2))
 									+"["+Matcher.quoteReplacement(m.group(3))+"]");
 		}

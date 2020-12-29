@@ -3,18 +3,14 @@ name: Update site
 on:
   workflow_dispatch:
     inputs:
-      release-version:
-        description: 'Release version'
-        required: true
-        default: '2.0.0'
-      next-dev-version:
-        description: 'Next dev version'
+      current-version:
+        description: 'The ogham version to display'
         required: true
         default: '3.0.0-SNAPSHOT'
-      output-dir:
-        description: 'Directory for the version'
+      git-branch:
+        description: 'The branch for the ogham version'
         required: true
-        default: 'v3.0.0-SNAPSHOT'
+        default: 'master'
         
 jobs:
   mutation-tests:
@@ -97,9 +93,9 @@ jobs:
 #          max_attempts: 3
 #          command: |
         run: |
-            export JAVA_TOOL_OPTIONS='-Xmx4096m'
-            export MAVEN_OPTS='-Xmx4096m'
-            ci/./generate-documentation.sh
+          export JAVA_TOOL_OPTIONS='-Xmx4096m'
+          export MAVEN_OPTS='-Xmx4096m'
+          ci/./generate-documentation.sh
       - name: "Generate showcase video"
         uses: nick-invision/retry@v2
         with:
@@ -148,22 +144,21 @@ jobs:
           ./mvnw site:stage
               '-Pmutation-testing'
               '-Dsite.staging.dir=gh-pages'
-              '-Dsite.output.version-dir=${{ github.event.inputs.output-dir }}'
-              '-DdocLatestReleaseVersion=${{ github.event.inputs.release-version }}'
-              '-DdocFutureDevVersion=${{ github.event.inputs.next-dev-version }}'
+              '-DdocOghamVersion=${{ github.event.inputs.current-version }}'
+              '-Dgit.branch=${{ github.event.inputs.git-branch }}'
       - uses: actions/setup-python@v2
         with:
           python-version: 3.5
       - name: "Update list of versions"
         run: |
-          python ci/site/generate-site-index-and-versions.py 'gh-pages'
+          python .tools/site/generate-site-index-and-versions.py 'gh-pages'
       - name: "Push site on gh-pages"
         working-directory: gh-pages
         run: |
           git config user.email github-actions@github.com
           git config user.name github-actions
           git add .
-          git commit -m "doc(site) Add/update ${{ github.event.inputs.output-dir }}"
+          git commit -m "doc(site) Add/update documentation for ${{ github.event.inputs.current-version }} from ${{ github.event.inputs.git-branch }}"
           git push
                   
   slack-success:

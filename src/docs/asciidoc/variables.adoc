@@ -23,9 +23,6 @@ endif::[]
 :github-url: https://github.com/groupe-sii/ogham
 :github-branch-url: {github-url}/tree
 
-:site-version-url: {site-url}/v{ogham-version}
-:site-dev-version-url: {site-url}/v{ogham-dev-version}
-
 :ogham-all-testsourcedir-url: {sourcedir-url}/ogham-all/src/test/java
 
 :standard-samples-url: {sourcedir-url}/sample-standard-usage
@@ -64,5 +61,28 @@ endif::[]
 :spring-sms-samples-sourcedir: {spring-samples-sourcedir}/fr/sii/ogham/sample/springboot/sms
 :spring-samples-testsourcedir: {spring-samples-rootdir}/src/test/java
 :spring-samples-testresourcesdir: {spring-samples-rootdir}/src/test/resources
+
+
+// links based on current version, latest release and nightly build
+:redirect-base-url: {site-url}/redirects
+:custom-badges-base-url: https://img.shields.io/endpoint?url={site-url}/badges
+// TODO: redirect to right version ?
+:maven-repository-standalone-url: https://mvnrepository.com/artifact/fr.sii.ogham/ogham-all/
+
+:current-version-badge: https://img.shields.io/static/v1?label=This%20version&message=v{ogham-version}
+:current-version-site-base-url: {site-url}/v{ogham-version}
+:current-version-site-showcase-url: {current-version-site-base-url}/presentation/showcase.html
+:current-version-sourcedir-url: {sourcedir-url}
+:latest-release-version-badge: {custom-badges-base-url}/latest-release-version.json
+:latest-release-site-base-url: {redirect-base-url}/latest-release-site.html
+:latest-release-site-showcase-url: {redirect-base-url}/latest-release-showcase.html
+:latest-release-sourcedir-url: {redirect-base-url}/latest-release-code.html
+:nightly-build-version-badge: {custom-badges-base-url}/nightly-build-version.json
+:nightly-build-site-base-url: {redirect-base-url}/nightly-build-site.html
+:nightly-build-site-showcase-url: {redirect-base-url}/nightly-build-showcase.html
+:nightly-build-sourcedir-url: {github-url}/tree/master
+
+
+:tabsize: 2
 
 include::{docdir}/theme.adoc[]

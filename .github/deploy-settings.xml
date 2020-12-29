@@ -6,6 +6,16 @@
 		<pluginGroup>com.sonatype.maven.plugins</pluginGroup>
 		<pluginGroup>org.sonatype.plugins</pluginGroup>
 	</pluginGroups>
+	<properties>
+		<gpg.keyname>${env.RELEASE_GPG_KEYNAME}</gpg.keyname>
+		<gpg.passphrase>${env.RELEASE_GPG_PASSPHRASE}</gpg.passphrase>
+		<!--gpg.defaultKeyring>false</gpg.defaultKeyring-->
+		<gpg.useagent>true</gpg.useagent>
+		<gpg.lockMode>never</gpg.lockMode>
+		<!--gpg.homedir>/home/aurelien/.gnupg</gpg.homedir>
+		<gpg.publicKeyring>/home/aurelien/.gnupg/pubring.gpg</gpg.publicKeyring>
+		<gpg.secretKeyring>/home/aurelien/.gnupg/secring.gpg</gpg.secretKeyring-->
+	</properties>
 	<servers>
 		<server>
 			<id>ossrh</id>

@@ -134,8 +134,8 @@ The new folder `ogham-site` in the example will be the folder where generated do
 ----
 ./mvnw clean site post-site site:stage \
 	-Dsite.staging.dir=<path to ogham-site> \
-	-DdocLatestReleaseVersion=<ogham version> \
-	-DdocFutureDevVersion=<future release version with -SNAPSHOT>
+	-DdocOghamVersion=<ogham version> \
+	-Dgit.branch=v<ogham version>
 ----
 
 This generates the documentation based on Asciidoctor and also the site with reports.
@@ -147,7 +147,7 @@ As you have generated the documentation for a new version, you need to register 
 
 [source, shell]
 ----
-py ci/site/generate-site-index-and-versions.py <path to ogham-site>
+py .tools/site/generate-site-index-and-versions.py <path to ogham-site>
 ----
 
 

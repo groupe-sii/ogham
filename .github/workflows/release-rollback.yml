@@ -1,0 +1,63 @@
+name: Rollback a release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: 'Release version to remove e.g 3.0.0. It will delete tag v3.0.0 and branch v3.0.x'
+        required: true
+      revert-to:
+        description: 'The commit to revert to on the branch that originated the release'
+        required: true
+        
+jobs:
+  rollback:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/fr/sii/
+          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+      - name: Prepare git
+        run: |
+          git config user.email github-actions@github.com
+          git config user.name github-actions
+      - name: "Remove tag"
+        continue-on-error: true
+        run: |
+          git push origin --delete v${{ github.event.inputs.release-version }}
+      - name: "Remove fix branch"
+        continue-on-error: true
+        run: |
+          RELEASE_VERSION=${{ github.event.inputs.release-version }}
+          FIX_BRANCH="v${RELEASE_VERSION%.*}.x"
+          git push origin --delete "$FIX_BRANCH"
+      - name: "Remove release commits"
+        continue-on-error: true
+        run: |
+          git pull
+          LATEST_COMMIT="$(git log -1 --format=%H)"
+          echo "LATEST_COMMIT=$LATEST_COMMIT"
+          echo "github.event.inputs.revert-to=${{ github.event.inputs.revert-to }}"
+          if [ "$LATEST_COMMIT" != "${{ github.event.inputs.revert-to }}" ]; then
+            ROLLBACK_BACKUP_BRANCH="rollback/backup/$LATEST_COMMIT"
+            git branch "$ROLLBACK_BACKUP_BRANCH"
+            git push origin "$ROLLBACK_BACKUP_BRANCH"
+            git reset --hard ${{ github.event.inputs.revert-to }}
+            git push --force
+          fi
+      # TODO: remove artifact from Maven repository: possible ?
+#      - name: "Remove artifact"
+#        if: always()
+#        run:
+      

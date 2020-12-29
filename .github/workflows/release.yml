@@ -1,5 +1,40 @@
 name: Release
 
+# Process
+# -------
+#
+# 1) mvn release:prepare
+#     => change version for release in pom.xml files to vX.Y.0
+#     => update readme
+#     => run unit+integration tests
+#     => commit
+#     => tag
+#     => change version for future developments in pom.xml files to vU.V.0-SNAPSHOT
+#
+# 2) Trigger a full build on tagged version and wait for result
+#     => build from tag
+#     => run unit+integration tests
+#     => run classpath-tests
+#     => generate javadoc
+#
+# 3) mvn release:perform to finish the release
+#     => deploy on Sonatype
+#
+# 4) Trigger a site generation on tagged version
+#
+# 5) Create branch for fixes
+#     => change versions to vX.Y.1-SNAPSHOT
+#
+#
+# Rollback
+# --------
+#
+# 1) mvn release:rollback
+# 2) delete tag
+# 3) restore previous commit (before version changes)
+# 3) mvn release:clean
+# 4) remove from Sonatype if deployed
+
 on:
   workflow_dispatch:
     inputs:
@@ -11,9 +46,283 @@ on:
         description: 'Next dev version'
         required: true
         default: '3.1.0-SNAPSHOT'
+      fix-version:
+        description: 'Fixes version'
+        required: true
+        default: '3.0.1-SNAPSHOT'
         
 jobs:
-  mutation-tests:
+# FIXME: maven-release-plugin can't be used due to issue: https://issues.apache.org/jira/browse/MRELEASE-920
+#  release:
+#    runs-on: ubuntu-18.04
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-java@v1
+#        with:
+#          java-version: 8
+#      - name: Cache Maven packages
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.m2/repository
+#            !~/.m2/repository/fr/sii/
+#          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+#      - name: "Release"
+#        run:
+#          ./mvnw release:prepare
+#              -DreleaseVersion=${{ github.event.inputs.release-version }}
+#              -DdevelopmentVersion=${{ github.event.inputs.next-dev-version }}
+#              -B
+  release:
     runs-on: ubuntu-18.04
     steps:
-      - run: echo "foo"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/fr/sii/
+          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+      - name: Prepare git
+        run: |
+          git config user.email github-actions@github.com
+          git config user.name github-actions
+      - name: "Set release version (${{ github.event.inputs.release-version }})"
+        run: |
+          ./mvnw versions:set -DnewVersion=${{ github.event.inputs.release-version }} -DprocessAllModules
+          ./mvnw com.google.code.maven-replacer-plugin:replacer:replace -N
+          ./mvnw versions:commit
+      - name: "Generate README.adoc"
+        run: 
+          ./mvnw install 
+              -DskipTests=true
+              -Dmaven.javadoc.skip=true
+              -Dreadme.skip=false
+              -DdocOghamVersion=${{ github.event.inputs.release-version}}
+              -Dgit.branch=v${{ github.event.inputs.release-version}}
+      - name: "Build to ensure that it works fine"
+        run:
+          ./mvnw clean install '-Dmaven.test.redirectTestOutputToFile=true' 
+      - name: "Commit release version"
+        run: |
+          git add .
+          git commit -m "release(${{ github.event.inputs.release-version }}) Prepare for release"
+          git push
+              
+  test-release:
+    needs: [release]
+    runs-on: ubuntu-18.04
+    steps:
+      - run: echo "disabled"
+      - uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          token: ${{ secrets.TRIGGER_WORKFLOW_TOKEN }}
+          workflow: build.yml
+          wait-for-completion-interval: 10m
+          wait-for-completion-timeout: 4h
+          
+  deploy-release:
+    needs: [test-release]
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/fr/sii/
+          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+      - name: Prepare git
+        run: |
+          git config user.email github-actions@github.com
+          git config user.name github-actions
+      - run: git pull
+      - name: "Tag release version"
+        run: |
+          git tag -a "v${{ github.event.inputs.release-version }}" -m "release(${{ github.event.inputs.release-version }}) Release"
+          git push origin "v${{ github.event.inputs.release-version }}"
+      - name: "Import GPG key"
+        uses: crazy-max/ghaction-import-gpg@v3
+        with:
+          gpg-private-key: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.RELEASE_GPG_PASSPHRASE }}
+      - name: "Deploy release"
+        run:
+          ./mvnw -Prelease deploy
+              --settings .github/deploy-settings.xml 
+              '-DskipTests=true' 
+              -B
+              
+  set-next-version:
+    needs: [deploy-release]
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/fr/sii/
+          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+      - name: Prepare git
+        run: |
+          git config user.email github-actions@github.com
+          git config user.name github-actions
+      - run: git pull
+      - name: "Set next development version on master (${{ github.event.inputs.next-dev-version }})"
+        run: |
+          ./mvnw versions:set -DnewVersion=${{ github.event.inputs.next-dev-version }} -DprocessAllModules
+          ./mvnw com.google.code.maven-replacer-plugin:replacer:replace -N
+          ./mvnw versions:commit
+      - name: "Generate README.adoc"
+        run: 
+          ./mvnw install 
+              -DskipTests=true
+              -Dmaven.javadoc.skip=true
+              -Dreadme.skip=false
+              -DdocOghamVersion=${{ github.event.inputs.next-dev-version }}
+              -Dgit.branch=master
+      - name: "Commit next development iteration"
+        run: |
+          git add .
+          git commit -m "release(${{ github.event.inputs.release-version }}) Prepare for next development iteration"
+          git push
+
+
+  create-or-update-fix-branch:
+    needs: [set-next-version]
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/fr/sii/
+          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
+      - name: Prepare git
+        run: |
+          git config user.email github-actions@github.com
+          git config user.name github-actions
+      - name: "Get fix branch"
+        run: |
+          RELEASE_VERSION=${{ github.event.inputs.release-version }}
+          FIX_BRANCH="v${RELEASE_VERSION%.*}.x"
+          echo "FIX_BRANCH=$FIX_BRANCH" >> $GITHUB_ENV
+      - name: "Set version"
+        run: |
+          echo "FIX_BRANCH=$FIX_BRANCH"
+          EXISTS=$(git ls-remote --heads origin ${FIX_BRANCH})
+          if [ -z "$EXISTS" ]; then
+            git checkout "v${{ github.event.inputs.release-version }}"
+            git checkout -b "$FIX_BRANCH"
+          else
+            git checkout "$FIX_BRANCH"
+          fi 
+          ./mvnw versions:set -DnewVersion=${{ github.event.inputs.fix-version }} -DprocessAllModules
+          ./mvnw com.google.code.maven-replacer-plugin:replacer:replace -N
+          ./mvnw versions:commit
+      - name: "Generate README.adoc"
+        run: 
+          ./mvnw install 
+              -DskipTests=true
+              -Dmaven.javadoc.skip=true
+              -Dreadme.skip=false
+              -DdocOghamVersion=${{ github.event.inputs.fix-version }}
+              -Dgit.branch=$FIX_BRANCH
+      - name: "Create fix branch or update it"
+        run: |
+          git add .
+          git commit -m "chore(bump) Change version number for next fix version"
+          git push -u origin ${FIX_BRANCH}
+
+  update-site:
+    needs: [create-or-update-fix-branch]
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          token: ${{ secrets.TRIGGER_WORKFLOW_TOKEN }}
+          workflow: update-site.yml
+          ref: v${{ github.event.inputs.release-version }}
+          inputs: |
+            {
+              "current-version": "${{ github.event.inputs.release-version }}",
+              "git-branch": "v${{ github.event.inputs.release-version }}"
+            }
+          wait-for-completion: false
+
+      
+  slack:
+    if: always()
+    needs: [set-next-version, update-site, create-or-update-fix-branch]
+    runs-on: ubuntu-18.04
+    name: "Slack"
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v2
+      - run: >
+          ICON=$(
+            ([ "${{env.WORKFLOW_CONCLUSION}}" = "success" ] && echo ":white_check_mark:") || 
+            ([ "${{env.WORKFLOW_CONCLUSION}}" = "failure" ] && echo ":x:") || 
+            ([ "${{env.WORKFLOW_CONCLUSION}}" = "timed_out" ] && echo ":x:") || 
+            ([ "${{env.WORKFLOW_CONCLUSION}}" = "cancelled" ] && echo ":heavy_multiplication_x:") || 
+            echo ":interrobang:"
+           )
+           echo "STATUS_ICON=$ICON" >> $GITHUB_ENV
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ env.WORKFLOW_CONCLUSION }}
+          fields: workflow,ref,message
+          username: 'release'
+          author_name: ''
+          icon_url: https://github.com/groupe-sii/ogham/raw/master/src/site/resources/img/ogham-blue-256x256.png
+          text: |
+            ${{ env.STATUS_ICON }} _${{ github.event.inputs.release-version }}_
+            ${{ github.event.head_commit.message }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  rollback:
+    needs: [release, test-release, deploy-release, set-next-version, update-site, create-or-update-fix-branch]
+    if: failure() || cancelled()
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          token: ${{ secrets.TRIGGER_WORKFLOW_TOKEN }}
+          inputs: |
+            {
+              "release-version": "${{ github.event.inputs.release-version }}",
+              "revert-to": "${{ github.sha }}"
+            }
+          workflow: release-rollback.yml
+          wait-for-completion-interval: 1m
+          wait-for-completion-timeout: 1h
+      

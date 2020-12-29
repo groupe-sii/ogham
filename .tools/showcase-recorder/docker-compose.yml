@@ -62,8 +62,11 @@ services:
       - "${OUTPUT_DIR}:/data/showcase"
     command: >
       sh -c 'python "/usr/src/app/play_showcase.py" "http://docs/presentation/showcase-video-recording.html" --recorded-video /data/showcase/showcase-recording.mp4 \
+              && echo "showcase recorded" \
               && python "/usr/src/app/rewrite_showcase.py" "/data/showcase/showcase-recording.mp4" "/data/showcase/showcase.mp4" \
+              && echo "showcase rewritten" \
               && python "/usr/src/app/generate_video_preview.py" "/data/showcase/showcase.mp4" "/data/showcase/showcase.png" \
+              && echo "preview generated" \
               ; chown -R ${OUTPUT_UID}:${OUTPUT_GID} "/data/showcase" \
               ; [ -f "/data/showcase/showcase.mp4" ] || { echo "showcase.mp4 not generated" ; exit 1 ;}'
 
