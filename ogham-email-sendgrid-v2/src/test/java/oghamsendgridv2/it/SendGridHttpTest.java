@@ -215,7 +215,7 @@ class SendGridHttpTest {
 		}, "throws message exception");
 		assertThat("sendgrid exception", e.getCause(), allOf(notNullValue(), instanceOf(SendGridException.class)));
 		assertThat("root cause", e.getCause().getCause(), allOf(notNullValue(), instanceOf(IOException.class)));
-		assertThat("sendgrid message", e.getCause().getCause().getMessage(), Matchers.equalTo("Sending to SendGrid failed: (400) {\n" + 
+		assertThat("sendgrid message", e.getCause().getCause().getMessage().replaceAll("\\r", ""), Matchers.equalTo("Sending to SendGrid failed: (400) {\n" + 
 				"	\"errors\": [\"The provided authorization grant is invalid, expired, or revoked\"],\n" + 
 				"	\"message\": \"error\"\n" + 
 				"}"));

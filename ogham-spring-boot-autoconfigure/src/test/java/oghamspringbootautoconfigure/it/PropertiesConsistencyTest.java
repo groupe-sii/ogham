@@ -207,7 +207,7 @@ public class PropertiesConsistencyTest {
 	}
 	
 	private static Set<String> getAllKeysDefinedInOghamCode() throws IOException {
-		return Arrays.stream(resourceAsString("config/application-consistency-check.properties").split("\n"))
+		return Arrays.stream(resourceAsString("config/application-consistency-check.properties").split("\r?\n"))
 				.filter(PropertiesConsistencyTest::skipComments)
 				.filter(PropertiesConsistencyTest::skipEmptyLines)
 				.map(PropertiesConsistencyTest::extractKey)

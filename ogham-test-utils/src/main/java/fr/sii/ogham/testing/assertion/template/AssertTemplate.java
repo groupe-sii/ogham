@@ -88,7 +88,7 @@ public final class AssertTemplate {
 		String expected = strict ? expectedContent : sanitize(expectedContent);
 		String contentAsString = content==null ? null : content.toString();
 		String actual = strict ? contentAsString : sanitize(contentAsString);
-		registry.register(() -> Assert.assertEquals("parsed template is different to expected content", expected, actual));
+		registry.register(() -> Assert.assertEquals("parsed template is different to expected content", expected == null ? null : expected.replace("\r", ""), actual == null ? null : actual.replace("\r", "")));
 	}
 	
 	private static String loadOrNull(String path, AssertionRegistry registry) throws IOException {

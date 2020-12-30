@@ -218,7 +218,7 @@ class SendGridHttpTest {
 		
 		assertThat("cause", e.getCause(), allOf(notNullValue(), instanceOf(SendGridException.class)));
 		assertThat("sub cause", e.getCause().getCause(), allOf(notNullValue(), instanceOf(IOException.class)));
-		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Sending to SendGrid failed: (401) {\n" + 
+		assertThat("sub cause message", e.getCause().getCause().getMessage().replaceAll("\\r", ""), equalTo("Sending to SendGrid failed: (401) {\n" + 
 				"  \"errors\": [\n" + 
 				"    {\n" + 
 				"      \"message\": \"The provided authorization grant is invalid, expired, or revoked\",\n" + 
@@ -257,7 +257,7 @@ class SendGridHttpTest {
 		
 		assertThat("cause", e.getCause(), allOf(notNullValue(), instanceOf(SendGridException.class)));
 		assertThat("sub cause", e.getCause().getCause(), allOf(notNullValue(), instanceOf(IOException.class)));
-		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Sending to SendGrid failed: (400) {\n" + 
+		assertThat("sub cause message", e.getCause().getCause().getMessage().replaceAll("\\r", ""), equalTo("Sending to SendGrid failed: (400) {\n" + 
 				"  \"errors\": [\n" + 
 				"    {\n" + 
 				"      \"message\": \"The disposition of your attachment can be either 'inline' or 'attachment'.\",\n" + 
@@ -289,7 +289,7 @@ class SendGridHttpTest {
 		}, "root exception");
 		assertThat("cause", e.getCause(), allOf(notNullValue(), instanceOf(SendGridException.class)));
 		assertThat("sub cause", e.getCause().getCause(), allOf(notNullValue(), instanceOf(IOException.class)));
-		assertThat("sub cause message", e.getCause().getCause().getMessage(), equalTo("Sending to SendGrid failed: (429) {\n" + 
+		assertThat("sub cause message", e.getCause().getCause().getMessage().replaceAll("\\r", ""), equalTo("Sending to SendGrid failed: (429) {\n" + 
 				"  \"errors\": [\n" + 
 				"    {\n" + 
 				"      \"field\": null,\n" + 

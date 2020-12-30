@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public class CustomConverterTest {
 		PropertyResolver resolver = env.build();
 		File file = resolver.getProperty("custom-file", File.class);
 		assertThat("converted to file", file, notNullValue());
-		assertThat("file path", file.getPath(), is("/path/to/file"));
+		assertThat("file path", file.getPath(), is(Paths.get("/path/to/file").toString()));
 	}
 
 	@Test
@@ -46,7 +47,7 @@ public class CustomConverterTest {
 		PropertyResolver resolver = builder.environment().build();
 		File file = resolver.getProperty("custom-file", File.class);
 		assertThat("converted to file", file, notNullValue());
-		assertThat("file path", file.getPath(), is("/path/to/file"));
+		assertThat("file path", file.getPath(), is(Paths.get("/path/to/file").toString()));
 	}
 	
 	private static class CustomConverter implements SupportingConverter {

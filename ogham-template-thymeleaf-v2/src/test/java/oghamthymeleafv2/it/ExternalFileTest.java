@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -78,6 +79,7 @@ public class ExternalFileTest {
 
 	@Test
 	public void fileUnreadable() throws ParseException {
+		Assume.assumeFalse("File.setReadable has no effect on Windows", isWindows());
 		TemplateParser parser = builder.build();
 
 		ParseException e = assertThrows("should throw", ParseException.class, () -> {
@@ -119,5 +121,9 @@ public class ExternalFileTest {
 		assertNotNull("content should not be null", content2);
 		assertTrue("content should be MayHaveStringContent", content2 instanceof MayHaveStringContent);
 		assertEquals("/template/thymeleaf/expected/simple_foo_42.txt", content2);
+	}
+	
+	private static boolean isWindows() {
+		return System.getProperty("os.name").startsWith("Windows");
 	}
 }

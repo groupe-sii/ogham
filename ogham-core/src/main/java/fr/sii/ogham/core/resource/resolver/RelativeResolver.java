@@ -100,8 +100,7 @@ public class RelativeResolver implements DelegateResourceResolver {
 	@Override
 	public ResolvedPath resolve(ResourcePath path) {
 		ResolvedPath resourcePath = delegate.resolve(path);
-		boolean absolute = resourcePath.getResolvedPath().startsWith("/");
-		if (absolute) {
+		if (delegate.isAbsolute(resourcePath)) {
 			LOG.trace("Absolute resource path {} => do not add parentPath/extension", path);
 			return resourcePath;
 		}

@@ -105,7 +105,7 @@ public class SpringWebBeanResolutionTest {
 		.receivedMessages()
 			.count(is(1))
 			.message(0)
-				.content(is(resourceAsString("/thymeleaf/expected/web-beans-and-urls-resolution.txt")));
+				.content(is(resourceAsString("/thymeleaf/expected/web-beans-and-urls-resolution.txt").replaceAll("\r", "")));
 	}
 
 
@@ -150,7 +150,7 @@ public class SpringWebBeanResolutionTest {
 			.receivedMessages()
 				.count(is(1))
 				.message(0)
-					.content(is(resourceAsString("/thymeleaf/expected/web-beans-resolution.txt")));
+					.content(is(resourceAsString("/thymeleaf/expected/web-beans-resolution.txt").replaceAll("\r", "")));
 	}
 	
 	@Test

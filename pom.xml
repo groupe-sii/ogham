@@ -833,6 +833,8 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<argLine>${surefireArgLine}</argLine>
+					<reuseForks>false</reuseForks>
+					<useSystemClassLoader>false</useSystemClassLoader>
 					<skipTests>${skip.unit.tests}</skipTests>
 					<includes>
 						<include>**/ut/**/*.java</include>
@@ -854,6 +856,8 @@
 						</goals>
 						<configuration>
 							<argLine>${failsafeArgLine}</argLine>
+							<reuseForks>false</reuseForks>
+							<useSystemClassLoader>false</useSystemClassLoader>
 							<skipTests>${skip.integration.tests}</skipTests>
 							<includes>
 								<include>**/it/**/*.java</include>

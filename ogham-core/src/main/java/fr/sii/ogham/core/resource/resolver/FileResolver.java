@@ -53,7 +53,7 @@ public class FileResolver extends AbstractPrefixedLookupPathResolver implements 
 	@Override
 	public boolean isAbsolute(ResourcePath path) {
 		ResolvedPath resourcePath = resolve(path);
-		return resourcePath.getResolvedPath().startsWith("/");
+		return new File(resourcePath.getResolvedPath()).isAbsolute();
 	}
 
 	@Override

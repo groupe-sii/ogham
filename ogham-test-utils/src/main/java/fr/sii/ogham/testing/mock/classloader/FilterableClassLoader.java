@@ -64,22 +64,38 @@ public class FilterableClassLoader extends ClassLoader {
 
 	@Override
 	public void setDefaultAssertionStatus(boolean enabled) {
-		delegate.setDefaultAssertionStatus(enabled);
+		super.setDefaultAssertionStatus(enabled);
+		if (delegate != null) {
+			delegate.setDefaultAssertionStatus(enabled);
+		}
+		// TODO: should set value when delegate is initialized ?
 	}
 
 	@Override
 	public void setPackageAssertionStatus(String packageName, boolean enabled) {
-		delegate.setPackageAssertionStatus(packageName, enabled);
+		super.setPackageAssertionStatus(packageName, enabled);
+		if (delegate != null) {
+			delegate.setPackageAssertionStatus(packageName, enabled);
+		}
+		// TODO: should set values when delegate is initialized ?
 	}
 
 	@Override
 	public void setClassAssertionStatus(String className, boolean enabled) {
-		delegate.setClassAssertionStatus(className, enabled);
+		super.setClassAssertionStatus(className, enabled);
+		if (delegate != null) {
+			delegate.setClassAssertionStatus(className, enabled);
+		}
+		// TODO: should set values when delegate is initialized ?
 	}
 
 	@Override
 	public void clearAssertionStatus() {
-		delegate.clearAssertionStatus();
+		super.clearAssertionStatus();
+		if (delegate != null) {
+			delegate.clearAssertionStatus();
+		}
+		// TODO: should call when delegate is initialized ?
 	}
 	
 	

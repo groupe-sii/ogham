@@ -139,7 +139,7 @@ public class JsoupCssInliner implements CssInliner {
 			if (isInlineModeAllowed(e, InlineModes.STYLE_ATTR)) {
 				String newStyle = e.attr(TEMP_STYLE_ATTR);
 				String oldStyle = e.attr(STYLE_ATTR);
-				e.attr(STYLE_ATTR, (newStyle.trim() + ";" + oldStyle.trim()).replaceAll(";+", ";").trim());
+				e.attr(STYLE_ATTR, (trimAll(newStyle) + ";" + trimAll(oldStyle)).replaceAll(";+", ";").trim());
 			}
 			e.removeAttr(TEMP_STYLE_ATTR);
 		}
@@ -150,7 +150,11 @@ public class JsoupCssInliner implements CssInliner {
 		if (!prop.endsWith(";")) {
 			prop += ";";
 		}
-		return prop.trim() + " " + newProp.trim() + ";";
+		return trimAll(prop) + " " + trimAll(newProp) + ";";
+	}
+	
+	private static String trimAll(String str) {
+		return str.replaceAll("\\s+", " ").trim();
 	}
 	
 

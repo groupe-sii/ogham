@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,6 +72,7 @@ public class UnreadableAttachmentTest {
 
 	@Test
 	public void attachmentUnreadable() throws MessagingException {
+		Assume.assumeFalse("File.setReadable has no effect on Windows", isWindows());
 		MessageException e = assertThrows("should throw", MessageException.class, () -> {
 			service.send(new Email()
 					.attach(new Attachment(unreadable))
@@ -81,5 +83,9 @@ public class UnreadableAttachmentTest {
 		});
 		assertThat("should indicate cause", e.getCause(), instanceOf(AttachmentResourceHandlerException.class));
 		assertThat("should indicate which file", e, hasAnyCause(FileNotFoundException.class, hasMessage(containsString(unreadable.getName()))));
+	}
+	
+	private static boolean isWindows() {
+		return System.getProperty("os.name").startsWith("Windows");
 	}
 }

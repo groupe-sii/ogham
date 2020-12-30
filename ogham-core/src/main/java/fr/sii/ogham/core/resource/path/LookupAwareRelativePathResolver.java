@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import fr.sii.ogham.core.util.ResourceUtils;
+
 /**
  * Resolve the given path against the base path by using the following rules:
  * 
@@ -143,12 +145,12 @@ public class LookupAwareRelativePathResolver implements RelativePathResolver {
 			merged = merged.resolveSibling(withoutLookup(relativePath.getOriginalPath()));
 		}
 		if (relativeLookup != null) {
-			return relativeLookup + merged.toString();
+			return relativeLookup + ResourceUtils.toResourcePath(merged);
 		}
 		if (sourceLookup != null) {
-			return sourceLookup + merged.toString();
+			return sourceLookup + ResourceUtils.toResourcePath(merged);
 		}
-		return merged.toString();
+		return ResourceUtils.toResourcePath(merged);
 	}
 
 	private boolean isSameLookupType(String relativeLookup, String sourceLookup) {
