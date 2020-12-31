@@ -29,15 +29,21 @@ jobs:
             !~/.m2/repository/fr/sii/
           key: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}
+      # TODO: remove when nick-invision/retry support portable command or execute command in shell
+      - run: echo "MVNW=./mvnw" >> $GITHUB_ENV
+        if: runner.os != 'Windows'
+      - run: echo "MVNW=mvnw" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        if: runner.os == 'Windows'
+      - run: echo "MVNW=${{ env.MVNW }}"
       - name: "Build"
         uses: nick-invision/retry@v2
         with:
           timeout_minutes: 60
           max_attempts: 3
           command: 
-            ./mvnw clean install 
-                '-DskipTests=true' 
-                '-Dmaven.javadoc.skip=true' 
+            ${{ env.MVNW }} clean install 
+                -DskipTests=true
+                -Dmaven.javadoc.skip=true
                 -B
       - name: "Save Maven outuput for analysis - archive"
         if: failure()
@@ -71,15 +77,21 @@ jobs:
             !~/.m2/repository/fr/sii/
           key: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}
+      # TODO: remove when nick-invision/retry support portable command or execute command in shell
+      - run: echo "MVNW=./mvnw" >> $GITHUB_ENV
+        if: runner.os != 'Windows'
+      - run: echo "MVNW=mvnw" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        if: runner.os == 'Windows'
+      - run: echo "MVNW=${{ env.MVNW }}"
       - name: "Unit Tests"
         uses: nick-invision/retry@v2
         with:
           timeout_minutes: 60
           max_attempts: 3
           command: 
-            ./mvnw test 
-                '-Dmaven.javadoc.skip=true' 
-                '-Dmaven.test.redirectTestOutputToFile=true' 
+            ${{ env.MVNW }} test 
+                -Dmaven.javadoc.skip=true
+                -Dmaven.test.redirectTestOutputToFile=true 
                 -fae 
                 -B
       - name: "Save Maven outuput for analysis - archive"
@@ -125,16 +137,22 @@ jobs:
             !~/.m2/repository/fr/sii/
           key: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}
+      # TODO: remove when nick-invision/retry support portable command or execute command in shell
+      - run: echo "MVNW=./mvnw" >> $GITHUB_ENV
+        if: runner.os != 'Windows'
+      - run: echo "MVNW=mvnw" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        if: runner.os == 'Windows'
+      - run: echo "MVNW=${{ env.MVNW }}"
       - name: "Integration Tests"
         uses: nick-invision/retry@v2
         with:
           timeout_minutes: 60
           max_attempts: 3
           command: 
-            ./mvnw verify 
-                '-Dmaven.javadoc.skip=true' 
-                '-Dskip.unit.tests=true' 
-                '-Dmaven.test.redirectTestOutputToFile=true' 
+            ${{ env.MVNW }} verify 
+                -Dmaven.javadoc.skip=true
+                -Dskip.unit.tests=true
+                -Dmaven.test.redirectTestOutputToFile=true
                 -fae 
                 -B
       - name: "Save Maven outuput for analysis - archive"
@@ -228,10 +246,10 @@ jobs:
           max_attempts: 3
           command: 
             ./mvnw clean install sonar:sonar 
-                '-Dmaven.test.redirectTestOutputToFile=true' 
-                '-Dsonar.projectKey=fr.sii.ogham:ogham-parent' 
-                '-Dsonar.organization=aurelien-baudet-github' 
-                '-Dsonar.host.url=https://sonarcloud.io' 
+                -Dmaven.test.redirectTestOutputToFile=true
+                -Dsonar.projectKey=fr.sii.ogham:ogham-parent 
+                -Dsonar.organization=aurelien-baudet-github 
+                -Dsonar.host.url=https://sonarcloud.io 
                 -Dsonar.login=$SONAR_TOKEN 
                 -B
         env:
@@ -260,7 +278,7 @@ jobs:
           max_attempts: 3
           command: 
             ./mvnw clean install
-                '-Dmaven.test.redirectTestOutputToFile=true'
+                -Dmaven.test.redirectTestOutputToFile=true
                 -B
       - name: "Analyze"
         uses: codecov/codecov-action@v1
@@ -492,7 +510,7 @@ jobs:
         run: 
           ./mvnw clean install deploy 
               --settings .github/deploy-settings.xml 
-              '-DskipTests=true' 
+              -DskipTests=true 
               -B 
       
   slack:
