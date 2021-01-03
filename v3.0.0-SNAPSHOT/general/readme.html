@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="..//javascripts/steps.js"></script>
 <script type="text/javascript" src="..//javascripts/sourcecode/source-utils.js"></script>
 <script type="text/javascript" src="..//javascripts/sourcecode/highlight-lines.js"></script>
@@ -22,7 +22,7 @@
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
-<h1>Ogham</h1>
+<h1><span class="image"><img src="../images//logo.png" alt="logo" width="30" height="30"></span> Ogham</h1>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
@@ -81,9 +81,9 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><span class="image"><a class="image" href="https://mvnrepository.com/artifact/fr.sii.ogham/ogham-all/3.0.0-SNAPSHOT"><img src="https://img.shields.io/maven-central/v/fr.sii.ogham/ogham-all.svg" alt="Latest Release Standalone"></a></span>
+<p><span class="image"><a class="image" href="https://mvnrepository.com/artifact/fr.sii.ogham/ogham-all/"><img src="https://img.shields.io/maven-central/v/fr.sii.ogham/ogham-all.svg" alt="Latest Release Standalone"></a></span>
 <span class="image"><a class="image" href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg" alt="License"></a></span>
-<span class="image"><a class="image" href="https://github.com/groupe-sii/ogham/actions?query=workflow%3ABuild"><img src="https://github.com/groupe-sii/ogham/workflows/Build/badge.svg?branch={badges-branch}" alt="Build Status"></a></span></p>
+<span class="image"><a class="image" href="https://github.com/groupe-sii/ogham/actions?query=workflow%3ABuild"><img src="https://github.com/groupe-sii/ogham/workflows/Build/badge.svg?branch={git-branch}" alt="Build Status"></a></span></p>
 </div>
 <div class="paragraph">
 <p><span class="image"><a class="image" href="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"><img src="https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&amp;metric=alert_status" alt="Sonar"></a></span>
@@ -112,27 +112,32 @@
 <div class="sect1">
 <h2 id="_resources"><a class="anchor" href="#_resources"></a>Resources</h2>
 <div class="sectionbody">
-<table class="tableblock frame-all grid-all fit-content stretch">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col>
-<col>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>v3.0.0-SNAPSHOT</strong> (Latest release)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>v3.0.0-SNAPSHOT</strong> (Current development)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><a class="image" href="https://groupe-sii.github.io/ogham/redirects/latest-release-site.html"><img src="https://img.shields.io/endpoint?url=https://groupe-sii.github.io/ogham/badges/latest-release-version.json" alt="Latest Release"></a></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><a class="image" href="https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT"><img src="https://img.shields.io/static/v1?label=This%20version&amp;message=v3.0.0-SNAPSHOT" alt="This version"></a></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><a class="image" href="https://groupe-sii.github.io/ogham/redirects/nightly-build-site.html"><img src="https://img.shields.io/endpoint?url=https://groupe-sii.github.io/ogham/badges/nightly-build-version.json" alt="Nightly build"></a></span></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/redirects/latest-release-site.html">site</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT">site</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT">site</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/redirects/nightly-build-site.html">site</a></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/redirects/latest-release-code.html">code</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/groupe-sii/ogham/blob/master">code</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{sourcedir-dev-url}[code]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/groupe-sii/ogham/tree/master">code</a></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/redirects/latest-release-showcase.html">showcase</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/presentation/showcase.html">showcase</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/presentation/showcase.html">showcase</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://groupe-sii.github.io/ogham/redirects/nightly-build-showcase.html">showcase</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -288,7 +293,7 @@ dependencies {
 <td class="content">
 <div class="title">Java version compatibility</div>
 <div class="paragraph">
-<p>Ogham is compatible with Java 8 and up to Java 14 (included).</p>
+<p>Ogham is compatible with Java 8 and up to Java 15 (included).</p>
 </div>
 </td>
 </tr>
@@ -607,13 +612,16 @@ configuration properties like <code>spring.mail.host</code> for example.</p>
 <p>1.5.x (currently automatically tested against 1.5.22.RELEASE)</p>
 </li>
 <li>
-<p>2.1.x (currently automatically tested against 2.1.16.RELEASE)</p>
+<p>2.1.x (currently automatically tested against 2.1.18.RELEASE)</p>
 </li>
 <li>
-<p>2.2.x (currently automatically tested against 2.2.9.RELEASE)</p>
+<p>2.2.x (currently automatically tested against 2.2.11.RELEASE)</p>
 </li>
 <li>
-<p>2.3.x (currently automatically tested against 2.3.3.RELEASE)</p>
+<p>2.3.x (currently automatically tested against 2.3.5.RELEASE)</p>
+</li>
+<li>
+<p>2.4.x (currently automatically tested against 2.4.0.RELEASE)</p>
 </li>
 </ul>
 </div>
@@ -626,7 +634,7 @@ configuration properties like <code>spring.mail.host</code> for example.</p>
 <td class="content">
 <div class="title">Java version compatibility</div>
 <div class="paragraph">
-<p>Ogham is compatible with Java 8 and up to Java 14 (included).</p>
+<p>Ogham is compatible with Java 8 and up to Java 15 (included).</p>
 </div>
 <div class="paragraph">
 <p>However, Spring Boot may not be compatible with some Java versions (depending on
@@ -733,6 +741,9 @@ to know how to send email using SendGrid HTTP API.</p>
 </div>
 <div class="sect3">
 <h4 id="_first_email_using_an_existing_smtp_server"><a class="anchor" href="#_first_email_using_an_existing_smtp_server"></a>First email using an existing SMTP server</h4>
+<details>
+<summary class="title">First email using an existing SMTP server</summary>
+<div class="content">
 <div class="paragraph">
 <p>This sample shows how to send a basic email.</p>
 </div>
@@ -836,8 +847,13 @@ Finally, the last line sends the email. The specified email is really basic. It 
 </table>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_use_an_html_template_for_email_body"><a class="anchor" href="#_use_an_html_template_for_email_body"></a>Use an HTML template for email body</h4>
+<details>
+<summary class="title">Use an HTML template for email body</summary>
+<div class="content">
 <div class="paragraph">
 <p>This sample shows how to send an email with a content following a template engine language.</p>
 </div>
@@ -997,8 +1013,13 @@ classpath is used by default. See <a href="../user-manual.html#resource-resoluti
 particular format. Directly use what you want.</p>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_use_html_title_as_email_subject"><a class="anchor" href="#_use_html_title_as_email_subject"></a>Use HTML title as email subject</h4>
+<details>
+<summary class="title">Use HTML title as email subject</summary>
+<div class="content">
 <div class="paragraph">
 <p>This sample is a variant of the previous one. It allows you to
 directly use the HTML title as subject of your email. It may be
@@ -1228,8 +1249,13 @@ The subject of the email will be <code>Welcome foo !</code>
 </div>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_html_body_with_css_and_images"><a class="anchor" href="#_html_body_with_css_and_images"></a>HTML body with CSS and images</h4>
+<details>
+<summary class="title">HTML body with CSS and images</summary>
+<div class="content">
 <div class="paragraph">
 <p>When you develop a Web application, you can use HTML for the content and CSS for
 layout and theming. HTML and CSS can use images to make a beautiful Web page.
@@ -1623,8 +1649,13 @@ determined</td>
 </div>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_a_working_preview_of_the_html_body_text_alternative"><a class="anchor" href="#_a_working_preview_of_the_html_body_text_alternative"></a>A working preview of the HTML body (text alternative)</h4>
+<details>
+<summary class="title">A working preview of the HTML body (text alternative)</summary>
+<div class="content">
 <div class="paragraph">
 <p>Sending an email with HTML content <strong>and</strong> text content might be really important, at least for
 smartphones. When a smartphone receives an email, it displays the sender, the subject and also a
@@ -2018,8 +2049,13 @@ extension). The HTML template uses Thymeleaf while the text template uses FreeMa
 to use the template engine that best suits your needs.</p>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_attach_files_to_the_email"><a class="anchor" href="#_attach_files_to_the_email"></a>Attach files to the email</h4>
+<details>
+<summary class="title">Attach files to the email</summary>
+<div class="content">
 <div class="exampleblock tab-container no-max-height">
 <div class="content">
 <div class="openblock tab">
@@ -2149,6 +2185,8 @@ disposition is automatically set to <code>ContentDisposition.INLINE</code>.</p>
 </table>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_other_email_features"><a class="anchor" href="#_other_email_features"></a>Other email features</h4>
 <div class="paragraph">
@@ -2184,6 +2222,9 @@ in <a href="https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#
 </div>
 <div class="sect3">
 <h4 id="_first_sms_using_an_existing_smpp_server"><a class="anchor" href="#_first_sms_using_an_existing_smpp_server"></a>First SMS using an existing SMPP server</h4>
+<details>
+<summary class="title">First SMS using an existing SMPP server</summary>
+<div class="content">
 <div class="paragraph">
 <p>This sample defines two properties mandatory (system ID and password) by this protocol in order to use it.</p>
 </div>
@@ -2285,8 +2326,13 @@ readable code.</p>
 <p>Properties are directly provided in the code. You can instead <a href="../user-manual.html#properties-handling">use a configuration file</a>.</p>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_use_a_template_for_sms_content"><a class="anchor" href="#_use_a_template_for_sms_content"></a>Use a template for SMS content</h4>
+<details>
+<summary class="title">Use a template for SMS content</summary>
+<div class="content">
 <div class="paragraph">
 <p>This sample shows how to send a SMS with a content following a template engine language.</p>
 </div>
@@ -2423,8 +2469,13 @@ classpath is used by default. See <a href="../user-manual.html#resource-resoluti
 a particular format. Directly use what you want.</p>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_send_a_long_sms"><a class="anchor" href="#_send_a_long_sms"></a>Send a long SMS</h4>
+<details>
+<summary class="title">Send a long SMS</summary>
+<div class="content">
 <div class="paragraph">
 <p>As you may know, SMS stands for Short Message Service. Basically, the messages are limited to a maximum
 of 160 characters if character encoding is using 7bits. Using a 8-bit character encoding decreases
@@ -2536,6 +2587,8 @@ messages are the practical maximum.</p>
 </div>
 </div>
 </div>
+</details>
+</div>
 <div class="sect3">
 <h4 id="_other_sms_features"><a class="anchor" href="#_other_sms_features"></a>Other SMS features</h4>
 <div class="paragraph">
@@ -2550,6 +2603,9 @@ messages are the practical maximum.</p>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_include_test_utilities"><a class="anchor" href="#_include_test_utilities"></a>Include test utilities</h3>
+<details>
+<summary class="title">Include test utilities</summary>
+<div class="content">
 <div class="exampleblock tab-container">
 <div class="content">
 <div class="openblock tab">
@@ -2634,8 +2690,13 @@ to provide autocompletion for static imports.</p>
 </table>
 </div>
 </div>
+</details>
+</div>
 <div class="sect2">
 <h3 id="_testing_emails"><a class="anchor" href="#_testing_emails"></a>Testing emails</h3>
+<details>
+<summary class="title">Testing emails</summary>
+<div class="content">
 <div class="paragraph">
 <p>To test your application emails, you can start a local SMTP server. You can then use Ogham to make
 assertions on your email (right recipients, right sender, right body&#8230;&#8203;). Ogham uses
@@ -2789,8 +2850,13 @@ assertions on your email (right recipients, right sender, right body&#8230;&#820
 </div>
 </div>
 </div>
+</details>
+</div>
 <div class="sect2">
 <h3 id="_testing_sms"><a class="anchor" href="#_testing_sms"></a>Testing SMS</h3>
+<details>
+<summary class="title">Testing SMS</summary>
+<div class="content">
 <div class="paragraph">
 <p>To test your application SMS, you can start a local SMPP server. You can then use Ogham to make assertions on you SMS (recipient phone number, sender phone number and message). Ogham uses <a href="https://jsmpp.org/">jSMPP</a> as local SMPP server.</p>
 </div>
@@ -2907,6 +2973,8 @@ assertions on your email (right recipients, right sender, right body&#8230;&#820
 </div>
 </div>
 </div>
+</details>
+</div>
 <div class="sect2">
 <h3 id="_more_testing_features"><a class="anchor" href="#_more_testing_features"></a>More testing features</h3>
 <div class="paragraph">
@@ -2955,7 +3023,7 @@ assertions on your email (right recipients, right sender, right body&#8230;&#820
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-26 18:00:18 UTC
+Last updated 2021-01-03 08:24:15 UTC
 </div>
 </div>
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
