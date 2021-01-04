@@ -29,21 +29,15 @@ jobs:
             !~/.m2/repository/fr/sii/
           key: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}
-      # TODO: remove when nick-invision/retry support portable command or execute command in shell
-      - run: echo "MVNW=./mvnw" >> $GITHUB_ENV
-        if: runner.os != 'Windows'
-      - run: echo "MVNW=mvnw" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        if: runner.os == 'Windows'
-      - run: echo "MVNW=${{ env.MVNW }}"
       - name: "Build"
         uses: nick-invision/retry@v2
         with:
           timeout_minutes: 60
           max_attempts: 3
           command: 
-            ${{ env.MVNW }} clean install 
-                -DskipTests=true
-                -Dmaven.javadoc.skip=true
+            ./mvnw clean install 
+                '-DskipTests=true'
+                '-Dmaven.javadoc.skip=true'
                 -B
       - name: "Save Maven outuput for analysis - archive"
         if: failure()
@@ -77,21 +71,15 @@ jobs:
             !~/.m2/repository/fr/sii/
           key: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}
-      # TODO: remove when nick-invision/retry support portable command or execute command in shell
-      - run: echo "MVNW=./mvnw" >> $GITHUB_ENV
-        if: runner.os != 'Windows'
-      - run: echo "MVNW=mvnw" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        if: runner.os == 'Windows'
-      - run: echo "MVNW=${{ env.MVNW }}"
       - name: "Unit Tests"
         uses: nick-invision/retry@v2
         with:
           timeout_minutes: 60
           max_attempts: 3
           command: 
-            ${{ env.MVNW }} test 
-                -Dmaven.javadoc.skip=true
-                -Dmaven.test.redirectTestOutputToFile=true 
+            ./mvnw test 
+                '-Dmaven.javadoc.skip=true'
+                '-Dmaven.test.redirectTestOutputToFile=true' 
                 -fae 
                 -B
       - name: "Save Maven outuput for analysis - archive"
@@ -137,22 +125,16 @@ jobs:
             !~/.m2/repository/fr/sii/
           key: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-${{ matrix.java }}-${{ secrets.CACHE_VERSION }}
-      # TODO: remove when nick-invision/retry support portable command or execute command in shell
-      - run: echo "MVNW=./mvnw" >> $GITHUB_ENV
-        if: runner.os != 'Windows'
-      - run: echo "MVNW=mvnw" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        if: runner.os == 'Windows'
-      - run: echo "MVNW=${{ env.MVNW }}"
       - name: "Integration Tests"
         uses: nick-invision/retry@v2
         with:
           timeout_minutes: 60
           max_attempts: 3
           command: 
-            ${{ env.MVNW }} verify 
-                -Dmaven.javadoc.skip=true
-                -Dskip.unit.tests=true
-                -Dmaven.test.redirectTestOutputToFile=true
+            ./mvnw verify 
+                '-Dmaven.javadoc.skip=true'
+                '-Dskip.unit.tests=true'
+                '-Dmaven.test.redirectTestOutputToFile=true'
                 -fae 
                 -B
       - name: "Save Maven outuput for analysis - archive"

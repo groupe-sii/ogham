@@ -19,7 +19,7 @@ endif::[]
 
 image:https://img.shields.io/maven-central/v/fr.sii.ogham/ogham-all.svg["Latest Release Standalone", link="https://mvnrepository.com/artifact/fr.sii.ogham/ogham-all/"]
 image:https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg["License", link="https://opensource.org/licenses/Apache-2.0"]
-image:https://github.com/groupe-sii/ogham/workflows/Build/badge.svg?branch=ci/github-actions/setup["Build Status", link="https://github.com/groupe-sii/ogham/actions?query=workflow%3ABuild"]
+image:https://github.com/groupe-sii/ogham/workflows/Build/badge.svg?branch=develop["Build Status", link="https://github.com/groupe-sii/ogham/actions?query=workflow%3ABuild"]
 
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=alert_status["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
 image:https://sonarcloud.io/api/project_badges/measure?project=fr.sii.ogham%3Aogham-parent&metric=sqale_rating["Sonar", link="https://sonarcloud.io/dashboard?id=fr.sii.ogham%3Aogham-parent"]
@@ -55,7 +55,7 @@ image::https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/presentation/showcase.
 | https://groupe-sii.github.io/ogham/redirects/nightly-build-site.html[site]
 
 | https://groupe-sii.github.io/ogham/redirects/latest-release-code.html[code]
-| https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup[code]
+| https://github.com/groupe-sii/ogham/tree/develop[code]
 | https://github.com/groupe-sii/ogham/tree/master[code]
 
 | https://groupe-sii.github.io/ogham/redirects/latest-release-showcase.html[showcase]
@@ -123,7 +123,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 ...
 ----
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/pom.xml?ts=2[View code of an example pom.xml]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/pom.xml?ts=2[View code of an example pom.xml]
 
 
 '''
@@ -373,7 +373,7 @@ take a look at https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.ht
 
 [NOTE]
 ====
-The samples are available in the https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage[sample-standard-usage sub-project].
+The samples are available in the https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMTP for sending email. 
 See https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/user-manual.html#sendgrid[Sending email through SendGrid] 
@@ -435,7 +435,7 @@ public class BasicSample {
 <3> Create a MessagingService instance
 <4> Send an email with a subject and a simple body. The sender address is automatically set using `ogham.email.from.default-value` property
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java?ts=2[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/BasicSample.java?ts=2[Source code of the sample].
 
 
 _____
@@ -512,7 +512,7 @@ public class HtmlTemplateSample {
 <5> Indicate the path to the HTML template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java?ts=2[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateSample.java?ts=2[Source code of the sample].
 
 '''
 
@@ -536,7 +536,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 <2> Use the `name` attribute value in the template
 <3> Use the `value` attribute value in the template
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=2[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=2[Source code of the HTML template]
 
 
 _____
@@ -613,7 +613,7 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 ----
 <1> Subject is no more in Java code
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateWithSubjectSample.java?ts=2[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlTemplateWithSubjectSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -639,7 +639,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 
 NOTE: The subject of the email will be `Subject of the email - Welcome foo !`
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html?ts=2[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/thymeleaf/simpleWithSubject.html?ts=2[Source code of the HTML template]
 
 
 _____
@@ -693,7 +693,7 @@ public class TextTemplateWithSubjectSample {
 ----
 <1> Subject is no more in Java code
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/TextTemplateWithSubjectSample.java?ts=2[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/TextTemplateWithSubjectSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -710,7 +710,7 @@ Foo bar ${value}
 
 NOTE: The subject of the email will be `Welcome foo !`
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts=2[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/freemarker/simpleWithSubject.txt.ftl?ts=2[Source code of the text template]
 
 
 _____
@@ -793,7 +793,7 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 `/template/withImagesAndCss/resources.txt.ftl` for the text alternative)
 <2> The template context
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts=2[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlWithImagesAndCssTemplateSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -868,7 +868,7 @@ determined
 <6> Same as <3>
 <7> The image is not inlined by Ogham. This can be useful to embed it manually.
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts=2[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/withImagesAndCss/resources.html?ts=2[Source code of the HTML template]
 
 '''
 
@@ -1058,7 +1058,7 @@ The call order between `text()` and `html()` doesn't matter (unlike using `.cont
 The underlying `Content` is a `MultiContent`.
 =====
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts=2[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextSample.java?ts=2[Source code of the sample]
 
 
 _____
@@ -1123,7 +1123,7 @@ extension).
 The underlying `Content` is a `MultiTemplateContent`.
 =====
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts=2[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextTemplateSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -1136,7 +1136,7 @@ image:src/docs/resources/images/icons/thymeleaf-text.jpg[width=30,height=30] Tex
 [[${name}]] [[${value}]]
 ----
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=2[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=2[Source code of the text template]
 
 
 '''
@@ -1159,7 +1159,7 @@ image:src/docs/resources/images/icons/thymeleaf-html.jpg[width=30,height=30] HTM
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=2[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/thymeleaf/simple.html?ts=2[Source code of the HTML template]
 
 
 _____
@@ -1232,7 +1232,7 @@ for HTML located at `/template/thymeleaf/simple.html` and one for text located a
 extension). The HTML template uses Thymeleaf while the text template uses FreeMarker.
 <2> The object used for evaluation as usual when using templates (same object used for both HTML and text)
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=2[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/HtmlAndTextMixedTemplateEnginesSample.java?ts=2[Source code of the sample]
 
 '''
 
@@ -1245,7 +1245,7 @@ image:src/docs/resources/images/icons/freemarker-logo.png[width=60,height=24] Te
 ${name} ${value}
 ----
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=2[Source code of the text template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/mixed/simple.txt.ftl?ts=2[Source code of the text template]
 
 '''
 
@@ -1267,7 +1267,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] HTML tem
 </html>
 ----
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=2[Source code of the HTML template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/mixed/simple.html?ts=2[Source code of the HTML template]
 
 
 _____
@@ -1325,7 +1325,7 @@ image:src/docs/resources/images/icons/java-logo.png[width=16,height=30] Java
 <1> Attach a PDF file that exists in the classpath to the email. The name of the attachment uses the name of the file
 <2> Use an `InputStream` and name the attachment
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts=2[Source code of the sample]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/email/WithAttachmentSample.java?ts=2[Source code of the sample]
 
 
 _____
@@ -1369,7 +1369,7 @@ See user guide to read about https://groupe-sii.github.io/ogham/v3.0.0-SNAPSHOT/
 
 [NOTE]
 ====
-The samples are available in the https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage[sample-standard-usage sub-project].
+The samples are available in the https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage[sample-standard-usage sub-project].
 
 All samples shown bellow are using SMPP for sending SMS. 
 The https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer[SMPP] protocol 
@@ -1435,7 +1435,7 @@ public class BasicSample {
 <9> Send a SMS with a simple message. The sender phone number is automatically set using 
 `ogham.sms.from.default-value` property
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts=2[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/BasicSample.java?ts=2[Source code of the sample].
 
 
 _____
@@ -1503,7 +1503,7 @@ set using `ogham.sms.from.default-value` property
 <5> Indicate the path to the template file (in the classpath)
 <6> Use any bean object for replacing variables in template
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java?ts=2[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/TemplateSample.java?ts=2[Source code of the sample].
 
 '''
 
@@ -1515,7 +1515,7 @@ image:src/docs/resources/images/icons/thymeleaf.jpg[width=30,height=30] ThymeLea
 [[${name}]] [[${value}]]
 ----
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=2[Source code of the template]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/resources/template/thymeleaf/simple.txt?ts=2[Source code of the template]
 
 
 _____
@@ -1591,7 +1591,7 @@ public class LongMessageSample {
 }
 ----
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java?ts=2[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/main/java/fr/sii/ogham/sample/standard/sms/LongMessageSample.java?ts=2[Source code of the sample].
 
 
 
@@ -1653,7 +1653,7 @@ image:src/docs/resources/images/icons/maven-logo.png[Maven,width=118,height=30]
 </dependency>
 ----
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/pom.xml?ts=2[View code of an example pom.xml]
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/pom.xml?ts=2[View code of an example pom.xml]
 
 
 '''
@@ -1780,7 +1780,7 @@ public class EmailTestSample {
 <15> Assert that received email has no attachment
 
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailTestSample.java?ts=2[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/EmailTestSample.java?ts=2[Source code of the sample].
 
 
 _____
@@ -1856,7 +1856,7 @@ public class SmsTestSample {
 <9> Assert that the recipient phone number is `0601020304`
 
 
-https://github.com/groupe-sii/ogham/tree/ci/github-actions/setup/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SmsTestSample.java?ts=2[Source code of the sample].
+https://github.com/groupe-sii/ogham/tree/develop/sample-standard-usage/src/test/java/fr/sii/ogham/sample/test/SmsTestSample.java?ts=2[Source code of the sample].
 
 
 _____
