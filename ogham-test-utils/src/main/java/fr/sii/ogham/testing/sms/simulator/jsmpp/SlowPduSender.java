@@ -180,12 +180,12 @@ public class SlowPduSender implements PDUSender {
 	}
 
 	@Override
-	public byte[] sendSubmiMulti(OutputStream os, int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+	public byte[] sendSubmitMulti(OutputStream os, int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
 			DestinationAddress[] destinationAddresses, ESMClass esmClass, byte protocolId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, RegisteredDelivery registeredDelivery,
 			ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... optionalParameters)
 			throws PDUStringException, InvalidNumberOfDestinationsException, IOException {
-		await(delays.getSendSubmiMultiWaiting());
-		return delegate.sendSubmiMulti(os, sequenceNumber, serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destinationAddresses, esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
+		await(delays.getSendSubmitMultiWaiting());
+		return delegate.sendSubmitMulti(os, sequenceNumber, serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destinationAddresses, esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
 				validityPeriod, registeredDelivery, replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage, optionalParameters);
 	}
 
@@ -196,8 +196,8 @@ public class SlowPduSender implements PDUSender {
 	}
 
 	@Override
-	public byte[] sendAlertNotification(OutputStream os, int sequenceNumber, byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr, byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
-			OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+	public byte[] sendAlertNotification(OutputStream os, int sequenceNumber, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber esmeAddrTon,
+			NumberingPlanIndicator esmeAddrNpi, String esmeAddr, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
 		await(delays.getSendAlertNotificationWaiting());
 		return delegate.sendAlertNotification(os, sequenceNumber, sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr, optionalParameters);
 	}

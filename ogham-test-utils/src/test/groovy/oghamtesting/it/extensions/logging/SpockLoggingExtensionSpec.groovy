@@ -297,7 +297,7 @@ class SpockLoggingExtensionSpec extends Specification {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics({s -> s.failed(0).succeeded(1)});
 			def logs = writer.toString();
 		then:
@@ -312,7 +312,7 @@ class SpockLoggingExtensionSpec extends Specification {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics({s -> s.failed(1).succeeded(0)});
 			def logs = writer.toString();
 		then:
@@ -327,7 +327,7 @@ class SpockLoggingExtensionSpec extends Specification {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics({s -> s.failed(0).succeeded(1)});
 			def logs = writer.toString();
 		then:
@@ -342,7 +342,7 @@ class SpockLoggingExtensionSpec extends Specification {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics({s -> s.failed(0).succeeded(4)});
 			def logs = writer.toString();
 		then:
@@ -361,7 +361,7 @@ class SpockLoggingExtensionSpec extends Specification {
 			EngineTestKit.engine("junit-vintage")
 				.selectors(selectClass(FakeSpec.class))
 				.execute()
-					.tests()
+					.testEvents()
 						.assertStatistics({s -> s.failed(2).succeeded(2)});
 			def logs = writer.toString();
 		then:

@@ -209,7 +209,7 @@ public class ServerConfig {
 		delays.setSendQuerySmRespWaiting(toAwaiter(slow.sendQuerySmRespDelay()));
 		delays.setSendReplaceSmWaiting(toAwaiter(slow.sendReplaceSmDelay()));
 		delays.setSendReplaceSmRespWaiting(toAwaiter(slow.sendReplaceSmRespDelay()));
-		delays.setSendSubmiMultiWaiting(toAwaiter(slow.sendSubmiMultiDelay()));
+		delays.setSendSubmitMultiWaiting(toAwaiter(slow.sendSubmitMultiDelay()));
 		delays.setSendSubmitMultiRespWaiting(toAwaiter(slow.sendSubmitMultiRespDelay()));
 		delays.setSendSubmitSmWaiting(toAwaiter(slow.sendSubmitSmDelay()));
 		delays.setSendSubmitSmRespWaiting(toAwaiter(slow.sendSubmitSmRespDelay()));

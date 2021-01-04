@@ -159,12 +159,12 @@ public @interface Slow {
 	long sendReplaceSmRespDelay() default 0L;
 
 	/**
-	 * Simulate slow server by waiting {@code sendSubmiMultiDelay} milliseconds
-	 * before sending "SubmiMulti" data
+	 * Simulate slow server by waiting {@code sendSubmitMultiDelay} milliseconds
+	 * before sending "SubmitMulti" data
 	 * 
 	 * @return the delay in milliseconds (0 by default)
 	 */
-	long sendSubmiMultiDelay() default 0L;
+	long sendSubmitMultiDelay() default 0L;
 
 	/**
 	 * Simulate slow server by waiting {@code sendSubmitMultiRespDelay}

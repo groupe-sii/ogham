@@ -59,7 +59,7 @@ public class SlowConfig extends HasParent<ServerConfig> {
 		sendQuerySmResp = new WaitingConfHelper(ServerDelays::setSendQuerySmRespWaiting);
 		sendReplaceSm = new WaitingConfHelper(ServerDelays::setSendReplaceSmRespWaiting);
 		sendReplaceSmResp = new WaitingConfHelper(ServerDelays::setSendReplaceSmRespWaiting);
-		sendSubmitMulti = new WaitingConfHelper(ServerDelays::setSendSubmiMultiWaiting);
+		sendSubmitMulti = new WaitingConfHelper(ServerDelays::setSendSubmitMultiWaiting);
 		sendSubmitMultiResp = new WaitingConfHelper(ServerDelays::setSendSubmitMultiRespWaiting);
 		sendSubmitSm = new WaitingConfHelper(ServerDelays::setSendSubmitSmWaiting);
 		sendSubmitSmResp = new WaitingConfHelper(ServerDelays::setSendSubmitSmRespWaiting);

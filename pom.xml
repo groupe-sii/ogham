@@ -22,57 +22,57 @@
 
 		<!-- Dependencies -->
 		<ogham.version>${project.version}</ogham.version>
-		<commons-io.version>2.7</commons-io.version>
+		<commons-io.version>2.8.0</commons-io.version>
 		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 		<thymeleaf-v2.version>2.1.6.RELEASE</thymeleaf-v2.version>
-		<thymeleaf-v3.version>3.0.11.RELEASE</thymeleaf-v3.version>
+		<thymeleaf-v3.version>3.0.11.RELEASE</thymeleaf-v3.version>		<!-- TODO: Thymeleaf 3.0.12 introduced a restriction to call static methods. There is no simple way to enable/disable it (hard coded). -->
 		<thymeleaf.version>${thymeleaf-v3.version}</thymeleaf.version>
 		<ognl.version>3.1.28</ognl.version>		<!-- TODO: ognl 3.2.x not supported by Thymeleaf (https://github.com/thymeleaf/thymeleaf/issues/727) -->
 		<freemarker.version>2.3.30</freemarker.version>
 		<javamail.version>1.6.2</javamail.version>
-		<jakarta-mail.version>1.6.5</jakarta-mail.version>
+		<jakarta-mail.version>1.6.5</jakarta-mail.version>	<!-- TODO: jakarta.mail 2.0.0 changes the base package from javax.mail to jakarta.mail. Just updating the packages will not work with Spring Boot integration. Need to provide another module with auto-adaptation (like thymeleaf or sendgrid) -->
 		<slf4j.version>1.7.30</slf4j.version>
 		<logback.version>1.2.3</logback.version>
-		<commons-lang.version>3.10</commons-lang.version>
+		<commons-lang.version>3.11</commons-lang.version>
 		<cloudhopper.version>5.0.9</cloudhopper.version>
 		<cloudhopper-fizzed.version>5.0.9</cloudhopper-fizzed.version>
 		<cloudhopper-gsm.version>3.0.0</cloudhopper-gsm.version>
 		<jsoup.version>1.13.1</jsoup.version>
-		<commons-codec.version>1.14</commons-codec.version>
-		<sendgrid-java-v4.version>4.6.1</sendgrid-java-v4.version>
+		<commons-codec.version>1.15</commons-codec.version>
+		<sendgrid-java-v4.version>4.7.1</sendgrid-java-v4.version>
 		<sendgrid-java-v2.version>2.2.2</sendgrid-java-v2.version>
 		<sendgrid-java.version>${sendgrid-java-v4.version}</sendgrid-java.version>
 		<commons-logging.version>1.2</commons-logging.version>
 		<libphonenumber.version>8.3.2</libphonenumber.version>
 		<tika.version>1.24.1</tika.version>
 		<javax-activation.version>1.2.0</javax-activation.version>
-		<jakarta-activation.version>1.2.2</jakarta-activation.version>
-		<jackson.version>2.11.1</jackson.version>
-		<reflections.version>0.9.11</reflections.version>
-		<guava.version>29.0-jre</guava.version>
-		<httpcore.version>4.4.13</httpcore.version>
-		<httpclient.version>4.5.12</httpclient.version>
-		<httpmime.version>4.5.12</httpmime.version>
+		<jakarta-activation.version>1.2.2</jakarta-activation.version>	<!-- TODO: as for jakarta.mail, jakarta.activation 2.0.0 changes the base package. -->
+		<jackson.version>2.12.0</jackson.version>
+		<reflections.version>0.9.11</reflections.version>	<!-- TODO: 0.9.12 has issues with Spring Fat JARs (https://github.com/ronmamo/reflections/issues/273, https://github.com/ronmamo/reflections/issues/277) -->
+		<guava.version>30.1-jre</guava.version>
+		<httpcore.version>4.4.14</httpcore.version>
+		<httpclient.version>4.5.13</httpclient.version>
+		<httpmime.version>4.5.13</httpmime.version>
 		<spring-boot-v1.version>1.5.22.RELEASE</spring-boot-v1.version>
-		<spring-boot-v2.version>2.3.3.RELEASE</spring-boot-v2.version>
+		<spring-boot-v2.version>2.4.1</spring-boot-v2.version>
 		<spring-boot.version>${spring-boot-v2.version}</spring-boot.version>
-		<joda-time.version>2.10.6</joda-time.version>
+		<joda-time.version>2.10.9</joda-time.version>
 		<!-- Dependencies - tests -->
-		<junit.version>4.13</junit.version>
-		<junit-jupiter.version>5.6.2</junit-jupiter.version>
-		<xmlunit.version>2.7.0</xmlunit.version>
-		<mockito-junit-jupiter.version>3.3.3</mockito-junit-jupiter.version>
+		<junit.version>4.13.1</junit.version>
+		<junit-jupiter.version>5.7.0</junit-jupiter.version>
+		<xmlunit.version>2.8.2</xmlunit.version>
+		<mockito-junit-jupiter.version>3.6.28</mockito-junit-jupiter.version>
 		<mockito.version>${mockito-junit-jupiter.version}</mockito.version>
-		<byte-buddy.version>1.10.13</byte-buddy.version>
+		<byte-buddy.version>1.10.19</byte-buddy.version>
 		<objenesis.version>3.1</objenesis.version>
 		<cloning.version>1.9.12</cloning.version>
-		<greenmail.version>1.6.0</greenmail.version>
-		<jsmpp.version>2.3.10</jsmpp.version>
+		<greenmail.version>1.6.1</greenmail.version>
+		<jsmpp.version>2.3.11</jsmpp.version>
 		<equalsverifier.version>3.5</equalsverifier.version>
-		<wiremock.version>2.27.1</wiremock.version>
+		<wiremock.version>2.27.2</wiremock.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<spock.version>1.3-groovy-2.5</spock.version>
-		<groovy.version>2.5.12</groovy.version>
+		<groovy.version>2.5.12</groovy.version>	<!-- TODO: Spock is not compatible with 2.5.14... There are compilation failures -->
 		<groovy-eclipse-compiler.version>3.6.0-03</groovy-eclipse-compiler.version>
 		<groovy-eclipse-batch.version>2.5.8-03</groovy-eclipse-batch.version>
 		<awaitility.version>4.0.3</awaitility.version>
@@ -151,7 +151,7 @@
 		<pitest-maven.version>${pit.version}</pitest-maven.version>
 		<pitest-junit5-plugin.version>0.7</pitest-junit5-plugin.version>
 		<pitmp-maven-plugin.version>1.3.7</pitmp-maven-plugin.version>
-		<descartes.version>1.2.6</descartes.version>
+		<descartes.version>1.2.6</descartes.version>	<!-- TODO: 1.3 not compatible with pitmp 1.3.7 -->
 		<!-- Plugins - documentation -->
 		<maven-site-plugin.version>3.9.0</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
@@ -1271,6 +1271,7 @@
 								<dependencyConvergence />
 							</rules>
 						</configuration>
+						<phase>install</phase>
 						<goals>
 							<goal>enforce</goal>
 						</goals>

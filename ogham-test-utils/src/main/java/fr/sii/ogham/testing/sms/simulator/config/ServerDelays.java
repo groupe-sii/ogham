@@ -98,10 +98,10 @@ public class ServerDelays {
 	 */
 	private Awaiter sendReplaceSmRespWaiting;
 	/**
-	 * Simulate slow server by executing {@code sendSubmiMultiWaiting} function
-	 * before sending "SubmiMulti" data
+	 * Simulate slow server by executing {@code sendSubmitMultiWaiting} function
+	 * before sending "SubmitMulti" data
 	 */
-	private Awaiter sendSubmiMultiWaiting;
+	private Awaiter sendSubmitMultiWaiting;
 	/**
 	 * Simulate slow server by executing {@code sendSubmitMultiRespWaiting}
 	 * function before sending "SubmitMultiResp" data
@@ -272,12 +272,12 @@ public class ServerDelays {
 		this.sendReplaceSmRespWaiting = sendReplaceSmRespWaiting;
 	}
 
-	public Awaiter getSendSubmiMultiWaiting() {
-		return sendSubmiMultiWaiting;
+	public Awaiter getSendSubmitMultiWaiting() {
+		return sendSubmitMultiWaiting;
 	}
 
-	public void setSendSubmiMultiWaiting(Awaiter sendSubmiMultiWaiting) {
-		this.sendSubmiMultiWaiting = sendSubmiMultiWaiting;
+	public void setSendSubmitMultiWaiting(Awaiter sendSubmitMultiWaiting) {
+		this.sendSubmitMultiWaiting = sendSubmitMultiWaiting;
 	}
 
 	public Awaiter getSendSubmitMultiRespWaiting() {
