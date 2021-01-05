@@ -27,6 +27,13 @@
 			<artifactId>thymeleaf</artifactId>
 		</dependency>
 
+		<!-- Dependency convergence -->
+		<!-- This is needed to enforce right versions in projects that use ogham -->
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+
 		<!-- Tests -->
 		<dependency>
 			<groupId>fr.sii.ogham</groupId>
