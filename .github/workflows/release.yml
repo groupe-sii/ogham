@@ -160,6 +160,9 @@ jobs:
           gpg-private-key: ${{ secrets.RELEASE_GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.RELEASE_GPG_PASSPHRASE }}
       - name: "Deploy release"
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         run:
           ./mvnw -Prelease deploy
               --settings .github/deploy-settings.xml 
