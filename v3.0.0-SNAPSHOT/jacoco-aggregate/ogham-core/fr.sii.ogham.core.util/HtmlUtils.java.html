@@ -258,9 +258,9 @@ public final class HtmlUtils {
 <span class="fc" id="L258">			return other;</span>
 		}
 <span class="fc" id="L260">		Path basePath = Paths.get(base);</span>
-<span class="fc" id="L261">		return basePath.resolveSibling(other).normalize().toString();</span>
+<span class="fc" id="L261">		return unescapeJavaUri(ResourceUtils.toResourcePath(basePath.resolveSibling(escapeForJavaUri(other)).normalize()));</span>
 	}
-
+	
 	/**
 	 * Indicates if the URL is relative or not.
 	 * 
@@ -303,6 +303,11 @@ public final class HtmlUtils {
 <span class="fc" id="L303">		return URI_INVALID_CHARS.matcher(url).replaceAll(URI_ESCAPE);</span>
 	}
 
+	@SuppressWarnings(&quot;java:S5361&quot;)
+	private static String unescapeJavaUri(String url) {
+<span class="fc" id="L308">		return url.replaceAll(URI_ESCAPE, URI_INVALID_CHARS.pattern());</span>
+	}
+	
 	private HtmlUtils() {
 		super();
 	}

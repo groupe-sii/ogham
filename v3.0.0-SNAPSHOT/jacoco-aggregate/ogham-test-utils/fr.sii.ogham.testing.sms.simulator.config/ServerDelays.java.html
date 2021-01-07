@@ -98,10 +98,10 @@
 	 */
 	private Awaiter sendReplaceSmRespWaiting;
 	/**
-	 * Simulate slow server by executing {@code sendSubmiMultiWaiting} function
-	 * before sending &quot;SubmiMulti&quot; data
+	 * Simulate slow server by executing {@code sendSubmitMultiWaiting} function
+	 * before sending &quot;SubmitMulti&quot; data
 	 */
-	private Awaiter sendSubmiMultiWaiting;
+	private Awaiter sendSubmitMultiWaiting;
 	/**
 	 * Simulate slow server by executing {@code sendSubmitMultiRespWaiting}
 	 * function before sending &quot;SubmitMultiResp&quot; data
@@ -272,12 +272,12 @@
 <span class="fc" id="L272">		this.sendReplaceSmRespWaiting = sendReplaceSmRespWaiting;</span>
 <span class="fc" id="L273">	}</span>
 
-	public Awaiter getSendSubmiMultiWaiting() {
-<span class="nc" id="L276">		return sendSubmiMultiWaiting;</span>
+	public Awaiter getSendSubmitMultiWaiting() {
+<span class="nc" id="L276">		return sendSubmitMultiWaiting;</span>
 	}
 
-	public void setSendSubmiMultiWaiting(Awaiter sendSubmiMultiWaiting) {
-<span class="fc" id="L280">		this.sendSubmiMultiWaiting = sendSubmiMultiWaiting;</span>
+	public void setSendSubmitMultiWaiting(Awaiter sendSubmitMultiWaiting) {
+<span class="fc" id="L280">		this.sendSubmitMultiWaiting = sendSubmitMultiWaiting;</span>
 <span class="fc" id="L281">	}</span>
 
 	public Awaiter getSendSubmitMultiRespWaiting() {

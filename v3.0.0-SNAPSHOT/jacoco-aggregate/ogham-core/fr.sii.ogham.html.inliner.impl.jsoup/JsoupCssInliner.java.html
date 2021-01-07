@@ -139,7 +139,7 @@ import fr.sii.ogham.html.inliner.ExternalCss;
 <span class="fc bfc" id="L139" title="All 2 branches covered.">			if (isInlineModeAllowed(e, InlineModes.STYLE_ATTR)) {</span>
 <span class="fc" id="L140">				String newStyle = e.attr(TEMP_STYLE_ATTR);</span>
 <span class="fc" id="L141">				String oldStyle = e.attr(STYLE_ATTR);</span>
-<span class="fc" id="L142">				e.attr(STYLE_ATTR, (newStyle.trim() + &quot;;&quot; + oldStyle.trim()).replaceAll(&quot;;+&quot;, &quot;;&quot;).trim());</span>
+<span class="fc" id="L142">				e.attr(STYLE_ATTR, (trimAll(newStyle) + &quot;;&quot; + trimAll(oldStyle)).replaceAll(&quot;;+&quot;, &quot;;&quot;).trim());</span>
 			}
 <span class="fc" id="L144">			e.removeAttr(TEMP_STYLE_ATTR);</span>
 <span class="fc" id="L145">		}</span>
@@ -150,113 +150,117 @@ import fr.sii.ogham.html.inliner.ExternalCss;
 <span class="pc bpc" id="L150" title="1 of 2 branches missed.">		if (!prop.endsWith(&quot;;&quot;)) {</span>
 <span class="nc" id="L151">			prop += &quot;;&quot;;</span>
 		}
-<span class="fc" id="L153">		return prop.trim() + &quot; &quot; + newProp.trim() + &quot;;&quot;;</span>
+<span class="fc" id="L153">		return trimAll(prop) + &quot; &quot; + trimAll(newProp) + &quot;;&quot;;</span>
+	}
+	
+	private static String trimAll(String str) {
+<span class="fc" id="L157">		return str.replaceAll(&quot;\\s+&quot;, &quot; &quot;).trim();</span>
 	}
 	
 
 	private static String ignoreAtRules(String stylesheet) {
-<span class="fc" id="L158">		StringBuilder sb = new StringBuilder();</span>
-<span class="fc" id="L159">		AtRuleParserContext ctx = new AtRuleParserContext();</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">		for (int i=0 ; i&lt;stylesheet.length() ; i++) {</span>
-<span class="fc" id="L161">			char c = stylesheet.charAt(i);</span>
-<span class="fc" id="L162">			updateLineNumberIfNewLine(ctx, c);</span>
-<span class="fc" id="L163">			markAsStartOfAtRuleIfAtChar(ctx, c);</span>
-<span class="fc" id="L164">			markAsStartOfNestedAtRuleIfAlreadyInAtRuleAndIsOpeningBracket(ctx, c);</span>
-<span class="fc" id="L165">			markAsEndOfNestedAtRuleIfAlreadyInAtRuleAndIsClosingBracket(ctx, c);</span>
-<span class="fc bfc" id="L166" title="All 2 branches covered.">			if (ignoreAtRuleIfAtEndOfAtRule(ctx, c)) {</span>
-<span class="fc" id="L167">				continue;</span>
+<span class="fc" id="L162">		StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L163">		AtRuleParserContext ctx = new AtRuleParserContext();</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">		for (int i=0 ; i&lt;stylesheet.length() ; i++) {</span>
+<span class="fc" id="L165">			char c = stylesheet.charAt(i);</span>
+<span class="fc" id="L166">			updateLineNumberIfNewLine(ctx, c);</span>
+<span class="fc" id="L167">			markAsStartOfAtRuleIfAtChar(ctx, c);</span>
+<span class="fc" id="L168">			markAsStartOfNestedAtRuleIfAlreadyInAtRuleAndIsOpeningBracket(ctx, c);</span>
+<span class="fc" id="L169">			markAsEndOfNestedAtRuleIfAlreadyInAtRuleAndIsClosingBracket(ctx, c);</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">			if (ignoreAtRuleIfAtEndOfAtRule(ctx, c)) {</span>
+<span class="fc" id="L171">				continue;</span>
 			}
-<span class="fc" id="L169">			updateStylesAndAtRuleContent(ctx, sb, c);</span>
+<span class="fc" id="L173">			updateStylesAndAtRuleContent(ctx, sb, c);</span>
 		}
-<span class="fc" id="L171">		return sb.toString();</span>
+<span class="fc" id="L175">		return sb.toString();</span>
 	}
 
 	private static boolean ignoreAtRuleIfAtEndOfAtRule(AtRuleParserContext ctx, char c) {
-<span class="fc bfc" id="L175" title="All 6 branches covered.">		if (ctx.inAtRule &amp;&amp; !ctx.inNestedAtRule &amp;&amp; c == ';') {</span>
-<span class="fc" id="L176">			ctx.inAtRule = false;</span>
-<span class="fc" id="L177">			LOG.warn(&quot;{} rule is not handled by JsoupCssInliner implementation. Line {}:'{}' is skipped&quot;, rulename(ctx.rule), ctx.startLineOfCurrentAtRule, ctx.rule);</span>
-<span class="fc" id="L178">			return true;</span>
+<span class="fc bfc" id="L179" title="All 6 branches covered.">		if (ctx.inAtRule &amp;&amp; !ctx.inNestedAtRule &amp;&amp; c == ';') {</span>
+<span class="fc" id="L180">			ctx.inAtRule = false;</span>
+<span class="fc" id="L181">			LOG.warn(&quot;{} rule is not handled by JsoupCssInliner implementation. Line {}:'{}' is skipped&quot;, rulename(ctx.rule), ctx.startLineOfCurrentAtRule, ctx.rule);</span>
+<span class="fc" id="L182">			return true;</span>
 		}
-<span class="fc bfc" id="L180" title="All 6 branches covered.">		if (ctx.inAtRule &amp;&amp; ctx.inNestedAtRule &amp;&amp; ctx.numberOfOpenedAtRules == 0) {</span>
-<span class="fc" id="L181">			ctx.inAtRule = false;</span>
-<span class="fc" id="L182">			ctx.inNestedAtRule = false;</span>
-<span class="fc" id="L183">			LOG.warn(&quot;{} rule is not handled by JsoupCssInliner implementation. Lines {}-{} are skipped&quot;, rulename(ctx.rule), ctx.startLineOfCurrentAtRule, ctx.line);</span>
-<span class="fc" id="L184">			return true;</span>
+<span class="fc bfc" id="L184" title="All 6 branches covered.">		if (ctx.inAtRule &amp;&amp; ctx.inNestedAtRule &amp;&amp; ctx.numberOfOpenedAtRules == 0) {</span>
+<span class="fc" id="L185">			ctx.inAtRule = false;</span>
+<span class="fc" id="L186">			ctx.inNestedAtRule = false;</span>
+<span class="fc" id="L187">			LOG.warn(&quot;{} rule is not handled by JsoupCssInliner implementation. Lines {}-{} are skipped&quot;, rulename(ctx.rule), ctx.startLineOfCurrentAtRule, ctx.line);</span>
+<span class="fc" id="L188">			return true;</span>
 		}
-<span class="fc" id="L186">		return false;</span>
+<span class="fc" id="L190">		return false;</span>
 	}
 
 	private static void updateStylesAndAtRuleContent(AtRuleParserContext ctx, StringBuilder sb, char c) {
-<span class="fc bfc" id="L190" title="All 2 branches covered.">		if (!ctx.inAtRule) {</span>
-<span class="fc" id="L191">			sb.append(c);</span>
-<span class="fc" id="L192">			ctx.rule = new StringBuilder();</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		if (!ctx.inAtRule) {</span>
+<span class="fc" id="L195">			sb.append(c);</span>
+<span class="fc" id="L196">			ctx.rule = new StringBuilder();</span>
 		} else {
-<span class="fc" id="L194">			ctx.rule.append(c);</span>
+<span class="fc" id="L198">			ctx.rule.append(c);</span>
 		}
-<span class="fc" id="L196">	}</span>
+<span class="fc" id="L200">	}</span>
 
 	private static void markAsEndOfNestedAtRuleIfAlreadyInAtRuleAndIsClosingBracket(AtRuleParserContext ctx, char c) {
-<span class="fc bfc" id="L199" title="All 6 branches covered.">		if (ctx.inAtRule &amp;&amp; ctx.inNestedAtRule &amp;&amp; c == '}') {</span>
-<span class="fc" id="L200">			ctx.numberOfOpenedAtRules--;</span>
+<span class="fc bfc" id="L203" title="All 6 branches covered.">		if (ctx.inAtRule &amp;&amp; ctx.inNestedAtRule &amp;&amp; c == '}') {</span>
+<span class="fc" id="L204">			ctx.numberOfOpenedAtRules--;</span>
 		}
-<span class="fc" id="L202">	}</span>
+<span class="fc" id="L206">	}</span>
 
 	private static void markAsStartOfNestedAtRuleIfAlreadyInAtRuleAndIsOpeningBracket(AtRuleParserContext ctx, char c) {
-<span class="fc bfc" id="L205" title="All 4 branches covered.">		if (ctx.inAtRule &amp;&amp; c == '{') {</span>
-<span class="fc" id="L206">			ctx.inNestedAtRule = true;</span>
-<span class="fc" id="L207">			ctx.numberOfOpenedAtRules++;</span>
+<span class="fc bfc" id="L209" title="All 4 branches covered.">		if (ctx.inAtRule &amp;&amp; c == '{') {</span>
+<span class="fc" id="L210">			ctx.inNestedAtRule = true;</span>
+<span class="fc" id="L211">			ctx.numberOfOpenedAtRules++;</span>
 		}
-<span class="fc" id="L209">	}</span>
+<span class="fc" id="L213">	}</span>
 
 	private static void markAsStartOfAtRuleIfAtChar(AtRuleParserContext ctx, char c) {
-<span class="fc bfc" id="L212" title="All 4 branches covered.">		if (c == '@' &amp;&amp; !ctx.inAtRule) {</span>
-<span class="fc" id="L213">			ctx.inAtRule = true;</span>
-<span class="fc" id="L214">			ctx.startLineOfCurrentAtRule = ctx.line;</span>
+<span class="fc bfc" id="L216" title="All 4 branches covered.">		if (c == '@' &amp;&amp; !ctx.inAtRule) {</span>
+<span class="fc" id="L217">			ctx.inAtRule = true;</span>
+<span class="fc" id="L218">			ctx.startLineOfCurrentAtRule = ctx.line;</span>
 		}
-<span class="fc" id="L216">	}</span>
+<span class="fc" id="L220">	}</span>
 
 	private static void updateLineNumberIfNewLine(AtRuleParserContext ctx, char c) {
-<span class="fc bfc" id="L219" title="All 2 branches covered.">		if (c == '\n') {</span>
-<span class="fc" id="L220">			ctx.line++;</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">		if (c == '\n') {</span>
+<span class="fc" id="L224">			ctx.line++;</span>
 		}
-<span class="fc" id="L222">	}</span>
+<span class="fc" id="L226">	}</span>
 	
 	private static String rulename(StringBuilder rule) {
-<span class="fc" id="L225">		StringBuilder name = new StringBuilder();</span>
-<span class="pc bpc" id="L226" title="1 of 2 branches missed.">		for (int i=0 ; i&lt;rule.length() ; i++) {</span>
-<span class="fc" id="L227">			char c = rule.charAt(i);</span>
-<span class="pc bpc" id="L228" title="1 of 8 branches missed.">			if (c != '@' &amp;&amp; c != '-' &amp;&amp; !Character.isAlphabetic(c) &amp;&amp; !Character.isDigit(c)) {</span>
-<span class="fc" id="L229">				break;</span>
+<span class="fc" id="L229">		StringBuilder name = new StringBuilder();</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">		for (int i=0 ; i&lt;rule.length() ; i++) {</span>
+<span class="fc" id="L231">			char c = rule.charAt(i);</span>
+<span class="pc bpc" id="L232" title="1 of 8 branches missed.">			if (c != '@' &amp;&amp; c != '-' &amp;&amp; !Character.isAlphabetic(c) &amp;&amp; !Character.isDigit(c)) {</span>
+<span class="fc" id="L233">				break;</span>
 			}
-<span class="fc" id="L231">			name.append(c);</span>
+<span class="fc" id="L235">			name.append(c);</span>
 		}
-<span class="fc" id="L233">		return name.toString();</span>
+<span class="fc" id="L237">		return name.toString();</span>
 	}
 
 
 	private static String getCssContent(ExternalCss css) {
-<span class="fc" id="L238">		String content = css.getContent();</span>
-<span class="fc" id="L239">		return updateRelativeUrls(content, css);</span>
+<span class="fc" id="L242">		String content = css.getContent();</span>
+<span class="fc" id="L243">		return updateRelativeUrls(content, css);</span>
 	}
 
 	private static String updateRelativeUrls(String content, ExternalCss css) {
-<span class="fc" id="L243">		StringBuffer sb = new StringBuffer();</span>
-<span class="fc" id="L244">		Matcher m = CSS_URL_FUNC_PATTERN.matcher(content);</span>
-<span class="fc bfc" id="L245" title="All 2 branches covered.">		while (m.find()) {</span>
-<span class="fc" id="L246">			String delim = &quot;&quot;;</span>
-<span class="fc" id="L247">			String url = m.group(&quot;unquotedurl&quot;);</span>
-<span class="fc bfc" id="L248" title="All 2 branches covered.">			if (url == null) {</span>
-<span class="fc" id="L249">				url = m.group(&quot;doublequotedurl&quot;);</span>
-<span class="fc" id="L250">				delim = &quot;\&quot;&quot;;</span>
-			}
+<span class="fc" id="L247">		StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L248">		Matcher m = CSS_URL_FUNC_PATTERN.matcher(content);</span>
+<span class="fc bfc" id="L249" title="All 2 branches covered.">		while (m.find()) {</span>
+<span class="fc" id="L250">			String delim = &quot;&quot;;</span>
+<span class="fc" id="L251">			String url = m.group(&quot;unquotedurl&quot;);</span>
 <span class="fc bfc" id="L252" title="All 2 branches covered.">			if (url == null) {</span>
-<span class="fc" id="L253">				url = m.group(&quot;singlequotedurl&quot;);</span>
-<span class="fc" id="L254">				delim = &quot;'&quot;;</span>
+<span class="fc" id="L253">				url = m.group(&quot;doublequotedurl&quot;);</span>
+<span class="fc" id="L254">				delim = &quot;\&quot;&quot;;</span>
 			}
-<span class="fc" id="L256">			m.appendReplacement(sb, Matcher.quoteReplacement(m.group(&quot;start&quot;)+delim+relativize(css.getPath().getOriginalPath(), url)+delim+m.group(&quot;end&quot;)));</span>
-<span class="fc" id="L257">		}</span>
-<span class="fc" id="L258">		m.appendTail(sb);</span>
-<span class="fc" id="L259">		return sb.toString();</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">			if (url == null) {</span>
+<span class="fc" id="L257">				url = m.group(&quot;singlequotedurl&quot;);</span>
+<span class="fc" id="L258">				delim = &quot;'&quot;;</span>
+			}
+<span class="fc" id="L260">			m.appendReplacement(sb, Matcher.quoteReplacement(m.group(&quot;start&quot;)+delim+relativize(css.getPath().getOriginalPath(), url)+delim+m.group(&quot;end&quot;)));</span>
+<span class="fc" id="L261">		}</span>
+<span class="fc" id="L262">		m.appendTail(sb);</span>
+<span class="fc" id="L263">		return sb.toString();</span>
 	}
 
 	private static class AtRuleParserContext {
@@ -268,14 +272,14 @@ import fr.sii.ogham.html.inliner.ExternalCss;
 		protected StringBuilder rule;
 		
 		public AtRuleParserContext() {
-<span class="fc" id="L271">			super();</span>
-<span class="fc" id="L272">			this.line = 1;</span>
-<span class="fc" id="L273">			this.startLineOfCurrentAtRule = 0;</span>
-<span class="fc" id="L274">			this.inAtRule = false;</span>
-<span class="fc" id="L275">			this.inNestedAtRule = false;</span>
-<span class="fc" id="L276">			this.numberOfOpenedAtRules = 0;</span>
-<span class="fc" id="L277">			this.rule = new StringBuilder();</span>
-<span class="fc" id="L278">		}</span>
+<span class="fc" id="L275">			super();</span>
+<span class="fc" id="L276">			this.line = 1;</span>
+<span class="fc" id="L277">			this.startLineOfCurrentAtRule = 0;</span>
+<span class="fc" id="L278">			this.inAtRule = false;</span>
+<span class="fc" id="L279">			this.inNestedAtRule = false;</span>
+<span class="fc" id="L280">			this.numberOfOpenedAtRules = 0;</span>
+<span class="fc" id="L281">			this.rule = new StringBuilder();</span>
+<span class="fc" id="L282">		}</span>
 		
 		
 	}

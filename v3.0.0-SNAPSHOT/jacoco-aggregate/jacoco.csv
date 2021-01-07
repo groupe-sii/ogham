@@ -34,7 +34,7 @@ reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,ImageInlineUtils,0,51,
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupCssInliner.AtRuleParserContext,0,23,0,0,0,8,0,1,0,1
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupBase64ImageInliner,0,103,0,8,0,17,0,7,0,3
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,CssInlineUtils,2,49,2,6,1,11,2,4,0,2
-reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupCssInliner,9,592,3,73,1,129,3,54,0,19
+reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupCssInliner,9,598,3,73,1,130,3,55,0,20
 reporting/ogham-core,fr.sii.ogham.html.inliner.impl.jsoup,JsoupAttachImageInliner,0,136,0,10,0,24,0,8,0,3
 reporting/ogham-core,fr.sii.ogham.core.async,ThreadSleepAwaiter,9,25,0,0,3,9,0,3,0,3
 reporting/ogham-core,fr.sii.ogham.core.message.fluent,SingleContentBuilder,20,58,0,0,4,14,2,7,2,7
@@ -76,13 +76,14 @@ reporting/ogham-core,fr.sii.ogham.core.util,ClasspathUtils,0,17,0,0,0,7,0,4,0,4
 reporting/ogham-core,fr.sii.ogham.core.util,StringUtils,4,12,0,0,1,3,1,3,1,3
 reporting/ogham-core,fr.sii.ogham.core.util,EqualsBuilder,88,175,13,27,18,31,13,17,4,6
 reporting/ogham-core,fr.sii.ogham.core.util,BeanUtils,11,138,0,12,2,35,1,14,1,8
-reporting/ogham-core,fr.sii.ogham.core.util,HtmlUtils,11,236,3,27,4,60,3,22,0,10
+reporting/ogham-core,fr.sii.ogham.core.util,HtmlUtils,11,244,3,27,4,61,3,23,0,11
 reporting/ogham-core,fr.sii.ogham.core.util,HashCodeBuilder,26,41,0,2,7,9,4,5,4,4
 reporting/ogham-core,fr.sii.ogham.core.util,IOUtils,0,30,0,0,0,6,0,4,0,4
 reporting/ogham-core,fr.sii.ogham.core.util,Base64Utils,0,4,0,0,0,1,0,1,0,1
 reporting/ogham-core,fr.sii.ogham.core.util,BuilderUtils,54,195,7,11,9,30,8,11,2,8
 reporting/ogham-core,fr.sii.ogham.core.util,ExceptionUtils,7,112,5,11,2,24,4,12,0,8
 reporting/ogham-core,fr.sii.ogham.core.util,LogUtils,5,35,3,5,1,5,3,3,0,2
+reporting/ogham-core,fr.sii.ogham.core.util,ResourceUtils,2,30,1,3,0,3,1,3,0,2
 reporting/ogham-core,fr.sii.ogham.core.util,PriorizedMatchingHandler,0,23,0,0,0,8,0,4,0,4
 reporting/ogham-core,fr.sii.ogham.core.util,ConfigurationValueUtils,0,22,0,4,0,4,0,3,0,1
 reporting/ogham-core,fr.sii.ogham.core.util,PriorityComparator,0,17,0,0,0,4,0,2,0,2
@@ -221,10 +222,10 @@ reporting/ogham-core,fr.sii.ogham.sms.message,Recipient,5,13,0,0,2,6,1,3,1,3
 reporting/ogham-core,fr.sii.ogham.core.resource.resolver,StringResourceResolver,0,49,0,8,0,11,0,9,0,5
 reporting/ogham-core,fr.sii.ogham.core.resource.resolver,FirstSupportingResourceResolver,13,96,2,8,4,23,4,10,2,7
 reporting/ogham-core,fr.sii.ogham.core.resource.resolver,AbstractPrefixedLookupPathResolver,0,76,1,9,0,19,1,10,0,6
-reporting/ogham-core,fr.sii.ogham.core.resource.resolver,FileResolver,25,62,0,2,3,15,1,6,1,5
+reporting/ogham-core,fr.sii.ogham.core.resource.resolver,FileResolver,25,64,0,2,3,15,1,6,1,5
 reporting/ogham-core,fr.sii.ogham.core.resource.resolver,ClassPathResolver,18,109,0,4,2,20,0,10,0,8
 reporting/ogham-core,fr.sii.ogham.core.resource.resolver,DefaultResourceResolver,44,0,4,0,10,0,7,0,5,0
-reporting/ogham-core,fr.sii.ogham.core.resource.resolver,RelativeResolver,20,237,3,15,1,28,3,14,0,8
+reporting/ogham-core,fr.sii.ogham.core.resource.resolver,RelativeResolver,20,235,3,15,1,27,3,14,0,8
 reporting/ogham-core,fr.sii.ogham.core.builder.template,VariantWithExt,0,15,0,0,0,6,0,3,0,3
 reporting/ogham-core,fr.sii.ogham.core.builder.template,TemplateBuilderHelper,32,271,5,23,9,54,8,20,3,11
 reporting/ogham-core,fr.sii.ogham.core.exception,InvalidMessageException,3,21,0,0,1,6,1,2,1,2
@@ -597,13 +598,15 @@ reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.configurer,
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,StringContentTemplateLoader.StringTemplateSource,22,6,0,0,2,3,2,1,2,1
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,ClassPathResolverAdapter.FixClassTemplateLoader,0,19,0,2,0,4,0,3,0,2
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,StringResolverAdapter,4,15,1,1,0,4,1,3,0,3
-reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FileResolverAdapter,16,32,0,2,2,8,0,5,0,4
+reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FileResolverAdapter,16,31,0,2,2,8,0,5,0,4
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,StringContentTemplateLoader,0,18,0,0,0,5,0,5,0,5
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FirstSupportingResolverAdapter,3,104,0,12,1,24,1,14,1,8
+reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FileResolverAdapter.FileTemplateLoaderAllowingAbsolutePaths.new PrivilegedExceptionAction() {...},7,40,3,5,1,7,3,3,0,2
+reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,FileResolverAdapter.FileTemplateLoaderAllowingAbsolutePaths,6,19,1,1,2,4,1,3,0,3
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,ClassPathResolverAdapter,3,31,1,3,1,8,1,5,0,4
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker.adapter,AbstractFreeMarkerTemplateLoaderOptionsAdapter,3,7,0,0,1,3,1,2,1,2
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker,TemplateLoaderOptions,0,3,0,0,0,2,0,1,0,1
-reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker,FreeMarkerFirstSupportingTemplateLoader.AdaptedSource,41,28,6,0,7,8,7,4,4,4
+reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker,FreeMarkerFirstSupportingTemplateLoader.AdaptedSource,37,32,6,0,6,9,6,5,3,5
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker,SkipLocaleForStringContentTemplateLookupStrategy,17,46,0,4,4,12,0,5,0,3
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker,FreeMarkerTemplateDetector,2,85,1,7,1,21,1,8,0,5
 reporting/ogham-template-freemarker,fr.sii.ogham.template.freemarker,FreeMarkerParser,9,74,0,2,2,18,0,5,0,4
@@ -663,8 +666,8 @@ reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.bean,NumberingPlan
 reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.bean,SimpleCommand,27,0,0,0,10,0,5,0,5,0
 reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.bean,TypeOfNumber,12,114,1,3,1,15,1,5,0,4
 reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.bean,Alphabet,12,213,1,3,1,24,1,5,0,4
-reporting/ogham-test-utils,fr.sii.ogham.testing.extension.junit.email,RandomPortServerSetup,33,36,6,2,7,11,5,5,2,4
-reporting/ogham-test-utils,fr.sii.ogham.testing.extension.junit.email,RandomPortGreenMailRule,0,103,2,4,0,25,2,11,0,10
+reporting/ogham-test-utils,fr.sii.ogham.testing.extension.junit.email,RandomPortServerSetup,37,32,7,1,9,9,7,3,3,3
+reporting/ogham-test-utils,fr.sii.ogham.testing.extension.junit.email,RandomPortGreenMailRule,3,100,2,4,1,24,2,11,0,10
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.junit.email,RandomPortGreenMailRule.new Statement() {...},0,16,0,0,0,4,0,2,0,2
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.hamcrest,AbstractHtmlDiffMatcher,0,88,0,4,0,21,0,7,0,5
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.hamcrest,FixedDescription,12,9,0,0,6,4,6,2,6,2
@@ -697,7 +700,7 @@ reporting/ogham-test-utils,fr.sii.ogham.testing.extension.spring,JsmppServerInit
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.spring,GreenMailInitializer,0,43,1,1,0,9,1,3,0,3
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.spring,WireMockInitializer,43,0,2,0,9,0,4,0,3,0
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.spring,GreenMailTestConfiguration,0,23,0,0,0,3,0,3,0,3
-reporting/ogham-test-utils,fr.sii.ogham.testing.extension.common,TestInformationLogger,0,346,0,2,0,45,0,15,0,14
+reporting/ogham-test-utils,fr.sii.ogham.testing.extension.common,TestInformationLogger,2,447,2,4,0,49,2,15,0,14
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.common,Slf4jPrinter,0,57,3,5,0,15,3,7,0,6
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.common,TestInformationLogger.Characters,0,105,0,0,0,13,0,3,0,3
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.common,StringPrinter,0,96,1,1,0,18,1,5,0,5
@@ -713,7 +716,7 @@ reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.config,Credentials
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.spock,LoggingTestInterceptor,0,44,0,0,0,14,0,3,0,3
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.spock,LoggingTestExtension,11,35,1,3,4,9,2,4,1,3
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.html,AssertHtml,0,75,1,9,0,20,1,9,0,5
-reporting/ogham-test-utils,fr.sii.ogham.testing.mock.classloader,FilterableClassLoader,21,89,0,8,8,21,4,10,4,6
+reporting/ogham-test-utils,fr.sii.ogham.testing.mock.classloader,FilterableClassLoader,46,89,8,8,16,21,8,10,4,6
 reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.cloudhopper,CloudhopperSMPPServer,76,0,0,0,23,0,9,0,9,0
 reporting/ogham-test-utils,fr.sii.ogham.testing.sms.simulator.cloudhopper,TestSmppServerHandler,73,0,4,0,21,0,10,0,8,0
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.sms,ExpectedSms,0,21,0,0,0,8,0,4,0,4
@@ -771,7 +774,7 @@ reporting/ogham-test-utils,fr.sii.ogham.testing.extension.junit.sms,SmppServerRu
 reporting/ogham-test-utils,fr.sii.ogham.testing.extension.junit.sms,SmppServerExtension,48,8,0,0,13,3,3,2,3,2
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion,OghamMatchers,0,10,0,0,0,2,0,2,0,2
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion,OghamAssertions,27,80,0,2,4,13,4,10,4,9
-reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.template,AssertTemplate,0,113,0,10,0,31,0,14,0,9
+reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.template,AssertTemplate,0,127,0,14,0,31,0,16,0,9
 reporting/ogham-test-utils,fr.sii.ogham.testing.assertion.template,AssertTemplate.new Executable() {...},0,9,0,0,0,2,0,2,0,2
 reporting/ogham-test-utils,mock.context,SimpleBean,20,98,3,3,4,24,4,10,1,10
 reporting/ogham-test-utils,mock.context,NestedBean,14,48,3,3,4,12,4,4,1,4

@@ -55,7 +55,7 @@ public class RandomPortServerSetup extends ServerSetup {
 
 	@Override
 	public int getPort() {
-<span class="fc bfc" id="L58" title="All 2 branches covered.">		if (currentPort == 0) {</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">		if (currentPort == 0) {</span>
 <span class="fc" id="L59">			currentPort = RandomPortUtils.findAvailableTcpPort(minPort, maxPort);</span>
 		}
 <span class="fc" id="L61">		return currentPort;</span>
@@ -66,8 +66,8 @@ public class RandomPortServerSetup extends ServerSetup {
 	 * and configuration on different port when restarted.
 	 */
 	public void resetPort() {
-<span class="fc" id="L69">		currentPort = 0;</span>
-<span class="fc" id="L70">	}</span>
+<span class="nc" id="L69">		currentPort = 0;</span>
+<span class="nc" id="L70">	}</span>
 
 	@Override
 	public boolean equals(Object obj) {

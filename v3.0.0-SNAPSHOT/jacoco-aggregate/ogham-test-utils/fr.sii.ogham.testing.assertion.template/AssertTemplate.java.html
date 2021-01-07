@@ -88,7 +88,7 @@ public final class AssertTemplate {
 <span class="fc bfc" id="L88" title="All 2 branches covered.">		String expected = strict ? expectedContent : sanitize(expectedContent);</span>
 <span class="fc bfc" id="L89" title="All 2 branches covered.">		String contentAsString = content==null ? null : content.toString();</span>
 <span class="fc bfc" id="L90" title="All 2 branches covered.">		String actual = strict ? contentAsString : sanitize(contentAsString);</span>
-<span class="fc" id="L91">		registry.register(() -&gt; Assert.assertEquals(&quot;parsed template is different to expected content&quot;, expected, actual));</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">		registry.register(() -&gt; Assert.assertEquals(&quot;parsed template is different to expected content&quot;, expected == null ? null : expected.replace(&quot;\r&quot;, &quot;&quot;), actual == null ? null : actual.replace(&quot;\r&quot;, &quot;&quot;)));</span>
 <span class="fc" id="L92">	}</span>
 	
 	private static String loadOrNull(String path, AssertionRegistry registry) throws IOException {

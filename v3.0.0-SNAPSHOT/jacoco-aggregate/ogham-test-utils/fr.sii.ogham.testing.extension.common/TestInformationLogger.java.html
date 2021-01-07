@@ -9,6 +9,8 @@ import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Charac
 import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.VERTICAL_LEFT;
 import static fr.sii.ogham.testing.extension.common.TestInformationLogger.Characters.VERTICAL_RIGHT;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
@@ -33,20 +35,24 @@ import com.github.jknack.handlebars.internal.text.WordUtils;
 public class TestInformationLogger {
 	public static final int DEFAULT_MAX_LENGTH = 100;
 	public static final String DEFAULT_MARKER = &quot;test-info&quot;;
-<span class="fc" id="L36">	private static final String[] SINGLE = { &quot;┌&quot;, &quot;┐&quot;, &quot;└&quot;, &quot;┘&quot;, &quot;─&quot;, &quot;│&quot;, &quot;├&quot;, &quot;┤&quot; };</span>
-<span class="fc" id="L37">	private static final String[] DOUBLE = { &quot;╔&quot;, &quot;╗&quot;, &quot;╚&quot;, &quot;╝&quot;, &quot;═&quot;, &quot;║&quot;, &quot;╠&quot;, &quot;╣&quot; };</span>
+<span class="fc" id="L38">	private static final String[] SINGLE_UTF8 = { &quot;┌&quot;, &quot;┐&quot;, &quot;└&quot;, &quot;┘&quot;, &quot;─&quot;, &quot;│&quot;, &quot;├&quot;, &quot;┤&quot; };</span>
+<span class="fc" id="L39">	private static final String[] DOUBLE_UTF8 = { &quot;╔&quot;, &quot;╗&quot;, &quot;╚&quot;, &quot;╝&quot;, &quot;═&quot;, &quot;║&quot;, &quot;╠&quot;, &quot;╣&quot; };</span>
+<span class="fc" id="L40">	private static final String[] SINGLE_ASCII = { &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;|&quot;, &quot;+&quot;, &quot;+&quot; };</span>
+<span class="fc" id="L41">	private static final String[] DOUBLE_ASCII = { &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;=&quot;, &quot;|&quot;, &quot;+&quot;, &quot;+&quot; };</span>
 
 	private final int maxLength;
 	private final Printer printer;
 	private final String marker;
+	private final String[] singleChars;
+	private final String[] doubleChars;
 
 	/**
 	 * Initializes with the default max line length (100), uses this logger as
 	 * printer and mark logs with &quot;test-info&quot; marker
 	 */
 	public TestInformationLogger() {
-<span class="fc" id="L48">		this(DEFAULT_MAX_LENGTH);</span>
-<span class="fc" id="L49">	}</span>
+<span class="fc" id="L54">		this(DEFAULT_MAX_LENGTH);</span>
+<span class="fc" id="L55">	}</span>
 
 	/**
 	 * Initializes with the provided max line length.
@@ -57,8 +63,8 @@ public class TestInformationLogger {
 	 *            the length of each line
 	 */
 	public TestInformationLogger(int maxLength) {
-<span class="fc" id="L60">		this(maxLength, DEFAULT_MARKER);</span>
-<span class="fc" id="L61">	}</span>
+<span class="fc" id="L66">		this(maxLength, DEFAULT_MARKER);</span>
+<span class="fc" id="L67">	}</span>
 
 	/**
 	 * Initializes with the provided max line length and marker.
@@ -71,8 +77,8 @@ public class TestInformationLogger {
 	 *            the marker for logs
 	 */
 	public TestInformationLogger(int maxLength, String marker) {
-<span class="fc" id="L74">		this(maxLength, marker, new Slf4jPrinter());</span>
-<span class="fc" id="L75">	}</span>
+<span class="fc" id="L80">		this(maxLength, marker, new Slf4jPrinter());</span>
+<span class="fc" id="L81">	}</span>
 
 	/**
 	 * 
@@ -84,11 +90,13 @@ public class TestInformationLogger {
 	 *            the printer
 	 */
 	public TestInformationLogger(int maxLength, String marker, Printer printer) {
-<span class="fc" id="L87">		super();</span>
-<span class="fc" id="L88">		this.maxLength = maxLength;</span>
-<span class="fc" id="L89">		this.printer = printer;</span>
-<span class="fc" id="L90">		this.marker = marker;</span>
-<span class="fc" id="L91">	}</span>
+<span class="fc" id="L93">		super();</span>
+<span class="fc" id="L94">		this.maxLength = maxLength;</span>
+<span class="fc" id="L95">		this.printer = printer;</span>
+<span class="fc" id="L96">		this.marker = marker;</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">		this.singleChars = Charset.defaultCharset().contains(StandardCharsets.UTF_8) ? SINGLE_UTF8 : SINGLE_ASCII;</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">		this.doubleChars = Charset.defaultCharset().contains(StandardCharsets.UTF_8) ? DOUBLE_UTF8 : DOUBLE_ASCII;</span>
+<span class="fc" id="L99">	}</span>
 
 	/**
 	 * Write the name of the test. The name is boxed to quickly see the test
@@ -99,12 +107,12 @@ public class TestInformationLogger {
 	 */
 	public void writeStart(String testName) {
 		// @formatter:off
-<span class="fc" id="L102">		printer.printHeader(marker, </span>
-<span class="fc" id="L103">				borderTop(DOUBLE)+&quot;\n&quot;+ </span>
-<span class="fc" id="L104">				format(testName, DOUBLE)+&quot;\n&quot;+ </span>
-<span class="fc" id="L105">				borderBottom(DOUBLE));</span>
+<span class="fc" id="L110">		printer.printHeader(marker, </span>
+<span class="fc" id="L111">				borderTop(doubleChars)+&quot;\n&quot;+ </span>
+<span class="fc" id="L112">				format(testName, doubleChars)+&quot;\n&quot;+ </span>
+<span class="fc" id="L113">				borderBottom(doubleChars));</span>
 		// @formatter:on
-<span class="fc" id="L107">	}</span>
+<span class="fc" id="L115">	}</span>
 
 	/**
 	 * Write the name of the test and &quot;SUCCESS&quot; message. The name is boxed to
@@ -115,14 +123,14 @@ public class TestInformationLogger {
 	 */
 	public void writeSuccess(String testName) {
 		// @formatter:off
-<span class="fc" id="L118">		printer.printSucess(marker,</span>
-<span class="fc" id="L119">					borderTop(SINGLE)+&quot;\n&quot;+ </span>
-<span class="fc" id="L120">					format(testName, SINGLE)+&quot;\n&quot;+ </span>
-<span class="fc" id="L121">					borderMiddle(SINGLE)+&quot;\n&quot;+</span>
-<span class="fc" id="L122">					format(&quot;SUCCESS&quot;, SINGLE)+&quot;\n&quot;+ </span>
-<span class="fc" id="L123">					borderBottom(SINGLE));</span>
+<span class="fc" id="L126">		printer.printSucess(marker,</span>
+<span class="fc" id="L127">					borderTop(singleChars)+&quot;\n&quot;+ </span>
+<span class="fc" id="L128">					format(testName, singleChars)+&quot;\n&quot;+ </span>
+<span class="fc" id="L129">					borderMiddle(singleChars)+&quot;\n&quot;+</span>
+<span class="fc" id="L130">					format(&quot;SUCCESS&quot;, singleChars)+&quot;\n&quot;+ </span>
+<span class="fc" id="L131">					borderBottom(singleChars));</span>
 		// @formatter:on
-<span class="fc" id="L125">	}</span>
+<span class="fc" id="L133">	}</span>
 
 	/**
 	 * Write the name of the test, &quot;FAILED&quot; message and failure information. The
@@ -136,64 +144,64 @@ public class TestInformationLogger {
 	@SuppressWarnings(&quot;squid:S4142&quot;)
 	public void writeFailure(String testName, Throwable e) {
 		// @formatter:off
-<span class="fc" id="L139">		printer.printFailure(marker,</span>
-<span class="fc" id="L140">				borderTop(SINGLE)+&quot;\n&quot;+</span>
-<span class="fc" id="L141">				format(testName, SINGLE)+&quot;\n&quot;+ </span>
-<span class="fc" id="L142">				borderMiddle(SINGLE)+&quot;\n&quot;+</span>
-<span class="fc" id="L143">				format(&quot;FAILED&quot;, SINGLE)+&quot;\n&quot;+</span>
-<span class="fc" id="L144">				borderMiddle(SINGLE)+&quot;\n&quot;+</span>
-<span class="fc" id="L145">				format(e.toString(), SINGLE)+&quot;\n&quot;+ </span>
-<span class="fc" id="L146">				borderBottom(SINGLE), e);</span>
+<span class="fc" id="L147">		printer.printFailure(marker,</span>
+<span class="fc" id="L148">				borderTop(singleChars)+&quot;\n&quot;+</span>
+<span class="fc" id="L149">				format(testName, singleChars)+&quot;\n&quot;+ </span>
+<span class="fc" id="L150">				borderMiddle(singleChars)+&quot;\n&quot;+</span>
+<span class="fc" id="L151">				format(&quot;FAILED&quot;, singleChars)+&quot;\n&quot;+</span>
+<span class="fc" id="L152">				borderMiddle(singleChars)+&quot;\n&quot;+</span>
+<span class="fc" id="L153">				format(e.toString(), singleChars)+&quot;\n&quot;+ </span>
+<span class="fc" id="L154">				borderBottom(singleChars), e);</span>
 		// @formatter:on
-<span class="fc" id="L148">	}</span>
+<span class="fc" id="L156">	}</span>
 
 	private String borderTop(String[] characters) {
-<span class="fc" id="L151">		return TOP_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + TOP_RIGHT.character(characters);</span>
+<span class="fc" id="L159">		return TOP_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + TOP_RIGHT.character(characters);</span>
 	}
 
 	private String borderMiddle(String[] characters) {
-<span class="fc" id="L155">		return VERTICAL_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + VERTICAL_RIGHT.character(characters);</span>
+<span class="fc" id="L163">		return VERTICAL_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + VERTICAL_RIGHT.character(characters);</span>
 	}
 
 	private String borderBottom(String[] characters) {
-<span class="fc" id="L159">		return BOTTOM_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + BOTTOM_RIGHT.character(characters);</span>
+<span class="fc" id="L167">		return BOTTOM_LEFT.character(characters) + dashLine(HORIZONTAL.character(characters)) + BOTTOM_RIGHT.character(characters);</span>
 	}
 
 	private String dashLine(String character) {
-<span class="fc" id="L163">		return StringUtils.repeat(character, maxLength - 2);</span>
+<span class="fc" id="L171">		return StringUtils.repeat(character, maxLength - 2);</span>
 	}
 
 	private String format(String text, String[] characters) {
-<span class="fc" id="L167">		String vertical = VERTICAL.character(characters);</span>
-<span class="fc" id="L168">		StringJoiner joiner = new StringJoiner(vertical + &quot;\n&quot; + vertical, vertical, vertical);</span>
-<span class="fc bfc" id="L169" title="All 2 branches covered.">		for (String line : wrap(text)) {</span>
-<span class="fc" id="L170">			joiner.add(StringUtils.rightPad(line, maxLength - 2));</span>
-<span class="fc" id="L171">		}</span>
-<span class="fc" id="L172">		return joiner.toString();</span>
+<span class="fc" id="L175">		String vertical = VERTICAL.character(characters);</span>
+<span class="fc" id="L176">		StringJoiner joiner = new StringJoiner(vertical + &quot;\n&quot; + vertical, vertical, vertical);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">		for (String line : wrap(text)) {</span>
+<span class="fc" id="L178">			joiner.add(StringUtils.rightPad(line, maxLength - 2));</span>
+<span class="fc" id="L179">		}</span>
+<span class="fc" id="L180">		return joiner.toString();</span>
 	}
 
 	private List&lt;String&gt; wrap(String text) {
-<span class="fc" id="L176">		return Arrays.asList(WordUtils.wrap(text.replace(&quot;\t&quot;, &quot;  &quot;), maxLength - 3, &quot;\n&quot;, true).split(&quot;\n&quot;));</span>
+<span class="fc" id="L184">		return Arrays.asList(WordUtils.wrap(text.replace(&quot;\t&quot;, &quot;  &quot;), maxLength - 3, &quot;\n&quot;, true).split(&quot;\n&quot;));</span>
 	}
 
-<span class="fc" id="L179">	enum Characters {</span>
-<span class="fc" id="L180">		TOP_LEFT(0),</span>
-<span class="fc" id="L181">		TOP_RIGHT(1),</span>
-<span class="fc" id="L182">		BOTTOM_LEFT(2),</span>
-<span class="fc" id="L183">		BOTTOM_RIGHT(3),</span>
-<span class="fc" id="L184">		HORIZONTAL(4),</span>
-<span class="fc" id="L185">		VERTICAL(5),</span>
-<span class="fc" id="L186">		VERTICAL_LEFT(6),</span>
-<span class="fc" id="L187">		VERTICAL_RIGHT(7);</span>
+<span class="fc" id="L187">	enum Characters {</span>
+<span class="fc" id="L188">		TOP_LEFT(0),</span>
+<span class="fc" id="L189">		TOP_RIGHT(1),</span>
+<span class="fc" id="L190">		BOTTOM_LEFT(2),</span>
+<span class="fc" id="L191">		BOTTOM_RIGHT(3),</span>
+<span class="fc" id="L192">		HORIZONTAL(4),</span>
+<span class="fc" id="L193">		VERTICAL(5),</span>
+<span class="fc" id="L194">		VERTICAL_LEFT(6),</span>
+<span class="fc" id="L195">		VERTICAL_RIGHT(7);</span>
 
 		private final int pos;
 
-<span class="fc" id="L191">		Characters(int pos) {</span>
-<span class="fc" id="L192">			this.pos = pos;</span>
-<span class="fc" id="L193">		}</span>
+<span class="fc" id="L199">		Characters(int pos) {</span>
+<span class="fc" id="L200">			this.pos = pos;</span>
+<span class="fc" id="L201">		}</span>
 
 		public String character(String[] characters) {
-<span class="fc" id="L196">			return characters[pos];</span>
+<span class="fc" id="L204">			return characters[pos];</span>
 		}
 	}
 }

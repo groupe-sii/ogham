@@ -64,23 +64,39 @@ public class FilterableClassLoader extends ClassLoader {
 
 	@Override
 	public void setDefaultAssertionStatus(boolean enabled) {
-<span class="nc" id="L67">		delegate.setDefaultAssertionStatus(enabled);</span>
-<span class="nc" id="L68">	}</span>
+<span class="nc" id="L67">		super.setDefaultAssertionStatus(enabled);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">		if (delegate != null) {</span>
+<span class="nc" id="L69">			delegate.setDefaultAssertionStatus(enabled);</span>
+		}
+		// TODO: should set value when delegate is initialized ?
+<span class="nc" id="L72">	}</span>
 
 	@Override
 	public void setPackageAssertionStatus(String packageName, boolean enabled) {
-<span class="nc" id="L72">		delegate.setPackageAssertionStatus(packageName, enabled);</span>
-<span class="nc" id="L73">	}</span>
+<span class="nc" id="L76">		super.setPackageAssertionStatus(packageName, enabled);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">		if (delegate != null) {</span>
+<span class="nc" id="L78">			delegate.setPackageAssertionStatus(packageName, enabled);</span>
+		}
+		// TODO: should set values when delegate is initialized ?
+<span class="nc" id="L81">	}</span>
 
 	@Override
 	public void setClassAssertionStatus(String className, boolean enabled) {
-<span class="nc" id="L77">		delegate.setClassAssertionStatus(className, enabled);</span>
-<span class="nc" id="L78">	}</span>
+<span class="nc" id="L85">		super.setClassAssertionStatus(className, enabled);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">		if (delegate != null) {</span>
+<span class="nc" id="L87">			delegate.setClassAssertionStatus(className, enabled);</span>
+		}
+		// TODO: should set values when delegate is initialized ?
+<span class="nc" id="L90">	}</span>
 
 	@Override
 	public void clearAssertionStatus() {
-<span class="nc" id="L82">		delegate.clearAssertionStatus();</span>
-<span class="nc" id="L83">	}</span>
+<span class="nc" id="L94">		super.clearAssertionStatus();</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">		if (delegate != null) {</span>
+<span class="nc" id="L96">			delegate.clearAssertionStatus();</span>
+		}
+		// TODO: should call when delegate is initialized ?
+<span class="nc" id="L99">	}</span>
 	
 	
 }

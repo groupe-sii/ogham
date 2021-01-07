@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import fr.sii.ogham.core.util.ResourceUtils;
+
 /**
  * Resolve the given path against the base path by using the following rules:
  * 
@@ -102,92 +104,92 @@ public class LookupAwareRelativePathResolver implements RelativePathResolver {
 	 *            the lookups indexed by type
 	 */
 	public LookupAwareRelativePathResolver(Map&lt;String, List&lt;String&gt;&gt; lookupsIndexedByType) {
-<span class="fc" id="L105">		super();</span>
-<span class="fc" id="L106">		this.lookupsMeta = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L107" title="All 2 branches covered.">		for (Entry&lt;String, List&lt;String&gt;&gt; entry : lookupsIndexedByType.entrySet()) {</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">			for (String lookup : entry.getValue()) {</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">				if (!lookup.isEmpty()) {</span>
-<span class="fc" id="L110">					lookupsMeta.add(new LookupMetadata(lookup, entry.getKey()));</span>
+<span class="fc" id="L107">		super();</span>
+<span class="fc" id="L108">		this.lookupsMeta = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">		for (Entry&lt;String, List&lt;String&gt;&gt; entry : lookupsIndexedByType.entrySet()) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">			for (String lookup : entry.getValue()) {</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">				if (!lookup.isEmpty()) {</span>
+<span class="fc" id="L112">					lookupsMeta.add(new LookupMetadata(lookup, entry.getKey()));</span>
 				}
-<span class="fc" id="L112">			}</span>
-<span class="fc" id="L113">		}</span>
-<span class="fc" id="L114">	}</span>
+<span class="fc" id="L114">			}</span>
+<span class="fc" id="L115">		}</span>
+<span class="fc" id="L116">	}</span>
 
 	@Override
 	public RelativePath resolve(ResourcePath source, ResourcePath relativePath) {
-<span class="fc" id="L118">		return new RelativePath(source, relativePath, getMergedPath(source, relativePath));</span>
+<span class="fc" id="L120">		return new RelativePath(source, relativePath, getMergedPath(source, relativePath));</span>
 	}
 
 	@Override
 	public RelativePath resolve(ResourcePath source, String relativePath) {
-<span class="fc" id="L123">		return resolve(source, new UnresolvedPath(relativePath));</span>
+<span class="fc" id="L125">		return resolve(source, new UnresolvedPath(relativePath));</span>
 	}
 
 	private String getMergedPath(ResourcePath source, ResourcePath relativePath) {
-<span class="fc" id="L127">		String relativeLookup = getLookup(relativePath.getOriginalPath());</span>
-<span class="fc" id="L128">		String sourceLookup = getLookup(source.getOriginalPath());</span>
+<span class="fc" id="L129">		String relativeLookup = getLookup(relativePath.getOriginalPath());</span>
+<span class="fc" id="L130">		String sourceLookup = getLookup(source.getOriginalPath());</span>
 		// not the same lookup
 		// =&gt; not the same system to load
 		// =&gt; not relative
-<span class="fc bfc" id="L132" title="All 4 branches covered.">		if (relativeLookup != null &amp;&amp; !isSameLookupType(relativeLookup, sourceLookup)) {</span>
-<span class="fc" id="L133">			return relativePath.getOriginalPath();</span>
+<span class="fc bfc" id="L134" title="All 4 branches covered.">		if (relativeLookup != null &amp;&amp; !isSameLookupType(relativeLookup, sourceLookup)) {</span>
+<span class="fc" id="L135">			return relativePath.getOriginalPath();</span>
 		}
 		// if path points to a directory
 		// =&gt; append the relative path
 		// if path points to a file
 		// =&gt; replace file by the relative path
-<span class="fc bfc" id="L139" title="All 2 branches covered.">		Path merged = Paths.get(withoutLookup(source instanceof ResolvedPath ? ((ResolvedPath) source).getResolvedPath() : source.getOriginalPath()));</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">		if (isDirectory(source.getOriginalPath())) {</span>
-<span class="fc" id="L141">			merged = merged.resolve(withoutLookup(relativePath.getOriginalPath()));</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">		Path merged = Paths.get(withoutLookup(source instanceof ResolvedPath ? ((ResolvedPath) source).getResolvedPath() : source.getOriginalPath()));</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">		if (isDirectory(source.getOriginalPath())) {</span>
+<span class="fc" id="L143">			merged = merged.resolve(withoutLookup(relativePath.getOriginalPath()));</span>
 		} else {
-<span class="fc" id="L143">			merged = merged.resolveSibling(withoutLookup(relativePath.getOriginalPath()));</span>
+<span class="fc" id="L145">			merged = merged.resolveSibling(withoutLookup(relativePath.getOriginalPath()));</span>
 		}
-<span class="fc bfc" id="L145" title="All 2 branches covered.">		if (relativeLookup != null) {</span>
-<span class="fc" id="L146">			return relativeLookup + merged.toString();</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">		if (relativeLookup != null) {</span>
+<span class="fc" id="L148">			return relativeLookup + ResourceUtils.toResourcePath(merged);</span>
 		}
-<span class="fc bfc" id="L148" title="All 2 branches covered.">		if (sourceLookup != null) {</span>
-<span class="fc" id="L149">			return sourceLookup + merged.toString();</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">		if (sourceLookup != null) {</span>
+<span class="fc" id="L151">			return sourceLookup + ResourceUtils.toResourcePath(merged);</span>
 		}
-<span class="fc" id="L151">		return merged.toString();</span>
+<span class="fc" id="L153">		return ResourceUtils.toResourcePath(merged);</span>
 	}
 
 	private boolean isSameLookupType(String relativeLookup, String sourceLookup) {
-<span class="fc" id="L155">		LookupMetadata relativeMeta = getLookupMeta(relativeLookup);</span>
-<span class="pc bpc" id="L156" title="1 of 2 branches missed.">		if (relativeMeta == null) {</span>
-<span class="nc" id="L157">			return false;</span>
+<span class="fc" id="L157">		LookupMetadata relativeMeta = getLookupMeta(relativeLookup);</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">		if (relativeMeta == null) {</span>
+<span class="nc" id="L159">			return false;</span>
 		}
-<span class="fc" id="L159">		return relativeMeta.isSameType(getLookupMeta(sourceLookup));</span>
+<span class="fc" id="L161">		return relativeMeta.isSameType(getLookupMeta(sourceLookup));</span>
 	}
 
 	private LookupMetadata getLookupMeta(String lookup) {
-<span class="fc bfc" id="L163" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
-<span class="fc bfc" id="L164" title="All 2 branches covered.">			if (meta.getLookup().equals(lookup)) {</span>
-<span class="fc" id="L165">				return meta;</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">			if (meta.getLookup().equals(lookup)) {</span>
+<span class="fc" id="L167">				return meta;</span>
 			}
-<span class="fc" id="L167">		}</span>
-<span class="fc" id="L168">		return null;</span>
+<span class="fc" id="L169">		}</span>
+<span class="fc" id="L170">		return null;</span>
 	}
 
 	private static boolean isDirectory(String path) {
-<span class="fc" id="L172">		return path.endsWith(&quot;/&quot;);</span>
+<span class="fc" id="L174">		return path.endsWith(&quot;/&quot;);</span>
 	}
 
 	private String withoutLookup(String path) {
-<span class="fc bfc" id="L176" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
-<span class="pc bpc" id="L177" title="1 of 4 branches missed.">			if (!meta.getLookup().isEmpty() &amp;&amp; path.startsWith(meta.getLookup())) {</span>
-<span class="fc" id="L178">				return path.substring(meta.getLookup().length());</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
+<span class="pc bpc" id="L179" title="1 of 4 branches missed.">			if (!meta.getLookup().isEmpty() &amp;&amp; path.startsWith(meta.getLookup())) {</span>
+<span class="fc" id="L180">				return path.substring(meta.getLookup().length());</span>
 			}
-<span class="fc" id="L180">		}</span>
-<span class="fc" id="L181">		return path;</span>
+<span class="fc" id="L182">		}</span>
+<span class="fc" id="L183">		return path;</span>
 	}
 
 	private String getLookup(String path) {
-<span class="fc bfc" id="L185" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
-<span class="pc bpc" id="L186" title="1 of 4 branches missed.">			if (!meta.getLookup().isEmpty() &amp;&amp; path.startsWith(meta.getLookup())) {</span>
-<span class="fc" id="L187">				return meta.getLookup();</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">		for (LookupMetadata meta : lookupsMeta) {</span>
+<span class="pc bpc" id="L188" title="1 of 4 branches missed.">			if (!meta.getLookup().isEmpty() &amp;&amp; path.startsWith(meta.getLookup())) {</span>
+<span class="fc" id="L189">				return meta.getLookup();</span>
 			}
-<span class="fc" id="L189">		}</span>
-<span class="fc" id="L190">		return null;</span>
+<span class="fc" id="L191">		}</span>
+<span class="fc" id="L192">		return null;</span>
 	}
 
 	private static class LookupMetadata {
@@ -195,24 +197,24 @@ public class LookupAwareRelativePathResolver implements RelativePathResolver {
 		private final String type;
 
 		public LookupMetadata(String lookup, String type) {
-<span class="fc" id="L198">			super();</span>
-<span class="fc" id="L199">			this.lookup = lookup;</span>
-<span class="fc" id="L200">			this.type = type;</span>
-<span class="fc" id="L201">		}</span>
+<span class="fc" id="L200">			super();</span>
+<span class="fc" id="L201">			this.lookup = lookup;</span>
+<span class="fc" id="L202">			this.type = type;</span>
+<span class="fc" id="L203">		}</span>
 
 		public boolean isSameType(LookupMetadata lookupMeta) {
-<span class="fc bfc" id="L204" title="All 2 branches covered.">			if (lookupMeta == null) {</span>
-<span class="fc" id="L205">				return false;</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">			if (lookupMeta == null) {</span>
+<span class="fc" id="L207">				return false;</span>
 			}
-<span class="fc" id="L207">			return type.equals(lookupMeta.getType());</span>
+<span class="fc" id="L209">			return type.equals(lookupMeta.getType());</span>
 		}
 
 		public String getLookup() {
-<span class="fc" id="L211">			return lookup;</span>
+<span class="fc" id="L213">			return lookup;</span>
 		}
 
 		public String getType() {
-<span class="fc" id="L215">			return type;</span>
+<span class="fc" id="L217">			return type;</span>
 		}
 	}
 }
