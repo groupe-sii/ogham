@@ -129,7 +129,7 @@ jobs:
           token: ${{ secrets.DEV_REPORTS_GITHUB_TOKEN }}
       - name: "Add branch site to reports"
         run: |
-          BRANCH="${GITHUB_REF#refs/heads}"
+          BRANCH="${GITHUB_REF#refs/heads/}"
           ci/./deploy-dev-reports.sh $BRANCH ${{ github.workspace }}/ogham-dev-reports
         
   slack-success:
@@ -138,7 +138,7 @@ jobs:
     runs-on: ubuntu-18.04
     name: "Slack"
     steps:
-      - run: echo "BRANCH=${GITHUB_REF#refs/heads}" >> $GITHUB_ENV
+      - run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       - uses: 8398a7/action-slack@v3
         with:
           text: |

@@ -5,7 +5,11 @@ on:
     branches-ignore:
       - 'gh-*'
       - 'docs/**'
-  workflow_dispatch:  
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Deploy on Maven repository'
+        default: 'false'
 
 jobs:
   build:
@@ -471,7 +475,7 @@ jobs:
           fail_on_test_failures: true
 
   deploy:
-    if: github.ref == 'refs/heads/master'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/master') || (github.event_name == 'workflow_dispatch' && fromJson(github.event.inputs.deploy)) 
     needs: [classpath-tests-standalone, classpath-tests-spring-boot-legacy, classpath-tests-spring-boot, javadoc, analyze-sonar, analyze-codecov]
     runs-on: ubuntu-18.04
     name: "Deploy"

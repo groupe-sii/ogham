@@ -119,7 +119,6 @@ jobs:
     needs: [release]
     runs-on: ubuntu-18.04
     steps:
-      - run: echo "disabled"
       - uses: aurelien-baudet/workflow-dispatch@v2
         with:
           token: ${{ secrets.TRIGGER_WORKFLOW_TOKEN }}
