@@ -7,8 +7,8 @@
 		<pluginGroup>org.sonatype.plugins</pluginGroup>
 	</pluginGroups>
 	<properties>
-		<!--gpg.keyname>${env.RELEASE_GPG_KEYNAME}</gpg.keyname>
-		<gpg.passphrase>${env.RELEASE_GPG_PASSPHRASE}</gpg.passphrase-->
+		<gpg.keyname>${env.RELEASE_GPG_KEYNAME}</gpg.keyname>
+		<gpg.passphrase>${env.RELEASE_GPG_PASSPHRASE}</gpg.passphrase>
 		<!--gpg.defaultKeyring>false</gpg.defaultKeyring-->
 		<!--gpg.useagent>true</gpg.useagent>
 		<gpg.lockMode>never</gpg.lockMode-->
