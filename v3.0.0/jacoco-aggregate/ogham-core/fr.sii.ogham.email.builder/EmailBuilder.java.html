@@ -1,0 +1,1019 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EmailBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">EmailBuilder.java</span></div><h1>EmailBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.async.Awaiter;
+import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderDelegate;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.retry.RetryBuilder;
+import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
+import fr.sii.ogham.core.builder.template.DetectorBuilder;
+import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
+import fr.sii.ogham.core.builder.template.VariantBuilder;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.fluent.MessageConditions;
+import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.retry.ExponentialDelayRetry;
+import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.retry.FixedIntervalRetry;
+import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.sender.AutoRetrySender;
+import fr.sii.ogham.core.sender.ConditionalSender;
+import fr.sii.ogham.core.sender.ContentTranslatorSender;
+import fr.sii.ogham.core.sender.FillerSender;
+import fr.sii.ogham.core.sender.MessageSender;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+import fr.sii.ogham.core.translator.content.EveryContentTranslator;
+import fr.sii.ogham.core.translator.content.MultiContentTranslator;
+import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
+import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
+import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.sender.AttachmentResourceTranslatorSender;
+import fr.sii.ogham.email.sender.EmailSender;
+import fr.sii.ogham.template.common.adapter.VariantResolver;
+
+/**
+ * Configures how to send {@link Email} messages. It allows to:
+ * &lt;ul&gt;
+ * &lt;li&gt;register and configure several sender implementations&lt;/li&gt;
+ * &lt;li&gt;register and configure several template engines for parsing templates as
+ * message content&lt;/li&gt;
+ * &lt;li&gt;configure handling of missing {@link Email} information&lt;/li&gt;
+ * &lt;li&gt;configure handling of file attachments&lt;/li&gt;
+ * &lt;li&gt;configure CSS and image handling for {@link Email}s with an HTML
+ * body&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * You can send an {@link Email} using the minimal behavior and using JavaMail
+ * implementation:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host(&quot;your SMTP server host&quot;)
+ *       .port(&quot;your SMTP server port&quot;)
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .from(&quot;sender email address&quot;)
+ *   .subject(&quot;email subject&quot;)
+ *   .content(&quot;email body&quot;)
+ *   .to(&quot;recipient email address&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * You can also send an {@link Email} using a template (using Freemarker for
+ * example):
+ * 
+ * The Freemarker template (&quot;email/sample.html.ftl&quot;):
+ * 
+ * &lt;pre&gt;
+ * &amp;lt;html&amp;gt;
+ * &amp;lt;head&amp;gt;
+ * &amp;lt;/head&amp;gt;
+ * &amp;lt;body&amp;gt;
+ * Email content with variables: ${name} ${value}
+ * &amp;lt;/body&amp;gt;
+ * &amp;lt;/html&amp;gt;
+ * &lt;/pre&gt;
+ * 
+ * Then you can send the {@link Email} like this:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host(&quot;your SMTP server host&quot;)
+ *       .port(&quot;your SMTP server port&quot;)
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup(&quot;classpath:&quot;)   // search resources/templates in the classpath if a path is prefixed by &quot;classpath:&quot;
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .from(&quot;sender email address&quot;)
+ *   .subject(&quot;email subject&quot;)
+ *   .content(new TemplateContent(&quot;classpath:email/sample.html.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient email address&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * Instead of explicitly configures SMTP host and port in your code, it could be
+ * better to externalize the configuration in a properties file for example (for
+ * example a file named &quot;email.properties&quot; in the classpath). The previous
+ * example becomes:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties(&quot;email.properties&quot;)
+ *     .and()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host(&quot;${mail.host}&quot;)
+ *       .port(&quot;${mail.port}&quot;)
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup(&quot;classpath:&quot;)   // search resources/templates in the classpath if a path is prefixed by &quot;classpath:&quot;
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .from(&quot;sender email address&quot;)
+ *   .subject(&quot;email subject&quot;)
+ *   .content(new TemplateContent(&quot;classpath:email/sample.html.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient email address&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * The content of the file &quot;email.properties&quot;:
+ * 
+ * &lt;pre&gt;
+ * mail.host=your STMP server host
+ * mail.port=your STMP server port
+ * &lt;/pre&gt;
+ * 
+ * 
+ * Some fields of the Email may be automatically filled by a default value if
+ * they are not defined. For example, the sender address could be configured
+ * only once for your application:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties(&quot;email.properties&quot;)
+ *     .and()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host(&quot;${mail.host}&quot;)
+ *       .port(&quot;${mail.port}&quot;)
+ *       .and()
+ *     .autofill()    // enables and configures autofilling
+ *       .from()
+ *         .defaultValue().properties(&quot;${email.sender.address}&quot;)
+ *         .and()
+ *     .and()
+ *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup(&quot;classpath:&quot;)   // search resources/templates in the classpath if a path is prefixed by &quot;classpath:&quot;
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email (now the sender address can be omitted)
+ * service.send(new Email()
+ *   .subject(&quot;email subject&quot;)
+ *   .content(new TemplateContent(&quot;classpath:email/sample.html.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient email address&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * The content of the file &quot;email.properties&quot;:
+ * 
+ * &lt;pre&gt;
+ * mail.host=your STMP server host
+ * mail.port=your STMP server port
+ * email.sender.address=sender email address
+ * &lt;/pre&gt;
+ * 
+ * 
+ * 
+ * Another very useful automatic filling is for providing the email subject:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties(&quot;email.properties&quot;)
+ *     .and()
+ *   .email()
+ *     .sender(JavaMailBuilder.class)   // enable Email sending using JavaMail
+ *       .host(&quot;${mail.host}&quot;)
+ *       .port(&quot;${mail.port}&quot;)
+ *       .and()
+ *     .autofill()    // enables and configures autofilling
+ *       .from()
+ *         .defaultValue().properties(&quot;${email.sender.address}&quot;).and()
+ *         .and()
+ *       .subject()
+ *         .htmlTitle(true)    // enables use of html title tag as subject
+ *     .and()
+ *   .template(FreemarkerEmailBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup(&quot;classpath:&quot;)   // search resources/templates in the classpath if a path is prefixed by &quot;classpath:&quot;
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email (now the subject can be omitted)
+ * service.send(new Email()
+ *   .content(new TemplateContent(&quot;classpath:email/sample.html.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient email address&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Change your template:
+ * 
+ * &lt;pre&gt;
+ * &amp;lt;html&amp;gt;
+ * &amp;lt;head&amp;gt;
+ *   &amp;lt;title&amp;gt;email subject - ${name}&amp;lt;/title&amp;gt;
+ * &amp;lt;/head&amp;gt;
+ * &amp;lt;body&amp;gt;
+ * Email content with variables: ${name} ${value}
+ * &amp;lt;/body&amp;gt;
+ * &amp;lt;/html&amp;gt;
+ * &lt;/pre&gt;
+ * 
+ * The obvious advantage is that you have a single place to handle email content
+ * (body + subject). There is another benefit: you can also use variables in the
+ * subject.
+ * 
+ * 
+ * There many other configuration possibilities:
+ * &lt;ul&gt;
+ * &lt;li&gt;for configuring {@link Email}s with HTML content with a text fallback
+ * (useful for smartphones preview of your email for example)&lt;/li&gt;
+ * &lt;li&gt;for configuring attachments handling&lt;/li&gt;
+ * &lt;li&gt;for configuring image and css handling&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * All the previous examples are provided to understand what can be configured.
+ * Hopefully, Ogham provides auto-configuration with a default behavior that
+ * fits 95% of usages. This auto-configuration is provided by
+ * {@link MessagingConfigurer}s. Those configurers are automatically applied
+ * when using predefined {@link MessagingBuilder}s like
+ * {@link MessagingBuilder#minimal()} and {@link MessagingBuilder#standard()}.
+ * 
+ * The previous sample using standard configuration becomes:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.standad()
+ *   .environment()
+ *     .properties(&quot;email.properties&quot;)
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .content(new TemplateContent(&quot;classpath:email/sample.html.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient email address&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * The new content of the file &quot;email.properties&quot;:
+ * 
+ * &lt;pre&gt;
+ * mail.host=your STMP server host
+ * mail.port=your STMP server port
+ * ogham.email.from.default-value=sender email address
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * You can also use the auto-configuration for benefit from default behaviors
+ * and override some behaviors for your needs:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.standard()
+ *   .environment()
+ *     .properties(&quot;email.properties&quot;)
+ *     .and()
+ *   .email()
+ *     .autofill()
+ *       .from()
+ *         .defaultValue()
+ *           .properties(&quot;${email.sender.address}&quot;)   // overrides default sender email address property
+ *           .and()
+ *         .and()
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the email
+ * service.send(new Email()
+ *   .content(new TemplateContent(&quot;classpath:email/sample.html.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient email address&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * The new content of the file &quot;email.properties&quot;:
+ * 
+ * &lt;pre&gt;
+ * mail.host=your STMP server host
+ * mail.port=your STMP server port
+ * email.sender.address=sender email address
+ * &lt;/pre&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class EmailBuilder extends AbstractParent&lt;MessagingBuilder&gt; implements Builder&lt;ConditionalSender&gt; {
+<span class="fc" id="L351">	private static final Logger LOG = LoggerFactory.getLogger(EmailBuilder.class);</span>
+
+	private final BuildContext buildContext;
+	private final TemplateBuilderHelper&lt;EmailBuilder&gt; templateBuilderHelper;
+	private final SenderImplementationBuilderHelper&lt;EmailBuilder&gt; senderBuilderHelper;
+	private AttachmentHandlingBuilder attachmentBuilder;
+	private AutofillEmailBuilder autofillBuilder;
+	private CssHandlingBuilder cssBuilder;
+	private ImageHandlingBuilder imageBuilder;
+	private RetryBuilder&lt;EmailBuilder&gt; retryBuilder;
+	
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public EmailBuilder(MessagingBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L373">		super(parent);</span>
+<span class="fc" id="L374">		this.buildContext = buildContext;</span>
+<span class="fc" id="L375">		templateBuilderHelper = new TemplateBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L376">		senderBuilderHelper = new SenderImplementationBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L377">	}</span>
+
+	/**
+	 * Configures how {@link Attachment}s are handled.
+	 * 
+	 * Attachment resolution consists of finding a file:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;either on filesystem&lt;/li&gt;
+	 * &lt;li&gt;or in the classpath&lt;/li&gt;
+	 * &lt;li&gt;or anywhere else&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * To identify which resolution to use, each resolution is configured to
+	 * handle one or several lookups prefixes. For example, if resolution is
+	 * configured like this:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 * .string()
+	 *   .lookup(&quot;string:&quot;, &quot;s:&quot;)
+	 *   .and()
+	 * .file()
+	 *   .lookup(&quot;file:&quot;)
+	 *   .and()
+	 * .classpath()
+	 *   .lookup(&quot;classpath:&quot;, &quot;&quot;);
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Then you can reference a file that is in the classpath like this:
+	 * 
+	 * &lt;pre&gt;
+	 * &quot;classpath:foo/bar.pdf&quot;
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * Resource resolution is also able to handle path prefix and suffix. The
+	 * aim is for example to have a folder that contains all templates. The
+	 * developer then configures a path prefix for the folder. He can also
+	 * configure a suffix to fix extension for templates. Thanks to those
+	 * prefix/suffix, templates can now be referenced by the name of the file
+	 * (without extension). It is useful to reference a template independently
+	 * from where it is in reality (classpath, file or anywhere else) .
+	 * Switching from classpath to file and conversely can be done easily (by
+	 * updating the lookup).
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .classpath().lookup(&quot;classpath:&quot;).pathPrefix(&quot;foo/&quot;).pathSuffix(&quot;.html&quot;);
+	 * 
+	 * resourceResolver.getResource(&quot;classpath:bar&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * The real path is then {@code foo/bar.pdf}.
+	 * 
+	 * &lt;p&gt;
+	 * This implementation is used by {@link MessagingBuilder} for general
+	 * configuration. That configuration may be inherited (applied to other
+	 * resource resolution builders).
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * Detection of the mimetype of each attachment is not directly configured
+	 * here. Attachment handling depends totally on the sender implementation.
+	 * Some implementations will require that a mimetype is provided (JavaMail
+	 * for example) while other implementations doesn't need it (SendGrid for
+	 * example).
+	 * 
+	 * @return the builder to configure attachment handling
+	 */
+	public AttachmentHandlingBuilder attachments() {
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">		if (attachmentBuilder == null) {</span>
+<span class="fc" id="L452">			attachmentBuilder = new AttachmentHandlingBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L454">		return attachmentBuilder;</span>
+	}
+
+	/**
+	 * Configures how Ogham will add default values to the {@link Email} if some
+	 * information is missing.
+	 * 
+	 * If sender address is missing, a default one can be defined in
+	 * configuration properties.
+	 * 
+	 * If recipient address is missing, a default one can be defined in
+	 * configuration properties.
+	 * 
+	 * If subject is missing, a default one can be defined either:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;In HTML title&lt;/li&gt;
+	 * &lt;li&gt;In first line of text template&lt;/li&gt;
+	 * &lt;li&gt;Using a default value defined in configuration properties&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 * builder
+	 *  .autofill()
+	 *    .subject()
+	 *      .defaultValue().properties(&quot;${ogham.email.subject.default-value}&quot;).and()
+	 *      .htmlTitle(true)
+	 *      .text().properties(&quot;${ogham.email.subject.extract-from-text.first-line-prefix}&quot;).defaultValue(&quot;Subject:&quot;).and()
+	 *	    .and()
+	 *    .from()
+	 *	    .defaultValue().properties(&quot;${ogham.email.from.default-value}&quot;, &quot;${mail.smtp.from}&quot;, &quot;${mail.from}&quot;).and()
+	 *	    .and()
+	 *    .to()
+	 *	    .defaultValue().properties(&quot;${ogham.email.to.default-value}&quot;).and()
+	 *	    .and()
+	 *    .cc()
+	 *	    .defaultValue().properties(&quot;${ogham.email.cc.default-value}&quot;).and()
+	 *	    .and()
+	 *    .bcc()
+	 *	    .defaultValue().properties(&quot;${ogham.email.bcc.default-value}&quot;)
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder to configure autofilling of Email
+	 */
+	public AutofillEmailBuilder autofill() {
+<span class="fc bfc" id="L502" title="All 2 branches covered.">		if (autofillBuilder == null) {</span>
+<span class="fc" id="L503">			autofillBuilder = new AutofillEmailBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L505">		return autofillBuilder;</span>
+	}
+
+	/**
+	 * CSS handling consists of defining how CSS are inlined in the email.
+	 * Inlining CSS means that CSS styles are loaded and applied on the matching
+	 * HTML nodes using the {@code style} HTML attribute.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .css()
+	 *   .inline()
+	 *     .jsoup()
+	 * &lt;/pre&gt;
+	 * 
+	 * Enables inlining of CSS styles using Jsoup utility.
+	 * 
+	 * @return the builder to configure css handling
+	 */
+	public CssHandlingBuilder css() {
+<span class="fc bfc" id="L526" title="All 2 branches covered.">		if (cssBuilder == null) {</span>
+<span class="fc" id="L527">			cssBuilder = new CssHandlingBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L529">		return cssBuilder;</span>
+	}
+
+	/**
+	 * Image handling consists of defining how images are inlined in the email:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Either inlining directly in the HTML content by enconding image into
+	 * base64 string&lt;/li&gt;
+	 * &lt;li&gt;Or attaching the image to the email and referencing it using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (CID)&lt;/a&gt;&lt;/li&gt;
+	 * &lt;li&gt;Or no inlining&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .images()
+	 *   .inline()
+	 *     .attach()
+	 *       .cid()
+	 *         .generator(new SequentialIdGenerator())
+	 *         .and()
+	 *       .and()
+	 *     .base64();
+	 * &lt;/pre&gt;
+	 * 
+	 * Enables both inlining modes (attaching images and encoding in base64). By
+	 * default, attaching is used if nothing is specified in the HTML. You can
+	 * also explicitly specify which mode to using the {@code data-inline-image}
+	 * attribute (see {@link ImageHandlingBuilder#inline()} for more
+	 * information).
+	 * 
+	 * @return the builder to configure images handling
+	 */
+	public ImageHandlingBuilder images() {
+<span class="fc bfc" id="L566" title="All 2 branches covered.">		if (imageBuilder == null) {</span>
+<span class="fc" id="L567">			imageBuilder = new ImageHandlingBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L569">		return imageBuilder;</span>
+	}
+
+	/**
+	 * Registers and configures a {@link TemplateParser} through a dedicated
+	 * builder.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .register(ThymeleafEmailBuilder.class)
+	 *     .detector(new ThymeleafEngineDetector());
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your {@link Builder} may implement {@link VariantBuilder} to handle
+	 * template {@link Variant}s (used for {@link MultiTemplateContent} that
+	 * provide a single path to templates with different extensions for
+	 * example).
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your {@link Builder} may also implement {@link DetectorBuilder} in order
+	 * to indicate which kind of templates your {@link TemplateParser} is able
+	 * to parse. If your template parse is able to parse any template file you
+	 * are using, you may not need to implement {@link DetectorBuilder}.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with two arguments:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The type of the parent builder ({@code &amp;lt;P&amp;gt;})&lt;/li&gt;
+	 * &lt;li&gt;The {@link EnvironmentBuilder} instance&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * If you don't care about chaining, just provide a default constructor.
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param &lt;T&gt;
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 */
+	public &lt;T extends Builder&lt;? extends TemplateParser&gt;&gt; T template(Class&lt;T&gt; builderClass) {
+<span class="fc" id="L613">		return templateBuilderHelper.register(builderClass);</span>
+	}
+
+	/**
+	 * Registers a custom message sender implementation.
+	 * 
+	 * &lt;p&gt;
+	 * If your custom implementation is annotated by one or several of:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link RequiredClass}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperty}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredClasses}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperties}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Then if condition evaluation returns true, your implementation will be
+	 * used. If you provide several annotations, your implementation will be
+	 * used only if all conditions are met (and operator).
+	 * 
+	 * &lt;p&gt;
+	 * If your custom implementation implements {@link ActivableAtRuntime}, and
+	 * the provided condition evaluation returns true, then your implementation
+	 * will be used.
+	 * 
+	 * See {@link MessageConditions} to build your condition.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If neither annotations nor implementation of {@link ActivableAtRuntime}
+	 * is used, then your custom implementation will be always used. All other
+	 * implementations (even standard ones) will never be used.
+	 * &lt;/p&gt;
+	 * 
+	 * @param sender
+	 *            the sender to register
+	 * @return this instance for fluent chaining
+	 */
+	public EmailBuilder customSender(MessageSender sender) {
+<span class="fc" id="L650">		senderBuilderHelper.customSender(sender);</span>
+<span class="fc" id="L651">		return this;</span>
+	}
+
+	/**
+	 * Registers and configures sender through a dedicated builder.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .sender(JavaMailBuilder.class)
+	 *     .host(&quot;localhost&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If your custom builder is annotated by one or several of:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link RequiredClass}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperty}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredClasses}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperties}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Then if condition evaluation returns true, your built implementation will
+	 * be used. If you provide several annotations, your built implementation
+	 * will be used only if all conditions are met (and operator).
+	 * 
+	 * &lt;p&gt;
+	 * If your custom builder implements {@link ActivableAtRuntime}, and the
+	 * provided condition evaluation returns true, then your built
+	 * implementation will be used.
+	 * 
+	 * See {@link MessageConditions} to build your condition.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If neither annotations nor implementation of {@link ActivableAtRuntime}
+	 * is used, then your built implementation will be always used. All other
+	 * implementations (even standard ones) will never be used.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with one argument with the type of the parent builder
+	 * ({@link EmailBuilder}). If you don't care about chaining, just provide a
+	 * default constructor.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your builder may return {@code null} when calling
+	 * {@link Builder#build()}. In this case it means that your implementation
+	 * can't be used due to current environment. Your implementation is then not
+	 * registered.
+	 * &lt;/p&gt;
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param &lt;T&gt;
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 * 
+	 */
+	public &lt;T extends Builder&lt;? extends MessageSender&gt;&gt; T sender(Class&lt;T&gt; builderClass) {
+<span class="fc" id="L712">		return senderBuilderHelper.register(builderClass);</span>
+	}
+
+	/**
+	 * If a variant is missing, then force to fail.
+	 * 
+	 * &lt;p&gt;
+	 * This may be useful if you want for example to always provide a text
+	 * fallback when using an html template. So if a client can't read the html
+	 * version, the fallback version will still always be readable. So to avoid
+	 * forgetting to write text template, set this to true.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #failIfMissingVariant()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code failIfMissingVariant(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param fail
+	 *            fail if a variant is missing
+	 * @return this instance for fluent chaining
+	 */
+	public EmailBuilder failIfMissingVariant(Boolean fail) {
+<span class="nc" id="L757">		templateBuilderHelper.failIfMissingVariant(fail);</span>
+<span class="nc" id="L758">		return this;</span>
+	}
+
+	/**
+	 * If a variant is missing, then force to fail.
+	 * 
+	 * &lt;p&gt;
+	 * This may be useful if you want for example to always provide a text
+	 * fallback when using an html template. So if a client can't read the html
+	 * version, the fallback version will still always be readable. So to avoid
+	 * forgetting to write text template, set this to true.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .failIfMissingVariant()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #failIfMissingVariant(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .failIfMissingVariant(false)
+	 * .failIfMissingVariant()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;EmailBuilder, Boolean&gt; failIfMissingVariant() {
+<span class="fc" id="L805">		return new ConfigurationValueBuilderDelegate&lt;&gt;(this, templateBuilderHelper.failIfMissingVariant());</span>
+	}
+
+	/**
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which
+	 * paths were tried in order to help debugging why a variant was not found.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #listPossiblePaths()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code listPossiblePaths(true)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable/disable tracking of possible paths for template
+	 *            variants
+	 * @return this instance for fluent chaining
+	 */
+	public EmailBuilder listPossiblePaths(Boolean enable) {
+<span class="nc" id="L845">		templateBuilderHelper.listPossiblePaths(enable);</span>
+<span class="nc" id="L846">		return this;</span>
+	}
+
+	/**
+	 * When {@link #failIfMissingVariant()} is enabled, also indicate which
+	 * paths were tried in order to help debugging why a variant was not found.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .listPossiblePaths()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #listPossiblePaths(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .listPossiblePaths(true)
+	 * .listPossiblePaths()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;EmailBuilder, Boolean&gt; listPossiblePaths() {
+<span class="fc" id="L887">		return new ConfigurationValueBuilderDelegate&lt;&gt;(this, templateBuilderHelper.listPossiblePaths());</span>
+	}
+
+	/**
+	 * Provide custom resolver that will handle a missing variant.
+	 * 
+	 * @param resolver
+	 *            the custom resolver
+	 * @return this instance for fluent chaining
+	 */
+	public EmailBuilder missingVariant(VariantResolver resolver) {
+<span class="nc" id="L898">		templateBuilderHelper.missingVariant(resolver);</span>
+<span class="nc" id="L899">		return this;</span>
+	}
+	
+	/**
+	 * Configure automatic retry if message couldn't be sent.
+	 * 
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .autoRetry()
+	 *   .fixedDelay()
+	 *     .maxRetries().properties(&quot;${ogham.email.send-retry.max-attempts}&quot;).and()
+	 *     .delay().properties(&quot;${ogham.email.send-retry.delay-between-attempts}&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * This builder lets you configure:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The retry strategy:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link FixedDelayRetry}: wait for a fixed delay after the last
+	 * failure&lt;/li&gt;
+	 * &lt;li&gt;{@link FixedIntervalRetry}: wait for a fixed delay between executions
+	 * (do not wait for the end of the action)&lt;/li&gt;
+	 * &lt;li&gt;{@link ExponentialDelayRetry}: start with a delay, the next delay
+	 * will be doubled on so on&lt;/li&gt;
+	 * &lt;li&gt;{@link PerExecutionDelayRetry}: provide a custom delay for each
+	 * execution&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;/li&gt;
+	 * &lt;li&gt;The {@link RetryExecutor} implementation&lt;/li&gt;
+	 * &lt;li&gt;The {@link Awaiter} implementation&lt;/li&gt;
+	 * &lt;li&gt;The {@link Condition} used to determine if the raised error should
+	 * trigger a retry or not&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the builder to configure retry management
+	 */
+	public RetryBuilder&lt;EmailBuilder&gt; autoRetry() {
+<span class="fc bfc" id="L940" title="All 2 branches covered.">		if (retryBuilder == null) {</span>
+<span class="fc" id="L941">			retryBuilder = new RetryBuilder&lt;&gt;(this, buildContext);</span>
+		}
+<span class="fc" id="L943">		return retryBuilder;</span>
+	}
+
+	@Override
+	public ConditionalSender build() {
+<span class="fc" id="L948">		EmailSender emailSender = buildContext.register(new EmailSender());</span>
+<span class="fc" id="L949">		ConditionalSender sender = emailSender;</span>
+<span class="fc" id="L950">		senderBuilderHelper.addSenders(emailSender);</span>
+<span class="fc bfc" id="L951" title="All 2 branches covered.">		if (autofillBuilder != null) {</span>
+<span class="fc" id="L952">			MessageFiller messageFiller = autofillBuilder.build();</span>
+<span class="fc" id="L953">			LOG.debug(&quot;Automatic filling of message enabled {}&quot;, messageFiller);</span>
+<span class="fc" id="L954">			sender = buildContext.register(new FillerSender(messageFiller, sender));</span>
+		}
+<span class="fc bfc" id="L956" title="All 2 branches covered.">		if (attachmentBuilder != null) {</span>
+<span class="fc" id="L957">			AttachmentResourceTranslator resourceTranslator = attachmentBuilder.build();</span>
+<span class="fc" id="L958">			LOG.debug(&quot;Resource translation enabled {}&quot;, resourceTranslator);</span>
+<span class="fc" id="L959">			sender = buildContext.register(new AttachmentResourceTranslatorSender(resourceTranslator, sender));</span>
+		}
+<span class="fc bfc" id="L961" title="All 6 branches covered.">		if (templateBuilderHelper.hasRegisteredTemplates() || cssBuilder != null || imageBuilder != null) {</span>
+<span class="fc" id="L962">			ContentTranslator translator = buildContentTranslator();</span>
+<span class="fc" id="L963">			LOG.debug(&quot;Content translation enabled {}&quot;, translator);</span>
+<span class="fc" id="L964">			sender = buildContext.register(new ContentTranslatorSender(translator, sender));</span>
+		}
+<span class="fc" id="L966">		RetryExecutor retryExecutor = BuilderUtils.build(retryBuilder);</span>
+<span class="fc bfc" id="L967" title="All 2 branches covered.">		if (retryExecutor != null) {</span>
+<span class="fc" id="L968">			LOG.debug(&quot;Automatic retry of message sending enabled {}&quot;, retryExecutor);</span>
+<span class="fc" id="L969">			sender = buildContext.register(new AutoRetrySender(sender, retryExecutor));</span>
+		}
+<span class="fc" id="L971">		return sender;</span>
+	}
+
+	private ContentTranslator buildContentTranslator() {
+<span class="fc" id="L975">		EveryContentTranslator translator = buildContext.register(new EveryContentTranslator());</span>
+<span class="fc" id="L976">		addTemplateTranslator(translator);</span>
+<span class="fc" id="L977">		addMultiContent(translator);</span>
+<span class="fc" id="L978">		addCssInlining(translator);</span>
+<span class="fc" id="L979">		addImageInlining(translator);</span>
+<span class="fc" id="L980">		return translator;</span>
+	}
+
+	private void addTemplateTranslator(EveryContentTranslator translator) {
+<span class="fc bfc" id="L984" title="All 2 branches covered.">		if (!templateBuilderHelper.hasRegisteredTemplates()) {</span>
+<span class="fc" id="L985">			return;</span>
+		}
+<span class="fc" id="L987">		TemplateParser templateParser = templateBuilderHelper.buildTemplateParser();</span>
+<span class="fc" id="L988">		LOG.debug(&quot;Registering content translator that parses templates using {}&quot;, templateParser);</span>
+<span class="fc" id="L989">		translator.addTranslator(buildContext.register(new TemplateContentTranslator(templateParser, templateBuilderHelper.buildVariant())));</span>
+<span class="fc" id="L990">	}</span>
+
+	private void addMultiContent(EveryContentTranslator translator) {
+<span class="fc" id="L993">		translator.addTranslator(buildContext.register(new MultiContentTranslator(translator)));</span>
+<span class="fc" id="L994">	}</span>
+
+	private void addImageInlining(EveryContentTranslator translator) {
+<span class="fc bfc" id="L997" title="All 2 branches covered.">		if (imageBuilder == null) {</span>
+<span class="fc" id="L998">			return;</span>
+		}
+<span class="fc" id="L1000">		ContentTranslator imageInliner = imageBuilder.build();</span>
+<span class="pc bpc" id="L1001" title="1 of 2 branches missed.">		if (imageInliner != null) {</span>
+<span class="fc" id="L1002">			LOG.debug(&quot;Image inlining is enabled&quot;);</span>
+<span class="fc" id="L1003">			translator.addTranslator(imageInliner);</span>
+		}
+<span class="fc" id="L1005">	}</span>
+
+	private void addCssInlining(EveryContentTranslator translator) {
+<span class="fc bfc" id="L1008" title="All 2 branches covered.">		if (cssBuilder == null) {</span>
+<span class="fc" id="L1009">			return;</span>
+		}
+<span class="fc" id="L1011">		ContentTranslator cssInliner = cssBuilder.build();</span>
+<span class="pc bpc" id="L1012" title="1 of 2 branches missed.">		if (cssInliner != null) {</span>
+<span class="fc" id="L1013">			LOG.debug(&quot;CSS inlining is enabled&quot;);</span>
+<span class="fc" id="L1014">			translator.addTranslator(cssInliner);</span>
+		}
+<span class="fc" id="L1016">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

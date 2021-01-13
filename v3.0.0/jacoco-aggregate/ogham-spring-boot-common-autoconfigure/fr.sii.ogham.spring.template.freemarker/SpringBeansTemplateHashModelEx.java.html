@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringBeansTemplateHashModelEx.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.template.freemarker</a> &gt; <span class="el_source">SpringBeansTemplateHashModelEx.java</span></div><h1>SpringBeansTemplateHashModelEx.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.template.freemarker;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import org.springframework.context.ApplicationContext;
+
+import freemarker.ext.beans.BeanModel;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.IteratorModel;
+import freemarker.ext.beans.StringModel;
+import freemarker.template.TemplateCollectionModel;
+import freemarker.template.TemplateHashModelEx2;
+import freemarker.template.TemplateModel;
+import freemarker.template.TemplateModelException;
+
+/**
+ * Specific model to be able to access Spring beans from template using
+ * {@code @beanName.method(args)} syntax.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SpringBeansTemplateHashModelEx implements TemplateHashModelEx2 {
+	private final ApplicationContext applicationContext;
+	private final BeansWrapper beansWrapper;
+
+	public SpringBeansTemplateHashModelEx(ApplicationContext applicationContext, BeansWrapper beansWrapper) {
+<span class="fc" id="L29">		super();</span>
+<span class="fc" id="L30">		this.applicationContext = applicationContext;</span>
+<span class="fc" id="L31">		this.beansWrapper = beansWrapper;</span>
+<span class="fc" id="L32">	}</span>
+
+	@Override
+	public int size() throws TemplateModelException {
+<span class="nc" id="L36">		return applicationContext.getBeanDefinitionCount();</span>
+	}
+
+	@Override
+	public TemplateCollectionModel keys() throws TemplateModelException {
+<span class="fc" id="L41">		return new IteratorModel(new Iterator&lt;String&gt;() {</span>
+<span class="fc" id="L42">			private int currentIdx = 0;</span>
+
+			@Override
+			public boolean hasNext() {
+<span class="fc bfc" id="L46" title="All 2 branches covered.">				return currentIdx &lt; applicationContext.getBeanDefinitionCount();</span>
+			}
+
+			@Override
+			public String next() {
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">				if (!hasNext()) {</span>
+<span class="nc" id="L52">					throw new NoSuchElementException();</span>
+				}
+<span class="fc" id="L54">				return &quot;@&quot; + applicationContext.getBeanDefinitionNames()[currentIdx++];</span>
+			}
+
+		}, beansWrapper);
+	}
+
+	@Override
+	public TemplateCollectionModel values() throws TemplateModelException {
+<span class="fc" id="L62">		return new IteratorModel(new Iterator&lt;Object&gt;() {</span>
+<span class="fc" id="L63">			private int currentIdx = 0;</span>
+
+			@Override
+			public boolean hasNext() {
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">				return currentIdx &lt; applicationContext.getBeanDefinitionCount();</span>
+			}
+
+			@Override
+			public Object next() {
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">				if (!hasNext()) {</span>
+<span class="nc" id="L73">					throw new NoSuchElementException();</span>
+				}
+<span class="fc" id="L75">				String name = applicationContext.getBeanDefinitionNames()[currentIdx++];</span>
+<span class="fc" id="L76">				return new LazySpringBeanAccessModel(applicationContext, beansWrapper, name);</span>
+			}
+
+		}, beansWrapper);
+	}
+
+	@Override
+	public TemplateModel get(String key) throws TemplateModelException {
+<span class="nc bnc" id="L84" title="All 2 branches missed.">		return new BeanModel(applicationContext.getBean(key.startsWith(&quot;@&quot;) ? key.substring(1) : key), beansWrapper);</span>
+	}
+
+	@Override
+	public boolean isEmpty() throws TemplateModelException {
+<span class="nc bnc" id="L89" title="All 2 branches missed.">		return applicationContext.getBeanDefinitionCount() &lt;= 0;</span>
+	}
+
+	@Override
+	public KeyValuePairIterator keyValuePairIterator() throws TemplateModelException {
+<span class="nc" id="L94">		return new KeyValuePairIterator() {</span>
+<span class="nc" id="L95">			private int currentIdx = 0;</span>
+
+			@Override
+			public KeyValuePair next() throws TemplateModelException {
+<span class="nc bnc" id="L99" title="All 2 branches missed.">				if (!hasNext()) {</span>
+<span class="nc" id="L100">					throw new NoSuchElementException();</span>
+				}
+<span class="nc" id="L102">				KeyValuePair pair = new KeyValuePair() {</span>
+
+					@Override
+					public TemplateModel getValue() throws TemplateModelException {
+<span class="nc" id="L106">						String name = applicationContext.getBeanDefinitionNames()[currentIdx];</span>
+<span class="nc" id="L107">						return new LazySpringBeanAccessModel(applicationContext, beansWrapper, name);</span>
+					}
+
+					@Override
+					public TemplateModel getKey() throws TemplateModelException {
+<span class="nc" id="L112">						return new StringModel(applicationContext.getBeanDefinitionNames()[currentIdx], beansWrapper);</span>
+					}
+				};
+<span class="nc" id="L115">				currentIdx++;</span>
+<span class="nc" id="L116">				return pair;</span>
+			}
+
+			@Override
+			public boolean hasNext() throws TemplateModelException {
+<span class="nc bnc" id="L121" title="All 2 branches missed.">				return currentIdx &lt; applicationContext.getBeanDefinitionCount();</span>
+			}
+		};
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

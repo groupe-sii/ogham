@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentPartAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.email</a> &gt; <span class="el_source">FluentPartAssert.java</span></div><h1>FluentPartAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.email;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getContent;
+import static java.util.Arrays.asList;
+import static java.util.Collections.list;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.mail.Header;
+import javax.mail.MessagingException;
+import javax.mail.Part;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.util.HasParent;
+
+public class FluentPartAssert&lt;P&gt; extends HasParent&lt;P&gt; {
+	/**
+	 * The list of messages that will be used for assertions
+	 */
+	private final List&lt;PartWithContext&gt; actual;
+	/**
+	 * Registry to register assertions
+	 */
+	private final AssertionRegistry registry;
+
+	public FluentPartAssert(PartWithContext actual, P parent, AssertionRegistry registry) {
+<span class="nc" id="L34">		this(Arrays.asList(actual), parent, registry);</span>
+<span class="nc" id="L35">	}</span>
+
+	public FluentPartAssert(List&lt;PartWithContext&gt; actual, P parent, AssertionRegistry registry) {
+<span class="fc" id="L38">		super(parent);</span>
+<span class="fc" id="L39">		this.actual = actual;</span>
+<span class="fc" id="L40">		this.registry = registry;</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Make assertions on the string content of a part (body, alternative or
+	 * attachment) of the message(s). UTF-8 charset is used to decode body
+	 * content.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).body()
+	 *    .contentAsString(is(&quot;foobar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of the body of the first message is exactly
+	 * &quot;foobar&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().body()
+	 *    .contentAsString(is(&quot;foobar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of the body of every message is exactly
+	 * &quot;foobar&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on string content
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; contentAsString(Matcher&lt;? super String&gt; matcher) {
+<span class="fc" id="L69">		return contentAsString(matcher, StandardCharsets.UTF_8);</span>
+	}
+
+	/**
+	 * Make assertions on the string content of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).body()
+	 *    .contentAsString(is(&quot;foobar&quot;), Charset.forName(&quot;UTF-8&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of the body of the first message is exactly
+	 * &quot;foobar&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().body()
+	 *    .contentAsString(is(&quot;foobar&quot;), Charset.forName(&quot;UTF-8&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of the body of every message is exactly
+	 * &quot;foobar&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on string content
+	 * @param charset
+	 *            the charset used to decode the content
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; contentAsString(Matcher&lt;? super String&gt; matcher, Charset charset) {
+		try {
+<span class="fc" id="L100">			String message = charset.name() + &quot; content of ${partName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">			for (PartWithContext partWithContext : actual) {</span>
+<span class="fc" id="L102">				Part part = partWithContext.getPart();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">				registry.register(() -&gt; assertThat(part == null ? null : getContent(part, charset), usingContext(message, partWithContext, matcher)));</span>
+<span class="fc" id="L104">			}</span>
+<span class="fc" id="L105">			return this;</span>
+<span class="nc" id="L106">		} catch (Exception e) {</span>
+<span class="nc" id="L107">			throw new AssertionError(&quot;Failed to get string content for part&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the raw content of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).body()
+	 *    .content(is(resource(&quot;path/to/expected/file&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of the body of the first message is exactly the
+	 * same as the file resource available in the classpath.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().body()
+	 *    .content(is(resource(&quot;path/to/expected/file&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of the body of every message is exactly the
+	 * same as the file resource available in the classpath.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on raw content
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; content(Matcher&lt;byte[]&gt; matcher) {
+		try {
+<span class="fc" id="L137">			String message = &quot;raw content of ${partName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">			for (PartWithContext partWithContext : actual) {</span>
+<span class="fc" id="L139">				Part part = partWithContext.getPart();</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">				registry.register(() -&gt; assertThat(part == null ? null : getContent(part), usingContext(message, partWithContext, matcher)));</span>
+<span class="fc" id="L141">			}</span>
+<span class="fc" id="L142">			return this;</span>
+<span class="nc" id="L143">		} catch (Exception e) {</span>
+<span class="nc" id="L144">			throw new AssertionError(&quot;Failed to get content for part&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the content-type of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).body()
+	 *    .contentType(is(&quot;text/html&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content-type of the body of the first message is
+	 * exactly &quot;text/html&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().body()
+	 *    .contentType(is(&quot;text/html&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content-type of the body of every message is exactly
+	 * &quot;text/html&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on content-type
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; contentType(Matcher&lt;? super String&gt; matcher) {
+		try {
+<span class="fc" id="L174">			String message = &quot;content-type of ${partName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">			for (PartWithContext partWithContext : actual) {</span>
+<span class="fc" id="L176">				Part part = partWithContext.getPart();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">				registry.register(() -&gt; assertThat(part == null ? null : part.getContentType(), usingContext(message, partWithContext, matcher)));</span>
+<span class="fc" id="L178">			}</span>
+<span class="fc" id="L179">			return this;</span>
+<span class="nc" id="L180">		} catch (MessagingException e) {</span>
+<span class="nc" id="L181">			throw new AssertionError(&quot;Failed to get string content type for part&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the description of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).body()
+	 *    .description(is(&quot;foo bar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the description of the body of the first message is exactly
+	 * &quot;foo bar&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().body()
+	 *    .description(is(&quot;foo bar&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the description of the body of every message is exactly
+	 * &quot;foo bar&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on description
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; description(Matcher&lt;? super String&gt; matcher) {
+		try {
+<span class="fc" id="L211">			String message = &quot;description of ${partName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">			for (PartWithContext partWithContext : actual) {</span>
+<span class="fc" id="L213">				Part part = partWithContext.getPart();</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">				registry.register(() -&gt; assertThat(part == null ? null : part.getDescription(), usingContext(message, partWithContext, matcher)));</span>
+<span class="fc" id="L215">			}</span>
+<span class="fc" id="L216">			return this;</span>
+<span class="nc" id="L217">		} catch (MessagingException e) {</span>
+<span class="nc" id="L218">			throw new AssertionError(&quot;Failed to get description of part&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the disposition of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).body()
+	 *    .disposition(is(INLINE_DISPOSITION))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the disposition of the body of the first message is exactly
+	 * &quot;inline&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().body()
+	 *    .disposition(is(INLINE_DISPOSITION))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the disposition of the body of every message is exactly
+	 * &quot;inline&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on disposition
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; disposition(Matcher&lt;? super String&gt; matcher) {
+		try {
+<span class="fc" id="L248">			String message = &quot;disposition of ${partName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L249" title="All 2 branches covered.">			for (PartWithContext partWithContext : actual) {</span>
+<span class="fc" id="L250">				Part part = partWithContext.getPart();</span>
+<span class="fc bfc" id="L251" title="All 2 branches covered.">				registry.register(() -&gt; assertThat(part == null ? null : part.getDisposition(), usingContext(message, partWithContext, matcher)));</span>
+<span class="fc" id="L252">			}</span>
+<span class="fc" id="L253">			return this;</span>
+<span class="nc" id="L254">		} catch (MessagingException e) {</span>
+<span class="nc" id="L255">			throw new AssertionError(&quot;Failed to get disposition of part&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the filename of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).attachment(0)
+	 *    .filename(is(&quot;foo.pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the filename of the first attachment of the first message
+	 * is exactly &quot;foo.pdf&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().attachment(0)
+	 *    .filename(is(&quot;foo.pdf&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the filename of the first attachment of every message is
+	 * exactly &quot;foo.pdf&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on filename
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; filename(Matcher&lt;? super String&gt; matcher) {
+		try {
+<span class="fc" id="L285">			String message = &quot;filename of ${partName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L286" title="All 2 branches covered.">			for (PartWithContext partWithContext : actual) {</span>
+<span class="fc" id="L287">				Part part = partWithContext.getPart();</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">				registry.register(() -&gt; assertThat(part == null ? null : part.getFileName(), usingContext(message, partWithContext, matcher)));</span>
+<span class="fc" id="L289">			}</span>
+<span class="fc" id="L290">			return this;</span>
+<span class="nc" id="L291">		} catch (MessagingException e) {</span>
+<span class="nc" id="L292">			throw new AssertionError(&quot;Failed to get filename of part&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on the headers of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).attachment(0)
+	 *    .headers(hasItem(new Header(&quot;name&quot;, &quot;value&quot;)))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the headers of the first attachment of the first message
+	 * contains a header with name &quot;name&quot; and value &quot;value&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().attachment(0)
+	 *    .header(hasItem(new Header(&quot;name&quot;, &quot;value&quot;)))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the headers of the first attachment of every message is
+	 * contains a header with name &quot;name&quot; and value &quot;value&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on headers
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; headers(Matcher&lt;? super Iterable&lt;Header&gt;&gt; matcher) {
+		try {
+<span class="nc" id="L322">			String message = &quot;headers of ${partName} of message ${messageIndex}&quot;;</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">			for (PartWithContext partWithContext : actual) {</span>
+<span class="nc" id="L324">				Part part = partWithContext.getPart();</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">				registry.register(() -&gt; assertThat(part == null ? null : list(part.getAllHeaders()), usingContext(message, partWithContext, matcher)));</span>
+<span class="nc" id="L326">			}</span>
+<span class="nc" id="L327">			return this;</span>
+<span class="nc" id="L328">		} catch (MessagingException e) {</span>
+<span class="nc" id="L329">			throw new AssertionError(&quot;Failed to get headers of part&quot;, e);</span>
+		}
+	}
+
+	/**
+	 * Make assertions on a single header of a part (body, alternative or
+	 * attachment) of the message(s).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).attachment(0)
+	 *    .header(&quot;Content-ID&quot;, contains(&quot;foo&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the &quot;Content-ID&quot; header of the first attachment of the
+	 * first message values &quot;foo&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().attachment(0)
+	 *    .header(&quot;Content-ID&quot;, contains(&quot;foo&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the &quot;Content-ID&quot; header of the first attachment of every
+	 * message values &quot;foo&quot;.
+	 * 
+	 * @param headerName
+	 *            the name of the header to check
+	 * @param matcher
+	 *            the assertion to apply on the header header
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPartAssert&lt;P&gt; header(String headerName, Matcher&lt;? super Iterable&lt;String&gt;&gt; matcher) {
+		try {
+<span class="fc" id="L361">			String message = &quot;header &quot; + headerName + &quot; of ${partName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">			for (PartWithContext partWithContext : actual) {</span>
+<span class="fc" id="L363">				Part part = partWithContext.getPart();</span>
+<span class="fc" id="L364">				registry.register(() -&gt; assertThat(getHeaderValues(part, headerName), usingContext(message, partWithContext, matcher)));</span>
+<span class="fc" id="L365">			}</span>
+<span class="fc" id="L366">			return this;</span>
+<span class="nc" id="L367">		} catch (MessagingException e) {</span>
+<span class="nc" id="L368">			throw new AssertionError(&quot;Failed to get header&quot; + headerName + &quot; of part&quot;, e);</span>
+		}
+	}
+	
+	@SuppressWarnings(&quot;squid:S1168&quot;)
+	private static List&lt;String&gt; getHeaderValues(Part part, String headerName) throws MessagingException {
+<span class="fc bfc" id="L374" title="All 2 branches covered.">		if (part != null) {</span>
+<span class="fc" id="L375">			String[] vals = part.getHeader(headerName);</span>
+<span class="pc bpc" id="L376" title="1 of 2 branches missed.">			if (vals != null) {</span>
+<span class="fc" id="L377">				return asList(vals);</span>
+			}
+		}
+<span class="fc" id="L380">		return null;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

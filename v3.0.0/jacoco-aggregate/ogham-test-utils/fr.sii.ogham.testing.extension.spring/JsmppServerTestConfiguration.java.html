@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JsmppServerTestConfiguration.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.spring</a> &gt; <span class="el_source">JsmppServerTestConfiguration.java</span></div><h1>JsmppServerTestConfiguration.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.spring;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerExtension;
+import fr.sii.ogham.testing.extension.junit.sms.JsmppServerRule;
+import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
+
+/**
+ * Test configuration that registers:
+ * &lt;ul&gt;
+ * &lt;li&gt;{@link JsmppServerRule} bean for JUnit 4&lt;/li&gt;
+ * &lt;li&gt;{@link JsmppServerExtension} bean for JUnit 5&lt;/li&gt;
+ * &lt;li&gt;Configure port defined by {@code jsmpp.server.port} property.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@TestConfiguration
+<span class="fc" id="L26">public class JsmppServerTestConfiguration {</span>
+	@Bean
+	@ConditionalOnMissingBean(JsmppServerRule.class)
+	@ConditionalOnProperty(&quot;jsmpp.server.port&quot;)
+	public JsmppServerRule randomJsmppPortRule(@Value(&quot;${jsmpp.server.port}&quot;) int port, @Autowired(required = false) ServerConfig config) {
+<span class="fc" id="L31">		return new JsmppServerRule(initConfig(port, config));</span>
+	}
+	
+	@Bean
+	@ConditionalOnMissingBean(JsmppServerExtension.class)
+	@ConditionalOnProperty(&quot;jsmpp.server.port&quot;)
+	public JsmppServerExtension randomJsmppPortExtension(@Value(&quot;${jsmpp.server.port}&quot;) int port, @Autowired(required = false) ServerConfig config) {
+<span class="fc" id="L38">		return new JsmppServerExtension(initConfig(port, config));</span>
+	}
+
+	private static ServerConfig initConfig(int port, ServerConfig config) {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">		if (config == null) {</span>
+<span class="fc" id="L43">			config = new ServerConfig();</span>
+		}
+<span class="fc" id="L45">		config.port(port);</span>
+<span class="fc" id="L46">		return config;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

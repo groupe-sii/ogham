@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AutoDetectTemplateParser.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.template.parser</a> &gt; <span class="el_source">AutoDetectTemplateParser.java</span></div><h1>AutoDetectTemplateParser.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.template.parser;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.template.EngineDetectionException;
+import fr.sii.ogham.core.exception.template.NoEngineDetectionException;
+import fr.sii.ogham.core.exception.template.ParseException;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
+
+/**
+ * Decorator that automatically detects the template engine parser to use. The
+ * auto-detection is based on pairs of engine detector and associated template
+ * engine parser.
+ * 
+ * The detection mechanism loop through the engine detectors until one indicates
+ * that the associated engine can parse the template.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class AutoDetectTemplateParser implements TemplateParser {
+<span class="fc" id="L28">	private static final Logger LOG = LoggerFactory.getLogger(AutoDetectTemplateParser.class);</span>
+	
+
+	/**
+	 * The pairs of engine detector and template engine parser
+	 */
+	private List&lt;TemplateImplementation&gt; implementations;
+
+	public AutoDetectTemplateParser(List&lt;TemplateImplementation&gt; implementations) {
+<span class="fc" id="L37">		super();</span>
+<span class="fc" id="L38">		this.implementations = implementations;</span>
+<span class="fc" id="L39">	}</span>
+
+	@Override
+	public Content parse(ResourcePath templatePath, Context ctx) throws ParseException {
+		try {
+<span class="fc" id="L44">			LOG.debug(&quot;Start template engine automatic detection for {}&quot;, templatePath);</span>
+<span class="fc" id="L45">			TemplateParser parser = findParser(templatePath, ctx);</span>
+<span class="fc" id="L46">			LOG.info(&quot;Parse the template {} using template engine {}&quot;, templatePath, parser);</span>
+<span class="fc" id="L47">			return parser.parse(templatePath, ctx);</span>
+<span class="fc" id="L48">		} catch (EngineDetectionException e) {</span>
+<span class="fc" id="L49">			throw new ParseException(&quot;Failed to automatically detect parser due to detection error&quot;, templatePath, ctx, e);</span>
+		}
+	}
+
+	private TemplateParser findParser(ResourcePath templatePath, Context ctx) throws EngineDetectionException {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		for (TemplateImplementation impl : implementations) {</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">			if (impl.getDetector().canParse(templatePath, ctx)) {</span>
+<span class="fc" id="L56">				TemplateParser parser = impl.getParser();</span>
+<span class="fc" id="L57">				LOG.debug(&quot;Template engine {} is used for {}&quot;, parser, templatePath);</span>
+<span class="fc" id="L58">				return parser;</span>
+			} else {
+<span class="fc" id="L60">				LOG.debug(&quot;Template engine {} can't be used for {}&quot;, impl.getParser(), templatePath);</span>
+			}
+<span class="fc" id="L62">		}</span>
+<span class="fc" id="L63">		throw new NoEngineDetectionException(&quot;Auto detection couldn't find any parser able to handle the template &quot; + templatePath.getOriginalPath() + &quot;.\n&quot;</span>
+				+ &quot;Either the template uses a template engine that is not registered in Ogham or the path points to a non existing template.&quot;);
+	}
+	
+
+	@Override
+	public String toString() {
+<span class="fc" id="L70">		return &quot;AutoDetectTemplateParser (&quot; + implementations + &quot;)&quot;;</span>
+	}
+
+
+
+	public static class TemplateImplementation {
+		private final TemplateEngineDetector detector;
+		private final TemplateParser parser;
+		public TemplateImplementation(TemplateEngineDetector detector, TemplateParser parser) {
+<span class="fc" id="L79">			super();</span>
+<span class="fc" id="L80">			this.detector = detector;</span>
+<span class="fc" id="L81">			this.parser = parser;</span>
+<span class="fc" id="L82">		}</span>
+		public TemplateEngineDetector getDetector() {
+<span class="fc" id="L84">			return detector;</span>
+		}
+		public TemplateParser getParser() {
+<span class="fc" id="L87">			return parser;</span>
+		}
+		@Override
+		public String toString() {
+<span class="fc" id="L91">			return &quot;TemplateImplementation {detector:&quot; + detector + &quot;, parser:&quot; + parser + &quot;}&quot;;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

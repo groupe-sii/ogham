@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EveryResourceTranslator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.translator.resource</a> &gt; <span class="el_source">EveryResourceTranslator.java</span></div><h1>EveryResourceTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.translator.resource;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.email.exception.attachment.translator.ResourceTranslatorException;
+
+/**
+ * Decorator that loop through all delegate translators to transform the
+ * attachment resource of the message. Every translator will be called to update
+ * the resource. Each translator receive the resource that may be updated by the
+ * previous translator.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class EveryResourceTranslator implements AttachmentResourceTranslator {
+<span class="fc" id="L23">	private static final Logger LOG = LoggerFactory.getLogger(EveryResourceTranslator.class);</span>
+
+	/**
+	 * The list of translators used to update the message content
+	 */
+	private List&lt;AttachmentResourceTranslator&gt; translators;
+
+	/**
+	 * Initialize the decorator with none, one or several translator
+	 * implementations. The registration order may be important.
+	 * 
+	 * @param translators
+	 *            the translators to register
+	 */
+	public EveryResourceTranslator(AttachmentResourceTranslator... translators) {
+<span class="fc" id="L38">		this(new ArrayList&lt;&gt;(Arrays.asList(translators)));</span>
+<span class="fc" id="L39">	}</span>
+
+	/**
+	 * Initialize the decorator with the provided translator implementations.
+	 * The registration order may be important.
+	 * 
+	 * @param translators
+	 *            the translators to register
+	 */
+	public EveryResourceTranslator(List&lt;AttachmentResourceTranslator&gt; translators) {
+<span class="fc" id="L49">		super();</span>
+<span class="fc" id="L50">		this.translators = translators;</span>
+<span class="fc" id="L51">	}</span>
+
+	@Override
+	public Resource translate(Resource resource) throws ResourceTranslatorException {
+<span class="fc" id="L55">		Resource result = resource;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">		for (AttachmentResourceTranslator translator : translators) {</span>
+<span class="fc" id="L57">			LOG.debug(&quot;Applying translator {} on resource {}&quot;, translator, resource);</span>
+<span class="fc" id="L58">			result = translator.translate(result);</span>
+<span class="fc" id="L59">		}</span>
+<span class="fc" id="L60">		return result;</span>
+	}
+
+	/**
+	 * Register a new translator. The translator is added at the end.
+	 * 
+	 * @param translator
+	 *            the translator to register
+	 */
+	public void addTranslator(AttachmentResourceTranslator translator) {
+<span class="fc" id="L70">		translators.add(translator);</span>
+<span class="fc" id="L71">	}</span>
+
+	/**
+	 * Get the registered translators.
+	 * 
+	 * @return the list of translators
+	 */
+	public List&lt;AttachmentResourceTranslator&gt; getTranslators() {
+<span class="fc" id="L79">		return translators;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L84">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L85">		builder.append(&quot;EveryResourceTranslator [translators=&quot;).append(translators).append(&quot;]&quot;);</span>
+<span class="fc" id="L86">		return builder.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

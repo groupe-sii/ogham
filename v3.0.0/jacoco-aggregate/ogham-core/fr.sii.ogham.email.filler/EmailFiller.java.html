@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EmailFiller.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.filler</a> &gt; <span class="el_source">EmailFiller.java</span></div><h1>EmailFiller.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.filler;
+
+import static fr.sii.ogham.email.message.RecipientType.BCC;
+import static fr.sii.ogham.email.message.RecipientType.CC;
+import static fr.sii.ogham.email.message.RecipientType.TO;
+
+import java.util.Map;
+
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.filler.AbstractMessageAwareFiller;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.message.Recipient;
+import fr.sii.ogham.email.message.RecipientType;
+
+public class EmailFiller extends AbstractMessageAwareFiller&lt;Email&gt; {
+
+	public EmailFiller(Map&lt;String, ConfigurationValueBuilderHelper&lt;?, ?&gt;&gt; defaultValues) {
+<span class="fc" id="L18">		super(defaultValues, Email.class);</span>
+<span class="fc" id="L19">	}</span>
+
+	@Override
+	protected void fill(Email email) {
+<span class="fc bfc" id="L23" title="All 4 branches covered.">		if (email.getSubject() == null &amp;&amp; containsProperty(&quot;subject&quot;)) {</span>
+<span class="fc" id="L24">			email.subject(getProperty(&quot;subject&quot;, String.class));</span>
+		}
+<span class="fc bfc" id="L26" title="All 4 branches covered.">		if (email.getFrom() == null &amp;&amp; containsProperty(&quot;from&quot;)) {</span>
+<span class="fc" id="L27">			email.from(getProperty(&quot;from&quot;, String.class));</span>
+		}
+<span class="fc bfc" id="L29" title="All 4 branches covered.">		if (!hasRecipient(email, TO) &amp;&amp; containsProperty(&quot;to&quot;)) {</span>
+<span class="fc" id="L30">			email.to(getProperty(&quot;to&quot;, String[].class));</span>
+		}
+<span class="fc bfc" id="L32" title="All 4 branches covered.">		if (!hasRecipient(email, CC) &amp;&amp; containsProperty(&quot;cc&quot;)) {</span>
+<span class="fc" id="L33">			email.cc(getProperty(&quot;cc&quot;, String[].class));</span>
+		}
+<span class="fc bfc" id="L35" title="All 4 branches covered.">		if (!hasRecipient(email, BCC) &amp;&amp; containsProperty(&quot;bcc&quot;)) {</span>
+<span class="fc" id="L36">			email.bcc(getProperty(&quot;bcc&quot;, String[].class));</span>
+		}
+<span class="fc" id="L38">	}</span>
+
+	private static boolean hasRecipient(Email email, RecipientType type) {
+<span class="fc bfc" id="L41" title="All 2 branches covered.">		if (email.getRecipients() == null) {</span>
+<span class="fc" id="L42">			return false;</span>
+		}
+<span class="fc bfc" id="L44" title="All 2 branches covered.">		for (Recipient recipient : email.getRecipients()) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">			if (type == recipient.getType()) {</span>
+<span class="fc" id="L46">				return true;</span>
+			}
+<span class="fc" id="L48">		}</span>
+<span class="fc" id="L49">		return false;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

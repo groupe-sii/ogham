@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractSpecializedSender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.sender</a> &gt; <span class="el_source">AbstractSpecializedSender.java</span></div><h1>AbstractSpecializedSender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.sender;
+
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.message.Message;
+
+/**
+ * Base class for handling particular message implementation. This is just a
+ * helper class in order to avoid casting the message.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;M&gt;
+ *            The type of message that the sub-class is able to handle
+ */
+<span class="fc" id="L15">public abstract class AbstractSpecializedSender&lt;M&gt; implements SpecializedSender&lt;M&gt; {</span>
+
+	@Override
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public void send(Message message) throws MessageException {
+<span class="fc" id="L20">		send((M) message);</span>
+<span class="fc" id="L21">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

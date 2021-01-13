@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FailIfNotFoundWithTestedPathsVariantResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.common.adapter</a> &gt; <span class="el_source">FailIfNotFoundWithTestedPathsVariantResolver.java</span></div><h1>FailIfNotFoundWithTestedPathsVariantResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.common.adapter;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.sii.ogham.core.message.capability.HasVariant;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.template.exception.TemplateVariantNotFoundException;
+import fr.sii.ogham.template.exception.VariantResolutionException;
+
+/**
+ * Improved implementation that fails but also provide more information to the
+ * end-user.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FailIfNotFoundWithTestedPathsVariantResolver implements VariantResolver {
+	/**
+	 * The list of previously used resolvers to retrieve the paths that didn't
+	 * match
+	 */
+	private List&lt;VariantResolver&gt; delegates;
+
+	public FailIfNotFoundWithTestedPathsVariantResolver() {
+<span class="fc" id="L31">		this(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L32">	}</span>
+
+	public FailIfNotFoundWithTestedPathsVariantResolver(List&lt;VariantResolver&gt; delegates) {
+<span class="fc" id="L35">		super();</span>
+<span class="fc" id="L36">		this.delegates = delegates;</span>
+<span class="fc" id="L37">	}</span>
+
+	@Override
+	public ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">		if (!(template instanceof HasVariant)) {</span>
+<span class="nc" id="L42">			return template.getPath();</span>
+		}
+<span class="fc" id="L44">		List&lt;ResourcePath&gt; testedPaths = getTestedPaths(template);</span>
+<span class="fc" id="L45">		Variant variant = ((HasVariant) template).getVariant();</span>
+<span class="fc" id="L46">		throw new TemplateVariantNotFoundException(&quot;Failed to resolve variant (&quot; + variant + &quot;) for template &quot; + template.getPath().getOriginalPath(), template, testedPaths);</span>
+	}
+
+	private List&lt;ResourcePath&gt; getTestedPaths(TemplateContent template) {
+<span class="fc" id="L50">		List&lt;ResourcePath&gt; testedPaths = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">		for (VariantResolver delegate : delegates) {</span>
+<span class="fc" id="L52">			testedPaths.addAll(getTestedPaths(template, delegate));</span>
+<span class="fc" id="L53">		}</span>
+<span class="fc" id="L54">		return testedPaths;</span>
+	}
+
+	private List&lt;ResourcePath&gt; getTestedPaths(TemplateContent template, VariantResolver delegate) {
+		// if information an be provided, use that information
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">		if (delegate instanceof CanProvidePossiblePaths) {</span>
+<span class="fc" id="L60">			return ((CanProvidePossiblePaths) delegate).getPossiblePaths(template);</span>
+		}
+		// otherwise call again to give a path if possible
+<span class="nc" id="L63">		ResourcePath testedPath = null;</span>
+		try {
+<span class="nc" id="L65">			testedPath = delegate.getRealPath(template);</span>
+<span class="nc" id="L66">		} catch (VariantResolutionException e) {</span>
+			// skip because there is no useful information
+<span class="nc" id="L68">		}</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">		return testedPath==null ? emptyList() : asList(testedPath);</span>
+	}
+
+	/**
+	 * Returns true to make it fail
+	 */
+	@Override
+	public boolean variantExists(TemplateContent template) {
+<span class="nc" id="L77">		return true;</span>
+	}
+
+	public FailIfNotFoundWithTestedPathsVariantResolver addVariantResolver(VariantResolver variantResolver) {
+<span class="fc" id="L81">		delegates.add(variantResolver);</span>
+<span class="fc" id="L82">		return this;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

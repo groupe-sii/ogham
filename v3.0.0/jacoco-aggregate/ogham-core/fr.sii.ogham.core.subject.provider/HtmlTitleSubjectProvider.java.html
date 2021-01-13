@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>HtmlTitleSubjectProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.subject.provider</a> &gt; <span class="el_source">HtmlTitleSubjectProvider.java</span></div><h1>HtmlTitleSubjectProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.subject.provider;
+
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.MayHaveStringContent;
+import fr.sii.ogham.core.util.HtmlUtils;
+
+/**
+ * Provider that analyzes the content of the message. It the content is HTML,
+ * then the subject is extracted from the title node. The extracted subject is
+ * trimmed. If the extracted subject is empty then the final subject is empty
+ * string. If the HTML doesn't contain the title node, then the subject is null.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L17">public class HtmlTitleSubjectProvider implements SubjectProvider {</span>
+
+	@Override
+	public String provide(Message message) {
+<span class="fc" id="L21">		Content content = message.getContent();</span>
+<span class="pc bpc" id="L22" title="1 of 4 branches missed.">		if(content instanceof MayHaveStringContent &amp;&amp; ((MayHaveStringContent) content).canProvideString()) {</span>
+<span class="fc" id="L23">			String stringContent = ((MayHaveStringContent) content).asString();</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">			if (HtmlUtils.isHtml(stringContent)) {</span>
+<span class="fc" id="L25">				return HtmlUtils.getTitle(stringContent);</span>
+			}
+		}
+<span class="fc" id="L28">		return null;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

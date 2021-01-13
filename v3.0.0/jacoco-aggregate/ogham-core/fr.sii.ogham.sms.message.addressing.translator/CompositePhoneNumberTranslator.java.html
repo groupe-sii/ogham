@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CompositePhoneNumberTranslator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.message.addressing.translator</a> &gt; <span class="el_source">CompositePhoneNumberTranslator.java</span></div><h1>CompositePhoneNumberTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.message.addressing.translator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import fr.sii.ogham.sms.exception.message.PhoneNumberTranslatorException;
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
+
+/**
+ * Composite phone number translator, delegating the translation to a list of
+ * handlers to try. It will use the first handler supporting the phone number
+ * format.
+ * 
+ * @author cdejonghe
+ * 
+ */
+public class CompositePhoneNumberTranslator implements PhoneNumberTranslator {
+<span class="fc" id="L20">	private final List&lt;PhoneNumberHandler&gt; handlerList = new ArrayList&lt;&gt;();</span>
+
+	/**
+	 * Initializes the translator with the given handlers.
+	 * 
+	 * @param handlers
+	 *            all the handlers to request when trying to translate a phone
+	 *            number
+	 */
+<span class="fc" id="L29">	public CompositePhoneNumberTranslator(PhoneNumberHandler... handlers) {</span>
+<span class="fc" id="L30">		Collections.addAll(handlerList, handlers);</span>
+<span class="fc" id="L31">	}</span>
+
+	/**
+	 * 
+	 * @param handler
+	 *            the handler to add
+	 */
+	public void add(PhoneNumberHandler handler) {
+<span class="fc" id="L39">		handlerList.add(handler);</span>
+<span class="fc" id="L40">	}</span>
+
+	@Override
+	public AddressedPhoneNumber translate(PhoneNumber phoneNumber) throws PhoneNumberTranslatorException {
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">		for (PhoneNumberHandler currentHandler : handlerList) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">			if (currentHandler.supports(phoneNumber)) {</span>
+<span class="fc" id="L46">				return currentHandler.translate(phoneNumber);</span>
+			}
+<span class="fc" id="L48">		}</span>
+<span class="nc" id="L49">		throw new PhoneNumberTranslatorException(&quot;No handler referenced to translate the phone number : &quot; + phoneNumber);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MayReuseSessionStrategy.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.cloudhopper.session</a> &gt; <span class="el_source">MayReuseSessionStrategy.java</span></div><h1>MayReuseSessionStrategy.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.cloudhopper.session;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.cloudhopper.smpp.SmppClient;
+import com.cloudhopper.smpp.SmppSession;
+import com.cloudhopper.smpp.pdu.EnquireLink;
+import com.cloudhopper.smpp.type.RecoverablePduException;
+import com.cloudhopper.smpp.type.SmppChannelException;
+import com.cloudhopper.smpp.type.SmppTimeoutException;
+import com.cloudhopper.smpp.type.UnrecoverablePduException;
+
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppClientSupplier;
+import fr.sii.ogham.sms.builder.cloudhopper.SmppSessionHandlerSupplier;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.SmppException;
+
+/**
+ * Strategy that attempts to reuse the previous session if possible.
+ * 
+ * &lt;p&gt;
+ * When sending the first message, a new session is created. Later, when sending
+ * the next message, if the session is still alive, this session is reused. As
+ * the connection is not actively maintained, the session may be killed by the
+ * server. Therefore to check if the session is still alive, an
+ * {@link EnquireLink} request is sent. If a response is received from the
+ * server, then the session is still alive and the message can be sent using the
+ * same session. If a failure response or no response is received after some
+ * time from the server, then a new session must be created.
+ * 
+ * &lt;p&gt;
+ * To check if the session is still alive, the {@link EnquireLink} request is
+ * sent just before sending the real message. In order to prevent sending an
+ * {@link EnquireLink} request before &lt;strong&gt;every&lt;/strong&gt; message, the date
+ * of the last sent message or {@link EnquireLink} is kept. This date is
+ * compared to a delay to ensure that no {@link EnquireLink} is sent during this
+ * delay.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MayReuseSessionStrategy extends BaseSessionHandlingStrategy implements ErrorHandler {
+<span class="fc" id="L47">	private static final Logger LOG = LoggerFactory.getLogger(MayReuseSessionStrategy.class);</span>
+
+	private final ErrorAnalyzer errorAnalyzer;
+	private long lastSentOrSession;
+
+	public MayReuseSessionStrategy(ExtendedSmppSessionConfiguration configuration, SmppClientSupplier clientSupplier, SmppSessionHandlerSupplier smppSessionHandlerSupplier, RetryExecutor retry,
+			ErrorAnalyzer errorAnalyzer) {
+<span class="fc" id="L54">		super(LOG, configuration, clientSupplier, smppSessionHandlerSupplier, retry);</span>
+<span class="fc" id="L55">		this.errorAnalyzer = errorAnalyzer;</span>
+<span class="fc" id="L56">	}</span>
+
+	@Override
+	public SmppSession getSession() throws SmppException {
+<span class="fc" id="L60">		initClient();</span>
+<span class="fc" id="L61">		initSession();</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">		if (!isSessionStillAlive()) {</span>
+<span class="fc" id="L63">			LOG.debug(&quot;Current session seems to be broken. Trying to reconnect...&quot;);</span>
+<span class="fc" id="L64">			reconnect();</span>
+		}
+<span class="fc" id="L66">		return currentSession;</span>
+	}
+
+	@Override
+	public void messageSent(Sms sms) throws MessageException {
+<span class="fc" id="L71">		updateLastSentOrSession();</span>
+<span class="fc" id="L72">	}</span>
+
+	@Override
+	public void messageNotSent(Sms sms, SmppException e) throws MessageException {
+		// If message couldn't be sent, re-throw the exception.
+		//
+		// The cause may be a broken connection because the delay to wait before
+		// sending a new EnquireLink is too long compared to the server
+		// configuration. But in this case, the developer has to adjust the
+		// settings accordingly to the server.
+		//
+		// If a new connection is required, clean the current session now
+		// therefore a new session will be created next time.
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">		if (errorAnalyzer.requiresNewConnection(e)) {</span>
+<span class="fc" id="L86">			clean();</span>
+		}
+<span class="fc" id="L88">		throw new MessageException(&quot;Failed to send SMS&quot;, sms, e);</span>
+	}
+
+	@Override
+	public void handleFailure(Throwable e) {
+		// If a new connection is required, clean the current session now
+		// therefore a new session will be created next time.
+<span class="nc bnc" id="L95" title="All 2 branches missed.">		if (errorAnalyzer.requiresNewConnection(e)) {</span>
+<span class="nc" id="L96">			clean();</span>
+		}
+<span class="nc" id="L98">	}</span>
+
+	@Override
+	public void messageProcessed(Sms sms) {
+		// nothing to do
+<span class="fc" id="L103">	}</span>
+
+	@Override
+	public void clean() {
+<span class="fc" id="L107">		destroySession();</span>
+<span class="fc" id="L108">		destroyClient();</span>
+<span class="fc" id="L109">	}</span>
+
+	@Override
+	protected synchronized SmppSession connect(SmppClient client) throws SmppException {
+<span class="fc" id="L113">		SmppSession session = super.connect(client);</span>
+<span class="fc" id="L114">		updateLastSentOrSession();</span>
+<span class="fc" id="L115">		return session;</span>
+	}
+
+	private boolean isSessionStillAlive() {
+<span class="fc" id="L119">		long elapsedTime = now() - lastSentOrSession;</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">		boolean skipEnquireLink = elapsedTime &lt; configuration.getReuseSession().getLastInteractionExpirationDelay();</span>
+<span class="fc" id="L121">		LOG.trace(&quot;Skip EnquireLink? {} {} =&gt; {}&quot;, elapsedTime, configuration.getReuseSession().getLastInteractionExpirationDelay(), skipEnquireLink);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">		if (skipEnquireLink) {</span>
+<span class="fc" id="L123">			return true;</span>
+		}
+		try {
+<span class="fc" id="L126">			LOG.trace(&quot;Sending EnquireLink to check if session is still alive...&quot;);</span>
+<span class="fc" id="L127">			currentSession.enquireLink(new EnquireLink(), configuration.getReuseSession().getEnquireLinkTimeout());</span>
+<span class="fc" id="L128">			LOG.trace(&quot;Session is still alive&quot;);</span>
+<span class="fc" id="L129">			updateLastSentOrSession();</span>
+<span class="fc" id="L130">			return true;</span>
+<span class="fc" id="L131">		} catch (RecoverablePduException | UnrecoverablePduException | SmppTimeoutException | SmppChannelException e) {</span>
+<span class="fc" id="L132">			LOG.trace(&quot;Failure while sending EnquireLink&quot;, e);</span>
+<span class="nc" id="L133">		} catch (InterruptedException e) {</span>
+<span class="nc" id="L134">			LOG.trace(&quot;Failure while sending EnquireLink (interrupted)&quot;, e);</span>
+<span class="nc" id="L135">			Thread.currentThread().interrupt();</span>
+<span class="fc" id="L136">		}</span>
+<span class="fc" id="L137">		return false;</span>
+	}
+
+	private void reconnect() throws SmppException {
+<span class="fc" id="L141">		destroySession();</span>
+<span class="fc" id="L142">		destroyClient();</span>
+<span class="fc" id="L143">		initClient();</span>
+<span class="fc" id="L144">		initSession();</span>
+<span class="fc" id="L145">	}</span>
+
+	private void updateLastSentOrSession() {
+<span class="fc" id="L148">		lastSentOrSession = now();</span>
+<span class="fc" id="L149">		LOG.trace(&quot;lastSentOrSession updated: {}&quot;, lastSentOrSession);</span>
+<span class="fc" id="L150">	}</span>
+
+	private static long now() {
+<span class="fc" id="L153">		return System.currentTimeMillis();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

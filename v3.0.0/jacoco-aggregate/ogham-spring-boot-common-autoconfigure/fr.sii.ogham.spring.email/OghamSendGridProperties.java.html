@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamSendGridProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.email</a> &gt; <span class="el_source">OghamSendGridProperties.java</span></div><h1>OghamSendGridProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.email;
+
+import java.net.URL;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(&quot;ogham.email.sendgrid&quot;)
+<span class="fc" id="L8">public class OghamSendGridProperties {</span>
+	/**
+	 * Set SendGrid API key.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * /!\ In Spring Boot application: if you provide a value for
+	 * spring.sendgrid.api-key, this property is not used. This is because
+	 * Spring Boot provides its own SendGrid client.
+	 */
+	private String apiKey;
+	/**
+	 * Set SendGrid API base URL.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * Changing the URL may be useful in tests.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * /!\ In Spring Boot application: if you provide a value for
+	 * spring.sendgrid.api-key, this property is not used. This is because
+	 * Spring Boot provides its own SendGrid client.
+	 */
+	private URL url;
+	/**
+	 * Set username for SendGrid HTTP API.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * @deprecated since version 3 of SendGrid Java library. Use API key instead
+	 */
+	@Deprecated
+	private String username;
+	/**
+	 * Set password for SendGrid HTTP API.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * @deprecated since version 3 of SendGrid Java library. Use API key instead
+	 */
+	@Deprecated
+	private String password;
+	/**
+	 * Configure SendGrid Client to run in unit tests. Only available since
+	 * version 3 of SendGrid Java library
+	 */
+	private boolean unitTesting;
+
+	public String getApiKey() {
+<span class="fc" id="L53">		return apiKey;</span>
+	}
+
+	public void setApiKey(String apiKey) {
+<span class="fc" id="L57">		this.apiKey = apiKey;</span>
+<span class="fc" id="L58">	}</span>
+
+	/**
+	 * @deprecated Spring Boot uses SendGrid Java library v4 since Spring Boot
+	 *             2. Use API keys instead.
+	 * 
+	 * @return the username
+	 */
+	@Deprecated
+	public String getUsername() {
+<span class="fc" id="L68">		return username;</span>
+	}
+
+	/**
+	 * @deprecated Spring Boot uses SendGrid Java library v4 since Spring Boot
+	 *             2. Use API keys instead.
+	 * 
+	 * @param username
+	 *            the username
+	 */
+	@Deprecated
+	public void setUsername(String username) {
+<span class="fc" id="L80">		this.username = username;</span>
+<span class="fc" id="L81">	}</span>
+
+	/**
+	 * @deprecated Spring Boot uses SendGrid Java library v4 since Spring Boot
+	 *             2. Use API keys instead.
+	 * 
+	 * @return the password
+	 */
+	@Deprecated
+	public String getPassword() {
+<span class="fc" id="L91">		return password;</span>
+	}
+
+	/**
+	 * @deprecated Spring Boot uses SendGrid Java library v4 since Spring Boot
+	 *             2. Use API keys instead.
+	 * 
+	 * @param password
+	 *            the password
+	 */
+	@Deprecated
+	public void setPassword(String password) {
+<span class="fc" id="L103">		this.password = password;</span>
+<span class="fc" id="L104">	}</span>
+
+	public URL getUrl() {
+<span class="fc" id="L107">		return url;</span>
+	}
+
+	public void setUrl(URL url) {
+<span class="fc" id="L111">		this.url = url;</span>
+<span class="fc" id="L112">	}</span>
+
+	public boolean isUnitTesting() {
+<span class="fc" id="L115">		return unitTesting;</span>
+	}
+
+	public void setUnitTesting(boolean unitTesting) {
+<span class="fc" id="L119">		this.unitTesting = unitTesting;</span>
+<span class="fc" id="L120">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

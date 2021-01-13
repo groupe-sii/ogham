@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FieldAccessor.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util.bean</a> &gt; <span class="el_source">FieldAccessor.java</span></div><h1>FieldAccessor.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util.bean;
+
+import java.lang.reflect.Field;
+
+import fr.sii.ogham.core.exception.util.InvalidPropertyException;
+
+/**
+ * Access the property of the bean using reflection. The property is accessed
+ * through {@link Field}.
+ * 
+ * &lt;p&gt;
+ * By default, if the field is not accessible, it makes it accessible and tries
+ * to access it.
+ * 
+ * @author Aurélien Baudet
+ * @param &lt;T&gt;
+ *            The type of the value
+ *
+ */
+public class FieldAccessor&lt;T&gt; implements Accessor&lt;T&gt; {
+	private final Object bean;
+	private final String name;
+	private final boolean makeAccessible;
+	private Field field;
+
+	/**
+	 * Use reflection to access the bean property named by &lt;code&gt;name&lt;/code&gt;
+	 * parameter.
+	 * 
+	 * &lt;p&gt;
+	 * If the field is not accessible (private or protected), it automatically
+	 * makes it accessible.
+	 * 
+	 * @param bean
+	 *            the bean to get property value from
+	 * @param name
+	 *            the name of the property
+	 */
+	public FieldAccessor(Object bean, String name) {
+<span class="fc" id="L40">		this(bean, name, true);</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Use reflection to access the bean property named by &lt;code&gt;name&lt;/code&gt;
+	 * parameter.
+	 * 
+	 * &lt;p&gt;
+	 * You can choose to force access to non accessible fields or not.
+	 * 
+	 * @param bean
+	 *            the bean to get property value from
+	 * @param name
+	 *            the name of the property
+	 * @param makeAccessible
+	 *            make the field accessible if not
+	 */
+	public FieldAccessor(Object bean, String name, boolean makeAccessible) {
+<span class="fc" id="L58">		super();</span>
+<span class="fc" id="L59">		this.bean = bean;</span>
+<span class="fc" id="L60">		this.name = name;</span>
+<span class="fc" id="L61">		this.makeAccessible = makeAccessible;</span>
+<span class="fc" id="L62">	}</span>
+
+	@Override
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public T getValue() {
+		try {
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">			if (field == null) {</span>
+<span class="fc" id="L69">				initField();</span>
+			}
+<span class="fc" id="L71">			return (T) field.get(bean);</span>
+<span class="fc" id="L72">		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | ClassCastException e) {</span>
+<span class="fc" id="L73">			throw new InvalidPropertyException(&quot;Failed to get value for property '&quot; + name + &quot;' on bean '&quot; + getClassName() + &quot;'&quot;, bean, name, e);</span>
+		}
+	}
+
+	private void initField() throws NoSuchFieldException {
+<span class="fc" id="L78">		field = bean.getClass().getDeclaredField(name);</span>
+<span class="pc bpc" id="L79" title="1 of 4 branches missed.">		if (makeAccessible &amp;&amp; !field.isAccessible()) {</span>
+<span class="fc" id="L80">			field.setAccessible(true);</span>
+		}
+<span class="fc" id="L82">	}</span>
+
+	private String getClassName() {
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">		return bean == null ? &quot;null&quot; : bean.getClass().getName();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

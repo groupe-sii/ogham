@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RelativePath.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.resource.path</a> &gt; <span class="el_source">RelativePath.java</span></div><h1>RelativePath.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.resource.path;
+
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+
+/**
+ * A generated path from a base path and a relative path.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class RelativePath implements ResourcePath {
+	/**
+	 * The base path
+	 */
+	private final ResourcePath basePath;
+	/**
+	 * The path to resolve against source path
+	 */
+	private final ResourcePath relativePath;
+	/**
+	 * The resolution result
+	 */
+	private final String mergedPath;
+
+	public RelativePath(ResourcePath base, ResourcePath relative, String mergedPath) {
+<span class="fc" id="L27">		super();</span>
+<span class="fc" id="L28">		this.basePath = base;</span>
+<span class="fc" id="L29">		this.relativePath = relative;</span>
+<span class="fc" id="L30">		this.mergedPath = mergedPath;</span>
+<span class="fc" id="L31">	}</span>
+
+	public RelativePath(ResourcePath base, String relativePath, String mergedPath) {
+<span class="nc" id="L34">		this(base, new UnresolvedPath(relativePath), mergedPath);</span>
+<span class="nc" id="L35">	}</span>
+
+	/**
+	 * Get the path as string of the resource before any resolution attempt.
+	 * 
+	 * This path is the relative path merged with the base path.
+	 * 
+	 * @return the merge path
+	 */
+	@Override
+	public String getOriginalPath() {
+<span class="fc" id="L46">		return mergedPath;</span>
+	}
+
+	/**
+	 * Get the base path
+	 * 
+	 * @return the base path
+	 */
+	public ResourcePath getBasePath() {
+<span class="nc" id="L55">		return basePath;</span>
+	}
+
+	/**
+	 * Get the relative path
+	 * 
+	 * @return the relative path
+	 */
+	public ResourcePath getRelativePath() {
+<span class="fc" id="L64">		return relativePath;</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L69">		return new HashCodeBuilder().append(basePath).append(relativePath).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="nc" id="L74">		return new EqualsBuilder(this, obj).appendFields(&quot;basePath&quot;, &quot;relativePath&quot;).isEqual();</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L79">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L80">		builder.append(&quot;'&quot;).append(mergedPath).append(&quot;' (merged from &quot;).append(relativePath).append(&quot; relative to &quot;).append(basePath).append(&quot;)&quot;);</span>
+<span class="fc" id="L81">		return builder.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

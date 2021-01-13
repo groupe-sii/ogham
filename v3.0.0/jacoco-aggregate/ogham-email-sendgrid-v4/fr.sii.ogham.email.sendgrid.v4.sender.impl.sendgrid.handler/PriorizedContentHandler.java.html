@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PriorizedContentHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v4</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler</a> &gt; <span class="el_source">PriorizedContentHandler.java</span></div><h1>PriorizedContentHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.handler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.util.PriorityComparator;
+import fr.sii.ogham.core.util.PriorizedMatchingHandler;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat.MailCompat;
+
+/**
+ * Implementation of {@link SendGridContentHandler} that delegates content
+ * handling to specialized instances, if one matching the actual content type
+ * has been declared.
+ */
+public final class PriorizedContentHandler implements SendGridContentHandler {
+
+<span class="fc" id="L24">	private static final Logger LOG = LoggerFactory.getLogger(PriorizedContentHandler.class);</span>
+
+	/**
+	 * The list of content handlers with corresponding matcher and priority
+	 */
+	private List&lt;PriorizedMatchingHandler&lt;SendGridContentHandler&gt;&gt; matchingHandlers;
+
+	/**
+	 * Initialize with the list of content handlers with matching predicate and
+	 * priority.
+	 * 
+	 * Higher priority means that handler will be used first.
+	 * 
+	 * @param matchingHandlers
+	 *            the list of content handlers with the associated content
+	 *            matcher and priority
+	 */
+	public PriorizedContentHandler(List&lt;PriorizedMatchingHandler&lt;SendGridContentHandler&gt;&gt; matchingHandlers) {
+<span class="fc" id="L42">		super();</span>
+<span class="fc" id="L43">		this.matchingHandlers = matchingHandlers;</span>
+<span class="fc" id="L44">	}</span>
+
+	/**
+	 * Initialize with an empty list
+	 */
+	public PriorizedContentHandler() {
+<span class="fc" id="L50">		this(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L51">	}</span>
+
+
+	/**
+	 * Register a new content handler using the provided content matcher.
+	 * 
+	 * @param contentMatcher
+	 *            the class of the content to match
+	 * @param handler
+	 *            the content handler to use if the class matches
+	 * @param priority
+	 *            the priority order (means that matching handler with higher
+	 *            priority is used)
+	 */
+	public void register(Predicate&lt;Content&gt; contentMatcher, SendGridContentHandler handler, int priority) {
+<span class="fc" id="L66">		matchingHandlers.add(new PriorizedMatchingHandler&lt;&gt;(contentMatcher, handler, priority));</span>
+<span class="fc" id="L67">		matchingHandlers.sort(new PriorityComparator&lt;&gt;(PriorizedMatchingHandler::getPriority));</span>
+<span class="fc" id="L68">	}</span>
+
+	/**
+	 * Register a new content handler using the provided content matcher.
+	 * 
+	 * The priority is the registration order (first registered has higher
+	 * priority).
+	 * 
+	 * @param contentMatcher
+	 *            the class of the content
+	 * @param handler
+	 *            the content handler
+	 */
+	public void register(Predicate&lt;Content&gt; contentMatcher, SendGridContentHandler handler) {
+<span class="nc" id="L82">		register(contentMatcher, handler, -matchingHandlers.size());</span>
+<span class="nc" id="L83">	}</span>
+
+	/**
+	 * Register a new content handler. The matching predicate is only based on
+	 * the class. It means that if the class of the content is a sub-class of
+	 * clazz parameter, then the associated handler is used.
+	 * 
+	 * @param clazz
+	 *            the class of the content to match
+	 * @param handler
+	 *            the content handler to use if the class matches
+	 * @param priority
+	 *            the priority order (means that matching handler with higher
+	 *            priority is used)
+	 */
+	public void register(Class&lt;? extends Content&gt; clazz, SendGridContentHandler handler, int priority) {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">		if (handler == null) {</span>
+<span class="fc" id="L100">			throw new IllegalArgumentException(&quot;[handler] cannot be null&quot;);</span>
+		}
+<span class="fc bfc" id="L102" title="All 2 branches covered.">		if (clazz == null) {</span>
+<span class="fc" id="L103">			throw new IllegalArgumentException(&quot;[clazz] cannot be null&quot;);</span>
+		}
+		
+<span class="fc" id="L106">		register(c -&gt; clazz.isAssignableFrom(c.getClass()), handler, priority);</span>
+<span class="fc" id="L107">	}</span>
+
+	/**
+	 * Register a new content handler. The matching predicate is only based on
+	 * the class. It means that if the class of the content is a sub-class of
+	 * clazz parameter, then the associated handler is used.
+	 * 
+	 * The priority is the registration order (first registered has higher
+	 * priority).
+	 * 
+	 * @param clazz
+	 *            the class of the content
+	 * @param handler
+	 *            the content handler
+	 */
+	public void register(Class&lt;? extends Content&gt; clazz, SendGridContentHandler handler) {
+<span class="fc" id="L123">		register(clazz, handler, -matchingHandlers.size());</span>
+<span class="fc" id="L124">	}</span>
+
+	@Override
+	public void setContent(final Email original, final MailCompat email, final Content content) throws ContentHandlerException {
+<span class="fc bfc" id="L128" title="All 2 branches covered.">		if (email == null) {</span>
+<span class="fc" id="L129">			throw new IllegalArgumentException(&quot;[email] cannot be null&quot;);</span>
+		}
+<span class="fc bfc" id="L131" title="All 2 branches covered.">		if (content == null) {</span>
+<span class="fc" id="L132">			throw new IllegalArgumentException(&quot;[content] cannot be null&quot;);</span>
+		}
+
+<span class="fc" id="L135">		final Class&lt;?&gt; clazz = content.getClass();</span>
+<span class="fc" id="L136">		LOG.debug(&quot;Getting content handler for type {}&quot;, clazz);</span>
+<span class="fc" id="L137">		final SendGridContentHandler handler = findHandler(content);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">		if (handler == null) {</span>
+<span class="fc" id="L139">			LOG.warn(&quot;No content handler found for requested type {}&quot;, clazz);</span>
+<span class="fc" id="L140">			throw new ContentHandlerException(&quot;No content handler found for content type &quot; + clazz.getSimpleName(), content);</span>
+		} else {
+<span class="fc" id="L142">			handler.setContent(original, email, content);</span>
+		}
+<span class="fc" id="L144">	}</span>
+
+	private SendGridContentHandler findHandler(final Content content) {
+<span class="fc bfc" id="L147" title="All 2 branches covered.">		for (PriorizedMatchingHandler&lt;SendGridContentHandler&gt; entry : matchingHandlers) {</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">			if (entry.matches(content)) {</span>
+<span class="fc" id="L149">				return entry.getHandler();</span>
+			}
+<span class="fc" id="L151">		}</span>
+<span class="fc" id="L152">		return null;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

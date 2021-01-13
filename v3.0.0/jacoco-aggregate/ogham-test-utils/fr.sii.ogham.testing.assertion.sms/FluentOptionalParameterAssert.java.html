@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentOptionalParameterAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">FluentOptionalParameterAssert.java</span></div><h1>FluentOptionalParameterAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+import static org.apache.commons.lang3.ArrayUtils.toObject;
+
+import java.util.List;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Make assertions on optional parameters of a {@link SubmitSm}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            The parent type
+ */
+public class FluentOptionalParameterAssert&lt;P&gt; extends HasParent&lt;P&gt; {
+	private final List&lt;OptionalParameterWithContext&gt; actual;
+	private final AssertionRegistry registry;
+
+	/**
+	 * Initializes with the parent instance and optional parameters for each
+	 * {@link SubmitSm} message.
+	 * 
+	 * @param parent
+	 *            the parent instance
+	 * @param parameters
+	 *            the optional parameters (with some contextual information)
+	 * @param registry
+	 *            used to regsiter assertions
+	 */
+	public FluentOptionalParameterAssert(P parent, List&lt;OptionalParameterWithContext&gt; parameters, AssertionRegistry registry) {
+<span class="fc" id="L40">		super(parent);</span>
+<span class="fc" id="L41">		this.actual = parameters;</span>
+<span class="fc" id="L42">		this.registry = registry;</span>
+<span class="fc" id="L43">	}</span>
+
+	/**
+	 * Make assertions on the whole optional parameter.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *   .rawRequest()
+	 *     .optionalParameter(Tag.MESSAGE_PAYLOAD)
+	 *    	 .parameter(notNullValue())
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the 'message_payload' optional parameter of the first
+	 * message is not null.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *   .rawRequest()
+	 *     .optionalParameter(Tag.MESSAGE_PAYLOAD)
+	 *    	 .parameter(notNullValue())
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the 'message_payload' optional parameter of every message
+	 * is not null.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the optional parameter
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentOptionalParameterAssert&lt;P&gt; parameter(Matcher&lt;? super OptionalParameter&gt; matcher) {
+<span class="fc" id="L73">		String message = &quot;optional parameter '${tagName}'${found} of ${name} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		for (OptionalParameterWithContext parameterWithContext : actual) {</span>
+<span class="fc" id="L75">			OptionalParameter parameter = parameterWithContext.getParameter();</span>
+<span class="fc" id="L76">			registry.register(() -&gt; assertThat(parameter, usingContext(message, parameterWithContext, matcher)));</span>
+<span class="fc" id="L77">		}</span>
+<span class="fc" id="L78">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the optional parameter value.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *   .rawRequest()
+	 *     .optionalParameter(Tag.MESSAGE_PAYLOAD)
+	 *    	 .value(arrayWithSize(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the value of the 'message_payload' optional parameter of
+	 * the first message is an array of 134 bytes.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *   .rawRequest()
+	 *     .optionalParameter(Tag.MESSAGE_PAYLOAD)
+	 *    	 .value(arrayWithSize(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the 'message_payload' optional parameter of every message
+	 * is an array of 134 bytes.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the optional parameter value
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentOptionalParameterAssert&lt;P&gt; value(Matcher&lt;? super Byte[]&gt; matcher) {
+<span class="fc" id="L109">		String message = &quot;optional parameter '${tagName}'${found} value of ${name} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">		for (OptionalParameterWithContext parameterWithContext : actual) {</span>
+<span class="fc" id="L111">			OptionalParameter parameter = parameterWithContext.getParameter();</span>
+<span class="fc" id="L112">			registry.register(() -&gt; assertThat(toObject(parameter.getValue()), usingContext(message, parameterWithContext, matcher)));</span>
+<span class="fc" id="L113">		}</span>
+<span class="fc" id="L114">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the optional parameter value.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *   .rawRequest()
+	 *     .optionalParameter(Tag.MESSAGE_PAYLOAD)
+	 *    	 .value(is(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the length of the 'message_payload' optional parameter of
+	 * the first message is 134.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *   .rawRequest()
+	 *     .optionalParameter(Tag.MESSAGE_PAYLOAD)
+	 *    	 .value(is(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the length of the 'message_payload' optional parameter of
+	 * every message is an array of 134 bytes.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the optional parameter value
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentOptionalParameterAssert&lt;P&gt; length(Matcher&lt;? super Integer&gt; matcher) {
+<span class="fc" id="L145">		String message = &quot;optional parameter '${tagName}'${found} length of ${name} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">		for (OptionalParameterWithContext parameterWithContext : actual) {</span>
+<span class="fc" id="L147">			OptionalParameter parameter = parameterWithContext.getParameter();</span>
+<span class="fc" id="L148">			registry.register(() -&gt; assertThat(parameter.getLength(), usingContext(message, parameterWithContext, matcher)));</span>
+<span class="fc" id="L149">		}</span>
+<span class="fc" id="L150">		return this;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

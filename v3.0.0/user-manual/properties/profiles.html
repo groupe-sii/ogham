@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to have the exact same code but different configurations for different
+execution environments, Ogham also supports profiles for configuration files.</p>
+</div>
+<div class="paragraph">
+<p>The aim is to have for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>one configuration file for development (that configures Ogham to send emails using external SMTP server)</p>
+</li>
+<li>
+<p>one configuration file for tests (that configures Ogham to send emails using embedded SMTP server)</p>
+</li>
+<li>
+<p>one configuration file for production (that configures Ogham to send emails through SendGrid)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This can be done by simply appending a suffix to the configuration file name of your choice.
+For instance, you want three profiles named <code>dev</code>, <code>tests</code>, <code>prod</code>, then
+you can create the following files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>config/ogham-dev.properties</code> and/or <code>config/application-dev.properties</code></p>
+</li>
+<li>
+<p><code>config/ogham-tests.properties</code> and/or <code>config/application-tests.properties</code></p>
+</li>
+<li>
+<p><code>config/ogham-prod.properties</code> and/or <code>config/application-prod.properties</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each file can have its own configuration.</p>
+</div>
+<div class="paragraph">
+<p>The next step is to enable a profile. This can be done by setting <code>ogham.profiles.active</code> system property:</p>
+</div>
+<div class="listingblock highlight-lines:2">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">java \
+  -Dogham.profiles.active=prod \
+  ... \
+  -jar ...</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Enable several profiles</div>
+<div class="paragraph">
+<p>You can enable several profiles at once by separating each profile name with a comma (<code>,</code>).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Default configuration</div>
+<div class="paragraph">
+<p>The default configuration files are still loaded but with lower priority.</p>
+</div>
+<div class="paragraph">
+<p>For instance if:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>a property <code>foo</code> with a value <code>bar</code> is defined in default location (<code>config/ogham.properties</code> or
+<code>config/application.properties</code>)</p>
+</li>
+<li>
+<p>and the same property <code>foo</code> with the value <code>foobar</code> is defined in <code>dev</code> profile
+(<code>config/ogham-dev.properties</code> or <code>config/application-dev.properties</code>),</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>the value <code>foobar</code> will be used if <code>dev</code> profile is enabled.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-13 02:09:36 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

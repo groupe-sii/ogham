@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultAttachmentPredicate.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.filter</a> &gt; <span class="el_source">DefaultAttachmentPredicate.java</span></div><h1>DefaultAttachmentPredicate.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.filter;
+
+import java.util.function.Predicate;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Part;
+import javax.mail.internet.MimePart;
+
+import fr.sii.ogham.testing.assertion.exception.FilterException;
+import fr.sii.ogham.testing.assertion.util.EmailUtils;
+
+/**
+ * Attachments may be everywhere in the message hierarchy. The default
+ * filter skips any body part that is either text/plain or text/html. All
+ * other parts are considered attachments (even if related to HTML message
+ * like images).
+ * 
+ * @author Aurélien Baudet
+ */
+<span class="fc" id="L21">public class DefaultAttachmentPredicate implements Predicate&lt;Part&gt; {</span>
+
+	@Override
+	public boolean test(Part p) {
+<span class="fc bfc" id="L25" title="All 2 branches covered.">		if (p instanceof Message) {</span>
+<span class="fc" id="L26">			return false;</span>
+		}
+<span class="pc bpc" id="L28" title="1 of 6 branches missed.">		return !EmailUtils.isMultipart(p) &amp;&amp; (isDownloadableAttachment(p) || isEmbeddableAttachment(p)); </span>
+	}
+
+	private boolean isDownloadableAttachment(Part p) {
+		try {
+<span class="fc bfc" id="L33" title="All 4 branches covered.">			return Part.ATTACHMENT.equalsIgnoreCase(p.getDisposition()) || p.getFileName() != null;</span>
+<span class="nc" id="L34">		} catch(MessagingException e) {</span>
+<span class="nc" id="L35">			throw new FilterException(&quot;Failed to check if attachment is downloadable&quot;, e);</span>
+		}
+	}
+
+	private boolean isEmbeddableAttachment(Part p) {
+		try {
+<span class="pc bpc" id="L41" title="2 of 4 branches missed.">			return Part.INLINE.equalsIgnoreCase(p.getDisposition()) || hasContentID(p);</span>
+<span class="nc" id="L42">		} catch(MessagingException e) {</span>
+<span class="nc" id="L43">			throw new FilterException(&quot;Failed to check if attachment is embeddable&quot;, e);</span>
+		}
+	}
+
+	private boolean hasContentID(Part p) throws MessagingException {
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">		if (p instanceof MimePart) {</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">			return ((MimePart) p).getContentID() != null;</span>
+		}
+<span class="nc" id="L51">		return false;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

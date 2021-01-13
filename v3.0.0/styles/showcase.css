@@ -1,0 +1,405 @@
+.collapsed .collapsed-text {
+  display: none;
+}
+
+.collapsed.closed {
+  position: relative;
+  display: block;
+  height: 24px;
+  background: white url("../../images/sourcecode/collapsed-bg.png") repeat-x;
+  cursor: pointer;
+  line-height: 24px;
+}
+
+.collapsed.closed:before {
+  content: "";
+  position: absolute;
+  display: block;
+  height: 16px;
+  width: 16px;
+  background: url("../../images/sourcecode/uncollapse.png") center center no-repeat;
+  top: 4px;
+  left: 4px;
+}
+
+.collapsed.closed .collapsed-text {
+  display: inline-block;
+  height: 24px;
+  margin-left: 24px;
+  font-size: 0.85em;
+  vertical-align: middle;
+  padding-left: 50px;
+}
+
+.collapsed.closed .collapsed-lines {
+  display: none;
+}
+
+.collapsed.closed:hover {
+  font-weight: bold;
+}
+
+.collapsed.closed:hover:before {
+  background-size: 17px 17px;
+}
+
+.highlight-line {
+  background-color: #F3FCB9;
+}
+
+.highlight-line-irrelevant {
+  opacity: 0.5;
+}
+
+.highlight-line-irrelevant:hover {
+  opacity: 1;
+}
+
+.highlight-line-diff-add,
+.highlight-line-diff-remove,
+.highlight-line-info,
+.highlight-line-warn,
+.highlight-line-error {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.highlight-line-info .wrapped-line,
+.highlight-line-warn .wrapped-line,
+.highlight-line-error .wrapped-line {
+  background-position: 52% 100%;
+  background-repeat: repeat-x;
+}
+
+.highlight-line-diff-add .wrapped-line {
+  background-color: #acf2bd;
+}
+
+.highlight-line-diff-remove .wrapped-line {
+  /*text-decoration: line-through  rgba(255, 0, 0, 0.5);*/
+  background-color: #fdb8c0;
+}
+
+.highlight-line-info .wrapped-line {
+  background-image: url("../../images/sourcecode/waveline-blue.gif");
+}
+
+.highlight-line-warn .wrapped-line {
+  background-image: url("../../images/sourcecode/waveline-orange.gif");
+}
+
+.highlight-line-error .wrapped-line {
+  background-image: url("../../images/sourcecode/waveline-red.gif");
+}
+
+.highlight-line-diff-add:before,
+.highlight-line-diff-remove:before,
+.highlight-line-info:before,
+.highlight-line-warn:before,
+.highlight-line-error:before {
+  content: "";
+  position: absolute;
+  right: 0;
+  background-position: center center;
+  background-repeat: no-repeat;
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.highlight-line-diff-add:before {
+  background-image: url("../../images/sourcecode/plus.png");
+}
+
+.highlight-line-diff-remove:before {
+  background-image: url("../../images/sourcecode/minus.png");
+}
+
+.highlight-line-info:before {
+  background-image: url("../../images/sourcecode/info.png");
+}
+
+.highlight-line-warn:before {
+  background-image: url("../../images/sourcecode/warning.png");
+}
+
+.highlight-line-error:before {
+  background-image: url("../../images/sourcecode/error.png");
+}
+
+div.reveal {
+  font-size: 30px;
+}
+
+.reveal .slides > section.stretch {
+  height: 100%;
+}
+.reveal .slides > section.stretch.vcenter,
+.reveal .slides > section > section.stretch.vcenter {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+.reveal .slides > section.stretch.vcenter.present,
+.reveal .slides > section > section.stretch.vcenter.present {
+  display: flex !important;
+}
+.reveal .slides section.stretch.vcenter > .slide-content {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.reveal .slides h3 {
+  text-transform: none;
+}
+
+.reveal .highlight-line-diff-remove .wrapped-line {
+  background: none;
+  text-decoration: line-through rgba(255, 0, 0, 0.5);
+}
+
+.reveal .r-stack {
+  display: block;
+}
+.reveal .r-stack > .content {
+  display: grid;
+}
+.reveal .r-stack > .content > * {
+  grid-area: 1/1;
+}
+
+.reveal .listingblock pre {
+  width: 98%;
+  margin-bottom: 5px;
+}
+.reveal .listingblock .title {
+  width: 98%;
+  margin: auto;
+  font-size: 0.75em;
+  background: #272822;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+  box-shadow: 0px 5px 0 0 #272822;
+}
+.reveal .listingblock .title::before {
+  content: "";
+  display: inline-block;
+  padding-left: 5px;
+}
+.reveal .listingblock .title code {
+  color: #ddd;
+  font-size: 0.75em;
+  padding: 2px 5px;
+}
+.reveal .listingblock .title + .content pre {
+  margin-top: 0;
+}
+.reveal .listingblock + .colist {
+  font-size: 0.6em;
+  margin-top: 0;
+}
+.reveal .paragraph p code,
+.reveal .ulist li p code {
+  background: #272822;
+  color: #ddd;
+  font-size: 0.75em;
+  padding: 2px 5px;
+}
+.reveal .paragraph + .ulist {
+  margin-top: -15px;
+}
+.reveal .paragraph + .ulist p {
+  margin: 0;
+}
+
+.reveal .admonitionblock {
+  font-size: 0.8em;
+}
+.reveal .admonitionblock table {
+  border-color: #333;
+}
+.reveal .admonitionblock p {
+  margin: 5px 0;
+}
+.reveal .admonitionblock td .paragraph + .ulist {
+  margin-top: -5px;
+}
+
+.reveal hr {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  border-width: 0;
+}
+
+.reveal .subobjective {
+  display: block;
+  text-transform: none;
+  border-bottom: 1px solid #333;
+}
+
+.reveal .wait {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+}
+
+.reveal .merging {
+  font-size: 1.5em;
+}
+.reveal .merging p {
+  margin: 0;
+}
+
+.reveal .the-end {
+  color: transparent;
+  position: absolute;
+  bottom: 0;
+}
+
+.move-subject-in-template {
+  position: absolute;
+  box-sizing: border-box;
+  border: 5px solid gray;
+  top: 365px;
+  left: 337px;
+  width: 287px;
+  height: 169px;
+  border-left: none;
+  border-bottom-right-radius: 200px;
+  border-top-right-radius: 200px;
+}
+.move-subject-in-template::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.move-subject-in-template::after {
+  bottom: -17px;
+  left: -15px;
+  border-width: 15px 15px 15px 0;
+  border-color: transparent gray transparent transparent;
+}
+.move-subject-in-template p {
+  position: absolute;
+  font-size: 0.8em;
+  color: gray;
+  background: rgba(0, 0, 0, 0.5);
+  top: 2px;
+  left: 289px;
+  width: 220px;
+}
+
+.use-any-object-as-model {
+  position: absolute;
+  box-sizing: border-box;
+  border: 5px solid gray;
+  top: 309px;
+  left: -36px;
+  width: 46px;
+  height: 300px;
+  border-right: none;
+  border-bottom-left-radius: 200px;
+  border-top-left-radius: 200px;
+}
+.use-any-object-as-model::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.use-any-object-as-model::after {
+  bottom: -17px;
+  right: -15px;
+  border-width: 15px 0 15px 15px;
+  border-color: transparent transparent transparent gray;
+}
+.use-any-object-as-model p {
+  position: absolute;
+  font-size: 0.8em;
+  color: gray;
+  background: rgba(0, 0, 0, 0.5);
+  top: 288px;
+  left: -5px;
+  width: 200px;
+}
+
+.styles-are-inlined {
+  position: absolute;
+  box-sizing: border-box;
+  border: 5px solid gray;
+  top: 300px;
+  left: -27px;
+  width: 46px;
+  height: 320px;
+  border-right: none;
+  border-bottom-left-radius: 200px;
+  border-top-left-radius: 200px;
+}
+.styles-are-inlined::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.styles-are-inlined::after {
+  bottom: -17px;
+  right: -15px;
+  border-width: 15px 0 15px 15px;
+  border-color: transparent transparent transparent gray;
+}
+.styles-are-inlined p {
+  position: absolute;
+  font-size: 0.8em;
+  color: gray;
+  background: rgba(0, 0, 0, 0.5);
+  top: 62px;
+  left: 1px;
+  width: 200px;
+}
+
+.image-is-attached-to-the-email-and-referenced {
+  position: absolute;
+  box-sizing: border-box;
+  border: 5px solid gray;
+  top: 357px;
+  left: 675px;
+  width: 46px;
+  height: 243px;
+  border-left: none;
+  border-bottom-right-radius: 200px;
+  border-top-right-radius: 200px;
+}
+.image-is-attached-to-the-email-and-referenced::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.image-is-attached-to-the-email-and-referenced::after {
+  bottom: -17px;
+  left: -15px;
+  border-width: 15px 15px 15px 0;
+  border-color: transparent gray transparent transparent;
+}
+.image-is-attached-to-the-email-and-referenced p {
+  position: absolute;
+  font-size: 0.8em;
+  color: gray;
+  background: rgba(0, 0, 0, 0.5);
+  top: 54px;
+  left: 48px;
+  width: 220px;
+}
+
+/*# sourceMappingURL=showcase.css.map */

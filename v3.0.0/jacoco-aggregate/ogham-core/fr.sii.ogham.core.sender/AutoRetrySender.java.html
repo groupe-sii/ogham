@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AutoRetrySender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.sender</a> &gt; <span class="el_source">AutoRetrySender.java</span></div><h1>AutoRetrySender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.sender;
+
+import static fr.sii.ogham.core.retry.NamedCallable.named;
+
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.exception.MessageNotSentException;
+import fr.sii.ogham.core.exception.retry.RetryException;
+import fr.sii.ogham.core.exception.retry.RetryExecutionInterruptedException;
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.retry.RetryStrategy;
+
+/**
+ * If a message couldn't be sent, the message may be sent again several times
+ * until it succeeds or maximum attempts are reached.
+ * 
+ * &lt;p&gt;
+ * The retry management is delegated to a {@link RetryExecutor}.
+ * 
+ * @author Aurélien Baudet
+ * @see RetryExecutor
+ * @see RetryStrategy
+ */
+public class AutoRetrySender implements ConditionalSender {
+	private final MessageSender delegate;
+	private final RetryExecutor retry;
+
+	/**
+	 * Initializes with the wrapped sender that will really send the message and
+	 * the {@link RetryExecutor} used to execute the action several times if
+	 * needed.
+	 * 
+	 * @param delegate
+	 *            the sender that really sends the messages
+	 * @param retry
+	 *            the retry manager
+	 */
+	public AutoRetrySender(MessageSender delegate, RetryExecutor retry) {
+<span class="fc" id="L39">		super();</span>
+<span class="fc" id="L40">		this.delegate = delegate;</span>
+<span class="fc" id="L41">		this.retry = retry;</span>
+<span class="fc" id="L42">	}</span>
+
+	@Override
+	public void send(Message message) throws MessageException {
+		try {
+<span class="fc" id="L47">			retry.execute(named(&quot;Send message&quot;, () -&gt; delegate.send(message)));</span>
+<span class="nc" id="L48">		} catch (RetryExecutionInterruptedException e) {</span>
+<span class="nc" id="L49">			Thread.currentThread().interrupt();</span>
+<span class="nc" id="L50">			throw new MessageNotSentException(&quot;Failed to send message (interrupted)&quot;, message, e);</span>
+<span class="fc" id="L51">		} catch (RetryException e) {</span>
+<span class="fc" id="L52">			throw new MessageNotSentException(&quot;Failed to send message&quot;, message, e);</span>
+<span class="fc" id="L53">		}</span>
+<span class="fc" id="L54">	}</span>
+
+	@Override
+	public boolean supports(Message message) {
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">		if (delegate instanceof ConditionalSender) {</span>
+<span class="fc" id="L59">			return ((ConditionalSender) delegate).supports(message);</span>
+		}
+<span class="nc" id="L61">		return true;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L66">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L67">		builder.append(&quot;AutoRetrySender [executor=&quot;).append(retry).append(&quot;, delegate=&quot;).append(delegate).append(&quot;]&quot;);</span>
+<span class="fc" id="L68">		return builder.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

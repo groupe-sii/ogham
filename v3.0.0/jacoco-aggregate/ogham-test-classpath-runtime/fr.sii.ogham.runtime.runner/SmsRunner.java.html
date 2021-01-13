@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SmsRunner.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-classpath-runtime</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.runtime.runner</a> &gt; <span class="el_source">SmsRunner.java</span></div><h1>SmsRunner.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.runtime.runner;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.core.util.ClasspathUtils;
+import fr.sii.ogham.sms.message.Sms;
+import mock.context.SimpleBean;
+
+public class SmsRunner {
+	private final MessagingService messagingService;
+	
+	public SmsRunner(MessagingService messagingService) {
+<span class="nc" id="L13">		super();</span>
+<span class="nc" id="L14">		this.messagingService = messagingService;</span>
+<span class="nc" id="L15">	}</span>
+
+	public void sendSmsWithoutTemplate() throws MessagingException {
+<span class="nc" id="L18">		messagingService.send(new Sms()</span>
+<span class="nc" id="L19">				.message().string(&quot;Hello world !!&quot;)</span>
+<span class="nc" id="L20">				.from(&quot;+33601020304&quot;)</span>
+<span class="nc" id="L21">				.to(&quot;0709080706&quot;));</span>
+<span class="nc" id="L22">	}</span>
+
+	public void sendSmsWithThymeleaf() throws MessagingException {
+<span class="nc" id="L25">		messagingService.send(new Sms()</span>
+<span class="nc" id="L26">				.message().template(&quot;classpath:/sms/thymeleaf/source/simple-&quot;+detectThymeleafEngineVersion()+&quot;.txt&quot;, new SimpleBean(&quot;foo&quot;, 42))</span>
+<span class="nc" id="L27">				.from(&quot;+33601020304&quot;)</span>
+<span class="nc" id="L28">				.to(&quot;0709080706&quot;));</span>
+<span class="nc" id="L29">	}</span>
+
+	public void sendSmsWithFreemarker() throws MessagingException {
+<span class="nc" id="L32">		messagingService.send(new Sms()</span>
+<span class="nc" id="L33">				.message().template(&quot;classpath:/sms/freemarker/source/simple.txt.ftl&quot;, new SimpleBean(&quot;foo&quot;, 42))</span>
+<span class="nc" id="L34">				.from(&quot;+33601020304&quot;)</span>
+<span class="nc" id="L35">				.to(&quot;0709080706&quot;));</span>
+<span class="nc" id="L36">	}</span>
+
+	private String detectThymeleafEngineVersion() {
+<span class="nc bnc" id="L39" title="All 4 branches missed.">		if (ClasspathUtils.exists(&quot;org.thymeleaf.TemplateEngine&quot;) &amp;&amp; ClasspathUtils.exists(&quot;org.thymeleaf.IEngineConfiguration&quot;)) {</span>
+<span class="nc" id="L40">			return &quot;v3&quot;;</span>
+		}
+<span class="nc bnc" id="L42" title="All 4 branches missed.">		if (ClasspathUtils.exists(&quot;org.thymeleaf.TemplateEngine&quot;) &amp;&amp; !ClasspathUtils.exists(&quot;org.thymeleaf.IEngineConfiguration&quot;)) {</span>
+<span class="nc" id="L43">			return &quot;v2&quot;;</span>
+		}
+<span class="nc" id="L45">		throw new IllegalStateException(&quot;Unknown Thymeleaf engine version&quot;);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

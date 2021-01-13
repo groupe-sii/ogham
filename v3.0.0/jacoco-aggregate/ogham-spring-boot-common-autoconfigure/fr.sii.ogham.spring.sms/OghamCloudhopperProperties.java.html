@@ -1,0 +1,643 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamCloudhopperProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">OghamCloudhopperProperties.java</span></div><h1>OghamCloudhopperProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import java.util.List;
+
+import javax.validation.constraints.Min;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import com.cloudhopper.smpp.SmppBindType;
+import com.cloudhopper.smpp.pdu.EnquireLink;
+
+@ConfigurationProperties(&quot;ogham.sms.cloudhopper&quot;)
+<span class="fc" id="L14">public class OghamCloudhopperProperties {</span>
+	/**
+	 * The system_id parameter is used to identify an ESME ( External Short
+	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
+	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
+	 * system_id provides an identification of the SMSC to the ESME. This is an
+	 * alias of ogham.sms.smpp.system-id. If both properties are defined, this
+	 * value is used.
+	 * 
+	 */
+	private String systemId;
+	/**
+	 * The password parameter is used by the SMSC (Short Message Service Centre)
+	 * to authenticate the identity of the binding ESME (External Short Message
+	 * Entity). The Service Provider may require ESME’s to provide a password
+	 * when binding to the SMSC. This password is normally issued by the SMSC
+	 * system administrator. The password parameter may also be used by the ESME
+	 * to authenticate the identity of the binding SMSC (e.g. in the case of the
+	 * outbind operation). This is an alias of ogham.sms.smpp.password. If both
+	 * properties are defined, this value is used.
+	 */
+	private String password;
+	/**
+	 * The SMPP server host (IP or address).&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * This is an alias of ogham.sms.smpp.host. If both properties are defined,
+	 * this value is used.
+	 */
+	private String host;
+	/**
+	 * The SMPP server port.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * This is an alias of ogham.sms.smpp.port. If both properties are defined,
+	 * this value is used.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * &lt;i&gt;Default: 2775&lt;/i&gt;
+	 */
+	private Integer port;
+	/**
+	 * The version of the SMPP protocol.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * Default: &lt;i&gt;&quot;3.4&quot;&lt;/i&gt;
+	 */
+	private String interfaceVersion;
+	/**
+	 * The bind command type.&lt;br /&gt;
+	 * &lt;br /&gt;
+	 * 
+	 * This is an alias of ogham.sms.smpp.bind-type. If both properties are
+	 * defined, this value is used. &lt;br /&gt;
+	 * 
+	 * Default: &lt;i&gt;&quot;TRANCEIVER&quot;&lt;/i&gt;
+	 */
+	private SmppBindType bindType;
+	/**
+	 * The system_type parameter is used to categorize the type of ESME that is
+	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
+	 * (over-the-air activation system). Specification of the system_type is
+	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
+	 * this case, the ESME can set the system_type to NULL. The system_type
+	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
+	 * etc. &lt;br /&gt;
+	 * 
+	 * This is an alias of ogham.sms.smpp.system-type. If both properties are
+	 * defined, this value is used.
+	 */
+	private String systemType;
+<span class="fc" id="L85">	@NestedConfigurationProperty</span>
+	private SessionProperties session = new SessionProperties();
+<span class="fc" id="L87">	@NestedConfigurationProperty</span>
+	private DataCodingSchemeProperties dataCodingScheme = new DataCodingSchemeProperties();
+<span class="fc" id="L89">	@NestedConfigurationProperty</span>
+	private EncoderProperties encoder = new EncoderProperties();
+<span class="fc" id="L91">	@NestedConfigurationProperty</span>
+	private UserDataProperties userData = new UserDataProperties();
+<span class="fc" id="L93">	@NestedConfigurationProperty</span>
+	private SplitProperties split = new SplitProperties();
+
+	public String getSystemId() {
+<span class="fc" id="L97">		return systemId;</span>
+	}
+
+	public void setSystemId(String systemId) {
+<span class="fc" id="L101">		this.systemId = systemId;</span>
+<span class="fc" id="L102">	}</span>
+
+	public String getPassword() {
+<span class="fc" id="L105">		return password;</span>
+	}
+
+	public void setPassword(String password) {
+<span class="fc" id="L109">		this.password = password;</span>
+<span class="fc" id="L110">	}</span>
+
+	public String getHost() {
+<span class="fc" id="L113">		return host;</span>
+	}
+
+	public void setHost(String host) {
+<span class="fc" id="L117">		this.host = host;</span>
+<span class="fc" id="L118">	}</span>
+
+	public Integer getPort() {
+<span class="fc" id="L121">		return port;</span>
+	}
+
+	public void setPort(Integer port) {
+<span class="fc" id="L125">		this.port = port;</span>
+<span class="fc" id="L126">	}</span>
+
+	public SessionProperties getSession() {
+<span class="fc" id="L129">		return session;</span>
+	}
+
+	public void setSession(SessionProperties session) {
+<span class="fc" id="L133">		this.session = session;</span>
+<span class="fc" id="L134">	}</span>
+
+	public String getInterfaceVersion() {
+<span class="fc" id="L137">		return interfaceVersion;</span>
+	}
+
+	public SmppBindType getBindType() {
+<span class="fc" id="L141">		return bindType;</span>
+	}
+
+	public void setBindType(SmppBindType bindType) {
+<span class="fc" id="L145">		this.bindType = bindType;</span>
+<span class="fc" id="L146">	}</span>
+
+	public String getSystemType() {
+<span class="fc" id="L149">		return systemType;</span>
+	}
+
+	public void setSystemType(String systemType) {
+<span class="fc" id="L153">		this.systemType = systemType;</span>
+<span class="fc" id="L154">	}</span>
+
+	public DataCodingSchemeProperties getDataCodingScheme() {
+<span class="fc" id="L157">		return dataCodingScheme;</span>
+	}
+
+	public void setDataCodingScheme(DataCodingSchemeProperties dataCodingScheme) {
+<span class="fc" id="L161">		this.dataCodingScheme = dataCodingScheme;</span>
+<span class="fc" id="L162">	}</span>
+
+	public EncoderProperties getEncoder() {
+<span class="fc" id="L165">		return encoder;</span>
+	}
+
+	public void setEncoder(EncoderProperties encoder) {
+<span class="fc" id="L169">		this.encoder = encoder;</span>
+<span class="fc" id="L170">	}</span>
+
+	public UserDataProperties getUserData() {
+<span class="fc" id="L173">		return userData;</span>
+	}
+
+	public void setUserData(UserDataProperties userData) {
+<span class="fc" id="L177">		this.userData = userData;</span>
+<span class="fc" id="L178">	}</span>
+
+	public void setInterfaceVersion(String interfaceVersion) {
+<span class="fc" id="L181">		this.interfaceVersion = interfaceVersion;</span>
+<span class="fc" id="L182">	}</span>
+
+	public SplitProperties getSplit() {
+<span class="fc" id="L185">		return split;</span>
+	}
+
+	public void setSplit(SplitProperties split) {
+<span class="fc" id="L189">		this.split = split;</span>
+<span class="fc" id="L190">	}</span>
+
+<span class="fc" id="L192">	public static class SessionProperties {</span>
+		/**
+		 * A name for the session (used to name threads used by Cloudhopper).
+		 */
+		private String name;
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait for the
+		 * success of a bind attempt to the SMSC.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;5 seconds&lt;/i&gt;
+		 */
+		private Long bindTimeout;
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait for a
+		 * establishing the connection.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;10 seconds&lt;/i&gt;
+		 */
+		private Long connectTimeout;
+		/**
+		 * Set the amount of time (milliseconds) to wait for an endpoint to
+		 * respond to a request before it expires.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;-1&lt;/i&gt; (disabled)
+		 */
+		private Long requestExpiryTimeout;
+		/**
+		 * Sets the amount of time (milliseconds) between executions of
+		 * monitoring the window for requests that expire. It's recommended that
+		 * this generally either matches or is half the value of
+		 * requestExpiryTimeout. Therefore, at worst a request would could take
+		 * up 1.5X the requestExpiryTimeout to clear out.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;-1&lt;/i&gt; (disabled)
+		 */
+		private Long windowMonitorInterval;
+		/**
+		 * Sets the maximum number of requests permitted to be outstanding
+		 * (unacknowledged) at a given time. Must be &amp;gt; 0.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;1&lt;/i&gt;
+		 */
+		@Min(0)
+		private Integer windowSize;
+		/**
+		 * Set the amount of time (milliseconds) to wait until a slot opens up
+		 * in the sendWindow.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;1 minute&lt;/i&gt;
+		 * 
+		 */
+		private Long windowWaitTimeout;
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait for bytes to
+		 * be written when creating a new SMPP session.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: 0 (no timeout, for backwards compatibility)
+		 */
+		private Long writeTimeout;
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait until a
+		 * valid response is received when a &quot;submit&quot; request is synchronously
+		 * sends to the remote endpoint. The timeout value includes both waiting
+		 * for a &quot;window&quot; slot, the time it takes to transmit the actual bytes
+		 * on the socket, and for the remote endpoint to send a response
+		 * back.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;5 seconds&lt;/i&gt;
+		 */
+		private Long responseTimeout;
+		/**
+		 * Set the maximum amount of time (in milliseconds) to wait until the
+		 * session is unbounded, waiting up to a specified period of
+		 * milliseconds for an unbind response from the remote endpoint.
+		 * Regardless of whether a proper unbind response was received, the
+		 * socket/channel is closed.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;5 seconds&lt;/i&gt;
+		 */
+		private Long unbindTimeout;
+<span class="fc" id="L281">		@NestedConfigurationProperty</span>
+		private ReuseSessionOptions reuseSession = new ReuseSessionOptions();
+<span class="fc" id="L283">		@NestedConfigurationProperty</span>
+		private KeepAliveOptions keepAlive = new KeepAliveOptions();
+<span class="fc" id="L285">		@NestedConfigurationProperty</span>
+		private ConnectRetryProperties connectRetry = new ConnectRetryProperties();
+
+		public String getName() {
+<span class="fc" id="L289">			return name;</span>
+		}
+
+		public void setName(String name) {
+<span class="fc" id="L293">			this.name = name;</span>
+<span class="fc" id="L294">		}</span>
+
+		public Long getBindTimeout() {
+<span class="fc" id="L297">			return bindTimeout;</span>
+		}
+
+		public void setBindTimeout(Long bindTimeout) {
+<span class="fc" id="L301">			this.bindTimeout = bindTimeout;</span>
+<span class="fc" id="L302">		}</span>
+
+		public Long getConnectTimeout() {
+<span class="fc" id="L305">			return connectTimeout;</span>
+		}
+
+		public void setConnectTimeout(Long connectTime) {
+<span class="fc" id="L309">			this.connectTimeout = connectTime;</span>
+<span class="fc" id="L310">		}</span>
+
+		public Long getRequestExpiryTimeout() {
+<span class="fc" id="L313">			return requestExpiryTimeout;</span>
+		}
+
+		public void setRequestExpiryTimeout(Long requestExpiryTimeout) {
+<span class="fc" id="L317">			this.requestExpiryTimeout = requestExpiryTimeout;</span>
+<span class="fc" id="L318">		}</span>
+
+		public Long getWindowMonitorInterval() {
+<span class="fc" id="L321">			return windowMonitorInterval;</span>
+		}
+
+		public void setWindowMonitorInterval(Long windowMonitorInterval) {
+<span class="fc" id="L325">			this.windowMonitorInterval = windowMonitorInterval;</span>
+<span class="fc" id="L326">		}</span>
+
+		public Integer getWindowSize() {
+<span class="fc" id="L329">			return windowSize;</span>
+		}
+
+		public void setWindowSize(Integer windowSize) {
+<span class="fc" id="L333">			this.windowSize = windowSize;</span>
+<span class="fc" id="L334">		}</span>
+
+		public Long getWindowWaitTimeout() {
+<span class="fc" id="L337">			return windowWaitTimeout;</span>
+		}
+
+		public void setWindowWaitTimeout(Long windowWaitTimeout) {
+<span class="fc" id="L341">			this.windowWaitTimeout = windowWaitTimeout;</span>
+<span class="fc" id="L342">		}</span>
+
+		public Long getWriteTimeout() {
+<span class="fc" id="L345">			return writeTimeout;</span>
+		}
+
+		public void setWriteTimeout(Long writeTimeout) {
+<span class="fc" id="L349">			this.writeTimeout = writeTimeout;</span>
+<span class="fc" id="L350">		}</span>
+
+		public Long getResponseTimeout() {
+<span class="fc" id="L353">			return responseTimeout;</span>
+		}
+
+		public void setResponseTimeout(Long responseTimeout) {
+<span class="fc" id="L357">			this.responseTimeout = responseTimeout;</span>
+<span class="fc" id="L358">		}</span>
+
+		public Long getUnbindTimeout() {
+<span class="fc" id="L361">			return unbindTimeout;</span>
+		}
+
+		public void setUnbindTimeout(Long unbindTimeout) {
+<span class="fc" id="L365">			this.unbindTimeout = unbindTimeout;</span>
+<span class="fc" id="L366">		}</span>
+
+		public ConnectRetryProperties getConnectRetry() {
+<span class="fc" id="L369">			return connectRetry;</span>
+		}
+
+		public void setConnectRetry(ConnectRetryProperties connectRetry) {
+<span class="fc" id="L373">			this.connectRetry = connectRetry;</span>
+<span class="fc" id="L374">		}</span>
+
+		public ReuseSessionOptions getReuseSession() {
+<span class="fc" id="L377">			return reuseSession;</span>
+		}
+
+		public void setReuseSession(ReuseSessionOptions reuseSession) {
+<span class="fc" id="L381">			this.reuseSession = reuseSession;</span>
+<span class="fc" id="L382">		}</span>
+
+		public KeepAliveOptions getKeepAlive() {
+<span class="fc" id="L385">			return keepAlive;</span>
+		}
+
+		public void setKeepAlive(KeepAliveOptions keepAlive) {
+<span class="fc" id="L389">			this.keepAlive = keepAlive;</span>
+<span class="fc" id="L390">		}</span>
+
+	}
+
+<span class="fc" id="L394">	public static class ConnectRetryProperties {</span>
+		/**
+		 * Set the maximum number of attempts for establishing a
+		 * connection.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;10&lt;/i&gt;
+		 */
+		private Integer maxAttempts;
+		/**
+		 * Set the delay between two attemps for establishing a connection (in
+		 * milliseconds).&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;5 seconds&lt;/i&gt;
+		 */
+		private Long delayBetweenAttempts;
+
+		/**
+		 * Set the initial delay between two executions (in milliseconds). This
+		 * delay will be doubled for each try.
+		 */
+		private Long exponentialInitialDelay;
+
+		/**
+		 * Set specific delays (in milliseconds) used for each new execution. If
+		 * there are more attempts than the configured delays, the last delay is
+		 * used for remaining attempts.
+		 */
+		private List&lt;Long&gt; perExecutionDelays;
+
+		/**
+		 * Retry several times with a fixed delay between each try (no matter
+		 * how long the execution of the action lasts) until the maximum
+		 * attempts is reached. The next execution date is based on the
+		 * execution start date of the first execution.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * Set the interval between two executions (in milliseconds).
+		 */
+		private Long executionInterval;
+
+		public Integer getMaxAttempts() {
+<span class="fc" id="L436">			return maxAttempts;</span>
+		}
+
+		public void setMaxAttempts(Integer maxAttempts) {
+<span class="fc" id="L440">			this.maxAttempts = maxAttempts;</span>
+<span class="fc" id="L441">		}</span>
+
+		public Long getDelayBetweenAttempts() {
+<span class="fc" id="L444">			return delayBetweenAttempts;</span>
+		}
+
+		public void setDelayBetweenAttempts(Long delayBetweenAttempts) {
+<span class="fc" id="L448">			this.delayBetweenAttempts = delayBetweenAttempts;</span>
+<span class="fc" id="L449">		}</span>
+
+		public Long getExponentialInitialDelay() {
+<span class="fc" id="L452">			return exponentialInitialDelay;</span>
+		}
+
+		public void setExponentialInitialDelay(Long exponentialInitialDelay) {
+<span class="fc" id="L456">			this.exponentialInitialDelay = exponentialInitialDelay;</span>
+<span class="fc" id="L457">		}</span>
+
+		public List&lt;Long&gt; getPerExecutionDelays() {
+<span class="fc" id="L460">			return perExecutionDelays;</span>
+		}
+
+		public void setPerExecutionDelays(List&lt;Long&gt; perExecutionDelays) {
+<span class="fc" id="L464">			this.perExecutionDelays = perExecutionDelays;</span>
+<span class="fc" id="L465">		}</span>
+
+		public Long getExecutionInterval() {
+<span class="fc" id="L468">			return executionInterval;</span>
+		}
+
+		public void setExecutionInterval(Long executionInterval) {
+<span class="fc" id="L472">			this.executionInterval = executionInterval;</span>
+<span class="fc" id="L473">		}</span>
+
+	}
+
+<span class="fc" id="L477">	public static class KeepAliveOptions {</span>
+		/**
+		 * Enable or disable sending of {@link EnquireLink} messages to keep the
+		 * session alive.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;false&lt;/i&gt;
+		 */
+		private Boolean enable;
+		/**
+		 * The delay (in milliseconds) between two {@link EnquireLink}
+		 * messages.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;30 seconds&lt;/i&gt;
+		 */
+		private Long requestInterval;
+		/**
+		 * The maximum amount of time (in milliseconds) to wait for receiving a
+		 * response from the server to an {@link EnquireLink} request.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;10 seconds&lt;/i&gt;
+		 */
+		private Long responseTimeout;
+		/**
+		 * Connect to the server directly when the client is ready (if true).
+		 * Otherwise, the connection is done when the first message is
+		 * sent.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * This may be useful to avoid a latency for the first message.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * If connection fails at startup, then a new attempt is done when first
+		 * message is sent.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;false&lt;/i&gt;
+		 */
+		private Boolean connectAtStartup;
+		/**
+		 * The maximum number of consecutive EnquireLink requests that end in
+		 * timeout to consider that a new session is required.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;3&lt;/i&gt;
+		 */
+		private Integer maxConsecutiveTimeouts;
+
+		public Boolean getEnable() {
+<span class="fc" id="L528">			return enable;</span>
+		}
+
+		public void setEnable(Boolean enable) {
+<span class="fc" id="L532">			this.enable = enable;</span>
+<span class="fc" id="L533">		}</span>
+
+		public Long getRequestInterval() {
+<span class="fc" id="L536">			return requestInterval;</span>
+		}
+
+		public void setRequestInterval(Long enquireLinkInterval) {
+<span class="fc" id="L540">			this.requestInterval = enquireLinkInterval;</span>
+<span class="fc" id="L541">		}</span>
+
+		public Long getResponseTimeout() {
+<span class="fc" id="L544">			return responseTimeout;</span>
+		}
+
+		public void setResponseTimeout(Long enquireLinkTimeout) {
+<span class="fc" id="L548">			this.responseTimeout = enquireLinkTimeout;</span>
+<span class="fc" id="L549">		}</span>
+
+		public Boolean getConnectAtStartup() {
+<span class="fc" id="L552">			return connectAtStartup;</span>
+		}
+
+		public void setConnectAtStartup(Boolean connectAtStartup) {
+<span class="fc" id="L556">			this.connectAtStartup = connectAtStartup;</span>
+<span class="fc" id="L557">		}</span>
+
+		public Integer getMaxConsecutiveTimeouts() {
+<span class="fc" id="L560">			return maxConsecutiveTimeouts;</span>
+		}
+
+		public void setMaxConsecutiveTimeouts(Integer maximumConsecutiveTimeouts) {
+<span class="fc" id="L564">			this.maxConsecutiveTimeouts = maximumConsecutiveTimeouts;</span>
+<span class="fc" id="L565">		}</span>
+	}
+
+<span class="fc" id="L568">	public static class ReuseSessionOptions {</span>
+		/**
+		 * Enable or disable the reuse the same session (if possible) for
+		 * sending messages.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;false&lt;/i&gt;
+		 */
+		private Boolean enable;
+		/**
+		 * To check if the session is still alive, an {@link EnquireLink}
+		 * request is sent. The request is sent just before sending the
+		 * message.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * This is the time (in milliseconds) to wait before considering last
+		 * {@link EnquireLink} response as expired (need to send a new
+		 * {@link EnquireLink} request to check if session is still
+		 * alive).&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * This is needed to prevent sending {@link EnquireLink} request every
+		 * time a message has to be sent. Instead it considers that the time
+		 * elapsed between now and the last {@link EnquireLink} response (or the
+		 * last sent message) is not enough so a new {@link EnquireLink} is not
+		 * necessary to check if session is still alive.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Set to 0 or null to always check session before sending
+		 * message.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;30 seconds&lt;/i&gt;
+		 */
+		private Long lastInteractionExpirationDelay;
+		/**
+		 * To check if the session is still alive, an {@link EnquireLink}
+		 * request is sent. This request may fail since the session may be
+		 * killed by the server. The timeout ensures that the client doesn't
+		 * wait too long for a response that may never come.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * The maximum amount of time (in milliseconds) to wait for receiving a
+		 * response from the server to an {@link EnquireLink} request.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * 
+		 * Default: &lt;i&gt;10 seconds&lt;/i&gt;
+		 */
+		private Long responseTimeout;
+
+		public Boolean getEnable() {
+<span class="fc" id="L619">			return enable;</span>
+		}
+
+		public void setEnable(Boolean enable) {
+<span class="fc" id="L623">			this.enable = enable;</span>
+<span class="fc" id="L624">		}</span>
+
+		public Long getLastInteractionExpirationDelay() {
+<span class="fc" id="L627">			return lastInteractionExpirationDelay;</span>
+		}
+
+		public void setLastInteractionExpirationDelay(Long delay) {
+<span class="fc" id="L631">			this.lastInteractionExpirationDelay = delay;</span>
+<span class="fc" id="L632">		}</span>
+
+		public Long getResponseTimeout() {
+<span class="fc" id="L635">			return responseTimeout;</span>
+		}
+
+		public void setResponseTimeout(Long enquireLinkTimeout) {
+<span class="fc" id="L639">			this.responseTimeout = enquireLinkTimeout;</span>
+<span class="fc" id="L640">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

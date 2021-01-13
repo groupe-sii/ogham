@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MultiTemplateContent.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.message.content</a> &gt; <span class="el_source">MultiTemplateContent.java</span></div><h1>MultiTemplateContent.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.message.content;
+
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.core.template.context.BeanContext;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.context.NullContext;
+
+/**
+ * &lt;p&gt;
+ * A shortcut for using several templates with same context.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * You have to put all templates to include at once at the same place. Each file
+ * must be named identically. Only the extension must be different.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Then you only need to indicate the path to the templates without any
+ * extension and provide the context.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * You can also specify all the extensions/variants to append to the template
+ * path. By default, the extensions/variants will be {@link EmailVariant#HTML}
+ * and {@link EmailVariant#TEXT}
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MultiTemplateContent extends MultiContent {
+
+	/**
+	 * Initialize with the template path (without extension/variant) and the
+	 * context. You may also specify the extensions to use.
+	 * 
+	 * @param templatePath
+	 *            the path to the template (without extension/variant)
+	 * @param context
+	 *            the context to share
+	 * @param variants
+	 *            the variants to specify
+	 */
+	public MultiTemplateContent(String templatePath, Context context, Variant... variants) {
+<span class="nc" id="L44">		this(new UnresolvedPath(templatePath), context, variants);</span>
+<span class="nc" id="L45">	}</span>
+
+	/**
+	 * Initialize with the template path (without extension/variant) and the
+	 * context. It uses the default variants ({@link EmailVariant#HTML} and
+	 * {@link EmailVariant#TEXT}).
+	 * 
+	 * @param templatePath
+	 *            the path to the template (without extension/variant)
+	 * @param context
+	 *            the context to share
+	 */
+	public MultiTemplateContent(String templatePath, Context context) {
+<span class="fc" id="L58">		this(new UnresolvedPath(templatePath), context);</span>
+<span class="fc" id="L59">	}</span>
+
+	/**
+	 * Initialize with the template path (without extension/variant) and the
+	 * context as simple bean. You may also specify the extensions/variants to
+	 * use.
+	 * 
+	 * @param templatePath
+	 *            the path to the template (without extension/variant)
+	 * @param bean
+	 *            the context to share as a simple POJO object
+	 * @param extensions
+	 *            the extensions to specify
+	 */
+	public MultiTemplateContent(String templatePath, Object bean, Variant... extensions) {
+<span class="nc" id="L74">		this(new UnresolvedPath(templatePath), bean, extensions);</span>
+<span class="nc" id="L75">	}</span>
+
+	/**
+	 * Initialize with the template path (without extension/variant) and the
+	 * context as simple bean. It uses the default variants (
+	 * {@link EmailVariant#HTML} and {@link EmailVariant#TEXT}).
+	 * 
+	 * @param templatePath
+	 *            the path to the template (without extension/variant)
+	 * @param bean
+	 *            the context to share as a simple POJO object
+	 */
+	public MultiTemplateContent(String templatePath, Object bean) {
+<span class="fc" id="L88">		this(new UnresolvedPath(templatePath), bean);</span>
+<span class="fc" id="L89">	}</span>
+	
+
+	/**
+	 * Initialize with the template path (without extension/variant) and the
+	 * context. You may also specify the extensions to use.
+	 * 
+	 * @param templatePath
+	 *            the path to the template (without extension/variant)
+	 * @param context
+	 *            the context to share
+	 * @param variants
+	 *            the variants to specify
+	 */
+	public MultiTemplateContent(ResourcePath templatePath, Context context, Variant... variants) {
+<span class="fc" id="L104">		super(createTemplates(templatePath, context, variants));</span>
+<span class="fc" id="L105">	}</span>
+
+	/**
+	 * Initialize with the template path (without extension/variant) and the
+	 * context. It uses the default variants ({@link EmailVariant#HTML} and
+	 * {@link EmailVariant#TEXT}).
+	 * 
+	 * @param templatePath
+	 *            the path to the template (without extension/variant)
+	 * @param context
+	 *            the context to share
+	 */
+	public MultiTemplateContent(ResourcePath templatePath, Context context) {
+<span class="fc" id="L118">		this(templatePath, context, EmailVariant.TEXT, EmailVariant.HTML);</span>
+<span class="fc" id="L119">	}</span>
+
+	/**
+	 * Initialize with the template path (without extension/variant) and the
+	 * context as simple bean. You may also specify the extensions/variants to
+	 * use.
+	 * 
+	 * @param templatePath
+	 *            the path to the template (without extension/variant)
+	 * @param bean
+	 *            the context to share as a simple POJO object
+	 * @param extensions
+	 *            the extensions to specify
+	 */
+	public MultiTemplateContent(ResourcePath templatePath, Object bean, Variant... extensions) {
+<span class="nc bnc" id="L134" title="All 2 branches missed.">		this(templatePath, bean != null ? new BeanContext(bean) : new NullContext(), extensions);</span>
+<span class="nc" id="L135">	}</span>
+
+	/**
+	 * Initialize with the template path (without extension/variant) and the
+	 * context as simple bean. It uses the default variants (
+	 * {@link EmailVariant#HTML} and {@link EmailVariant#TEXT}).
+	 * 
+	 * @param templatePath
+	 *            the path to the template (without extension/variant)
+	 * @param bean
+	 *            the context to share as a simple POJO object
+	 */
+	public MultiTemplateContent(ResourcePath templatePath, Object bean) {
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">		this(templatePath, bean != null ? new BeanContext(bean) : new NullContext());</span>
+<span class="fc" id="L149">	}</span>
+
+	private static TemplateContent[] createTemplates(ResourcePath templatePath, Context context, Variant[] variants) {
+<span class="fc" id="L152">		TemplateContent[] contents = new TemplateContent[variants.length];</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">		for (int i = 0; i &lt; variants.length; i++) {</span>
+<span class="fc" id="L154">			contents[i] = new TemplateVariantContent(templatePath, variants[i], context);</span>
+		}
+<span class="fc" id="L156">		return contents;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

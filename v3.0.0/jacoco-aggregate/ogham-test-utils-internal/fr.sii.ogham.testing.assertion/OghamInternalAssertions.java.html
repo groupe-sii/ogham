@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamInternalAssertions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion</a> &gt; <span class="el_source">OghamInternalAssertions.java</span></div><h1>OghamInternalAssertions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion;
+
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.testing.assertion.internal.MessagingServiceAssertions;
+
+/**
+ * Utility class used by Ogham for testing result of {@link MessagingService}
+ * configuration.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class OghamInternalAssertions {
+	/**
+	 * Entry point to write assertions on {@link MessagingService} instance.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * OghamInternalAssertions
+	 *   .assertThat(messagingService)
+	 *     .sendGrid()
+	 *       .apiKey(equalTo(&quot;bar&quot;))
+	 *       .client(allOf(isA(SendGrid.class), not(isSpringBeanInstance(context, SendGrid.class))))
+	 *       .and()
+	 *     .thymeleaf()
+	 * 		 .all()
+	 *         .engine(isA(TemplateEngine.class))
+	 *         .and()
+	 *       .and()
+	 *     .freemarker()
+	 *       .all()
+	 *         .configuration()
+	 *           .defaultEncoding(equalTo(StandardCharsets.US_ASCII.name()));
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @param service
+	 *            the service to make assertions with
+	 * @return builder for fluent assertions on messaging service
+	 */
+	public static MessagingServiceAssertions assertThat(MessagingService service) {
+<span class="fc" id="L44">		return new MessagingServiceAssertions(service);</span>
+	}
+
+
+	private OghamInternalAssertions() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringPrinter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.common</a> &gt; <span class="el_source">StringPrinter.java</span></div><h1>StringPrinter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.common;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+/**
+ * Simple logger that writes header, success and failure using a
+ * {@link StringWriter}. The {@link StringWriter} is passed to the constructor
+ * to ba able to read the written strings from the external.
+ * 
+ * &lt;p&gt;
+ * This is mainly used for tests
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class StringPrinter implements Printer {
+	private final StringWriter writer;
+	private final boolean writeMarker;
+
+	/**
+	 * 
+	 * @param writer
+	 *            the writer that can be shared
+	 * @param writeMarker
+	 *            true to write marker
+	 */
+	public StringPrinter(StringWriter writer, boolean writeMarker) {
+<span class="fc" id="L29">		super();</span>
+<span class="fc" id="L30">		this.writer = writer;</span>
+<span class="fc" id="L31">		this.writeMarker = writeMarker;</span>
+<span class="fc" id="L32">	}</span>
+
+	@Override
+	public void printHeader(String marker, String header) {
+<span class="fc" id="L36">		printMarker(marker);</span>
+<span class="fc" id="L37">		writer.append(header + &quot;\n\n&quot;);</span>
+<span class="fc" id="L38">	}</span>
+
+	@Override
+	public void printSucess(String marker, String success) {
+<span class="fc" id="L42">		printMarker(marker);</span>
+<span class="fc" id="L43">		writer.append(success + &quot;\n\n&quot;);</span>
+<span class="fc" id="L44">	}</span>
+
+	@Override
+	public void printFailure(String marker, String failure, Throwable e) {
+<span class="fc" id="L48">		printMarker(marker);</span>
+<span class="fc" id="L49">		writer.append(&quot;Test failure:&quot; + e + &quot;\n&quot;);</span>
+<span class="fc" id="L50">		e.printStackTrace(new PrintWriter(writer));</span>
+<span class="fc" id="L51">		writer.append(failure + &quot;\n\n&quot;);</span>
+<span class="fc" id="L52">	}</span>
+
+
+	private void printMarker(String marker) {
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">		if (writeMarker) {</span>
+<span class="fc" id="L57">			writer.append(&quot;[marker:&quot; + marker + &quot;]\n&quot;);</span>
+		}
+<span class="fc" id="L59">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

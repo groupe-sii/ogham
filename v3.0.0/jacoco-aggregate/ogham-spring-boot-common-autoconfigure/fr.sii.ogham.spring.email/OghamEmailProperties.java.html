@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamEmailProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.email</a> &gt; <span class="el_source">OghamEmailProperties.java</span></div><h1>OghamEmailProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.email;
+
+import java.util.List;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import fr.sii.ogham.spring.common.MessageSpecificFreemarkerProperties;
+import fr.sii.ogham.spring.common.MessageSpecificTemplateProperties;
+import fr.sii.ogham.spring.common.MessageSpecificThymeleafProperties;
+import fr.sii.ogham.spring.common.OghamTemplateProperties;
+import fr.sii.ogham.spring.common.SendRetryProperties;
+
+@ConfigurationProperties(&quot;ogham.email&quot;)
+<span class="fc" id="L15">public class OghamEmailProperties implements OghamTemplateProperties {</span>
+<span class="fc" id="L16">	@NestedConfigurationProperty</span>
+	private FromProperties from = new FromProperties();
+<span class="fc" id="L18">	@NestedConfigurationProperty</span>
+	private SubjectProperties subject = new SubjectProperties();
+<span class="fc" id="L20">	@NestedConfigurationProperty</span>
+	private ToProperties to = new ToProperties();
+<span class="fc" id="L22">	@NestedConfigurationProperty</span>
+	private CcProperties cc = new CcProperties();
+<span class="fc" id="L24">	@NestedConfigurationProperty</span>
+	private BccProperties bcc = new BccProperties();
+<span class="fc" id="L26">	@NestedConfigurationProperty</span>
+	private MessageSpecificFreemarkerProperties freemarker = new MessageSpecificFreemarkerProperties();
+<span class="fc" id="L28">	@NestedConfigurationProperty</span>
+	private MessageSpecificThymeleafProperties thymeleaf = new MessageSpecificThymeleafProperties();
+<span class="fc" id="L30">	@NestedConfigurationProperty</span>
+	private MessageSpecificTemplateProperties template = new MessageSpecificTemplateProperties();
+<span class="fc" id="L32">	@NestedConfigurationProperty</span>
+	private SendRetryProperties sendRetry = new SendRetryProperties();
+<span class="fc" id="L34">	@NestedConfigurationProperty</span>
+	private ImageInliningProperties imageInlining = new ImageInliningProperties();
+
+	public FromProperties getFrom() {
+<span class="fc" id="L38">		return from;</span>
+	}
+
+	public void setFrom(FromProperties from) {
+<span class="fc" id="L42">		this.from = from;</span>
+<span class="fc" id="L43">	}</span>
+
+	public SubjectProperties getSubject() {
+<span class="fc" id="L46">		return subject;</span>
+	}
+
+	public void setSubject(SubjectProperties subject) {
+<span class="fc" id="L50">		this.subject = subject;</span>
+<span class="fc" id="L51">	}</span>
+
+	public ToProperties getTo() {
+<span class="fc" id="L54">		return to;</span>
+	}
+
+	public void setTo(ToProperties to) {
+<span class="fc" id="L58">		this.to = to;</span>
+<span class="fc" id="L59">	}</span>
+
+	public CcProperties getCc() {
+<span class="fc" id="L62">		return cc;</span>
+	}
+
+	public void setCc(CcProperties cc) {
+<span class="fc" id="L66">		this.cc = cc;</span>
+<span class="fc" id="L67">	}</span>
+
+	public BccProperties getBcc() {
+<span class="fc" id="L70">		return bcc;</span>
+	}
+
+	public void setBcc(BccProperties bcc) {
+<span class="fc" id="L74">		this.bcc = bcc;</span>
+<span class="fc" id="L75">	}</span>
+
+	public MessageSpecificFreemarkerProperties getFreemarker() {
+<span class="fc" id="L78">		return freemarker;</span>
+	}
+
+	public void setFreemarker(MessageSpecificFreemarkerProperties freemarker) {
+<span class="fc" id="L82">		this.freemarker = freemarker;</span>
+<span class="fc" id="L83">	}</span>
+
+	public MessageSpecificThymeleafProperties getThymeleaf() {
+<span class="fc" id="L86">		return thymeleaf;</span>
+	}
+
+	public void setThymeleaf(MessageSpecificThymeleafProperties thymeleaf) {
+<span class="fc" id="L90">		this.thymeleaf = thymeleaf;</span>
+<span class="fc" id="L91">	}</span>
+
+	public MessageSpecificTemplateProperties getTemplate() {
+<span class="fc" id="L94">		return template;</span>
+	}
+
+	public void setTemplate(MessageSpecificTemplateProperties template) {
+<span class="fc" id="L98">		this.template = template;</span>
+<span class="fc" id="L99">	}</span>
+
+	public SendRetryProperties getSendRetry() {
+<span class="fc" id="L102">		return sendRetry;</span>
+	}
+
+	public void setSendRetry(SendRetryProperties sendRetry) {
+<span class="fc" id="L106">		this.sendRetry = sendRetry;</span>
+<span class="fc" id="L107">	}</span>
+
+	public ImageInliningProperties getImageInlining() {
+<span class="fc" id="L110">		return imageInlining;</span>
+	}
+
+	public void setImageInlining(ImageInliningProperties imageInlining) {
+<span class="fc" id="L114">		this.imageInlining = imageInlining;</span>
+<span class="fc" id="L115">	}</span>
+
+<span class="fc" id="L117">	public static class SubjectProperties {</span>
+		/**
+		 * Configures how to handle missing email subject: if no subject is
+		 * explicitly defined on the email, Ogham will use this value.
+		 */
+		private String defaultValue;
+<span class="fc" id="L123">		@NestedConfigurationProperty</span>
+		private ExtractFromTextProperties extractFromText = new ExtractFromTextProperties();
+<span class="fc" id="L125">		@NestedConfigurationProperty</span>
+		private ExtractHtmlTitleProperties extractHtmlTitle = new ExtractHtmlTitleProperties();
+
+		public String getDefaultValue() {
+<span class="fc" id="L129">			return defaultValue;</span>
+		}
+
+		public void setDefaultValue(String defaultValue) {
+<span class="fc" id="L133">			this.defaultValue = defaultValue;</span>
+<span class="fc" id="L134">		}</span>
+
+		public ExtractFromTextProperties getExtractFromText() {
+<span class="fc" id="L137">			return extractFromText;</span>
+		}
+
+		public void setExtractFromText(ExtractFromTextProperties extractFromText) {
+<span class="fc" id="L141">			this.extractFromText = extractFromText;</span>
+<span class="fc" id="L142">		}</span>
+
+		public ExtractHtmlTitleProperties getExtractHtmlTitle() {
+<span class="fc" id="L145">			return extractHtmlTitle;</span>
+		}
+
+		public void setExtractHtmlTitle(ExtractHtmlTitleProperties extractHtmlTitle) {
+<span class="fc" id="L149">			this.extractHtmlTitle = extractHtmlTitle;</span>
+<span class="fc" id="L150">		}</span>
+
+	}
+
+<span class="fc" id="L154">	public static class ExtractHtmlTitleProperties {</span>
+		/**
+		 * Subject can be determined by extracting the text declared in
+		 * &amp;gt;title&amp;lt; node of the HTML. Enabled by default
+		 */
+<span class="fc" id="L159">		private boolean enable = true;</span>
+
+		public boolean isEnable() {
+<span class="fc" id="L162">			return enable;</span>
+		}
+
+		public void setEnable(boolean enable) {
+<span class="fc" id="L166">			this.enable = enable;</span>
+<span class="fc" id="L167">		}</span>
+	}
+
+<span class="fc" id="L170">	public static class ExtractFromTextProperties {</span>
+		/**
+		 * Subject can be determined using the first line of text template if
+		 * prefixed by this value. Set to empty string to disable
+		 */
+<span class="fc" id="L175">		private String firstLinePrefix = &quot;Subject:&quot;;</span>
+
+		public String getFirstLinePrefix() {
+<span class="fc" id="L178">			return firstLinePrefix;</span>
+		}
+
+		public void setFirstLinePrefix(String firstLinePrefix) {
+<span class="fc" id="L182">			this.firstLinePrefix = firstLinePrefix;</span>
+<span class="fc" id="L183">		}</span>
+	}
+
+<span class="fc" id="L186">	public static class FromProperties {</span>
+		/**
+		 * Configures how to handle missing email sender address: if no sender
+		 * address is explicitly defined on the email, Ogham will use this
+		 * value.
+		 */
+		private String defaultValue;
+
+		public String getDefaultValue() {
+<span class="fc" id="L195">			return defaultValue;</span>
+		}
+
+		public void setDefaultValue(String defaultValue) {
+<span class="fc" id="L199">			this.defaultValue = defaultValue;</span>
+<span class="fc" id="L200">		}</span>
+	}
+
+<span class="fc" id="L203">	public static class ToProperties {</span>
+		/**
+		 * Configures how to handle missing email recipient address: if no &quot;to&quot;
+		 * address is explicitly defined on the email, Ogham will use this
+		 * value.
+		 */
+		private List&lt;String&gt; defaultValue;
+
+		public List&lt;String&gt; getDefaultValue() {
+<span class="fc" id="L212">			return defaultValue;</span>
+		}
+
+		public void setDefaultValue(List&lt;String&gt; defaultValue) {
+<span class="fc" id="L216">			this.defaultValue = defaultValue;</span>
+<span class="fc" id="L217">		}</span>
+	}
+
+<span class="fc" id="L220">	public static class CcProperties {</span>
+		/**
+		 * Configures how to handle missing email recipient address: if no &quot;cc&quot;
+		 * address is explicitly defined on the email, Ogham will use this
+		 * value.
+		 */
+		private List&lt;String&gt; defaultValue;
+
+		public List&lt;String&gt; getDefaultValue() {
+<span class="fc" id="L229">			return defaultValue;</span>
+		}
+
+		public void setDefaultValue(List&lt;String&gt; defaultValue) {
+<span class="fc" id="L233">			this.defaultValue = defaultValue;</span>
+<span class="fc" id="L234">		}</span>
+	}
+
+<span class="fc" id="L237">	public static class BccProperties {</span>
+		/**
+		 * Configures how to handle missing email recipient address: if no &quot;bcc&quot;
+		 * address is explicitly defined on the email, Ogham will use this
+		 * value.
+		 */
+		private List&lt;String&gt; defaultValue;
+
+		public List&lt;String&gt; getDefaultValue() {
+<span class="fc" id="L246">			return defaultValue;</span>
+		}
+
+		public void setDefaultValue(List&lt;String&gt; defaultValue) {
+<span class="fc" id="L250">			this.defaultValue = defaultValue;</span>
+<span class="fc" id="L251">		}</span>
+	}
+
+<span class="fc" id="L254">	public static class ImageInliningProperties {</span>
+<span class="fc" id="L255">		@NestedConfigurationProperty</span>
+		private MimetypeProperties mimetype = new MimetypeProperties();
+
+		public MimetypeProperties getMimetype() {
+<span class="fc" id="L259">			return mimetype;</span>
+		}
+
+		public void setMimetype(MimetypeProperties mimetype) {
+<span class="fc" id="L263">			this.mimetype = mimetype;</span>
+<span class="fc" id="L264">		}</span>
+	}
+	
+<span class="fc" id="L267">	public static class MimetypeProperties {</span>
+		
+		/**
+		 * The allowed mimetypes for image inlining.&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * Each allowed mimetype pattern may contain &quot;*&quot; character to indicate
+		 * that is accepts several characters (useful to match sub-types such as
+		 * &quot;image/*&quot; to match all kind of images).&lt;br /&gt;
+		 * &lt;br /&gt;
+		 * If the pattern starts with &quot;!&quot;, then the mimetype is excluded. For
+		 * example, &quot;image/*,!image/png&quot; indicates that all kind of images are
+		 * allowed except for PNG images.
+		 */
+		private List&lt;String&gt; allowedMimetypes;
+
+		public List&lt;String&gt; getAllowedMimetypes() {
+<span class="fc" id="L283">			return allowedMimetypes;</span>
+		}
+
+		public void setAllowedMimetypes(List&lt;String&gt; allowedMimetypes) {
+<span class="fc" id="L287">			this.allowedMimetypes = allowedMimetypes;</span>
+<span class="fc" id="L288">		}</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

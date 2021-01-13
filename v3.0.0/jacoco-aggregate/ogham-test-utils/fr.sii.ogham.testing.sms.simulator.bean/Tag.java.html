@@ -1,0 +1,1822 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Tag.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.bean</a> &gt; <span class="el_source">Tag.java</span></div><h1>Tag.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.bean;
+
+/**
+ * Optional Parameter tags
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L9">public enum Tag {</span>
+	/**
+	 * &lt;p&gt;
+	 * The payload_type parameter defines the higher layer PDU type contained in
+	 * the message payload.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;payload_type&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;payload_type&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;
+	 * &lt;p&gt;
+	 * 0 - Default. In the case of a WAP application, the default higher layer
+	 * message type is a WDP message. See [WDP] for details.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 1 - WCMP message. Wireless Control Message Protocol formatted data. See
+	 * [WCMP] for details.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * values - 2 to 255 are reserved
+	 * &lt;/p&gt;
+	 * &lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L57">	PAYLOAD_TYPE(&quot;payload_type&quot;, 0x0019),</span>
+	/**
+	 * &lt;p&gt;
+	 * The privacy_indicator indicates the privacy level of the message.
+	 * &lt;/p&gt;
+	 */
+<span class="fc" id="L63">	PRIVACY_INDICATOR(&quot;privacy_indicator&quot;, 0x0201),</span>
+	/**
+	 * &lt;p&gt;
+	 * A reference assigned by the originating SME to the short message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;user_message_reference&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;user_message_reference&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;All values allowed.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L98">	USER_MESSAGE_REFERENCE(&quot;user_message_reference&quot;, 0x0204),</span>
+	/**
+	 * &lt;p&gt;
+	 * A response code set by the user in a User Acknowledgement/Reply message.
+	 * The response codes are application specific.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;user_response_code&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;user_response_code&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 to 255 (IS-95 CDMA)&lt;br&gt;
+	 * 0 to 15 (CMT-136 TDMA)&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L135">	USER_RESPONSE_CODE(&quot;user_response_code&quot;, 0x0205),</span>
+	/**
+	 * &lt;p&gt;
+	 * The source_port parameter is used to indicate the application port number
+	 * associated with the source address of the message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;source_port&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;source_port&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;All values allowed.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L171">	SOURCE_PORT(&quot;source_port&quot;, 0x020A),</span>
+	/**
+	 * &lt;p&gt;
+	 * The destination_port parameter is used to indicate the application port
+	 * number associated with the destination address of the message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;destination_port&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;destination_port&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;All values allowed.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L207">	DESTINATION_PORT(&quot;destination_port&quot;, 0x020B),</span>
+	/**
+	 * &lt;p&gt;
+	 * The sar_msg_ref_num parameter is used to indicate the reference number
+	 * for a particular concatenated short message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;sar_msg_ref_num&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;sar_msg_ref_num&lt;/td&gt;
+	 * 
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;This parameter shall contain a originator generated reference number
+	 * so that a segmented short message may be reassembled into a single
+	 * original message. This allows the parallel transmission of several
+	 * segmented messages. This reference number shall remain constant for every
+	 * segment which makes up a particular concatenated short message. When
+	 * present, the PDU must also contain the sar_total_segments and
+	 * sar_segment_seqnum parameters. Otherwise this parameter shall be
+	 * ignored.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L251">	SAR_MSG_REF_NUM(&quot;sar_msg_ref_num&quot;, 0x020C),</span>
+	/**
+	 * &lt;p&gt;
+	 * The language_indicator parameter is used to indicate the language of the
+	 * short message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;lang_indicator&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;language_indicator&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 = unspecified (default)&lt;br&gt;
+	 * 1 = english &lt;br&gt;
+	 * 2 = french &lt;br&gt;
+	 * 3 = spanish &lt;br&gt;
+	 * 4 = german &lt;br&gt;
+	 * 5 = Portuguese &lt;br&gt;
+	 * refer to [CMT-136] for other values&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L293">	LANGUAGE_INDICATOR(&quot;lang_indicator&quot;, 0x020D),</span>
+	/**
+	 * &lt;p&gt;
+	 * The sar_total_segments parameter is used to indicate the total number of
+	 * short messages within the concatenated short message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;sar_total_segments&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;sar_total_segments&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;This parameter shall contain a value in the range 1 to 255 indicating
+	 * the total number of fragments within the concatenated short message. The
+	 * value shall start at 1 and remain constant for every short message which
+	 * makes up the concatenated short message. When present, the PDU must also
+	 * contain the sar_msg_ref_num and sar_segment_seqnum parameters. Otherwise
+	 * this parameter shall be ignored.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L334">	SAR_TOTAL_SEGMENTS(&quot;sar_total_segments&quot;, 0x020E),</span>
+	/**
+	 * &lt;p&gt;
+	 * The sar_segment_seqnum parameter is used to indicate the sequence number
+	 * of a particular short message within the concatenated short message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;sar_segment_seqnum&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;ar_segment_seqnum&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;This octet shall contain a value in the range 1 to 255 indicating the
+	 * sequence number of a particular message within the concatenated short
+	 * message. The value shall start at 1 and increment by one for every
+	 * message sent within the concatenated short message. When present, the PDU
+	 * must also contain the sar_total_segments and sar_msg_ref_num parameters.
+	 * Otherwise this parameter shall be ignored.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L375">	SAR_SEGMENT_SEQNUM(&quot;sar_segment_seqnum&quot;, 0x020F),</span>
+	/**
+	 * &lt;p&gt;
+	 * The source_subaddress parameter specifies a subaddress associated with
+	 * the originator of the message.
+	 * &lt;/p&gt;
+	 */
+<span class="fc" id="L382">	SOURCE_SUBADDRESS(&quot;source_subaddress&quot;, 0x0202),</span>
+	/**
+	 * &lt;p&gt;
+	 * The dest_subaddress parameter specifies a subaddress associated with the
+	 * destination of the message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;dest_subaddress&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;dest_subaddress&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;Var 2 - 23&lt;/td&gt;
+	 * &lt;td&gt;Octet String&lt;/td&gt;
+	 * &lt;td&gt;See 5.3.2.15 for parameter encoding.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L418">	DEST_SUBADDRESS(&quot;dest_subaddress&quot;, 0x0203),</span>
+	/**
+	 * &lt;p&gt;
+	 * The callback_num parameter associates a call back number with the
+	 * message. In TDMA networks, it is possible to send and receive multiple
+	 * callback numbers to/from TDMA mobile stations.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;callback_num&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;Var 4 - 19&lt;/td&gt;
+	 * &lt;td&gt;Octet String&lt;/td&gt;
+	 * &lt;td&gt;
+	 * &lt;p&gt;
+	 * &lt;b&gt;Bits 7.............0&lt;/b&gt;
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 0000000D (octet 1)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 00000TTT (octet 2)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 0000NNNN (octet 3)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * XXXXXXXX (octet 4)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * :
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * :
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * XXXXXXXX (octet N)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The originating SME can set a Call Back Number for the receiving Mobile
+	 * Station. The first octet contains the Digit Mode Indicator. Bit D=0
+	 * indicates that the Call Back Number is sent to the mobile as DTMF digits
+	 * encoded in TBCD. Bit D=1 indicates that the Call Back Number is sent to
+	 * the mobile encoded as ASCII digits. The 2nd octet contains the Type of
+	 * Number (TON). Encoded as in section 5.2.5.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The third octet contains the Numbering Plan Indicator (NPI). Encoded as
+	 * specified in section 5.2.6
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The remaining octets contain the Call Back Number digits encoded as ASCII
+	 * characters
+	 * &lt;/p&gt;
+	 * &lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L496">	CALLBACK_NUM(&quot;callback_num&quot;, 0x0381),</span>
+	/**
+	 * &lt;p&gt;
+	 * The message_payload parameter contains the user data.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;message_payload&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;message_payload&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Set to length of user data&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;Variable&lt;/td&gt;
+	 * &lt;td&gt;Octet String&lt;/td&gt;
+	 * &lt;td&gt;Short message user data. The maximum size is SMSC and network
+	 * implementation specific.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L532">	MESSAGE_PAYLOAD(&quot;message_payload&quot;, 0x0424),</span>
+	/**
+	 * &lt;p&gt;
+	 * The sc_interface_version parameter is used to indicate the SMPP version
+	 * supported by the SMSC. It is returned in the bind response PDUs.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;sc_interface_version&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;sc_interface_version&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;values as per 5.2.4. (interface_version)&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L568">	SC_INTERFACE_VERSION(&quot;sc_interface_version&quot;, 0x0210),</span>
+	/**
+	 * &lt;p&gt;
+	 * The display_time parameter is used to associate a display time of the
+	 * short message on the MS.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;display_time&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;display_time&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 = Temporary&lt;br&gt;
+	 * 1 = Default (default)&lt;br&gt;
+	 * 2 = Invoke&lt;br&gt;
+	 * values 3 to 255 are reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L607">	DISPLAY_TIME(&quot;display_time&quot;, 0x1201),</span>
+	/**
+	 * &lt;p&gt;
+	 * The ms_validity parameter is used to provide an MS with validity
+	 * information associated with the received short message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;ms_validity&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;ms_validity&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 = Store Indefinitely (default)&lt;br&gt;
+	 * 1 = Power Down &lt;br&gt;
+	 * 2 = SID based registration area &lt;br&gt;
+	 * 3 = Display Only &lt;br&gt;
+	 * values 4 to 255 are reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L647">	MS_VALIDITY(&quot;ms_validity&quot;, 0x1204),</span>
+	/**
+	 * &lt;p&gt;
+	 * The dpf_result parameter is used in the data_sm_resp PDU to indicate if
+	 * delivery pending flag (DPF) was set for a delivery failure of the short
+	 * message..
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * If the dpf_result parameter is not included in the data_sm_resp PDU, the
+	 * ESME should assume that DPF is not set.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * Currently this parameter is only applicable for the Transaction message
+	 * mode.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;dpf_result&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;dpf_result&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 = DPF not set&lt;br&gt;
+	 * 1 = DPF set&lt;br&gt;
+	 * values 2 to 255 are reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L694">	DPF_RESULT(&quot;dpf_result&quot;, 0x0420),</span>
+	/**
+	 * &lt;p&gt;
+	 * An ESME may use the set_dpf parameter to request the setting of a
+	 * delivery pending flag (DPF) for certain delivery failure scenarios, such
+	 * as
+	 * &lt;/p&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;MS is unavailable for message delivery (as indicated by the HLR)&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The SMSC should respond to such a request with an alert_notification PDU
+	 * when it detects that the destination MS has become available.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The delivery failure scenarios under which DPF is set is SMSC
+	 * implementation and network implementation specific. If a delivery pending
+	 * flag is set by the SMSC or network (e.g. HLR), then the SMSC should
+	 * indicate this to the ESME in the data_sm_resp message via the dpf_result
+	 * parameter.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;set_dpf&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;set_dpf&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 = Setting of DPF for delivery failure to MS not requested&lt;br&gt;
+	 * 1 = Setting of DPF for delivery failure requested (default) &lt;br&gt;
+	 * values 2 to 255 are reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L747">	SET_DPF(&quot;set_dpf&quot;, 0x0421),</span>
+	/**
+	 * &lt;p&gt;
+	 * The ms_availability_status parameter is used in the alert_notification
+	 * operation to indicate the availability state of the MS to the ESME.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * If the SMSC does not include the parameter in the alert_notification
+	 * operation, the ESME should assume that the MS is in an &quot;available&quot; state.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;ms_availability_status&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;ms_availability_status&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 = Available (Default)&lt;br&gt;
+	 * 1 = Denied (e.g. suspended, no SMS capability, etc.)&lt;br&gt;
+	 * 2 = Unavailable values 3 to 255 are reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L789">	MS_AVAILABILITY_STATUS(&quot;ms_availability_status&quot;, 0x0422),</span>
+	/**
+	 * &lt;p&gt;
+	 * The network_error_code parameter is used to indicate the actual network
+	 * error code for a delivery failure. The network error code is technology
+	 * specific.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;network_error_code&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;network_error_code&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;3&lt;/td&gt;
+	 * &lt;td&gt;Octet String&lt;/td&gt;
+	 * &lt;td&gt;
+	 * &lt;p&gt;
+	 * The first octet indicates the network type. The following values are
+	 * defined:
+	 * &lt;/p&gt;
+	 * &lt;ul&gt;
+	 * &lt;li&gt;1 = ANSI-136&lt;/li&gt;
+	 * &lt;li&gt;2 = IS-95&lt;/li&gt;
+	 * &lt;li&gt;3 = GSM&lt;/li&gt;
+	 * &lt;li&gt;4 = Reserved&lt;/li&gt;
+	 * &lt;li&gt;All other values reserved.&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The remaining two octets specify the actual network error code
+	 * appropriate to the network type.
+	 * &lt;/p&gt;
+	 * &lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L842">	NETWORK_ERROR_CODE(&quot;network_error_code&quot;, 0x0423),</span>
+	/**
+	 * &lt;p&gt;
+	 * The delivery_failure_reason parameter is used in the data_sm_resp
+	 * operation to indicate the outcome of the message delivery attempt (only
+	 * applicable for transaction message mode). If a delivery failure due to a
+	 * network error is indicated, the ESME may check the network_error_code
+	 * parameter (if present) for the actual network error code.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The delivery_failure_reason parameter is not included if the delivery
+	 * attempt was successful.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;delivery_failure_reason&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;delivery_failure_reason&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 = Destination unavailable&lt;br&gt;
+	 * 1 = Destination Address Invalid (e.g.&lt;br&gt;
+	 * suspended, no SMS capability, etc.)&lt;br&gt;
+	 * 2 = Permanent network error&lt;br&gt;
+	 * 3 = Temporary network error&lt;br&gt;
+	 * values 4 to are 255 reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L890">	DELIVERY_FAILURE_REASON(&quot;delivery_failure_reason&quot;, 0x0425),</span>
+	/**
+	 * &lt;p&gt;
+	 * The more_messages_to_send parameter is used by the ESME in the submit_sm
+	 * and data_sm operations to indicate to the SMSC that there are further
+	 * messages for the same destination SME. The SMSC may use this setting for
+	 * network resource optimization.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;more_messages_to_send&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;more_messages_to_send&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+	 * &lt;td&gt;0 = No more messages to follow; 1 = More messages to follow (default)
+	 * values 2 to 255 are reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L929">	MORE_MESSAGES_TO_SEND(&quot;more_messages_to_send&quot;, 0x0426),</span>
+	/**
+	 * &lt;p&gt;
+	 * The message_state optional parameter is used by the SMSC in the
+	 * deliver_sm and data_sm PDUs to indicate to the ESME the final message
+	 * state for an SMSC Delivery Receipt.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;message_state&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;message_state&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+	 * &lt;td&gt;Values as per section 5.2.28&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L966">	MESSAGE_STATE(&quot;message_state&quot;, 0x0427),</span>
+	/**
+	 * &lt;table&gt;&lt;caption&gt;callback_num_pres_ind&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;callback_num_pres_ind&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Bit mask&lt;/td&gt;
+	 * &lt;td&gt;
+	 * &lt;p&gt;
+	 * &lt;b&gt; Bits 7............0&lt;br&gt;
+	 * 0000ppss &lt;/b&gt;
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This parameter controls the presentation indication and screening of the
+	 * CallBackNumber at the mobile station.If present, the callback_num
+	 * parameter must also be present.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The Presentation Indicator is encoded in bits 2 and 3 as follows:
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 00 = Presentation Allowed
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 01 = Presentation Restricted
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 10 = Number Not Available
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 11 = Reserved
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * The Screening Indicator is encoded in bits 0 and 1 as follows:
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 00 = User provided, not screened
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 01 = User provided, verified and passed
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 10 = User provided, verified and failed
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * 11 = Network Provided.
+	 * &lt;/p&gt;
+	 * &lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1039">	CALLBACK_NUM_PRES_IND(&quot;callback_num_pres_ind&quot;, 0x0302),</span>
+	/**
+	 * &lt;p&gt;
+	 * The callback_num_atag parameter associates an alphanumeric display with
+	 * the call back number.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;callback_num_atag&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;callback_num_atag&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;Var max 65&lt;/td&gt;
+	 * &lt;td&gt;Octet string&lt;/td&gt;
+	 * &lt;td&gt;
+	 * &lt;p&gt;
+	 * Alphanumeric display tag for call back number
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;pre class=&quot;aclSourceCodeInTable&quot;&gt;
+	Bits 7...............0
+	EEEEEEEE (octet 1)
+	XXXXXXXX (octet 2)
+	:
+	:
+	XXXXXXXX (octet N)
+	 * &lt;/pre&gt;
+	 * &lt;p&gt;
+	 * The first octet contains the encoding scheme of the Alpha Tag display
+	 * characters. This field contains the same values as for Data Coding Scheme
+	 * (see section 5.2.19). The following octets contain the display
+	 * characters: There is one octet per display character for 7-bit and 8-bit
+	 * encoding schemes. There are two octets per display character for 16-bit
+	 * encoding schemes.
+	 * &lt;/p&gt;
+	 * &lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1096">	CALLBACK_NUM_ATAG(&quot;callback_num_atag&quot;, 0x0303),</span>
+	/**
+	 * &lt;p&gt;
+	 * The number_of_messages parameter is used to indicate the number of
+	 * messages stored in a mailbox.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;number_of_messages&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;number_of_messages&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0 to 99 = allowed values. Values 100 to 255 are reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1132">	NUMBER_OF_MESSAGES(&quot;number_of_messages&quot;, 0x0304),</span>
+	/**
+	 * &lt;p&gt;
+	 * The sms_signal parameter is used to provide a TDMA MS with alert tone
+	 * information associated with the received short message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;sms_signal&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;sms_signal&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Encoded as per [CMT-136]&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1168">	SMS_SIGNAL(&quot;sms_signal&quot;, 0x1203),</span>
+	/**
+	 * &lt;p&gt;
+	 * The alert_on_message_delivery parameter is set to instruct a MS to alert
+	 * the user (in a MS implementation specific manner) when the short message
+	 * arrives at the MS.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;alert_on_message_delivery&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;alert_on_message_delivery&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets (= 0)&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;0&lt;/td&gt;
+	 * &lt;td&gt;No Value&lt;/td&gt;
+	 * &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1205">	ALERT_ON_MESSAGE_DELIVERY(&quot;alert_on_message_delivery&quot;, 0x130C),</span>
+	/**
+	 * &lt;p&gt;
+	 * The its_reply_type parameter is a required parameter for the CDMA
+	 * Interactive Teleservice as defined by the Korean PCS carriers [KORITS].
+	 * It indicates and controls the MS user's reply method to an SMS delivery
+	 * message received from the ESME.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;its_reply_type&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;its_reply_type&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;
+	 * 
+	 * &lt;pre class=&quot;aclSourceCodeInTable&quot;&gt;
+	 * 0 = Digit 
+	1 = Number 
+	2 = Telephone No. 
+	3 = Password 
+	4 = Character Line 
+	5 = Menu 
+	6 = Date 
+	7 = Time 
+	8 = Continue 
+	values 9 to 255 are reserved
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1258">	ITS_REPLY_TYPE(&quot;its_reply_type&quot;, 0x1380),</span>
+	/**
+	 * &lt;p&gt;
+	 * The its_session_info parameter is a required parameter for the CDMA
+	 * Interactive Teleservice as defined by the Korean PCS carriers [KORITS].
+	 * It contains control information for the interactive session between an MS
+	 * and an ESME.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;its_session_info&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;its_session_info&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Octet String&lt;/td&gt;
+	 * &lt;td&gt;
+	 * 
+	 * &lt;pre class=&quot;aclSourceCodeInTable&quot;&gt;
+	 * Bits 7...............0 
+	SSSS SSSS (octet 1) 
+	NNNN NNNE (octet 2)
+	 * &lt;/pre&gt;
+	 * &lt;p&gt;
+	 * Octet 1 contains the session number (0 - 255) encoded in binary. The
+	 * session number remains constant for each session.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The sequence number of the dialogue unit (as assigned by the ESME) within
+	 * the session is encoded in bits 7..1 of octet 2.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The End of Session Indicator indicates the message is the end of the
+	 * conversation session and is encoded in bit 0 of octet 2 as follows: 0 =
+	 * End of Session Indicator inactive. 1 = End of Session Indicator active.
+	 * &lt;/p&gt;
+	 * &lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1316">	ITS_SESSION_INFO(&quot;its_session_info&quot;, 0x1383),</span>
+	/**
+	 * &lt;p&gt;
+	 * The ussd_service_op parameter is required to define the USSD service
+	 * operation when SMPP is being used as an interface to a (GSM) USSD system.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;ussd_service_op&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;ussd_service_op&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Octet String&lt;/td&gt;
+	 * &lt;td&gt;
+	 * 
+	 * &lt;pre class=&quot;aclSourceCodeInTable&quot;&gt;
+	 * 0 = PSSD indication 
+	1 = PSSR indication 
+	2 = USSR request 
+	3 = USSN request 
+	4 to 15 = reserved 
+	
+	16 = PSSD response 
+	17 = PSSR response 
+	18 = USSR confirm 
+	19 = USSN confirm 
+	
+	20 to 31 = reserved 
+	32 to 255 = reserved for vendor specific 
+	USSD operations
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1371">	USSD_SERVICE_OP(&quot;ussd_service_op&quot;, 0x0501),</span>
+	/**
+	 * Billing information passed from ESME to MC &lt;br&gt;
+	 * &lt;br&gt;
+	 * Bits 7......0 &lt;br&gt;
+	 * 0XXXXXXX (Reserved) &lt;br&gt;
+	 * 1XXXXXXX (Vendor Specific) &lt;br&gt;
+	 * The first octet represents the Billing Format tag and indicates the
+	 * format of the billing information in the remaining octets. &lt;br&gt;
+	 * The remaining octets contain the billing information. &lt;br&gt;
+	 * &lt;br&gt;
+	 * Wireless Network Technology: Generic
+	 *
+	 */
+<span class="fc" id="L1385">	BILLING_IDENTIFICATION(&quot;billing_identification&quot;, 0x060B),</span>
+	/**
+	 * &lt;p&gt;
+	 * The dest_addr_subunit parameter is used to route messages when received
+	 * by a mobile station, for example to a smart card in the mobile station or
+	 * to an external device connected to the mobile station.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;dest_addr_subunit&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;dest_addr_subunit&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0x00 = Unknown (default)&lt;br&gt;
+	 * 0x01 = MS Display &lt;br&gt;
+	 * 0x02 = Mobile Equipment&lt;br&gt;
+	 * 0x03 = Smart Card 1 (expected to be SIM if&lt;br&gt;
+	 * a SIM exists in the MS)&lt;br&gt;
+	 * 0x04 = External Unit 1&lt;br&gt;
+	 * 5 to 255 = reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1428">	DEST_ADDR_SUBUNIT(&quot;dest_addr_subunit&quot;, 0x0005),</span>
+	/**
+	 * The dest_network_type parameter is used to indicate a network type
+	 * associated with the destination address of a message. In the case that
+	 * the receiving system (e.g. SMSC) does not support the indicated network
+	 * type, it may treat this a failure and return a response PDU reporting a
+	 * failure.
+	 */
+<span class="fc" id="L1436">	DEST_NETWORK_TYPE(&quot;dest_network_type&quot;, 0x0006),</span>
+	/**
+	 * &lt;p&gt;
+	 * The dest_bearer_type parameter is used to request the desired bearer for
+	 * delivery of the message to the destination address. In the case that the
+	 * receiving system (e.g. SMSC) does not support the indicated bearer type,
+	 * it may treat this a failure and return a response PDU reporting a
+	 * failure.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;dest_bearer_type&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;dest_bearer_type&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;0x00 = Unknown&lt;br&gt;
+	 * 0x01 = SMS&lt;br&gt;
+	 * 0x02 = Circuit Switched Data (CSD)&lt;br&gt;
+	 * 0x03 = Packet Data&lt;br&gt;
+	 * 0x04 = USSD&lt;br&gt;
+	 * 0x05 = CDPD&lt;br&gt;
+	 * 0x06 = DataTAC&lt;br&gt;
+	 * 0x07 = FLEX/ReFLEX&lt;br&gt;
+	 * 0x08 = Cell Broadcast (cellcast)&lt;br&gt;
+	 * 9 to 255 = reserved&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1484">	DEST_BEARER_TYPE(&quot;dest_bearer_type&quot;, 0x0007),</span>
+	/**
+	 * &lt;p&gt;
+	 * This parameter defines the telematic interworking to be used by the
+	 * delivering system for the destination address. This is only useful when a
+	 * specific dest_bearer_type parameter has also been specified as the value
+	 * is bearer dependent. In the case that the receiving system (e.g. SMSC)
+	 * does not support the indicated telematic interworking, it may treat this
+	 * a failure and return a response PDU reporting a failure.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;dest_telematics_id&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;dest_telematics_id&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;to be defined&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1524">	DEST_TELEMATICS_ID(&quot;dest_telematics_id&quot;, 0x0008),</span>
+	/**
+	 * &lt;p&gt;
+	 * The source_addr_subunit parameter is used to indicate where a message
+	 * originated in the mobile station, for example a smart card in the mobile
+	 * station or an external device connected to the mobile station.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;source_addr_subunit&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;source_addr_subunit&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;see 5.3.2.1&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1561">	SOURCE_ADDR_SUBUNIT(&quot;source_addr_subunit&quot;, 0x000D),</span>
+	/**
+	 * &lt;p&gt;
+	 * The source_network_type parameter is used to indicate the network type
+	 * associated with the device that originated the message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;source_network_type&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;source_network_type&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;see 5.3.2.3&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1597">	SOURCE_NETWORK_TYPE(&quot;source_network_type&quot;, 0x000E),</span>
+	/**
+	 * &lt;p&gt;
+	 * The source_bearer_type parameter indicates the wireless bearer over which
+	 * the message originated.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;source_bearer_type&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;source_bearer_type&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;see 5.3.2.5&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1633">	SOURCE_BEARER_TYPE(&quot;source_bearer_type&quot;, 0x000F),</span>
+	/**
+	 * &lt;p&gt;
+	 * The source_telematics_id parameter indicates the type of telematics
+	 * interface over which the message originated.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;source_telematics_id&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;source_telematics_id&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;see 5.3.2.7&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1669">	SOURCE_TELEMATICS_ID(&quot;source_telematics_id&quot;, 0x0010),</span>
+	/**
+	 * &lt;p&gt;
+	 * This parameter defines the number of seconds which the sender requests
+	 * the SMSC to keep the message if undelivered before it is deemed expired
+	 * and not worth delivering. If the parameter is not present, the SMSC may
+	 * apply a default value.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;qos_time_to_live&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;qos_time_to_live&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;4&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;number of seconds for message to be retained by the receiving
+	 * system.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1708">	QOS_TIME_TO_LIVE(&quot;qos_time_to_live&quot;, 0x0017),</span>
+	/**
+	 * &lt;p&gt;
+	 * The additional_status_info_text parameter gives an ASCII textual
+	 * description of the meaning of a response PDU. It is to be used by an
+	 * implementation to allow easy diagnosis of problems.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;additional_status_info&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;additional_status_info_text&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1 - 256&lt;/td&gt;
+	 * &lt;td&gt;C Octet String&lt;/td&gt;
+	 * &lt;td&gt;Free format text to allow implementations to supply the most useful
+	 * information for problem diagnosis. Maximum length is 256 octets.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1746">	ADDITIONAL_STATUS_INFO(&quot;additional_status_info&quot;, 0x001D),</span>
+	/**
+	 * &lt;p&gt;
+	 * The receipted_message_id parameter indicates the ID of the message being
+	 * receipted in an SMSC Delivery Receipt. This is the opaque SMSC message
+	 * identifier that was returned in the message_id parameter of the SMPP
+	 * response PDU that acknowledged the submission of the original message.
+	 * &lt;/p&gt;
+	 * &lt;table&gt;&lt;caption&gt;receipted_message_id&lt;/caption&gt;
+	 * &lt;thead&gt;
+	 * &lt;tr&gt;
+	 * &lt;th&gt;Field Name&lt;/th&gt;
+	 * &lt;th&gt;Size octets&lt;/th&gt;
+	 * &lt;th&gt;Type&lt;/th&gt;
+	 * &lt;th&gt;Description&lt;/th&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/thead&gt; &lt;tbody&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Parameter Tag&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;receipted_message_id&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Length&lt;/td&gt;
+	 * &lt;td&gt;2&lt;/td&gt;
+	 * &lt;td&gt;Integer&lt;/td&gt;
+	 * &lt;td&gt;Length of Value part in octets&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;tr&gt;
+	 * &lt;td&gt;Value&lt;/td&gt;
+	 * &lt;td&gt;1 - 65&lt;/td&gt;
+	 * &lt;td&gt;C Octet String&lt;/td&gt;
+	 * &lt;td&gt;SMSC handle of the message being receipted.&lt;/td&gt;
+	 * &lt;/tr&gt;
+	 * &lt;/tbody&gt;
+	 * &lt;/table&gt;
+	 */
+<span class="fc" id="L1784">	RECEIPTED_MESSAGE_ID(&quot;receipted_message_id&quot;, 0x001E),</span>
+	/**
+	 * &lt;p&gt;
+	 * The ms_msg_wait_facilities parameter allows an indication to be provided
+	 * to an MS that there are messages waiting for the subscriber on systems on
+	 * the PLMN. The indication can be an icon on the MS screen or other MMI
+	 * indication.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The ms_msg_wait_facilities can also specify the type of message
+	 * associated with the message waiting indication.
+	 * &lt;/p&gt;
+	 */
+<span class="fc" id="L1797">	MS_MSG_WAIT_FACILITIES(&quot;ms_msg_wait_facilities&quot;, 0x0030);</span>
+
+	private final String tagName;
+	private final short code;
+
+<span class="fc" id="L1802">	Tag(String tagName, int code) {</span>
+<span class="fc" id="L1803">		this.code = (short) code;</span>
+<span class="fc" id="L1804">		this.tagName = tagName;</span>
+<span class="fc" id="L1805">	}</span>
+
+	/**
+	 * @return the tag name
+	 */
+	public String getTagName() {
+<span class="fc" id="L1811">		return tagName;</span>
+	}
+
+	/**
+	 * @return the code of the tag
+	 */
+	public short getCode() {
+<span class="fc" id="L1818">		return code;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

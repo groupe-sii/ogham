@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AssertEmail.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.email</a> &gt; <span class="el_source">AssertEmail.java</span></div><h1>AssertEmail.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.email;
+
+import static fr.sii.ogham.testing.assertion.util.EmailUtils.getBodyParts;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyList;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+
+import org.junit.Assert;
+import org.junit.ComparisonFailure;
+
+import fr.sii.ogham.testing.assertion.html.AssertHtml;
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.assertion.util.EmailUtils;
+import fr.sii.ogham.testing.assertion.util.Executable;
+import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
+
+/**
+ * Utility class for checking if the received email content is as expected.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@SuppressWarnings(&quot;squid:S1192&quot;)
+public final class AssertEmail {
+<span class="fc" id="L35">	private static final Pattern HTML_PATTERN = Pattern.compile(&quot;&lt;html&quot;, Pattern.CASE_INSENSITIVE);</span>
+<span class="fc" id="L36">	private static final Pattern NEW_LINES = Pattern.compile(&quot;\r|\n&quot;);</span>
+
+	/**
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains several parts (several contents). The
+	 * received email should also have the equivalent parts. It will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})&lt;/li&gt;
+	 * &lt;li&gt;The received message is a {@link Multipart} email&lt;/li&gt;
+	 * &lt;li&gt;The number of parts are equal&lt;/li&gt;
+	 * &lt;li&gt;Each received part body equals the expected one (order is important).
+	 * See {@link #assertBody(String, String, boolean)}&lt;/li&gt;
+	 * &lt;li&gt;Each received part Mime Type equals the expected one (order is
+	 * important).&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The checking of the body is done strictly (totally equal).
+	 * &lt;/p&gt;
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmail
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+<span class="fc" id="L66">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L67">		assertEquals(expectedEmail, actualEmail, true, assertions);</span>
+<span class="fc" id="L68">		assertions.execute();</span>
+<span class="fc" id="L69">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Shortcut to simplify unit testing with GreenMail. See
+	 * {@link #assertEquals(ExpectedMultiPartEmail[], Message[])}.
+	 * &lt;/p&gt;
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains several parts (several contents). The
+	 * received email should also have the equivalent parts. It will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})&lt;/li&gt;
+	 * &lt;li&gt;The received message is a {@link Multipart} email&lt;/li&gt;
+	 * &lt;li&gt;The number of parts are equal&lt;/li&gt;
+	 * &lt;li&gt;Each received part body equals the expected one (order is important).
+	 * See {@link #assertBody(String, String, boolean)}&lt;/li&gt;
+	 * &lt;li&gt;Each received part Mime Type equals the expected one (order is
+	 * important).&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The checking of the body is done strictly (totally equal).
+	 * &lt;/p&gt;
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmails
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+<span class="nc" id="L103">		assertEquals(new ExpectedMultiPartEmail[] { expectedEmail }, actualEmails);</span>
+<span class="nc" id="L104">	}</span>
+
+	/**
+	 * Assert that each received email content respects the expected one. It
+	 * ensures that the number of received emails equals to the expected number.
+	 * Then for each email it calls
+	 * {@link #assertEquals(ExpectedMultiPartEmail, Message)} .
+	 * 
+	 * @param expectedEmails
+	 *            the list of expected emails
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertEquals(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessagingException, IOException {
+<span class="fc" id="L122">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L123">		assertions.register(() -&gt; Assert.assertEquals(&quot;should have received &quot; + expectedEmails.length + &quot; email&quot;, expectedEmails.length, actualEmails.length));</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		for (int i = 0; i &lt; expectedEmails.length; i++) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">			assertEquals(expectedEmails[i], i &lt; actualEmails.length ? actualEmails[i] : null, true, assertions);</span>
+		}
+<span class="nc" id="L127">		assertions.execute();</span>
+<span class="nc" id="L128">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Shortcut to simplify unit testing with GreenMail. See
+	 * {@link #assertEquals(ExpectedEmail[], Message[])}.
+	 * &lt;/p&gt;
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains only one part (only one content). It
+	 * will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})&lt;/li&gt;
+	 * &lt;li&gt;The body equals the expected one (order is important). See
+	 * {@link #assertBody(String, String, boolean)}&lt;/li&gt;
+	 * &lt;li&gt;The Mime Type equals the expected one (order is important).&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The checking of the body is done strictly (totally equal).
+	 * &lt;/p&gt;
+	 * 
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the email content fails
+	 */
+	public static void assertEquals(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+<span class="fc" id="L160">		assertEquals(new ExpectedEmail[] { expectedEmail }, actualEmails);</span>
+<span class="fc" id="L161">	}</span>
+
+	/**
+	 * Assert that each received email content respects the expected one. It
+	 * ensures that the number of received emails equals to the expected number.
+	 * Then for each email it calls
+	 * {@link #assertEquals(ExpectedEmail, Message)} .
+	 * 
+	 * @param expectedEmail
+	 *            the expected email
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the email content fails
+	 */
+	public static void assertEquals(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+<span class="fc" id="L179">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L180">		assertions.register(() -&gt; Assert.assertEquals(&quot;should have received &quot; + expectedEmail.length + &quot; email&quot;, expectedEmail.length, actualEmails.length));</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">		for (int i = 0; i &lt; expectedEmail.length; i++) {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">			assertEquals(expectedEmail[i], i &lt; actualEmails.length ? actualEmails[i] : null, true, assertions);</span>
+		}
+<span class="fc" id="L184">		assertions.execute();</span>
+<span class="fc" id="L185">	}</span>
+
+	/**
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains only one part (only one content). It
+	 * will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})&lt;/li&gt;
+	 * &lt;li&gt;The body equals the expected one (order is important). See
+	 * {@link #assertBody(String, String, boolean)}&lt;/li&gt;
+	 * &lt;li&gt;The Mime Type equals the expected one (order is important).&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The checking of the body is done strictly (totally equal).
+	 * &lt;/p&gt;
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmail
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the email content fails
+	 */
+	public static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+<span class="fc" id="L212">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L213">		assertEquals(expectedEmail, actualEmail, true, assertions);</span>
+<span class="fc" id="L214">		assertions.execute();</span>
+<span class="fc" id="L215">	}</span>
+
+	/**
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains several parts (several contents). The
+	 * received email should also have the equivalent parts. It will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})&lt;/li&gt;
+	 * &lt;li&gt;The received message is a {@link Multipart} email&lt;/li&gt;
+	 * &lt;li&gt;The number of parts are equal&lt;/li&gt;
+	 * &lt;li&gt;Each received part body equals the expected one (order is important).
+	 * See {@link #assertBody(String, String, boolean)}&lt;/li&gt;
+	 * &lt;li&gt;Each received part Mime Type equals the expected one (order is
+	 * important).&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The checking of the body ignores the new line characters.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmail
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertSimilar(ExpectedMultiPartEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+<span class="fc" id="L245">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L246">		assertEquals(expectedEmail, actualEmail, false, assertions);</span>
+<span class="fc" id="L247">		assertions.execute();</span>
+<span class="fc" id="L248">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Shortcut to simplify unit testing with GreenMail. See
+	 * {@link #assertSimilar(ExpectedMultiPartEmail[], Message[])}.
+	 * &lt;/p&gt;
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains several parts (several contents). The
+	 * received email should also have the equivalent parts. It will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})&lt;/li&gt;
+	 * &lt;li&gt;The received message is a {@link Multipart} email&lt;/li&gt;
+	 * &lt;li&gt;The number of parts are equal&lt;/li&gt;
+	 * &lt;li&gt;Each received part body equals the expected one (order is important).
+	 * See {@link #assertBody(String, String, boolean)}&lt;/li&gt;
+	 * &lt;li&gt;Each received part Mime Type equals the expected one (order is
+	 * important).&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The checking of the body ignores the new line characters.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmails
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertSimilar(ExpectedMultiPartEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+<span class="nc" id="L282">		assertSimilar(new ExpectedMultiPartEmail[] { expectedEmail }, actualEmails);</span>
+<span class="nc" id="L283">	}</span>
+
+	/**
+	 * Assert that each received email content respects the expected one. It
+	 * ensures that the number of received emails equals to the expected number.
+	 * Then for each email it calls
+	 * {@link #assertSimilar(ExpectedMultiPartEmail, Message)} .
+	 * 
+	 * @param expectedEmails
+	 *            the list of expected emails
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the content of the email fails
+	 */
+	public static void assertSimilar(ExpectedMultiPartEmail[] expectedEmails, Message[] actualEmails) throws MessagingException, IOException {
+<span class="fc" id="L301">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L302">		assertions.register(() -&gt; Assert.assertEquals(&quot;should have received &quot; + expectedEmails.length + &quot; email&quot;, expectedEmails.length, actualEmails.length));</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">		for (int i = 0; i &lt; expectedEmails.length; i++) {</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">			assertEquals(expectedEmails[i], i &lt; actualEmails.length ? actualEmails[i] : null, false, assertions);</span>
+		}
+<span class="nc" id="L306">		assertions.execute();</span>
+<span class="nc" id="L307">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Shortcut to simplify unit testing with GreenMail. See
+	 * {@link #assertSimilar(ExpectedEmail[], Message[])}.
+	 * &lt;/p&gt;
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains only one part (only one content). It
+	 * will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})&lt;/li&gt;
+	 * &lt;li&gt;The body equals the expected one (order is important). See
+	 * {@link #assertBody(String, String, boolean)}&lt;/li&gt;
+	 * &lt;li&gt;The Mime Type equals the expected one (order is important).&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The checking of the body ignores the new line characters.
+	 * &lt;/p&gt;
+	 * 
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the email content fails
+	 */
+	public static void assertSimilar(ExpectedEmail expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+<span class="nc" id="L339">		assertSimilar(new ExpectedEmail[] { expectedEmail }, actualEmails);</span>
+<span class="nc" id="L340">	}</span>
+
+	/**
+	 * Assert that each received email content respects the expected one. It
+	 * ensures that the number of received emails equals to the expected number.
+	 * Then for each email it calls
+	 * {@link #assertSimilar(ExpectedEmail, Message)} .
+	 * 
+	 * @param expectedEmail
+	 *            the expected email
+	 * @param actualEmails
+	 *            the received emails
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the email content fails
+	 */
+	public static void assertSimilar(ExpectedEmail[] expectedEmail, Message[] actualEmails) throws MessagingException, IOException {
+<span class="fc" id="L358">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L359">		assertions.register(() -&gt; Assert.assertEquals(&quot;should have received &quot; + expectedEmail.length + &quot; email&quot;, expectedEmail.length, actualEmails.length));</span>
+<span class="pc bpc" id="L360" title="1 of 2 branches missed.">		for (int i = 0; i &lt; expectedEmail.length; i++) {</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">			assertEquals(expectedEmail[i], i &lt; actualEmails.length ? actualEmails[i] : null, false, assertions);</span>
+		}
+<span class="nc" id="L363">		assertions.execute();</span>
+<span class="nc" id="L364">	}</span>
+
+	/**
+	 * Assert that the fields of the received email are equal to the expected
+	 * values. The expected email contains only one part (only one content). It
+	 * will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received headers are respected (see
+	 * {@link #assertHeaders(ExpectedEmailHeader, Message)})&lt;/li&gt;
+	 * &lt;li&gt;The body equals the expected one (order is important). See
+	 * {@link #assertBody(String, String, boolean)}&lt;/li&gt;
+	 * &lt;li&gt;The Mime Type equals the expected one (order is important).&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The checking of the body ignores the new line characters.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expectedEmail
+	 *            all the fields with their expected values
+	 * @param actualEmail
+	 *            the received email
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 * @throws IOException
+	 *             when reading the email content fails
+	 */
+	public static void assertSimilar(ExpectedEmail expectedEmail, Message actualEmail) throws MessagingException, IOException {
+<span class="fc" id="L391">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L392">		assertEquals(expectedEmail, actualEmail, false, assertions);</span>
+<span class="fc" id="L393">		assertions.execute();</span>
+<span class="fc" id="L394">	}</span>
+
+	/**
+	 * Checks if the received body equals the expected body. It handles HTML
+	 * content and pure text content.
+	 * &lt;p&gt;
+	 * For text, the check can be done either strictly (totally equal) or not
+	 * (ignore new lines).
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * For HTML, the string content is parsed and DOM trees are compared. The
+	 * comparison can be done either strictly (DOM trees are totally equals,
+	 * attributes are in the same order) or not (attributes can be in any
+	 * order).
+	 * &lt;/p&gt;
+	 * 
+	 * @param expectedBody
+	 *            the expected content as string
+	 * @param actualBody
+	 *            the received content as string
+	 * @param strict
+	 *            true for strict checking (totally equals) or false to ignore
+	 *            new line characters
+	 */
+	public static void assertBody(String expectedBody, String actualBody, boolean strict) {
+<span class="fc" id="L419">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L420">		assertBody(&quot;body&quot;, expectedBody, actualBody, strict, assertions);</span>
+<span class="fc" id="L421">		assertions.execute();</span>
+<span class="fc" id="L422">	}</span>
+
+	/**
+	 * Checks if the received headers corresponds to the expected header values.
+	 * It checks if:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received subject equals the expected subject&lt;/li&gt;
+	 * &lt;li&gt;The email sender address equals the expected sender address&lt;/li&gt;
+	 * &lt;li&gt;The total number of recipients equals the total number of expected
+	 * recipients&lt;/li&gt;
+	 * &lt;li&gt;The number of &quot;to&quot; recipients equals the number of expected &quot;to&quot;
+	 * recipients&lt;/li&gt;
+	 * &lt;li&gt;The number of &quot;cc&quot; recipients equals the number of expected &quot;cc&quot;
+	 * recipients&lt;/li&gt;
+	 * &lt;li&gt;The number of &quot;bcc&quot; recipients equals the number of expected &quot;bcc&quot;
+	 * recipients&lt;/li&gt;
+	 * &lt;li&gt;Each &quot;to&quot; recipient equals the expected &quot;to&quot; recipient value&lt;/li&gt;
+	 * &lt;li&gt;Each &quot;cc&quot; recipient equals the expected &quot;cc&quot; recipient value&lt;/li&gt;
+	 * &lt;li&gt;Each &quot;bcc&quot; recipient equals the expected &quot;bcc&quot; recipient value&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param expectedEmail
+	 *            the expected header values
+	 * @param actualEmail
+	 *            the received header values
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 */
+	public static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail) throws MessagingException {
+<span class="fc" id="L451">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L452">		assertHeaders(expectedEmail, actualEmail, assertions);</span>
+<span class="fc" id="L453">		assertions.execute();</span>
+<span class="fc" id="L454">	}</span>
+
+	/**
+	 * Checks if the received headers corresponds to the expected header values.
+	 * It checks if:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The number of recipients of the provided type equals the number of
+	 * expected recipients of the provided type&lt;/li&gt;
+	 * &lt;li&gt;Each recipient of the provided type equals the expected recipient
+	 * value of the provided type&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param expectedRecipients
+	 *            the list of recipient string values
+	 * @param actualEmail
+	 *            the received header values
+	 * @param recipientType
+	 *            the type of the recipient to compare
+	 * @throws MessagingException
+	 *             when accessing the received email fails
+	 */
+	public static void assertRecipients(List&lt;String&gt; expectedRecipients, Message actualEmail, RecipientType recipientType) throws MessagingException {
+<span class="fc" id="L476">		AssertionRegistry assertions = new FailAtEndRegistry();</span>
+<span class="fc" id="L477">		assertRecipients(expectedRecipients, actualEmail, recipientType, assertions);</span>
+<span class="fc" id="L478">		assertions.execute();</span>
+<span class="fc" id="L479">	}</span>
+
+	private static void assertEquals(ExpectedEmail expectedEmail, Message actualEmail, boolean strict, AssertionRegistry assertions) throws MessagingException, IOException {
+<span class="fc" id="L482">		assertHeaders(expectedEmail, actualEmail, assertions);</span>
+<span class="fc" id="L483">		assertions.register(() -&gt; Assert.assertNotNull(&quot;Expected at least one body part but none found&quot;, getBodyOrNull(actualEmail, assertions)));</span>
+<span class="fc" id="L484">		assertBody(&quot;body&quot;, expectedEmail.getExpectedContent().getBody(), getBodyContentOrNull(actualEmail, assertions), strict, assertions);</span>
+<span class="fc" id="L485">		assertMimetype(expectedEmail.getExpectedContent(), getBodyMimetypeOrNull(actualEmail, assertions), assertions);</span>
+<span class="fc" id="L486">	}</span>
+
+	private static void assertEquals(ExpectedMultiPartEmail expectedEmail, Message actualEmail, boolean strict, AssertionRegistry assertions) throws MessagingException, IOException {
+<span class="fc" id="L489">		assertHeaders(expectedEmail, actualEmail, assertions);</span>
+<span class="fc bfc" id="L490" title="All 2 branches covered.">		Object content = actualEmail == null ? null : actualEmail.getContent();</span>
+<span class="fc" id="L491">		assertions.register(() -&gt; Assert.assertTrue(&quot;should be multipart message&quot;, content instanceof Multipart));</span>
+<span class="fc bfc" id="L492" title="All 2 branches covered.">		List&lt;Part&gt; bodyParts = actualEmail == null ? emptyList() : getBodyParts(actualEmail);</span>
+<span class="fc" id="L493">		assertions.register(() -&gt; Assert.assertEquals(&quot;should have &quot; + expectedEmail.getExpectedContents().size() + &quot; parts&quot;, expectedEmail.getExpectedContents().size(), bodyParts.size()));</span>
+<span class="fc bfc" id="L494" title="All 2 branches covered.">		for (int i = 0; i &lt; expectedEmail.getExpectedContents().size(); i++) {</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">			Part part = i &lt; bodyParts.size() ? bodyParts.get(i) : null;</span>
+<span class="pc bpc" id="L496" title="1 of 4 branches missed.">			assertBody(&quot;body[&quot; + i + &quot;]&quot;, expectedEmail.getExpectedContents().get(i).getBody(), part == null || part.getContent() == null ? null : part.getContent().toString(), strict, assertions);</span>
+<span class="fc bfc" id="L497" title="All 2 branches covered.">			assertMimetype(expectedEmail.getExpectedContents().get(i), part == null ? null : part.getContentType(), assertions);</span>
+		}
+<span class="fc" id="L499">	}</span>
+
+	private static void assertMimetype(ExpectedContent expectedContent, String contentType, AssertionRegistry assertions) {
+<span class="fc bfc" id="L502" title="All 2 branches covered.">		assertions.register(() -&gt; Assert.assertTrue(&quot;mimetype should match &quot; + expectedContent.getMimetype() + &quot; instead of &quot; + contentType,</span>
+<span class="fc bfc" id="L503" title="All 2 branches covered.">				contentType != null &amp;&amp; expectedContent.getMimetype().matcher(contentType).matches()));</span>
+<span class="fc" id="L504">	}</span>
+
+	private static void assertBody(String name, String expectedBody, String actualBody, boolean strict, AssertionRegistry assertions) {
+<span class="fc bfc" id="L507" title="All 2 branches covered.">		if (isHtml(expectedBody)) {</span>
+<span class="fc bfc" id="L508" title="All 2 branches covered.">			if (strict) {</span>
+<span class="fc" id="L509">				assertions.register(() -&gt; AssertHtml.assertEquals(expectedBody, actualBody));</span>
+			} else {
+<span class="fc" id="L511">				assertions.register(() -&gt; AssertHtml.assertSimilar(expectedBody, actualBody));</span>
+			}
+		} else {
+<span class="fc" id="L514">			assertions.register(() -&gt; compareText(name, expectedBody, actualBody, strict));</span>
+		}
+<span class="fc" id="L516">	}</span>
+
+	private static void compareText(String name, String expectedBody, String actualBody, boolean strict) throws ComparisonFailure {
+<span class="pc bpc" id="L519" title="3 of 4 branches missed.">		if (expectedBody == null &amp;&amp; actualBody != null) {</span>
+<span class="nc" id="L520">			throw new ComparisonFailure(name + &quot; should be null&quot;, expectedBody, actualBody);</span>
+		}
+<span class="pc bpc" id="L522" title="1 of 2 branches missed.">		if (expectedBody == null) {</span>
+<span class="nc" id="L523">			return;</span>
+		}
+<span class="fc bfc" id="L525" title="All 6 branches covered.">		if (strict ? !expectedBody.equals(actualBody) : !sanitize(expectedBody).equals(sanitize(actualBody))) {</span>
+<span class="fc" id="L526">			throw new ComparisonFailure(name + &quot; should be '&quot; + expectedBody + &quot;'&quot;, expectedBody, actualBody);</span>
+		}
+<span class="fc" id="L528">	}</span>
+
+	private static void assertHeaders(ExpectedEmailHeader expectedEmail, Message actualEmail, AssertionRegistry assertions) throws MessagingException {
+<span class="fc bfc" id="L531" title="All 4 branches covered.">		Address[] from = actualEmail == null || actualEmail.getFrom() == null ? null : actualEmail.getFrom();</span>
+<span class="fc bfc" id="L532" title="All 2 branches covered.">		assertions.register(() -&gt; Assert.assertEquals(&quot;subject should be '&quot; + expectedEmail.getSubject() + &quot;'&quot;, expectedEmail.getSubject(), actualEmail == null ? null : actualEmail.getSubject()));</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">		assertions.register(() -&gt; Assert.assertEquals(&quot;should have only one from&quot;, (Integer) 1, from == null ? null : from.length));</span>
+<span class="fc bfc" id="L534" title="All 2 branches covered.">		assertions.register(() -&gt; Assert.assertEquals(&quot;from should be '&quot; + expectedEmail.getFrom() + &quot;'&quot;, expectedEmail.getFrom(), from == null ? null : from[0].toString()));</span>
+<span class="fc" id="L535">		int recipients = expectedEmail.getTo().size() + expectedEmail.getBcc().size() + expectedEmail.getCc().size();</span>
+<span class="fc bfc" id="L536" title="All 2 branches covered.">		assertions.register(() -&gt; Assert.assertEquals(&quot;should be received by &quot; + recipients + &quot; recipients&quot;, (Integer) recipients,</span>
+<span class="fc bfc" id="L537" title="All 2 branches covered.">				actualEmail == null || actualEmail.getAllRecipients() == null ? null : actualEmail.getAllRecipients().length));</span>
+<span class="fc" id="L538">		assertRecipients(expectedEmail.getTo(), actualEmail, RecipientType.TO, assertions);</span>
+<span class="fc" id="L539">		assertRecipients(expectedEmail.getCc(), actualEmail, RecipientType.CC, assertions);</span>
+<span class="fc" id="L540">		assertRecipients(expectedEmail.getBcc(), actualEmail, RecipientType.BCC, assertions);</span>
+<span class="fc" id="L541">	}</span>
+
+	private static void assertRecipients(List&lt;String&gt; expectedRecipients, Message actualEmail, RecipientType recipientType, AssertionRegistry assertions) throws MessagingException {
+<span class="fc bfc" id="L544" title="All 2 branches covered.">		Address[] actualRecipients = actualEmail == null ? null : actualEmail.getRecipients(recipientType);</span>
+<span class="fc bfc" id="L545" title="All 2 branches covered.">		if (expectedRecipients.isEmpty()) {</span>
+<span class="fc bfc" id="L546" title="All 4 branches covered.">			assertions.register(() -&gt; Assert.assertTrue(&quot;should be received by no recipients (of type RecipientType.&quot; + recipientType + &quot;)&quot;, actualRecipients == null || actualRecipients.length == 0));</span>
+		} else {
+<span class="fc" id="L548">			assertions.register(() -&gt; Assert.assertEquals(&quot;should be received by &quot; + expectedRecipients.size() + &quot; recipients (of type RecipientType.&quot; + recipientType + &quot;)&quot;,</span>
+<span class="fc bfc" id="L549" title="All 2 branches covered.">					(Integer) expectedRecipients.size(), actualRecipients == null ? null : actualRecipients.length));</span>
+<span class="fc bfc" id="L550" title="All 2 branches covered.">			for (int i = 0; i &lt; expectedRecipients.size(); i++) {</span>
+<span class="fc" id="L551">				final int idx = i;</span>
+<span class="fc bfc" id="L552" title="All 4 branches covered.">				assertions.register(() -&gt; Assert.assertEquals(&quot;recipient &quot; + recipientType + &quot;[&quot; + idx + &quot;] should be '&quot; + expectedRecipients.get(idx) + &quot;'&quot;, expectedRecipients.get(idx),</span>
+<span class="fc" id="L553">						actualRecipients != null &amp;&amp; idx &lt; actualRecipients.length ? actualRecipients[idx].toString() : null));</span>
+			}
+		}
+<span class="fc" id="L556">	}</span>
+
+	/**
+	 * Remove new lines from the string.
+	 * 
+	 * @param str
+	 *            the string to sanitize
+	 * @return the sanitized string
+	 */
+	private static String sanitize(String str) {
+<span class="fc bfc" id="L566" title="All 2 branches covered.">		if (str == null) {</span>
+<span class="fc" id="L567">			return null;</span>
+		}
+<span class="fc" id="L569">		return NEW_LINES.matcher(str).replaceAll(&quot;&quot;);</span>
+	}
+
+	@SuppressWarnings(&quot;squid:S2147&quot;) // false positive: merging exception
+										// doesn't compile in that case or we
+										// are force to throw Exception instead
+										// of MessagingException
+	private static Part getBodyOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException {
+		try {
+<span class="fc bfc" id="L578" title="All 2 branches covered.">			if (actualEmail == null) {</span>
+<span class="fc" id="L579">				return null;</span>
+			}
+<span class="fc" id="L581">			return EmailUtils.getBodyPart(actualEmail);</span>
+<span class="nc" id="L582">		} catch (MessagingException e) {</span>
+<span class="nc" id="L583">			registry.register(failure(e));</span>
+<span class="nc" id="L584">			return null;</span>
+<span class="nc" id="L585">		} catch (IllegalStateException e) {</span>
+<span class="nc" id="L586">			registry.register(failure(e));</span>
+<span class="nc" id="L587">			return null;</span>
+		}
+	}
+
+	@SuppressWarnings(&quot;squid:S2147&quot;) // false positive: merging exception
+										// doesn't compile in that case or we
+										// are force to throw Exception instead
+										// of MessagingException
+	private static String getBodyContentOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException, IOException {
+		try {
+<span class="fc" id="L597">			Part bodyPart = getBodyOrNull(actualEmail, registry);</span>
+<span class="fc bfc" id="L598" title="All 2 branches covered.">			if (bodyPart == null) {</span>
+<span class="fc" id="L599">				return null;</span>
+			}
+<span class="fc" id="L601">			return EmailUtils.getContent(bodyPart, UTF_8);</span>
+<span class="nc" id="L602">		} catch (MessagingException e) {</span>
+<span class="nc" id="L603">			registry.register(failure(e));</span>
+<span class="nc" id="L604">			return null;</span>
+<span class="nc" id="L605">		} catch (IllegalStateException e) {</span>
+<span class="nc" id="L606">			registry.register(failure(e));</span>
+<span class="nc" id="L607">			return null;</span>
+<span class="nc" id="L608">		} catch (IOException e) {</span>
+<span class="nc" id="L609">			registry.register(failure(e));</span>
+<span class="nc" id="L610">			return null;</span>
+		}
+	}
+
+	private static &lt;E extends Exception&gt; Executable&lt;E&gt; failure(E exception) {
+<span class="nc" id="L615">		return () -&gt; {</span>
+<span class="nc" id="L616">			throw exception;</span>
+		};
+	}
+
+	@SuppressWarnings(&quot;squid:S2147&quot;) // false positive: merging exception
+										// doesn't compile in that case or we
+										// are force to throw Exception instead
+										// of MessagingException
+	private static String getBodyMimetypeOrNull(Part actualEmail, AssertionRegistry registry) throws MessagingException {
+		try {
+<span class="fc" id="L626">			Part bodyPart = getBodyOrNull(actualEmail, registry);</span>
+<span class="fc bfc" id="L627" title="All 2 branches covered.">			if (bodyPart == null) {</span>
+<span class="fc" id="L628">				return null;</span>
+			}
+<span class="fc" id="L630">			return bodyPart.getContentType();</span>
+<span class="nc" id="L631">		} catch (MessagingException e) {</span>
+<span class="nc" id="L632">			registry.register(failure(e));</span>
+<span class="nc" id="L633">			return null;</span>
+<span class="nc" id="L634">		} catch (IllegalStateException e) {</span>
+<span class="nc" id="L635">			registry.register(failure(e));</span>
+<span class="nc" id="L636">			return null;</span>
+		}
+	}
+
+	private static boolean isHtml(String expectedBody) {
+<span class="fc" id="L641">		return HTML_PATTERN.matcher(expectedBody).find();</span>
+	}
+
+	private AssertEmail() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

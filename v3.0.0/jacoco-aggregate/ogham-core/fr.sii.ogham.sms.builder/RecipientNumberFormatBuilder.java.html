@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RecipientNumberFormatBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">RecipientNumberFormatBuilder.java</span></div><h1>RecipientNumberFormatBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
+import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
+import fr.sii.ogham.sms.message.addressing.translator.DefaultHandler;
+import fr.sii.ogham.sms.message.addressing.translator.InternationalNumberFormatHandler;
+import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
+
+/**
+ * Defines which standard conversions may be applied on the phone number to
+ * convert it from a {@link PhoneNumber} to an {@link AddressedPhoneNumber}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class RecipientNumberFormatBuilder extends AbstractParent&lt;RecipientNumberBuilder&gt; implements Builder&lt;PhoneNumberTranslator&gt; {
+	private final BuildContext buildContext;
+	private final ConfigurationValueBuilderHelper&lt;RecipientNumberFormatBuilder, Boolean&gt; enableInternationalValueBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public RecipientNumberFormatBuilder(RecipientNumberBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L39">		super(parent);</span>
+<span class="fc" id="L40">		this.buildContext = buildContext;</span>
+<span class="fc" id="L41">		enableInternationalValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L42">	}</span>
+
+	/**
+	 * Enable/disable international number conversion: if the sender starts with
+	 * a &quot;+&quot;, TON is set to 1, and NPI is set to 1.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #internationalNumber()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code internationalNumber(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable international format
+	 * @return this instance for fluent chaining
+	 */
+	public RecipientNumberFormatBuilder internationalNumber(Boolean enable) {
+<span class="fc" id="L80">		enableInternationalValueBuilder.setValue(enable);</span>
+<span class="fc" id="L81">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable international number conversion: if the sender starts with
+	 * a &quot;+&quot;, TON is set to 1, and NPI is set to 1.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .internationalNumber()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #internationalNumber(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .internationalNumber(false)
+	 * .internationalNumber()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;RecipientNumberFormatBuilder, Boolean&gt; internationalNumber() {
+<span class="fc" id="L122">		return enableInternationalValueBuilder;</span>
+	}
+
+	@Override
+	public PhoneNumberTranslator build() {
+<span class="fc" id="L127">		CompositePhoneNumberTranslator translator = buildContext.register(new CompositePhoneNumberTranslator());</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">		if (enabled(enableInternationalValueBuilder)) {</span>
+<span class="fc" id="L129">			translator.add(buildContext.register(new InternationalNumberFormatHandler()));</span>
+		}
+<span class="fc" id="L131">		translator.add(buildContext.register(new DefaultHandler()));</span>
+<span class="fc" id="L132">		return translator;</span>
+	}
+
+	private static boolean enabled(ConfigurationValueBuilderHelper&lt;?, Boolean&gt; enableInternational) {
+<span class="fc" id="L136">		return enableInternational.getValue(false);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

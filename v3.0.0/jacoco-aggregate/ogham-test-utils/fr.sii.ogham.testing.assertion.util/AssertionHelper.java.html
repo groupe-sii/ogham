@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AssertionHelper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.util</a> &gt; <span class="el_source">AssertionHelper.java</span></div><h1>AssertionHelper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.util;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.StringDescription;
+import org.junit.ComparisonFailure;
+
+import fr.sii.ogham.testing.assertion.context.Context;
+import fr.sii.ogham.testing.assertion.hamcrest.ComparisonAwareMatcher;
+import fr.sii.ogham.testing.assertion.hamcrest.CustomDescriptionProvider;
+import fr.sii.ogham.testing.assertion.hamcrest.CustomReason;
+import fr.sii.ogham.testing.assertion.hamcrest.DecoratorMatcher;
+import fr.sii.ogham.testing.assertion.hamcrest.ExpectedValueProvider;
+import fr.sii.ogham.testing.assertion.hamcrest.OverrideDescription;
+
+/**
+ * Utility class for Ogham assertions.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class AssertionHelper {
+
+	/**
+	 * Copy of {@link MatcherAssert#assertThat(Object, Matcher)} with the
+	 * following additions:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If the matcher can provide expected value, a
+	 * {@link ComparisonFailure} exception is thrown instead of
+	 * {@link AssertionError} in order to display differences between expected
+	 * string and actual string in the IDE.&lt;/li&gt;
+	 * &lt;li&gt;If the matcher is a {@link CustomReason} matcher and no reason is
+	 * provided, the reason of the matcher is used to provide more information
+	 * about the context (which message has failed for example)&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param actual
+	 *            the actual value
+	 * @param matcher
+	 *            the matcher to apply
+	 * @param &lt;T&gt;
+	 *            the type used for the matcher
+	 */
+	public static &lt;T&gt; void assertThat(T actual, Matcher&lt;? super T&gt; matcher) {
+<span class="fc" id="L46">		assertThat(&quot;&quot;, actual, matcher);</span>
+<span class="fc" id="L47">	}</span>
+
+	/**
+	 * Copy of {@link MatcherAssert#assertThat(String, Object, Matcher)} with
+	 * the following additions:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If the matcher can provide expected value, a
+	 * {@link ComparisonFailure} exception is thrown instead of
+	 * {@link AssertionError} in order to display differences between expected
+	 * string and actual string in the IDE.&lt;/li&gt;
+	 * &lt;li&gt;If the matcher is a {@link CustomReason} matcher and no reason is
+	 * provided, the reason of the matcher is used to provide more information
+	 * about the context (which message has failed for example)&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param reason
+	 *            the reason
+	 * @param actual
+	 *            the actual value
+	 * @param matcher
+	 *            the matcher to apply
+	 * @param &lt;T&gt;
+	 *            the type used for the matcher
+	 */
+	public static &lt;T&gt; void assertThat(String reason, T actual, Matcher&lt;? super T&gt; matcher) {
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		if (!matcher.matches(actual)) {</span>
+<span class="fc" id="L73">			Description description = getDescription(reason, actual, matcher);</span>
+
+<span class="fc bfc" id="L75" title="All 2 branches covered.">			if (hasExpectedValue(matcher)) {</span>
+<span class="fc" id="L76">				ExpectedValueProvider&lt;T&gt; comparable = getComparable(matcher);</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">				throw new ComparisonFailure(description.toString(), String.valueOf(comparable == null ? null : comparable.getExpectedValue()), String.valueOf(actual));</span>
+			} else {
+<span class="fc" id="L79">				throw new AssertionError(description.toString());</span>
+			}
+		}
+<span class="fc" id="L82">	}</span>
+
+	/**
+	 * Ogham helper for keeping context information when using fluent
+	 * assertions.
+	 * 
+	 * @param reasonTemplate
+	 *            the template for the reason
+	 * @param context
+	 *            the evaluation context
+	 * @param delegate
+	 *            the matcher to decorate
+	 * @param &lt;T&gt;
+	 *            the type used for the matcher
+	 * @return the matcher
+	 */
+	public static &lt;T&gt; Matcher&lt;T&gt; usingContext(String reasonTemplate, Context context, Matcher&lt;T&gt; delegate) {
+<span class="fc" id="L99">		return new CustomReason&lt;&gt;(context.evaluate(reasonTemplate), delegate);</span>
+	}
+
+	/**
+	 * Ogham helper for overriding default description.
+	 * 
+	 * @param description
+	 *            the description to display
+	 * @param delegate
+	 *            the matcher to decorate
+	 * @param &lt;T&gt;
+	 *            the type used for the matcher
+	 * @return the matcher
+	 */
+	public static &lt;T&gt; Matcher&lt;T&gt; overrideDescription(String description, Matcher&lt;T&gt; delegate) {
+<span class="fc" id="L114">		return new OverrideDescription&lt;&gt;(description, delegate);</span>
+	}
+	
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T&gt; boolean hasExpectedValue(Matcher&lt;? super T&gt; matcher) {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">		if (matcher instanceof ExpectedValueProvider) {</span>
+<span class="fc" id="L120">			return true;</span>
+		}
+<span class="fc bfc" id="L122" title="All 2 branches covered.">		if (matcher instanceof DecoratorMatcher) {</span>
+<span class="fc" id="L123">			return hasExpectedValue(((DecoratorMatcher&lt;T&gt;) matcher).getDecoree());</span>
+		}
+<span class="fc" id="L125">		return false;</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T&gt; ExpectedValueProvider&lt;T&gt; getComparable(Matcher&lt;? super T&gt; matcher) {
+<span class="fc bfc" id="L130" title="All 2 branches covered.">		if (matcher instanceof ExpectedValueProvider) {</span>
+<span class="fc" id="L131">			return (ExpectedValueProvider&lt;T&gt;) matcher;</span>
+		}
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">		if (matcher instanceof DecoratorMatcher) {</span>
+<span class="fc" id="L134">			return getComparable(((DecoratorMatcher&lt;T&gt;) matcher).getDecoree());</span>
+		}
+<span class="nc" id="L136">		return null;</span>
+	}
+
+	private static &lt;T&gt; Description getDescription(String reason, T actual, Matcher&lt;? super T&gt; matcher) {
+<span class="fc" id="L140">		String additionalText = null;</span>
+<span class="fc" id="L141">		ComparisonAwareMatcher cam = getComparisonAwareMatcher(matcher);</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">		if (cam != null) {</span>
+<span class="fc" id="L143">			additionalText = cam.comparisonMessage();</span>
+		}
+<span class="fc" id="L145">		return getDescription(reason, actual, matcher, additionalText);</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T&gt; ComparisonAwareMatcher getComparisonAwareMatcher(Matcher&lt;? super T&gt; matcher) {
+<span class="fc bfc" id="L150" title="All 2 branches covered.">		if (matcher instanceof ComparisonAwareMatcher) {</span>
+<span class="fc" id="L151">			return (ComparisonAwareMatcher) matcher;</span>
+		}
+<span class="fc bfc" id="L153" title="All 2 branches covered.">		if (matcher instanceof DecoratorMatcher) {</span>
+<span class="fc" id="L154">			return getComparisonAwareMatcher(((DecoratorMatcher&lt;T&gt;) matcher).getDecoree());</span>
+		}
+<span class="fc" id="L156">		return null;</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T&gt; Description getDescription(String reason, T actual, Matcher&lt;? super T&gt; matcher, String additionalText) {
+<span class="fc bfc" id="L161" title="All 2 branches covered.">		if (matcher instanceof CustomDescriptionProvider) {</span>
+<span class="fc" id="L162">			return ((CustomDescriptionProvider&lt;T&gt;) matcher).describe(reason, actual, additionalText);</span>
+		}
+		// @formatter:off
+<span class="fc" id="L165">		Description description = new StringDescription();</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">		description.appendText(getReason(reason, matcher))</span>
+<span class="fc" id="L167">					.appendText(additionalText==null ? &quot;&quot; : (&quot;\n&quot;+additionalText))</span>
+<span class="fc" id="L168">					.appendText(&quot;\nExpected: &quot;)</span>
+<span class="fc" id="L169">					.appendDescriptionOf(matcher)</span>
+<span class="fc" id="L170">					.appendText(&quot;\n     but: &quot;);</span>
+<span class="fc" id="L171">		matcher.describeMismatch(actual, description);</span>
+		// @formatter:on
+<span class="fc" id="L173">		return description;</span>
+	}
+
+	private static &lt;T&gt; String getReason(String reason, Matcher&lt;? super T&gt; matcher) {
+<span class="pc bpc" id="L177" title="1 of 4 branches missed.">		if (reason != null &amp;&amp; !reason.isEmpty()) {</span>
+<span class="fc" id="L178">			return reason;</span>
+		}
+<span class="fc bfc" id="L180" title="All 2 branches covered.">		if (matcher instanceof CustomReason) {</span>
+<span class="fc" id="L181">			return ((CustomReason&lt;?&gt;) matcher).getReason();</span>
+		}
+<span class="fc" id="L183">		return &quot;&quot;;</span>
+	}
+
+	private AssertionHelper() {
+		super();
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FileResolverAdapter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.adapter</a> &gt; <span class="el_source">FileResolverAdapter.java</span></div><h1>FileResolverAdapter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.adapter;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+
+import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
+import fr.sii.ogham.core.resource.resolver.FileResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.template.exception.ResolverAdapterConfigurationException;
+import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.TemplateLoader;
+
+/**
+ * Adapter that converts general {@link FileResolver} into FreeMarker specific
+ * {@link FileTemplateLoader}.
+ * 
+ * @author Cyril Dejonghe
+ *
+ */
+public class FileResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter {
+	private final File baseDir;
+	
+	public FileResolverAdapter() {
+<span class="fc" id="L27">		this(new File(&quot;/&quot;));</span>
+<span class="fc" id="L28">	}</span>
+
+	public FileResolverAdapter(File baseDir) {
+<span class="fc" id="L31">		super();</span>
+<span class="fc" id="L32">		this.baseDir = baseDir;</span>
+<span class="fc" id="L33">	}</span>
+
+	@Override
+	public boolean supports(ResourceResolver resolver) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;</span>
+<span class="fc" id="L38">		return actualResolver instanceof FileResolver;</span>
+	}
+
+	@Override
+	public TemplateLoader adapt(ResourceResolver resolver) throws ResolverAdapterConfigurationException {
+		try {
+<span class="fc" id="L44">			return new FileTemplateLoaderAllowingAbsolutePaths(baseDir);</span>
+<span class="nc" id="L45">		} catch (IOException e) {</span>
+<span class="nc" id="L46">			throw new ResolverAdapterConfigurationException(&quot;Invalid configuration for &quot; + FileTemplateLoader.class.getSimpleName(), resolver, e);</span>
+		}
+	}
+
+	private static class FileTemplateLoaderAllowingAbsolutePaths extends FileTemplateLoader {
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">		private static final boolean SEP_IS_SLASH = File.separatorChar == '/';</span>
+		
+		public FileTemplateLoaderAllowingAbsolutePaths(File baseDir) throws IOException {
+<span class="fc" id="L54">			super(baseDir, true);</span>
+<span class="fc" id="L55">		}</span>
+
+		@Override
+		public Object findTemplateSource(String name) throws IOException {
+			// TODO: add security option to enable/disable absolute paths outside of baseDir
+			try {
+<span class="fc" id="L61">				return AccessController.doPrivileged(new PrivilegedExceptionAction&lt;File&gt;() {</span>
+					@Override
+					public File run() throws IOException {
+<span class="fc" id="L64">						File source = new File(name);</span>
+<span class="pc bpc" id="L65" title="1 of 4 branches missed.">						if (source.isAbsolute() &amp;&amp; source.isFile()) {</span>
+<span class="fc" id="L66">							return source;</span>
+						}
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">						source = new File(baseDir, SEP_IS_SLASH ? name : name.replace('/', File.separatorChar));</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">						if (!source.isFile()) {</span>
+<span class="fc" id="L70">							return null;</span>
+						}
+<span class="nc" id="L72">						return source;</span>
+					}
+				});
+<span class="nc" id="L75">			} catch (PrivilegedActionException e) {</span>
+<span class="nc" id="L76">				throw (IOException) e.getException();</span>
+			}
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

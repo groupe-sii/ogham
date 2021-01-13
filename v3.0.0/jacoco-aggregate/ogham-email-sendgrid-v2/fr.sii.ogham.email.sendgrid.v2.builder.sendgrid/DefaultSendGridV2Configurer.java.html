@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultSendGridV2Configurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v2</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v2.builder.sendgrid</a> &gt; <span class="el_source">DefaultSendGridV2Configurer.java</span></div><h1>DefaultSendGridV2Configurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v2.builder.sendgrid;
+
+import static fr.sii.ogham.email.sendgrid.SendGridConstants.DEFAULT_SENDGRID_CONFIGURER_PRIORITY;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.core.util.ClasspathUtils;
+
+/**
+ * Default SendGrid configurer that is automatically applied every time a
+ * {@link MessagingBuilder} instance is created through
+ * {@link MessagingBuilder#standard()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 30000 in order to be applied after
+ * templating configurers and JavaMail configurer.
+ * &lt;/p&gt;
+ * 
+ * This configurer is applied only if {@code com.sendgrid.SendGrid} is present
+ * in the classpath. If not present, SendGrid implementation is not registered
+ * at all.
+ * 
+ * &lt;p&gt;
+ * This configurer inherits environment configuration (see
+ * {@link BuildContext}).
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * This configurer inherits mimetype configuration (see
+ * {@link MimetypeDetectionBuilder} and
+ * {@link SendGridV2Builder#mimetype(MimetypeDetectionBuilder)}).
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This configurer applies the following configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configures authentication:
+ * &lt;ul&gt;
+ * &lt;li&gt;Either by providing an &lt;a href=
+ * &quot;https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html&quot;&gt;API
+ * key&lt;/a&gt;: using the property &quot;ogham.email.sendgrid.api-key&quot;&lt;/li&gt;
+ * &lt;li&gt;Or using username/password: using the properties
+ * &quot;ogham.email.sendgrid.username&quot; and &quot;ogham.email.sendgrid.password&quot;&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class DefaultSendGridV2Configurer {
+<span class="fc" id="L57">	private static final Logger LOG = LoggerFactory.getLogger(DefaultSendGridV2Configurer.class);</span>
+
+	@ConfigurerFor(targetedBuilder = &quot;standard&quot;, priority = DEFAULT_SENDGRID_CONFIGURER_PRIORITY)
+<span class="fc" id="L60">	public static class SendGridV2Configurer implements MessagingConfigurer {</span>
+		@Override
+		public void configure(MessagingBuilder msgBuilder) {
+<span class="fc bfc" id="L63" title="All 2 branches covered.">			if (!canUseSendGrid()) {</span>
+<span class="fc" id="L64">				LOG.debug(&quot;[{}] skip configuration&quot;, this);</span>
+<span class="fc" id="L65">				return;</span>
+			}
+<span class="fc" id="L67">			LOG.debug(&quot;[{}] apply configuration&quot;, this);</span>
+			// @formatter:off
+<span class="fc" id="L69">			SendGridV2Builder builder = msgBuilder.email().sender(SendGridV2Builder.class);</span>
+			// inherit mimetype configuration as parent builder
+<span class="fc" id="L71">			builder.mimetype(msgBuilder.mimetype());</span>
+<span class="fc" id="L72">			builder</span>
+<span class="fc" id="L73">				.apiKey().properties(&quot;${ogham.email.sendgrid.api-key}&quot;).and()</span>
+<span class="fc" id="L74">				.username().properties(&quot;${ogham.email.sendgrid.username}&quot;).and()</span>
+<span class="fc" id="L75">				.password().properties(&quot;${ogham.email.sendgrid.password}&quot;).and()</span>
+<span class="fc" id="L76">				.url().properties(&quot;${ogham.email.sendgrid.url}&quot;);</span>
+			// @formatter:on
+<span class="fc" id="L78">		}</span>
+
+		private static boolean canUseSendGrid() {
+<span class="pc bpc" id="L81" title="1 of 4 branches missed.">			return ClasspathUtils.exists(&quot;com.sendgrid.SendGrid&quot;) &amp;&amp; ClasspathUtils.exists(&quot;com.sendgrid.SendGrid$Email&quot;);</span>
+		}
+	}
+
+	private DefaultSendGridV2Configurer() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

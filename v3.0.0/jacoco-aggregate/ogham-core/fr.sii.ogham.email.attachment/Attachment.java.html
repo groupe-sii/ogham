@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Attachment.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.attachment</a> &gt; <span class="el_source">Attachment.java</span></div><h1>Attachment.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.attachment;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import fr.sii.ogham.core.resource.ByteResource;
+import fr.sii.ogham.core.resource.FileResource;
+import fr.sii.ogham.core.resource.LookupResource;
+import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+
+/**
+ * Represents a content to attach to the email. Typically a file to join to the
+ * email. An attachment is represented with the following information:
+ * &lt;ul&gt;
+ * &lt;li&gt;A content (the file to join to the email). See {@link NamedResource} for
+ * more information.&lt;/li&gt;
+ * &lt;li&gt;A name (the name to display for the file). See {@link NamedResource} for
+ * more information.&lt;/li&gt;
+ * &lt;li&gt;An optional description&lt;/li&gt;
+ * &lt;li&gt;An optional disposition ({@link ContentDisposition#ATTACHMENT} by
+ * default)&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class Attachment {
+	/**
+	 * The resource used to access the content of the attachment
+	 */
+	private NamedResource resource;
+
+	/**
+	 * The description for the attachment
+	 */
+	private String description;
+
+	/**
+	 * How to attach the attachment to the email
+	 */
+	private String disposition;
+
+	/**
+	 * The ID of the content
+	 */
+	private String contentId;
+
+	/**
+	 * The content-type of the attachment (automatically guessed by default)
+	 */
+	private String contentType;
+
+	/**
+	 * Initialize the attachment with the provided resource (content and name),
+	 * the description of the attachment and the disposition (how to include the
+	 * attachment into the mail).
+	 * 
+	 * @param resource
+	 *            the resource of the attachment (with name)
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 * @param contentId
+	 *            the unique id of the content (may not null)
+	 */
+	public Attachment(NamedResource resource, String description, String disposition, String contentId) {
+<span class="fc" id="L73">		super();</span>
+<span class="fc" id="L74">		this.resource = resource;</span>
+<span class="fc" id="L75">		this.description = description;</span>
+<span class="fc" id="L76">		this.disposition = disposition;</span>
+<span class="fc" id="L77">		this.contentId = contentId;</span>
+<span class="fc" id="L78">	}</span>
+
+	/**
+	 * Initialize the attachment with the provided resource (content and name),
+	 * the description of the attachment and the disposition (how to include the
+	 * attachment into the mail).
+	 * 
+	 * @param resource
+	 *            the resource of the attachment (with name)
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 */
+	public Attachment(NamedResource resource, String description, String disposition) {
+<span class="fc" id="L93">		this(resource, description, disposition, null);</span>
+<span class="fc" id="L94">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided resource (content and name),
+	 * the description of the attachment.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param resource
+	 *            the resource of the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 */
+	public Attachment(NamedResource resource, String description) {
+<span class="fc" id="L111">		this(resource, description, ContentDisposition.ATTACHMENT);</span>
+<span class="fc" id="L112">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided resource (content and name).
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The description is not used (set to null)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param resource
+	 *            the resource of the attachment
+	 */
+	public Attachment(NamedResource resource) {
+<span class="fc" id="L129">		this(resource, null);</span>
+<span class="fc" id="L130">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided path, description of the
+	 * attachment and disposition (how to include the attachment into the mail).
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * For example, a path could be &quot;classpath:/email/hello.pdf&quot;. The lookup is
+	 * &quot;classpath:&quot;.
+	 * &lt;/p&gt;
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 */
+	public Attachment(String path, String description, String disposition) {
+<span class="nc" id="L154">		this(new UnresolvedPath(path), description, disposition);</span>
+<span class="nc" id="L155">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided path and description of the
+	 * attachment.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * For example, a path could be &quot;classpath:/email/hello.pdf&quot;. The lookup is
+	 * &quot;classpath:&quot;.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 */
+	public Attachment(String path, String description) {
+<span class="nc" id="L180">		this(new UnresolvedPath(path), description);</span>
+<span class="nc" id="L181">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided path.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * For example, a path could be &quot;classpath:/email/hello.pdf&quot;. The lookup is
+	 * &quot;classpath:&quot;.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The description is not used (set to null)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 */
+	public Attachment(String path) {
+<span class="fc" id="L206">		this(new UnresolvedPath(path));</span>
+<span class="fc" id="L207">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided path, description of the
+	 * attachment and disposition (how to include the attachment into the mail).
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * For example, a path could be &quot;classpath:/email/hello.pdf&quot;. The lookup is
+	 * &quot;classpath:&quot;.
+	 * &lt;/p&gt;
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 */
+	public Attachment(ResourcePath path, String description, String disposition) {
+<span class="nc" id="L231">		this(new LookupResource(path), description, disposition);</span>
+<span class="nc" id="L232">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided path and description of the
+	 * attachment.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * For example, a path could be &quot;classpath:/email/hello.pdf&quot;. The lookup is
+	 * &quot;classpath:&quot;.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 */
+	public Attachment(ResourcePath path, String description) {
+<span class="nc" id="L257">		this(new LookupResource(path), description);</span>
+<span class="nc" id="L258">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided path.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The path may contain a lookup. The lookup is case sensitive and must end
+	 * with a ':'. It must not contain another ':' character.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * For example, a path could be &quot;classpath:/email/hello.pdf&quot;. The lookup is
+	 * &quot;classpath:&quot;.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The description is not used (set to null)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param path
+	 *            the path to the attachment
+	 */
+	public Attachment(ResourcePath path) {
+<span class="fc" id="L283">		this(new LookupResource(path));</span>
+<span class="fc" id="L284">	}</span>
+
+	/**
+	 * Initialize the attachment with the provided content, name, description of
+	 * the attachment and disposition (how to include the attachment into the
+	 * mail).
+	 * 
+	 * @param name
+	 *            the name of the attachment
+	 * @param stream
+	 *            the content of the attachment accessible trough the stream
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 * @throws IOException
+	 *             when the content of the stream can't be read
+	 */
+	public Attachment(String name, InputStream stream, String description, String disposition) throws IOException {
+<span class="nc" id="L303">		this(new ByteResource(name, stream), description, disposition);</span>
+<span class="nc" id="L304">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided content, name and description
+	 * of the attachment.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param name
+	 *            the name of the attachment
+	 * @param stream
+	 *            the content of the attachment accessible trough the stream
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @throws IOException
+	 *             when the content of the stream can't be read
+	 */
+	public Attachment(String name, InputStream stream, String description) throws IOException {
+<span class="nc" id="L325">		this(new ByteResource(name, stream), description);</span>
+<span class="nc" id="L326">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided content and name.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The description is not used (set to null)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param name
+	 *            the name of the attachment
+	 * @param stream
+	 *            the content of the attachment accessible trough the stream
+	 * @throws IOException
+	 *             when the content of the stream can't be read
+	 */
+	public Attachment(String name, InputStream stream) throws IOException {
+<span class="fc" id="L347">		this(new ByteResource(name, stream));</span>
+<span class="fc" id="L348">	}</span>
+
+	/**
+	 * Initialize the attachment with the provided content, name, description of
+	 * the attachment and disposition (how to include the attachment into the
+	 * mail).
+	 * 
+	 * @param name
+	 *            the name of the attachment
+	 * @param content
+	 *            the content of the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 */
+	public Attachment(String name, byte[] content, String description, String disposition) {
+<span class="nc" id="L365">		this(new ByteResource(name, content), description, disposition);</span>
+<span class="nc" id="L366">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided content, name and description
+	 * of the attachment.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param name
+	 *            the name of the attachment
+	 * @param content
+	 *            the content of the attachment
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 */
+	public Attachment(String name, byte[] content, String description) {
+<span class="nc" id="L385">		this(new ByteResource(name, content), description);</span>
+<span class="nc" id="L386">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided content and name.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The description is not used (set to null)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param name
+	 *            the name of the attachment
+	 * @param content
+	 *            the content of the attachment
+	 */
+	public Attachment(String name, byte[] content) {
+<span class="fc" id="L405">		this(new ByteResource(name, content));</span>
+<span class="fc" id="L406">	}</span>
+
+	/**
+	 * Initialize the attachment with the provided file, description of the
+	 * attachment and disposition (how to include the attachment into the mail).
+	 * &lt;p&gt;
+	 * The name of the attachment is the name of the file.
+	 * &lt;/p&gt;
+	 * 
+	 * @param file
+	 *            the file to attach
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 * @param disposition
+	 *            the disposition of the attachment
+	 */
+	public Attachment(File file, String description, String disposition) {
+<span class="fc" id="L423">		this(new FileResource(file), description, disposition);</span>
+<span class="fc" id="L424">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided file and description of the
+	 * attachment.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The name of the attachment is the name of the file.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param file
+	 *            the file to attach
+	 * @param description
+	 *            the description of the attachment (may be null)
+	 */
+	public Attachment(File file, String description) {
+<span class="nc" id="L444">		this(new FileResource(file), description);</span>
+<span class="nc" id="L445">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * Initialize the attachment with the provided file.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The name of the attachment is the name of the file.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The description is not used (set to null)
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * The disposition is set to {@link ContentDisposition#ATTACHMENT}
+	 * &lt;/p&gt;
+	 * 
+	 * @param file
+	 *            the file to attach
+	 */
+	public Attachment(File file) {
+<span class="fc" id="L465">		this(new FileResource(file));</span>
+<span class="fc" id="L466">	}</span>
+
+	public String getDescription() {
+<span class="fc" id="L469">		return description;</span>
+	}
+
+	public void setDescription(String description) {
+<span class="nc" id="L473">		this.description = description;</span>
+<span class="nc" id="L474">	}</span>
+
+	public String getDisposition() {
+<span class="fc" id="L477">		return disposition;</span>
+	}
+
+	public void setDisposition(String disposition) {
+<span class="fc" id="L481">		this.disposition = disposition;</span>
+<span class="fc" id="L482">	}</span>
+
+	public NamedResource getResource() {
+<span class="fc" id="L485">		return resource;</span>
+	}
+
+	public void setResource(NamedResource resource) {
+<span class="fc" id="L489">		this.resource = resource;</span>
+<span class="fc" id="L490">	}</span>
+
+	public String getContentId() {
+<span class="fc" id="L493">		return contentId;</span>
+	}
+
+	public void setContentId(String contentId) {
+<span class="fc" id="L497">		this.contentId = contentId;</span>
+<span class="fc" id="L498">	}</span>
+
+	public String getContentType() {
+<span class="fc" id="L501">		return contentType;</span>
+	}
+
+	public void setContentType(String contentType) {
+<span class="fc" id="L505">		this.contentType = contentType;</span>
+<span class="fc" id="L506">	}</span>
+
+	@Override
+	public String toString() {
+<span class="fc" id="L510">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L511">		builder.append(&quot;&lt;&quot;).append(resource.getName());</span>
+<span class="fc bfc" id="L512" title="All 2 branches covered.">		if (contentType != null) {</span>
+<span class="fc" id="L513">			builder.append(&quot; [&quot;).append(contentType).append(&quot;]&quot;);</span>
+		}
+<span class="fc bfc" id="L515" title="All 2 branches covered.">		if (description != null) {</span>
+<span class="fc" id="L516">			builder.append(&quot;(&quot;).append(description).append(&quot;)&quot;);</span>
+		}
+<span class="fc bfc" id="L518" title="All 2 branches covered.">		if (contentId != null) {</span>
+<span class="fc" id="L519">			builder.append(&quot;{&quot;).append(contentId).append(&quot;}&gt;&quot;);</span>
+		}
+<span class="fc" id="L521">		builder.append(&quot;|&quot;).append(disposition).append(&quot;|&gt;&quot;);</span>
+<span class="fc" id="L522">		return builder.toString();</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L527">		return new HashCodeBuilder().append(resource, description, disposition, contentId, contentType).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L532">		return new EqualsBuilder(this, obj).appendFields(&quot;resource&quot;, &quot;description&quot;, &quot;disposition&quot;, &quot;contentId&quot;, &quot;contentType&quot;).isEqual();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

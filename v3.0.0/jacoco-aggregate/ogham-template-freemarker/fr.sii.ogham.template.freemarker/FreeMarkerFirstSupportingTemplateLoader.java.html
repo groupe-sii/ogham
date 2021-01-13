@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FreeMarkerFirstSupportingTemplateLoader.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker</a> &gt; <span class="el_source">FreeMarkerFirstSupportingTemplateLoader.java</span></div><h1>FreeMarkerFirstSupportingTemplateLoader.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker;
+
+import java.io.IOException;
+import java.io.Reader;
+
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.template.exception.NoResolverAdapterException;
+import fr.sii.ogham.template.exception.ResolverAdapterConfigurationException;
+import fr.sii.ogham.template.exception.ResolverAdapterException;
+import fr.sii.ogham.template.exception.ResolverAdapterNotFoundException;
+import fr.sii.ogham.template.freemarker.adapter.FirstSupportingResolverAdapter;
+import freemarker.cache.TemplateLoader;
+
+/**
+ * &lt;p&gt;
+ * Decorator resolver that is able to manage {@link ResolvedResourcePath}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * It delegates to a {@link FirstSupportingResourceResolver} the link between path, {@link ResolvedResourcePath} and {@link ResourceResolver}. each lookup to a
+ * dedicated {@link ResourceResolver}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * It delegates to a {@link FirstSupportingResolverAdapter} the link between {@link ResourceResolver} and the {@link TemplateLoader} implementation to use with
+ * the given path.
+ * &lt;/p&gt;
+ * 
+ * @author Cyril Dejonghe
+ * @see FirstSupportingResourceResolver
+ * @see FirstSupportingResolverAdapter
+ *
+ */
+public class FreeMarkerFirstSupportingTemplateLoader implements TemplateLoader {
+
+	private FirstSupportingResourceResolver resolver;
+	private FirstSupportingResolverAdapter resolverAdapter;
+
+	public FreeMarkerFirstSupportingTemplateLoader(FirstSupportingResourceResolver resolver, FirstSupportingResolverAdapter resolverAdapter) {
+<span class="fc" id="L41">		super();</span>
+<span class="fc" id="L42">		this.resolver = resolver;</span>
+<span class="fc" id="L43">		this.resolverAdapter = resolverAdapter;</span>
+<span class="fc" id="L44">	}</span>
+
+	@Override
+	public Object findTemplateSource(String unresolvedTemplateName) throws IOException {
+<span class="fc" id="L48">		ResourceResolver supportingResolver = resolver.getSupportingResolver(new UnresolvedPath(unresolvedTemplateName));</span>
+		TemplateLoader templateLoader;
+		try {
+<span class="fc" id="L51">			templateLoader = resolverAdapter.adapt(supportingResolver);</span>
+<span class="fc" id="L52">			String resolvedPath = supportingResolver.resolve(new UnresolvedPath(unresolvedTemplateName)).getResolvedPath();</span>
+<span class="fc" id="L53">			Object source = templateLoader.findTemplateSource(resolvedPath);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">			return source == null ? null : new AdaptedSource(source, templateLoader);</span>
+
+<span class="fc" id="L56">		} catch (NoResolverAdapterException e) {</span>
+<span class="fc" id="L57">			throw new ResolverAdapterNotFoundException(&quot;Unable to find template source cause no adapter supporting template name '&quot; + unresolvedTemplateName + &quot;' was found. &quot;, e);</span>
+<span class="nc" id="L58">		} catch (ResolverAdapterConfigurationException e) {</span>
+<span class="nc" id="L59">			throw new ResolverAdapterNotFoundException(&quot;Unable to find template source because of invalid adapter configuration for template name '&quot; + unresolvedTemplateName + &quot;'. &quot;, e);</span>
+<span class="nc" id="L60">		} catch (ResolverAdapterException e) {</span>
+<span class="nc" id="L61">			throw new IOException(&quot;Unable to find template source because of adapter failure for template name '&quot; + unresolvedTemplateName + &quot;'. &quot;, e);</span>
+		}
+	}
+
+	@Override
+	public long getLastModified(Object templateSource) {
+<span class="fc" id="L67">		return ((AdaptedSource) templateSource).getLastModified();</span>
+	}
+
+	@Override
+	public Reader getReader(Object templateSource, String encoding) throws IOException {
+<span class="fc" id="L72">		return ((AdaptedSource) templateSource).getReader(encoding);</span>
+	}
+
+	@Override
+	public void closeTemplateSource(Object templateSource) throws IOException {
+<span class="fc" id="L77">		((AdaptedSource) templateSource).close();</span>
+<span class="fc" id="L78">	}</span>
+
+	/**
+	 * see freemarker.cache.MultiTemplateLoader.MultiSource
+	 */
+	static final class AdaptedSource {
+
+		private final Object source;
+		private final TemplateLoader loader;
+
+<span class="fc" id="L88">		AdaptedSource(Object source, TemplateLoader loader) {</span>
+<span class="fc" id="L89">			this.source = source;</span>
+<span class="fc" id="L90">			this.loader = loader;</span>
+<span class="fc" id="L91">		}</span>
+
+		long getLastModified() {
+<span class="fc" id="L94">			return loader.getLastModified(source);</span>
+		}
+
+		Reader getReader(String encoding) throws IOException {
+<span class="fc" id="L98">			return loader.getReader(source, encoding);</span>
+		}
+
+		void close() throws IOException {
+<span class="fc" id="L102">			loader.closeTemplateSource(source);</span>
+<span class="fc" id="L103">		}</span>
+
+		Object getWrappedSource() {
+<span class="nc" id="L106">			return source;</span>
+		}
+
+		@Override
+		public boolean equals(Object o) {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">			if (o instanceof AdaptedSource) {</span>
+<span class="nc" id="L112">				AdaptedSource m = (AdaptedSource) o;</span>
+<span class="nc bnc" id="L113" title="All 4 branches missed.">				return m.loader.equals(loader) &amp;&amp; m.source.equals(source);</span>
+			}
+<span class="nc" id="L115">			return false;</span>
+		}
+
+		@Override
+		public int hashCode() {
+<span class="nc" id="L120">			return loader.hashCode() + 31 * source.hashCode();</span>
+		}
+
+		@Override
+		public String toString() {
+<span class="fc" id="L125">			return source.toString();</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

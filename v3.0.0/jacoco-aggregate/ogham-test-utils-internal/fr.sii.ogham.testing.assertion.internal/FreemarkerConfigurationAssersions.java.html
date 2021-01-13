@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FreemarkerConfigurationAssersions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.internal</a> &gt; <span class="el_source">FreemarkerConfigurationAssersions.java</span></div><h1>FreemarkerConfigurationAssersions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.internal;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+
+import java.util.Set;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.util.HasParent;
+import freemarker.template.Configuration;
+
+/**
+ * Helper to make assertions on FreeMarker {@link Configuration}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FreemarkerConfigurationAssersions extends HasParent&lt;FreemarkerParserAssertions&gt; {
+	private final Set&lt;Configuration&gt; configurations;
+
+	public FreemarkerConfigurationAssersions(FreemarkerParserAssertions parent, Set&lt;Configuration&gt; configurations) {
+<span class="fc" id="L22">		super(parent);</span>
+<span class="fc" id="L23">		this.configurations = configurations;</span>
+<span class="fc" id="L24">	}</span>
+
+	/**
+	 * Ensures that default encoding used by particular FreeMarker
+	 * {@link Configuration} is correctly set.
+	 * 
+	 * @param matcher
+	 *            the matcher to ensure that default encoding is correct.
+	 * @return this instance for fluent chaining
+	 */
+	public FreemarkerConfigurationAssersions defaultEncoding(Matcher&lt;String&gt; matcher) {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		for (Configuration configuration : configurations) {</span>
+<span class="fc" id="L36">			assertThat(configuration.getDefaultEncoding(), matcher);</span>
+<span class="fc" id="L37">		}</span>
+<span class="fc" id="L38">		return this;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JavaMailAssertions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.internal</a> &gt; <span class="el_source">JavaMailAssertions.java</span></div><h1>JavaMailAssertions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.internal;
+
+import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinder.findSender;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static org.apache.commons.lang3.reflect.FieldUtils.readField;
+
+import java.util.Properties;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.sender.impl.JavaMailSender;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Helper to mke assertions on {@link JavaMailSender} instance created by Ogham.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class JavaMailAssertions extends HasParent&lt;MessagingServiceAssertions&gt; {
+	private final JavaMailSender javaMailSender;
+
+	public JavaMailAssertions(MessagingServiceAssertions parent, JavaMailSender javaMailSender) {
+<span class="fc" id="L25">		super(parent);</span>
+<span class="fc" id="L26">		this.javaMailSender = javaMailSender;</span>
+<span class="fc" id="L27">	}</span>
+
+	/**
+	 * Ensure that host value is correctly configured as expected.
+	 * 
+	 * @param matcher
+	 *            the matcher used to check that host is configured as expected.
+	 * @return this instance for fluent chaining
+	 */
+	public JavaMailAssertions host(Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L37">		assertThat(getHost(javaMailSender), matcher);</span>
+<span class="fc" id="L38">		return this;</span>
+	}
+
+	/**
+	 * Find the {@link JavaMailSender} instance.
+	 * 
+	 * @param messagingService
+	 *            the messaging service
+	 * @return the found instance
+	 */
+	public static JavaMailSender getJavaMailSender(MessagingService messagingService) {
+<span class="fc" id="L49">		return findSender(messagingService, JavaMailSender.class);</span>
+	}
+
+	private String getHost(JavaMailSender javaMailSender) {
+<span class="fc" id="L53">		Properties properties = getProperties(javaMailSender);</span>
+<span class="fc" id="L54">		return properties.getProperty(&quot;mail.smtp.host&quot;, properties.getProperty(&quot;mail.host&quot;));</span>
+	}
+
+	private static Properties getProperties(JavaMailSender javaMailSender) {
+		try {
+<span class="fc" id="L59">			return (Properties) readField(javaMailSender, &quot;properties&quot;, true);</span>
+<span class="nc" id="L60">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L61">			throw new IllegalStateException(&quot;Failed to get 'properties' of JavaMailSender&quot;, e);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

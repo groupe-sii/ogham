@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ExpectedEmail.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.email</a> &gt; <span class="el_source">ExpectedEmail.java</span></div><h1>ExpectedEmail.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.email;
+
+
+/**
+ * Class used in tests for ensuring that the email is respected. It provides the
+ * following information:
+ * &lt;ul&gt;
+ * &lt;li&gt;The expected subject&lt;/li&gt;
+ * &lt;li&gt;The expected body&lt;/li&gt;
+ * &lt;li&gt;The expected sender address&lt;/li&gt;
+ * &lt;li&gt;The expected recipients (to, cc, bcc)&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ * @see ExpectedEmailHeader
+ */
+public class ExpectedEmail extends ExpectedEmailHeader {
+	/**
+	 * The expected body content
+	 */
+	private ExpectedContent expectedContent;
+
+	/**
+	 * Initialize the expected email with string values. The body is used as-is
+	 * and is expected to provide a &quot;text/plain&quot; Mime Type.
+	 * 
+	 * @param subject
+	 *            the expected subject of the email
+	 * @param body
+	 *            the expected body of the email in plain text
+	 * @param from
+	 *            the expected email sender address
+	 * @param to
+	 *            the expected recipients
+	 */
+	public ExpectedEmail(String subject, String body, String from, String... to) {
+<span class="fc" id="L37">		this(subject, new ExpectedContent(body, &quot;text/plain.*&quot;), from, to);</span>
+<span class="fc" id="L38">	}</span>
+
+	/**
+	 * Initialize the expected email with provided values.
+	 * 
+	 * @param subject
+	 *            the expected subject of the email
+	 * @param expectedContent
+	 *            the expected body of the email with the expected Mime Type
+	 * @param from
+	 *            the expected email sender address
+	 * @param to
+	 *            the expected recipients
+	 */
+	public ExpectedEmail(String subject, ExpectedContent expectedContent, String from, String... to) {
+<span class="fc" id="L53">		super(subject, from, to);</span>
+<span class="fc" id="L54">		this.expectedContent = expectedContent;</span>
+<span class="fc" id="L55">	}</span>
+
+	public ExpectedContent getExpectedContent() {
+<span class="fc" id="L58">		return expectedContent;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

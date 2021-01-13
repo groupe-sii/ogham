@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BuilderToRetryStrategyProviderBridge.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.retry</a> &gt; <span class="el_source">BuilderToRetryStrategyProviderBridge.java</span></div><h1>BuilderToRetryStrategyProviderBridge.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.retry;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.retry.RetryStrategy;
+import fr.sii.ogham.core.retry.RetryStrategyProvider;
+
+/**
+ * A wrapper that references a {@link RetryStrategy} builder to provide a new
+ * {@link RetryStrategy} instance every time the {@link #provide()} method is
+ * called. The builder will then simply create and configure the
+ * {@link RetryStrategy} instance.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class BuilderToRetryStrategyProviderBridge implements RetryStrategyProvider {
+	private final Builder&lt;RetryStrategy&gt; delegate;
+
+	/**
+	 * Instantiate the wrapper with the delegate instance.
+	 * 
+	 * &lt;p&gt;
+	 * The delegate instance must not be bull
+	 * 
+	 * @param delegate
+	 *            the retry strategy instance
+	 */
+	public BuilderToRetryStrategyProviderBridge(Builder&lt;RetryStrategy&gt; delegate) {
+<span class="fc" id="L29">		super();</span>
+<span class="fc" id="L30">		this.delegate = delegate;</span>
+<span class="fc" id="L31">	}</span>
+
+	@Override
+	public RetryStrategy provide() {
+<span class="fc" id="L35">		return delegate.build();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

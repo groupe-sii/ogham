@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ParseException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.exception.template</a> &gt; <span class="el_source">ParseException.java</span></div><h1>ParseException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.exception.template;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.exception.VariantResolutionException;
+
+/**
+ * General exception to indicate that the {@link TemplateParser} couldn't parse
+ * the template.
+ * 
+ * It may happen in several cases:
+ * &lt;ul&gt;
+ * &lt;li&gt;The template doesn't exist&lt;/li&gt;
+ * &lt;li&gt;The template is not readable&lt;/li&gt;
+ * &lt;li&gt;The template exists but it is malformed&lt;/li&gt;
+ * &lt;li&gt;The template is well-formed but the data (context) doesn't provide the
+ * right variables&lt;/li&gt;
+ * &lt;li&gt;...&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * This exception wraps the original cause. It also has several subclasses to
+ * indicate specific reasons for some failures.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @see VariantResolutionException
+ */
+public class ParseException extends MessagingException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	private final transient ResourcePath templatePath;
+	private final transient Context context;
+
+	public ParseException(String message, ResourcePath templatePath, Context context, Throwable cause) {
+<span class="fc" id="L39">		super(message, cause);</span>
+<span class="fc" id="L40">		this.templatePath = templatePath;</span>
+<span class="fc" id="L41">		this.context = context;</span>
+<span class="fc" id="L42">	}</span>
+
+	public ParseException(String message, ResourcePath templatePath, Context context) {
+<span class="fc" id="L45">		super(message);</span>
+<span class="fc" id="L46">		this.templatePath = templatePath;</span>
+<span class="fc" id="L47">		this.context = context;</span>
+<span class="fc" id="L48">	}</span>
+
+	public ParseException(ResourcePath templatePath, Context context, Throwable cause) {
+<span class="nc" id="L51">		super(cause);</span>
+<span class="nc" id="L52">		this.templatePath = templatePath;</span>
+<span class="nc" id="L53">		this.context = context;</span>
+<span class="nc" id="L54">	}</span>
+
+	public ResourcePath getTemplatePath() {
+<span class="fc" id="L57">		return templatePath;</span>
+	}
+
+	public Context getContext() {
+<span class="nc" id="L61">		return context;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

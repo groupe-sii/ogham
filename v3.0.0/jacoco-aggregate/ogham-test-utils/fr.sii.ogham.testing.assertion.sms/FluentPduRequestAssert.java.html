@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentPduRequestAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">FluentPduRequestAssert.java</span></div><h1>FluentPduRequestAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+import static org.apache.commons.lang3.ArrayUtils.toObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.Alphabet;
+import fr.sii.ogham.testing.sms.simulator.bean.OptionalParameter;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.bean.Tag;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Make assertions on received PDU.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the parent type
+ * @param &lt;S&gt;
+ *            the type of received messages
+ */
+public class FluentPduRequestAssert&lt;P, S extends SubmitSm&gt; extends HasParent&lt;P&gt; {
+	private final List&lt;PduRequestWithContext&lt;S&gt;&gt; actual;
+	private final AssertionRegistry registry;
+
+	/**
+	 * 
+	 * @param actual
+	 *            the received messages
+	 * @param parent
+	 *            the parent
+	 * @param registry
+	 *            used to register assertions
+	 */
+	public FluentPduRequestAssert(List&lt;PduRequestWithContext&lt;S&gt;&gt; actual, P parent, AssertionRegistry registry) {
+<span class="fc" id="L43">		super(parent);</span>
+<span class="fc" id="L44">		this.actual = actual;</span>
+<span class="fc" id="L45">		this.registry = registry;</span>
+<span class="fc" id="L46">	}</span>
+
+	/**
+	 * Make assertions on the encoding byte of the message(s) using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *   .rawRequest()
+	 *     .encoding(is(0x01))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the encoding byte of the first message is exactly 0x01.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *   .rawRequest()
+	 *     .encoding(is(0x01))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the encoding byte of every message is exactly 0x01.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the encoding
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPduRequestAssert&lt;P, S&gt; encoding(Matcher&lt;Byte&gt; matcher) {
+<span class="fc" id="L72">		String message = &quot;encoding of ${name} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">		for (PduRequestWithContext&lt;S&gt; rawContentWithContext : actual) {</span>
+<span class="fc" id="L74">			S msg = rawContentWithContext.getRequest();</span>
+<span class="fc" id="L75">			registry.register(() -&gt; assertThat(org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value(), usingContext(message, rawContentWithContext, matcher)));</span>
+<span class="fc" id="L76">		}</span>
+<span class="fc" id="L77">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the alphabet of the message(s) using fluent API. The
+	 * alphabet is extracted from {@link SubmitSm#getDataCoding()} byte. It
+	 * corresponds to the character table used to encode the message. It is a
+	 * convenience method that is similar to {@link #encoding(Matcher)} but
+	 * using human readable enum.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *   .rawRequest()
+	 *     .alphabet(is(Alphabet.ALPHA_DEFAULT))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the alphabet of the first message is exactly
+	 * Alphabet.ALPHA_DEFAULT.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *   .rawRequest()
+	 *     .alphabet(is(Alphabet.ALPHA_DEFAULT))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the alphabet of every message is exactly
+	 * Alphabet.ALPHA_DEFAULT.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the alphabet
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPduRequestAssert&lt;P, S&gt; alphabet(Matcher&lt;Alphabet&gt; matcher) {
+<span class="fc" id="L110">		String message = &quot;alphabet of ${name} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">		for (PduRequestWithContext&lt;S&gt; rawContentWithContext : actual) {</span>
+<span class="fc" id="L112">			S msg = rawContentWithContext.getRequest();</span>
+<span class="fc" id="L113">			registry.register(() -&gt; assertThat(Alphabet.from(org.jsmpp.bean.Alphabet.parseDataCoding(msg.getDataCoding()).value()), usingContext(message, rawContentWithContext, matcher)));</span>
+<span class="fc" id="L114">		}</span>
+<span class="fc" id="L115">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the short message byte array of the message(s) using
+	 * fluent API. The short message corresponds to the whole array of data. It
+	 * always contains the payload (see
+	 * {@link FluentShortMessageMessageAssert#payload(Matcher)}). It may contain the
+	 * header (see {@link FluentShortMessageMessageAssert#header(Matcher)}). For
+	 * example, if the original message is split into several segments, then
+	 * each received message contains a header to indicate how the message was
+	 * split (number of segments, reference number, current segment number,
+	 * ...).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *   .rawRequest()
+	 *     .shortMessage(arrayWithSize(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the short message (header + payload) byte array of the
+	 * first message has 134 bytes.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *   .rawRequest()
+	 *     .shortMessage(arrayWithSize(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the short message (header + payload) byte array of every
+	 * message has 134 bytes.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the short message (header + payload)
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPduRequestAssert&lt;P, S&gt; shortMessage(Matcher&lt;? super Byte[]&gt; matcher) {
+<span class="fc" id="L152">		String message = &quot;shortMessage of ${name} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">		for (PduRequestWithContext&lt;S&gt; rawContentWithContext : actual) {</span>
+<span class="fc" id="L154">			S msg = rawContentWithContext.getRequest();</span>
+<span class="fc" id="L155">			registry.register(() -&gt; assertThat(toObject(msg.getShortMessage()), usingContext(message, rawContentWithContext, matcher)));</span>
+<span class="fc" id="L156">		}</span>
+<span class="fc" id="L157">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the short message byte array of the message(s) using
+	 * fluent API. The short message corresponds to the whole array of data. It
+	 * always contains the payload (see
+	 * {@link FluentShortMessageMessageAssert#payload(Matcher)}). It may contain the
+	 * header (see {@link FluentShortMessageMessageAssert#header(Matcher)}). For
+	 * example, if the original message is split into several segments, then
+	 * each received message contains a header to indicate how the message was
+	 * split (number of segments, reference number, current segment number,
+	 * ...).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *   .rawRequest()
+	 *     .shortMessage()
+	 *    	 .payload(arrayWithSize(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the short message payload byte array of the first message
+	 * has 134 bytes.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *   .rawRequest()
+	 *     .shortMessage()
+	 *    	 .payload(arrayWithSize(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the short message payload byte array of every message has
+	 * 134 bytes.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentShortMessageMessageAssert&lt;FluentPduRequestAssert&lt;P, S&gt;, S&gt; shortMessage() {
+<span class="fc" id="L194">		List&lt;ShortMessageWithContext&lt;S&gt;&gt; shortMessages = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">		for (PduRequestWithContext&lt;S&gt; rawContentWithContext : actual) {</span>
+<span class="fc" id="L196">			S msg = rawContentWithContext.getRequest();</span>
+<span class="fc" id="L197">			shortMessages.add(new ShortMessageWithContext&lt;&gt;(msg, rawContentWithContext));</span>
+<span class="fc" id="L198">		}</span>
+<span class="fc" id="L199">		return new FluentShortMessageMessageAssert&lt;&gt;(shortMessages, this, registry);</span>
+	}
+
+	/**
+	 * Make assertions on optional parameter with particular tag.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *   .rawRequest()
+	 *     .optionalParameter(Tag.MESSAGE_PAYLOAD)
+	 *    	 .value(arrayWithSize(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the short message payload byte array of the
+	 * 'message_payload' optional parameter of the first message has 134 bytes.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *   .rawRequest()
+	 *     .optionalParameter(Tag.MESSAGE_PAYLOAD)
+	 *    	 .value(arrayWithSize(134))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the short message payload byte array of the
+	 * 'message_payload' optional parameter of every message has 134 bytes.
+	 * 
+	 * @param withTag
+	 *            the particular tag to search and to make assertions on
+	 * @see OptionalParameter
+	 * @see Tag
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentOptionalParameterAssert&lt;FluentPduRequestAssert&lt;P, S&gt;&gt; optionalParameter(Tag withTag) {
+<span class="fc" id="L232">		List&lt;OptionalParameterWithContext&gt; parameters = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">		for (PduRequestWithContext&lt;S&gt; rawContentWithContext : actual) {</span>
+<span class="fc" id="L234">			OptionalParameter parameter = getOptionalParameter(rawContentWithContext.getRequest(), withTag);</span>
+<span class="fc" id="L235">			parameters.add(new OptionalParameterWithContext(withTag, parameter, rawContentWithContext));</span>
+<span class="fc" id="L236">		}</span>
+<span class="fc" id="L237">		return new FluentOptionalParameterAssert&lt;&gt;(this, parameters, registry);</span>
+	}
+
+	private OptionalParameter getOptionalParameter(S msg, Tag tag) {
+<span class="fc" id="L241">		return msg.getOptionalParameter(tag);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

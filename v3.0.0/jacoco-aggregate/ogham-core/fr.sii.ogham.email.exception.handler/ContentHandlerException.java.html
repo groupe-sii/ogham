@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ContentHandlerException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.exception.handler</a> &gt; <span class="el_source">ContentHandlerException.java</span></div><h1>ContentHandlerException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.exception.handler;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.message.content.Content;
+
+/**
+ * Thrown when the content of the message can't be handled. This exception
+ * carries the original content that couldn't be handled.
+ * 
+ * This is a general exception and it has subclasses to identify the reason.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @see NoContentHandlerException
+ */
+public class ContentHandlerException extends MessagingException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	private final transient Content content;
+
+	public ContentHandlerException(String message, Content content, Throwable cause) {
+<span class="fc" id="L24">		super(message, cause);</span>
+<span class="fc" id="L25">		this.content = content;</span>
+<span class="fc" id="L26">	}</span>
+
+	public ContentHandlerException(String message, Content content) {
+<span class="fc" id="L29">		super(message);</span>
+<span class="fc" id="L30">		this.content = content;</span>
+<span class="fc" id="L31">	}</span>
+
+	public ContentHandlerException(Throwable cause, Content content) {
+<span class="nc" id="L34">		super(cause);</span>
+<span class="nc" id="L35">		this.content = content;</span>
+<span class="nc" id="L36">	}</span>
+
+	public Content getContent() {
+<span class="nc" id="L39">		return content;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

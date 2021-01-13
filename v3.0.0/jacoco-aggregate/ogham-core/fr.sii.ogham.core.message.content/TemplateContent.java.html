@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TemplateContent.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.message.content</a> &gt; <span class="el_source">TemplateContent.java</span></div><h1>TemplateContent.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.message.content;
+
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.core.template.context.BeanContext;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.context.NullContext;
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+
+/**
+ * Content that points to a template. The template contains variables. The
+ * template will be evaluated with the provided context (variable values).
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class TemplateContent implements Content, HasResourcePath {
+	/**
+	 * The path to the template
+	 */
+	private ResourcePath path;
+
+	/**
+	 * The context (variable values)
+	 */
+	private Context context;
+
+	
+	/**
+	 * Initialize the content with the path to the template and the context.
+	 * 
+	 * @param path
+	 *            the path to the template
+	 * @param context
+	 *            the context (variable values)
+	 */
+	public TemplateContent(ResourcePath path, Context context) {
+<span class="fc" id="L39">		super();</span>
+<span class="fc" id="L40">		this.path = path;</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">		this.context = context != null ? context : new NullContext();</span>
+<span class="fc" id="L42">	}</span>
+
+	/**
+	 * Initialize the content with the path to the template and the context.
+	 * 
+	 * @param path
+	 *            the path to the template as string
+	 * @param context
+	 *            the context (variable values)
+	 */
+	public TemplateContent(String path, Context context) {
+<span class="fc" id="L53">		this(new UnresolvedPath(path), context);</span>
+<span class="fc" id="L54">	}</span>
+
+	/**
+	 * Shortcut for directly using any object as source for variable
+	 * substitutions.
+	 * 
+	 * @param path
+	 *            the path to the template
+	 * @param bean
+	 *            the object that contains the variable values
+	 */
+	public TemplateContent(ResourcePath path, Object bean) {
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">		this(path, bean != null ? new BeanContext(bean) : new NullContext());</span>
+<span class="fc" id="L67">	}</span>
+
+	/**
+	 * Shortcut for directly using any object as source for variable
+	 * substitutions.
+	 * 
+	 * @param path
+	 *            the path to the template
+	 * @param bean
+	 *            the object that contains the variable values
+	 */
+	public TemplateContent(String path, Object bean) {
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">		this(path, bean != null ? new BeanContext(bean) : new NullContext());</span>
+<span class="fc" id="L80">	}</span>
+
+	@Override
+	public ResourcePath getPath() {
+<span class="fc" id="L84">		return path;</span>
+	}
+
+	public Context getContext() {
+<span class="fc" id="L88">		return context;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L93">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L94">		builder.append(&quot;TemplateContent [path=&quot;).append(path).append(&quot;, context=&quot;).append(context).append(&quot;]&quot;);</span>
+<span class="fc" id="L95">		return builder.toString();</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L100">		return new HashCodeBuilder().append(path, context).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L105">		return new EqualsBuilder(this, obj).appendFields(&quot;path&quot;, &quot;context&quot;).isEqual();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringWebMvcThymeleafRequestContextWrapper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-v2-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.v2.template.thymeleaf</a> &gt; <span class="el_source">SpringWebMvcThymeleafRequestContextWrapper.java</span></div><h1>SpringWebMvcThymeleafRequestContextWrapper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.v2.template.thymeleaf;
+
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.support.RequestContext;
+import org.thymeleaf.spring5.context.IThymeleafRequestContext;
+import org.thymeleaf.spring5.context.webmvc.SpringWebMvcThymeleafRequestContext;
+import org.thymeleaf.spring5.naming.SpringContextVariableNames;
+import org.thymeleaf.spring5.view.ThymeleafView;
+
+import fr.sii.ogham.spring.template.thymeleaf.ThymeleafRequestContextWrapper;
+
+/**
+ * Wraps the {@link RequestContext} into a {@link IThymeleafRequestContext} and
+ * registers it into the model as a variable.
+ * 
+ * This is used to mimic the behavior of {@link ThymeleafView} in order to give
+ * access to {@link HttpServletRequest}, {@link HttpServletResponse} and
+ * {@link ServletContext} from templates.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L28">public class SpringWebMvcThymeleafRequestContextWrapper implements ThymeleafRequestContextWrapper {</span>
+
+	@Override
+	public void wrapAndRegister(RequestContext requestContext, HttpServletRequest request, HttpServletResponse response, ServletContext servletContext, Map&lt;String, Object&gt; springModel) {
+<span class="fc" id="L32">		final SpringWebMvcThymeleafRequestContext thymeleafRequestContext = new SpringWebMvcThymeleafRequestContext(requestContext, request);</span>
+		// Add the Thymeleaf RequestContext wrapper that we will be using in
+		// this dialect (the bare RequestContext
+		// stays in the context to for compatibility with other dialects)
+<span class="fc" id="L36">		springModel.put(SpringContextVariableNames.THYMELEAF_REQUEST_CONTEXT, thymeleafRequestContext);</span>
+<span class="fc" id="L37">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

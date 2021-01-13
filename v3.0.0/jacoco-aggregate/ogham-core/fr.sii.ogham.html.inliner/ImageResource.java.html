@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImageResource.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.inliner</a> &gt; <span class="el_source">ImageResource.java</span></div><h1>ImageResource.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.inliner;
+
+import java.util.Arrays;
+
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.html.translator.InlineImageTranslator;
+
+/**
+ * A simple object that represents an image to be usable by the
+ * {@link InlineImageTranslator}. The aim is to decouple the translator
+ * implementation from the general system.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ImageResource {
+	private final String name;
+
+	private final String srcUrl;
+
+	private final ResourcePath path;
+
+	private final byte[] content;
+
+	private final String mimetype;
+
+	/**
+	 * Initialize the resource with the name of the image, the path of the image
+	 * found in the HTML, the content of the image as array of bytes and the
+	 * mimetype of the image. The bytes for the content of the image are copied
+	 * into a new array to prevent security leaks.
+	 * 
+	 * @param name
+	 *            the name of the image
+	 * @param srcUrl
+	 *            the URL of the image used in the html content
+	 * @param path
+	 *            the path to the image
+	 * @param content
+	 *            the content of the image
+	 * @param mimetype
+	 *            the mimetype of the image
+	 */
+	public ImageResource(String name, String srcUrl, ResourcePath path, byte[] content, String mimetype) {
+<span class="fc" id="L45">		super();</span>
+<span class="fc" id="L46">		this.name = name;</span>
+<span class="fc" id="L47">		this.srcUrl = srcUrl;</span>
+<span class="fc" id="L48">		this.path = path;</span>
+<span class="fc" id="L49">		this.content = Arrays.copyOf(content, content.length);</span>
+<span class="fc" id="L50">		this.mimetype = mimetype;</span>
+<span class="fc" id="L51">	}</span>
+
+	public String getSrcUrl() {
+<span class="fc" id="L54">		return srcUrl;</span>
+	}
+
+	public ResourcePath getPath() {
+<span class="nc" id="L58">		return path;</span>
+	}
+
+	public byte[] getContent() {
+<span class="fc" id="L62">		return content;</span>
+	}
+
+	public String getMimetype() {
+<span class="fc" id="L66">		return mimetype;</span>
+	}
+
+	public String getName() {
+<span class="fc" id="L70">		return name;</span>
+	}
+	
+	@Override
+	public String toString() {
+<span class="nc" id="L75">		StringBuilder builder = new StringBuilder();</span>
+<span class="nc" id="L76">		builder.append(&quot;ImageResource(&quot;)</span>
+<span class="nc" id="L77">			.append(&quot;src=&quot;).append(srcUrl).append(&quot;, &quot;)</span>
+<span class="nc" id="L78">			.append(&quot;path=&quot;).append(path).append(&quot;, &quot;)</span>
+<span class="nc" id="L79">			.append(&quot;name=&quot;).append(name).append(&quot;, &quot;)</span>
+<span class="nc" id="L80">			.append(&quot;mimetype=&quot;).append(mimetype).append(&quot;)&quot;);</span>
+<span class="nc" id="L81">		return builder.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

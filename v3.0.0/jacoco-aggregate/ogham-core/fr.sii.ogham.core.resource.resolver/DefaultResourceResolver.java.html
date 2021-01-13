@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultResourceResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.resource.resolver</a> &gt; <span class="el_source">DefaultResourceResolver.java</span></div><h1>DefaultResourceResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.resource.resolver;
+
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+
+/**
+ * Decorates an {@link AbstractPrefixedLookupPathResolver} to manage a default
+ * case (no lookup found).
+ * 
+ * @author Cyril Dejonghe
+ *
+ */
+public class DefaultResourceResolver implements DelegateResourceResolver {
+	/**
+	 * The delegate resolver that will do the real resource resolution
+	 */
+	private AbstractPrefixedLookupPathResolver delegate;
+
+	/**
+	 * Initialize the resolver with the mandatory delegate.
+	 * 
+	 * @param delegate
+	 *            the resolver that will do the real resource resolution
+	 */
+	public DefaultResourceResolver(AbstractPrefixedLookupPathResolver delegate) {
+<span class="nc" id="L29">		super();</span>
+<span class="nc" id="L30">		this.delegate = delegate;</span>
+<span class="nc" id="L31">	}</span>
+
+	@Override
+	public ResolvedPath resolve(ResourcePath path) {
+<span class="nc" id="L35">		ResolvedPath result = delegate.resolve(path);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">		if (result == null) {</span>
+<span class="nc" id="L37">			result = new ResolvedResourcePath(path, null, path.getOriginalPath());</span>
+		}
+<span class="nc" id="L39">		return result;</span>
+	}
+
+	@Override
+	public boolean supports(ResourcePath path) {
+<span class="nc" id="L44">		return true;</span>
+	}
+
+	@Override
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
+<span class="nc" id="L49">		return delegate.getResource(resolve(path));</span>
+	}
+
+	@Override
+	public ResourceResolver getActualResourceResolver() {
+<span class="nc bnc" id="L54" title="All 2 branches missed.">		return delegate instanceof DelegateResourceResolver ? ((DelegateResourceResolver) delegate).getActualResourceResolver() : delegate;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

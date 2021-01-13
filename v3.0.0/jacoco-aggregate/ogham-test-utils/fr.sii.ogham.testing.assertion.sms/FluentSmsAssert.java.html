@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentSmsAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">FluentSmsAssert.java</span></div><h1>FluentSmsAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+import static fr.sii.ogham.testing.sms.simulator.decode.SmsUtils.getSmsContent;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.context.SingleMessageContext;
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.decode.Charset;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Make assertions on particular message.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the parent type
+ * @param &lt;S&gt;
+ *            the type of the {@link SubmitSm}
+ */
+public class FluentSmsAssert&lt;P, S extends SubmitSm&gt; extends HasParent&lt;P&gt; {
+	/**
+	 * The list of messages that will be used for assertions
+	 */
+	private final List&lt;S&gt; actual;
+	private int index;
+	private final AssertionRegistry registry;
+
+	/**
+	 * Initializes with a single received message
+	 * 
+	 * @param actual
+	 *            received message
+	 * @param index
+	 *            the index of the message
+	 * @param parent
+	 *            the parent
+	 * @param registry
+	 *            used to register assertions
+	 */
+	public FluentSmsAssert(S actual, int index, P parent, AssertionRegistry registry) {
+<span class="fc" id="L50">		this(Arrays.asList(actual), parent, registry);</span>
+<span class="fc" id="L51">		this.index = index;</span>
+<span class="fc" id="L52">	}</span>
+
+	/**
+	 * Initializes with several received messages
+	 * 
+	 * @param actual
+	 *            received messages
+	 * @param parent
+	 *            the parent
+	 * @param registry
+	 *            used to register assertions
+	 */
+	public FluentSmsAssert(List&lt;S&gt; actual, P parent, AssertionRegistry registry) {
+<span class="fc" id="L65">		super(parent);</span>
+<span class="fc" id="L66">		this.actual = actual;</span>
+<span class="fc" id="L67">		this.registry = registry;</span>
+<span class="fc" id="L68">	}</span>
+
+	/**
+	 * Make assertions on the content of the message(s). Alphabet/encoding is
+	 * automatically determined from message (based on Data Coding Scheme).
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .content(allOf(notNullValue(), is(&quot;hello world&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Or:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .content(notNullValue())
+	 *    .content(is(&quot;hello world&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of the first message is not null and is exactly
+	 * &quot;hello world&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .content(allOf(notNullValue(), is(&quot;hello world&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Or:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .content(notNullValue())
+	 *    .content(is(&quot;hello world&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of every message is not null and is exactly
+	 * &quot;hello world&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on message content
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentSmsAssert&lt;P, S&gt; content(Matcher&lt;? super String&gt; matcher) {
+<span class="fc" id="L111">		String desc = &quot;content of message ${messageIndex}&quot;;</span>
+<span class="fc" id="L112">		int msgIdx = index;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		for (S message : actual) {</span>
+<span class="fc" id="L114">			final int idx = msgIdx;</span>
+<span class="fc" id="L115">			registry.register(() -&gt; assertThat(getSmsContent(message), usingContext(desc, new SingleMessageContext(idx), matcher)));</span>
+<span class="fc" id="L116">			msgIdx++;</span>
+<span class="fc" id="L117">		}</span>
+<span class="fc" id="L118">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the content of the message(s). Alphabet/encoding used
+	 * to decode the message is explicitly provided.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .content(allOf(notNullValue(), is(&quot;hello world&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Or:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .content(notNullValue())
+	 *    .content(is(&quot;hello world&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of the first message is not null and is exactly
+	 * &quot;hello world&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .content(allOf(notNullValue(), is(&quot;hello world&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Or:
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .content(notNullValue())
+	 *    .content(is(&quot;hello world&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the content of every message is not null and is exactly
+	 * &quot;hello world&quot;.
+	 * 
+	 * @param charset
+	 *            the charset to use to decode the message (bytes to string)
+	 * @param matcher
+	 *            the assertion to apply on message content
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentSmsAssert&lt;P, S&gt; content(Charset charset, Matcher&lt;? super String&gt; matcher) {
+<span class="fc" id="L164">		String desc = &quot;content of message ${messageIndex}&quot;;</span>
+<span class="fc" id="L165">		int msgIdx = index;</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">		for (S message : actual) {</span>
+<span class="fc" id="L167">			final int idx = msgIdx;</span>
+<span class="fc" id="L168">			registry.register(() -&gt; assertThat(getSmsContent(message, charset), usingContext(desc, new SingleMessageContext(idx), matcher)));</span>
+<span class="fc" id="L169">			msgIdx++;</span>
+<span class="fc" id="L170">		}</span>
+<span class="fc" id="L171">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the raw request ({@link SubmitSm}) of the message(s)
+	 * using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).rawRequest()
+	 *   .alphabet(is(Alphabet.ALPHA_DEFAULT))
+	 *   .shortMessage()
+	 *     .header(array(equalTo(0x01), equalTo(0x02), equalTo(0x03))))
+	 *     .payload(arrayWithSize(10))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the received byte array of the first message has a header
+	 * with some expected bytes, the alphabet used to encode the message is
+	 * ALPHA_DEFAULT and the payload has exactly 10 bytes.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().rawRequest()
+	 *   .alphabet(is(Alphabet.ALPHA_DEFAULT))
+	 *   .shortMessage()
+	 *     .header(array(equalTo(0x01), equalTo(0x02), equalTo(0x03))))
+	 *     .payload(arrayWithSize(10))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the received byte array of every message has a header with
+	 * some expected bytes, the alphabet used to encode the message is
+	 * ALPHA_DEFAULT and the payload has exactly 10 bytes.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPduRequestAssert&lt;FluentSmsAssert&lt;P, S&gt;, S&gt; rawRequest() {
+<span class="fc" id="L205">		List&lt;PduRequestWithContext&lt;S&gt;&gt; requests = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L206">		int msgIdx = index;</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">		for (S request : actual) {</span>
+<span class="fc" id="L208">			requests.add(new PduRequestWithContext&lt;&gt;(request, &quot;raw request&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L209">			msgIdx++;</span>
+<span class="fc" id="L210">		}</span>
+<span class="fc" id="L211">		return new FluentPduRequestAssert&lt;&gt;(requests, this, registry);</span>
+	}
+
+	/**
+	 * Make assertions on the sender of the message(s) using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .from(notNullValue())
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the sender phone number of the first message is not null.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .from(notNullValue())
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the sender phone number of every message is not null.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the phone number
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentSmsAssert&lt;P, S&gt; from(Matcher&lt;PhoneNumberInfo&gt; matcher) {
+<span class="fc" id="L236">		String desc = &quot;sender of message ${messageIndex}&quot;;</span>
+<span class="fc" id="L237">		int msgIdx = index;</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">		for (S message : actual) {</span>
+<span class="fc" id="L239">			PhoneNumberInfo number = new PhoneNumberInfo(message.getSourceAddress());</span>
+<span class="fc" id="L240">			final int idx = msgIdx;</span>
+<span class="fc" id="L241">			registry.register(() -&gt; assertThat(number, usingContext(desc, new SingleMessageContext(idx), matcher)));</span>
+<span class="fc" id="L242">			msgIdx++;</span>
+<span class="fc" id="L243">		}</span>
+<span class="fc" id="L244">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the sender of the message(s) using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).from()
+	 *    .number(is(&quot;+33102030405&quot;))
+	 *    .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the sender phone number of the first message is exactly
+	 * &quot;+33102030405&quot; and sender phone number type of the first message is an
+	 * international number.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().from()
+	 *    .number(is(&quot;+33102030405&quot;))
+	 *    .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the sender phone number of every message is exactly
+	 * &quot;+33102030405&quot; and sender phone number type of every message is an
+	 * international number.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPhoneNumberAssert&lt;FluentSmsAssert&lt;P, S&gt;&gt; from() {
+<span class="fc" id="L273">		List&lt;PhoneNumberWithContext&gt; numbers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L274">		int msgIdx = index;</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">		for (S message : actual) {</span>
+<span class="fc" id="L276">			PhoneNumberInfo number = new PhoneNumberInfo(message.getSourceAddress());</span>
+<span class="fc" id="L277">			numbers.add(new PhoneNumberWithContext(number, &quot;sender&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L278">			msgIdx++;</span>
+<span class="fc" id="L279">		}</span>
+<span class="fc" id="L280">		return new FluentPhoneNumberAssert&lt;&gt;(numbers, this, registry);</span>
+	}
+
+	/**
+	 * Make assertions on the recipient of the message(s) using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0)
+	 *    .to(notNullValue())
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the recipient phone number of the first message is not
+	 * null.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every()
+	 *    .to(notNullValue())
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the recipient phone number of every message is not null.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the phone number
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentSmsAssert&lt;P, S&gt; to(Matcher&lt;PhoneNumberInfo&gt; matcher) {
+<span class="fc" id="L306">		String desc = &quot;recipient of message ${messageIndex}&quot;;</span>
+<span class="fc" id="L307">		int msgIdx = index;</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">		for (S message : actual) {</span>
+<span class="fc" id="L309">			PhoneNumberInfo number = new PhoneNumberInfo(message.getDestAddress());</span>
+<span class="fc" id="L310">			final int idx = msgIdx;</span>
+<span class="fc" id="L311">			registry.register(() -&gt; assertThat(number, usingContext(desc, new SingleMessageContext(idx), matcher)));</span>
+<span class="fc" id="L312">			msgIdx++;</span>
+<span class="fc" id="L313">		}</span>
+<span class="fc" id="L314">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on the recipient of the message(s) using fluent API.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .number(is(&quot;+33102030405&quot;))
+	 *    .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the recipient phone number of the first message is exactly
+	 * &quot;+33102030405&quot; and recipient phone number type of the first message is an
+	 * international number.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .number(is(&quot;+33102030405&quot;))
+	 *    .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the recipient phone number of every message is exactly
+	 * &quot;+33102030405&quot; and recipient phone number type of every message is an
+	 * international number.
+	 * 
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPhoneNumberAssert&lt;FluentSmsAssert&lt;P, S&gt;&gt; to() {
+<span class="fc" id="L343">		List&lt;PhoneNumberWithContext&gt; numbers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L344">		int msgIdx = index;</span>
+<span class="fc bfc" id="L345" title="All 2 branches covered.">		for (S message : actual) {</span>
+<span class="fc" id="L346">			PhoneNumberInfo number = new PhoneNumberInfo(message.getDestAddress());</span>
+<span class="fc" id="L347">			numbers.add(new PhoneNumberWithContext(number, &quot;recipient&quot;, new SingleMessageContext(msgIdx)));</span>
+<span class="fc" id="L348">			msgIdx++;</span>
+<span class="fc" id="L349">		}</span>
+<span class="fc" id="L350">		return new FluentPhoneNumberAssert&lt;&gt;(numbers, this, registry);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

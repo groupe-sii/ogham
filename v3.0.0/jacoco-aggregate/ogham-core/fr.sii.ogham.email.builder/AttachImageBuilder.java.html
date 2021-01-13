@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AttachImageBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">AttachImageBuilder.java</span></div><h1>AttachImageBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.id.generator.IdGenerator;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.html.inliner.EveryImageInliner;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.inliner.impl.jsoup.JsoupAttachImageInliner;
+import fr.sii.ogham.html.inliner.impl.regexp.RegexAttachBackgroudImageInliner;
+
+/**
+ * Configures how attachment of images is handled.
+ * 
+ * Image defined in a html must be referenced by a
+ * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID (or
+ * CID)&lt;/a&gt; if the image is attached to the email.
+ * 
+ * For example, if your template contains the following HTML code:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;attach&quot; /&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image will be loaded from the classpath and attached to the email.
+ * The src attribute will be replaced by the Content-ID.
+ * 
+ * The Content-ID is generated using an {@link IdGenerator} that is configured
+ * through the {@link #cid()} method.
+ * 
+ * &lt;p&gt;
+ * In the same way, if your template contains the following code:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ *  &amp;lt;style&amp;gt;
+ *     .some-class {
+ *       background: url('classpath:/foo.png');
+ *       --inline-image: attach;
+ *     }
+ *  &amp;lt;/style&amp;gt;
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or directly on {@code style} attribute:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ * 	&lt;div style=&quot;background: url('classpath:/foo.png'); --inline-image: attach;&quot;&gt;&lt;/div&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image will be loaded from the classpath and attached to the email.
+ * The url will be replaced by the Content-ID.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class AttachImageBuilder extends AbstractParent&lt;ImageInliningBuilder&gt; implements Builder&lt;ImageInliner&gt; {
+	private final BuildContext buildContext;
+	private CidBuilder cidBuilder;
+
+	/**
+	 * Initializes with the parent (used when calling {@link #and()} method for
+	 * fluent chaining).
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public AttachImageBuilder(ImageInliningBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L77">		super(parent);</span>
+<span class="fc" id="L78">		this.buildContext = buildContext;</span>
+<span class="fc" id="L79">	}</span>
+
+	/**
+	 * Configures how images are attached to {@link Email}s.
+	 * 
+	 * Image defined in a html must be referenced by a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt; if the image is attached to the email. You can define how
+	 * CIDs are generated.
+	 * 
+	 * @return the builder to configure CID generation
+	 */
+	public CidBuilder cid() {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">		if (cidBuilder == null) {</span>
+<span class="fc" id="L93">			cidBuilder = new CidBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L95">		return cidBuilder;</span>
+	}
+
+	@Override
+	public ImageInliner build() {
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">		if (cidBuilder == null) {</span>
+<span class="nc" id="L101">			throw new BuildException(&quot;Can't build inliner that attaches images because no identifier generator configured&quot;);</span>
+		}
+<span class="fc" id="L103">		IdGenerator idGenerator = cidBuilder.build();</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">		if (idGenerator == null) {</span>
+<span class="nc" id="L105">			throw new BuildException(&quot;Can't build inliner that attaches images because no identifier generator configured&quot;);</span>
+		}
+<span class="fc" id="L107">		EveryImageInliner inliner = buildContext.register(new EveryImageInliner());</span>
+<span class="fc" id="L108">		inliner.addInliner(buildContext.register(new JsoupAttachImageInliner(idGenerator)));</span>
+<span class="fc" id="L109">		inliner.addInliner(buildContext.register(new RegexAttachBackgroudImageInliner(idGenerator)));</span>
+<span class="fc" id="L110">		return inliner;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

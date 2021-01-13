@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeleafParser.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common</a> &gt; <span class="el_source">ThymeleafParser.java</span></div><h1>ThymeleafParser.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common;
+
+import static fr.sii.ogham.template.thymeleaf.common.ThymeleafConstants.DEFAULT_THYMELEAF_IMPLEMENTATION_PRIORITY;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.exceptions.TemplateEngineException;
+
+import fr.sii.ogham.core.builder.priority.Priority;
+import fr.sii.ogham.core.exception.template.ContextException;
+import fr.sii.ogham.core.exception.template.ParseException;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.ParsedContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.exception.TemplateRuntimeException;
+
+/**
+ * Implementation for Thymeleaf template engine.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@Priority(properties=&quot;${ogham.template.implementation-priority.thymeleaf}&quot;, defaultValue = DEFAULT_THYMELEAF_IMPLEMENTATION_PRIORITY)
+public class ThymeleafParser implements TemplateParser {
+<span class="fc" id="L29">	private static final Logger LOG = LoggerFactory.getLogger(ThymeleafParser.class);</span>
+
+	/**
+	 * Thymeleaf engine
+	 */
+	private TemplateEngine engine;
+	
+	/**
+	 * Converts general context into Thymeleaf specific context
+	 */
+	private ThymeleafContextConverter contextConverter;
+
+	/**
+	 * The template resolver used to find the template
+	 */
+	private final ResourceResolver resolver;
+	
+	public ThymeleafParser(TemplateEngine engine, ResourceResolver resolver, ThymeleafContextConverter contextConverter) {
+<span class="fc" id="L47">		super();</span>
+<span class="fc" id="L48">		this.engine = engine;</span>
+<span class="fc" id="L49">		this.resolver = resolver;</span>
+<span class="fc" id="L50">		this.contextConverter = contextConverter;</span>
+<span class="fc" id="L51">	}</span>
+
+	public ThymeleafParser(TemplateEngine engine, ResourceResolver resolver) {
+<span class="nc" id="L54">		this(engine, resolver, new SimpleThymeleafContextConverter());</span>
+<span class="nc" id="L55">	}</span>
+	
+	@Override
+	public Content parse(ResourcePath templatePath, Context ctx) throws ParseException {
+		try {
+<span class="fc" id="L60">			LOG.debug(&quot;Parsing Thymeleaf template {} with context {}...&quot;, templatePath, ctx);</span>
+<span class="fc" id="L61">			String result = engine.process(templatePath.getOriginalPath(), contextConverter.convert(ctx));</span>
+<span class="fc" id="L62">			LOG.debug(&quot;Template {} successfully parsed with context {}. Result:&quot;, templatePath, ctx);</span>
+<span class="fc" id="L63">			LOG.trace(result);</span>
+<span class="fc" id="L64">			return new ParsedContent(resolver.resolve(templatePath), ctx, result);</span>
+<span class="fc" id="L65">		} catch (TemplateEngineException | TemplateRuntimeException e) {</span>
+<span class="fc" id="L66">			throw new ParseException(&quot;Failed to parse template with thymeleaf&quot;, templatePath, ctx, e);</span>
+<span class="nc" id="L67">		} catch (ContextException e) {</span>
+<span class="nc" id="L68">			throw new ParseException(&quot;Failed to parse template with thymeleaf due to conversion error&quot;, templatePath, ctx, e);</span>
+		}
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L74">		return &quot;ThymeleafParser&quot;;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

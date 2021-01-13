@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractSingleResolutionBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.resolution</a> &gt; <span class="el_source">AbstractSingleResolutionBuilder.java</span></div><h1>AbstractSingleResolutionBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.resolution;
+
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.resource.resolver.RelativeResolver;
+import fr.sii.ogham.core.resource.resolver.RelativisableResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+
+/**
+ * Base implementation to handle lookup prefix configuration. Path prefix/suffix
+ * configuration is also partially managed. As path prefix/suffix for string
+ * resolution has no sense, this base class doesn't implement
+ * {@link PrefixSuffixBuilder}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;MYSELF&gt;
+ *            The type of this instance. This is needed to have the right return
+ *            type for fluent chaining with inheritance
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+@SuppressWarnings(&quot;squid:S00119&quot;)
+public abstract class AbstractSingleResolutionBuilder&lt;MYSELF extends AbstractSingleResolutionBuilder&lt;MYSELF, P&gt;, P&gt; extends AbstractParent&lt;P&gt; implements Builder&lt;ResourceResolver&gt; {
+<span class="fc" id="L36">	private static final Logger LOG = LoggerFactory.getLogger(AbstractSingleResolutionBuilder.class);</span>
+
+	protected final BuildContext buildContext;
+	protected final List&lt;String&gt; lookups;
+	protected final ConfigurationValueBuilderHelper&lt;MYSELF, String&gt; pathPrefixValueBuilder;
+	protected final ConfigurationValueBuilderHelper&lt;MYSELF, String&gt; pathSuffixValueBuilder;
+	protected final MYSELF myself;
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected AbstractSingleResolutionBuilder(Class&lt;?&gt; selfType, P parent, BuildContext buildContext) {
+<span class="fc" id="L46">		super(parent);</span>
+<span class="fc" id="L47">		myself = (MYSELF) selfType.cast(this);</span>
+<span class="fc" id="L48">		this.buildContext = buildContext;</span>
+<span class="fc" id="L49">		lookups = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L50">		pathPrefixValueBuilder = buildContext.newConfigurationValueBuilder(myself, String.class);</span>
+<span class="fc" id="L51">		pathSuffixValueBuilder = buildContext.newConfigurationValueBuilder(myself, String.class);</span>
+<span class="fc" id="L52">	}</span>
+
+	/**
+	 * Configure lookup prefix. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .classpath().lookup(&quot;classpath:&quot;);
+	 * 
+	 * // path prefixed by classpath: matches 
+	 * // then classpath resolver is used
+	 * resourceResolver.getResource(&quot;classpath:foo/bar.html&quot;);
+	 * // path is not prefixed (or using another prefix) doesn't match 
+	 * // then classpath resolver is not used
+	 * resourceResolver.getResource(&quot;foo/bar.html&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Several lookups can be provided:
+	 * 
+	 * &lt;pre&gt;
+	 * .classpath().lookup(&quot;classpath:&quot;, &quot;cp:&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * If a path starts with one of the prefix (&quot;classpath:&quot; or &quot;cp:&quot;), the
+	 * corresponding resolver (classpath resolver in this example) is used to
+	 * resolve the file.
+	 * 
+	 * &lt;p&gt;
+	 * Lookup may be empty meaning that if the path has no prefix, the
+	 * corresponding resolver is use as default. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .classpath().lookup(&quot;&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * If the path is &quot;foo/bar.html&quot; is provided then the classpath resolver is
+	 * used.
+	 * 
+	 * @param prefix
+	 *            one or several prefixes that indicates which resolver to use
+	 *            according to path
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF lookup(String... prefix) {
+<span class="fc" id="L96">		this.lookups.addAll(asList(prefix));</span>
+<span class="fc" id="L97">		return myself;</span>
+	}
+
+	/**
+	 * Configure lookup prefix. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .classpath().lookup(&quot;classpath:&quot;);
+	 * 
+	 * // path prefixed by classpath: matches 
+	 * // then classpath resolver is used
+	 * resourceResolver.getResource(&quot;classpath:foo/bar.html&quot;);
+	 * // path is not prefixed (or using another prefix) doesn't match 
+	 * // then classpath resolver is not used
+	 * resourceResolver.getResource(&quot;foo/bar.html&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Several lookups can be provided:
+	 * 
+	 * &lt;pre&gt;
+	 * .classpath().lookup(&quot;classpath:&quot;, &quot;cp:&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * If a path starts with one of the prefix (&quot;classpath:&quot; or &quot;cp:&quot;), the
+	 * corresponding resolver (classpath resolver in this example) is used to
+	 * resolve the file.
+	 * 
+	 * &lt;p&gt;
+	 * Lookup may be empty meaning that if the path has no prefix, the
+	 * corresponding resolver is use as default. For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .classpath().lookup(&quot;&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * If the path is &quot;foo/bar.html&quot; is provided then the classpath resolver is
+	 * used.
+	 * 
+	 * @param prefix
+	 *            one or several prefixes that indicates which resolver to use
+	 *            according to path
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF lookup(List&lt;String&gt; prefix) {
+<span class="fc" id="L142">		this.lookups.addAll(prefix);</span>
+<span class="fc" id="L143">		return myself;</span>
+	}
+
+	@Override
+	public ResourceResolver build() {
+<span class="fc" id="L148">		ResourceResolver resolver = buildContext.register(createResolver());</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">		if (!(resolver instanceof RelativisableResourceResolver)) {</span>
+<span class="fc" id="L150">			return resolver;</span>
+		}
+<span class="fc" id="L152">		String resolvedPathPrefix = pathPrefixValueBuilder.getValue(&quot;&quot;);</span>
+<span class="fc" id="L153">		String resolvedPathSuffix = pathSuffixValueBuilder.getValue(&quot;&quot;);</span>
+<span class="fc bfc" id="L154" title="All 4 branches covered.">		if (!resolvedPathPrefix.isEmpty() || !resolvedPathSuffix.isEmpty()) {</span>
+<span class="fc" id="L155">			LOG.debug(&quot;Using parentPath {} and extension {} for resource resolution&quot;, resolvedPathPrefix, resolvedPathSuffix);</span>
+<span class="fc" id="L156">			resolver = buildContext.register(new RelativeResolver((RelativisableResourceResolver) resolver, resolvedPathPrefix, resolvedPathSuffix));</span>
+		}
+<span class="fc" id="L158">		return resolver;</span>
+	}
+
+	protected abstract ResourceResolver createResolver();
+
+	/**
+	 * Provide the list of registered lookups
+	 * 
+	 * @return the list of lookups
+	 */
+	public List&lt;String&gt; getLookups() {
+<span class="fc" id="L169">		return lookups;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

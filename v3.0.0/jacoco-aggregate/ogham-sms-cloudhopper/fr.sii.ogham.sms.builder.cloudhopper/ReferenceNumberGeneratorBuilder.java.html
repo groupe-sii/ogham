@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ReferenceNumberGeneratorBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">ReferenceNumberGeneratorBuilder.java</span></div><h1>ReferenceNumberGeneratorBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import java.util.Random;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.sms.splitter.RandomReferenceNumberGenerator;
+import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
+
+/**
+ * In the cellular phone industry, mobile phones and their networks sometimes
+ * support concatenated short message service (or concatenated SMS) to overcome
+ * the limitation on the number of characters that can be sent in a single SMS
+ * text message transmission (which is usually 160). Using this method, long
+ * messages are split into smaller messages by the sending device and recombined
+ * at the receiving end. Each message is then billed separately. When the
+ * feature works properly, it is nearly transparent to the user, appearing as a
+ * single long text message.
+ * 
+ * &lt;p&gt;
+ * One way of sending concatenated SMS (CSMS) is to split the message into 153
+ * 7-bit character parts (134 octets), and sending each part with a User Data
+ * Header (UDH) tacked onto the beginning. A UDH can be used for various
+ * purposes and its contents and size varies accordingly, but a UDH for
+ * concatenating SMSes look like this:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;Field 1 (1 octet): Length of User Data Header, in this case 05.&lt;/li&gt;
+ * &lt;li&gt;Field 2 (1 octet): Information Element Identifier, equal to 00
+ * (Concatenated short messages, 8-bit reference number)&lt;/li&gt;
+ * &lt;li&gt;Field 3 (1 octet): Length of the header, excluding the first two fields;
+ * equal to 03&lt;/li&gt;
+ * &lt;li&gt;Field 4 (1 octet): 00-FF, CSMS reference number, must be same for all the
+ * SMS parts in the CSMS&lt;/li&gt;
+ * &lt;li&gt;Field 5 (1 octet): 00-FF, total number of parts. The value shall remain
+ * constant for every short message which makes up the concatenated short
+ * message. If the value is zero then the receiving entity shall ignore the
+ * whole information element&lt;/li&gt;
+ * &lt;li&gt;Field 6 (1 octet): 00-FF, this part's number in the sequence. The value
+ * shall start at 1 and increment for every short message which makes up the
+ * concatenated short message. If the value is zero or greater than the value in
+ * Field 5 then the receiving entity shall ignore the whole information element.
+ * [ETSI Specification: GSM 03.40 Version 5.3.0: July 1996]&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * It is possible to use a 16 bit CSMS reference number in order to reduce the
+ * probability that two different concatenated messages are sent with identical
+ * reference numbers to a receiver. In this case, the User Data Header shall be:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;Field 1 (1 octet): Length of User Data Header (UDL), in this case
+ * 06.&lt;/li&gt;
+ * &lt;li&gt;Field 2 (1 octet): Information Element Identifier, equal to 08
+ * (Concatenated short messages, 16-bit reference number)&lt;/li&gt;
+ * &lt;li&gt;Field 3 (1 octet): Length of the header, excluding the first two fields;
+ * equal to 04&lt;/li&gt;
+ * &lt;li&gt;Field 4 (2 octets): 0000-FFFF, CSMS reference number, must be same for
+ * all the SMS parts in the CSMS&lt;/li&gt;
+ * &lt;li&gt;Field 5 (1 octet): 00-FF, total number of parts. The value shall remain
+ * constant for every short message which makes up the concatenated short
+ * message. If the value is zero then the receiving entity shall ignore the
+ * whole information element&lt;/li&gt;
+ * &lt;li&gt;Field 6 (1 octet): 00-FF, this part's number in the sequence. The value
+ * shall start at 1 and increment for every short message which makes up the
+ * concatenated short message. If the value is zero or greater than the value in
+ * Field 5 then the receiving entity shall ignore the whole information element.
+ * [ETSI Specification: GSM 03.40 Version 5.3.0: July 1996]&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * Configures reference number generation strategy.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ReferenceNumberGeneratorBuilder extends AbstractParent&lt;MessageSplitterBuilder&gt; implements Builder&lt;ReferenceNumberGenerator&gt; {
+	private final BuildContext buildContext;
+	private Random random;
+	private ReferenceNumberGenerator custom;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public ReferenceNumberGeneratorBuilder(MessageSplitterBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L94">		super(parent);</span>
+<span class="fc" id="L95">		this.buildContext = buildContext;</span>
+<span class="fc" id="L96">	}</span>
+
+	/**
+	 * Uses a random number for reference number.
+	 * 
+	 * It uses an instance of {@link Random} to generate random numbers.
+	 * 
+	 * @return this instance for fluent chaining
+	 */
+	@SuppressWarnings(&quot;squid:S2245&quot;)
+	public ReferenceNumberGeneratorBuilder random() {
+<span class="fc" id="L107">		return random(new Random());</span>
+	}
+
+	/**
+	 * Uses a random number for reference number. The provided {@link Random}
+	 * instance is used to generate random numbers.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last {@link Random}
+	 * instance is used.
+	 * 
+	 * &lt;p&gt;
+	 * If random parameter is {@code null} then any previously registered
+	 * {@link Random} instance won't be used.
+	 * 
+	 * @param random
+	 *            the {@link Random} instance used to generate random numbers
+	 * @return this instance for fluent chaining
+	 */
+	public ReferenceNumberGeneratorBuilder random(Random random) {
+<span class="fc" id="L127">		this.random = random;</span>
+<span class="fc" id="L128">		return this;</span>
+	}
+
+	/**
+	 * Uses a custom reference number generation strategy. This strategy takes
+	 * precedence over any other generation strategy.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last registered
+	 * generator is used.
+	 * 
+	 * &lt;p&gt;
+	 * If custom parameter is {@code null}, the custom strategy is disabled.
+	 * Other previously configured strategies (like {@link #random()}) will be
+	 * used instead.
+	 * 
+	 * @param custom
+	 *            custom reference number generation strategy
+	 * @return this instance for fluent chaining
+	 */
+	public ReferenceNumberGeneratorBuilder generator(ReferenceNumberGenerator custom) {
+<span class="nc" id="L149">		this.custom = custom;</span>
+<span class="nc" id="L150">		return this;</span>
+	}
+
+	@Override
+	public ReferenceNumberGenerator build() {
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">		if (custom != null) {</span>
+<span class="nc" id="L156">			return custom;</span>
+		}
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">		if (random != null) {</span>
+<span class="fc" id="L159">			return buildContext.register(new RandomReferenceNumberGenerator(random));</span>
+		}
+<span class="nc" id="L161">		return buildContext.register(new RandomReferenceNumberGenerator());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">ExceptionUtils.java</span></div><h1>ExceptionUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Utility class for exceptions
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class ExceptionUtils {
+<span class="fc" id="L16">	private static final Logger LOG = LoggerFactory.getLogger(ExceptionUtils.class);</span>
+<span class="fc" id="L17">	private static final Pattern INDENT = Pattern.compile(&quot;^&quot;, Pattern.MULTILINE);</span>
+
+	/**
+	 * Predicate that returns {@code true} if any cause in the exception stack
+	 * matches the cause predicate.
+	 * 
+	 * &lt;p&gt;
+	 * If a cause matches the predicate, then it return {@code true} immediately
+	 * (skipping other checks).
+	 * 
+	 * @param error
+	 *            the root error to analyze
+	 * @param causePredicate
+	 *            the predicate to apply to causes recursively
+	 * @return true if the cause predicate returns true for at least one cause
+	 *         in the exception stack
+	 */
+	public static boolean hasAnyCause(Throwable error, Predicate&lt;Throwable&gt; causePredicate) {
+<span class="fc" id="L35">		Throwable cause = error;</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">		while (cause != null) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">			if (causePredicate.test(cause)) {</span>
+<span class="fc" id="L38">				return true;</span>
+			}
+<span class="fc" id="L40">			cause = cause.getCause();</span>
+		}
+<span class="fc" id="L42">		return false;</span>
+	}
+
+	/**
+	 * Checks whether the error has been raised due to a Java {@link Error}.
+	 * {@link Error}s should not be ignored. For example, if there is a
+	 * {@link OutOfMemoryError}, retrying may result in consuming more memory
+	 * and totally crash the JVM or hang the system.
+	 * 
+	 * @param error
+	 *            the raised error
+	 * @return true if the error is fatal JVM error
+	 */
+	public static boolean fatalJvmError(Throwable error) {
+<span class="fc" id="L56">		return error instanceof Error;</span>
+	}
+
+	/**
+	 * Generate a String based on the exception. Unlike default
+	 * {@link Throwable#toString()} method, the {@link Throwable#getCause()} may
+	 * also be included in the generated string (depending of logging
+	 * configuration). If logger associated to this class is configured to
+	 * {@code DEBUG} or {@code TRACE}, then the cause is included.
+	 * 
+	 * @param e
+	 *            the error to convert to a string
+	 * @return the error string
+	 */
+	public static String toString(Throwable e) {
+<span class="fc" id="L71">		return toString(e, &quot;&quot;);</span>
+	}
+
+	/**
+	 * Generate a String based on the exception. Unlike default
+	 * {@link Throwable#toString()} method, the {@link Throwable#getCause()} may
+	 * also be included in the generated string (depending of logging
+	 * configuration). If logger associated to this class is configured to
+	 * {@code DEBUG} or {@code TRACE}, then the cause is included.
+	 * 
+	 * @param e
+	 *            the error to convert to a string
+	 * @param indentation
+	 *            the initial indentation
+	 * @return the error string
+	 */
+	public static String toString(Throwable e, String indentation) {
+<span class="fc" id="L88">		String str = toThrowableString(e, indentation);</span>
+<span class="pc bpc" id="L89" title="3 of 4 branches missed.">		if (LOG.isDebugEnabled() || LOG.isTraceEnabled()) {</span>
+<span class="fc" id="L90">			str += toCauseString(e, indentation + &quot; &quot;);</span>
+		}
+<span class="fc" id="L92">		return str;</span>
+	}
+
+	private static String toThrowableString(Throwable e, String indentation) {
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">		if (e == null) {</span>
+<span class="nc" id="L97">			return &quot;&quot;;</span>
+		}
+<span class="fc" id="L99">		String s = e.getClass().getName();</span>
+<span class="fc" id="L100">		String message = e.getLocalizedMessage();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		return indent(indentation, (message != null) ? (s + &quot;: &quot; + message) : s);</span>
+	}
+
+	private static String toCauseString(Throwable e, String indentation) {
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">		if (e == null) {</span>
+<span class="nc" id="L106">			return &quot;&quot;;</span>
+		}
+<span class="fc" id="L108">		Throwable cause = e.getCause();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">		if (cause == null) {</span>
+<span class="fc" id="L110">			return &quot;&quot;;</span>
+		}
+<span class="fc" id="L112">		return &quot;\n&quot; + indent(indentation, toString(cause, indentation));</span>
+	}
+
+	private static String indent(String indentation, String str) {
+<span class="fc" id="L116">		return INDENT.matcher(str).replaceAll(indentation);</span>
+	}
+
+	private ExceptionUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

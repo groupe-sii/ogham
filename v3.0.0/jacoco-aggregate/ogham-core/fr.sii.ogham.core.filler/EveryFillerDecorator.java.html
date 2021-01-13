@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EveryFillerDecorator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.filler</a> &gt; <span class="el_source">EveryFillerDecorator.java</span></div><h1>EveryFillerDecorator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.filler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.exception.filler.FillMessageException;
+import fr.sii.ogham.core.message.Message;
+
+/**
+ * Decorator that calls every decorated filler in order to fill the message.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class EveryFillerDecorator implements MessageFiller {
+	/**
+	 * The decorated fillers
+	 */
+	private List&lt;MessageFiller&gt; fillers;
+
+	/**
+	 * Initializes with some fillers.
+	 * 
+	 * @param fillers
+	 *            the fillers to be called (may be empty)
+	 */
+	public EveryFillerDecorator(MessageFiller... fillers) {
+<span class="fc" id="L29">		this(new ArrayList&lt;&gt;(Arrays.asList(fillers)));</span>
+<span class="fc" id="L30">	}</span>
+
+	/**
+	 * Initializes with some fillers.
+	 * 
+	 * @param fillers
+	 *            the fillers to be called (may be empty)
+	 */
+	public EveryFillerDecorator(List&lt;MessageFiller&gt; fillers) {
+<span class="fc" id="L39">		super();</span>
+<span class="fc" id="L40">		this.fillers = fillers;</span>
+<span class="fc" id="L41">	}</span>
+
+	@Override
+	public void fill(Message message) throws FillMessageException {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		for (MessageFiller filler : fillers) {</span>
+<span class="fc" id="L46">			filler.fill(message);</span>
+<span class="fc" id="L47">		}</span>
+<span class="fc" id="L48">	}</span>
+
+	/**
+	 * Register a new filler to be executed.
+	 * 
+	 * &lt;p&gt;
+	 * The filler is registered at the end of the list.
+	 * &lt;/p&gt;
+	 * 
+	 * @param filler
+	 *            the filler to append to the list
+	 * @return this instance for fluent chaining
+	 */
+	public EveryFillerDecorator addFiller(MessageFiller filler) {
+<span class="fc" id="L62">		fillers.add(filler);</span>
+<span class="fc" id="L63">		return this;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

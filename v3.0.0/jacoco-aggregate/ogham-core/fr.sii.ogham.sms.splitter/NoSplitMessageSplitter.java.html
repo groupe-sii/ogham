@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>NoSplitMessageSplitter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.splitter</a> &gt; <span class="el_source">NoSplitMessageSplitter.java</span></div><h1>NoSplitMessageSplitter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.splitter;
+
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
+import fr.sii.ogham.sms.encoder.Encoder;
+import fr.sii.ogham.sms.exception.message.EncodingException;
+import fr.sii.ogham.sms.exception.message.SplitMessageException;
+
+/**
+ * A no-op splitter that never splits any message.
+ * 
+ * &lt;p&gt;
+ * It always returns a single segment with the whole message.
+ * 
+ * &lt;p&gt;
+ * The message is encoded using the provided {@link Encoder}. The
+ * {@link Encoder} may be null and the result segment wraps the unencoded
+ * original string.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class NoSplitMessageSplitter implements MessageSplitter {
+	private final Encoder encoder;
+
+	/**
+	 * Initializes with no encoder. The result of split is one segment with
+	 * unencoded original message.
+	 * 
+	 */
+	public NoSplitMessageSplitter() {
+<span class="nc" id="L34">		this(null);</span>
+<span class="nc" id="L35">	}</span>
+
+	/**
+	 * Initializes with the {@link Encoder} used to encode the string message
+	 * into a byte array.
+	 * 
+	 * &lt;p&gt;
+	 * The encoder may be null, resulting in a single segment with the unencoded
+	 * original string.
+	 * 
+	 * @param encoder
+	 *            the encoder used to encode the message
+	 */
+	public NoSplitMessageSplitter(Encoder encoder) {
+<span class="fc" id="L49">		super();</span>
+<span class="fc" id="L50">		this.encoder = encoder;</span>
+<span class="fc" id="L51">	}</span>
+
+	@Override
+	public List&lt;Segment&gt; split(String message) throws SplitMessageException {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">		if (encoder == null) {</span>
+<span class="nc" id="L56">			return asList(new StringSegment(message));</span>
+		}
+		try {
+<span class="fc" id="L59">			return asList(new EncodedSegment(encoder.encode(message)));</span>
+<span class="nc" id="L60">		} catch (EncodingException e) {</span>
+<span class="nc" id="L61">			throw new SplitMessageException(&quot;Message couldn't be encoded&quot;, message, e);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

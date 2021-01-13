@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>PhoneNumberTranslatorPair.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package fr.sii.ogham.sms.builder;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>public class PhoneNumberTranslatorPair {</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final PhoneNumberTranslator sender;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;private final PhoneNumberTranslator recipient;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public PhoneNumberTranslatorPair(PhoneNumberTranslator sender, PhoneNumberTranslator recipient) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;super();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.sender = sender;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;&#9;this.recipient = recipient;</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public PhoneNumberTranslator getSender() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_14'/>
+14
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_14'>8</a>
+<span>
+1. getSender : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; NO_COVERAGE<br/>
+2. getSender : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; SURVIVED<br/>
+3. getSender : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; SURVIVED<br/>
+4. getSender : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; SURVIVED<br/>
+5. getSender : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; KILLED<br/>
+6. getSender : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; KILLED<br/>
+7. getSender : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; KILLED<br/>
+8. getSender : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return sender;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_15'/>
+15
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_15'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;public PhoneNumberTranslator getRecipient() {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_17'/>
+17
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_17'>8</a>
+<span>
+1. getRecipient : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; NO_COVERAGE<br/>
+2. getRecipient : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; SURVIVED<br/>
+3. getRecipient : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; SURVIVED<br/>
+4. getRecipient : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; SURVIVED<br/>
+5. getRecipient : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; KILLED<br/>
+6. getRecipient : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; KILLED<br/>
+7. getRecipient : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; KILLED<br/>
+8. getRecipient : replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>&#9;&#9;return recipient;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_18'/>
+18
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_18'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>&#9;}</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@2b19dc14_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2b19dc14_14'>14</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_14'/> 
+
+<p class='NO_COVERAGE'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getSender<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getSender<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.StaticMethodsAccessTest.smsUsingFreemarkerTemplateShouldBeAbleToCallStaticMethods(oghamspringbootv1autoconfigure.it.StaticMethodsAccessTest)</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getSender<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getSender<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getSender<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getSender<br/><b>Killed by : </b>oghamcloudhopper.it.ConnectionFailureTest.invalidSystemId(oghamcloudhopper.it.ConnectionFailureTest)</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; KILLED</p> <p class='KILLED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getSender<br/><b>Killed by : </b>oghamall.it.sms.SmsCustomImplTest.simple(oghamall.it.sms.SmsCustomImplTest)</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; KILLED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getSender<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.StaticMethodAccessTest.smsUsingFreemarkerTemplateAndStaticMethodAccessDisabledShouldFail(oghamspringbootv2autoconfigure.it.StaticMethodAccessTest)</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getSender &rarr; KILLED</p> 
+</td>
+</tr>
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@2b19dc14_17'>17</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@2b19dc14_17'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>getRecipient<br/><b>Killed by : </b>oghamspringbootv2autoconfigure.it.StaticMethodAccessTest.smsUsingFreemarkerTemplateAndStaticMethodAccessDisabledShouldFail(oghamspringbootv2autoconfigure.it.StaticMethodAccessTest)</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; KILLED</p> <p class='NO_COVERAGE'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>getRecipient<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; NO_COVERAGE</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>getRecipient<br/><b>Killed by : </b>oghamcloudhopper.it.ConnectionFailureTest.invalidSystemId(oghamcloudhopper.it.ConnectionFailureTest)</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>4.<span><b>4</b><br/><b>Location : </b>getRecipient<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; SURVIVED</p> <p class='SURVIVED'><span class='pop'>5.<span><b>5</b><br/><b>Location : </b>getRecipient<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>6.<span><b>6</b><br/><b>Location : </b>getRecipient<br/><b>Killed by : </b>oghamall.it.sms.SmsCustomImplTest.simple(oghamall.it.sms.SmsCustomImplTest)</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; KILLED</p> <p class='SURVIVED'><span class='pop'>7.<span><b>7</b><br/><b>Location : </b>getRecipient<br/><b>Killed by : </b>none</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; SURVIVED</p> <p class='KILLED'><span class='pop'>8.<span><b>8</b><br/><b>Location : </b>getRecipient<br/><b>Killed by : </b>oghamspringbootv1autoconfigure.it.StaticMethodsAccessTest.smsUsingFreemarkerTemplateShouldBeAbleToCallStaticMethods(oghamspringbootv1autoconfigure.it.StaticMethodsAccessTest)</span></span> replaced return value with null for fr/sii/ogham/sms/builder/PhoneNumberTranslatorPair::getRecipient &rarr; KILLED</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator</li>
+<li class='mutator'>org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+</ul>
+
+<br/>
+
+Report generated by <a href='http://pitest.org'>PIT</a> OGHAM
+
+</body>
+</html>

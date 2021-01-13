@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ClassPathResolverAdapter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.adapter</a> &gt; <span class="el_source">ClassPathResolverAdapter.java</span></div><h1>ClassPathResolverAdapter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.adapter;
+
+import java.net.URL;
+
+import fr.sii.ogham.core.resource.resolver.ClassPathResolver;
+import fr.sii.ogham.core.resource.resolver.DelegateResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.TemplateLoader;
+
+/**
+ * Adapter that converts general {@link ClassPathResolver} into FreeMarker
+ * specific {@link ClassTemplateLoader}.
+ * 
+ * @author Cyril Dejonghe
+ *
+ */
+public class ClassPathResolverAdapter extends AbstractFreeMarkerTemplateLoaderOptionsAdapter {
+	private final ClassLoader classLoader;
+	
+	public ClassPathResolverAdapter(ClassLoader classLoader) {
+<span class="fc" id="L22">		super();</span>
+<span class="fc" id="L23">		this.classLoader = classLoader;</span>
+<span class="fc" id="L24">	}</span>
+
+	@Override
+	public boolean supports(ResourceResolver resolver) {
+<span class="fc bfc" id="L28" title="All 2 branches covered.">		ResourceResolver actualResolver = resolver instanceof DelegateResourceResolver ? ((DelegateResourceResolver) resolver).getActualResourceResolver() : resolver;</span>
+<span class="fc" id="L29">		return actualResolver instanceof ClassPathResolver;</span>
+	}
+
+	@Override
+	public TemplateLoader adapt(ResourceResolver resolver) {
+<span class="fc" id="L34">		return new FixClassTemplateLoader(getClassLoader(), &quot;&quot;);</span>
+	}
+
+	private ClassLoader getClassLoader() {
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">		if(classLoader!=null) {</span>
+<span class="nc" id="L39">			return classLoader;</span>
+		}
+<span class="fc" id="L41">		return Thread.currentThread().getContextClassLoader();</span>
+	}
+
+	private static class FixClassTemplateLoader extends ClassTemplateLoader {
+		public FixClassTemplateLoader(ClassLoader classLoader, String basePackagePath) {
+<span class="fc" id="L46">			super(classLoader, basePackagePath);</span>
+<span class="fc" id="L47">		}</span>
+
+		@Override
+		protected URL getURL(String name) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">			String path = name.startsWith(&quot;/&quot;) ? name.substring(1) : name;</span>
+<span class="fc" id="L52">			return super.getURL(path);</span>
+		}
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

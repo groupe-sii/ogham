@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ClassPathResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.resource.resolver</a> &gt; <span class="el_source">ClassPathResolver.java</span></div><h1>ClassPathResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.resource.resolver;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.resource.ByteResource;
+import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+
+/**
+ * Resource resolver that searches for the resource into the classpath. This
+ * implementation is able to manage path starting or not with '/'. The resource
+ * resolution needs an absolute class path. The generated resource information
+ * will only contain a reference to the stream of the found resource. If the
+ * path points nowhere, an {@link ResourceResolutionException} is thrown to
+ * indicate that the resource couldn't be found.
+ * 
+ * @author Aurélien Baudet
+ * @see ByteResource
+ */
+public class ClassPathResolver extends AbstractPrefixedLookupPathResolver implements RelativisableResourceResolver {
+
+<span class="fc" id="L31">	private static final Logger LOG = LoggerFactory.getLogger(ClassPathResolver.class);</span>
+
+	public ClassPathResolver(List&lt;String&gt; lookups) {
+<span class="fc" id="L34">		super(lookups);</span>
+<span class="fc" id="L35">	}</span>
+
+	public ClassPathResolver(String... lookups) {
+<span class="fc" id="L38">		super(lookups);</span>
+<span class="fc" id="L39">	}</span>
+
+	@Override
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
+<span class="fc" id="L43">		ResolvedPath resourcePath = resolve(path);</span>
+<span class="fc" id="L44">		return getResource(resourcePath);</span>
+	}
+
+	@Override
+	protected Resource getResource(ResolvedPath resourcePath) throws ResourceResolutionException {
+		try {
+<span class="fc" id="L50">			LOG.debug(&quot;Loading resource {} from classpath...&quot;, resourcePath);</span>
+<span class="fc" id="L51">			String resolvedPath = resourcePath.getResolvedPath();</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">			InputStream stream = getClass().getClassLoader().getResourceAsStream(resolvedPath.startsWith(&quot;/&quot;) ? resolvedPath.substring(1) : resolvedPath);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">			if (stream == null) {</span>
+<span class="fc" id="L54">				throw new ResourceResolutionException(&quot;Resource &quot; + resolvedPath + &quot; not found in the classpath&quot;, resourcePath);</span>
+			}
+<span class="fc" id="L56">			LOG.debug(&quot;Resource {} available in the classpath...&quot;, resourcePath);</span>
+<span class="fc" id="L57">			return new ByteResource(extractName(resolvedPath), stream);</span>
+<span class="nc" id="L58">		} catch (IOException e) {</span>
+<span class="nc" id="L59">			throw new ResourceResolutionException(&quot;The resource &quot; + resourcePath.getOriginalPath() + &quot; is not readable&quot;, resourcePath, e);</span>
+		}
+	}
+
+	private static String extractName(String path) {
+<span class="fc" id="L64">		return new File(path).getName();</span>
+	}
+
+
+	@Override
+	public boolean isAbsolute(ResourcePath path) {
+<span class="fc" id="L70">		ResolvedPath resourcePath = resolve(path);</span>
+<span class="fc" id="L71">		return resourcePath.getResolvedPath().startsWith(&quot;/&quot;);</span>
+	}
+
+	@Override
+	public ResolvedPath resolve(ResourcePath relativePath, String prefixPath, String suffixPath) {
+<span class="fc" id="L76">		ResolvedPath resourcePath = resolve(relativePath);</span>
+<span class="fc" id="L77">		String lookup = getLookup(relativePath);</span>
+<span class="fc" id="L78">		return new ResolvedResourcePath(relativePath, lookup, prefixPath + resourcePath.getResolvedPath() + suffixPath);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

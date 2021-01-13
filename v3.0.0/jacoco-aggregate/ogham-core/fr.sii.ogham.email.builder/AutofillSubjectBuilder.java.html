@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AutofillSubjectBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">AutofillSubjectBuilder.java</span></div><h1>AutofillSubjectBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.filler.AbstractAutofillDefaultValueBuilder;
+import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.filler.SubjectFiller;
+import fr.sii.ogham.core.subject.provider.FirstSupportingSubjectProvider;
+import fr.sii.ogham.core.subject.provider.HtmlTitleSubjectProvider;
+import fr.sii.ogham.core.subject.provider.MultiContentSubjectProvider;
+import fr.sii.ogham.core.subject.provider.SubjectProvider;
+import fr.sii.ogham.core.subject.provider.TextPrefixSubjectProvider;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * Configures how to handle missing {@link Email} subject: if no subject is
+ * explicitly defined on the {@link Email}, Ogham will use the result of this
+ * builder configuration to provide a default subject.
+ * 
+ * Default subject can be provided by:
+ * &lt;ul&gt;
+ * &lt;li&gt;Using HTML {@code &lt;title&gt;} header tag as subject&lt;/li&gt;
+ * &lt;li&gt;Using first line text if prefixed&lt;/li&gt;
+ * &lt;li&gt;Using a property value&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class AutofillSubjectBuilder extends AbstractAutofillDefaultValueBuilder&lt;AutofillSubjectBuilder, AutofillEmailBuilder, String&gt; implements Builder&lt;MessageFiller&gt; {
+	private final ConfigurationValueBuilderHelper&lt;AutofillSubjectBuilder, Boolean&gt; enableHtmlTitleValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;AutofillSubjectBuilder, String&gt; firstLinePrefixValueBuilder;
+	private SubjectProvider customProvider;
+
+	/**
+	 * Initializes with the parent builder and the {@link EnvironmentBuilder}.
+	 * The parent builder is used when calling the {@link #and()} method. The
+	 * {@link EnvironmentBuilder} is used by {@link #build()} method to evaluate
+	 * property values.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for property resolution
+	 */
+	public AutofillSubjectBuilder(AutofillEmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L51">		super(AutofillSubjectBuilder.class, parent, String.class, buildContext);</span>
+<span class="fc" id="L52">		enableHtmlTitleValueBuilder = buildContext.newConfigurationValueBuilder(myself, Boolean.class);</span>
+<span class="fc" id="L53">		firstLinePrefixValueBuilder = buildContext.newConfigurationValueBuilder(myself, String.class);</span>
+<span class="fc" id="L54">	}</span>
+	
+	/**
+	 * Enable/disable using HTML {@code &lt;title&gt;} tag to provide a subject on the
+	 * {@link Email} if none was explicitly defined.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #htmlTitle()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .htmlTitle(false)
+	 * .htmlTitle()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .htmlTitle(false)
+	 * .htmlTitle()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code htmlTitle(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable (true) or disable (false) extraction of HTML title to be used as subject of the email
+	 * @return this instance for fluent chaining
+	 */
+	public AutofillSubjectBuilder htmlTitle(Boolean enable) {
+<span class="nc" id="L92">		enableHtmlTitleValueBuilder.setValue(enable);</span>
+<span class="nc" id="L93">		return this;</span>
+	}
+
+	
+	/**
+	 * Enable/disable using HTML {@code &lt;title&gt;} tag to provide a subject on the
+	 * {@link Email} if none was explicitly defined.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .htmlTitle()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #htmlTitle(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .htmlTitle(false)
+	 * .htmlTitle()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;AutofillSubjectBuilder, Boolean&gt; htmlTitle() {
+<span class="fc" id="L133">		return enableHtmlTitleValueBuilder;</span>
+	}
+	
+	/**
+	 * Uses first line of text template to define the email subject (only if a
+	 * prefix is defined).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #text()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .text(&quot;MyPrefix:&quot;)
+	 * .text()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;Subject:&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .text(&quot;MyPrefix:&quot;)
+	 * .text()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;Subject:&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code text(&quot;MyPrefix:&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param firstLinePrefix
+	 *            the prefix used to indicate that subject should be extracted
+	 * @return this instance for fluent chaining
+	 */
+	public AutofillSubjectBuilder text(String firstLinePrefix) {
+<span class="nc" id="L172">		firstLinePrefixValueBuilder.setValue(firstLinePrefix);</span>
+<span class="nc" id="L173">		return this;</span>
+	}
+
+	
+	/**
+	 * Uses first line of text template to define the email subject (only if a
+	 * prefix is defined).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some property keys and/or a default value.
+	 * The aim is to let developer be able to externalize its configuration (using system properties, configuration file or anything else).
+	 * If the developer doesn't configure any value for the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .text()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;Subject:&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #text(String)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .text(&quot;MyPrefix:&quot;)
+	 * .text()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;Subject:&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;MyPrefix:&quot;} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;AutofillSubjectBuilder, String&gt; text() {
+<span class="fc" id="L213">		return firstLinePrefixValueBuilder;</span>
+	}
+
+	/**
+	 * Extension point to provide any additional subject provider. See
+	 * {@link SubjectProvider} for more information.
+	 * 
+	 * If defined, any previously defined configuration is not used.
+	 * 
+	 * Only one provider can be defined. So you may need to register a
+	 * {@link FirstSupportingSubjectProvider} with the list of your custom
+	 * providers.
+	 * 
+	 * @param provider
+	 *            the provider to use
+	 * @return this instance for fluent chaining
+	 */
+	public AutofillSubjectBuilder provider(SubjectProvider provider) {
+<span class="nc" id="L231">		customProvider = provider;</span>
+<span class="nc" id="L232">		return myself;</span>
+	}
+
+	@Override
+	public MessageFiller build() {
+<span class="fc" id="L237">		return buildContext.register(new SubjectFiller(buildProvider()));</span>
+	}
+
+	private SubjectProvider buildProvider() {
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">		if (customProvider != null) {</span>
+<span class="nc" id="L242">			return customProvider;</span>
+		}
+<span class="fc" id="L244">		FirstSupportingSubjectProvider provider = buildContext.register(new FirstSupportingSubjectProvider());</span>
+<span class="fc" id="L245">		String prefix = firstLinePrefixValueBuilder.getValue();</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">		if (prefix != null) {</span>
+<span class="fc" id="L247">			provider.addProvider(buildContext.register(new TextPrefixSubjectProvider(prefix)));</span>
+		}
+<span class="fc" id="L249">		boolean htmlTitle = enableHtmlTitleValueBuilder.getValue(false);</span>
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">		if (htmlTitle) {</span>
+<span class="fc" id="L251">			provider.addProvider(buildContext.register(new HtmlTitleSubjectProvider()));</span>
+		}
+<span class="fc" id="L253">		SubjectProvider multiContentProvider = buildContext.register(new MultiContentSubjectProvider(provider));</span>
+<span class="fc" id="L254">		provider.addProvider(multiContentProvider);</span>
+<span class="fc" id="L255">		return provider;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

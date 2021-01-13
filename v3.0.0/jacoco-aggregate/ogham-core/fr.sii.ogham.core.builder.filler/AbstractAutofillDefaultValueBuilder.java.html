@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractAutofillDefaultValueBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.filler</a> &gt; <span class="el_source">AbstractAutofillDefaultValueBuilder.java</span></div><h1>AbstractAutofillDefaultValueBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.filler;
+
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.fluent.AbstractParent;
+
+/**
+ * Base class to configure a property key that will be used to automatically
+ * fill a message. It registers the property keys only (no direct value).
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;MYSELF&gt;
+ *            The type of this instance. This is needed to have the right return
+ *            type for fluent chaining with inheritance
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ * @param &lt;V&gt;
+ *            The type of the value
+ */
+@SuppressWarnings(&quot;squid:S00119&quot;)
+public abstract class AbstractAutofillDefaultValueBuilder&lt;MYSELF, P, V&gt; extends AbstractParent&lt;P&gt; {
+	protected final MYSELF myself;
+	protected final BuildContext buildContext;
+	protected final ConfigurationValueBuilderHelper&lt;MYSELF, V&gt; defaultValueBuilder;
+
+	/**
+	 * Initializes the builder with the explicit type of this instance for
+	 * chaining. This is mandatory in order to have a fluent chaining that
+	 * doesn't loose sub-types. If we were using directly {@code this}, chaining
+	 * would only give methods statically defined by
+	 * {@link AbstractAutofillDefaultValueBuilder}. All methods defined by any
+	 * specialized implementation that would add other methods won't be
+	 * accessible directly.
+	 * 
+	 * The parent is used by the {@link #and()} method for chaining.
+	 * 
+	 * @param selfType
+	 *            the real implementation class that helps compiler to chain
+	 *            calls
+	 * @param parent
+	 *            the parent builder
+	 * @param valueClass
+	 *            the type of the value
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public AbstractAutofillDefaultValueBuilder(Class&lt;?&gt; selfType, P parent, Class&lt;V&gt; valueClass, BuildContext buildContext) {
+<span class="fc" id="L53">		super(parent);</span>
+<span class="fc" id="L54">		myself = (MYSELF) selfType.cast(this);</span>
+<span class="fc" id="L55">		this.buildContext = buildContext;</span>
+<span class="fc" id="L56">		defaultValueBuilder = buildContext.newConfigurationValueBuilder(myself, valueClass);</span>
+<span class="fc" id="L57">	}</span>
+
+	/**
+	 * Register a default value to use if no value is specified on the message.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #defaultValue()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .defaultValue(&quot;my-value&quot;)
+	 * .defaultValue()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .defaultValue(&quot;my-value&quot;)
+	 * .defaultValue()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code defaultValue(&quot;my-value&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param value
+	 *            the default value if no value is defined
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF defaultValue(V value) {
+<span class="nc" id="L94">		defaultValueBuilder.setValue(value);</span>
+<span class="nc" id="L95">		return myself;</span>
+	}
+
+	/**
+	 * Register a default value to use if no value is specified on the message.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .defaultValue()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #defaultValue(Object)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .defaultValue(&quot;my-value&quot;)
+	 * .defaultValue()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;my-value&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;MYSELF, V&gt; defaultValue() {
+<span class="fc" id="L135">		return defaultValueBuilder;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>KeepAliveOptions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.cloudhopper</a> &gt; <span class="el_source">KeepAliveOptions.java</span></div><h1>KeepAliveOptions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.cloudhopper;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Supplier;
+
+import com.cloudhopper.smpp.pdu.EnquireLink;
+
+public class KeepAliveOptions {
+	/**
+	 * Enable or disable sending of {@link EnquireLink} messages to keep the
+	 * session alive.
+	 */
+	private Boolean enable;
+	/**
+	 * The delay (in milliseconds) between two {@link EnquireLink} messages.
+	 */
+	private Long enquireLinkInterval;
+	/**
+	 * The maximum amount of time (in milliseconds) to wait for receiving a
+	 * response from the server to an {@link EnquireLink} request.
+	 */
+	private Long enquireLinkTimeout;
+	/**
+	 * Connect to the server directly when the client is ready (if true).
+	 * Otherwise, the connection is done when the first message is sent.
+	 * 
+	 * This may be useful to avoid a latency for the first message.
+	 * 
+	 * If connection fails at startup, then a new attempt is done when first
+	 * message is sent.
+	 */
+	private Boolean connectAtStartup;
+	/**
+	 * Provide a factory that creates a {@link ScheduledExecutorService}. The
+	 * created executor is then used to schedule the task that sends regularly
+	 * {@link EnquireLink} requests.
+	 */
+	private Supplier&lt;ScheduledExecutorService&gt; executor;
+	/**
+	 * The maximum number of consecutive {@link EnquireLink} requests that end
+	 * in timeout to consider that a new session is required.
+	 */
+	private Integer maxConsecutiveTimeouts;
+
+	public KeepAliveOptions() {
+<span class="fc" id="L46">		super();</span>
+<span class="fc" id="L47">	}</span>
+
+	public KeepAliveOptions(boolean enable) {
+<span class="fc" id="L50">		super();</span>
+<span class="fc" id="L51">		this.enable = enable;</span>
+<span class="fc" id="L52">	}</span>
+
+	public Boolean getEnable() {
+<span class="nc" id="L55">		return enable;</span>
+	}
+
+	public void setEnable(Boolean enable) {
+<span class="fc" id="L59">		this.enable = enable;</span>
+<span class="fc" id="L60">	}</span>
+
+	public boolean isEnable(boolean defaultValue) {
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">		return enable == null ? defaultValue : enable;</span>
+	}
+
+	public Long getEnquireLinkInterval() {
+<span class="fc" id="L67">		return enquireLinkInterval;</span>
+	}
+
+	public void setEnquireLinkInterval(Long enquireLinkInterval) {
+<span class="fc" id="L71">		this.enquireLinkInterval = enquireLinkInterval;</span>
+<span class="fc" id="L72">	}</span>
+
+	public Long getEnquireLinkTimeout() {
+<span class="fc" id="L75">		return enquireLinkTimeout;</span>
+	}
+
+	public void setEnquireLinkTimeout(Long enquireLinkTimeout) {
+<span class="fc" id="L79">		this.enquireLinkTimeout = enquireLinkTimeout;</span>
+<span class="fc" id="L80">	}</span>
+
+	public Boolean getConnectAtStartup() {
+<span class="nc" id="L83">		return connectAtStartup;</span>
+	}
+
+	public void setConnectAtStartup(Boolean connectAtStartup) {
+<span class="fc" id="L87">		this.connectAtStartup = connectAtStartup;</span>
+<span class="fc" id="L88">	}</span>
+
+	public boolean isConnectAtStartup(boolean defaultValue) {
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		return connectAtStartup == null ? defaultValue : connectAtStartup;</span>
+	}
+
+	public Supplier&lt;ScheduledExecutorService&gt; getExecutor() {
+<span class="fc" id="L95">		return executor;</span>
+	}
+
+	public void setExecutor(Supplier&lt;ScheduledExecutorService&gt; executor) {
+<span class="fc" id="L99">		this.executor = executor;</span>
+<span class="fc" id="L100">	}</span>
+
+	public Integer getMaxConsecutiveTimeouts() {
+<span class="fc" id="L103">		return maxConsecutiveTimeouts;</span>
+	}
+
+	public void setMaxConsecutiveTimeouts(Integer maximumConsecutiveTimeouts) {
+<span class="fc" id="L107">		this.maxConsecutiveTimeouts = maximumConsecutiveTimeouts;</span>
+<span class="fc" id="L108">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

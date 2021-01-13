@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RelativeResolver.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.resource.resolver</a> &gt; <span class="el_source">RelativeResolver.java</span></div><h1>RelativeResolver.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.resource.resolver;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.path.ResolvedPath;
+import fr.sii.ogham.core.resource.path.ResolvedResourcePath;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+
+/**
+ * &lt;p&gt;
+ * Decorator resource resolver that use parent path and extension for resource
+ * resolution.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * For example, the parent path values &quot;email/user/&quot; and the extension is
+ * &quot;.html&quot;. The resource name is &quot;hello&quot;. This resource resolver appends the
+ * parent path, the resource name and the extension generating the path
+ * &quot;email/user/hello.html&quot;.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Once the path is generated, then this implementation delegates the real
+ * resource resolution to another implementation.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class RelativeResolver implements DelegateResourceResolver {
+<span class="fc" id="L32">	private static final Logger LOG = LoggerFactory.getLogger(RelativeResolver.class);</span>
+
+	/**
+	 * The parent path to add to the resource name (or path)
+	 */
+	private String parentPath;
+
+	/**
+	 * The suffix to add to the resource name (or path)
+	 */
+	private String extension;
+
+	/**
+	 * The delegate resolver that will do the real resource resolution
+	 */
+	private RelativisableResourceResolver delegate;
+
+	/**
+	 * Initialize the resolver with the mandatory delegate and a parent path. No
+	 * extension will be appended to the resource path.
+	 * 
+	 * @param delegate
+	 *            the resolver that will do the real resource resolution
+	 * @param parentPath
+	 *            a string to add before the resource path
+	 */
+	public RelativeResolver(RelativisableResourceResolver delegate, String parentPath) {
+<span class="fc" id="L59">		this(delegate, parentPath, &quot;&quot;);</span>
+<span class="fc" id="L60">	}</span>
+
+	/**
+	 * Initialize the resolver with the mandatory delegate, a parent path and a
+	 * extension.
+	 * 
+	 * @param delegate
+	 *            the resolver that will do the real resource resolution
+	 * @param parentPath
+	 *            a string to add before the resource path
+	 * @param extension
+	 *            a string to add after the resource path
+	 */
+	public RelativeResolver(RelativisableResourceResolver delegate, String parentPath, String extension) {
+<span class="fc" id="L74">		super();</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">		this.parentPath = parentPath == null ? &quot;&quot; : parentPath;</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">		this.extension = extension == null ? &quot;&quot; : extension;</span>
+<span class="fc" id="L77">		this.delegate = delegate;</span>
+<span class="fc" id="L78">	}</span>
+
+	@Override
+	public Resource getResource(ResourcePath path) throws ResourceResolutionException {
+<span class="fc bfc" id="L82" title="All 2 branches covered.">		if (delegate.isAbsolute(path)) {</span>
+<span class="fc" id="L83">			LOG.trace(&quot;Absolute resource path {} =&gt; do not add parentPath/extension&quot;, path);</span>
+<span class="fc" id="L84">			return delegate.getResource(path);</span>
+		}
+		// special case when extension is already set
+<span class="fc bfc" id="L87" title="All 4 branches covered.">		if (!extension.isEmpty() &amp;&amp; path.getOriginalPath().endsWith(extension)) {</span>
+<span class="fc" id="L88">			LOG.debug(&quot;Adding parentPath '{}' and skipping extension '{}' to the resource path {}&quot;, parentPath, extension, path);</span>
+<span class="nc" id="L89">			return delegate.getResource(delegate.resolve(path, parentPath, &quot;&quot;));</span>
+		}
+<span class="fc" id="L91">		LOG.debug(&quot;Adding parentPath '{}' and extension '{}' to the resource path {}&quot;, parentPath, extension, path);</span>
+<span class="fc" id="L92">		return delegate.getResource(delegate.resolve(path, parentPath, extension));</span>
+	}
+
+	@Override
+	public boolean supports(ResourcePath path) {
+<span class="fc" id="L97">		return delegate.supports(path);</span>
+	}
+
+	@Override
+	public ResolvedPath resolve(ResourcePath path) {
+<span class="fc" id="L102">		ResolvedPath resourcePath = delegate.resolve(path);</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		if (delegate.isAbsolute(resourcePath)) {</span>
+<span class="fc" id="L104">			LOG.trace(&quot;Absolute resource path {} =&gt; do not add parentPath/extension&quot;, path);</span>
+<span class="fc" id="L105">			return resourcePath;</span>
+		}
+		// special case when extension is already set
+<span class="fc bfc" id="L108" title="All 4 branches covered.">		if (!extension.isEmpty() &amp;&amp; resourcePath.getResolvedPath().endsWith(extension)) {</span>
+<span class="fc" id="L109">			LOG.debug(&quot;Adding parentPath ({}) and skipping extension ({}) to the resource path {}&quot;, parentPath, extension, path);</span>
+<span class="fc" id="L110">			return new ResolvedResourcePath(path, resourcePath.getLookup(), parentPath + resourcePath.getResolvedPath());</span>
+		}
+<span class="fc" id="L112">		LOG.debug(&quot;Adding parentPath ({}) and extension ({}) to the resource path {}&quot;, parentPath, extension, path);</span>
+<span class="fc" id="L113">		return new ResolvedResourcePath(path, resourcePath.getLookup(), parentPath + resourcePath.getResolvedPath() + extension);</span>
+	}
+
+	@Override
+	public ResourceResolver getActualResourceResolver() {
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">		return delegate instanceof DelegateResourceResolver ? ((RelativeResolver) delegate).getActualResourceResolver() : delegate;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L123">		return &quot;RelativeResolver [parentPath=&quot; + parentPath + &quot;, extension=&quot; + extension + &quot;, delegate=&quot; + delegate + &quot;]&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

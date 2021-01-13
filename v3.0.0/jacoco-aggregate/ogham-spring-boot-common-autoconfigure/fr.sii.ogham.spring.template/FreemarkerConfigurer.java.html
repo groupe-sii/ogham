@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FreemarkerConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.template</a> &gt; <span class="el_source">FreemarkerConfigurer.java</span></div><h1>FreemarkerConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.template;
+
+import static fr.sii.ogham.core.util.ConfigurationValueUtils.firstValue;
+import static java.util.Optional.ofNullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
+import org.springframework.context.ApplicationContext;
+
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.spring.common.OghamTemplateProperties;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
+import fr.sii.ogham.spring.email.OghamEmailProperties;
+import fr.sii.ogham.spring.sms.OghamSmsProperties;
+import fr.sii.ogham.spring.template.freemarker.SpringBeansTemplateHashModelEx;
+import fr.sii.ogham.template.freemarker.FreeMarkerParser;
+import fr.sii.ogham.template.freemarker.FreemarkerConstants;
+import fr.sii.ogham.template.freemarker.builder.AbstractFreemarkerBuilder;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerEmailBuilder;
+import fr.sii.ogham.template.freemarker.builder.FreemarkerSmsBuilder;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.BeansWrapperBuilder;
+import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
+
+/**
+ * Integrates with Spring templating system by using Freemarker
+ * {@link Configuration} object provided by Spring and by using Spring
+ * properties defined with prefix {@code spring.freemarker} (see
+ * {@link FreeMarkerProperties}).
+ * 
+ * If both Spring property and Ogham property is defined, Ogham property is
+ * used.
+ * 
+ * For example, if the file application.properties contains the following
+ * configuration:
+ * 
+ * &lt;pre&gt;
+ * spring.freemarker.prefix=/email/
+ * ogham.email.freemarker.path-prefix=/foo/
+ * &lt;/pre&gt;
+ * 
+ * The {@link FreeMarkerParser} will use the templates in &quot;/foo/&quot;.
+ * 
+ * &lt;p&gt;
+ * This configurer is also useful to support property naming variants (see
+ * &lt;a href=
+ * &quot;https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0&quot;&gt;Relaxed
+ * Binding&lt;/a&gt;).
+ * 
+ * &lt;p&gt;
+ * If ogham.freemarker.enable-spring-beans is true (default value), then Spring
+ * Beans are available from the template using syntax
+ * {@code @beanName.method(args)}.
+ * 
+ * &lt;p&gt;
+ * If {@code ogham.freemarker.static-method-access.enable} is true (default
+ * value), then static methods can be called from templates using
+ * 
+ * &lt;pre&gt;
+ * {@code statics['full.package.name.ClassName'].method(args)}
+ * &lt;/pre&gt;
+ * 
+ * If {@code ogham.freemarker.static-method-access.variable-name} value is
+ * changed (default value is 'statics'), then static methods can be called from
+ * templates using another variable name. For example, configuring
+ * {@code ogham.freemarker.static-method-access.variable-name=global} gives
+ * access to static methods using name global:
+ * 
+ * &lt;pre&gt;
+ * {@code global['full.package.name.ClassName'].method(args)}
+ * &lt;/pre&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FreemarkerConfigurer extends MessagingConfigurerAdapter implements SpringMessagingConfigurer {
+	private static final int SPRING_CONFIGURER_PRIORITY_OFFSET = 1000;
+
+<span class="fc" id="L84">	private static final Logger LOG = LoggerFactory.getLogger(FreemarkerConfigurer.class);</span>
+
+	private final Configuration emailConfiguration;
+	private final Configuration smsConfiguration;
+	private final OghamCommonTemplateProperties templateProperties;
+	private final OghamEmailProperties emailProperties;
+	private final OghamSmsProperties smsProperties;
+	private final FreeMarkerProperties springProperties;
+	private final OghamFreemarkerProperties oghamFreemarkerProperties;
+	private final ApplicationContext applicationContext;
+
+	public FreemarkerConfigurer(Configuration emailConfiguration, Configuration smsConfiguration, OghamCommonTemplateProperties templateProperties, OghamEmailProperties emailProperties,
+			OghamSmsProperties smsProperties, FreeMarkerProperties springProperties, OghamFreemarkerProperties oghamFreemarkerProperties, ApplicationContext applicationContext) {
+<span class="fc" id="L97">		super();</span>
+<span class="fc" id="L98">		this.emailConfiguration = emailConfiguration;</span>
+<span class="fc" id="L99">		this.smsConfiguration = smsConfiguration;</span>
+<span class="fc" id="L100">		this.templateProperties = templateProperties;</span>
+<span class="fc" id="L101">		this.emailProperties = emailProperties;</span>
+<span class="fc" id="L102">		this.smsProperties = smsProperties;</span>
+<span class="fc" id="L103">		this.springProperties = springProperties;</span>
+<span class="fc" id="L104">		this.oghamFreemarkerProperties = oghamFreemarkerProperties;</span>
+<span class="fc" id="L105">		this.applicationContext = applicationContext;</span>
+<span class="fc" id="L106">	}</span>
+
+	@Override
+	public void configure(EmailBuilder emailBuilder) {
+<span class="fc" id="L110">		AbstractFreemarkerBuilder&lt;?, ?&gt; builder = emailBuilder.template(FreemarkerEmailBuilder.class);</span>
+<span class="fc" id="L111">		builder.mergeConfiguration(emailConfiguration);</span>
+		// specific Ogham properties explicitly take precedence over Spring
+		// properties
+<span class="fc bfc" id="L114" title="All 2 branches covered.">		if (springProperties != null) {</span>
+<span class="fc" id="L115">			applySpringConfiguration(builder);</span>
+		}
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">		if (emailProperties != null) {</span>
+<span class="fc" id="L118">			applyOghamConfiguration(builder, emailProperties);</span>
+		}
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">		if (oghamFreemarkerProperties.getSpringBeans().isEnable()) {</span>
+<span class="fc" id="L121">			registerSpringBeans(builder, emailConfiguration);</span>
+		}
+<span class="fc bfc" id="L123" title="All 2 branches covered.">		if (oghamFreemarkerProperties.getStaticMethodAccess().isEnable()) {</span>
+<span class="fc" id="L124">			registerStatics(builder);</span>
+		}
+<span class="fc" id="L126">	}</span>
+
+	@Override
+	public void configure(SmsBuilder smsBuilder) {
+<span class="fc" id="L130">		AbstractFreemarkerBuilder&lt;?, ?&gt; builder = smsBuilder.template(FreemarkerSmsBuilder.class);</span>
+<span class="fc" id="L131">		builder.mergeConfiguration(smsConfiguration);</span>
+		// specific Ogham properties explicitly take precedence over Spring
+		// properties
+<span class="fc bfc" id="L134" title="All 2 branches covered.">		if (springProperties != null) {</span>
+<span class="fc" id="L135">			applySpringConfiguration(builder);</span>
+		}
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">		if (smsProperties != null) {</span>
+<span class="fc" id="L138">			applyOghamConfiguration(builder, smsProperties);</span>
+		}
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">		if (oghamFreemarkerProperties.getSpringBeans().isEnable()) {</span>
+<span class="fc" id="L141">			registerSpringBeans(builder, smsConfiguration);</span>
+		}
+<span class="fc bfc" id="L143" title="All 2 branches covered.">		if (oghamFreemarkerProperties.getStaticMethodAccess().isEnable()) {</span>
+<span class="fc" id="L144">			registerStatics(builder);</span>
+		}
+<span class="fc" id="L146">	}</span>
+
+	@Override
+	public int getOrder() {
+<span class="fc" id="L150">		return FreemarkerConstants.DEFAULT_FREEMARKER_EMAIL_CONFIGURER_PRIORITY + SPRING_CONFIGURER_PRIORITY_OFFSET;</span>
+	}
+
+	private void applyOghamConfiguration(AbstractFreemarkerBuilder&lt;?, ?&gt; builder, OghamTemplateProperties props) {
+<span class="fc" id="L154">		LOG.debug(&quot;[{}] apply ogham configuration properties to {}&quot;, this, builder);</span>
+		// @formatter:off
+<span class="fc" id="L156">		builder</span>
+<span class="fc" id="L157">			.classpath()</span>
+<span class="fc" id="L158">				.pathPrefix()</span>
+<span class="fc" id="L159">					.value(ofNullable(firstValue(props.getFreemarker().getClasspath().getPathPrefix(),</span>
+<span class="fc" id="L160">												props.getTemplate().getClasspath().getPathPrefix(),</span>
+<span class="fc" id="L161">												props.getFreemarker().getPathPrefix(),</span>
+<span class="fc" id="L162">												props.getTemplate().getPathPrefix(),</span>
+<span class="fc" id="L163">												templateProperties.getPathPrefix())))</span>
+<span class="fc" id="L164">					.and()</span>
+<span class="fc" id="L165">				.pathSuffix()</span>
+<span class="fc" id="L166">					.value(ofNullable(firstValue(props.getFreemarker().getClasspath().getPathSuffix(),</span>
+<span class="fc" id="L167">												props.getTemplate().getClasspath().getPathSuffix(),</span>
+<span class="fc" id="L168">												props.getFreemarker().getPathSuffix(),</span>
+<span class="fc" id="L169">												props.getTemplate().getPathSuffix(),</span>
+<span class="fc" id="L170">												templateProperties.getPathSuffix())))</span>
+<span class="fc" id="L171">					.and()</span>
+<span class="fc" id="L172">				.and()</span>
+<span class="fc" id="L173">			.file()</span>
+<span class="fc" id="L174">				.pathPrefix()</span>
+<span class="fc" id="L175">					.value(ofNullable(firstValue(props.getFreemarker().getFile().getPathPrefix(),</span>
+<span class="fc" id="L176">												props.getTemplate().getFile().getPathPrefix(),</span>
+<span class="fc" id="L177">												props.getFreemarker().getPathPrefix(),</span>
+<span class="fc" id="L178">												props.getTemplate().getPathPrefix(),</span>
+<span class="fc" id="L179">												templateProperties.getPathPrefix())))</span>
+<span class="fc" id="L180">					.and()</span>
+<span class="fc" id="L181">				.pathSuffix()</span>
+<span class="fc" id="L182">					.value(ofNullable(firstValue(props.getFreemarker().getFile().getPathSuffix(),</span>
+<span class="fc" id="L183">											props.getTemplate().getFile().getPathSuffix(),</span>
+<span class="fc" id="L184">											props.getFreemarker().getPathSuffix(),</span>
+<span class="fc" id="L185">											props.getTemplate().getPathSuffix(),</span>
+<span class="fc" id="L186">											templateProperties.getPathSuffix())));</span>
+<span class="fc" id="L187">		builder</span>
+<span class="fc" id="L188">			.configuration()</span>
+<span class="fc" id="L189">				.defaultEncoding().value(ofNullable(oghamFreemarkerProperties.getDefaultEncoding()));</span>
+		// @formatter:on
+<span class="fc" id="L191">	}</span>
+
+	private void applySpringConfiguration(AbstractFreemarkerBuilder&lt;?, ?&gt; builder) {
+<span class="fc" id="L194">		LOG.debug(&quot;[{}] apply spring configuration properties to {}&quot;, this, builder);</span>
+		// @formatter:off
+<span class="fc" id="L196">		builder</span>
+<span class="fc" id="L197">			.classpath()</span>
+<span class="fc" id="L198">				.pathPrefix().value(ofNullable(springProperties.getPrefix())).and()</span>
+<span class="fc" id="L199">				.pathSuffix().value(ofNullable(springProperties.getSuffix())).and()</span>
+<span class="fc" id="L200">				.and()</span>
+<span class="fc" id="L201">			.file()</span>
+<span class="fc" id="L202">				.pathPrefix().value(ofNullable(springProperties.getPrefix())).and()</span>
+<span class="fc" id="L203">				.pathSuffix().value(ofNullable(springProperties.getSuffix()));</span>
+<span class="fc" id="L204">		builder</span>
+<span class="fc" id="L205">			.configuration()</span>
+<span class="fc" id="L206">				.defaultEncoding().value(ofNullable(springProperties.getCharsetName()));</span>
+		// @formatter:on
+<span class="fc" id="L208">	}</span>
+
+	private void registerSpringBeans(AbstractFreemarkerBuilder&lt;?, ?&gt; builder, Configuration configuration) {
+<span class="fc" id="L211">		builder.configuration().addSharedVariables(new SpringBeansTemplateHashModelEx(applicationContext, getBeansWrapper(configuration)));</span>
+<span class="fc" id="L212">	}</span>
+
+	private static BeansWrapper getBeansWrapper(Configuration configuration) {
+<span class="fc" id="L215">		ObjectWrapper objectWrapper = configuration.getObjectWrapper();</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">		if (objectWrapper instanceof BeansWrapper) {</span>
+<span class="fc" id="L217">			return (BeansWrapper) objectWrapper;</span>
+		}
+<span class="nc" id="L219">		return new BeansWrapperBuilder(configuration.getIncompatibleImprovements()).build();</span>
+	}
+
+	private void registerStatics(AbstractFreemarkerBuilder&lt;?, ?&gt; builder) {
+<span class="fc" id="L223">		builder.configuration()</span>
+<span class="fc" id="L224">			.enableStaticMethodAccess(true)</span>
+<span class="fc" id="L225">			.staticMethodAccessVariableName(oghamFreemarkerProperties.getStaticMethodAccess().getVariableName());</span>
+<span class="fc" id="L226">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

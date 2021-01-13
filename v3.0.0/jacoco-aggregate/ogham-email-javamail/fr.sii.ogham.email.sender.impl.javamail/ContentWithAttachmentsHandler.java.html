@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ContentWithAttachmentsHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sender.impl.javamail</a> &gt; <span class="el_source">ContentWithAttachmentsHandler.java</span></div><h1>ContentWithAttachmentsHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sender.impl.javamail;
+
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
+import fr.sii.ogham.email.exception.handler.ContentHandlerException;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.message.content.ContentWithAttachments;
+
+public class ContentWithAttachmentsHandler implements JavaMailContentHandler {
+<span class="fc" id="L20">	private static final Logger LOG = LoggerFactory.getLogger(ContentWithAttachmentsHandler.class);</span>
+	
+	/**
+	 * The content handler used for sub content
+	 */
+	private final JavaMailContentHandler delegate;
+	
+	/**
+	 * The attachment handler
+	 */
+	private final JavaMailAttachmentHandler attachmentHandler;
+
+	public ContentWithAttachmentsHandler(JavaMailContentHandler delegate, JavaMailAttachmentHandler attachmentHandler) {
+<span class="fc" id="L33">		super();</span>
+<span class="fc" id="L34">		this.delegate = delegate;</span>
+<span class="fc" id="L35">		this.attachmentHandler = attachmentHandler;</span>
+<span class="fc" id="L36">	}</span>
+
+	@Override
+	public void setContent(MimePart message, Multipart multipart, Email email, Content content) throws ContentHandlerException {
+		try {
+<span class="fc" id="L41">			MimeMultipart mp = new MimeMultipart(&quot;related&quot;);</span>
+<span class="fc" id="L42">			ContentWithAttachments cwa = (ContentWithAttachments) content;</span>
+<span class="fc" id="L43">			delegate.setContent(message, mp, email, cwa.getContent());</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">			for(Attachment attachment : cwa.getAttachments()) {</span>
+<span class="fc" id="L45">				LOG.debug(&quot;Attaching {} to email&quot;, attachment);</span>
+<span class="fc" id="L46">				attachmentHandler.addAttachment(mp, attachment);</span>
+<span class="fc" id="L47">			}</span>
+			// add the part
+<span class="fc" id="L49">			MimeBodyPart part = new MimeBodyPart();</span>
+<span class="fc" id="L50">			part.setContent(mp);</span>
+<span class="fc" id="L51">			multipart.addBodyPart(part);</span>
+<span class="nc" id="L52">		} catch (MessagingException e) {</span>
+<span class="nc" id="L53">			throw new ContentHandlerException(&quot;Failed to generate related content&quot;, content, e);</span>
+<span class="nc" id="L54">		} catch(AttachmentResourceHandlerException e) {</span>
+<span class="nc" id="L55">			throw new ContentHandlerException(&quot;Failed to set email content&quot;, content, e);</span>
+<span class="fc" id="L56">		}</span>
+<span class="fc" id="L57">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

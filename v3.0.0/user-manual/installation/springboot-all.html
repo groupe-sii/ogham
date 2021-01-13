@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Untitled</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../..//javascripts/steps.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/source-utils.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/highlight-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/sourcecode/collapse-lines.js"></script>
+<script type="text/javascript" src="../..//javascripts/tabcontainer.js"></script>
+<script type="text/javascript" src="../..//javascripts/toc.js"></script>
+<script type="text/javascript" src="../..//javascripts/sticky-title-fix.js"></script>
+<script type="text/javascript" src="../..//javascripts/image-viewer.js"></script>
+<link rel="stylesheet" type="text/css" href="../..//styles/doc-styles.css" />
+</head>
+<body class="book">
+<div id="header">
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="exampleblock tab-container no-max-height">
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/maven-logo.png" alt="Maven" width="118" height="30"></span></div>
+<div class="content">
+<div class="listingblock collapse-lines:1-21,28- highlight-lines:22-26">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="tag">&lt;project</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
+  <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;modelVersion&gt;</span>4.0.0<span class="tag">&lt;/modelVersion&gt;</span>
+  <span class="tag">&lt;parent&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.3.3.RELEASE<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;relativePath</span><span class="tag">/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span>
+  <span class="tag">&lt;/parent&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>samples<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>ogham-and-spring-boot<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;name&gt;</span>ogham-and-spring-boot<span class="tag">&lt;/name&gt;</span>
+  <span class="tag">&lt;description&gt;</span>Demo project for Spring Boot<span class="tag">&lt;/description&gt;</span>
+
+  <span class="tag">&lt;properties&gt;</span>
+    <span class="tag">&lt;java.version&gt;</span>11<span class="tag">&lt;/java.version&gt;</span>
+  <span class="tag">&lt;/properties&gt;</span>
+
+  <span class="tag">&lt;dependencies&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>fr.sii.ogham<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>ogham-spring-boot-starter-all<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;version&gt;</span>3.0.0<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+      <span class="tag">&lt;exclusions&gt;</span>
+        <span class="tag">&lt;exclusion&gt;</span>
+          <span class="tag">&lt;groupId&gt;</span>org.junit.vintage<span class="tag">&lt;/groupId&gt;</span>
+          <span class="tag">&lt;artifactId&gt;</span>junit-vintage-engine<span class="tag">&lt;/artifactId&gt;</span>
+        <span class="tag">&lt;/exclusion&gt;</span>
+      <span class="tag">&lt;/exclusions&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+  <span class="tag">&lt;/dependencies&gt;</span>
+
+  <span class="tag">&lt;build&gt;</span>
+    <span class="tag">&lt;plugins&gt;</span>
+      <span class="tag">&lt;plugin&gt;</span>
+        <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+        <span class="tag">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;/plugin&gt;</span>
+    <span class="tag">&lt;/plugins&gt;</span>
+  <span class="tag">&lt;/build&gt;</span>
+
+<span class="tag">&lt;/project&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/gradlephant-logo.png" alt="Gradle" width="114" height="30"></span></div>
+<div class="content">
+<div class="listingblock collapse-lines:1-13,17-24 highlight-lines:16">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+  id <span class="string"><span class="delimiter">'</span><span class="content">org.springframework.boot</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">2.3.3.RELEASE</span><span class="delimiter">'</span></span>
+  id <span class="string"><span class="delimiter">'</span><span class="content">io.spring.dependency-management</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.0.10.RELEASE</span><span class="delimiter">'</span></span>
+  id <span class="string"><span class="delimiter">'</span><span class="content">java</span><span class="delimiter">'</span></span>
+}
+
+group = <span class="string"><span class="delimiter">'</span><span class="content">samples</span><span class="delimiter">'</span></span>
+version = <span class="string"><span class="delimiter">'</span><span class="content">0.0.1-SNAPSHOT</span><span class="delimiter">'</span></span>
+sourceCompatibility = <span class="string"><span class="delimiter">'</span><span class="content">11</span><span class="delimiter">'</span></span>
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation <span class="string"><span class="delimiter">'</span><span class="content">fr.sii.ogham:ogham-spring-boot-starter-all:3.0.0</span><span class="delimiter">'</span></span>
+
+  testImplementation(<span class="string"><span class="delimiter">'</span><span class="content">org.springframework.boot:spring-boot-starter-test</span><span class="delimiter">'</span></span>) {
+    exclude <span class="key">group</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.vintage</span><span class="delimiter">'</span></span>, <span class="key">module</span>: <span class="string"><span class="delimiter">'</span><span class="content">junit-vintage-engine</span><span class="delimiter">'</span></span>
+  }
+}
+
+test {
+  useJUnitPlatform()
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>This will include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Sending email through SMTP server (using <a href="https://javaee.github.io/javamail/">JavaMail</a>)</p>
+</li>
+<li>
+<p>Sending email through <a href="https://sendgrid.com/">SendGrid</a></p>
+</li>
+<li>
+<p>Sending SMS through SMPP server (using <a href="https://github.com/fizzed/cloudhopper-smpp">Cloudhopper</a>)</p>
+</li>
+<li>
+<p>Sending SMS through <a href="https://www.ovhtelecom.fr/sms/api-sms.xml">OVH SMS API</a></p>
+</li>
+<li>
+<p><a href="http://freemarker.org/">FreeMarker</a> template engine available for building message contents</p>
+</li>
+<li>
+<p><a href="http://www.thymeleaf.org/">ThymeLeaf</a> template engine available for building message contents</p>
+</li>
+<li>
+<p>Support of <a href="https://projects.spring.io/spring-boot/">Spring Boot</a> auto-detection mechanism and configuration properties</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can combine Ogham with existing Spring Boot dependencies:</p>
+</div>
+<div class="exampleblock tab-container no-max-height">
+<div class="title">Example 1. Ogham adapts itself to Spring Boot features</div>
+<div class="content">
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/maven-logo.png" alt="Maven" width="118" height="30"></span></div>
+<div class="content">
+<div class="listingblock collapse-lines:1-21,40- highlight-lines:22-26">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="tag">&lt;project</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">&quot;</span></span>
+  <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;modelVersion&gt;</span>4.0.0<span class="tag">&lt;/modelVersion&gt;</span>
+  <span class="tag">&lt;parent&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.3.3.RELEASE<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;relativePath</span><span class="tag">/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span>
+  <span class="tag">&lt;/parent&gt;</span>
+  <span class="tag">&lt;groupId&gt;</span>samples<span class="tag">&lt;/groupId&gt;</span>
+  <span class="tag">&lt;artifactId&gt;</span>ogham-and-spring-boot<span class="tag">&lt;/artifactId&gt;</span>
+  <span class="tag">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;name&gt;</span>ogham-and-spring-boot<span class="tag">&lt;/name&gt;</span>
+  <span class="tag">&lt;description&gt;</span>Demo project for Spring Boot<span class="tag">&lt;/description&gt;</span>
+
+  <span class="tag">&lt;properties&gt;</span>
+    <span class="tag">&lt;java.version&gt;</span>11<span class="tag">&lt;/java.version&gt;</span>
+  <span class="tag">&lt;/properties&gt;</span>
+
+  <span class="tag">&lt;dependencies&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>fr.sii.ogham<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>ogham-spring-boot-starter-all<span class="tag">&lt;/artifactId&gt;</span>    <i class="conum" data-value="1"></i><b>(1)</b>
+      <span class="tag">&lt;version&gt;</span>3.0.0<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-freemarker<span class="tag">&lt;/artifactId&gt;</span>   <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="tag">&lt;/dependency&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-thymeleaf<span class="tag">&lt;/artifactId&gt;</span>    <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="tag">&lt;/dependency&gt;</span>
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-mail<span class="tag">&lt;/artifactId&gt;</span>         <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="tag">&lt;/dependency&gt;</span>
+
+    <span class="tag">&lt;dependency&gt;</span>
+      <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+      <span class="tag">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+      <span class="tag">&lt;exclusions&gt;</span>
+        <span class="tag">&lt;exclusion&gt;</span>
+          <span class="tag">&lt;groupId&gt;</span>org.junit.vintage<span class="tag">&lt;/groupId&gt;</span>
+          <span class="tag">&lt;artifactId&gt;</span>junit-vintage-engine<span class="tag">&lt;/artifactId&gt;</span>
+        <span class="tag">&lt;/exclusion&gt;</span>
+      <span class="tag">&lt;/exclusions&gt;</span>
+    <span class="tag">&lt;/dependency&gt;</span>
+  <span class="tag">&lt;/dependencies&gt;</span>
+
+  <span class="tag">&lt;build&gt;</span>
+    <span class="tag">&lt;plugins&gt;</span>
+      <span class="tag">&lt;plugin&gt;</span>
+        <span class="tag">&lt;groupId&gt;</span>org.springframework.boot<span class="tag">&lt;/groupId&gt;</span>
+        <span class="tag">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/artifactId&gt;</span>
+      <span class="tag">&lt;/plugin&gt;</span>
+    <span class="tag">&lt;/plugins&gt;</span>
+  <span class="tag">&lt;/build&gt;</span>
+
+<span class="tag">&lt;/project&gt;</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Add Ogham starter for Spring Boot to benefit for all Ogham features in
+your Spring Boot application.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Import FreeMarker starter as usual. Ogham will adapt to additional FreeMarker
+provided by Spring Boot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Import Thymeleaf starter as usual. Ogham will adapt to additional Thymeleaf
+provided by Spring Boot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Import Mail starter as usual. Ogham will adapt to use mail features provided
+by Spring Boot.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="openblock tab">
+<div class="title"><span class="image"><img src="../../images//icons/gradlephant-logo.png" alt="Gradle" width="114" height="30"></span></div>
+<div class="content">
+<div class="listingblock collapse-lines:1-13,21-27 highlight-lines:16">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+  id <span class="string"><span class="delimiter">'</span><span class="content">org.springframework.boot</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">2.3.3.RELEASE</span><span class="delimiter">'</span></span>
+  id <span class="string"><span class="delimiter">'</span><span class="content">io.spring.dependency-management</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.0.10.RELEASE</span><span class="delimiter">'</span></span>
+  id <span class="string"><span class="delimiter">'</span><span class="content">java</span><span class="delimiter">'</span></span>
+}
+
+group = <span class="string"><span class="delimiter">'</span><span class="content">samples</span><span class="delimiter">'</span></span>
+version = <span class="string"><span class="delimiter">'</span><span class="content">0.0.1-SNAPSHOT</span><span class="delimiter">'</span></span>
+sourceCompatibility = <span class="string"><span class="delimiter">'</span><span class="content">11</span><span class="delimiter">'</span></span>
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation <span class="string"><span class="delimiter">'</span><span class="content">fr.sii.ogham:ogham-spring-boot-starter-all:3.0.0</span><span class="delimiter">'</span></span>   <i class="conum" data-value="1"></i><b>(1)</b>
+
+  implementation <span class="string"><span class="delimiter">'</span><span class="content">org.springframework.boot:spring-boot-starter-freemarker</span><span class="delimiter">'</span></span>      <i class="conum" data-value="2"></i><b>(2)</b>
+  implementation <span class="string"><span class="delimiter">'</span><span class="content">org.springframework.boot:spring-boot-starter-thymeleaf</span><span class="delimiter">'</span></span>       <i class="conum" data-value="3"></i><b>(3)</b>
+  implementation <span class="string"><span class="delimiter">'</span><span class="content">org.springframework.boot:spring-boot-starter-mail</span><span class="delimiter">'</span></span>            <i class="conum" data-value="4"></i><b>(4)</b>
+  testImplementation(<span class="string"><span class="delimiter">'</span><span class="content">org.springframework.boot:spring-boot-starter-test</span><span class="delimiter">'</span></span>) {
+    exclude <span class="key">group</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.junit.vintage</span><span class="delimiter">'</span></span>, <span class="key">module</span>: <span class="string"><span class="delimiter">'</span><span class="content">junit-vintage-engine</span><span class="delimiter">'</span></span>
+  }
+}
+
+test {
+  useJUnitPlatform()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Add Ogham starter for Spring Boot to benefit for all Ogham features in
+your Spring Boot application.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Import FreeMarker starter as usual. Ogham will adapt to additional FreeMarker
+provided by Spring Boot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Import Thymeleaf starter as usual. Ogham will adapt to additional Thymeleaf
+provided by Spring Boot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Import Mail starter as usual. Ogham will adapt to use mail features provided
+by Spring Boot.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Ogham will auto-configure to use Spring Boot additions and support Spring Boot
+configuration properties like <code>spring.mail.host</code> for example.</p>
+</div>
+<div class="paragraph">
+<p>Ogham is compatible with following Spring Boot versions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>1.4.x (currently automatically tested against 1.4.7.RELEASE, see note below)</p>
+</li>
+<li>
+<p>1.5.x (currently automatically tested against 1.5.22.RELEASE)</p>
+</li>
+<li>
+<p>2.1.x (currently automatically tested against 2.1.18.RELEASE)</p>
+</li>
+<li>
+<p>2.2.x (currently automatically tested against 2.2.12.RELEASE)</p>
+</li>
+<li>
+<p>2.3.x (currently automatically tested against 2.3.7.RELEASE)</p>
+</li>
+<li>
+<p>2.4.x (currently automatically tested against 2.4.1.RELEASE)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Java version compatibility</div>
+<div class="paragraph">
+<p>Ogham is compatible with Java 8 and up to Java 15 (included).</p>
+</div>
+<div class="paragraph">
+<p>However, Spring Boot may not be compatible with some Java versions (depending on
+Spring Boot version).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Java 7</div>
+<div class="paragraph">
+<p>Java 7 support has been dropped since Ogham 3.0.0. Therefore, Ogham is no more
+tested with Spring Boot 1.3.x</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Spring Boot 1.4.x and WireMock</div>
+<div class="paragraph">
+<p>Latest WireMock versions are not compatible with Spring Boot 1.4.x. So if you
+are using Spring Boot 1.4.x, also using <code>ogham-test-utils</code> for writing tests and
+want to use WireMock in one of your test, you may experience <code>ClassNotFoundException</code>.
+This is due to different <code>org.apache.httpcomponents</code> versions.</p>
+</div>
+<div class="paragraph">
+<p>In this case, just use a different version of WireMock by manually adding the dependency
+<code>com.github.tomakehurst:wiremock-jre8:2.23.2:test</code>. This will force to use a
+previous WireMock version that is compatible with Spring Boot 1.4.x.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2021-01-13 02:09:36 UTC
+</div>
+</div>
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+</body>
+</html>

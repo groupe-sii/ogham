@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DefaultThymeleafV3SmsConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v3</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v3.configure</a> &gt; <span class="el_source">DefaultThymeleafV3SmsConfigurer.java</span></div><h1>DefaultThymeleafV3SmsConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v3.configure;
+
+import static fr.sii.ogham.template.thymeleaf.common.ThymeleafConstants.DEFAULT_THYMELEAF_SMS_CONFIGURER_PRIORITY;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configurer.ConfigurerFor;
+import fr.sii.ogham.core.builder.configurer.DefaultMessagingConfigurer;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurerAdapter;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.util.ClasspathUtils;
+import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
+import fr.sii.ogham.template.thymeleaf.common.configure.AbstractDefaultThymeleafSmsConfigurer;
+import fr.sii.ogham.template.thymeleaf.v3.ThymeleafV3TemplateDetector;
+import fr.sii.ogham.template.thymeleaf.v3.buider.ThymeleafV3SmsBuilder;
+
+/**
+ * Default configurer for Thymeleaf template engine that is automatically ap
+ * {@link MessagingBuilder#standard()} or {@link MessagingBuilder#minimal()}.
+ * 
+ * &lt;p&gt;
+ * The configurer has a priority of 70000 in order to be applied after global
+ * configurer but before any sender implementation.
+ * &lt;/p&gt;
+ * 
+ * This configurer is applied only if {@code org.thymeleaf.TemplateEngine} is
+ * present in the classpath. If not present, template engine is not registered
+ * at all.
+ * 
+ * &lt;p&gt;
+ * This configurer inherits environment configuration (see
+ * {@link BuildContext}).
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * It also copies resource resolution configuration of
+ * {@link DefaultMessagingConfigurer} to inherit resource resolution lookups
+ * (see {@link ResourceResolutionBuilder}).
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * This configurer applies the following configuration:
+ * &lt;ul&gt;
+ * &lt;li&gt;Configures template prefix/suffix paths:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses the first property that has a value for classpath resolution prefix:
+ * &lt;ol&gt;
+ * &lt;li&gt;&quot;ogham.sms.thymeleaf.classpath.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.template.classpath.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.thymeleaf.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.template.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.template.path-prefix&quot;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Uses the first property that has a value for classpath resolution suffix:
+ * &lt;ol&gt;
+ * &lt;li&gt;&quot;ogham.sms.thymeleaf.classpath.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.template.classpath.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.thymeleaf.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.template.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.template.path-suffix&quot;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Uses the first property that has a value for file resolution prefix:
+ * &lt;ol&gt;
+ * &lt;li&gt;&quot;ogham.sms.thymeleaf.file.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.template.file.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.thymeleaf.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.template.path-prefix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.template.path-prefix&quot;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Uses the first property that has a value for file resolution suffix:
+ * &lt;ol&gt;
+ * &lt;li&gt;&quot;ogham.sms.thymeleaf.file.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.template.file.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.thymeleaf.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.sms.template.path-suffix&quot;&lt;/li&gt;
+ * &lt;li&gt;&quot;ogham.template.path-suffix&quot;&lt;/li&gt;
+ * &lt;/ol&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;li&gt;Configures template detection:
+ * &lt;ul&gt;
+ * &lt;li&gt;Uses {@link ThymeleafV3TemplateDetector} to detect if templates are
+ * parseable by Thymeleaf&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class DefaultThymeleafV3SmsConfigurer {
+<span class="fc" id="L98">	private static final Logger LOG = LoggerFactory.getLogger(DefaultThymeleafV3SmsConfigurer.class);</span>
+
+	@ConfigurerFor(targetedBuilder = { &quot;minimal&quot;, &quot;standard&quot; }, priority = DEFAULT_THYMELEAF_SMS_CONFIGURER_PRIORITY)
+	public static class ThymeleafV3SmsConfigurer extends AbstractDefaultThymeleafSmsConfigurer {
+		public ThymeleafV3SmsConfigurer() {
+<span class="fc" id="L103">			super(LOG);</span>
+<span class="fc" id="L104">		}</span>
+
+		public ThymeleafV3SmsConfigurer(MessagingConfigurerAdapter delegate) {
+<span class="nc" id="L107">			super(LOG, delegate);</span>
+<span class="nc" id="L108">		}</span>
+
+		@Override
+		protected boolean canUseThymeleaf() {
+<span class="fc" id="L112">			return canUseThymeleafV3();</span>
+		}
+
+		@Override
+		protected Class&lt;? extends AbstractThymeleafBuilder&lt;?, ?, ?&gt;&gt; getBuilderClass() {
+<span class="fc" id="L117">			return ThymeleafV3SmsBuilder.class;</span>
+		}
+
+		private static boolean canUseThymeleafV3() {
+<span class="fc bfc" id="L121" title="All 4 branches covered.">			return ClasspathUtils.exists(&quot;org.thymeleaf.TemplateEngine&quot;) &amp;&amp; ClasspathUtils.exists(&quot;org.thymeleaf.IEngineConfiguration&quot;);</span>
+		}
+	}
+
+
+	private DefaultThymeleafV3SmsConfigurer() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

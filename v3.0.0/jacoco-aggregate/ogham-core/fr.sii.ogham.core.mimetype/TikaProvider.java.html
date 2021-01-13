@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TikaProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.mimetype</a> &gt; <span class="el_source">TikaProvider.java</span></div><h1>TikaProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.mimetype;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+
+import org.apache.tika.Tika;
+import org.apache.tika.mime.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.mimetype.InvalidMimetypeException;
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+
+/**
+ * Mime Type detection based on &lt;a href=&quot;http://tika.apache.org/&quot;&gt;Apache
+ * Tika&lt;/a&gt;. This library is very complete and up-to-date. It is also able to
+ * parse documents but this is not useful in our case.
+ * 
+ * @author Aurélien Baudet
+ * @see &lt;a href=&quot;http://tika.apache.org/&quot;&gt;Apache Tika&lt;/a&gt;
+ *
+ */
+@SuppressWarnings(&quot;squid:S1192&quot;)
+public class TikaProvider implements MimeTypeProvider {
+<span class="fc" id="L29">	private static final Logger LOG = LoggerFactory.getLogger(TikaProvider.class);</span>
+
+	/**
+	 * The Tika instance to use
+	 */
+	private final Tika tika;
+
+	/**
+	 * Whether to fail if the default mimetype is return (this may indicate that
+	 * detection hasn't work).
+	 */
+	private final boolean failIfOctetStream;
+
+	/**
+	 * Initialize the provider with default Tika instance and configuration. It
+	 * fails if application/octet-stream mimetype is returned
+	 */
+	public TikaProvider() {
+<span class="fc" id="L47">		this(new Tika(), true);</span>
+<span class="fc" id="L48">	}</span>
+
+	/**
+	 * Initialize the provider with the specified Tika instance.
+	 * 
+	 * @param tika
+	 *            the Tika instance to use
+	 * @param failIfOctetStream
+	 *            Whether to fail if the default mimetype is return (this may
+	 *            indicate that detection hasn't work).
+	 */
+	public TikaProvider(Tika tika, boolean failIfOctetStream) {
+<span class="fc" id="L60">		super();</span>
+<span class="fc" id="L61">		this.tika = tika;</span>
+<span class="fc" id="L62">		this.failIfOctetStream = failIfOctetStream;</span>
+<span class="fc" id="L63">	}</span>
+
+	@Override
+	public MimeType getMimeType(File file) throws MimeTypeDetectionException {
+		try {
+<span class="fc" id="L68">			LOG.debug(&quot;Detect mime type for file {}&quot;, file);</span>
+<span class="fc" id="L69">			String mimetype = tika.detect(file);</span>
+<span class="fc" id="L70">			LOG.debug(&quot;Detect mime type for file {}: {}&quot;, file, mimetype);</span>
+<span class="fc" id="L71">			checkMimeType(mimetype);</span>
+<span class="fc" id="L72">			return new MimeType(mimetype);</span>
+<span class="nc" id="L73">		} catch (MimeTypeParseException e) {</span>
+<span class="nc" id="L74">			throw new InvalidMimetypeException(&quot;Invalid mimetype&quot;, e);</span>
+<span class="fc" id="L75">		} catch (IOException e) {</span>
+<span class="fc" id="L76">			throw new MimeTypeDetectionException(&quot;Failed to get the mimetype for the file &quot; + file, e);</span>
+		}
+	}
+
+	@Override
+	public MimeType getMimeType(String fileName) throws MimeTypeDetectionException {
+<span class="nc" id="L82">		return getMimeType(new File(fileName));</span>
+	}
+
+	@Override
+	public MimeType detect(InputStream stream) throws MimeTypeDetectionException {
+		try {
+<span class="fc" id="L88">			LOG.debug(&quot;Detect mime type from stream&quot;);</span>
+<span class="fc" id="L89">			String mimetype = tika.detect(stream);</span>
+<span class="fc" id="L90">			LOG.debug(&quot;Detect mime type from stream: {}&quot;, mimetype);</span>
+<span class="fc" id="L91">			checkMimeType(mimetype);</span>
+<span class="fc" id="L92">			return new MimeType(mimetype);</span>
+<span class="fc" id="L93">		} catch (MimeTypeParseException e) {</span>
+<span class="fc" id="L94">			throw new InvalidMimetypeException(&quot;Invalid mimetype&quot;, e);</span>
+<span class="fc" id="L95">		} catch (IOException e) {</span>
+<span class="fc" id="L96">			throw new MimeTypeDetectionException(&quot;Failed to get the mimetype because the stream is not readable&quot;, e);</span>
+		}
+	}
+
+	@Override
+	public MimeType detect(String content) throws MimeTypeDetectionException {
+		try {
+<span class="fc" id="L103">			LOG.debug(&quot;Detect mime type from stream&quot;);</span>
+<span class="fc" id="L104">			String mimetype = tika.detect(content.getBytes());</span>
+<span class="fc" id="L105">			LOG.debug(&quot;Detect mime type from stream: {}&quot;, mimetype);</span>
+<span class="fc" id="L106">			checkMimeType(mimetype);</span>
+<span class="fc" id="L107">			return new MimeType(mimetype);</span>
+<span class="nc" id="L108">		} catch (MimeTypeParseException e) {</span>
+<span class="nc" id="L109">			throw new InvalidMimetypeException(&quot;Invalid mimetype&quot;, e);</span>
+		}
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L115">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L116">		builder.append(&quot;TikaProvider [tika=&quot;).append(tika.toString()).append(&quot;]&quot;);</span>
+<span class="fc" id="L117">		return builder.toString();</span>
+	}
+
+	private void checkMimeType(String mimetype) throws MimeTypeDetectionException {
+<span class="fc bfc" id="L121" title="All 4 branches covered.">		if (failIfOctetStream &amp;&amp; MediaType.OCTET_STREAM.toString().equals(mimetype)) {</span>
+<span class="fc" id="L122">			throw new InvalidMimetypeException(&quot;Default mimetype found (application/octet-stream) but provider is configured to fail in this case&quot;);</span>
+		}
+<span class="fc" id="L124">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

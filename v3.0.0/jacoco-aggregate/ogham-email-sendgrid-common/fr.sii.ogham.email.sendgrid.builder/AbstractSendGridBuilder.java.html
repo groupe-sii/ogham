@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractSendGridBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.builder</a> &gt; <span class="el_source">AbstractSendGridBuilder.java</span></div><h1>AbstractSendGridBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.builder;
+
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+
+import javax.activation.MimetypesFileTypeMap;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+
+import com.sendgrid.SendGrid;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilder;
+import fr.sii.ogham.core.builder.mimetype.MimetypeDetectionBuilderDelegate;
+import fr.sii.ogham.core.builder.mimetype.SimpleMimetypeDetectionBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
+
+@SuppressWarnings(&quot;squid:S00119&quot;)
+public abstract class AbstractSendGridBuilder&lt;MYSELF extends AbstractSendGridBuilder&lt;MYSELF, EmailBuilder&gt;, EmailBuilder&gt; extends AbstractParent&lt;EmailBuilder&gt; implements Builder&lt;SendGridSender&gt; {
+	protected final MYSELF myself;
+	protected final BuildContext buildContext;
+	protected MimetypeDetectionBuilder&lt;MYSELF&gt; mimetypeBuilder;
+	protected final ConfigurationValueBuilderHelper&lt;MYSELF, String&gt; apiKeyValueBuilder;
+	protected final ConfigurationValueBuilderHelper&lt;MYSELF, URL&gt; urlValueBuilder;
+	protected CloseableHttpClient httpClient;
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected AbstractSendGridBuilder(Class&lt;?&gt; selfType, EmailBuilder parent, BuildContext buildContext, MimetypeDetectionBuilder&lt;?&gt; mimetypeBuilder) {
+<span class="fc" id="L37">		super(parent);</span>
+<span class="fc" id="L38">		myself = (MYSELF) selfType.cast(this);</span>
+<span class="fc" id="L39">		this.buildContext = buildContext;</span>
+<span class="fc" id="L40">		apiKeyValueBuilder = buildContext.newConfigurationValueBuilder(myself, String.class);</span>
+<span class="fc" id="L41">		urlValueBuilder = buildContext.newConfigurationValueBuilder(myself, URL.class);</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">		if (mimetypeBuilder != null) {</span>
+<span class="nc" id="L43">			mimetype(mimetypeBuilder);</span>
+		}
+<span class="fc" id="L45">	}</span>
+
+	public AbstractSendGridBuilder(Class&lt;?&gt; selfType, EmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L48">		this(selfType, parent, buildContext, null);</span>
+<span class="fc" id="L49">		mimetype();</span>
+<span class="fc" id="L50">	}</span>
+
+	/**
+	 * Set SendGrid &lt;a href=
+	 * &quot;https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html&quot;&gt;API
+	 * key&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #apiKey()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .apiKey(&quot;my-key&quot;)
+	 * .apiKey()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-key&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .apiKey(&quot;my-key&quot;)
+	 * .apiKey()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-key&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code apiKey(&quot;my-key&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param apiKey
+	 *            the API key to use
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF apiKey(String apiKey) {
+<span class="fc" id="L89">		apiKeyValueBuilder.setValue(apiKey);</span>
+<span class="fc" id="L90">		return myself;</span>
+	}
+
+	/**
+	 * Set SendGrid &lt;a href=
+	 * &quot;https://sendgrid.com/docs/Classroom/Send/How_Emails_Are_Sent/api_keys.html&quot;&gt;API
+	 * key&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .apiKey()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-key&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #apiKey(String)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .apiKey(&quot;my-key&quot;)
+	 * .apiKey()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-key&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;my-key&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;MYSELF, String&gt; apiKey() {
+<span class="fc" id="L132">		return apiKeyValueBuilder;</span>
+	}
+
+	/**
+	 * Set username for SendGrid HTTP API.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;WARNING:&lt;/strong&gt; SendGrid v4 doesn't use username/password
+	 * anymore. You must use an {@link #apiKey(String)}.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #username()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .username(&quot;my-username&quot;)
+	 * .username()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-username&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .username(&quot;my-username&quot;)
+	 * .username()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-username&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code username(&quot;my-username&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param username
+	 *            the user name for SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 * 
+	 */
+	public abstract MYSELF username(String username);
+
+	/**
+	 * Set username for SendGrid HTTP API.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;WARNING:&lt;/strong&gt; SendGrid v4 doesn't use username/password
+	 * anymore. You must use an {@link #apiKey(String)}.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .username()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-username&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #username(String)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .username(&quot;my-username&quot;)
+	 * .username()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-username&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;my-username&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public abstract ConfigurationValueBuilder&lt;MYSELF, String&gt; username();
+
+	/**
+	 * Set password for SendGrid HTTP API.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;WARNING:&lt;/strong&gt; SendGrid v4 doesn't use username/password
+	 * anymore. You must use an {@link #apiKey(String)}.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #password()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;my-password&quot;)
+	 * .password()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-password&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;my-password&quot;)
+	 * .password()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-password&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code password(&quot;my-password&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param password
+	 *            the password value
+	 * @return this instance for fluent chaining
+	 */
+	public abstract MYSELF password(String password);
+
+	/**
+	 * Set password for SendGrid HTTP API.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;WARNING:&lt;/strong&gt; SendGrid v4 doesn't use username/password
+	 * anymore. You must use an {@link #apiKey(String)}.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .password()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-password&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #password(String)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;my-password&quot;)
+	 * .password()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-password&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;my-password&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public abstract ConfigurationValueBuilder&lt;MYSELF, String&gt; password();
+
+	/**
+	 * Set SendGrid API base URL.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #url()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .url(&quot;http://localhost/sendgrid&quot;)
+	 * .url()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;http://api.sendgrid.com&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .url(&quot;http://localhost/sendgrid&quot;)
+	 * .url()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;http://api.sendgrid.com&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code url(&quot;http://localhost/sendgrid&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param url
+	 *            the base URL for SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF url(URL url) {
+<span class="fc" id="L333">		urlValueBuilder.setValue(url);</span>
+<span class="fc" id="L334">		return myself;</span>
+	}
+
+	/**
+	 * Set SendGrid API base URL.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #url()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .url(&quot;http://localhost/sendgrid&quot;)
+	 * .url()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;http://api.sendgrid.com&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .url(&quot;http://localhost/sendgrid&quot;)
+	 * .url()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;http://api.sendgrid.com&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code url(&quot;http://localhost/sendgrid&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param url
+	 *            the base URL for SendGrid HTTP API
+	 * @return this instance for fluent chaining
+	 * @throws IllegalArgumentException
+	 *             if URL is malformed
+	 */
+	public MYSELF url(String url) {
+		try {
+<span class="fc" id="L375">			return url(new URL(url));</span>
+<span class="nc" id="L376">		} catch (MalformedURLException e) {</span>
+<span class="nc" id="L377">			throw new IllegalArgumentException(&quot;Invalid URL &quot; + url, e);</span>
+		}
+	}
+
+	/**
+	 * Set SendGrid API base URL.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .url()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;http://api.sendgrid.com&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #url(URL)} takes precedence over property
+	 * values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .url(&quot;http://localhost/sendgrid&quot;)
+	 * .url()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;http://api.sendgrid.com&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;http://localhost/sendgrid&quot;} is used regardless of the
+	 * value of the properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;MYSELF, URL&gt; url() {
+<span class="fc" id="L418">		return urlValueBuilder;</span>
+	}
+
+	/**
+	 * By default, calling SendGrid HTTP API is done through the default
+	 * {@link SendGrid} implementation that uses default {@link HttpClient}
+	 * (calling {@code HttpClientBuilder.create().build()}). If you want to use
+	 * another HTTP client implementation, you can extend the
+	 * {@link CloseableHttpClient} class and provide it:
+	 * 
+	 * &lt;pre&gt;
+	 * .client(new MyCustomHttpClient())
+	 * &lt;/pre&gt;
+	 * 
+	 * @param httpClient
+	 *            the custom implementation of {@link HttpClient} used to call
+	 *            SendGrid HTTP API. SendGrid requires a
+	 *            {@link CloseableHttpClient}.
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF httpClient(CloseableHttpClient httpClient) {
+<span class="nc" id="L439">		this.httpClient = httpClient;</span>
+<span class="nc" id="L440">		return myself;</span>
+	}
+
+	/**
+	 * Builder that configures mimetype detection.
+	 * 
+	 * There exists several implementations to provide the mimetype:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Using Java {@link MimetypesFileTypeMap}&lt;/li&gt;
+	 * &lt;li&gt;Using Java 7 {@link Files#probeContentType(java.nio.file.Path)}&lt;/li&gt;
+	 * &lt;li&gt;Using &lt;a href=&quot;http://tika.apache.org/&quot;&gt;Apache Tika&lt;/a&gt;&lt;/li&gt;
+	 * &lt;li&gt;Using
+	 * &lt;a href=&quot;https://github.com/arimus/jmimemagic&quot;&gt;JMimeMagic&lt;/a&gt;&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Both implementations provided by Java are based on file extensions. This
+	 * can't be used in most cases as we often handle {@link InputStream}s.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In previous version of Ogham, JMimeMagic was used and was working quite
+	 * well. Unfortunately, the library is no more maintained.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * You can configure how Tika will detect mimetype:
+	 * 
+	 * &lt;pre&gt;
+	 * .mimetype()
+	 *    .tika()
+	 *       ...
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * This builder allows to use several providers. It will chain them until
+	 * one can find a valid mimetype. If none is found, you can explicitly
+	 * provide the default one:
+	 * 
+	 * &lt;pre&gt;
+	 * .mimetype()
+	 *    .defaultMimetype(&quot;text/html&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If no mimetype detector was previously defined, it creates a new one.
+	 * Then each time you call {@link #mimetype()}, the same instance is used.
+	 * &lt;/p&gt;
+	 * 
+	 * @return the builder to configure mimetype detection
+	 */
+	public MimetypeDetectionBuilder&lt;MYSELF&gt; mimetype() {
+<span class="fc bfc" id="L492" title="All 2 branches covered.">		if (mimetypeBuilder == null) {</span>
+<span class="fc" id="L493">			mimetypeBuilder = new SimpleMimetypeDetectionBuilder&lt;&gt;(myself, buildContext);</span>
+		}
+<span class="fc" id="L495">		return mimetypeBuilder;</span>
+	}
+
+	/**
+	 * NOTE: this is mostly for advance usage (when creating a custom module).
+	 * 
+	 * Inherits mimetype configuration from another builder. This is useful for
+	 * configuring independently different parts of Ogham but keeping a whole
+	 * coherence.
+	 * 
+	 * The same instance is shared meaning that all changes done here will also
+	 * impact the other builder.
+	 * 
+	 * &lt;p&gt;
+	 * If a previous builder was defined (by calling {@link #mimetype()} for
+	 * example), the new builder will override it.
+	 * 
+	 * @param builder
+	 *            the builder to inherit
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF mimetype(MimetypeDetectionBuilder&lt;?&gt; builder) {
+<span class="fc" id="L517">		mimetypeBuilder = new MimetypeDetectionBuilderDelegate&lt;&gt;(myself, builder);</span>
+<span class="fc" id="L518">		return myself;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

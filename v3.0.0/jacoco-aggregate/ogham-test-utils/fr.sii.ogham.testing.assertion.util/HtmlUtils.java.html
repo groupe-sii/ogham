@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>HtmlUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.util</a> &gt; <span class="el_source">HtmlUtils.java</span></div><h1>HtmlUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.util;
+
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.HTMLDocumentBuilder;
+import org.custommonkey.xmlunit.TolerantSaxDocumentBuilder;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.custommonkey.xmlunit.exceptions.ConfigurationException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import fr.sii.ogham.testing.assertion.exception.ComparisonException;
+
+public final class HtmlUtils {
+	/**
+	 * Compare two HTML documents. The HTML strings are parsed into
+	 * {@link Document}s. The HTML are compared by elements and attributes, not
+	 * using directly using string.
+	 * 
+	 * &lt;p&gt;
+	 * A {@link DetailedDiff} is provided to know if the documents are
+	 * &quot;identical&quot; or &quot;similar&quot;:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Two documents are considered to be &quot;identical&quot; if they contain the
+	 * same elements and attributes in the same order.&lt;/li&gt;
+	 * &lt;li&gt;Two documents are considered to be &quot;similar&quot; if they contain the same
+	 * elements and attributes regardless of order.&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * 
+	 * @param expected
+	 *            the expected HTML
+	 * @param actual
+	 *            the HTML content to check
+	 * @return a report that let you know differences between the two HTML
+	 *         strings
+	 */
+	public static DetailedDiff compare(String expected, String actual) {
+<span class="fc bfc" id="L42" title="All 2 branches covered.">		if (expected == null) {</span>
+<span class="fc" id="L43">			throw new IllegalArgumentException(&quot;expected html can't be null&quot;);</span>
+		}
+		try {
+<span class="fc" id="L46">			HTMLDocumentBuilder builder = new HTMLDocumentBuilder(new TolerantSaxDocumentBuilder(XMLUnit.newTestParser()));</span>
+<span class="fc" id="L47">			Document expectedDoc = builder.parse(expected);</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">			Document actualDoc = builder.parse(actual==null ? &quot;&quot; : actual);</span>
+<span class="fc" id="L49">			return new DetailedDiff(XMLUnit.compareXML(expectedDoc, actualDoc));</span>
+<span class="nc" id="L50">		} catch (SAXException | IOException | ConfigurationException | ParserConfigurationException e) {</span>
+<span class="nc" id="L51">			throw new ComparisonException(&quot;Failed to compare HTML&quot;, e);</span>
+		}
+	}
+	
+	private HtmlUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

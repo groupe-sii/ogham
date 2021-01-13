@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PhoneNumbersBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">PhoneNumbersBuilder.java</span></div><h1>PhoneNumbersBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
+
+/**
+ * Configures the phone number conversions (from a {@link PhoneNumber} to an
+ * {@link AddressedPhoneNumber}).
+ * 
+ * The {@link PhoneNumber} is used by the developer to provide a simple phone
+ * number without knowing how phone number works (no need to handle formats,
+ * addressing, countries...). The {@link AddressedPhoneNumber} is used by Ogham
+ * implementations to have a phone number that is usable by a technical system.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class PhoneNumbersBuilder extends AbstractParent&lt;SmsBuilder&gt; implements Builder&lt;PhoneNumberTranslatorPair&gt; {
+	private final BuildContext buildContext;
+	private SenderNumberBuilder senderNumberBuilder;
+	private RecipientNumberBuilder recipientNumberBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public PhoneNumbersBuilder(SmsBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L38">		super(parent);</span>
+<span class="fc" id="L39">		this.buildContext = buildContext;</span>
+<span class="fc" id="L40">	}</span>
+
+	/**
+	 * Configures the sender phone number conversion (from a {@link PhoneNumber}
+	 * to an {@link AddressedPhoneNumber}).
+	 * 
+	 * The {@link PhoneNumber} is used by the developer to provide a simple
+	 * phone number without knowing how phone number works (no need to handle
+	 * formats, addressing, countries...). The {@link AddressedPhoneNumber} is
+	 * used by Ogham implementations to have a phone number that is usable by a
+	 * technical system.
+	 * 
+	 * @return the builder to configure the sender phone number
+	 */
+	public SenderNumberBuilder from() {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		if (senderNumberBuilder == null) {</span>
+<span class="fc" id="L56">			senderNumberBuilder = new SenderNumberBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L58">		return senderNumberBuilder;</span>
+	}
+
+	/**
+	 * Configures the recipient phone number conversion (from a
+	 * {@link PhoneNumber} to an {@link AddressedPhoneNumber}).
+	 * 
+	 * The {@link PhoneNumber} is used by the developer to provide a simple
+	 * phone number without knowing how phone number works (no need to handle
+	 * formats, addressing, countries...). The {@link AddressedPhoneNumber} is
+	 * used by Ogham implementations to have a phone number that is usable by a
+	 * technical system.
+	 * 
+	 * @return the builder to configure the recipient phone number
+	 */
+	public RecipientNumberBuilder to() {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		if (recipientNumberBuilder == null) {</span>
+<span class="fc" id="L75">			recipientNumberBuilder = new RecipientNumberBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L77">		return recipientNumberBuilder;</span>
+	}
+
+	@Override
+	public PhoneNumberTranslatorPair build() {
+<span class="fc" id="L82">		return buildContext.register(new PhoneNumberTranslatorPair(senderNumberBuilder.build(), recipientNumberBuilder.build()));</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

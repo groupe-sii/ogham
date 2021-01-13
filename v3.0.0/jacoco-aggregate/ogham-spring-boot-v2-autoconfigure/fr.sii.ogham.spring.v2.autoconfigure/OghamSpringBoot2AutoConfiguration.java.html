@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamSpringBoot2AutoConfiguration.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-v2-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.v2.autoconfigure</a> &gt; <span class="el_source">OghamSpringBoot2AutoConfiguration.java</span></div><h1>OghamSpringBoot2AutoConfiguration.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.v2.autoconfigure;
+
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.spring.email.OghamJavaMailConfiguration;
+import fr.sii.ogham.spring.general.OghamGeneralConfiguration;
+import fr.sii.ogham.spring.sms.OghamCloudhopperConfiguration;
+import fr.sii.ogham.spring.sms.OghamOvhSmsConfiguration;
+import fr.sii.ogham.spring.template.OghamFreemarkerConfiguration;
+import fr.sii.ogham.spring.template.OghamNoTemplateEngineConfiguration;
+import fr.sii.ogham.spring.v2.email.OghamSendGridV4Configuration;
+import fr.sii.ogham.spring.v2.template.OghamThymeleafV3Configuration;
+
+/**
+ * &lt;p&gt;
+ * Spring Boot auto-configuration module for Ogham messaging library.
+ * &lt;/p&gt;
+ * 
+ * It links Ogham with Spring beans:
+ * &lt;ul&gt;
+ * &lt;li&gt;Use SpringTemplateEngine instead of default Thymeleaf TemplateEngine&lt;/li&gt;
+ * &lt;li&gt;Use FreeMarker configured with Spring additional features&lt;/li&gt;
+ * &lt;li&gt;Use SendGrid configured with Spring additional features&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ */
+// @formatter:off
+@Configuration
+@AutoConfigureAfter({ 
+		WebMvcAutoConfiguration.class, 
+		ThymeleafAutoConfiguration.class, 
+		FreeMarkerAutoConfiguration.class, 
+		MailSenderAutoConfiguration.class })
+@ConditionalOnClass({ 
+		/* used to match Spring Boot 2 */ WebMvcAutoConfiguration.class, 
+		MessagingService.class, 
+		MessagingBuilder.class })
+@ConditionalOnMissingBean(MessagingService.class)
+@Import({ 
+		OghamGeneralConfiguration.class,
+		OghamNoTemplateEngineConfiguration.class, 
+		OghamFreemarkerConfiguration.class, 
+		OghamThymeleafV3Configuration.class, 
+		OghamJavaMailConfiguration.class,
+		OghamSendGridV4Configuration.class,
+		OghamCloudhopperConfiguration.class,
+		OghamOvhSmsConfiguration.class })
+//@formatter:on
+<span class="fc" id="L61">public class OghamSpringBoot2AutoConfiguration {</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

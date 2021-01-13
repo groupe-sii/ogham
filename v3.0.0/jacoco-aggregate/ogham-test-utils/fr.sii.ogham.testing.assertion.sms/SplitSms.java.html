@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SplitSms.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">SplitSms.java</span></div><h1>SplitSms.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Represents a SMS that has been split into several parts in order to be sent.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SplitSms {
+	/**
+	 * Parts of the message when the message is too long and has to be split
+	 */
+	private final List&lt;ExpectedSms&gt; parts;
+
+	/**
+	 * Initialize with the provided parts. Each part MUST contain:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The expected phone number of the sender&lt;/li&gt;
+	 * &lt;li&gt;The expected phone number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The expected message part&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The receiver and sender numbers have to be duplicated. See
+	 * {@link #SplitSms(ExpectedAddressedPhoneNumber, ExpectedAddressedPhoneNumber, String...)}
+	 * for reusing the receiver and sender numbers.
+	 * &lt;/p&gt;
+	 * 
+	 * @param parts
+	 *            the parts
+	 */
+	public SplitSms(List&lt;ExpectedSms&gt; parts) {
+<span class="fc" id="L36">		super();</span>
+<span class="fc" id="L37">		this.parts = parts;</span>
+<span class="fc" id="L38">	}</span>
+
+	/**
+	 * Initialize with the provided parts. Each part MUST contain:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The expected phone number of the sender&lt;/li&gt;
+	 * &lt;li&gt;The expected phone number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The expected message part&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * The receiver and sender numbers have to be duplicated. See
+	 * {@link #SplitSms(ExpectedAddressedPhoneNumber, ExpectedAddressedPhoneNumber, String...)}
+	 * for reusing the receiver and sender numbers.
+	 * &lt;/p&gt;
+	 * 
+	 * @param parts
+	 *            the parts
+	 */
+	public SplitSms(ExpectedSms... parts) {
+<span class="nc" id="L57">		this(Arrays.asList(parts));</span>
+<span class="nc" id="L58">	}</span>
+
+	/**
+	 * Initialize several parts by reusing the sender and receiver numbers. Each
+	 * message part is directly provided as string.
+	 * 
+	 * @param senderNumber
+	 *            the number of the sender to use in each part
+	 * @param receiverNumber
+	 *            the number of the receiver to use in each part
+	 * @param messages
+	 *            the array of message parts
+	 */
+	public SplitSms(ExpectedAddressedPhoneNumber senderNumber, ExpectedAddressedPhoneNumber receiverNumber, String... messages) {
+<span class="fc" id="L72">		this(toExpectedSms(senderNumber, receiverNumber, messages));</span>
+<span class="fc" id="L73">	}</span>
+
+	private static List&lt;ExpectedSms&gt; toExpectedSms(ExpectedAddressedPhoneNumber senderNumber, ExpectedAddressedPhoneNumber receiverNumber, String[] messages) {
+<span class="fc" id="L76">		List&lt;ExpectedSms&gt; parts = new ArrayList&lt;&gt;(messages.length);</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">		for (String message : messages) {</span>
+<span class="fc" id="L78">			parts.add(new ExpectedSms(message, senderNumber, receiverNumber));</span>
+		}
+<span class="fc" id="L80">		return parts;</span>
+	}
+
+	/**
+	 * Get the parts of the message.
+	 * 
+	 * @return the parts of the message
+	 */
+	public List&lt;ExpectedSms&gt; getParts() {
+<span class="fc" id="L89">		return parts;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

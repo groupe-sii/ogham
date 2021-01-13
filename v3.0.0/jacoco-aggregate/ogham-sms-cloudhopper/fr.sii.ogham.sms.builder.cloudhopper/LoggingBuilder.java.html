@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LoggingBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">LoggingBuilder.java</span></div><h1>LoggingBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import com.cloudhopper.smpp.pdu.Pdu;
+import com.cloudhopper.smpp.type.LoggingOptions;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+
+/**
+ * * Configure logs:
+ * &lt;ul&gt;
+ * &lt;li&gt;Enable/disable log of {@link Pdu}s&lt;/li&gt;
+ * &lt;li&gt;Enable/disable log of bytes&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class LoggingBuilder extends AbstractParent&lt;CloudhopperBuilder&gt; implements Builder&lt;LoggingOptions&gt; {
+	private LoggingOptions options;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 */
+	public LoggingBuilder(CloudhopperBuilder parent) {
+<span class="nc" id="L30">		super(parent);</span>
+<span class="nc" id="L31">	}</span>
+
+	/**
+	 * Provide a {@link LoggingOptions} instance to:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable/disable log of {@link Pdu}s&lt;/li&gt;
+	 * &lt;li&gt;Enable/disable log of bytes&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * If this method is called several times, only the last instance is used.
+	 * 
+	 * @param options
+	 *            the logging options
+	 * @return this instance for fluent chaining
+	 */
+	public LoggingBuilder options(LoggingOptions options) {
+<span class="nc" id="L47">		this.options = options;</span>
+<span class="nc" id="L48">		return this;</span>
+	}
+
+	@Override
+	public LoggingOptions build() {
+<span class="nc" id="L53">		return options;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

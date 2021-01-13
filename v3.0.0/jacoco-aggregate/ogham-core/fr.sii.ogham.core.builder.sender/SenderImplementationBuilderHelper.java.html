@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SenderImplementationBuilderHelper.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.sender</a> &gt; <span class="el_source">SenderImplementationBuilderHelper.java</span></div><h1>SenderImplementationBuilderHelper.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.sender;
+
+import static fr.sii.ogham.core.util.BuilderUtils.instantiateBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.priority.ImplementationPriorityProvider;
+import fr.sii.ogham.core.builder.priority.PriorityProvider;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.fluent.MessageConditions;
+import fr.sii.ogham.core.condition.provider.ImplementationConditionProvider;
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.sender.MessageSender;
+import fr.sii.ogham.core.sender.MultiImplementationSender;
+
+/**
+ * Helps to configure a {@link MultiImplementationSender}.
+ * 
+ * &lt;p&gt;
+ * It registers and uses {@link Builder}s to instantiate and configure a
+ * {@link MessageSender} implementation.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * It also let you provide your own direct {@link MessageSender} implementation.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder {@link MessageSender}
+ *            {@link Builder}
+ */
+public class SenderImplementationBuilderHelper&lt;P&gt; {
+<span class="fc" id="L47">	private static final Logger LOG = LoggerFactory.getLogger(SenderImplementationBuilderHelper.class);</span>
+
+	private final P parent;
+	private final BuildContext buildContext;
+	private final List&lt;Builder&lt;? extends MessageSender&gt;&gt; senderBuilders;
+	private final List&lt;MessageSender&gt; customSenders;
+	private final PriorityProvider&lt;MessageSender&gt; priorityProvider;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling and() method of any registered {@link Message}
+	 * {@link Builder}. The {@link EnvironmentBuilder} is used to evaluate
+	 * properties at build time (when
+	 * {@link #addSenders(MultiImplementationSender)} is called).
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public SenderImplementationBuilderHelper(P parent, BuildContext buildContext) {
+<span class="fc" id="L68">		super();</span>
+<span class="fc" id="L69">		this.parent = parent;</span>
+<span class="fc" id="L70">		this.buildContext = buildContext;</span>
+<span class="fc" id="L71">		senderBuilders = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L72">		customSenders = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L73">		priorityProvider = new ImplementationPriorityProvider&lt;&gt;(buildContext);</span>
+<span class="fc" id="L74">	}</span>
+
+	/**
+	 * Returns true if at least either one custom sender or a sender builder was
+	 * previously registered.
+	 * 
+	 * @return true if at least one custom sender or one sender builder
+	 */
+	public boolean hasRegisteredSenders() {
+<span class="nc bnc" id="L83" title="All 4 branches missed.">		return !customSenders.isEmpty() || !senderBuilders.isEmpty();</span>
+	}
+
+	/**
+	 * Registers a custom message sender implementation.
+	 * 
+	 * &lt;p&gt;
+	 * If your custom implementation is annotated by one or several of:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link RequiredClass}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperty}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredClasses}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperties}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Then if condition evaluation returns true, your implementation will be
+	 * used. If you provide several annotations, your implementation will be
+	 * used only if all conditions are met (and operator).
+	 * 
+	 * &lt;p&gt;
+	 * If your custom implementation implements {@link ActivableAtRuntime}, and
+	 * the provided condition evaluation returns true, then your implementation
+	 * will be used.
+	 * 
+	 * See {@link MessageConditions} to build your condition.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If neither annotations nor implementation of {@link ActivableAtRuntime}
+	 * is used, then your custom implementation will be always used. All other
+	 * implementations (even standard ones) will never be used.
+	 * &lt;/p&gt;
+	 * 
+	 * @param sender
+	 *            the sender to register
+	 */
+	public void customSender(MessageSender sender) {
+<span class="fc" id="L119">		customSenders.add(sender);</span>
+<span class="fc" id="L120">	}</span>
+
+	/**
+	 * Registers and configures sender through a dedicated builder.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .register(JavaMailBuilder.class)
+	 *     .host(&quot;localhost&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If your custom builder is annotated by one or several of:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link RequiredClass}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperty}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredClasses}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperties}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Then if condition evaluation returns true, your built implementation will
+	 * be used. If you provide several annotations, your built implementation
+	 * will be used only if all conditions are met (and operator).
+	 * 
+	 * &lt;p&gt;
+	 * If your custom builder implements {@link ActivableAtRuntime}, and the
+	 * provided condition evaluation returns true, then your built
+	 * implementation will be used.
+	 * 
+	 * See {@link MessageConditions} to build your condition.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If neither annotations nor implementation of {@link ActivableAtRuntime}
+	 * is used, then your built implementation will be always used. All other
+	 * implementations (even standard ones) will never be used.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with one argument with the type of the parent builder
+	 * ({@code &amp;lt;P&amp;gt;}). If you don't care about chaining, just provide a
+	 * default constructor.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your builder may return {@code null} when calling
+	 * {@link Builder#build()}. In this case it means that your implementation
+	 * can't be used due to current environment. Your implementation is then not
+	 * registered.
+	 * &lt;/p&gt;
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param &lt;B&gt;
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 * 
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public &lt;B extends Builder&lt;? extends MessageSender&gt;&gt; B register(Class&lt;B&gt; builderClass) {
+		// if builder already registered =&gt; provide same instance
+<span class="fc bfc" id="L182" title="All 2 branches covered.">		for (Builder&lt;? extends MessageSender&gt; builder : senderBuilders) {</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">			if (builderClass.isAssignableFrom(builder.getClass())) {</span>
+<span class="fc" id="L184">				return (B) builder;</span>
+			}
+<span class="fc" id="L186">		}</span>
+<span class="fc" id="L187">		B builder = instantiateBuilder(builderClass, parent, buildContext);</span>
+<span class="fc" id="L188">		senderBuilders.add(builder);</span>
+<span class="fc" id="L189">		return builder;</span>
+	}
+
+	/**
+	 * Add registered custom senders or built senders base on registered sender
+	 * builders to the provided {@link MultiImplementationSender}.
+	 * 
+	 * &lt;p&gt;
+	 * A {@link MultiImplementationSender} is able to evaluate a
+	 * {@link Condition} when a message is being sent to determine which
+	 * implementation can and should handle the message and really send it.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If a custom implementation was registered and is annotated by one or
+	 * several of:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link RequiredClass}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperty}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredClasses}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperties}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Then if condition evaluation returns true, the custom implementation will
+	 * be used. If you provide several annotations, the custom implementation
+	 * will be used only if all conditions are met (and operator).
+	 * 
+	 * &lt;p&gt;
+	 * If a custom implementation was registered and implements
+	 * {@link ActivableAtRuntime}, and the provided condition evaluation returns
+	 * true, then the custom implementation will be used.
+	 * 
+	 * See {@link MessageConditions} to build your condition.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If neither annotations nor implementation of {@link ActivableAtRuntime}
+	 * is used, then the custom implementation will be always used. All other
+	 * implementations (even standard ones) will never be used.
+	 * &lt;/p&gt;
+	 * 
+	 * @param mainSender
+	 *            the sender that manages several implementations
+	 */
+	public void addSenders(MultiImplementationSender&lt;?&gt; mainSender) {
+<span class="fc" id="L233">		ImplementationConditionProvider implementationSelection = new ImplementationConditionProvider(buildContext.getPropertyResolver());</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">		for (MessageSender customSender : customSenders) {</span>
+<span class="fc" id="L235">			LOG.debug(&quot;Custom implementation {} registered into {}&quot;, customSender, mainSender);</span>
+<span class="fc" id="L236">			mainSender.addImplementation(implementationSelection.provide(customSender), buildContext.register(customSender), priorityProvider.provide(customSender));</span>
+<span class="fc" id="L237">		}</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">		for (Builder&lt;? extends MessageSender&gt; builder : senderBuilders) {</span>
+<span class="fc" id="L239">			MessageSender sender = builder.build();</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">			if (sender != null) {</span>
+<span class="fc" id="L241">				LOG.debug(&quot;Implementation {} registered into {}&quot;, sender, mainSender);</span>
+<span class="fc" id="L242">				mainSender.addImplementation(implementationSelection.provide(builder), sender, priorityProvider.provide(sender));</span>
+			}
+<span class="fc" id="L244">		}</span>
+<span class="fc" id="L245">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>UnresolvedPath.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.resource.path</a> &gt; <span class="el_source">UnresolvedPath.java</span></div><h1>UnresolvedPath.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.resource.path;
+
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+
+public class UnresolvedPath implements ResourcePath {
+	private final String originalPath;
+
+	public UnresolvedPath(String path) {
+<span class="fc" id="L10">		super();</span>
+<span class="fc" id="L11">		this.originalPath = path;</span>
+<span class="fc" id="L12">	}</span>
+
+	@Override
+	public String getOriginalPath() {
+<span class="fc" id="L16">		return originalPath;</span>
+	}
+	
+	@Override
+	public int hashCode() {
+<span class="fc" id="L21">		return new HashCodeBuilder().append(originalPath).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L26">		return new EqualsBuilder(this, obj).appendFields(&quot;originalPath&quot;).isEqual();</span>
+	}
+	
+	@Override
+	public String toString() {
+<span class="fc" id="L31">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L32">		builder.append(&quot;'&quot;).append(originalPath).append(&quot;'&quot;);</span>
+<span class="fc" id="L33">		return builder.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

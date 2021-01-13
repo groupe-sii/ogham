@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SendGridAssertions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.internal</a> &gt; <span class="el_source">SendGridAssertions.java</span></div><h1>SendGridAssertions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.internal;
+
+import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinder.findSender;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static org.apache.commons.lang3.reflect.FieldUtils.readField;
+
+import java.util.Map;
+
+import org.hamcrest.Matcher;
+
+import com.sendgrid.SendGrid;
+
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.sendgrid.sender.SendGridSender;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.SendGridV2Sender;
+import fr.sii.ogham.email.sendgrid.v2.sender.impl.sendgrid.client.SendGridClient;
+import fr.sii.ogham.email.sendgrid.v4.sender.impl.SendGridV4Sender;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Helper to make assertions on SendGrid instance created by Ogham.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SendGridAssertions extends HasParent&lt;MessagingServiceAssertions&gt; {
+	private static final String DELEGATE_FIELD = &quot;delegate&quot;;
+	private final SendGridSender sendGridSender;
+
+	public SendGridAssertions(MessagingServiceAssertions parent, SendGridSender sendGridSender) {
+<span class="fc" id="L31">		super(parent);</span>
+<span class="fc" id="L32">		this.sendGridSender = sendGridSender;</span>
+<span class="fc" id="L33">	}</span>
+
+	/**
+	 * Ensures that SendGrid apiKey is correctly configured.
+	 * 
+	 * @param matcher
+	 *            the matcher used to ensure that apiKey is correctly
+	 *            configured.
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridAssertions apiKey(Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L44">		assertThat(getApiKey(sendGridSender), matcher);</span>
+<span class="fc" id="L45">		return this;</span>
+	}
+
+	/**
+	 * Ensures that SendGrid instance is correctly configured.
+	 * 
+	 * @param matcher
+	 *            the matcher used to ensure that instance is correctly
+	 *            configured.
+	 * @return this instance for fluent chaining
+	 */
+	public SendGridAssertions client(Matcher&lt;? super SendGrid&gt; matcher) {
+<span class="fc" id="L57">		assertThat(getClient(sendGridSender), matcher);</span>
+<span class="fc" id="L58">		return this;</span>
+	}
+
+	/**
+	 * Find the {@link SendGridSender} instance (one of {@link SendGridV2Sender}
+	 * or {@link SendGridV4Sender}).
+	 * 
+	 * @param messagingService
+	 *            the messaging service
+	 * @param senderClass
+	 *            which of {@link SendGridV2Sender} or {@link SendGridV4Sender}
+	 * @return the found instance
+	 */
+	public static SendGridSender getSendGridSender(MessagingService messagingService, Class&lt;? extends SendGridSender&gt; senderClass) {
+<span class="nc" id="L72">		return findSender(messagingService, senderClass);</span>
+	}
+
+	/**
+	 * Find the {@link SendGridSender} instance (one of {@link SendGridV2Sender}
+	 * or {@link SendGridV4Sender}) based on the classpath. If
+	 * {@link SendGridV4Sender} sender is found, return this instance. If not
+	 * found, tried to get {@link SendGridV2Sender} instance.
+	 * 
+	 * @param messagingService the messaging service
+	 * @return the found instance
+	 */
+	public static SendGridSender getSendGridSender(MessagingService messagingService) {
+		try {
+<span class="fc" id="L86">			return findSender(messagingService, SendGridV4Sender.class);</span>
+<span class="fc" id="L87">		} catch (IllegalStateException e) { // NOSONAR</span>
+			// skip
+		}
+		try {
+<span class="fc" id="L91">			return findSender(messagingService, SendGridV2Sender.class);</span>
+<span class="nc" id="L92">		} catch (IllegalStateException e) { // NOSONAR</span>
+			// skip
+		}
+<span class="nc" id="L95">		throw new IllegalStateException(&quot;No SendGridSender available&quot;);</span>
+	}
+
+	private static String getApiKey(SendGridSender sendGridSender) {
+<span class="fc" id="L99">		SendGrid client = getClient(sendGridSender);</span>
+		try {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">			if (sendGridSender instanceof SendGridV2Sender) {</span>
+<span class="fc" id="L102">				return (String) readField(client, &quot;password&quot;, true);</span>
+			}
+<span class="fc" id="L104">			return getApiKeyFromFieldOrHeaders(client);</span>
+<span class="nc" id="L105">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L106">			throw new IllegalStateException(&quot;Failed to read 'apiKey' of SendGrid&quot;, e);</span>
+		}
+	}
+
+	@SuppressWarnings({ &quot;squid:S1166&quot;, &quot;unchecked&quot; })
+	private static String getApiKeyFromFieldOrHeaders(SendGrid client) throws IllegalAccessException {
+		try {
+<span class="nc" id="L113">			return (String) readField(client, &quot;apiKey&quot;, true);</span>
+<span class="fc" id="L114">		} catch (IllegalArgumentException e) {</span>
+<span class="fc" id="L115">			Map&lt;String, String&gt; requestHeaders = (Map&lt;String, String&gt;) readField(client, &quot;requestHeaders&quot;, true);</span>
+<span class="fc" id="L116">			String authHeader = requestHeaders.get(&quot;Authorization&quot;);</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">			if (authHeader == null) {</span>
+<span class="nc" id="L118">				return null;</span>
+			}
+<span class="fc" id="L120">			String apiKey = authHeader.substring(7);</span>
+			// special case to be compatible with previous versions
+<span class="fc bfc" id="L122" title="All 2 branches covered.">			if (&quot;null&quot;.equals(apiKey)) {</span>
+<span class="fc" id="L123">				return null;</span>
+			}
+<span class="fc" id="L125">			return apiKey;</span>
+		}
+	}
+
+	private static SendGrid getClient(SendGridSender sendGridSender) {
+		try {
+<span class="fc bfc" id="L131" title="All 2 branches covered.">			if (sendGridSender instanceof SendGridV2Sender) {</span>
+<span class="fc" id="L132">				SendGridClient wrapper = (SendGridClient) readField(sendGridSender, DELEGATE_FIELD, true);</span>
+<span class="fc" id="L133">				return (SendGrid) readField(wrapper, DELEGATE_FIELD, true);</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">			} else if (sendGridSender instanceof SendGridV4Sender) {</span>
+<span class="fc" id="L135">				fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient wrapper = (fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.client.SendGridClient) readField(</span>
+						sendGridSender, DELEGATE_FIELD, true);
+<span class="fc" id="L137">				return (SendGrid) readField(wrapper, DELEGATE_FIELD, true);</span>
+			}
+<span class="nc" id="L139">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L140">			throw new IllegalStateException(&quot;Failed to read 'delegate' of SendGridClient&quot;, e);</span>
+<span class="nc" id="L141">		}</span>
+<span class="nc" id="L142">		return null;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

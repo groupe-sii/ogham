@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MessageSplitterBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">MessageSplitterBuilder.java</span></div><h1>MessageSplitterBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM7;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_GSM8;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_ISO_8859_1;
+import static com.cloudhopper.commons.charset.CharsetUtil.NAME_UCS_2;
+import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_GSM_7BIT_SMS_PACKING_MODE;
+import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_GSM_8BIT;
+import static fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SEGMENT_SIZE_UCS2;
+
+import java.util.Random;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.exception.builder.BuildException;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.util.PriorizedList;
+import fr.sii.ogham.sms.SmsConstants.SmppSplitConstants.SegmentSizes;
+import fr.sii.ogham.sms.encoder.Encoder;
+import fr.sii.ogham.sms.encoder.SupportingEncoder;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.CloudhopperCharsetSupportingEncoder;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.splitter.SupportedEncoderConditionalSplitter;
+import fr.sii.ogham.sms.splitter.FirstSupportingMessageSplitter;
+import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
+import fr.sii.ogham.sms.splitter.MessageSplitter;
+import fr.sii.ogham.sms.splitter.RandomReferenceNumberGenerator;
+import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
+import fr.sii.ogham.sms.splitter.SupportingSplitter;
+
+/**
+ * Configures how Cloudhopper will split messages.
+ * 
+ * &lt;p&gt;
+ * The splitter will check if the whole message can fit in a single segment. If
+ * not the splitter will split the whole message in several segments with a
+ * header to indicate splitting information such as number of segments,
+ * reference number and current segment number.
+ * 
+ * &lt;p&gt;
+ * {@link Encoder} configured using {@link CloudhopperBuilder#encoder()} is used
+ * to encode each segment.
+ * 
+ * &lt;p&gt;
+ * If automatic guessing of best standard encoder is enabled for {@link Encoder}
+ * (using {@code encoder().autoGuess(true)}), and message splitting is enabled,
+ * then standard message splitting is configured such as:
+ * &lt;ul&gt;
+ * &lt;li&gt;If GSM 7-bit encoder is enabled, {@link GsmMessageSplitter} is used to
+ * split messages that support this encoding. If whole message can fit in a
+ * single segment of 160 characters. Longer message is split into segments of
+ * either 153 characters or 152 characters (depending on reference number
+ * generation, see {@link ReferenceNumberGenerator})&lt;/li&gt;
+ * &lt;li&gt;If GSM 8-bit encoder is enabled, {@link GsmMessageSplitter} is used to
+ * split messages that support this encoding. If whole message can fit in a
+ * single segment of 140 characters. Longer message is split into segments of
+ * either 134 characters or 133 characters (depending on reference number
+ * generation, see {@link ReferenceNumberGenerator})&lt;/li&gt;
+ * &lt;li&gt;If UCS-2 encoder is enabled, {@link GsmMessageSplitter} is used to split
+ * messages that support this encoding. If whole message can fit in a single
+ * segment of 70 characters. Longer message is split into segments of either 67
+ * characters or 66 characters (depending on reference number generation, see
+ * {@link ReferenceNumberGenerator})&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * Each registered splitter uses the same priority as associated
+ * {@link Encoder}.
+ * 
+ * If you don't want standard message splitting based on supported
+ * {@link Encoder}s, you can either disable message splitting or provide a
+ * custom splitter with higher priority.
+ * 
+ * &lt;p&gt;
+ * This builder allows to configure:
+ * &lt;ul&gt;
+ * &lt;li&gt;Enable/disable message splitting&lt;/li&gt;
+ * &lt;li&gt;Provide a custom split strategy&lt;/li&gt;
+ * &lt;li&gt;Choose strategy for reference number generation&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;pre&gt;
+ * {@code
+ * .splitter()
+ *   .enable()
+ *     .properties(&quot;${ogham.sms.cloudhopper.split.enable}&quot;, &quot;${ogham.sms.split.enable}&quot;)
+ *     .devaultValue(true)
+ *     .and()
+ *   .customSplitter(new MyCustomSplitter(), 100000)
+ *   .referenceNumber()
+ *     .random()
+ *     .random(new Random())
+ *     .generator(new MyCustomReferenceNumberGenerator())
+ * }
+ * &lt;/pre&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MessageSplitterBuilder extends AbstractParent&lt;CloudhopperBuilder&gt; implements Builder&lt;MessageSplitter&gt; {
+	private final BuildContext buildContext;
+	private final ReadableEncoderBuilder encoderBuilder;
+	private final ConfigurationValueBuilderHelper&lt;MessageSplitterBuilder, Boolean&gt; enableValueBuilder;
+	private final PriorizedList&lt;MessageSplitter&gt; customSplitters;
+	private MessageSplitter customSplitter;
+	private ReferenceNumberGeneratorBuilder referenceNumberBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 * @param encoderBuilder
+	 *            the encoder builder that is used to configure standard message
+	 *            splitting based on encoding charset
+	 */
+	public MessageSplitterBuilder(CloudhopperBuilder parent, BuildContext buildContext, ReadableEncoderBuilder encoderBuilder) {
+<span class="fc" id="L125">		super(parent);</span>
+<span class="fc" id="L126">		this.buildContext = buildContext;</span>
+<span class="fc" id="L127">		this.encoderBuilder = encoderBuilder;</span>
+<span class="fc" id="L128">		enableValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L129">		customSplitters = new PriorizedList&lt;&gt;();</span>
+<span class="fc" id="L130">	}</span>
+
+	/**
+	 * Enable/disable message splitting.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #enable()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(false)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(false)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code enable(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable message splitting
+	 * @return this instance for fluent chaining
+	 */
+	public MessageSplitterBuilder enable(Boolean enable) {
+<span class="fc" id="L167">		enableValueBuilder.setValue(enable);</span>
+<span class="fc" id="L168">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable message splitting.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #enable(Boolean)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(false)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;MessageSplitterBuilder, Boolean&gt; enable() {
+<span class="fc" id="L208">		return enableValueBuilder;</span>
+	}
+
+	/**
+	 * Configures how Cloudhopper should generate a reference number.
+	 * 
+	 * &lt;p&gt;
+	 * Reference number is used to identify segments that belong to the same
+	 * message. Every segment of the split message must have the same reference
+	 * number.
+	 * 
+	 * &lt;p&gt;
+	 * This builder allows to configure:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable random generation strategy&lt;/li&gt;
+	 * &lt;li&gt;Customize random generation by providing a custom {@link Random}&lt;/li&gt;
+	 * &lt;li&gt;Provide a custom generator&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 *   .referenceNumber()
+	 *     .random()
+	 *     .random(new Random())
+	 *     .generator(new MyCustomReferenceNumberGenerator())
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * @return the builder to configure reference number generation
+	 * @see ReferenceNumberGenerator
+	 */
+	public ReferenceNumberGeneratorBuilder referenceNumber() {
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">		if (referenceNumberBuilder == null) {</span>
+<span class="fc" id="L242">			referenceNumberBuilder = new ReferenceNumberGeneratorBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L244">		return referenceNumberBuilder;</span>
+	}
+
+	/**
+	 * Register a custom splitter strategy.
+	 * 
+	 * &lt;p&gt;
+	 * Using this method totally disable all other features. Only the provided
+	 * splitter is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last one is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is provided, then custom splitting is disabled.
+	 * 
+	 * @param splitter
+	 *            the splitter to use
+	 * @return this instance for fluent chaining
+	 */
+	public MessageSplitterBuilder customSplitter(MessageSplitter splitter) {
+<span class="nc" id="L265">		this.customSplitter = splitter;</span>
+<span class="nc" id="L266">		return this;</span>
+	}
+
+	/**
+	 * Register a custom splitter strategy in the chain of splitters.
+	 * 
+	 * &lt;p&gt;
+	 * It is possible to register several custom splitters.
+	 * 
+	 * &lt;p&gt;
+	 * The priority is used to indicate in which order the custom splitter must
+	 * be applied in the chain.
+	 * 
+	 * &lt;p&gt;
+	 * If the custom splitter implements {@link SupportingSplitter}, then the
+	 * splitter can indicate if it is able to handle to message to split. If the
+	 * splitter can't handle the message, then the next splitter is tried.
+	 * 
+	 * &lt;p&gt;
+	 * If the custom splitter doesn't implement {@link SupportingSplitter}, then
+	 * the splitter is considered as able to handle the message. Splitting is
+	 * used with this splitter. So if such splitter is registered with a higher
+	 * priority than others, no other splitter will be tried.
+	 * 
+	 * @param splitter
+	 *            the splitter to register
+	 * @param priority
+	 *            the associated priority (greater value means higher priority)
+	 * @return this instance for fluent chaining
+	 */
+	public MessageSplitterBuilder customSplitter(MessageSplitter splitter, int priority) {
+<span class="nc" id="L297">		customSplitters.register(splitter, priority);</span>
+<span class="nc" id="L298">		return this;</span>
+	}
+
+	@Override
+	public MessageSplitter build() {
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">		if (customSplitter != null) {</span>
+<span class="nc" id="L304">			return customSplitter;</span>
+		}
+<span class="fc bfc" id="L306" title="All 2 branches covered.">		if (!splittingEnabled()) {</span>
+<span class="fc" id="L307">			return null;</span>
+		}
+<span class="fc bfc" id="L309" title="All 2 branches covered.">		if (encoderBuilder.autoGuessEnabled()) {</span>
+<span class="fc" id="L310">			return buildAutoGuessSplitter();</span>
+		}
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">		if (!customSplitters.isEmpty()) {</span>
+<span class="nc" id="L313">			return buildContext.register(new FirstSupportingMessageSplitter(customSplitters.getOrdered()));</span>
+		}
+<span class="fc" id="L315">		throw new BuildException(&quot;Split of SMS is enabled but no splitter is configured&quot;);</span>
+	}
+
+	private boolean splittingEnabled() {
+<span class="fc" id="L319">		return enableValueBuilder.getValue(false);</span>
+	}
+
+	private MessageSplitter buildAutoGuessSplitter() {
+<span class="fc" id="L323">		PriorizedList&lt;MessageSplitter&gt; registry = new PriorizedList&lt;&gt;();</span>
+<span class="fc" id="L324">		registerStandardSplitter(encoderBuilder.getGsm7Priorities(), NAME_GSM7, SEGMENT_SIZE_GSM_7BIT_SMS_PACKING_MODE, registry);</span>
+<span class="fc" id="L325">		registerStandardSplitter(encoderBuilder.getGsm8Priorities(), NAME_GSM8, SEGMENT_SIZE_GSM_8BIT, registry);</span>
+<span class="fc" id="L326">		registerStandardSplitter(encoderBuilder.getLatin1Priorities(), NAME_ISO_8859_1, SEGMENT_SIZE_GSM_8BIT, registry);</span>
+<span class="fc" id="L327">		registerStandardSplitter(encoderBuilder.getUcs2Priorities(), NAME_UCS_2, SEGMENT_SIZE_UCS2, registry);</span>
+<span class="fc" id="L328">		registry.register(customSplitters);</span>
+<span class="fc" id="L329">		return buildContext.register(new FirstSupportingMessageSplitter(registry.getOrdered()));</span>
+	}
+
+	private void registerStandardSplitter(StandardEncodingHelper priorities, String supportedCharsetName, SegmentSizes maxSizes, PriorizedList&lt;MessageSplitter&gt; registry) {
+<span class="fc" id="L333">		Integer priority = priorities.getValue();</span>
+<span class="fc bfc" id="L334" title="All 4 branches covered.">		if (priority == null || priority &lt;= 0) {</span>
+<span class="fc" id="L335">			return;</span>
+		}
+<span class="fc" id="L337">		registry.register(buildStandardSplitter(supportedCharsetName, maxSizes), priority);</span>
+<span class="fc" id="L338">	}</span>
+
+	private MessageSplitter buildStandardSplitter(String supportingCharset, SegmentSizes maxSizes) {
+<span class="fc" id="L341">		SupportingEncoder encoder = buildContext.register(new CloudhopperCharsetSupportingEncoder(NamedCharset.from(supportingCharset)));</span>
+<span class="fc" id="L342">		return buildContext.register(new SupportedEncoderConditionalSplitter(encoder, buildContext.register(new GsmMessageSplitter(encoder, maxSizes, buildReferenceNumberGenerator()))));</span>
+	}
+
+	private ReferenceNumberGenerator buildReferenceNumberGenerator() {
+<span class="fc bfc" id="L346" title="All 2 branches covered.">		if (referenceNumberBuilder != null) {</span>
+<span class="fc" id="L347">			return referenceNumberBuilder.build();</span>
+		}
+<span class="fc" id="L349">		return buildContext.register(new RandomReferenceNumberGenerator());</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

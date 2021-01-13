@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StreamResourceHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-javamail</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sender.impl.javamail</a> &gt; <span class="el_source">StreamResourceHandler.java</span></div><h1>StreamResourceHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sender.impl.javamail;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.activation.DataHandler;
+import javax.mail.BodyPart;
+import javax.mail.MessagingException;
+import javax.mail.util.ByteArrayDataSource;
+
+import fr.sii.ogham.core.exception.mimetype.MimeTypeDetectionException;
+import fr.sii.ogham.core.mimetype.MimeTypeProvider;
+import fr.sii.ogham.core.resource.NamedResource;
+import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.util.IOUtils;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.exception.handler.AttachmentResourceHandlerException;
+
+/**
+ * Implementation that is able to handle any {@link Resource}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class StreamResourceHandler implements JavaMailAttachmentResourceHandler {
+	/**
+	 * The Mime Type detector
+	 */
+	private MimeTypeProvider mimetypeProvider;
+
+	public StreamResourceHandler(MimeTypeProvider mimetypeProvider) {
+<span class="fc" id="L33">		super();</span>
+<span class="fc" id="L34">		this.mimetypeProvider = mimetypeProvider;</span>
+<span class="fc" id="L35">	}</span>
+
+	@Override
+	@SuppressWarnings(&quot;squid:S1192&quot;)
+	public void setData(BodyPart part, NamedResource resource, Attachment attachment) throws AttachmentResourceHandlerException {
+<span class="fc" id="L40">		try (InputStream stream = resource.getInputStream()) {</span>
+<span class="fc" id="L41">			InputStream s = stream;</span>
+			// stream is read twice, if stream can't handle reset =&gt; create a
+			// stream that is able to do it
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">			if (!stream.markSupported()) {</span>
+<span class="nc" id="L45">				s = new ByteArrayInputStream(IOUtils.toByteArray(stream));</span>
+			}
+			// mark to reset at the start of the stream
+<span class="fc" id="L48">			s.mark(Integer.MAX_VALUE);</span>
+			// detect the mimetype
+<span class="fc" id="L50">			String mimetype = getMimetype(attachment, s);</span>
+			// reset the stream
+<span class="fc" id="L52">			s.reset();</span>
+			// set the content
+<span class="fc" id="L54">			part.setDataHandler(new DataHandler(new ByteArrayDataSource(s, mimetype)));</span>
+<span class="nc" id="L55">		} catch (MimeTypeDetectionException e) {</span>
+<span class="nc" id="L56">			throw new AttachmentResourceHandlerException(&quot;Failed to attach &quot; + resource.getName() + &quot;. Mime type can't be detected&quot;, attachment, e);</span>
+<span class="nc" id="L57">		} catch (MessagingException e) {</span>
+<span class="nc" id="L58">			throw new AttachmentResourceHandlerException(&quot;Failed to attach &quot; + resource.getName(), attachment, e);</span>
+<span class="nc" id="L59">		} catch (IOException e) {</span>
+<span class="nc" id="L60">			throw new AttachmentResourceHandlerException(&quot;Failed to attach &quot; + resource.getName() + &quot;. Stream can't be read&quot;, attachment, e);</span>
+<span class="fc" id="L61">		}</span>
+<span class="fc" id="L62">	}</span>
+
+	private String getMimetype(Attachment attachment, InputStream stream) throws MimeTypeDetectionException {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		if (attachment.getContentType() != null) {</span>
+<span class="fc" id="L66">			return attachment.getContentType();</span>
+		}
+<span class="fc" id="L68">		return mimetypeProvider.detect(stream).toString();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

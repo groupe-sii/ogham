@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JavaMailChecker.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-classpath-runtime</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.runtime.checker</a> &gt; <span class="el_source">JavaMailChecker.java</span></div><h1>JavaMailChecker.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.runtime.checker;
+
+import static fr.sii.ogham.testing.assertion.OghamAssertions.assertThat;
+import static fr.sii.ogham.testing.assertion.OghamMatchers.isIdenticalHtml;
+import static fr.sii.ogham.testing.util.ResourceUtils.resourceAsString;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.startsWith;
+
+import java.io.IOException;
+
+import com.icegreen.greenmail.junit4.GreenMailRule;
+
+public class JavaMailChecker {
+	private final GreenMailRule greenMail;
+	
+	public JavaMailChecker(GreenMailRule greenMail) {
+<span class="nc" id="L20">		super();</span>
+<span class="nc" id="L21">		this.greenMail = greenMail;</span>
+<span class="nc" id="L22">	}</span>
+
+	public void assertEmailWithoutTemplate() {
+<span class="nc" id="L25">		assertThat(greenMail).receivedMessages()</span>
+<span class="nc" id="L26">			.count(is(1))</span>
+<span class="nc" id="L27">				.message(0)</span>
+<span class="nc" id="L28">					.subject(is(&quot;Simple&quot;))</span>
+<span class="nc" id="L29">					.from()</span>
+<span class="nc" id="L30">						.address(hasItems(&quot;sender@sii.fr&quot;))</span>
+<span class="nc" id="L31">						.personal(hasItems(&quot;Sender Name&quot;)).and()</span>
+<span class="nc" id="L32">					.to()</span>
+<span class="nc" id="L33">						.address(hasItems(&quot;recipient@sii.fr&quot;))</span>
+<span class="nc" id="L34">						.personal(hasItems(&quot;Recipient Name&quot;)).and()</span>
+<span class="nc" id="L35">					.body()</span>
+<span class="nc" id="L36">						.contentAsString(is(&quot;string body&quot;))</span>
+<span class="nc" id="L37">						.contentType(startsWith(&quot;text/plain&quot;)).and()</span>
+<span class="nc" id="L38">					.alternative(nullValue())</span>
+<span class="nc" id="L39">					.attachments(emptyIterable());</span>
+<span class="nc" id="L40">	}</span>
+	
+	public void assertEmailWithThymeleaf() throws IOException {
+<span class="nc" id="L43">		assertEmailWithTemplates(&quot;Thymeleaf&quot;, &quot;thymeleaf&quot;);</span>
+<span class="nc" id="L44">	}</span>
+
+	public void assertEmailWithFreemarker() throws IOException {
+<span class="nc" id="L47">		assertEmailWithTemplates(&quot;Freemarker&quot;, &quot;freemarker&quot;);</span>
+<span class="nc" id="L48">	}</span>
+
+	public void assertEmailWithThymeleafAndFreemarker() throws IOException {
+<span class="nc" id="L51">		assertEmailWithTemplates(&quot;Thymeleaf+Freemarker&quot;, &quot;mixed&quot;);</span>
+<span class="nc" id="L52">	}</span>
+	
+	private void assertEmailWithTemplates(String subject, String templateEngine) throws IOException {
+<span class="nc" id="L55">		assertThat(greenMail).receivedMessages()</span>
+<span class="nc" id="L56">			.count(is(1))</span>
+<span class="nc" id="L57">			.message(0)</span>
+<span class="nc" id="L58">				.subject(is(subject))</span>
+<span class="nc" id="L59">				.from()</span>
+<span class="nc" id="L60">					.address(hasItems(&quot;sender@sii.fr&quot;))</span>
+<span class="nc" id="L61">					.personal(hasItems(&quot;Sender Name&quot;)).and()</span>
+<span class="nc" id="L62">				.to()</span>
+<span class="nc" id="L63">					.address(hasItems(&quot;recipient@sii.fr&quot;))</span>
+<span class="nc" id="L64">					.personal(hasItems(&quot;Recipient Name&quot;)).and()</span>
+<span class="nc" id="L65">				.body()</span>
+<span class="nc" id="L66">					.contentAsString(isIdenticalHtml(resourceAsString(&quot;/email/&quot;+templateEngine+&quot;/expected/simple_foo_42.html&quot;)))</span>
+<span class="nc" id="L67">					.contentType(startsWith(&quot;text/html&quot;)).and()</span>
+<span class="nc" id="L68">				.alternative()</span>
+<span class="nc" id="L69">					.contentAsString(is(resourceAsString(&quot;/email/&quot;+templateEngine+&quot;/expected/simple_foo_42.txt&quot;)))</span>
+<span class="nc" id="L70">					.contentType(startsWith(&quot;text/plain&quot;)).and()</span>
+<span class="nc" id="L71">				.attachments(emptyIterable());</span>
+<span class="nc" id="L72">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

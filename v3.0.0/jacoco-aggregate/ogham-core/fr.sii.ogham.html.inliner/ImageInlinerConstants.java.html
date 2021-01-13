@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImageInlinerConstants.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.html.inliner</a> &gt; <span class="el_source">ImageInlinerConstants.java</span></div><h1>ImageInlinerConstants.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.html.inliner;
+
+/**
+ * Common constants for image inlining.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class ImageInlinerConstants {
+	/**
+	 * &lt;p&gt;
+	 * The attribute name to indicate which strategy for inlining to apply if
+	 * the default one is not appropriated.
+	 * &lt;/p&gt;
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 		&lt;img src=&quot;...&quot; data-inline-image=&quot;base64&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * It forces to use &lt;code&gt;base64&lt;/code&gt; inlining for this image.
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * You can also skip inlining by using &quot;skip&quot; value:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * 		&lt;img src=&quot;...&quot; data-inline-image=&quot;skip&quot; /&gt;
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @see InlineModes
+	 */
+	public static final String INLINE_MODE_ATTR = &quot;data-inline-image&quot;;
+
+	/**
+	 * Attribute to mark an image as already inlined in order to not process it
+	 * again
+	 */
+	public static final String INLINED_ATTR = &quot;data-image-inlined&quot;;
+
+	/**
+	 * Interface for defining an inline mode
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
+	public interface InlineMode {
+		/**
+		 * The inline mode value
+		 * 
+		 * @return inline mode value
+		 */
+		String mode();
+
+		/**
+		 * Indicates if the mode is the same as the current mode.
+		 * 
+		 * @param mode
+		 *            the mode to check if same
+		 * @return true if same value, false otherwise
+		 */
+		boolean is(String mode);
+	}
+
+	/**
+	 * Provide predefined inline modes
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
+<span class="fc" id="L77">	public enum InlineModes implements InlineMode {</span>
+		/**
+		 * Attach the image to the email and references it in the HTML using a
+		 * Content-ID (CID).
+		 */
+<span class="fc" id="L82">		ATTACH(&quot;attach&quot;),</span>
+		/**
+		 * Encode the image content to a base64 string that is directly used by
+		 * image {@code src} attribute
+		 */
+<span class="fc" id="L87">		BASE64(&quot;base64&quot;),</span>
+		/**
+		 * Do not inline the image
+		 */
+<span class="fc" id="L91">		SKIP(&quot;skip&quot;);</span>
+
+		private final String mode;
+
+<span class="fc" id="L95">		InlineModes(String mode) {</span>
+<span class="fc" id="L96">			this.mode = mode;</span>
+<span class="fc" id="L97">		}</span>
+
+		@Override
+		public String mode() {
+<span class="nc" id="L101">			return mode;</span>
+		}
+
+		@Override
+		public boolean is(String mode) {
+<span class="fc" id="L106">			return this.mode.equals(mode);</span>
+		}
+	}
+
+	private ImageInlinerConstants() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

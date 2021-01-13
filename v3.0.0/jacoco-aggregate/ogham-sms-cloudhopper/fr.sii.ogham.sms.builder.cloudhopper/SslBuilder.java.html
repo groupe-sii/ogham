@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SslBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">SslBuilder.java</span></div><h1>SslBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import com.cloudhopper.smpp.ssl.SslConfiguration;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+
+/**
+ * Enable or disable SSL configuration and configure how SSL is handled.
+ * 
+ * See
+ * &lt;a href=&quot;https://github.com/fizzed/cloudhopper-smpp/blob/master/SSL.md&quot;&gt;How
+ * to use SSL with cloudhopper-smpp&lt;/a&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SslBuilder extends AbstractParent&lt;CloudhopperBuilder&gt; implements Builder&lt;SslConfiguration&gt; {
+	private final ConfigurationValueBuilderHelper&lt;SslBuilder, Boolean&gt; enableSslValueBuilder;
+	private SslConfiguration sslConfiguration;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public SslBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
+<span class="nc" id="L38">		super(parent);</span>
+<span class="nc" id="L39">		enableSslValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="nc" id="L40">	}</span>
+
+	/**
+	 * Enable or disable SSL.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #enable()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code enable(true)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enale
+	 *            true to enable SSL, false to disable
+	 * @return this instance for fluent chaining
+	 */
+	public SslBuilder enable(Boolean enale) {
+<span class="nc" id="L77">		enableSslValueBuilder.setValue(enale);</span>
+<span class="nc" id="L78">		return this;</span>
+	}
+
+	/**
+	 * Enable or disable SSL.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #enable(Boolean)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;SslBuilder, Boolean&gt; enable() {
+<span class="nc" id="L118">		return enableSslValueBuilder;</span>
+	}
+
+	/**
+	 * Configure SSL handling.
+	 * 
+	 * See &lt;a href=
+	 * &quot;https://github.com/fizzed/cloudhopper-smpp/blob/master/SSL.md&quot;&gt;How to
+	 * use SSL with cloudhopper-smpp&lt;/a&gt;
+	 * 
+	 * If this method is called several times, only the last configuration is
+	 * used.
+	 * 
+	 * @param sslConfiguration
+	 *            the new SSL configuration
+	 * @return this instance for fluent chaining
+	 */
+	public SslBuilder sslConfiguration(SslConfiguration sslConfiguration) {
+<span class="nc" id="L136">		this.sslConfiguration = sslConfiguration;</span>
+<span class="nc" id="L137">		return this;</span>
+	}
+
+	@Override
+	public SslConfiguration build() {
+<span class="nc" id="L142">		boolean enabled = enableSslValueBuilder.getValue(false);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">		return enabled ? sslConfiguration : null;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleThymeleafContextConverter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common</a> &gt; <span class="el_source">SimpleThymeleafContextConverter.java</span></div><h1>SimpleThymeleafContextConverter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common;
+
+import fr.sii.ogham.core.exception.template.ContextException;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.context.LocaleContext;
+
+/**
+ * Simple converter that is able to handle {@link Context} and
+ * {@link LocaleContext}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L14">public class SimpleThymeleafContextConverter implements ThymeleafContextConverter {</span>
+	@Override
+	public org.thymeleaf.context.IContext convert(Context context) throws ContextException {
+<span class="fc" id="L17">		org.thymeleaf.context.Context thymeleafContext = new org.thymeleaf.context.Context();</span>
+		
+<span class="fc" id="L19">		thymeleafContext.setVariables(context.getVariables());</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">		if (context instanceof LocaleContext) {</span>
+<span class="fc" id="L21">			thymeleafContext.setLocale(((LocaleContext) context).getLocale());</span>
+		}
+		
+<span class="fc" id="L24">		return thymeleafContext;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

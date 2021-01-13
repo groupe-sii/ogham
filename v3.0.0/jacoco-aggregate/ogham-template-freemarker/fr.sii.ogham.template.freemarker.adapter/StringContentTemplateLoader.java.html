@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringContentTemplateLoader.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.adapter</a> &gt; <span class="el_source">StringContentTemplateLoader.java</span></div><h1>StringContentTemplateLoader.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.adapter;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Locale;
+
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+import fr.sii.ogham.template.freemarker.SkipLocaleForStringContentTemplateLookupStrategy;
+import freemarker.cache.StringTemplateLoader;
+import freemarker.cache.TemplateLoader;
+
+/**
+ * Ogham special implementation to handle template that is directly provided as
+ * string. This is different from {@link StringTemplateLoader} provided by
+ * Freemarker. The Freemarker implementations expects that template content is
+ * previously registered and referenced by a name. Then when requesting the
+ * template, only the name is used. This is an alias.
+ * 
+ * &lt;p&gt;
+ * This implementation directly handles the template content as string.
+ * 
+ * &lt;p&gt;
+ * To work as expected, the {@link Locale} resolution must be skipped. Take a
+ * look at {@link SkipLocaleForStringContentTemplateLookupStrategy}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L31">public class StringContentTemplateLoader implements TemplateLoader {</span>
+
+	@Override
+	public Object findTemplateSource(String name) throws IOException {
+<span class="fc" id="L35">		return new StringTemplateSource(name);</span>
+	}
+
+	@Override
+	public long getLastModified(Object templateSource) {
+<span class="fc" id="L40">		return System.currentTimeMillis();</span>
+	}
+
+	@Override
+	public Reader getReader(Object templateSource, String encoding) throws IOException {
+<span class="fc" id="L45">		return new StringReader(((StringTemplateSource) templateSource).source);</span>
+	}
+
+	@Override
+	public void closeTemplateSource(Object templateSource) throws IOException {
+		// nothing to do
+<span class="fc" id="L51">	}</span>
+
+	private static class StringTemplateSource {
+		private final String source;
+
+		public StringTemplateSource(String source) {
+<span class="fc" id="L57">			super();</span>
+<span class="fc" id="L58">			this.source = source;</span>
+<span class="fc" id="L59">		}</span>
+
+		@Override
+		public int hashCode() {
+<span class="nc" id="L63">			return new HashCodeBuilder().append(source).hashCode();</span>
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+<span class="nc" id="L68">			return new EqualsBuilder(this, obj).appendFields(&quot;source&quot;).isEqual();</span>
+		}
+		
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

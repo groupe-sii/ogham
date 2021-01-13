@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AssertSms.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">AssertSms.java</span></div><h1>AssertSms.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import static fr.sii.ogham.testing.sms.simulator.decode.SmsUtils.getSmsContent;
+
+import java.util.List;
+import java.util.function.Function;
+
+import org.junit.Assert;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.assertion.util.FailAtEndRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.Address;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+
+/**
+ * Utility class for checking if the received SMS content is as expected.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class AssertSms {
+
+	/**
+	 * Assert that the fields of the received SMS using SMPP protocol are equal
+	 * to the expected values. It will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received sender address corresponds to the expected phone number
+	 * of the sender&lt;/li&gt;
+	 * &lt;li&gt;The received receiver address corresponds to the expected phone
+	 * number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The received message corresponds to the expected message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @param expected
+	 *            all the fields with their expected values
+	 * @param actual
+	 *            the received SMS
+	 */
+	public static void assertEquals(ExpectedSms expected, SubmitSm actual) {
+<span class="fc" id="L40">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L41">		assertEquals(&quot;1/1&quot;, expected, actual, registry);</span>
+<span class="fc" id="L42">		registry.execute();</span>
+<span class="fc" id="L43">	}</span>
+
+	/**
+	 * Assert that the fields of the received SMS using SMPP protocol are equal
+	 * to the expected values. It will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received sender address corresponds to the expected phone number
+	 * of the sender&lt;/li&gt;
+	 * &lt;li&gt;The received receiver address corresponds to the expected phone
+	 * number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The received message corresponds to the expected message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * It also checks that there is exactly one received message.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * This is a shortcut useful in unit testing.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expected
+	 *            all the fields with their expected values
+	 * @param receivedMessages
+	 *            the list of received SMS
+	 */
+	public static void assertEquals(ExpectedSms expected, List&lt;SubmitSm&gt; receivedMessages) {
+<span class="fc" id="L68">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L69">		registry.register(() -&gt; Assert.assertEquals(&quot;should have received exactly one message&quot;, 1, receivedMessages.size()));</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		assertEquals(&quot;1/1&quot;, expected, receivedMessages.size()==1 ? receivedMessages.get(0) : null, registry);</span>
+<span class="nc" id="L71">		registry.execute();</span>
+<span class="nc" id="L72">	}</span>
+
+	/**
+	 * Assert that the fields of each received SMS using SMPP protocol are equal
+	 * to values of each expected message. For each message, it will check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received sender address corresponds to the expected phone number
+	 * of the sender&lt;/li&gt;
+	 * &lt;li&gt;The received receiver address corresponds to the expected phone
+	 * number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The received message corresponds to the expected message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * It also checks that there are exactly the same number of received message
+	 * as the expected number.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expected
+	 *            all the fields with their expected values
+	 * @param receivedMessages
+	 *            the received SMS
+	 */
+	public static void assertEquals(List&lt;ExpectedSms&gt; expected, List&lt;SubmitSm&gt; receivedMessages) {
+<span class="fc" id="L95">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L96">		assertEquals(expected, receivedMessages, registry);</span>
+<span class="fc" id="L97">		registry.execute();</span>
+<span class="fc" id="L98">	}</span>
+
+	/**
+	 * &lt;p&gt;
+	 * When message is too long, the SMS is split into several parts. This
+	 * method helps to check this case.
+	 * &lt;/p&gt;
+	 * Assert that the fields of each received SMS using SMPP protocol are equal
+	 * to values of each expected message part. For each message part, it will
+	 * check that:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The received sender address corresponds to the expected phone number
+	 * of the sender&lt;/li&gt;
+	 * &lt;li&gt;The received receiver address corresponds to the expected phone
+	 * number of the receiver&lt;/li&gt;
+	 * &lt;li&gt;The received message corresponds to the expected message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;p&gt;
+	 * It also checks that there are exactly the same number of received message
+	 * as the expected number of parts.
+	 * &lt;/p&gt;
+	 * 
+	 * @param expected
+	 *            all the fields with their expected values
+	 * @param receivedMessages
+	 *            the received SMS
+	 */
+	public static void assertEquals(SplitSms expected, List&lt;SubmitSm&gt; receivedMessages) {
+<span class="fc" id="L126">		AssertionRegistry registry = new FailAtEndRegistry();</span>
+<span class="fc" id="L127">		assertEquals(expected.getParts(), receivedMessages, registry);</span>
+<span class="fc" id="L128">		registry.execute();</span>
+<span class="fc" id="L129">	}</span>
+
+	private static void assertEquals(List&lt;ExpectedSms&gt; expected, List&lt;SubmitSm&gt; receivedMessages, AssertionRegistry registry) {
+<span class="fc" id="L132">		registry.register(() -&gt; Assert.assertEquals(&quot;should have received exactly &quot; + expected.size() + &quot; message(s)&quot;, expected.size(), receivedMessages.size()));</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">		for (int i = 0; i &lt; expected.size(); i++) {</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">			assertEquals((i+1)+&quot;/&quot;+expected.size(), expected.get(i), i&lt;receivedMessages.size() ? receivedMessages.get(i) : null, registry);</span>
+		}
+<span class="fc" id="L136">	}</span>
+
+	private static void assertEquals(String msgIdx, ExpectedSms expected, SubmitSm actual, AssertionRegistry registry) {
+<span class="fc" id="L139">		registry.register(() -&gt; Assert.assertEquals(&quot;Sender number of message &quot;+ msgIdx + &quot; should be &quot; + expected.getSenderNumber().getNumber(), expected.getSenderNumber().getNumber(), getValue(actual, SubmitSm::getSourceAddress, Address::getAddress)));</span>
+<span class="fc" id="L140">		registry.register(() -&gt; Assert.assertEquals(&quot;Sender ton of message &quot;+ msgIdx + &quot; should be &quot; + expected.getSenderNumber().getTon(), (Byte) expected.getSenderNumber().getTon(), getValue(actual, SubmitSm::getSourceAddress, Address::getTon)));</span>
+<span class="fc" id="L141">		registry.register(() -&gt; Assert.assertEquals(&quot;Sender npi of message &quot;+ msgIdx + &quot; should be &quot; + expected.getSenderNumber().getNpi(), (Byte) expected.getSenderNumber().getNpi(), getValue(actual, SubmitSm::getSourceAddress, Address::getNpi)));</span>
+
+<span class="fc" id="L143">		registry.register(() -&gt; Assert.assertEquals(&quot;Receiver number of message &quot;+ msgIdx + &quot; should be &quot; + expected.getReceiverNumber().getNumber(), expected.getReceiverNumber().getNumber(), getValue(actual, SubmitSm::getDestAddress, Address::getAddress)));</span>
+<span class="fc" id="L144">		registry.register(() -&gt; Assert.assertEquals(&quot;Receiver ton of message &quot;+ msgIdx + &quot;  should be &quot; + expected.getReceiverNumber().getTon(), (Byte) expected.getReceiverNumber().getTon(), getValue(actual, SubmitSm::getDestAddress, Address::getTon)));</span>
+<span class="fc" id="L145">		registry.register(() -&gt; Assert.assertEquals(&quot;Receiver npi of message &quot;+ msgIdx + &quot;  should be &quot; + expected.getReceiverNumber().getNpi(), (Byte) expected.getReceiverNumber().getNpi(), getValue(actual, SubmitSm::getDestAddress, Address::getNpi)));</span>
+
+<span class="fc bfc" id="L147" title="All 2 branches covered.">		registry.register(() -&gt; Assert.assertEquals(&quot;Message &quot; + msgIdx + &quot; not consistent with expected&quot;, expected.getMessage(), actual==null ? null : getSmsContent(actual)));</span>
+<span class="fc" id="L148">	}</span>
+
+	private static &lt;T&gt; T getValue(SubmitSm actual, Function&lt;SubmitSm, Address&gt; addressAccessor, Function&lt;Address, T&gt; valueAccessor) {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		if (actual == null) {</span>
+<span class="fc" id="L152">			return null;</span>
+		}
+<span class="fc" id="L154">		Address address = addressAccessor.apply(actual);</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">		if (address == null) {</span>
+<span class="fc" id="L156">			return null;</span>
+		}
+<span class="fc" id="L158">		return valueAccessor.apply(address);</span>
+	}
+
+	private AssertSms() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

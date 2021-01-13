@@ -1,0 +1,1481 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CloudhopperBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">CloudhopperBuilder.java</span></div><h1>CloudhopperBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_BIND_TYPE;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_CHARSET;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_INTERFACE_VERSION;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_RESPONSE_TIMEOUT;
+import static fr.sii.ogham.sms.CloudhopperConstants.DEFAULT_UNBIND_TIMEOUT;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
+
+import com.cloudhopper.commons.charset.Charset;
+import com.cloudhopper.smpp.SmppBindType;
+import com.cloudhopper.smpp.SmppClient;
+import com.cloudhopper.smpp.SmppConstants;
+import com.cloudhopper.smpp.SmppSessionConfiguration;
+import com.cloudhopper.smpp.SmppSessionHandler;
+import com.cloudhopper.smpp.impl.DefaultSmppClient;
+import com.cloudhopper.smpp.impl.DefaultSmppSessionHandler;
+import com.cloudhopper.smpp.pdu.Pdu;
+import com.cloudhopper.smpp.pdu.SubmitSm;
+import com.cloudhopper.smpp.ssl.SslConfiguration;
+import com.cloudhopper.smpp.type.Address;
+import com.cloudhopper.smpp.type.LoggingOptions;
+
+import fr.sii.ogham.core.async.ThreadSleepAwaiter;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.retry.SimpleRetryExecutor;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.sms.builder.cloudhopper.UserDataBuilder.UserDataPropValues;
+import fr.sii.ogham.sms.encoder.Encoder;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
+import fr.sii.ogham.sms.message.addressing.translator.DefaultHandler;
+import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
+import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.KeepAliveOptions;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.CloudhopperCharsetSupportingEncoder;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.encoder.NamedCharset;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.CharsetMapToCharacterEncodingGroupDataCodingProvider;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.DataCodingProvider;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.ShortMessagePreparator;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.TlvMessagePayloadMessagePreparator;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.AlwaysNewSessionStrategy;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.DefaultErrorAnalyzer;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.ErrorAnalyzer;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.ErrorHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.KeepSessionAliveStrategy;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.LogErrorHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.MayReuseSessionStrategy;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.RespondToDeliveryReceiptHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.RespondToEnquireLinkRequestHandler;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.session.SessionHandlingStrategy;
+import fr.sii.ogham.sms.splitter.GsmMessageSplitter;
+import fr.sii.ogham.sms.splitter.MessageSplitter;
+import fr.sii.ogham.sms.splitter.NoSplitMessageSplitter;
+import fr.sii.ogham.sms.splitter.ReferenceNumberGenerator;
+
+/**
+ * Configures Cloudhopper:
+ * 
+ * &lt;ul&gt;
+ * &lt;li&gt;SMPP protocol parameters (host, port, systemId, password,
+ * version...)&lt;/li&gt;
+ * &lt;li&gt;Session management (name, bind, timeouts, retry...)&lt;/li&gt;
+ * &lt;li&gt;SSL configuration&lt;/li&gt;
+ * &lt;li&gt;Logging options&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * &lt;p&gt;
+ * To send {@link Sms} using Cloudhopper, you need to register this builder into
+ * a {@link MessagingBuilder} like this:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * MessagingBuilder msgBuilder = ...
+ * msgBuilder.sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Once the builder is registered, sending sms through Cloudhopper requires at
+ * least host of the SMPP server. You can define it using:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder.sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .host(&quot;localhost&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or you can also use property keys (using interpolation):
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * msgBuilder
+ * .environment()
+ *    .properties()
+ *       .set(&quot;custom.property.for.host&quot;, &quot;localhost&quot;)
+ *       .and()
+ *    .and()
+ * .sms()
+ *    .sender(CloudhopperBuilder.class)    // registers the builder and accesses to that builder for configuring it
+ *       .host()
+ *         .properties(&quot;${custom.property.for.host}&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * You can do the same with port of the SMPP server.
+ * 
+ * 
+ * &lt;p&gt;
+ * SMPP server may require authentication. In most cases, authentication is done
+ * using system_id/password. You can use this builder to quickly provide your
+ * system_id and password:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .sender(CloudhopperBuilder.class)
+ *        .systemId(&quot;foo&quot;)
+ *        .password(&quot;bar&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ */
+public class CloudhopperBuilder extends AbstractParent&lt;SmsBuilder&gt; implements Builder&lt;CloudhopperSMPPSender&gt; {
+<span class="fc" id="L145">	private static final Logger LOG = LoggerFactory.getLogger(CloudhopperBuilder.class);</span>
+
+	private final ReadableEncoderBuilder sharedEncoderBuilder;
+	private BuildContext buildContext;
+	private final ConfigurationValueBuilderHelper&lt;CloudhopperBuilder, String&gt; systemIdValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;CloudhopperBuilder, String&gt; passwordValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;CloudhopperBuilder, String&gt; hostValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;CloudhopperBuilder, Integer&gt; portValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;CloudhopperBuilder, String&gt; systemTypeValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;CloudhopperBuilder, InterfaceVersion&gt; interfaceVersionValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;CloudhopperBuilder, SmppBindType&gt; bindTypeValueBuilder;
+	private SessionBuilder sessionBuilder;
+	private ExtendedSmppSessionConfiguration sessionConfiguration;
+	private Address addressRange;
+	private SslBuilder sslBuilder;
+	private LoggingBuilder loggingBuilder;
+	private SmppClientSupplier clientSupplier;
+	private SmppSessionHandlerSupplier smppSessionHandler;
+	private MessageSplitterBuilder messageSplitterBuilder;
+	private EncoderBuilder encoderBuilder;
+	private UserDataBuilder userDataBuilder;
+	private DataCodingSchemeBuilder dataCodingBuilder;
+	private MessagePreparator preparator;
+
+	/**
+	 * Default constructor when using without all Ogham work.
+	 * 
+	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
+	 */
+	public CloudhopperBuilder() {
+<span class="fc" id="L175">		this(null, new DefaultBuildContext());</span>
+<span class="fc" id="L176">	}</span>
+
+	/**
+	 * Constructor that is called when using Ogham builder:
+	 * 
+	 * &lt;pre&gt;
+	 * MessagingBuilder msgBuilder = ...
+	 * msgBuilder
+	 * .sms()
+	 *    .sender(CloudhopperBuilder.class)
+	 * &lt;/pre&gt;
+	 * 
+	 * @param parent
+	 *            the parent builder instance for fluent chaining
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public CloudhopperBuilder(SmsBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L194">		super(parent);</span>
+<span class="fc" id="L195">		this.buildContext = buildContext;</span>
+<span class="fc" id="L196">		sharedEncoderBuilder = new ReadableEncoderBuilder(buildContext);</span>
+<span class="fc" id="L197">		systemIdValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="fc" id="L198">		passwordValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="fc" id="L199">		hostValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="fc" id="L200">		portValueBuilder = buildContext.newConfigurationValueBuilder(this, Integer.class);</span>
+<span class="fc" id="L201">		interfaceVersionValueBuilder = buildContext.newConfigurationValueBuilder(this, InterfaceVersion.class);</span>
+<span class="fc" id="L202">		systemTypeValueBuilder = buildContext.newConfigurationValueBuilder(this, String.class);</span>
+<span class="fc" id="L203">		bindTypeValueBuilder = buildContext.newConfigurationValueBuilder(this, SmppBindType.class);</span>
+<span class="fc" id="L204">	}</span>
+
+	/**
+	 * The system_id parameter is used to identify an ESME ( External Short
+	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
+	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
+	 * system_id provides an identification of the SMSC to the ESME.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #systemId()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .systemId(&quot;my-system-id&quot;)
+	 * .systemId()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-system-id&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .systemId(&quot;my-system-id&quot;)
+	 * .systemId()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-system-id&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code systemId(&quot;my-system-id&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param systemId
+	 *            the system_id value
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder systemId(String systemId) {
+<span class="nc" id="L244">		systemIdValueBuilder.setValue(systemId);</span>
+<span class="nc" id="L245">		return this;</span>
+	}
+
+	/**
+	 * The system_id parameter is used to identify an ESME ( External Short
+	 * Message Entity) or an SMSC (Short Message Service Centre) at bind time.
+	 * An ESME system_id identifies the ESME or ESME agent to the SMSC. The SMSC
+	 * system_id provides an identification of the SMSC to the ESME.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .systemId()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-system-id&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #systemId(String)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .systemId(&quot;my-system-id&quot;)
+	 * .systemId()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-system-id&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;my-system-id&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;CloudhopperBuilder, String&gt; systemId() {
+<span class="fc" id="L288">		return systemIdValueBuilder;</span>
+	}
+
+	/**
+	 * The system_type parameter is used to categorize the type of ESME that is
+	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
+	 * (over-the-air activation system). Specification of the system_type is
+	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
+	 * this case, the ESME can set the system_type to NULL. The system_type
+	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
+	 * etc.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #systemType()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .systemType(&quot;my-system-type&quot;)
+	 * .systemType()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-system-type&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .systemType(&quot;my-system-type&quot;)
+	 * .systemType()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-system-type&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code systemType(&quot;my-system-type&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param systemType
+	 *            the system type value
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder systemType(String systemType) {
+<span class="nc" id="L332">		systemTypeValueBuilder.setValue(systemType);</span>
+<span class="nc" id="L333">		return this;</span>
+	}
+
+	/**
+	 * The system_type parameter is used to categorize the type of ESME that is
+	 * binding to the SMSC. Examples include “VMS” (voice mail system) and “OTA”
+	 * (over-the-air activation system). Specification of the system_type is
+	 * optional - some SMSC’s may not require ESME’s to provide this detail. In
+	 * this case, the ESME can set the system_type to NULL. The system_type
+	 * (optional) may be used to categorize the system, e.g., “EMAIL”, “WWW”,
+	 * etc.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .systemType()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;defaut-system-type&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #systemType(String)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .systemType(&quot;my-system-type&quot;)
+	 * .systemType()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;defaut-system-type&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;my-system-type&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;CloudhopperBuilder, String&gt; systemType() {
+<span class="fc" id="L379">		return systemTypeValueBuilder;</span>
+	}
+
+	/**
+	 * The password parameter is used by the SMSC to authenticate the identity
+	 * of the binding ESME. The Service Provider may require ESME’s to provide a
+	 * password when binding to the SMSC. This password is normally issued by
+	 * the SMSC system administrator. The password parameter may also be used by
+	 * the ESME to authenticate the identity of the binding SMSC (e.g. in the
+	 * case of the outbind operation).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #password()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;my-password&quot;)
+	 * .password()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-password&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;my-password&quot;)
+	 * .password()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-password&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code password(&quot;my-password&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param password
+	 *            the password used to authenticate
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder password(String password) {
+<span class="nc" id="L422">		passwordValueBuilder.setValue(password);</span>
+<span class="nc" id="L423">		return this;</span>
+	}
+
+	/**
+	 * The password parameter is used by the SMSC to authenticate the identity
+	 * of the binding ESME. The Service Provider may require ESME’s to provide a
+	 * password when binding to the SMSC. This password is normally issued by
+	 * the SMSC system administrator. The password parameter may also be used by
+	 * the ESME to authenticate the identity of the binding SMSC (e.g. in the
+	 * case of the outbind operation).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .password()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-password&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #password(String)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .password(&quot;my-password&quot;)
+	 * .password()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-password&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;my-password&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;CloudhopperBuilder, String&gt; password() {
+<span class="fc" id="L468">		return passwordValueBuilder;</span>
+	}
+
+	/**
+	 * The SMPP server host (IP or address).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #host()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .host(&quot;localhost&quot;)
+	 * .host()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-host&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .host(&quot;localhost&quot;)
+	 * .host()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-host&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code host(&quot;localhost&quot;)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param host
+	 *            the host address
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder host(String host) {
+<span class="fc" id="L506">		hostValueBuilder.setValue(host);</span>
+<span class="fc" id="L507">		return this;</span>
+	}
+
+	/**
+	 * The SMPP server host (IP or address).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .host()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-host&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #host(String)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .host(&quot;localhost&quot;)
+	 * .host()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(&quot;default-host&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code &quot;localhost&quot;} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;CloudhopperBuilder, String&gt; host() {
+<span class="fc" id="L547">		return hostValueBuilder;</span>
+	}
+
+	/**
+	 * Set the SMPP server port.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #port()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .port(2775)
+	 * .port()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(1775)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .port(2775)
+	 * .port()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(1775)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code port(2775)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param port
+	 *            the SMPP server port
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder port(Integer port) {
+<span class="fc" id="L585">		portValueBuilder.setValue(port);</span>
+<span class="fc" id="L586">		return this;</span>
+	}
+
+	/**
+	 * Set the SMPP server port.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .port()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(1775)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #port(Integer)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .port(2775)
+	 * .port()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(1775)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 2775} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;CloudhopperBuilder, Integer&gt; port() {
+<span class="fc" id="L626">		return portValueBuilder;</span>
+	}
+
+	/**
+	 * The SMPP protocol version (one of {@link InterfaceVersion#VERSION_3_3},
+	 * {@link InterfaceVersion#VERSION_3_4},
+	 * {@link InterfaceVersion#VERSION_5_0}).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #interfaceVersion()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .interfaceVersion(InterfaceVersion.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .interfaceVersion(InterfaceVersion.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code interfaceVersion(InterfaceVersion.VERSION_5_0)} is
+	 * used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param version
+	 *            the version of the SMPP protocol
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder interfaceVersion(InterfaceVersion version) {
+<span class="nc" id="L667">		interfaceVersionValueBuilder.setValue(version);</span>
+<span class="nc" id="L668">		return this;</span>
+	}
+
+	/**
+	 * The SMPP protocol version (one of {@link SmppConstants#VERSION_3_3},
+	 * {@link SmppConstants#VERSION_3_4}, {@link SmppConstants#VERSION_5_0}).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #interfaceVersion()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .interfaceVersion(SmppConstants.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(SmppConstants.VERSION_3_4)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .interfaceVersion(SmppConstants.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(SmppConstants.VERSION_3_4)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code interfaceVersion(SmppConstants.VERSION_5_0)} is
+	 * used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param version
+	 *            the version of the SMPP protocol
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder interfaceVersion(Byte version) {
+<span class="nc" id="L708">		interfaceVersionValueBuilder.setValue(InterfaceVersion.fromValue(version));</span>
+<span class="nc" id="L709">		return this;</span>
+	}
+
+	/**
+	 * The SMPP protocol version (one of {@link InterfaceVersion#VERSION_3_3},
+	 * {@link InterfaceVersion#VERSION_3_4},
+	 * {@link InterfaceVersion#VERSION_5_0}).
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .interfaceVersion()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #interfaceVersion(InterfaceVersion)}
+	 * takes precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .interfaceVersion(InterfaceVersion.VERSION_5_0)
+	 * .interfaceVersion()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(InterfaceVersion.VERSION_3_4)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code InterfaceVersion.VERSION_5_0} is used regardless of the
+	 * value of the properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;CloudhopperBuilder, InterfaceVersion&gt; interfaceVersion() {
+<span class="fc" id="L752">		return interfaceVersionValueBuilder;</span>
+	}
+
+	/**
+	 * The bind command type (see {@link SmppBindType}).
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #bindType()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .bindType(SmppBindType.TRANSCEIVER)
+	 * .bindType()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(SmppBindType.RECEIVER)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .bindType(SmppBindType.TRANSCEIVER)
+	 * .bindType()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(SmppBindType.RECEIVER)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code bindType(SmppBindType.TRANSCEIVER)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param bindType
+	 *            the bind type
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder bindType(SmppBindType bindType) {
+<span class="nc" id="L790">		bindTypeValueBuilder.setValue(bindType);</span>
+<span class="nc" id="L791">		return this;</span>
+	}
+
+	/**
+	 * The bind command type (see {@link SmppBindType}).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .bindType()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(SmppBindType.RECEIVER)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #bindType(SmppBindType)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .bindType(SmppBindType.TRANSCEIVER)
+	 * .bindType()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(SmppBindType.RECEIVER)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code SmppBindType.TRANSCEIVER} is used regardless of the
+	 * value of the properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;CloudhopperBuilder, SmppBindType&gt; bindType() {
+<span class="fc" id="L831">		return bindTypeValueBuilder;</span>
+	}
+
+	/**
+	 * Configures how Cloudhopper will encode SMS messages. Charsets defined by
+	 * the SMPP protocol may be different from NIO charsets.
+	 * 
+	 * &lt;p&gt;
+	 * The encoder will be used to transform Java {@link String} into a byte
+	 * array that is understandable by SMPP servers.
+	 * 
+	 * &lt;p&gt;
+	 * This builder configures encoders for both messages that are split and
+	 * message that are not split.
+	 * 
+	 * &lt;p&gt;
+	 * This builder allows to configure:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable/disable the standard GSM encoders (GSM 7-bit, GSM 8-bit and
+	 * UCS-2) as defined in
+	 * &lt;a href=&quot;https://en.wikipedia.org/wiki/GSM_03.38&quot;&gt;GSM 03.38
+	 * specification&lt;/a&gt;. It also allows to define different priority order&lt;/li&gt;
+	 * &lt;li&gt;Enable/disable automatic guessing of encoding (based on previously
+	 * registered priorities).&lt;/li&gt;
+	 * &lt;li&gt;Define a fallback encoder based on {@link Charset}&lt;/li&gt;
+	 * &lt;li&gt;Provide custom {@link Encoder}s&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .encoder()
+	 *    .gsm7()
+	 *      .properties(&quot;${ogham.sms.cloudhopper.encoder.gsm7bit-packed.priority}&quot;, &quot;${ogham.sms.smpp.encoder.gsm7bit-packed.priority}&quot;)
+	 *      .defaultValue(100000)
+	 *      .and()
+	 *    .gsm8()
+	 *      .properties(&quot;${ogham.sms.cloudhopper.encoder.gsm8bit.priority}&quot;, &quot;${ogham.sms.smpp.encoder.gsm8bit.priority}&quot;)
+	 *      .defaultValue(99000)
+	 *      .and()
+	 *    .ucs2()
+	 *      .properties(&quot;${ogham.sms.cloudhopper.encoder.ucs2.priority}&quot;, &quot;${ogham.sms.smpp.encoder.ucs2.priority}&quot;)
+	 *      .defaultValue(98000)
+	 *      .and()
+	 *    .autoGuess()
+	 *      .properties(&quot;${ogham.sms.cloudhopper.encoder.auto-guess.enable}&quot;, &quot;${ogham.sms.smpp.encoder.auto-guess.enable}&quot;)
+	 *      .defaultValue(true)
+	 *      .and()
+	 *    .fallback()
+	 *      .properties(&quot;${ogham.sms.cloudhopper.encoder.default-charset}&quot;, &quot;${ogham.sms.smpp.encoder.default-charset}&quot;)
+	 *      .defaultValue(CharsetUtil.NAME_GSM)
+	 *      .and()
+	 *    .customEncoder(new MyCustomEncoder(), 50000)
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder to configure the encoder
+	 */
+	public EncoderBuilder encoder() {
+<span class="fc bfc" id="L889" title="All 2 branches covered.">		if (encoderBuilder == null) {</span>
+<span class="fc" id="L890">			encoderBuilder = new EncoderBuilder(this, buildContext);</span>
+<span class="fc" id="L891">			sharedEncoderBuilder.update(encoderBuilder);</span>
+		}
+<span class="fc" id="L893">		return encoderBuilder;</span>
+	}
+
+	/**
+	 * Configures how Cloudhopper will split messages.
+	 * 
+	 * &lt;p&gt;
+	 * The splitter will check if the whole message can fit in a single segment.
+	 * If not the splitter will split the whole message in several segments with
+	 * a header to indicate splitting information such as number of segments,
+	 * reference number and current segment number.
+	 * 
+	 * &lt;p&gt;
+	 * {@link Encoder} configured using {@link #encoder()} is used to encode
+	 * each segment.
+	 * 
+	 * &lt;p&gt;
+	 * If automatic guessing of best standard encoder is enabled for
+	 * {@link Encoder} (using {@code encoder().autoGuess(true)}), and message
+	 * splitting is enabled, then standard message splitting is configured such
+	 * as:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If GSM 7-bit encoder is enabled, {@link GsmMessageSplitter} is used
+	 * to split messages that support this encoding. If whole message can fit in
+	 * a single segment of 160 characters. Longer message is split into segments
+	 * of either 153 characters or 152 characters (depending on reference number
+	 * generation, see {@link ReferenceNumberGenerator})&lt;/li&gt;
+	 * &lt;li&gt;If GSM 8-bit encoder is enabled, {@link GsmMessageSplitter} is used
+	 * to split messages that support this encoding. If whole message can fit in
+	 * a single segment of 140 characters. Longer message is split into segments
+	 * of either 134 characters or 133 characters (depending on reference number
+	 * generation, see {@link ReferenceNumberGenerator})&lt;/li&gt;
+	 * &lt;li&gt;If UCS-2 encoder is enabled, {@link GsmMessageSplitter} is used to
+	 * split messages that support this encoding. If whole message can fit in a
+	 * single segment of 70 characters. Longer message is split into segments of
+	 * either 67 characters or 66 characters (depending on reference number
+	 * generation, see {@link ReferenceNumberGenerator})&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * Each registered splitter uses the same priority as associated
+	 * {@link Encoder}.
+	 * 
+	 * If you don't want standard message splitting based on supported
+	 * {@link Encoder}s, you can either disable message splitting or provide a
+	 * custom splitter with higher priority.
+	 * 
+	 * &lt;p&gt;
+	 * This builder allows to configure:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable/disable message splitting&lt;/li&gt;
+	 * &lt;li&gt;Provide a custom split strategy&lt;/li&gt;
+	 * &lt;li&gt;Choose strategy for reference number generation&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Examples of usage:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .splitter()
+	 *   .enable()
+	 *     .properties(&quot;${ogham.sms.cloudhopper.split.enable}&quot;, &quot;${ogham.sms.smpp.split.enable}&quot;, &quot;${ogham.sms.split.enable}&quot;)
+	 *     .defaultValue(true)
+	 *     .and()
+	 *   .customSplitter(new MyCustomSplitter(), 100000)
+	 *   .referenceNumber()
+	 *     .random()
+	 *     .random(new Random())
+	 *     .generator(new MyCustomReferenceNumberGenerator())
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder to configure message splitting
+	 */
+	public MessageSplitterBuilder splitter() {
+<span class="fc bfc" id="L968" title="All 2 branches covered.">		if (messageSplitterBuilder == null) {</span>
+<span class="fc" id="L969">			messageSplitterBuilder = new MessageSplitterBuilder(this, buildContext, sharedEncoderBuilder);</span>
+		}
+<span class="fc" id="L971">		return messageSplitterBuilder;</span>
+	}
+
+	/**
+	 * Configures Cloudhopper session management (timeouts, retry, session
+	 * name...).
+	 * 
+	 * @return the builder to configure the session management
+	 */
+	public SessionBuilder session() {
+<span class="fc bfc" id="L981" title="All 2 branches covered.">		if (sessionBuilder == null) {</span>
+<span class="fc" id="L982">			sessionBuilder = new SessionBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L984">		return sessionBuilder;</span>
+	}
+
+	/**
+	 * Overrides any previously defined Cloudhopper parameters to use the
+	 * provided session.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last session is used.
+	 * 
+	 * @param session
+	 *            the Cloudhopper session to use
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder session(ExtendedSmppSessionConfiguration session) {
+<span class="fc" id="L999">		this.sessionConfiguration = session;</span>
+<span class="fc" id="L1000">		return this;</span>
+	}
+
+	/**
+	 * The address_range parameter is used in the bind_receiver and
+	 * bind_transceiver command to specify a set of SME addresses serviced by
+	 * the ESME client. A single SME address may also be specified in the
+	 * address_range parameter. UNIX Regular Expression notation should be used
+	 * to specify a range of addresses. Messages addressed to any destination in
+	 * this range shall be routed to the ESME.
+	 * 
+	 * Default to {@code null}.
+	 * 
+	 * Note: For IP addresses, it is only possible to specify a single IP
+	 * address. A range of IP addresses are not allowed. IP version 6.0 is not
+	 * currently supported in this version of the protocol.
+	 * 
+	 * Note: It is likely that the addr_range field is not supported or
+	 * deliberately ignored on most Message Centres. The reason for this is that
+	 * most carriers will not allow an ESME control the message routing as this
+	 * can carry the risk of mis-routing messages. In such circumstances, the
+	 * ESME will be requested to set the field to NULL.
+	 * 
+	 * @param range
+	 *            the address range
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder addressRange(Address range) {
+<span class="nc" id="L1028">		this.addressRange = range;</span>
+<span class="nc" id="L1029">		return this;</span>
+	}
+
+	/**
+	 * Enable or disable SSL configuration and configure how SSL is handled.
+	 * 
+	 * See &lt;a href=
+	 * &quot;https://github.com/fizzed/cloudhopper-smpp/blob/master/SSL.md&quot;&gt;How to
+	 * use SSL with cloudhopper-smpp&lt;/a&gt;
+	 * 
+	 * @return the builder to configure SSL
+	 */
+	public SslBuilder ssl() {
+<span class="nc bnc" id="L1042" title="All 2 branches missed.">		if (sslBuilder == null) {</span>
+<span class="nc" id="L1043">			sslBuilder = new SslBuilder(this, buildContext);</span>
+		}
+<span class="nc" id="L1045">		return sslBuilder;</span>
+	}
+
+	/**
+	 * Configure logs:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Enable/disable log of {@link Pdu}s&lt;/li&gt;
+	 * &lt;li&gt;Enable/disable log of bytes&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the builder to enable/disable some logs
+	 */
+	public LoggingBuilder logging() {
+<span class="nc bnc" id="L1058" title="All 2 branches missed.">		if (loggingBuilder == null) {</span>
+<span class="nc" id="L1059">			loggingBuilder = new LoggingBuilder(this);</span>
+		}
+<span class="nc" id="L1061">		return loggingBuilder;</span>
+	}
+
+	/**
+	 * By default, {@link CloudhopperSMPPSender} uses {@link DefaultSmppClient}
+	 * client. This option provides a way to use another {@link SmppClient}.
+	 * 
+	 * @param supplier
+	 *            an implementation that provides an instance of a
+	 *            {@link SmppClient}
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder clientSupplier(SmppClientSupplier supplier) {
+<span class="fc" id="L1074">		this.clientSupplier = supplier;</span>
+<span class="fc" id="L1075">		return this;</span>
+	}
+
+	/**
+	 * By default, {@link CloudhopperSMPPSender} uses
+	 * {@link DefaultSmppSessionHandler}. This option provides a way to use
+	 * another {@link SmppSessionHandler}.
+	 * 
+	 * @param supplier
+	 *            an implementation that provides an instance of a
+	 *            {@link SmppSessionHandler}
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperBuilder smppSessionHandlerSupplier(SmppSessionHandlerSupplier supplier) {
+<span class="nc" id="L1089">		this.smppSessionHandler = supplier;</span>
+<span class="nc" id="L1090">		return this;</span>
+	}
+
+	/**
+	 * {@link Sms} message is converted to {@link SubmitSm}(s) using a
+	 * {@link MessagePreparator}.
+	 * 
+	 * &lt;p&gt;
+	 * You can provide a custom {@link MessagePreparator} instance if the
+	 * default behavior doesn't fit your needs.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If a custom {@link MessagePreparator} is set, any other preparator (using
+	 * {@link #userData()}) is not used.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is provided, then custom {@link MessagePreparator}
+	 * is disabled. Other configured preparators are used (using
+	 * {@link #userData()}).
+	 * &lt;/p&gt;
+	 * 
+	 * @param preparator
+	 *            the custom preprator instance
+	 * @return this instance for fluent chaining
+	 * @see #userData()
+	 */
+	public CloudhopperBuilder messagePreparator(MessagePreparator preparator) {
+<span class="nc" id="L1123">		this.preparator = preparator;</span>
+<span class="nc" id="L1124">		return this;</span>
+	}
+
+	/**
+	 * SMS message (named &quot;User Data&quot; in SMPP specification) can be transmitted
+	 * using:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Either {@code short_message} field (standard field for &quot;User
+	 * Data&quot;).&lt;/li&gt;
+	 * &lt;li&gt;Or {@code message_payload} optional parameter.&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * This builder allow to configure which strategy to use for sending
+	 * message:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Either use {@code short_message} field&lt;/li&gt;
+	 * &lt;li&gt;Or use {@code message_payload} field&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * The result of {@link #userData()} configuration affects the message
+	 * preparation strategy.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Examples of usage:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .userData()
+	 *   .useShortMessage()
+	 *     .properties(&quot;${ogham.sms.cloudhopper.user-data.use-short-message}&quot;, &quot;${ogham.sms.smpp.user-data.use-short-message}&quot;)
+	 *     .defaultValue(true)
+	 *     .and()
+	 *   .useTlvMessagePayload()
+	 *     .properties(&quot;${ogham.sms.cloudhopper.user-data.use-tlv-message-payload}&quot;, &quot;${ogham.sms.smpp.user-data.use-tlv-message-payload}&quot;)
+	 *     .defaultValue(false)
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * If any of {@code ogham.sms.cloudhopper.user-data.use-short-message}
+	 * property or {@code ogham.sms.user-data.use-short-message} property is set
+	 * to true, it uses {@code short_message} field.
+	 * 
+	 * If any of {@code ogham.sms.cloudhopper.user-data.use-tlv-message-payload}
+	 * property or {@code ogham.sms.user-data.use-tlv-message-payload} property
+	 * is set to true, it uses {@code message_payload} field.
+	 * 
+	 * If none of the above properties is set, it uses {@code short_message}
+	 * field is used (last value of {@code shortMessage} is set to
+	 * {@code &quot;true&quot;}).
+	 * 
+	 * &lt;p&gt;
+	 * If {@link #userData()} is not configured at all, then default behavior is
+	 * used ({@code short_message} field is used).
+	 * &lt;/p&gt;
+	 * 
+	 * @return the builder to configure how the &quot;User Data&quot; is sent
+	 */
+	public UserDataBuilder userData() {
+<span class="fc bfc" id="L1185" title="All 2 branches covered.">		if (userDataBuilder == null) {</span>
+<span class="fc" id="L1186">			userDataBuilder = new UserDataBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L1188">		return userDataBuilder;</span>
+	}
+
+	/**
+	 * Data Coding Scheme is a one-octet field in Short Messages (SM) and Cell
+	 * Broadcast Messages (CB) which carries a basic information how the
+	 * recipient handset should process the received message. The information
+	 * includes:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;the character set or message coding which determines the encoding of
+	 * the message user data&lt;/li&gt;
+	 * &lt;li&gt;the message class which determines to which component of the Mobile
+	 * Station (MS) or User Equipment (UE) should be the message delivered&lt;/li&gt;
+	 * &lt;li&gt;the request to automatically delete the message after reading&lt;/li&gt;
+	 * &lt;li&gt;the state of flags indicating presence of unread voicemail, fax,
+	 * e-mail or other messages&lt;/li&gt;
+	 * &lt;li&gt;the indication that the message content is compressed&lt;/li&gt;
+	 * &lt;li&gt;the language of the cell broadcast message&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * The field is described in 3GPP 23.040 and 3GPP 23.038 under the name
+	 * TP-DCS (see &lt;a href=
+	 * &quot;https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme&quot;&gt;SMS
+	 * Data Coding Scheme&lt;/a&gt;).
+	 * 
+	 * SMPP 3.4 introduced a new list of {@code data_coding} values (see
+	 * &lt;a href=&quot;https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer&quot;&gt;Short
+	 * Message Peer to Peer&lt;/a&gt;).
+	 * 
+	 * &lt;p&gt;
+	 * This builder allows to configure how Data Coding Scheme value is
+	 * determined:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;Use automatic mode base on interface version (see
+	 * {@link #interfaceVersion(InterfaceVersion)} and
+	 * {@link #interfaceVersion(Byte)}) and charset encoding (see
+	 * {@link #encoder()}) used to encode the message (&quot;User Data&quot;)&lt;/li&gt;
+	 * &lt;li&gt;Use a fixed value used for every message&lt;/li&gt;
+	 * &lt;li&gt;Use a custom implementation&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Examples of usage:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * .dataCodingScheme()
+	 *   .auto(&quot;${ogham.sms.cloudhopper.data-coding-scheme.auto.enable}&quot;, &quot;${ogham.sms.smpp.data-coding-scheme.auto.enable}&quot;)
+	 *   .value(&quot;${ogham.sms.cloudhopper.data-coding-scheme.value}&quot;, &quot;${ogham.sms.smpp.data-coding-scheme.value}&quot;)
+	 *   .custom(new MyCustomDataCodingProvider())
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * See {@link DataCodingSchemeBuilder#auto(Boolean)},
+	 * {@link DataCodingSchemeBuilder#value(Byte)} and
+	 * {@link DataCodingSchemeBuilder#custom(DataCodingProvider)} for more
+	 * information.
+	 * 
+	 * 
+	 * @return the builder to configure how to determine Data Coding Scheme
+	 *         value
+	 */
+	public DataCodingSchemeBuilder dataCodingScheme() {
+<span class="fc bfc" id="L1250" title="All 2 branches covered.">		if (dataCodingBuilder == null) {</span>
+<span class="fc" id="L1251">			dataCodingBuilder = new DataCodingSchemeBuilder(this, buildContext, this::getInterfaceVersion);</span>
+		}
+<span class="fc" id="L1253">		return dataCodingBuilder;</span>
+	}
+
+	@Override
+	public CloudhopperSMPPSender build() {
+<span class="fc" id="L1258">		CloudhopperSessionOptions sessionOpts = buildSessionOpts();</span>
+<span class="fc" id="L1259">		ExtendedSmppSessionConfiguration configuration = buildSessionConfiguration(sessionOpts);</span>
+<span class="pc bpc" id="L1260" title="1 of 4 branches missed.">		if (configuration.getHost() == null || configuration.getPort() == 0) {</span>
+<span class="fc" id="L1261">			return null;</span>
+		}
+<span class="fc" id="L1263">		LOG.info(&quot;Sending SMS using Cloudhopper is registered&quot;);</span>
+<span class="fc" id="L1264">		LOG.debug(&quot;SMPP server address: {}:{}&quot;, configuration.getHost(), configuration.getPort());</span>
+<span class="fc" id="L1265">		SessionHandlingStrategy sessionHandler = buildSessionHandlingStrategy(configuration);</span>
+<span class="fc" id="L1266">		return buildContext.register(new CloudhopperSMPPSender(configuration, sessionHandler, buildPreparator()));</span>
+	}
+
+	private CloudhopperSessionOptions buildSessionOpts() {
+<span class="fc bfc" id="L1270" title="All 2 branches covered.">		if (sessionBuilder != null) {</span>
+<span class="fc" id="L1271">			return sessionBuilder.build();</span>
+		}
+<span class="fc" id="L1273">		CloudhopperSessionOptions cloudhopperSessionOptions = buildContext.register(new CloudhopperSessionOptions());</span>
+<span class="fc" id="L1274">		cloudhopperSessionOptions.setConnectRetry(buildConnectRetry(cloudhopperSessionOptions));</span>
+<span class="fc" id="L1275">		return cloudhopperSessionOptions;</span>
+	}
+
+	private SessionHandlingStrategy buildSessionHandlingStrategy(ExtendedSmppSessionConfiguration configuration) {
+<span class="fc bfc" id="L1279" title="All 4 branches covered.">		if (configuration.getKeepAlive() != null &amp;&amp; configuration.getKeepAlive().isEnable(false)) {</span>
+<span class="fc" id="L1280">			return buildKeepAliveHandler(configuration);</span>
+		}
+<span class="fc bfc" id="L1282" title="All 4 branches covered.">		if (configuration.getReuseSession() != null &amp;&amp; configuration.getReuseSession().isEnable(false)) {</span>
+<span class="fc" id="L1283">			return buildReuseSessionHandler(configuration);</span>
+		}
+<span class="fc" id="L1285">		return buildAlwaysNewSessionHandler(configuration);</span>
+	}
+
+	private SessionHandlingStrategy buildKeepAliveHandler(ExtendedSmppSessionConfiguration configuration) {
+<span class="fc" id="L1289">		return new KeepSessionAliveStrategy(configuration, buildClientSupplier(), buildSmppSessionHandler(), configuration.getConnectRetry(), configuration.getKeepAlive().getExecutor(), buildKeepAliveErrorAnalyzer(configuration.getKeepAlive()), buildReconnectionErrorHandler());</span>
+	}
+	
+	private ErrorAnalyzer buildKeepAliveErrorAnalyzer(KeepAliveOptions options) {
+<span class="fc" id="L1293">		return new DefaultErrorAnalyzer(options.getMaxConsecutiveTimeouts());</span>
+	}
+	
+	private ErrorHandler buildReconnectionErrorHandler() {
+		// TODO: make this configurable ?
+<span class="fc" id="L1298">		return new LogErrorHandler(&quot;Failed to reconnect&quot;, Level.ERROR);</span>
+	}
+
+	private SessionHandlingStrategy buildReuseSessionHandler(ExtendedSmppSessionConfiguration configuration) {
+<span class="fc" id="L1302">		return new MayReuseSessionStrategy(configuration, buildClientSupplier(), buildSmppSessionHandler(), configuration.getConnectRetry(), buildReuseSessionErrorAnalyzer());</span>
+	}
+	
+	private ErrorAnalyzer buildReuseSessionErrorAnalyzer() {
+<span class="fc" id="L1306">		return new DefaultErrorAnalyzer(1);</span>
+	}
+
+	private SessionHandlingStrategy buildAlwaysNewSessionHandler(ExtendedSmppSessionConfiguration configuration) {
+<span class="fc" id="L1310">		return new AlwaysNewSessionStrategy(configuration, buildClientSupplier(), buildSmppSessionHandler(), configuration.getConnectRetry());</span>
+	}
+
+	private RetryExecutor buildConnectRetry(CloudhopperSessionOptions sessionOpts) {
+<span class="fc bfc" id="L1314" title="All 2 branches covered.">		if (sessionOpts.getConnectRetry() == null) {</span>
+<span class="fc" id="L1315">			return noRetry();</span>
+		}
+<span class="fc" id="L1317">		return sessionOpts.getConnectRetry();</span>
+	}
+	
+	private SimpleRetryExecutor noRetry() {
+<span class="fc" id="L1321">		return buildContext.register(new SimpleRetryExecutor(() -&gt; null, buildContext.register(new ThreadSleepAwaiter())));</span>
+	}
+
+	private MessagePreparator buildPreparator() {
+<span class="pc bpc" id="L1325" title="1 of 2 branches missed.">		if (preparator != null) {</span>
+<span class="nc" id="L1326">			return preparator;</span>
+		}
+<span class="fc bfc" id="L1328" title="All 2 branches covered.">		if (userDataBuilder != null) {</span>
+<span class="fc" id="L1329">			UserDataPropValues values = userDataBuilder.build();</span>
+<span class="fc bfc" id="L1330" title="All 2 branches covered.">			if (values.isUseShortMessage()) {</span>
+<span class="fc" id="L1331">				return buildShortMessagePreparator();</span>
+			}
+<span class="pc bpc" id="L1333" title="1 of 2 branches missed.">			if (values.isUseTlvMessagePayload()) {</span>
+<span class="fc" id="L1334">				return buildTlvMessagePayloadMessagePreparator();</span>
+			}
+		}
+<span class="fc" id="L1337">		return buildShortMessagePreparator();</span>
+	}
+
+	private MessagePreparator buildShortMessagePreparator() {
+<span class="fc" id="L1341">		return buildContext.register(new ShortMessagePreparator(buildSplitter(buildEncoder()), buildDataCodingProvider(), buildPhoneNumberTranslator()));</span>
+	}
+
+	private MessagePreparator buildTlvMessagePayloadMessagePreparator() {
+<span class="fc" id="L1345">		return buildContext.register(new TlvMessagePayloadMessagePreparator(buildSplitter(buildEncoder()), buildDataCodingProvider(), buildPhoneNumberTranslator()));</span>
+	}
+
+	private Encoder buildEncoder() {
+<span class="fc bfc" id="L1349" title="All 2 branches covered.">		if (encoderBuilder == null) {</span>
+<span class="fc" id="L1350">			return buildContext.register(new CloudhopperCharsetSupportingEncoder(NamedCharset.from(DEFAULT_CHARSET)));</span>
+		}
+<span class="fc" id="L1352">		return encoderBuilder.build();</span>
+	}
+
+	private DataCodingProvider buildDataCodingProvider() {
+<span class="fc bfc" id="L1356" title="All 2 branches covered.">		if (dataCodingBuilder == null) {</span>
+<span class="fc" id="L1357">			return buildContext.register(new CharsetMapToCharacterEncodingGroupDataCodingProvider(true));</span>
+		}
+<span class="fc" id="L1359">		return dataCodingBuilder.build();</span>
+	}
+
+	private MessageSplitter buildSplitter(Encoder encoder) {
+<span class="fc bfc" id="L1363" title="All 2 branches covered.">		if (messageSplitterBuilder == null) {</span>
+<span class="fc" id="L1364">			return buildContext.register(new NoSplitMessageSplitter(encoder));</span>
+		}
+<span class="fc" id="L1366">		MessageSplitter splitter = messageSplitterBuilder.build();</span>
+<span class="fc bfc" id="L1367" title="All 2 branches covered.">		if (splitter != null) {</span>
+<span class="fc" id="L1368">			return splitter;</span>
+		}
+<span class="fc" id="L1370">		return buildContext.register(new NoSplitMessageSplitter(encoder));</span>
+	}
+
+	private SmppClientSupplier buildClientSupplier() {
+<span class="fc bfc" id="L1374" title="All 2 branches covered.">		if (clientSupplier == null) {</span>
+<span class="fc" id="L1375">			return buildContext.register(DefaultSmppClient::new);</span>
+		}
+<span class="fc" id="L1377">		return clientSupplier;</span>
+	}
+
+	private SmppSessionHandlerSupplier buildSmppSessionHandler() {
+<span class="pc bpc" id="L1381" title="1 of 2 branches missed.">		if (smppSessionHandler == null) {</span>
+<span class="fc" id="L1382">			return defaultSmppSessionHandlerSupplier();</span>
+		}
+<span class="nc" id="L1384">		return smppSessionHandler;</span>
+	}
+	
+	private SmppSessionHandlerSupplier defaultSmppSessionHandlerSupplier() {
+<span class="fc" id="L1388">		return () -&gt; new RespondToEnquireLinkRequestHandler(new RespondToDeliveryReceiptHandler(new DefaultSmppSessionHandler()));</span>
+	}
+
+	private PhoneNumberTranslator buildPhoneNumberTranslator() {
+		// TODO: allow configuration of fallback phone number translator
+<span class="fc" id="L1393">		return buildContext.register(new CompositePhoneNumberTranslator(buildContext.register(new DefaultHandler())));</span>
+	}
+
+	private ExtendedSmppSessionConfiguration buildSessionConfiguration(CloudhopperSessionOptions sessionOpts) {
+<span class="fc" id="L1397">		ExtendedSmppSessionConfiguration session = buildContext.register(new ExtendedSmppSessionConfiguration());</span>
+<span class="fc bfc" id="L1398" title="All 2 branches covered.">		ExtendedSmppSessionConfiguration manual = sessionConfiguration == null ? new ExtendedSmppSessionConfiguration() : sessionConfiguration;</span>
+		// @formatter:off
+<span class="pc" id="L1400">		merge(session::setType,                    bindTypeValueBuilder::getValue,            manual::getType,                                           () -&gt; DEFAULT_BIND_TYPE);</span>
+<span class="fc" id="L1401">		merge(session::setHost,                    hostValueBuilder::getValue,                manual::getHost);</span>
+<span class="pc" id="L1402">		merge(session::setPort,                    portValueBuilder::getValue,                manual::getPort,                                           () -&gt; 0);</span>
+<span class="fc" id="L1403">		merge(session::setSystemId,                systemIdValueBuilder::getValue,            manual::getSystemId);</span>
+<span class="fc" id="L1404">		merge(session::setPassword,                passwordValueBuilder::getValue,            manual::getPassword);</span>
+<span class="fc" id="L1405">		merge(session::setSystemType,              systemTypeValueBuilder::getValue,          manual::getSystemType);</span>
+<span class="fc" id="L1406">		merge(session::setBindTimeout,             sessionOpts::getBindTimeout,               considerZeroAsDefault(manual::getBindTimeout));</span>
+<span class="fc" id="L1407">		merge(session::setConnectTimeout,          sessionOpts::getConnectTimeout,            considerZeroAsDefault(manual::getConnectTimeout));</span>
+<span class="fc" id="L1408">		merge(session::setInterfaceVersion,        this::getInterfaceVersion,                 manual::getInterfaceVersion);</span>
+<span class="fc" id="L1409">		merge(session::setName,                    sessionOpts::getSessionName,               manual::getName);</span>
+<span class="fc" id="L1410">		merge(session::setRequestExpiryTimeout,    sessionOpts::getRequestExpiryTimeout,      considerZeroAsDefault(manual::getRequestExpiryTimeout));</span>
+<span class="fc" id="L1411">		merge(session::setWindowMonitorInterval,   sessionOpts::getWindowMonitorInterval,     considerZeroAsDefault(manual::getWindowMonitorInterval));</span>
+<span class="fc" id="L1412">		merge(session::setWindowSize,              sessionOpts::getWindowSize,                considerZeroAsDefault(manual::getWindowSize));</span>
+<span class="fc" id="L1413">		merge(session::setWindowWaitTimeout,       sessionOpts::getWindowWaitTimeout,         considerZeroAsDefault(manual::getWindowWaitTimeout));</span>
+<span class="fc" id="L1414">		merge(session::setWriteTimeout,            sessionOpts::getWriteTimeout,              considerZeroAsDefault(manual::getWriteTimeout));</span>
+<span class="fc" id="L1415">		merge(session::setResponseTimeout,         sessionOpts::getResponseTimeout,           considerZeroAsDefault(manual::getResponseTimeout),         () -&gt; DEFAULT_RESPONSE_TIMEOUT);</span>
+<span class="fc" id="L1416">		merge(session::setUnbindTimeout,           sessionOpts::getUnbindTimeout,             considerZeroAsDefault(manual::getUnbindTimeout),           () -&gt; DEFAULT_UNBIND_TIMEOUT);</span>
+<span class="fc" id="L1417">		merge(session::setReuseSession,            sessionOpts::getReuseSession,              manual::getReuseSession);</span>
+<span class="fc" id="L1418">		merge(session::setAddressRange,            () -&gt; addressRange,                        manual::getAddressRange);</span>
+<span class="fc" id="L1419">		merge(session::setKeepAlive,               sessionOpts::getKeepAlive,                 manual::getKeepAlive);</span>
+<span class="fc" id="L1420">		merge(session::setConnectRetry,            () -&gt; buildConnectRetry(sessionOpts),      manual::getConnectRetry);</span>
+		// @formatter:on
+<span class="fc" id="L1422">		configureSsl(session);</span>
+<span class="fc" id="L1423">		configureLogs(session);</span>
+<span class="fc" id="L1424">		return session;</span>
+	}
+
+	private static &lt;T&gt; Supplier&lt;T&gt; considerZeroAsDefault(Supplier&lt;T&gt; getter) {
+<span class="fc" id="L1428">		T value = getter.get();</span>
+<span class="fc bfc" id="L1429" title="All 2 branches covered.">		if (value instanceof Long) {</span>
+<span class="fc bfc" id="L1430" title="All 2 branches covered.">			return () -&gt; (Long) value == 0 ? null : value;</span>
+		}
+<span class="pc bpc" id="L1432" title="1 of 2 branches missed.">		if (value instanceof Integer) {</span>
+<span class="pc bpc" id="L1433" title="1 of 2 branches missed.">			return () -&gt; (Integer) value == 0 ? null : value;</span>
+		}
+<span class="nc" id="L1435">		return getter;</span>
+	}
+	
+	@SafeVarargs
+	private static &lt;T&gt; void merge(Consumer&lt;T&gt; setter, Supplier&lt;T&gt;... getters) {
+<span class="fc" id="L1440">		T value = null;</span>
+<span class="fc bfc" id="L1441" title="All 2 branches covered.">		for (Supplier&lt;T&gt; getter : getters) {</span>
+<span class="fc" id="L1442">			value = getter.get();</span>
+<span class="fc bfc" id="L1443" title="All 2 branches covered.">			if (value != null) {</span>
+<span class="fc" id="L1444">				break;</span>
+			}
+		}
+		// if there is a value, set it
+<span class="fc bfc" id="L1448" title="All 2 branches covered.">		if (value != null) {</span>
+<span class="fc" id="L1449">			setter.accept(value);</span>
+		}
+<span class="fc" id="L1451">	}</span>
+
+	private void configureLogs(SmppSessionConfiguration session) {
+<span class="pc bpc" id="L1454" title="1 of 2 branches missed.">		if (loggingBuilder == null) {</span>
+<span class="fc" id="L1455">			return;</span>
+		}
+<span class="nc" id="L1457">		LoggingOptions options = loggingBuilder.build();</span>
+<span class="nc bnc" id="L1458" title="All 2 branches missed.">		if (options != null) {</span>
+<span class="nc" id="L1459">			session.setLoggingOptions(options);</span>
+		}
+<span class="nc" id="L1461">	}</span>
+
+	private void configureSsl(SmppSessionConfiguration session) {
+<span class="pc bpc" id="L1464" title="1 of 2 branches missed.">		if (sslBuilder == null) {</span>
+<span class="fc" id="L1465">			return;</span>
+		}
+<span class="nc" id="L1467">		SslConfiguration sslConfiguration = sslBuilder.build();</span>
+<span class="nc bnc" id="L1468" title="All 2 branches missed.">		session.setUseSsl(sslConfiguration != null);</span>
+<span class="nc bnc" id="L1469" title="All 2 branches missed.">		if (sslConfiguration != null) {</span>
+<span class="nc" id="L1470">			session.setSslConfiguration(sslConfiguration);</span>
+		}
+<span class="nc" id="L1472">	}</span>
+
+
+	private Byte getInterfaceVersion() {
+<span class="fc" id="L1476">		InterfaceVersion version = interfaceVersionValueBuilder.getValue(DEFAULT_INTERFACE_VERSION);</span>
+<span class="fc" id="L1477">		return version.value();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

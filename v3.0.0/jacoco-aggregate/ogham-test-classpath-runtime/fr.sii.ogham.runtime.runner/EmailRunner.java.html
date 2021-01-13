@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EmailRunner.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-classpath-runtime</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.runtime.runner</a> &gt; <span class="el_source">EmailRunner.java</span></div><h1>EmailRunner.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.runtime.runner;
+
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.core.util.ClasspathUtils;
+import fr.sii.ogham.email.message.Email;
+import mock.context.SimpleBean;
+
+public class EmailRunner {
+	private final MessagingService messagingService;
+	
+	public EmailRunner(MessagingService messagingService) {
+<span class="nc" id="L13">		super();</span>
+<span class="nc" id="L14">		this.messagingService = messagingService;</span>
+<span class="nc" id="L15">	}</span>
+
+	public void sendEmailWithoutTemplate() throws MessagingException {
+<span class="nc" id="L18">		messagingService.send(new Email()</span>
+<span class="nc" id="L19">				.subject(&quot;Simple&quot;)</span>
+<span class="nc" id="L20">				.body().string(&quot;string body&quot;)</span>
+<span class="nc" id="L21">				.from(&quot;Sender Name &lt;sender@sii.fr&gt;&quot;)</span>
+<span class="nc" id="L22">				.to(&quot;Recipient Name &lt;recipient@sii.fr&gt;&quot;));</span>
+<span class="nc" id="L23">	}</span>
+
+	public void sendEmailWithThymeleaf() throws MessagingException {
+<span class="nc" id="L26">		messagingService.send(new Email()</span>
+<span class="nc" id="L27">				.subject(&quot;Thymeleaf&quot;)</span>
+<span class="nc" id="L28">				.body().template(&quot;classpath:/email/thymeleaf/source/simple-&quot;+detectThymeleafEngineVersion(), new SimpleBean(&quot;foo&quot;, 42))</span>
+<span class="nc" id="L29">				.from(&quot;Sender Name &lt;sender@sii.fr&gt;&quot;)</span>
+<span class="nc" id="L30">				.to(&quot;Recipient Name &lt;recipient@sii.fr&gt;&quot;));</span>
+<span class="nc" id="L31">	}</span>
+
+	public void sendEmailWithFreemarker() throws MessagingException {
+<span class="nc" id="L34">		messagingService.send(new Email()</span>
+<span class="nc" id="L35">				.subject(&quot;Freemarker&quot;)</span>
+<span class="nc" id="L36">				.body().template(&quot;classpath:/email/freemarker/source/simple&quot;, new SimpleBean(&quot;foo&quot;, 42))</span>
+<span class="nc" id="L37">				.from(&quot;Sender Name &lt;sender@sii.fr&gt;&quot;)</span>
+<span class="nc" id="L38">				.to(&quot;Recipient Name &lt;recipient@sii.fr&gt;&quot;));</span>
+<span class="nc" id="L39">	}</span>
+
+	public void sendEmailWithThymeleafAndFreemarker() throws MessagingException {
+<span class="nc" id="L42">		messagingService.send(new Email()</span>
+<span class="nc" id="L43">				.subject(&quot;Thymeleaf+Freemarker&quot;)</span>
+<span class="nc" id="L44">				.body().template(&quot;classpath:/email/mixed/source/simple&quot;, new SimpleBean(&quot;foo&quot;, 42))</span>
+<span class="nc" id="L45">				.from(&quot;Sender Name &lt;sender@sii.fr&gt;&quot;)</span>
+<span class="nc" id="L46">				.to(&quot;Recipient Name &lt;recipient@sii.fr&gt;&quot;));</span>
+<span class="nc" id="L47">	}</span>
+
+
+	private String detectThymeleafEngineVersion() {
+<span class="nc bnc" id="L51" title="All 4 branches missed.">		if (ClasspathUtils.exists(&quot;org.thymeleaf.TemplateEngine&quot;) &amp;&amp; ClasspathUtils.exists(&quot;org.thymeleaf.IEngineConfiguration&quot;)) {</span>
+<span class="nc" id="L52">			return &quot;v3&quot;;</span>
+		}
+<span class="nc bnc" id="L54" title="All 4 branches missed.">		if (ClasspathUtils.exists(&quot;org.thymeleaf.TemplateEngine&quot;) &amp;&amp; !ClasspathUtils.exists(&quot;org.thymeleaf.IEngineConfiguration&quot;)) {</span>
+<span class="nc" id="L55">			return &quot;v2&quot;;</span>
+		}
+<span class="nc" id="L57">		throw new IllegalStateException(&quot;Unknown Thymeleaf engine version&quot;);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

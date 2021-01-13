@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SmsBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">SmsBuilder.java</span></div><h1>SmsBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.async.Awaiter;
+import fr.sii.ogham.core.builder.ActivableAtRuntime;
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.builder.condition.RequiredProperties;
+import fr.sii.ogham.core.builder.condition.RequiredProperty;
+import fr.sii.ogham.core.builder.configurer.MessagingConfigurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.retry.RetryBuilder;
+import fr.sii.ogham.core.builder.sender.SenderImplementationBuilderHelper;
+import fr.sii.ogham.core.builder.template.DetectorBuilder;
+import fr.sii.ogham.core.builder.template.TemplateBuilderHelper;
+import fr.sii.ogham.core.builder.template.VariantBuilder;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.fluent.MessageConditions;
+import fr.sii.ogham.core.filler.MessageFiller;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.message.content.MultiTemplateContent;
+import fr.sii.ogham.core.message.content.Variant;
+import fr.sii.ogham.core.retry.ExponentialDelayRetry;
+import fr.sii.ogham.core.retry.FixedDelayRetry;
+import fr.sii.ogham.core.retry.FixedIntervalRetry;
+import fr.sii.ogham.core.retry.PerExecutionDelayRetry;
+import fr.sii.ogham.core.retry.RetryExecutor;
+import fr.sii.ogham.core.sender.AutoRetrySender;
+import fr.sii.ogham.core.sender.ConditionalSender;
+import fr.sii.ogham.core.sender.ContentTranslatorSender;
+import fr.sii.ogham.core.sender.FillerSender;
+import fr.sii.ogham.core.sender.MessageSender;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+import fr.sii.ogham.core.translator.content.EveryContentTranslator;
+import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
+import fr.sii.ogham.core.util.BuilderUtils;
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
+import fr.sii.ogham.sms.sender.PhoneNumberTranslatorSender;
+import fr.sii.ogham.sms.sender.SmsSender;
+
+/**
+ * Configures how to send {@link Sms} messages. It allows to:
+ * &lt;ul&gt;
+ * &lt;li&gt;register and configure several sender implementations&lt;/li&gt;
+ * &lt;li&gt;register and configure several template engines for parsing templates as
+ * message content&lt;/li&gt;
+ * &lt;li&gt;configure handling of missing {@link Sms} information&lt;/li&gt;
+ * &lt;li&gt;configure number format handling&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * You can send a {@link Sms} using the minimal behavior and using Cloudhopper
+ * implementation:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .sms()
+ *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+ *       .host(&quot;your SMPP server host&quot;)
+ *       .port(&quot;your SMPP server port&quot;)
+ *       .systemId(&quot;your SMPP system_id&quot;)
+ *       .password(&quot;an optional password&quot;)
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .from(&quot;sender phone number&quot;)
+ *   .content(&quot;sms content&quot;)
+ *   .to(&quot;recipient phone number&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * You can also send a {@link Sms} using a template (using Freemarker for
+ * example):
+ * 
+ * The Freemarker template (&quot;sms/sample.txt.ftl&quot;):
+ * 
+ * &lt;pre&gt;
+ * Sms content with variables: ${name} ${value}
+ * &lt;/pre&gt;
+ * 
+ * Then you can send the {@link Sms} like this:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .sms()
+ *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+ *       .host(&quot;your SMPP server host&quot;)
+ *       .port(&quot;your SMPP server port&quot;)
+ *       .systemId(&quot;your SMPP system_id&quot;)
+ *       .password(&quot;an optional password&quot;)
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup(&quot;classpath:&quot;)   // search resources/templates in the classpath if a path is prefixed by &quot;classpath:&quot;
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .from(&quot;sender phone number&quot;)
+ *   .content(new TemplateContent(&quot;classpath:sms/sample.txt.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient phone number&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * Instead of explicitly configures SMPP host/port/system_id/password in your
+ * code, it could be better to externalize the configuration in a properties
+ * file for example (for example a file named &quot;sms.properties&quot; in the
+ * classpath). The previous example becomes:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties(&quot;sms.properties&quot;)
+ *     .and()
+ *   .sms()
+ *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+ *       .host(&quot;${smpp.host}&quot;)
+ *       .port(&quot;${smpp.port}&quot;)
+ *       .systemId(&quot;${smpp.system-id}&quot;)
+ *       .password(&quot;${smpp.password}&quot;)
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup(&quot;classpath:&quot;)   // search resources/templates in the classpath if a path is prefixed by &quot;classpath:&quot;
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .from(&quot;sender phone number&quot;)
+ *   .content(new TemplateContent(&quot;classpath:sms/sample.txt.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient phone number&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * The content of the file &quot;sms.properties&quot;:
+ * 
+ * &lt;pre&gt;
+ * smpp.host=your SMPP server host
+ * smpp.port=your SMPP server port
+ * smpp.system-id=your SMPP system_id
+ * smpp.password=an optional password
+ * &lt;/pre&gt;
+ * 
+ * 
+ * Some fields of the SMS may be automatically filled by a default value if they
+ * are not defined. For example, the sender phone number could be configured
+ * only once for your application:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = new MessagingBuilder()
+ *   .environment()
+ *     .properties(&quot;sms.properties&quot;)
+ *     .and()
+ *   .sms()
+ *     .sender(CloudhopperBuilder.class)   // enable SMS sending using Cloudhopper
+ *       .host().properties(&quot;${smpp.host}&quot;).and()
+ *       .port().properties(&quot;${smpp.port}&quot;).and()
+ *       .systemId().properties(&quot;${smpp.system-id}&quot;).and()
+ *       .password().properties(&quot;${smpp.password}&quot;).and()
+ *       .and()
+ *     .autofill()    // enables and configures autofilling
+ *       .from()
+ *         .defaultValue().properties(&quot;${sms.sender.number}&quot;).and()
+ *         .and()
+ *       .and()
+ *     .and()
+ *   .template(FreemarkerSmsBuilder.class)  // enable templating using Freemarker
+ *     .classpath()
+ *       .lookup(&quot;classpath:&quot;)   // search resources/templates in the classpath if a path is prefixed by &quot;classpath:&quot;
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms (now the sender phone number can be omitted)
+ * service.send(new Sms()
+ *   .content(new TemplateContent(&quot;classpath:sms/sample.txt.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient phone number&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * The new content of the file &quot;sms.properties&quot;:
+ * 
+ * &lt;pre&gt;
+ * smpp.host=your SMPP server host
+ * smpp.port=your SMPP server port
+ * smpp.system-id=your SMPP system_id
+ * smpp.password=an optional password
+ * sms.sender.number=the sender phone number
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * All the previous examples are provided to understand what can be configured.
+ * Hopefully, Ogham provides auto-configuration with a default behavior that
+ * fits 95% of usages. This auto-configuration is provided by
+ * {@link MessagingConfigurer}s. Those configurers are automatically applied
+ * when using predefined {@link MessagingBuilder}s like
+ * {@link MessagingBuilder#minimal()} and {@link MessagingBuilder#standard()}.
+ * 
+ * The previous sample using standard configuration becomes:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.standard()
+ *   .environment()
+ *     .properties(&quot;sms.properties&quot;)
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .content(new TemplateContent(&quot;classpath:sms/sample.txt.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient phone number&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * The new content of the file &quot;sms.properties&quot;:
+ * 
+ * &lt;pre&gt;
+ * ogham.sms.smpp.host=your SMPP server host
+ * ogham.sms.smpp.port=your SMPP server port
+ * ogham.sms.smpp.system-id=your SMPP system_id
+ * ogham.sms.smpp.password=an optional password
+ * ogham.sms.from.default-value=the sender phone number
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * You can also use the auto-configuration for benefit from default behaviors
+ * and override some behaviors for your needs:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * // Instantiate the messaging service
+ * MessagingService service = MessagingBuilder.standard()
+ *   .environment()
+ *     .properties(&quot;sms.properties&quot;)
+ *     .and()
+ *   .sms()
+ *     .autofill()
+ *       .from()
+ *         .defaultValue().properties(&quot;${sms.sender.number}&quot;).and()   // overrides default sender phone number property
+ *         .and()
+ *       .and()
+ *     .and()
+ *   .build();
+ * // send the sms
+ * service.send(new Sms()
+ *   .content(new TemplateContent(&quot;classpath:sms/sample.txt.ftl&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;recipient phone number&quot;));
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * The new content of the file &quot;sms.properties&quot;:
+ * 
+ * &lt;pre&gt;
+ * ogham.sms.smpp.host=your SMPP server host
+ * ogham.sms.smpp.port=your SMPP server port
+ * ogham.sms.smpp.system-id=your SMPP system_id
+ * ogham.sms.smpp.password=an optional password
+ * sms.sender.number=the sender phone number
+ * &lt;/pre&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SmsBuilder extends AbstractParent&lt;MessagingBuilder&gt; implements Builder&lt;ConditionalSender&gt; {
+<span class="fc" id="L286">	private static final Logger LOG = LoggerFactory.getLogger(SmsBuilder.class);</span>
+
+	private final BuildContext buildContext;
+	private final TemplateBuilderHelper&lt;SmsBuilder&gt; templateBuilderHelper;
+	private final SenderImplementationBuilderHelper&lt;SmsBuilder&gt; senderBuilderHelper;
+	private AutofillSmsBuilder autofillBuilder;
+	private PhoneNumbersBuilder phoneNumbersBuilder;
+	private RetryBuilder&lt;SmsBuilder&gt; retryBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link BuildContext} is used to
+	 * evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public SmsBuilder(MessagingBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L306">		super(parent);</span>
+<span class="fc" id="L307">		this.buildContext = buildContext;</span>
+<span class="fc" id="L308">		templateBuilderHelper = new TemplateBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L309">		senderBuilderHelper = new SenderImplementationBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L310">	}</span>
+
+	/**
+	 * Configures how Ogham will add default values to the {@link Sms} if some
+	 * information is missing.
+	 * 
+	 * If sender phone number is missing, a default one can be defined in
+	 * configuration properties.
+	 * 
+	 * If recipient phone number is missing, a default one can be defined in
+	 * configuration properties.
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *	builder
+	 *	  .autofill()
+	 *	    .from()
+	 *	      .defaultValue().properties(&quot;${ogham.sms.from.default-value}&quot;).and()
+	 *	        .and()
+	 *	    .to()
+	 *	      .defaultValue().properties(&quot;${ogham.sms.to.default-value}&quot;).and()
+	 *	        .and()
+	 *	    .and()
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder to configure autofilling of SMS
+	 */
+	public AutofillSmsBuilder autofill() {
+<span class="fc bfc" id="L339" title="All 2 branches covered.">		if (autofillBuilder == null) {</span>
+<span class="fc" id="L340">			autofillBuilder = new AutofillSmsBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L342">		return autofillBuilder;</span>
+	}
+
+	/**
+	 * Configures the phone number conversions (from a {@link PhoneNumber} to an
+	 * {@link AddressedPhoneNumber}).
+	 * 
+	 * The {@link PhoneNumber} is used by the developer to provide a simple
+	 * phone number without knowing how phone number works (no need to handle
+	 * formats, addressing, countries...). The {@link AddressedPhoneNumber} is
+	 * used by Ogham implementations to have a phone number that is usable by a
+	 * technical system.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 *	builder
+	 *	  .numbers()
+	 *	    .from()
+	 *	      .format()
+	 *	        .alphanumericCode().properties(&quot;${ogham.sms.from.alphanumeric-code-format.enable}&quot;).defaultValue(true).and()
+	 *	        .shortCode().properties(&quot;${ogham.sms.from.short-code-format.enable}&quot;).defaultValue(true).and()
+	 *	        .internationalNumber().properties(&quot;${ogham.sms.from.international-format.enable}&quot;).defaultValue(true).and()
+	 *	        .and()
+	 *	      .and()
+	 *	    .to()
+	 *	      .format()
+	 *	        .internationalNumber().properties(&quot;${ogham.sms.to.international-format.enable}&quot;).defaultValue(true);
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * @return the builder to configure phone number formats
+	 */
+	public PhoneNumbersBuilder numbers() {
+<span class="fc bfc" id="L377" title="All 2 branches covered.">		if (phoneNumbersBuilder == null) {</span>
+<span class="fc" id="L378">			phoneNumbersBuilder = new PhoneNumbersBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L380">		return phoneNumbersBuilder;</span>
+	}
+
+	/**
+	 * Registers and configures a {@link TemplateParser} through a dedicated
+	 * builder.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .register(ThymeleafSmsBuilder.class)
+	 *     .detector(new ThymeleafEngineDetector());
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your {@link Builder} may implement {@link VariantBuilder} to handle
+	 * template {@link Variant}s (used for {@link MultiTemplateContent} that
+	 * provide a single path to templates with different extensions for
+	 * example).
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your {@link Builder} may also implement {@link DetectorBuilder} in order
+	 * to indicate which kind of templates your {@link TemplateParser} is able
+	 * to parse. If your template parse is able to parse any template file you
+	 * are using, you may not need to implement {@link DetectorBuilder}.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with two arguments:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The type of the parent builder ({@code &amp;lt;P&amp;gt;})&lt;/li&gt;
+	 * &lt;li&gt;The {@link BuildContext} instance&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * If you don't care about chaining, just provide a default constructor.
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param &lt;T&gt;
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 */
+	public &lt;T extends Builder&lt;? extends TemplateParser&gt;&gt; T template(Class&lt;T&gt; builderClass) {
+<span class="fc" id="L424">		return templateBuilderHelper.register(builderClass);</span>
+	}
+
+	/**
+	 * Registers a custom message sender implementation.
+	 * 
+	 * &lt;p&gt;
+	 * If your custom implementation is annotated by one or several of:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link RequiredClass}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperty}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredClasses}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperties}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Then if condition evaluation returns true, your implementation will be
+	 * used. If you provide several annotations, your implementation will be
+	 * used only if all conditions are met (and operator).
+	 * 
+	 * &lt;p&gt;
+	 * If your custom implementation implements {@link ActivableAtRuntime}, and
+	 * the provided condition evaluation returns true, then your implementation
+	 * will be used.
+	 * 
+	 * See {@link MessageConditions} to build your condition.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If neither annotations nor implementation of {@link ActivableAtRuntime}
+	 * is used, then your custom implementation will be always used. All other
+	 * implementations (even standard ones) will never be used.
+	 * &lt;/p&gt;
+	 * 
+	 * @param sender
+	 *            the sender to register
+	 * @return this instance for fluent chaining
+	 */
+	public SmsBuilder customSender(MessageSender sender) {
+<span class="fc" id="L461">		senderBuilderHelper.customSender(sender);</span>
+<span class="fc" id="L462">		return this;</span>
+	}
+
+	/**
+	 * Registers and configures sender through a dedicated builder.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .sender(CloudhopperBuilder.class)
+	 *     .host(&quot;localhost&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If your custom builder is annotated by one or several of:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link RequiredClass}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperty}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredClasses}&lt;/li&gt;
+	 * &lt;li&gt;{@link RequiredProperties}&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * Then if condition evaluation returns true, your built implementation will
+	 * be used. If you provide several annotations, your built implementation
+	 * will be used only if all conditions are met (and operator).
+	 * 
+	 * &lt;p&gt;
+	 * If your custom builder implements {@link ActivableAtRuntime}, and the
+	 * provided condition evaluation returns true, then your built
+	 * implementation will be used.
+	 * 
+	 * See {@link MessageConditions} to build your condition.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * If neither annotations nor implementation of {@link ActivableAtRuntime}
+	 * is used, then your built implementation will be always used. All other
+	 * implementations (even standard ones) will never be used.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * In order to be able to keep chaining, you builder instance may provide a
+	 * constructor with one argument with the type of the parent builder
+	 * ({@link SmsBuilder}). If you don't care about chaining, just provide a
+	 * default constructor.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Your builder may return {@code null} when calling
+	 * {@link Builder#build()}. In this case it means that your implementation
+	 * can't be used due to current environment. Your implementation is then not
+	 * registered.
+	 * &lt;/p&gt;
+	 * 
+	 * @param builderClass
+	 *            the builder class to instantiate
+	 * @param &lt;T&gt;
+	 *            the type of the builder
+	 * @return the builder to configure the implementation
+	 */
+	public &lt;T extends Builder&lt;? extends MessageSender&gt;&gt; T sender(Class&lt;T&gt; builderClass) {
+<span class="fc" id="L522">		return senderBuilderHelper.register(builderClass);</span>
+	}
+
+	/**
+	 * Configure automatic retry if message couldn't be sent.
+	 * 
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * .autoRetry()
+	 *   .fixedDelay()
+	 *     .maxRetries().properties(&quot;${ogham.sms.send-retry.max-attempts}&quot;).and()
+	 *     .delay().properties(&quot;${ogham.sms.send-retry.delay-between-attempts}&quot;)
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * &lt;p&gt;
+	 * This builder lets you configure:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;The retry strategy:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;{@link FixedDelayRetry}: wait for a fixed delay after the last
+	 * failure&lt;/li&gt;
+	 * &lt;li&gt;{@link FixedIntervalRetry}: wait for a fixed delay between executions
+	 * (do not wait for the end of the action)&lt;/li&gt;
+	 * &lt;li&gt;{@link ExponentialDelayRetry}: start with a delay, the next delay
+	 * will be doubled on so on&lt;/li&gt;
+	 * &lt;li&gt;{@link PerExecutionDelayRetry}: provide a custom delay for each
+	 * execution&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * &lt;/li&gt;
+	 * &lt;li&gt;The {@link RetryExecutor} implementation&lt;/li&gt;
+	 * &lt;li&gt;The {@link Awaiter} implementation&lt;/li&gt;
+	 * &lt;li&gt;The {@link Condition} used to determine if the raised error should
+	 * trigger a retry or not&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * @return the builder to configure retry management
+	 */
+	public RetryBuilder&lt;SmsBuilder&gt; autoRetry() {
+<span class="fc bfc" id="L563" title="All 2 branches covered.">		if (retryBuilder == null) {</span>
+<span class="fc" id="L564">			retryBuilder = new RetryBuilder&lt;&gt;(this, buildContext);</span>
+		}
+<span class="fc" id="L566">		return retryBuilder;</span>
+	}
+
+	@Override
+	public ConditionalSender build() {
+<span class="fc" id="L571">		SmsSender smsSender = buildContext.register(new SmsSender());</span>
+<span class="fc" id="L572">		ConditionalSender sender = smsSender;</span>
+<span class="fc" id="L573">		senderBuilderHelper.addSenders(smsSender);</span>
+<span class="fc bfc" id="L574" title="All 2 branches covered.">		if (templateBuilderHelper.hasRegisteredTemplates()) {</span>
+<span class="fc" id="L575">			ContentTranslator translator = buildContentTranslator();</span>
+<span class="fc" id="L576">			LOG.debug(&quot;Content translation enabled {}&quot;, translator);</span>
+<span class="fc" id="L577">			sender = buildContext.register(new ContentTranslatorSender(translator, sender));</span>
+		}
+<span class="pc bpc" id="L579" title="1 of 2 branches missed.">		if (phoneNumbersBuilder != null) {</span>
+<span class="fc" id="L580">			PhoneNumberTranslatorPair pair = phoneNumbersBuilder.build();</span>
+<span class="fc" id="L581">			sender = buildContext.register(new PhoneNumberTranslatorSender(pair.getSender(), pair.getRecipient(), sender));</span>
+		}
+<span class="pc bpc" id="L583" title="1 of 2 branches missed.">		if (autofillBuilder != null) {</span>
+<span class="fc" id="L584">			MessageFiller messageFiller = autofillBuilder.build();</span>
+<span class="fc" id="L585">			LOG.debug(&quot;Automatic filling of message enabled {}&quot;, messageFiller);</span>
+<span class="fc" id="L586">			sender = buildContext.register(new FillerSender(messageFiller, sender));</span>
+		}
+<span class="fc" id="L588">		RetryExecutor retryExecutor = BuilderUtils.build(retryBuilder);</span>
+<span class="fc bfc" id="L589" title="All 2 branches covered.">		if (retryExecutor != null) {</span>
+<span class="fc" id="L590">			LOG.debug(&quot;Automatic retry of message sending enabled {}&quot;, retryExecutor);</span>
+<span class="fc" id="L591">			sender = buildContext.register(new AutoRetrySender(sender, retryExecutor));</span>
+		}
+<span class="fc" id="L593">		return sender;</span>
+	}
+
+	private ContentTranslator buildContentTranslator() {
+<span class="fc" id="L597">		EveryContentTranslator translator = buildContext.register(new EveryContentTranslator());</span>
+<span class="fc" id="L598">		addTemplateTranslator(translator);</span>
+<span class="fc" id="L599">		return translator;</span>
+	}
+
+	private void addTemplateTranslator(EveryContentTranslator translator) {
+<span class="pc bpc" id="L603" title="1 of 2 branches missed.">		if (!templateBuilderHelper.hasRegisteredTemplates()) {</span>
+<span class="nc" id="L604">			return;</span>
+		}
+<span class="fc" id="L606">		TemplateParser templateParser = templateBuilderHelper.buildTemplateParser();</span>
+<span class="fc" id="L607">		LOG.debug(&quot;Registering content translator that parses templates using {}&quot;, templateParser);</span>
+<span class="fc" id="L608">		translator.addTranslator(buildContext.register(new TemplateContentTranslator(templateParser)));</span>
+<span class="fc" id="L609">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

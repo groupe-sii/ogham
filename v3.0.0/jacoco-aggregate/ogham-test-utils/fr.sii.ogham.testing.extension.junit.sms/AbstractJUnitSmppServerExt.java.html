@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractJUnitSmppServerExt.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.extension.junit.sms</a> &gt; <span class="el_source">AbstractJUnitSmppServerExt.java</span></div><h1>AbstractJUnitSmppServerExt.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.extension.junit.sms;
+
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.Rule;
+import org.junit.jupiter.api.extension.Extension;
+
+import fr.sii.ogham.testing.extension.junit.sms.config.ServerConfig;
+import fr.sii.ogham.testing.sms.simulator.SmppServerSimulator;
+import fr.sii.ogham.testing.sms.simulator.bean.SubmitSm;
+import fr.sii.ogham.testing.sms.simulator.config.SimulatorConfiguration;
+
+/**
+ * Base class for JUnit {@link Rule} and JUnit {@link Extension}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;M&gt;
+ *            The type of the received messages
+ */
+public abstract class AbstractJUnitSmppServerExt&lt;M&gt; {
+
+	/**
+	 * The configuration to control how server should behave
+	 */
+	protected final ServerConfig builder;
+	/**
+	 * The server simulator
+	 */
+	protected SmppServerSimulator&lt;M&gt; server;
+
+	/**
+	 * Initializes with the default configuration to use for the SMPP server
+	 * 
+	 */
+	public AbstractJUnitSmppServerExt() {
+<span class="nc" id="L40">		this(new ServerConfig());</span>
+<span class="nc" id="L41">	}</span>
+
+	/**
+	 * Initializes with the configuration to use for the SMPP server
+	 * 
+	 * @param builder
+	 *            the configuration for the server
+	 */
+	public AbstractJUnitSmppServerExt(ServerConfig builder) {
+<span class="fc" id="L50">		super();</span>
+<span class="fc" id="L51">		this.builder = builder;</span>
+<span class="fc" id="L52">	}</span>
+
+	/**
+	 * Get the port used by the server.
+	 * 
+	 * @return the port used by the server
+	 */
+	public int getPort() {
+<span class="fc" id="L60">		return server.getPort();</span>
+	}
+
+	/**
+	 * Provide the list of received messages during the execution of the test.
+	 * 
+	 * @return the list of received messages
+	 */
+	public List&lt;M&gt; getRawMessages() {
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">		if (server == null) {</span>
+<span class="nc" id="L70">			return Collections.emptyList();</span>
+		}
+<span class="fc" id="L72">		return server.getReceivedMessages();</span>
+	}
+
+	/**
+	 * Provide the list of received messages during the execution of the test.
+	 * 
+	 * The raw messages are converted to the common interface
+	 * ({@link SubmitSm}).
+	 * 
+	 * @return the list of received messages
+	 */
+	public List&lt;SubmitSm&gt; getReceivedMessages() {
+<span class="fc" id="L84">		return getRawMessages().stream().map(this::convert).collect(toList());</span>
+	}
+
+	/**
+	 * Initialize the server with the ready to use configuration.
+	 * 
+	 * @param simulatorConfiguration
+	 *            the configuration to apply to the server
+	 * @return the server instance
+	 */
+	protected abstract SmppServerSimulator&lt;M&gt; initServer(SimulatorConfiguration simulatorConfiguration);
+
+	protected abstract SubmitSm convert(M raw);
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

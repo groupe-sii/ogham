@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CorrectPackageNameMailCompat.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-email-sendgrid-v4</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat</a> &gt; <span class="el_source">CorrectPackageNameMailCompat.java</span></div><h1>CorrectPackageNameMailCompat.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.sendgrid.v4.sender.impl.sendgrid.compat;
+
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.util.List;
+
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
+import com.sendgrid.helpers.mail.objects.Personalization;
+
+
+/**
+ * Compatibility wrapper that wraps {@link Mail} instance and delegates
+ * operations to it.
+ * 
+ * @author Aurélien Baudet
+ * @see CompatUtil
+ * @see CompatFactory
+ */
+public class CorrectPackageNameMailCompat implements MailCompat {
+	private final Mail delegate;
+
+	public CorrectPackageNameMailCompat() {
+<span class="fc" id="L26">		this(new Mail());</span>
+<span class="fc" id="L27">	}</span>
+
+	public CorrectPackageNameMailCompat(Mail delegate) {
+<span class="fc" id="L30">		super();</span>
+<span class="fc" id="L31">		this.delegate = delegate;</span>
+<span class="fc" id="L32">	}</span>
+
+	@Override
+	public EmailCompat getFrom() {
+<span class="fc" id="L36">		Email from = delegate.getFrom();</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		if (from == null) {</span>
+<span class="fc" id="L38">			return null;</span>
+		}
+<span class="fc" id="L40">		return new CorrectPackageNameEmailCompat(from);</span>
+	}
+
+	@Override
+	public String getSubject() {
+<span class="fc" id="L45">		return delegate.getSubject();</span>
+	}
+
+	@Override
+	public List&lt;PersonalizationCompat&gt; getPersonalization() {
+<span class="fc" id="L50">		List&lt;Personalization&gt; personalization = delegate.getPersonalization();</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">		if (personalization == null) {</span>
+<span class="fc" id="L52">			return null;</span>
+		}
+<span class="fc" id="L54">		return personalization.stream()</span>
+<span class="fc" id="L55">				.map(CorrectPackageNamePersonalizationCompat::new)</span>
+<span class="fc" id="L56">				.collect(toList());</span>
+	}
+
+	@Override
+	public void setSubject(String subject) {
+<span class="fc" id="L61">		delegate.setSubject(subject);</span>
+<span class="fc" id="L62">	}</span>
+
+	@Override
+	public void setFrom(String address, String personal) {
+<span class="fc" id="L66">		delegate.setFrom(new Email(address, personal));</span>
+<span class="fc" id="L67">	}</span>
+
+	@Override
+	public void addContent(String mime, String contentStr) {
+<span class="fc" id="L71">		delegate.addContent(new Content(mime, contentStr));</span>
+<span class="fc" id="L72">	}</span>
+
+	@Override
+	public void addPersonalization(PersonalizationCompat personalization) {
+<span class="fc" id="L76">		delegate.addPersonalization(((CorrectPackageNamePersonalizationCompat) personalization).getDelegate());</span>
+<span class="fc" id="L77">	}</span>
+
+	@Override
+	public void addAttachments(AttachmentsCompat attachment) {
+<span class="fc" id="L81">		delegate.addAttachments(((CorrectPackageNameAttachmentsCompat) attachment).getDelegate());</span>
+<span class="fc" id="L82">	}</span>
+
+	@Override
+	public String build() throws IOException {
+<span class="fc" id="L86">		return delegate.build();</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	@Override
+	public &lt;M&gt; M getDelegate() {
+<span class="fc" id="L92">		return (M) delegate;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

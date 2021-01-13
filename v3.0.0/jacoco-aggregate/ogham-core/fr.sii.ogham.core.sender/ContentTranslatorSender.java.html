@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ContentTranslatorSender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.sender</a> &gt; <span class="el_source">ContentTranslatorSender.java</span></div><h1>ContentTranslatorSender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.sender;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.exception.MessageNotSentException;
+import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+
+/**
+ * Decorator sender that transforms the content of the message before really
+ * sending it. This sender relies on {@link ContentTranslator} to transform the
+ * message content. Once the content has been updated, then this sender
+ * delegates to a real implementation the sending of the message.
+ * 
+ * @author Aurélien Baudet
+ * @see ContentTranslator
+ */
+public class ContentTranslatorSender implements ConditionalSender {
+<span class="fc" id="L22">	private static final Logger LOG = LoggerFactory.getLogger(ContentTranslatorSender.class);</span>
+
+	/**
+	 * The translator that transforms the content of the message
+	 */
+	private ContentTranslator translator;
+
+	/**
+	 * The decorated sender that will really send the message
+	 */
+	private MessageSender delegate;
+
+	/**
+	 * Initialize the sender with the provided translator and decorated sender.
+	 * The translator implementation will transform the content of the message.
+	 * The decorated sender will really send the message.
+	 * 
+	 * @param translator
+	 *            the translator implementation that will transform the content
+	 *            of the message
+	 * @param delegate
+	 *            The decorated sender will really send the message
+	 */
+	public ContentTranslatorSender(ContentTranslator translator, MessageSender delegate) {
+<span class="fc" id="L46">		super();</span>
+<span class="fc" id="L47">		this.translator = translator;</span>
+<span class="fc" id="L48">		this.delegate = delegate;</span>
+<span class="fc" id="L49">	}</span>
+
+	@Override
+	public boolean supports(Message message) {
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">		if (delegate instanceof ConditionalSender) {</span>
+<span class="fc" id="L54">			return ((ConditionalSender) delegate).supports(message);</span>
+		}
+<span class="nc" id="L56">		return true;</span>
+	}
+
+	@Override
+	public void send(Message message) throws MessageException {
+		try {
+<span class="fc" id="L62">			LOG.debug(&quot;Translate the message content using {}&quot;, translator);</span>
+<span class="fc" id="L63">			LOG.trace(&quot;content: {}&quot;, message.getContent());</span>
+<span class="fc" id="L64">			message.setContent(translator.translate(message.getContent()));</span>
+<span class="fc" id="L65">			LOG.debug(&quot;Message content translated using {}&quot;, translator);</span>
+<span class="fc" id="L66">			LOG.trace(&quot;content: {}&quot;, message.getContent());</span>
+<span class="fc" id="L67">			LOG.debug(&quot;Sending translated message using {}&quot;, delegate);</span>
+<span class="fc" id="L68">			LOG.trace(&quot;message: {}&quot;, message);</span>
+<span class="fc" id="L69">			delegate.send(message);</span>
+<span class="fc" id="L70">		} catch (ContentTranslatorException e) {</span>
+<span class="fc" id="L71">			throw new MessageNotSentException(&quot;Failed to send message due to content handler&quot;, message, e);</span>
+<span class="fc" id="L72">		}</span>
+<span class="fc" id="L73">	}</span>
+
+	@Override
+	public String toString() {
+<span class="fc" id="L77">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L78">		builder.append(&quot;ContentTranslatorSender [translator=&quot;).append(translator).append(&quot;, delegate=&quot;).append(delegate).append(&quot;]&quot;);</span>
+<span class="fc" id="L79">		return builder.toString();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

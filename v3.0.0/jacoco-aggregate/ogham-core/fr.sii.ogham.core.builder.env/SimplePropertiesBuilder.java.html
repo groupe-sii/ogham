@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimplePropertiesBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.env</a> &gt; <span class="el_source">SimplePropertiesBuilder.java</span></div><h1>SimplePropertiesBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.env;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import fr.sii.ogham.core.fluent.AbstractParent;
+
+/**
+ * A {@link PropertiesBuilder} that registers properties (key/value pairs) that
+ * is used by an {@link EnvironmentBuilder#properties()}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class SimplePropertiesBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements PropertiesBuilder&lt;P&gt; {
+	private List&lt;Property&gt; properties;
+
+	/**
+	 * Initializes the builder with the provided parent. The list of properties
+	 * is initialized with an empty list.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 */
+	public SimplePropertiesBuilder(P parent) {
+<span class="fc" id="L30">		super(parent);</span>
+<span class="fc" id="L31">		properties = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L32">	}</span>
+
+	@Override
+	public PropertiesBuilder&lt;P&gt; set(String key, String value) {
+<span class="fc" id="L36">		properties.add(new Property(key, value));</span>
+<span class="fc" id="L37">		return this;</span>
+	}
+
+	@Override
+	public PropertiesBuilder&lt;P&gt; set(String key, Object value) {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">		properties.add(new Property(key, value == null ? null : value.toString()));</span>
+<span class="fc" id="L43">		return this;</span>
+	}
+
+	@Override
+	public Properties build() {
+<span class="fc" id="L48">		Properties props = new Properties();</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">		for (Property prop : properties) {</span>
+<span class="pc bpc" id="L50" title="1 of 4 branches missed.">			if (prop.getKey() != null &amp;&amp; prop.getValue() != null) {</span>
+<span class="fc" id="L51">				props.put(prop.getKey(), prop.getValue());</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">			} else if (prop.getValue() == null) {</span>
+<span class="fc" id="L53">				props.remove(prop.getKey());</span>
+			}
+<span class="fc" id="L55">		}</span>
+<span class="fc" id="L56">		return props;</span>
+	}
+
+	private static class Property {
+		private final String key;
+		private final String value;
+
+		public Property(String key, String value) {
+<span class="fc" id="L64">			super();</span>
+<span class="fc" id="L65">			this.key = key;</span>
+<span class="fc" id="L66">			this.value = value;</span>
+<span class="fc" id="L67">		}</span>
+
+		public String getKey() {
+<span class="fc" id="L70">			return key;</span>
+		}
+
+		public String getValue() {
+<span class="fc" id="L74">			return value;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

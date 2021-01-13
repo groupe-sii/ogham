@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpringCloudhopperConfigurer.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">SpringCloudhopperConfigurer.java</span></div><h1>SpringCloudhopperConfigurer.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import static fr.sii.ogham.core.util.ConfigurationValueUtils.firstValue;
+import static fr.sii.ogham.spring.util.PropertiesUtils.asArray;
+import static java.util.Optional.ofNullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.sms.CloudhopperConstants;
+import fr.sii.ogham.sms.builder.cloudhopper.CloudhopperBuilder;
+import fr.sii.ogham.sms.builder.cloudhopper.InterfaceVersion;
+import fr.sii.ogham.spring.common.SpringMessagingConfigurer;
+
+/**
+ * This configurer is useful to support property naming variants (see
+ * &lt;a href=
+ * &quot;https://github.com/spring-projects/spring-boot/wiki/relaxed-binding-2.0&quot;&gt;Relaxed
+ * Binding&lt;/a&gt;).
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SpringCloudhopperConfigurer implements SpringMessagingConfigurer {
+<span class="fc" id="L26">	private static final Logger LOG = LoggerFactory.getLogger(SpringCloudhopperConfigurer.class);</span>
+
+	private final OghamSmsProperties smsProperties;
+	private final OghamSmppProperties smppProperties;
+	private final OghamCloudhopperProperties cloudhopperProperties;
+
+
+	public SpringCloudhopperConfigurer(OghamSmsProperties smsProperties, OghamSmppProperties smppProperties, OghamCloudhopperProperties cloudhopperProperties) {
+<span class="fc" id="L34">		super();</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">		this.smsProperties = smsProperties != null ? smsProperties : new OghamSmsProperties();</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">		this.smppProperties = smppProperties != null ? smppProperties : new OghamSmppProperties();</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">		this.cloudhopperProperties = cloudhopperProperties != null ? cloudhopperProperties : new OghamCloudhopperProperties();</span>
+<span class="fc" id="L38">	}</span>
+
+	@Override
+	public void configure(MessagingBuilder builder) {
+<span class="fc" id="L42">		LOG.debug(&quot;[{}] apply Cloudhopper configuration properties to {}&quot;, this, builder);</span>
+		// @formatter:off
+<span class="fc" id="L44">		builder.sms()</span>
+<span class="fc" id="L45">			.sender(CloudhopperBuilder.class)</span>
+<span class="fc" id="L46">				.systemId().value(ofNullable(firstValue(cloudhopperProperties.getSystemId(), smppProperties.getSystemId()))).and()</span>
+<span class="fc" id="L47">				.password().value(ofNullable(firstValue(cloudhopperProperties.getPassword(), smppProperties.getPassword()))).and()</span>
+<span class="fc" id="L48">				.host().value(ofNullable(firstValue(cloudhopperProperties.getHost(), smppProperties.getHost()))).and()</span>
+<span class="fc" id="L49">				.port().value(ofNullable(firstValue(cloudhopperProperties.getPort(), smppProperties.getPort()))).and()</span>
+<span class="fc" id="L50">				.bindType().value(ofNullable(firstValue(cloudhopperProperties.getBindType(), smppProperties.getBindType()))).and()</span>
+<span class="fc" id="L51">				.systemType().value(ofNullable(firstValue(cloudhopperProperties.getSystemType(), smppProperties.getSystemType()))).and()</span>
+<span class="fc" id="L52">				.interfaceVersion().value(ofNullable(InterfaceVersion.of(cloudhopperProperties.getInterfaceVersion()))).and()</span>
+<span class="fc" id="L53">				.userData()</span>
+<span class="fc" id="L54">					.useShortMessage().value(ofNullable(firstValue(cloudhopperProperties.getUserData().getUseShortMessage(), smppProperties.getUserData().getUseShortMessage()))).and()</span>
+<span class="fc" id="L55">					.useTlvMessagePayload().value(ofNullable(firstValue(cloudhopperProperties.getUserData().getUseTlvMessagePayload(), smppProperties.getUserData().getUseTlvMessagePayload()))).and()</span>
+<span class="fc" id="L56">					.and()</span>
+<span class="fc" id="L57">				.encoder()</span>
+<span class="fc" id="L58">					.gsm7bitPacked().value(ofNullable(firstValue(cloudhopperProperties.getEncoder().getGsm7bitPacked().getPriority(), smppProperties.getEncoder().getGsm7bitPacked().getPriority()))).and()</span>
+<span class="fc" id="L59">					.gsm8bit().value(ofNullable(firstValue(cloudhopperProperties.getEncoder().getGsm8bit().getPriority(), smppProperties.getEncoder().getGsm8bit().getPriority()))).and()</span>
+<span class="fc" id="L60">					.latin1().value(ofNullable(firstValue(cloudhopperProperties.getEncoder().getLatin1().getPriority(), smppProperties.getEncoder().getLatin1().getPriority()))).and()</span>
+<span class="fc" id="L61">					.ucs2().value(ofNullable(firstValue(cloudhopperProperties.getEncoder().getUcs2().getPriority(), smppProperties.getEncoder().getUcs2().getPriority()))).and()</span>
+<span class="fc" id="L62">					.autoGuess().value(ofNullable(firstValue(cloudhopperProperties.getEncoder().getAutoGuess().getEnable(), smppProperties.getEncoder().getAutoGuess().getEnable()))).and()</span>
+<span class="fc" id="L63">					.fallback().value(ofNullable(firstValue(cloudhopperProperties.getEncoder().getDefaultCharset(), smppProperties.getEncoder().getDefaultCharset()))).and()</span>
+<span class="fc" id="L64">					.and()</span>
+<span class="fc" id="L65">				.splitter()</span>
+<span class="fc" id="L66">					.enable().value(ofNullable(firstValue(cloudhopperProperties.getSplit().getEnable(), smppProperties.getSplit().getEnable(), smsProperties.getSplit().getEnable()))).and()</span>
+<span class="fc" id="L67">					.and()</span>
+<span class="fc" id="L68">				.dataCodingScheme()</span>
+<span class="fc" id="L69">					.auto().value(ofNullable(firstValue(cloudhopperProperties.getDataCodingScheme().getAuto().getEnable(), smppProperties.getDataCodingScheme().getAuto().getEnable()))).and()</span>
+<span class="fc" id="L70">					.value().value(ofNullable(firstValue(cloudhopperProperties.getDataCodingScheme().getValue(), smppProperties.getDataCodingScheme().getValue()))).and()</span>
+<span class="fc" id="L71">					.and()</span>
+<span class="fc" id="L72">				.session()</span>
+<span class="fc" id="L73">					.sessionName().value(ofNullable(cloudhopperProperties.getSession().getName())).and()</span>
+<span class="fc" id="L74">					.bindTimeout().value(ofNullable(cloudhopperProperties.getSession().getBindTimeout())).and()</span>
+<span class="fc" id="L75">					.connectTimeout().value(ofNullable(cloudhopperProperties.getSession().getConnectTimeout())).and()</span>
+<span class="fc" id="L76">					.requestExpiryTimeout().value(ofNullable(cloudhopperProperties.getSession().getRequestExpiryTimeout())).and()</span>
+<span class="fc" id="L77">					.windowMonitorInterval().value(ofNullable(cloudhopperProperties.getSession().getWindowMonitorInterval())).and()</span>
+<span class="fc" id="L78">					.windowSize().value(ofNullable(cloudhopperProperties.getSession().getWindowSize())).and()</span>
+<span class="fc" id="L79">					.windowWait().value(ofNullable(cloudhopperProperties.getSession().getWindowWaitTimeout())).and()</span>
+<span class="fc" id="L80">					.writeTimeout().value(ofNullable(cloudhopperProperties.getSession().getWriteTimeout())).and()</span>
+<span class="fc" id="L81">					.responseTimeout().value(ofNullable(cloudhopperProperties.getSession().getResponseTimeout())).and()</span>
+<span class="fc" id="L82">					.unbindTimeout().value(ofNullable(cloudhopperProperties.getSession().getUnbindTimeout())).and()</span>
+<span class="fc" id="L83">					.reuseSession()</span>
+<span class="fc" id="L84">						.enable().value(ofNullable(cloudhopperProperties.getSession().getReuseSession().getEnable())).and()</span>
+<span class="fc" id="L85">						.lastInteractionExpiration().value(ofNullable(cloudhopperProperties.getSession().getReuseSession().getLastInteractionExpirationDelay())).and()</span>
+<span class="fc" id="L86">						.responseTimeout().value(ofNullable(cloudhopperProperties.getSession().getReuseSession().getResponseTimeout())).and()</span>
+<span class="fc" id="L87">						.and()</span>
+<span class="fc" id="L88">					.keepAlive()</span>
+<span class="fc" id="L89">						.enable().value(ofNullable(cloudhopperProperties.getSession().getKeepAlive().getEnable())).and()</span>
+<span class="fc" id="L90">						.interval().value(ofNullable(cloudhopperProperties.getSession().getKeepAlive().getRequestInterval())).and()</span>
+<span class="fc" id="L91">						.responseTimeout().value(ofNullable(cloudhopperProperties.getSession().getKeepAlive().getResponseTimeout())).and()</span>
+<span class="fc" id="L92">						.connectAtStartup().value(ofNullable(cloudhopperProperties.getSession().getKeepAlive().getConnectAtStartup())).and()</span>
+<span class="fc" id="L93">						.maxConsecutiveTimeouts().value(ofNullable(cloudhopperProperties.getSession().getKeepAlive().getMaxConsecutiveTimeouts())).and()</span>
+<span class="fc" id="L94">						.and()</span>
+<span class="fc" id="L95">					.connectRetry()</span>
+<span class="fc" id="L96">						.fixedDelay()</span>
+<span class="fc" id="L97">							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L98">							.delay().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getDelayBetweenAttempts())).and()</span>
+<span class="fc" id="L99">							.and()</span>
+<span class="fc" id="L100">						.exponentialDelay()</span>
+<span class="fc" id="L101">							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L102">							.initialDelay().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getExponentialInitialDelay())).and()</span>
+<span class="fc" id="L103">							.and()</span>
+<span class="fc" id="L104">						.perExecutionDelay()</span>
+<span class="fc" id="L105">							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L106">							.delays().value(ofNullable(asArray(cloudhopperProperties.getSession().getConnectRetry().getPerExecutionDelays(), Long.class))).and()</span>
+<span class="fc" id="L107">							.and()</span>
+<span class="fc" id="L108">						.fixedInterval()</span>
+<span class="fc" id="L109">							.maxRetries().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getMaxAttempts())).and()</span>
+<span class="fc" id="L110">							.interval().value(ofNullable(cloudhopperProperties.getSession().getConnectRetry().getExecutionInterval()));</span>
+		// @formatter:on
+<span class="fc" id="L112">	}</span>
+
+	@Override
+	public int getOrder() {
+<span class="fc" id="L116">		return CloudhopperConstants.DEFAULT_CLOUDHOPPER_CONFIGURER_PRIORITY + 1000;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

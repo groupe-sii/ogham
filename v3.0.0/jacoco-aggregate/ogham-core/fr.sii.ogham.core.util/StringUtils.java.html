@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StringUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">StringUtils.java</span></div><h1>StringUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+/**
+ * Helper class for string manipulation:
+ * &lt;ul&gt;
+ * &lt;li&gt;Join an array or list into a string with a delimiter&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;p&gt;
+ * This work can be done by several libraries. The aim of this class is to be
+ * able to change the implementation easily to use another library for example.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * For example, we could read which library is available in the classpath and
+ * use this library instead of forcing users to include Apache Commons Lang
+ * library.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class StringUtils {
+
+	/**
+	 * &lt;p&gt;
+	 * Joins the elements of the provided array into a single String containing
+	 * the provided list of elements.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * No delimiter is added before or after the list. A null separator is the
+	 * same as an empty String (&quot;&quot;). Null objects or empty strings within the
+	 * array are represented by empty strings.
+	 * &lt;/p&gt;
+	 * 
+	 * &lt;pre&gt;
+	 *  StringUtils.join(null, *)                = null
+	 *  StringUtils.join([], *)                  = &quot;&quot;
+	 *  StringUtils.join([null], *)              = &quot;&quot;
+	 *  StringUtils.join([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;], &quot;--&quot;)  = &quot;a--b--c&quot;
+	 *  StringUtils.join([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;], null)  = &quot;abc&quot;
+	 *  StringUtils.join([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;], &quot;&quot;)    = &quot;abc&quot;
+	 *  StringUtils.join([null, &quot;&quot;, &quot;a&quot;], ',')   = &quot;,,a&quot;
+	 * &lt;/pre&gt;
+	 * 
+	 * 
+	 * @param array
+	 *            the array of values to join together, may be null
+	 * @param separator
+	 *            the separator character to use, null treated as &quot;&quot;
+	 * @return the joined String, null if null array input
+	 */
+	public static String join(Object[] array, String separator) {
+<span class="nc" id="L52">		return org.apache.commons.lang3.StringUtils.join(array, separator);</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Joins the elements of the provided Iterable into a single String
+	 * containing the provided elements.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * No delimiter is added before or after the list. A null separator is the
+	 * same as an empty String (&quot;&quot;).
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * See the examples here: {@link #join(Object[], String)}.
+	 * &lt;/p&gt;
+	 * 
+	 * @param iterable
+	 *            the Iterable providing the values to join together, may be
+	 *            null
+	 * @param separator
+	 *            the separator character to use, null treated as &quot;&quot;
+	 * @return the joined String, null if null iterator input
+	 */
+	public static String join(Iterable&lt;?&gt; iterable, String separator) {
+<span class="fc" id="L76">		return org.apache.commons.lang3.StringUtils.join(iterable, separator);</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Left pad a String with a specified character.
+	 * &lt;/p&gt;
+	 *
+	 * &lt;p&gt;
+	 * Pad to a size of {@code size}.
+	 * &lt;/p&gt;
+	 *
+	 * &lt;pre&gt;
+	 * StringUtils.leftPad(null, *, *)     = null
+	 * StringUtils.leftPad(&quot;&quot;, 3, 'z')     = &quot;zzz&quot;
+	 * StringUtils.leftPad(&quot;bat&quot;, 3, 'z')  = &quot;bat&quot;
+	 * StringUtils.leftPad(&quot;bat&quot;, 5, 'z')  = &quot;zzbat&quot;
+	 * StringUtils.leftPad(&quot;bat&quot;, 1, 'z')  = &quot;bat&quot;
+	 * StringUtils.leftPad(&quot;bat&quot;, -1, 'z') = &quot;bat&quot;
+	 * &lt;/pre&gt;
+	 *
+	 * @param str
+	 *            the String to pad out, may be null
+	 * @param size
+	 *            the size to pad to
+	 * @param padChar
+	 *            the character to pad with
+	 * @return left padded String or original String if no padding is necessary,
+	 *         {@code null} if null String input
+	 */
+	public static String leftPad(String str, int size, char padChar) {
+<span class="fc" id="L107">		return org.apache.commons.lang3.StringUtils.leftPad(str, size, padChar);</span>
+	}
+
+	/**
+	 * &lt;p&gt;
+	 * Capitalizes a String changing the first character to title case. No other
+	 * characters are changed.
+	 * &lt;/p&gt;
+	 *
+	 * &lt;p&gt;
+	 * A {@code null} input String returns {@code null}.
+	 * &lt;/p&gt;
+	 *
+	 * &lt;pre&gt;
+	 * StringUtils.capitalize(null)  = null
+	 * StringUtils.capitalize(&quot;&quot;)    = &quot;&quot;
+	 * StringUtils.capitalize(&quot;cat&quot;) = &quot;Cat&quot;
+	 * StringUtils.capitalize(&quot;cAt&quot;) = &quot;CAt&quot;
+	 * StringUtils.capitalize(&quot;'cat'&quot;) = &quot;'cat'&quot;
+	 * &lt;/pre&gt;
+	 *
+	 * @param str
+	 *            the String to capitalize, may be null
+	 * @return the capitalized String, {@code null} if null String input
+	 */
+	public static String capitalize(String str) {
+<span class="fc" id="L133">		return org.apache.commons.lang3.StringUtils.capitalize(str);</span>
+	}
+
+	private StringUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeleafV2EmailBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v2</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v2.buider</a> &gt; <span class="el_source">ThymeleafV2EmailBuilder.java</span></div><h1>ThymeleafV2EmailBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v2.buider;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
+import fr.sii.ogham.email.builder.EmailBuilder;
+import fr.sii.ogham.template.thymeleaf.common.adapter.FileResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafMultiContentBuilder;
+import fr.sii.ogham.template.thymeleaf.v2.ThymeLeafV2FirstSupportingTemplateResolver;
+import fr.sii.ogham.template.thymeleaf.v2.ThymeleafV2TemplateDetector;
+import fr.sii.ogham.template.thymeleaf.v2.adapter.FixClassPathResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.v2.adapter.StringResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.v2.adapter.ThymeleafV2TemplateOptionsApplier;
+
+/**
+ * Configures parsing of templates using Thymeleaf.
+ * 
+ * Specific resource resolution can be configured to use template prefix/suffix
+ * paths:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .classpath()
+ *   .pathPrefix(&quot;email/&quot;)
+ *   .pathSuffix(&quot;.html&quot;)
+ *   .and()
+ * .file()
+ *   .pathPrefix(&quot;/data/myapplication/templates/email&quot;)
+ *   .pathSuffix(&quot;.html&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * You can customize default Thymeleaf {@link TemplateEngine}:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .engine()
+ *   .addDialect(&quot;foo&quot;, myDialect)
+ *   .addMessageResolver(myMessageResolver)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or you can use a particular Thymeleaf {@link TemplateEngine}:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .engine(new MyTemplateEngine())
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * 
+ * Email protocol supports several contents (main and alternative). The main
+ * content is often an HTML email to display a beautiful email to users. The
+ * alternative content is often a textual fallback (when email client can't
+ * display HTML version like mobile phones that tries to display a summary of
+ * the email). You can configure which file extensions are supported by
+ * Thymeleaf to automatically load variants (HTML: main, TEXT: alternative):
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .variant(EmailVariant.HTML, &quot;html&quot;)
+ * .variant(EmailVariant.TEXT, &quot;txt&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Thanks to that configuration, you can send an email without specifying the
+ * extension:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * service.send(new Email()
+ *   .content(new MultiTemplateContent(&quot;email/sample&quot;, new SampleBean(&quot;foo&quot;, 42)))
+ *   .to(&quot;foo.bar@sii.fr&quot;))
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Ogham will then be able to detect which files exist and choose the right
+ * behavior:
+ * &lt;ul&gt;
+ * &lt;li&gt;If you provide an &quot;.html&quot; file (either in classpath or on filesytem), the
+ * HTML template is used as main content&lt;/li&gt;
+ * &lt;li&gt;If you provide an &quot;.txt&quot; file (either in classpath or on filesytem), the
+ * text template is used as main content&lt;/li&gt;
+ * &lt;li&gt;If you provide both files, the HTML template is used as main content and
+ * text template as alternative&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ThymeleafV2EmailBuilder extends AbstractThymeleafMultiContentBuilder&lt;ThymeleafV2EmailBuilder, EmailBuilder, ThymeleafV2EngineConfigBuilder&lt;ThymeleafV2EmailBuilder&gt;&gt; {
+	/**
+	 * Default constructor when using Thymeleaf without all Ogham work.
+	 * 
+	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
+	 */
+	public ThymeleafV2EmailBuilder() {
+<span class="fc" id="L105">		super(ThymeleafV2EmailBuilder.class, null, new DefaultBuildContext());</span>
+<span class="fc" id="L106">	}</span>
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public ThymeleafV2EmailBuilder(EmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L119">		super(ThymeleafV2EmailBuilder.class, parent, buildContext);</span>
+<span class="fc" id="L120">	}</span>
+
+	@Override
+	protected ITemplateResolver buildTemplateResolver(TemplateEngine builtEngine) {
+<span class="fc" id="L124">		return buildContext.register(new ThymeLeafV2FirstSupportingTemplateResolver(buildResolver(), buildAdapters()));</span>
+	}
+
+	@Override
+	protected TemplateEngineDetector createTemplateDetector() {
+<span class="fc" id="L129">		return buildContext.register(new ThymeleafV2TemplateDetector(buildResolver()));</span>
+	}
+
+	@Override
+	protected ThymeleafV2EngineConfigBuilder&lt;ThymeleafV2EmailBuilder&gt; getThymeleafEngineConfigBuilder() {
+<span class="nc" id="L134">		return buildContext.register(new ThymeleafV2EngineConfigBuilder&lt;&gt;(myself, buildContext));</span>
+	}
+
+	@Override
+	protected FirstSupportingResolverAdapter buildAdapters() {
+<span class="fc" id="L139">		FirstSupportingResolverAdapter adapter = buildContext.register(new FirstSupportingResolverAdapter());</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">		for (TemplateResolverAdapter custom : customAdapters) {</span>
+<span class="nc" id="L141">			adapter.addAdapter(custom);</span>
+<span class="nc" id="L142">		}</span>
+<span class="fc" id="L143">		ThymeleafV2TemplateOptionsApplier applier = buildContext.register(new ThymeleafV2TemplateOptionsApplier());</span>
+<span class="fc" id="L144">		adapter.addAdapter(buildContext.register(new FixClassPathResolverAdapter(applier)));</span>
+<span class="fc" id="L145">		adapter.addAdapter(buildContext.register(new FileResolverAdapter(applier)));</span>
+<span class="fc" id="L146">		adapter.addAdapter(buildContext.register(new StringResolverAdapter(applier)));</span>
+<span class="fc" id="L147">		adapter.setOptions(buildTemplateResolverOptions());</span>
+<span class="fc" id="L148">		return adapter;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

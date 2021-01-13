@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ImplementationFinder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.internal.helper</a> &gt; <span class="el_source">ImplementationFinder.java</span></div><h1>ImplementationFinder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.internal.helper;
+
+import static org.apache.commons.lang3.reflect.FieldUtils.readField;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.sender.ConditionalSender;
+import fr.sii.ogham.core.sender.ContentTranslatorSender;
+import fr.sii.ogham.core.sender.MessageSender;
+import fr.sii.ogham.core.sender.MultiImplementationSender;
+import fr.sii.ogham.core.sender.MultiImplementationSender.Implementation;
+import fr.sii.ogham.core.service.CleanableMessagingService;
+import fr.sii.ogham.core.service.EverySupportingMessagingService;
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.core.service.WrapExceptionMessagingService;
+import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.core.template.parser.AutoDetectTemplateParser.TemplateImplementation;
+import fr.sii.ogham.core.translator.content.ContentTranslator;
+import fr.sii.ogham.core.translator.content.EveryContentTranslator;
+import fr.sii.ogham.core.translator.content.MultiContentTranslator;
+import fr.sii.ogham.core.translator.content.TemplateContentTranslator;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.email.sender.EmailSender;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.sms.sender.SmsSender;
+
+/**
+ * Utility class to find implementations used by Ogham service.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class ImplementationFinder {
+	private static final String DELEGATE_FIELD = &quot;delegate&quot;;
+
+	/**
+	 * Find recursively a finder of the provided class
+	 * 
+	 * @param &lt;T&gt;
+	 *            the type of the found sender
+	 * @param service
+	 *            the messaging service
+	 * @param clazz
+	 *            the class of the sender to find
+	 * @return the found sender
+	 */
+	public static &lt;T extends MessageSender&gt; T findSender(MessagingService service, Class&lt;T&gt; clazz) {
+<span class="fc" id="L52">		Set&lt;T&gt; found = findSenders(service, clazz);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">		if (found.isEmpty()) {</span>
+<span class="fc" id="L54">			throw new IllegalStateException(&quot;Failed to find MessageSender of &quot; + clazz.getTypeName());</span>
+		}
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">		if (found.size() == 1) {</span>
+<span class="fc" id="L57">			return found.iterator().next();</span>
+		}
+<span class="nc" id="L59">		throw new IllegalStateException(&quot;Several matching MessageSender for &quot; + clazz.getTypeName() + &quot; found&quot;);</span>
+	}
+
+	/**
+	 * Find all senders for the given type
+	 * 
+	 * @param &lt;T&gt;
+	 *            the type of the senders to find
+	 * @param service
+	 *            the messaging service
+	 * @param clazz
+	 *            the class of the senders to find
+	 * @return the found senders
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public static &lt;T extends MessageSender&gt; Set&lt;T&gt; findSenders(MessagingService service, Class&lt;T&gt; clazz) {
+		try {
+<span class="fc" id="L76">			Set&lt;T&gt; found = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L77">			List&lt;ConditionalSender&gt; senders = (List&lt;ConditionalSender&gt;) readField(getRealService(service), &quot;senders&quot;, true);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">			for (ConditionalSender sender : senders) {</span>
+<span class="fc" id="L79">				found.addAll(findSenders(sender, clazz));</span>
+<span class="fc" id="L80">			}</span>
+<span class="fc" id="L81">			return found;</span>
+<span class="nc" id="L82">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L83">			throw new IllegalStateException(&quot;Failed to find senders of type &quot; + clazz.getTypeName(), e);</span>
+		}
+	}
+
+	/**
+	 * Find template parsers of the given type.
+	 * 
+	 * @param &lt;T&gt;
+	 *            the type of the template parsers to find
+	 * @param service
+	 *            the messaging service
+	 * @param clazz
+	 *            the class of the template parsers to find
+	 * @return the found parsers
+	 */
+	public static &lt;T extends TemplateParser&gt; Set&lt;FoundParser&lt;T&gt;&gt; findParsers(MessagingService service, Class&lt;T&gt; clazz) {
+		try {
+<span class="fc" id="L100">			Set&lt;FoundParser&lt;T&gt;&gt; found = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L101">			Set&lt;ContentTranslatorSender&gt; translatorSenders = findSenders(service, ContentTranslatorSender.class);</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">			for (ContentTranslatorSender sender : translatorSenders) {</span>
+<span class="fc" id="L103">				Set&lt;TemplateContentTranslator&gt; translators = findTranslators(sender, TemplateContentTranslator.class);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">				for (TemplateContentTranslator translator : translators) {</span>
+<span class="fc" id="L105">					found.addAll(findParsers(clazz, translator, (MessageSender) readField(sender, DELEGATE_FIELD, true)));</span>
+<span class="fc" id="L106">				}</span>
+<span class="fc" id="L107">			}</span>
+<span class="fc" id="L108">			return found;</span>
+<span class="nc" id="L109">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L110">			throw new IllegalStateException(&quot;Failed to find parser of type &quot; + clazz.getTypeName(), e);</span>
+		}
+	}
+
+	private static MessagingService getRealService(MessagingService service) {
+		try {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">			if (service instanceof WrapExceptionMessagingService) {</span>
+<span class="fc" id="L117">				return getRealService((MessagingService) readField(service, DELEGATE_FIELD, true));</span>
+			}
+<span class="fc bfc" id="L119" title="All 2 branches covered.">			if (service instanceof CleanableMessagingService) {</span>
+<span class="fc" id="L120">				return getRealService((MessagingService) readField(service, DELEGATE_FIELD, true));</span>
+			}
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">			if (service instanceof EverySupportingMessagingService) {</span>
+<span class="fc" id="L123">				return service;</span>
+			}
+<span class="nc" id="L125">			throw new IllegalStateException(&quot;Unknown MessagingService implementation, please add it here&quot;);</span>
+<span class="nc" id="L126">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L127">			throw new IllegalStateException(&quot;Failed to find real MessagingService&quot;, e);</span>
+		}
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T extends MessageSender&gt; Set&lt;T&gt; findSenders(MessageSender sender, Class&lt;T&gt; clazz) {
+		try {
+<span class="fc" id="L134">			Set&lt;T&gt; found = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">			if (clazz.isAssignableFrom(sender.getClass())) {</span>
+<span class="fc" id="L136">				found.add((T) sender);</span>
+			}
+			// Any sender that delegates in the chain (FillerSender,
+			// AttachmentResourceTranslatorSender, ContentTranslatorSender,
+			// PhoneNumberTranslatorSender)
+			// TODO: FallbackSender
+<span class="fc bfc" id="L142" title="All 2 branches covered.">			if (delegates(sender)) {</span>
+<span class="fc" id="L143">				MessageSender delegate = (MessageSender) readField(sender, DELEGATE_FIELD, true);</span>
+<span class="fc" id="L144">				found.addAll(findSenders(delegate, clazz));</span>
+			}
+<span class="fc bfc" id="L146" title="All 2 branches covered.">			if (sender instanceof MultiImplementationSender&lt;?&gt;) {</span>
+<span class="fc" id="L147">				found.addAll(findSenders((MultiImplementationSender&lt;?&gt;) sender, clazz));</span>
+			}
+<span class="fc" id="L149">			return found;</span>
+<span class="nc" id="L150">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L151">			throw new IllegalStateException(&quot;Failed to find senders of type &quot; + clazz.getTypeName(), e);</span>
+		}
+	}
+
+	private static boolean delegates(MessageSender sender) {
+		try {
+<span class="fc" id="L157">			Object value = readField(sender, DELEGATE_FIELD, true);</span>
+<span class="fc" id="L158">			return value instanceof MessageSender;</span>
+<span class="fc" id="L159">		} catch (IllegalAccessException | IllegalArgumentException e) { // NOSONAR</span>
+<span class="fc" id="L160">			return false;</span>
+		}
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T extends MessageSender&gt; Set&lt;T&gt; findSenders(MultiImplementationSender&lt;?&gt; sender, Class&lt;T&gt; clazz) {
+<span class="fc" id="L166">		Set&lt;T&gt; found = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L167">		List&lt;Implementation&gt; implementations = sender.getImplementations();</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">		for (Implementation impl : implementations) {</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">			if (clazz.isAssignableFrom(impl.getSender().getClass())) {</span>
+<span class="fc" id="L170">				found.add((T) impl.getSender());</span>
+			}
+<span class="fc" id="L172">		}</span>
+<span class="fc" id="L173">		return found;</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T extends TemplateParser&gt; Set&lt;FoundParser&lt;T&gt;&gt; findParsers(Class&lt;T&gt; clazz, TemplateContentTranslator translator, MessageSender sender) throws IllegalAccessException {
+<span class="fc" id="L178">		Set&lt;FoundParser&lt;T&gt;&gt; found = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L179">		TemplateParser parser = (TemplateParser) readField(translator, &quot;parser&quot;, true);</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">		if (clazz.isAssignableFrom(parser.getClass())) {</span>
+<span class="nc" id="L181">			found.add(new FoundParser&lt;&gt;((T) parser, getMessageType(sender)));</span>
+		}
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">		if (parser instanceof AutoDetectTemplateParser) {</span>
+<span class="fc" id="L184">			found.addAll(findParsers(clazz, (AutoDetectTemplateParser) parser, sender));</span>
+		}
+<span class="fc" id="L186">		return found;</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T extends TemplateParser&gt; Set&lt;FoundParser&lt;T&gt;&gt; findParsers(Class&lt;T&gt; clazz, AutoDetectTemplateParser parser, MessageSender sender) throws IllegalAccessException {
+<span class="fc" id="L191">		Set&lt;FoundParser&lt;T&gt;&gt; found = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L192">		List&lt;TemplateImplementation&gt; implementations = (List&lt;TemplateImplementation&gt;) readField(parser, &quot;implementations&quot;, true);</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">		for (TemplateImplementation impl : implementations) {</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">			if (clazz.isAssignableFrom(impl.getParser().getClass())) {</span>
+<span class="fc" id="L195">				found.add(new FoundParser&lt;&gt;((T) impl.getParser(), getMessageType(sender)));</span>
+			}
+<span class="fc" id="L197">		}</span>
+<span class="fc" id="L198">		return found;</span>
+	}
+
+	private static Class&lt;? extends Message&gt; getMessageType(MessageSender sender) {
+<span class="fc" id="L202">		Set&lt;EmailSender&gt; emailSenders = findSenders(sender, EmailSender.class);</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">		if (!emailSenders.isEmpty()) {</span>
+<span class="fc" id="L204">			return Email.class;</span>
+		}
+<span class="fc" id="L206">		Set&lt;SmsSender&gt; smsSenders = findSenders(sender, SmsSender.class);</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">		if (!smsSenders.isEmpty()) {</span>
+<span class="fc" id="L208">			return Sms.class;</span>
+		}
+<span class="nc" id="L210">		throw new IllegalStateException(&quot;Failed to find message type&quot;);</span>
+	}
+
+	private static &lt;T extends ContentTranslator&gt; Set&lt;T&gt; findTranslators(ContentTranslatorSender translatorSender, Class&lt;T&gt; clazz) {
+		try {
+<span class="fc" id="L215">			ContentTranslator translator = (ContentTranslator) readField(translatorSender, &quot;translator&quot;, true);</span>
+<span class="fc" id="L216">			return findTranslators(translator, clazz);</span>
+<span class="nc" id="L217">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L218">			throw new IllegalStateException(&quot;Failed to find translator of type &quot; + clazz.getTypeName(), e);</span>
+		}
+	}
+
+	private static &lt;T extends ContentTranslator&gt; Set&lt;T&gt; findTranslators(ContentTranslator translator, Class&lt;T&gt; clazz) {
+		try {
+<span class="fc" id="L224">			Set&lt;T&gt; found = new HashSet&lt;&gt;();</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">			if (translator instanceof EveryContentTranslator) {</span>
+<span class="fc" id="L226">				found.addAll(findTranslators((EveryContentTranslator) translator, clazz));</span>
+			}
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">			if (translator instanceof MultiContentTranslator) {</span>
+<span class="nc" id="L229">				found.addAll(findTranslators((ContentTranslator) readField(translator, DELEGATE_FIELD, true), clazz));</span>
+			}
+<span class="fc" id="L231">			return found;</span>
+<span class="nc" id="L232">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L233">			throw new IllegalStateException(&quot;Failed to read 'delegate' of MultiContentTranslator&quot;, e);</span>
+		}
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static &lt;T extends ContentTranslator&gt; Set&lt;T&gt; findTranslators(EveryContentTranslator translator, Class&lt;T&gt; clazz) {
+<span class="fc" id="L239">		Set&lt;T&gt; found = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">		for (ContentTranslator t : translator.getTranslators()) {</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">			if (clazz.isAssignableFrom(t.getClass())) {</span>
+<span class="fc" id="L242">				found.add((T) t);</span>
+			}
+<span class="fc" id="L244">		}</span>
+<span class="fc" id="L245">		return found;</span>
+	}
+
+	private ImplementationFinder() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

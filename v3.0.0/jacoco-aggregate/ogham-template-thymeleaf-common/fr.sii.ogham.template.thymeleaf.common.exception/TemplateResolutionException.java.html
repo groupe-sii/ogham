@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TemplateResolutionException.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common.exception</a> &gt; <span class="el_source">TemplateResolutionException.java</span></div><h1>TemplateResolutionException.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common.exception;
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.template.exception.TemplateRuntimeException;
+
+/**
+ * Specialized exception that is thrown by template engine integrations to
+ * indicate that a template couldn't be resolved.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+@SuppressWarnings({ &quot;squid:MaximumInheritanceDepth&quot; }) // Object, Throwable,
+														// Exception and
+														// RuntimeException are
+														// counted but this is
+														// stupid
+public class TemplateResolutionException extends TemplateRuntimeException {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+
+	private final String templateName;
+	private final transient ResourcePath templatePath;
+
+	public TemplateResolutionException(String message, String templateName, ResourcePath templatePath, Throwable cause) {
+<span class="nc" id="L27">		super(message, cause);</span>
+<span class="nc" id="L28">		this.templateName = templateName;</span>
+<span class="nc" id="L29">		this.templatePath = templatePath;</span>
+<span class="nc" id="L30">	}</span>
+
+	public TemplateResolutionException(String message, String templateName, ResourcePath templatePath) {
+<span class="fc" id="L33">		super(message);</span>
+<span class="fc" id="L34">		this.templateName = templateName;</span>
+<span class="fc" id="L35">		this.templatePath = templatePath;</span>
+<span class="fc" id="L36">	}</span>
+
+	public ResourcePath getTemplatePath() {
+<span class="nc" id="L39">		return templatePath;</span>
+	}
+
+	public String getTemplateName() {
+<span class="nc" id="L43">		return templateName;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

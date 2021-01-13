@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CloudhopperAssertions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.internal</a> &gt; <span class="el_source">CloudhopperAssertions.java</span></div><h1>CloudhopperAssertions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.internal;
+
+import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinder.findSender;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static org.apache.commons.lang3.reflect.FieldUtils.readField;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.sms.sender.impl.CloudhopperSMPPSender;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ExtendedSmppSessionConfiguration;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Helper class to make assertions on Cloudhopper instance created by Ogham.
+ * 
+ * For example, to ensure that particular configuration is used for emails:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ * cloudhopper()
+ *   .host(is(&quot;localhost&quot;)
+ *   .splitter()
+ *      .enabled(is(true))
+ * }
+ * &lt;/pre&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class CloudhopperAssertions extends HasParent&lt;MessagingServiceAssertions&gt; {
+	private final CloudhopperSMPPSender cloudhopperSender;
+
+	public CloudhopperAssertions(MessagingServiceAssertions parent, CloudhopperSMPPSender cloudhopperSender) {
+<span class="fc" id="L35">		super(parent);</span>
+<span class="fc" id="L36">		this.cloudhopperSender = cloudhopperSender;</span>
+<span class="fc" id="L37">	}</span>
+
+	/**
+	 * Ensures that configured host is correct.
+	 * 
+	 * @param matcher
+	 *            the matcher to ensure that host is correct.
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperAssertions host(Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L47">		assertThat(getHost(cloudhopperSender), matcher);</span>
+<span class="fc" id="L48">		return this;</span>
+	}
+
+	/**
+	 * Ensures that configured port is correct.
+	 * 
+	 * @param matcher
+	 *            the matcher to ensure that port is correct.
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperAssertions port(Matcher&lt;Integer&gt; matcher) {
+<span class="fc" id="L59">		assertThat(getPort(cloudhopperSender), matcher);</span>
+<span class="fc" id="L60">		return this;</span>
+	}
+
+	/**
+	 * Ensures that configured SMPP version is correct.
+	 * 
+	 * @param matcher
+	 *            the matcher to ensure that SMPP version in is correct.
+	 * @return this instance for fluent chaining
+	 */
+	public CloudhopperAssertions interfaceVersion(Matcher&lt;Byte&gt; matcher) {
+<span class="fc" id="L71">		assertThat(getConfiguration(cloudhopperSender).getInterfaceVersion(), matcher);</span>
+<span class="fc" id="L72">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on &quot;User Data&quot; to ensure that it is correctly configured.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * userData()
+	 *   .useShortMessage(is(true))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return builder for fluent chaining
+	 */
+	public CloudhopperUserDataAssertions userData() {
+<span class="fc" id="L90">		return new CloudhopperUserDataAssertions(this, cloudhopperSender);</span>
+	}
+
+	/**
+	 * Make assertions on splitter instance to ensure that it is correctly
+	 * configured.
+	 * 
+	 * For example:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * splitter()
+	 *   .enabled(is(true))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return builder for fluent chaining
+	 */
+	public CloudhopperSplitterAssertions splitter() {
+<span class="fc" id="L109">		return new CloudhopperSplitterAssertions(this, cloudhopperSender);</span>
+	}
+
+	/**
+	 * Find instance of {@link CloudhopperSMPPSender}.
+	 * 
+	 * @param messagingService
+	 *            the messaging service
+	 * @return the found instance
+	 */
+	public static CloudhopperSMPPSender getCloudhopperSender(MessagingService messagingService) {
+<span class="fc" id="L120">		return findSender(messagingService, CloudhopperSMPPSender.class);</span>
+	}
+
+	private static ExtendedSmppSessionConfiguration getConfiguration(CloudhopperSMPPSender cloudhopperSender) {
+		try {
+<span class="fc" id="L125">			return (ExtendedSmppSessionConfiguration) readField(cloudhopperSender, &quot;configuration&quot;, true);</span>
+<span class="nc" id="L126">		} catch (IllegalAccessException e) {</span>
+<span class="nc" id="L127">			throw new IllegalStateException(&quot;Failed to read 'configuration' of CloudhopperSMPPSender&quot;, e);</span>
+		}
+	}
+	
+	private static String getHost(CloudhopperSMPPSender cloudhopperSender) {
+<span class="fc" id="L132">		return getConfiguration(cloudhopperSender).getHost();</span>
+	}
+
+	private static int getPort(CloudhopperSMPPSender cloudhopperSender) {
+<span class="fc" id="L136">		return getConfiguration(cloudhopperSender).getPort();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

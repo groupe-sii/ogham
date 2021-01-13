@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SimpleReplaceMimetypeBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.mimetype</a> &gt; <span class="el_source">SimpleReplaceMimetypeBuilder.java</span></div><h1>SimpleReplaceMimetypeBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.mimetype;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.mimetype.replace.ContainsMimetypeReplacer;
+import fr.sii.ogham.core.mimetype.replace.FirstMatchingMimetypeReplacer;
+import fr.sii.ogham.core.mimetype.replace.MimetypeReplacer;
+import fr.sii.ogham.core.mimetype.replace.PatternMimetypeReplacer;
+
+/**
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class SimpleReplaceMimetypeBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements ReplaceMimetypeBuilder&lt;P&gt; {
+	private final List&lt;Builder&lt;MimetypeReplacer&gt;&gt; delegates;
+
+	/**
+	 * Initializes the builder with the parent instance (used by the
+	 * {@link #and()} method).
+	 * 
+	 * @param parent
+	 *            the parent instance
+	 */
+	public SimpleReplaceMimetypeBuilder(P parent) {
+<span class="fc" id="L33">		super(parent);</span>
+<span class="fc" id="L34">		delegates = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L35">	}</span>
+
+	@Override
+	public ReplaceMimetypeBuilder&lt;P&gt; contains(String contains, String replacement) {
+<span class="nc" id="L39">		delegates.add(new ContainsReplacement(contains, true, replacement));</span>
+<span class="nc" id="L40">		return this;</span>
+	}
+
+	@Override
+	public ReplaceMimetypeBuilder&lt;P&gt; contains(String contains, boolean ignoreCase, String replacement) {
+<span class="nc" id="L45">		delegates.add(new ContainsReplacement(contains, ignoreCase, replacement));</span>
+<span class="nc" id="L46">		return this;</span>
+	}
+
+	@Override
+	public ReplaceMimetypeBuilder&lt;P&gt; pattern(String matchingPattern, String replacement) {
+<span class="fc" id="L51">		delegates.add(new PatternReplacement(Pattern.compile(matchingPattern), replacement));</span>
+<span class="fc" id="L52">		return this;</span>
+	}
+
+	@Override
+	public ReplaceMimetypeBuilder&lt;P&gt; pattern(Pattern matchingPattern, String replacement) {
+<span class="nc" id="L57">		delegates.add(new PatternReplacement(matchingPattern, replacement));</span>
+<span class="nc" id="L58">		return this;</span>
+	}
+
+	@Override
+	public MimetypeReplacer build() {
+<span class="fc" id="L63">		List&lt;MimetypeReplacer&gt; replacers = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		for (Builder&lt;MimetypeReplacer&gt; builder : delegates) {</span>
+<span class="fc" id="L65">			replacers.add(builder.build());</span>
+<span class="fc" id="L66">		}</span>
+<span class="fc" id="L67">		return new FirstMatchingMimetypeReplacer(replacers);</span>
+	}
+
+	private static class PatternReplacement implements Builder&lt;MimetypeReplacer&gt; {
+		private final Pattern pattern;
+		private final String replacement;
+
+		public PatternReplacement(Pattern pattern, String replacement) {
+<span class="fc" id="L75">			super();</span>
+<span class="fc" id="L76">			this.pattern = pattern;</span>
+<span class="fc" id="L77">			this.replacement = replacement;</span>
+<span class="fc" id="L78">		}</span>
+
+		@Override
+		public MimetypeReplacer build() {
+<span class="fc" id="L82">			return new PatternMimetypeReplacer(pattern, replacement);</span>
+		}
+
+	}
+
+	private static class ContainsReplacement implements Builder&lt;MimetypeReplacer&gt; {
+		private final String contains;
+		private final boolean ignoreCase;
+		private final String replacement;
+
+		public ContainsReplacement(String contains, boolean ignoreCase, String replacement) {
+<span class="nc" id="L93">			super();</span>
+<span class="nc" id="L94">			this.contains = contains;</span>
+<span class="nc" id="L95">			this.ignoreCase = ignoreCase;</span>
+<span class="nc" id="L96">			this.replacement = replacement;</span>
+<span class="nc" id="L97">		}</span>
+
+		@Override
+		public MimetypeReplacer build() {
+<span class="nc" id="L101">			return new ContainsMimetypeReplacer(contains, ignoreCase, replacement);</span>
+		}
+
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

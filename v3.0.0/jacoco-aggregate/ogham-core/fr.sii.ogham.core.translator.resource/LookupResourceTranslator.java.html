@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LookupResourceTranslator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.translator.resource</a> &gt; <span class="el_source">LookupResourceTranslator.java</span></div><h1>LookupResourceTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.translator.resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.resource.ResourceResolutionException;
+import fr.sii.ogham.core.resource.LookupResource;
+import fr.sii.ogham.core.resource.Resource;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.email.exception.attachment.translator.ResourceTranslatorException;
+
+/**
+ * &lt;p&gt;
+ * Translator that handles {@link LookupResource}. It associates a lookup with a
+ * real resource implementation.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * This translator uses a {@link ResourceResolver} to get the real
+ * resource implementation.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class LookupResourceTranslator implements AttachmentResourceTranslator {
+<span class="fc" id="L26">	private static final Logger LOG = LoggerFactory.getLogger(LookupResourceTranslator.class);</span>
+
+	private final ResourceResolver resolver;
+
+	public LookupResourceTranslator(ResourceResolver resolver) {
+<span class="fc" id="L31">		super();</span>
+<span class="fc" id="L32">		this.resolver = resolver;</span>
+<span class="fc" id="L33">	}</span>
+
+	@Override
+	public Resource translate(Resource resource) throws ResourceTranslatorException {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		if (resource instanceof LookupResource) {</span>
+			try {
+<span class="fc" id="L39">				LookupResource lookupResource = (LookupResource) resource;</span>
+<span class="fc" id="L40">				LOG.debug(&quot;Resolving {} using {}&quot;, lookupResource.getPath(), resolver);</span>
+<span class="fc" id="L41">				return resolver.getResource(lookupResource.getPath());</span>
+<span class="nc" id="L42">			} catch (ResourceResolutionException e) {</span>
+<span class="nc" id="L43">				throw new ResourceTranslatorException(&quot;failed to translate lookup resource&quot;, e);</span>
+			}
+		} else {
+<span class="fc" id="L46">			LOG.trace(&quot;Not a LookupResource =&gt; skip it&quot;);</span>
+<span class="fc" id="L47">			return resource;</span>
+		}
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L53">		return &quot;LookupResourceTranslator&quot;;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

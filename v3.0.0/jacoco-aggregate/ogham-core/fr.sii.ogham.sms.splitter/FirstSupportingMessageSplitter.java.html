@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FirstSupportingMessageSplitter.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.splitter</a> &gt; <span class="el_source">FirstSupportingMessageSplitter.java</span></div><h1>FirstSupportingMessageSplitter.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.splitter;
+
+import java.util.List;
+
+import fr.sii.ogham.sms.exception.message.NoSplitterAbleToSplitMessageException;
+import fr.sii.ogham.sms.exception.message.SplitMessageException;
+
+/**
+ * Try to split using any registered {@link MessageSplitter}.
+ * 
+ * &lt;p&gt;
+ * For each registered splitter, it checks if the message can be split with it.
+ * If it can, then split using the splitter and return the result. If the
+ * splitter can't handle the message, try next one.
+ * 
+ * &lt;p&gt;
+ * The message can be handled by a registered splitter if it implements
+ * {@link SupportingSplitter} and {@link SupportingSplitter#canSplit(String)}
+ * returns true. If the registered splitter doesn't implement
+ * {@link SupportingSplitter}, the splitter is always considered as able to
+ * split the message.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FirstSupportingMessageSplitter implements MessageSplitter {
+	private final List&lt;MessageSplitter&gt; delegates;
+
+	/**
+	 * Registers the splitters
+	 * 
+	 * @param delegates
+	 *            the splitters to try in order
+	 */
+	public FirstSupportingMessageSplitter(List&lt;MessageSplitter&gt; delegates) {
+<span class="fc" id="L37">		super();</span>
+<span class="fc" id="L38">		this.delegates = delegates;</span>
+<span class="fc" id="L39">	}</span>
+
+	@Override
+	public List&lt;Segment&gt; split(String message) throws SplitMessageException {
+<span class="fc bfc" id="L43" title="All 2 branches covered.">		for (MessageSplitter splitter : delegates) {</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">			if (canSplit(splitter, message)) {</span>
+<span class="fc" id="L45">				return splitter.split(message);</span>
+			}
+<span class="fc" id="L47">		}</span>
+<span class="fc" id="L48">		throw new NoSplitterAbleToSplitMessageException(&quot;Failed to split message because no splitter is able to split the message&quot;, message);</span>
+	}
+
+	private static boolean canSplit(MessageSplitter splitter, String message) {
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">		if (splitter instanceof SupportingSplitter) {</span>
+<span class="fc" id="L53">			return ((SupportingSplitter) splitter).canSplit(message);</span>
+		}
+<span class="nc" id="L55">		return true;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

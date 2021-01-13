@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MultiImplementationSender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.sender</a> &gt; <span class="el_source">MultiImplementationSender.java</span></div><h1>MultiImplementationSender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.sender;
+
+import static fr.sii.ogham.core.util.LogUtils.logString;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.core.util.PriorizedList;
+
+/**
+ * Decorator sender that is able to handle a particular type of message. And for
+ * handling this message it can rely on several possible implementations. Each
+ * implementation is associated to a {@link Condition}. The condition indicates
+ * at runtime if the message can be handled by the possible implementation.
+ * There can be any kind of condition (for example, based on a required class in
+ * the classpath or a particular property value...).
+ * 
+ * The implementation selection is done in the {@link #supports(Message)}
+ * method.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;M&gt;
+ *            The type of message that the implementations can handle
+ * @see Condition
+ */
+public abstract class MultiImplementationSender&lt;M extends Message&gt; implements ConditionalSender {
+<span class="fc" id="L35">	private static final Logger LOG = LoggerFactory.getLogger(MultiImplementationSender.class);</span>
+
+	/**
+	 * The list of possible implementations indexed by the associated condition
+	 */
+	private final PriorizedList&lt;Implementation&gt; implementations;
+
+	/**
+	 * Initialize with no registered implementation.
+	 */
+	public MultiImplementationSender() {
+<span class="fc" id="L46">		this(new PriorizedList&lt;&gt;());</span>
+<span class="fc" id="L47">	}</span>
+
+	/**
+	 * Initialize with several implementations.
+	 * 
+	 * @param implementations
+	 *            the list of possible implementations indexed by the condition
+	 *            that indicates if the implementation is eligible at runtime
+	 */
+	public MultiImplementationSender(PriorizedList&lt;Implementation&gt; implementations) {
+<span class="fc" id="L57">		super();</span>
+<span class="fc" id="L58">		this.implementations = implementations;</span>
+<span class="fc" id="L59">	}</span>
+
+	/**
+	 * Register a new possible implementation with the associated condition. The
+	 * implementation is added at the end so any other possible implementation
+	 * will be used before this one if the associated condition allow it.
+	 * 
+	 * @param condition
+	 *            the condition that indicates if the implementation can be used
+	 *            at runtime
+	 * @param implementation
+	 *            the implementation to register
+	 * @param priority
+	 *            the registration priority
+	 * @return this instance for fluent chaining
+	 */
+	public final MultiImplementationSender&lt;M&gt; addImplementation(Condition&lt;Message&gt; condition, MessageSender implementation, int priority) {
+<span class="fc" id="L76">		implementations.register(new Implementation(condition, implementation), priority);</span>
+<span class="fc" id="L77">		return this;</span>
+	}
+
+	@Override
+	public boolean supports(Message message) {
+<span class="fc bfc" id="L82" title="All 2 branches covered.">		return getSender(message) != null;</span>
+	}
+
+	@Override
+	public void send(Message message) throws MessageException {
+<span class="fc" id="L87">		MessageSender sender = getSender(message);</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">		if (sender == null) {</span>
+<span class="nc" id="L89">			LOG.warn(&quot;No implementation is able to send the message {}. Skipping&quot;, logString(message));</span>
+<span class="nc" id="L90">			return;</span>
+		}
+<span class="fc" id="L92">		LOG.debug(&quot;Sending message {} using {} implementation&quot;, logString(message), sender);</span>
+<span class="fc" id="L93">		sender.send(message);</span>
+<span class="fc" id="L94">	}</span>
+
+	public List&lt;Implementation&gt; getImplementations() {
+<span class="fc" id="L97">		return implementations.getOrdered();</span>
+	}
+
+	protected boolean supportsMessageType(Message message) {
+<span class="fc" id="L101">		Class&lt;M&gt; managedClass = getManagedClass();</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">		if (managedClass == null) {</span>
+<span class="nc" id="L103">			LOG.warn(&quot;No managed class is declared&quot;);</span>
+<span class="nc" id="L104">			return false;</span>
+		}
+<span class="fc" id="L106">		return managedClass.isAssignableFrom(message.getClass());</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected Class&lt;M&gt; getManagedClass() {
+<span class="fc" id="L111">		Type genericSuperclass = getClass().getGenericSuperclass();</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">		if (genericSuperclass instanceof ParameterizedType) {</span>
+<span class="fc" id="L113">			return (Class&lt;M&gt;) ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];</span>
+		}
+<span class="nc" id="L115">		return null;</span>
+	}
+
+	private MessageSender getSender(Message message) {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">		if (supportsMessageType(message)) {</span>
+<span class="fc" id="L120">			LOG.debug(&quot;Can handle the message type {}. Is there any implementation available to send it ?&quot;, message.getClass());</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">			for (Implementation impl : implementations.getOrdered()) {</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">				if (impl.getCondition().accept(message)) {</span>
+<span class="fc" id="L123">					LOG.debug(&quot;The implementation {} can handle the message {}&quot;, impl.getSender(), logString(message));</span>
+<span class="fc" id="L124">					return impl.getSender();</span>
+				}
+<span class="fc" id="L126">			}</span>
+		}
+<span class="fc" id="L128">		LOG.debug(&quot;Can't handle the message type {}&quot;, message.getClass());</span>
+<span class="fc" id="L129">		return null;</span>
+	}
+
+	public static class Implementation {
+		private final Condition&lt;Message&gt; condition;
+		private final MessageSender sender;
+
+		public Implementation(Condition&lt;Message&gt; condition, MessageSender sender) {
+<span class="fc" id="L137">			super();</span>
+<span class="fc" id="L138">			this.condition = condition;</span>
+<span class="fc" id="L139">			this.sender = sender;</span>
+<span class="fc" id="L140">		}</span>
+
+		public Condition&lt;Message&gt; getCondition() {
+<span class="fc" id="L143">			return condition;</span>
+		}
+
+		public MessageSender getSender() {
+<span class="fc" id="L147">			return sender;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

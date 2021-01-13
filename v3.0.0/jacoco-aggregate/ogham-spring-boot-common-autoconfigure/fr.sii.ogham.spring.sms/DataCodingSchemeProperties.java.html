@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DataCodingSchemeProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.sms</a> &gt; <span class="el_source">DataCodingSchemeProperties.java</span></div><h1>DataCodingSchemeProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.sms;
+
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import com.cloudhopper.commons.charset.Charset;
+import com.cloudhopper.commons.charset.CharsetUtil;
+import com.cloudhopper.commons.gsm.DataCoding;
+
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.DataCodingProvider;
+
+<span class="fc" id="L11">public class DataCodingSchemeProperties {</span>
+	/**
+	 * Use the same Data Coding Scheme value for all messages if set.
+	 */
+	private Byte value;
+<span class="fc" id="L16">	@NestedConfigurationProperty</span>
+	private AutoProperties auto = new AutoProperties();
+
+<span class="fc" id="L19">	public static class AutoProperties {</span>
+		/**
+		 * Enable/disable automatic mode based on SMPP interface version.
+		 * 
+		 * &lt;p&gt;
+		 * {@link DataCodingProvider} implementation is selected based on SMPP
+		 * interface version. SMPP v3.3 Data Coding Scheme values are defined in
+		 * &lt;a href=
+		 * &quot;https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme&quot;&gt;SMS
+		 * Data Coding Scheme&lt;/a&gt;. SMPP 3.4 introduced a new list of data_coding
+		 * values (&lt;a href=
+		 * &quot;https://en.wikipedia.org/wiki/Short_Message_Peer-to-Peer#PDU_body&quot;&gt;PDU
+		 * body&lt;/a&gt;).
+		 * &lt;/p&gt;
+		 * 
+		 * &lt;strong&gt;SMPP v3.3&lt;/strong&gt;
+		 * &lt;p&gt;
+		 * The text message is encoded using {@link Charset}. According to that
+		 * charset, the Data Coding Scheme is determined using the
+		 * &lt;strong&gt;General Data Coding group&lt;/strong&gt; table. Therefore, a simple
+		 * mapping is applied:
+		 * &lt;ul&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_GSM7} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_PACKED_GSM} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_GSM} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_GSM8} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_UCS_2} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_UCS2}&lt;/li&gt;
+		 * &lt;/ul&gt;
+		 * 
+		 * 
+		 * &lt;strong&gt;SMPP v3.4+&lt;/strong&gt;
+		 * &lt;p&gt;
+		 * The text message is encoded using {@link Charset}. According to that
+		 * charset, the Data Coding Scheme is determined using only the
+		 * &lt;strong&gt;Alphabet&lt;/strong&gt; table. Therefore, a simple mapping is
+		 * applied:
+		 * &lt;ul&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_GSM7} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_PACKED_GSM} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_DEFAULT}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_GSM} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_GSM8} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_8BIT}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_ISO_8859_1} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_LATIN1}&lt;/li&gt;
+		 * &lt;li&gt;{@link CharsetUtil#NAME_UCS_2} {@literal -&gt;}
+		 * {@link DataCoding#CHAR_ENC_UCS2}&lt;/li&gt;
+		 * &lt;/ul&gt;
+		 * 
+		 * Default: &lt;i&gt;true&lt;/i&gt;
+		 */
+		private Boolean enable;
+
+		public Boolean getEnable() {
+<span class="fc" id="L80">			return enable;</span>
+		}
+
+		public void setEnable(Boolean enable) {
+<span class="fc" id="L84">			this.enable = enable;</span>
+<span class="fc" id="L85">		}</span>
+	}
+
+	public Byte getValue() {
+<span class="fc" id="L89">		return value;</span>
+	}
+
+	public void setValue(Byte value) {
+<span class="fc" id="L93">		this.value = value;</span>
+<span class="fc" id="L94">	}</span>
+
+	public AutoProperties getAuto() {
+<span class="fc" id="L97">		return auto;</span>
+	}
+
+	public void setAuto(AutoProperties auto) {
+<span class="fc" id="L101">		this.auto = auto;</span>
+<span class="fc" id="L102">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

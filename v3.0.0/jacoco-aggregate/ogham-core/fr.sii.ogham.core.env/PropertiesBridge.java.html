@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PropertiesBridge.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.env</a> &gt; <span class="el_source">PropertiesBridge.java</span></div><h1>PropertiesBridge.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.env;
+
+
+import static fr.sii.ogham.core.CoreConstants.SERIAL_VERSION_UID;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Set;
+
+/**
+ * Extends {@link Properties} and wraps a {@link PropertyResolver}. The aim is
+ * to be able to use a {@link Properties} object required by Java Mail while
+ * real property handling is managed by the underlying {@link PropertyResolver}.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class PropertiesBridge extends Properties {
+	private static final long serialVersionUID = SERIAL_VERSION_UID;
+	private final transient PropertyResolver propertyResolver;
+
+	/**
+	 * Wraps the property resolver
+	 * 
+	 * @param propertyResolver
+	 *            the property resolver to wrap
+	 */
+	public PropertiesBridge(PropertyResolver propertyResolver) {
+<span class="fc" id="L32">		super();</span>
+<span class="fc" id="L33">		this.propertyResolver = propertyResolver;</span>
+<span class="fc" id="L34">	}</span>
+
+	@Override
+	public String getProperty(String key) {
+<span class="fc" id="L38">		return propertyResolver.getProperty(key);</span>
+	}
+
+	@Override
+	public String getProperty(String key, String defaultValue) {
+<span class="fc" id="L43">		return propertyResolver.getProperty(key, defaultValue);</span>
+	}
+
+	@Override
+	public Enumeration&lt;?&gt; propertyNames() {
+<span class="nc" id="L48">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public Set&lt;String&gt; stringPropertyNames() {
+<span class="nc" id="L53">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public void list(PrintStream out) {
+<span class="nc" id="L58">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public void list(PrintWriter out) {
+<span class="nc" id="L63">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public synchronized int size() {
+<span class="nc" id="L68">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public synchronized boolean isEmpty() {
+<span class="nc" id="L73">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public synchronized Enumeration&lt;Object&gt; keys() {
+<span class="nc" id="L78">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public synchronized Enumeration&lt;Object&gt; elements() {
+<span class="nc" id="L83">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public synchronized boolean contains(Object value) {
+<span class="nc" id="L88">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+<span class="nc" id="L93">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public synchronized boolean containsKey(Object key) {
+<span class="nc" id="L98">		return propertyResolver.containsProperty((String) key);</span>
+	}
+
+	@Override
+	public synchronized Object get(Object key) {
+<span class="fc" id="L103">		return propertyResolver.getProperty((String) key, Object.class);</span>
+	}
+
+	@Override
+	public Set&lt;Object&gt; keySet() {
+<span class="nc" id="L108">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public Set&lt;java.util.Map.Entry&lt;Object, Object&gt;&gt; entrySet() {
+<span class="nc" id="L113">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public Collection&lt;Object&gt; values() {
+<span class="nc" id="L118">		throw new UnsupportedOperationException();</span>
+	}
+
+	@Override
+	public synchronized String toString() {
+<span class="fc" id="L123">		return propertyResolver.toString();</span>
+	}
+	
+	@Override
+	public synchronized boolean equals(Object other) {
+<span class="nc" id="L128">		return super.equals(other);</span>
+	}
+
+	@Override
+	public synchronized int hashCode() {
+<span class="nc" id="L133">		return super.hashCode();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

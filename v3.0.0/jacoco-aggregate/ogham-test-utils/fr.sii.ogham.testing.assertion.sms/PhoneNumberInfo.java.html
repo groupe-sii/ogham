@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PhoneNumberInfo.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">PhoneNumberInfo.java</span></div><h1>PhoneNumberInfo.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import fr.sii.ogham.testing.sms.simulator.bean.Address;
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+
+/**
+ * Represents a phone number with {@link TypeOfNumber} and
+ * {@link NumberingPlanIndicator} information.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class PhoneNumberInfo {
+	private final String address;
+	private final byte npi;
+	private final byte ton;
+
+	/**
+	 * Initializes with an {@link Address}
+	 * 
+	 * @param address
+	 *            the address (phone number + {@link NumberingPlanIndicator} +
+	 *            {@link TypeOfNumber})
+	 */
+	public PhoneNumberInfo(Address address) {
+<span class="fc" id="L27">		this(address.getAddress(), address.getNpi(), address.getTon());</span>
+<span class="fc" id="L28">	}</span>
+
+	/**
+	 * @param address
+	 *            the phone number
+	 * @param npi
+	 *            the {@link NumberingPlanIndicator}
+	 * @param ton
+	 *            the {@link TypeOfNumber}
+	 */
+	public PhoneNumberInfo(String address, byte npi, byte ton) {
+<span class="fc" id="L39">		super();</span>
+<span class="fc" id="L40">		this.address = address;</span>
+<span class="fc" id="L41">		this.npi = npi;</span>
+<span class="fc" id="L42">		this.ton = ton;</span>
+<span class="fc" id="L43">	}</span>
+
+	/**
+	 * @return the address (may be phone number, IP address or anything else)
+	 */
+	public String getAddress() {
+<span class="fc" id="L49">		return address;</span>
+	}
+
+	/**
+	 * @return the {@link NumberingPlanIndicator}
+	 */
+	public byte getNpi() {
+<span class="fc" id="L56">		return npi;</span>
+	}
+
+	/**
+	 * @return the {@link TypeOfNumber}
+	 */
+	public byte getTon() {
+<span class="fc" id="L63">		return ton;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L68">		return &quot;PhoneNumberInfo [address=&quot; + address + &quot;, npi=&quot; + npi + &quot;, ton=&quot; + ton + &quot;]&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

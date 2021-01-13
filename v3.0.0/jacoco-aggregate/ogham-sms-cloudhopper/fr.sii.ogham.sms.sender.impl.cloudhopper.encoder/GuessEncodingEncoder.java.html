@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GuessEncodingEncoder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl.cloudhopper.encoder</a> &gt; <span class="el_source">GuessEncodingEncoder.java</span></div><h1>GuessEncodingEncoder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl.cloudhopper.encoder;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.sms.encoder.Encoded;
+import fr.sii.ogham.sms.encoder.Encoder;
+import fr.sii.ogham.sms.encoder.SupportingEncoder;
+import fr.sii.ogham.sms.exception.message.EncodingException;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.exception.GuessEncodingException;
+
+/**
+ * Automatically determine best {@link Encoder} to use for encoding the message.
+ * 
+ * &lt;p&gt;
+ * The guessing is really simple:
+ * &lt;ol&gt;
+ * &lt;li&gt;The first {@link Encoder} is tested to check if message can be encoded
+ * with that encoder:
+ * &lt;ul&gt;
+ * &lt;li&gt;If the {@link Encoder} implements {@link SupportingEncoder}, the
+ * {@link SupportingEncoder#canEncode(String)} is called to check if the
+ * {@link Encoder} is able to encode the message. If false is returned, the
+ * {@link Encoder} is skipped (not executed).&lt;/li&gt;
+ * &lt;li&gt;If the {@link Encoder} doesn't implement {@link SupportingEncoder}, the
+ * {@link Encoder} is executed. The {@link Encoder} may throw an
+ * {@link EncodingException} if it can't encode correctly the message. If that
+ * exception is raised, it is caught and the {@link Encoder} is skipped.&lt;/li&gt;
+ * &lt;li&gt;If the {@link Encoder} is not skipped (it could encode the message
+ * correctly), its result is directly returned.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;li&gt;The next {@link Encoder} is tested and so on until one {@link Encoder}
+ * returns the encoded message&lt;/li&gt;
+ * &lt;/ol&gt;
+ * 
+ * &lt;p&gt;
+ * If none of the possible encoders could encode the message, the
+ * {@link GuessEncodingException} is raised.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class GuessEncodingEncoder implements SupportingEncoder {
+<span class="fc" id="L47">	private static final Logger LOG = LoggerFactory.getLogger(GuessEncodingEncoder.class);</span>
+
+	private final List&lt;Encoder&gt; possibleEncoders;
+
+	/**
+	 * Initializes with the list of possible encoders to test. If an encoder
+	 * implements {@link SupportingEncoder}, the
+	 * {@link SupportingEncoder#canEncode(String)} is used to check if the text
+	 * message can be encoded using that {@link Encoder}. Otherwise, the
+	 * {@link Encoder} is executed to try encoding the message. If the message
+	 * can't be encoded, an {@link EncodingException} is raised. The exception
+	 * is caught and the next {@link Encoder} is executed.
+	 * 
+	 * @param possibleEncoders
+	 *            the possible encoders used to encode the message
+	 */
+	public GuessEncodingEncoder(List&lt;Encoder&gt; possibleEncoders) {
+<span class="fc" id="L64">		super();</span>
+<span class="fc" id="L65">		this.possibleEncoders = possibleEncoders;</span>
+<span class="fc" id="L66">	}</span>
+
+	@Override
+	public boolean canEncode(String message) {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		for (Encoder encoder : possibleEncoders) {</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">			if (canEncode(encoder, message)) {</span>
+<span class="fc" id="L72">				return true;</span>
+			}
+<span class="fc" id="L74">		}</span>
+<span class="fc" id="L75">		return false;</span>
+	}
+
+	@Override
+	public Encoded encode(String message) throws EncodingException {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		for (Encoder encoder : possibleEncoders) {</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">			if (!canEncode(encoder, message)) {</span>
+<span class="fc" id="L82">				continue;</span>
+			}
+			try {
+<span class="fc" id="L85">				return encoder.encode(message);</span>
+<span class="fc" id="L86">			} catch (EncodingException e) {</span>
+<span class="fc" id="L87">				LOG.debug(&quot;Encoder failed to encode =&gt; try next one&quot;, e);</span>
+			}
+<span class="fc" id="L89">		}</span>
+<span class="fc" id="L90">		throw new GuessEncodingException(&quot;Failed to guess encoding for message&quot;, message);</span>
+	}
+
+	private static boolean canEncode(Encoder encoder, String message) {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if (encoder instanceof SupportingEncoder) {</span>
+<span class="fc" id="L95">			return ((SupportingEncoder) encoder).canEncode(message);</span>
+		}
+<span class="fc" id="L97">		return true;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

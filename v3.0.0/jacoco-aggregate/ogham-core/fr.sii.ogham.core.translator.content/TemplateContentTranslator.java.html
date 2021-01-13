@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TemplateContentTranslator.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.translator.content</a> &gt; <span class="el_source">TemplateContentTranslator.java</span></div><h1>TemplateContentTranslator.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.translator.content;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.handler.ContentTranslatorException;
+import fr.sii.ogham.core.exception.handler.TemplateNotFoundException;
+import fr.sii.ogham.core.exception.handler.TemplateParsingFailedException;
+import fr.sii.ogham.core.exception.template.ParseException;
+import fr.sii.ogham.core.message.content.Content;
+import fr.sii.ogham.core.message.content.TemplateContent;
+import fr.sii.ogham.core.message.content.TemplateVariantContent;
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.template.context.Context;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.common.adapter.VariantResolver;
+import fr.sii.ogham.template.exception.TemplateVariantNotFoundException;
+import fr.sii.ogham.template.exception.VariantResolutionException;
+
+/**
+ * &lt;p&gt;
+ * Translator that handles {@link TemplateContent}. It parses the template and
+ * provide an evaluated content. It also handles {@link TemplateVariantContent}
+ * through {@link VariantResolver}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * The template parsing is delegated to a {@link TemplateParser}.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * If the content is not a {@link TemplateContent}, then the content is returned
+ * as-is
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class TemplateContentTranslator implements ContentTranslator {
+<span class="fc" id="L38">	private static final Logger LOG = LoggerFactory.getLogger(TemplateContentTranslator.class);</span>
+
+	/**
+	 * The parser to use for finding, loading and evaluating the template
+	 */
+	private final TemplateParser parser;
+
+	/**
+	 * The resolver that converts partial path with variant into real path
+	 */
+	private final VariantResolver variantResolver;
+
+	public TemplateContentTranslator(TemplateParser parser) {
+<span class="fc" id="L51">		this(parser, null);</span>
+<span class="fc" id="L52">	}</span>
+
+	public TemplateContentTranslator(TemplateParser parser, VariantResolver variantResolver) {
+<span class="fc" id="L55">		super();</span>
+<span class="fc" id="L56">		this.parser = parser;</span>
+<span class="fc" id="L57">		this.variantResolver = variantResolver;</span>
+<span class="fc" id="L58">	}</span>
+
+	@Override
+	public Content translate(Content content) throws ContentTranslatorException {
+<span class="fc bfc" id="L62" title="All 2 branches covered.">		if (!(content instanceof TemplateContent)) {</span>
+<span class="fc" id="L63">			LOG.trace(&quot;Not a TemplateContent =&gt; skip it&quot;);</span>
+<span class="fc" id="L64">			return content;</span>
+		}
+		try {
+<span class="fc" id="L67">			TemplateContent template = (TemplateContent) content;</span>
+<span class="fc" id="L68">			ResourcePath realPath = getRealPath(template);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">			if (realPath == null) {</span>
+<span class="fc" id="L70">				LOG.debug(&quot;No template found for {}&quot;, template.getPath());</span>
+<span class="fc" id="L71">				throw new TemplateNotFoundException(&quot;Template not found for &quot; + template.getPath().getOriginalPath());</span>
+			}
+<span class="fc" id="L73">			Context ctx = template.getContext();</span>
+<span class="fc" id="L74">			LOG.info(&quot;Parse template {} using context {}&quot;, realPath, ctx);</span>
+<span class="fc" id="L75">			LOG.debug(&quot;Parse template content {} using {}&quot;, template, parser);</span>
+<span class="fc" id="L76">			return parser.parse(realPath, ctx);</span>
+<span class="fc" id="L77">		} catch (TemplateVariantNotFoundException e) {</span>
+<span class="fc" id="L78">			LOG.debug(&quot;No template found for {} after trying to load from {}&quot;, e.getTemplatePath(), e.getResolvedPaths());</span>
+<span class="fc" id="L79">			throw new TemplateNotFoundException(&quot;Template not found for &quot; + e.getTemplatePath().getOriginalPath() + &quot; after trying to load from &quot; + e.getResolvedPaths(), e);</span>
+<span class="fc" id="L80">		} catch (ParseException e) {</span>
+<span class="fc" id="L81">			throw new TemplateParsingFailedException(&quot;failed to translate templated content&quot;, e);</span>
+		}
+	}
+
+	private ResourcePath getRealPath(TemplateContent template) throws VariantResolutionException {
+<span class="fc bfc" id="L86" title="All 2 branches covered.">		if (variantResolver == null) {</span>
+<span class="fc" id="L87">			return template.getPath();</span>
+		}
+<span class="fc" id="L89">		return variantResolver.getRealPath(template);</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L94">		return &quot;TemplateContentTranslator&quot;;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

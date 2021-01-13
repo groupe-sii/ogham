@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SenderNumberBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder</a> &gt; <span class="el_source">SenderNumberBuilder.java</span></div><h1>SenderNumberBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.addressing.AddressedPhoneNumber;
+import fr.sii.ogham.sms.message.addressing.translator.CompositePhoneNumberTranslator;
+import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberHandler;
+import fr.sii.ogham.sms.message.addressing.translator.PhoneNumberTranslator;
+
+/**
+ * Configures the sender phone number conversion (from a {@link PhoneNumber} to
+ * an {@link AddressedPhoneNumber}).
+ * 
+ * The {@link PhoneNumber} is used by the developer to provide a simple phone
+ * number without knowing how phone number works (no need to handle formats,
+ * addressing, countries...). The {@link AddressedPhoneNumber} is used by Ogham
+ * implementations to have a phone number that is usable by a technical system.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class SenderNumberBuilder extends AbstractParent&lt;PhoneNumbersBuilder&gt; implements Builder&lt;PhoneNumberTranslator&gt; {
+	private final BuildContext buildContext;
+	private SenderNumberFormatBuilder formatBuilder;
+	private PhoneNumberTranslator customTranslator;
+
+	/**
+	 * Default constructor when using without all Ogham work.
+	 * 
+	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
+	 */
+	public SenderNumberBuilder() {
+<span class="fc" id="L37">		this(null, new DefaultBuildContext());</span>
+<span class="fc" id="L38">	}</span>
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public SenderNumberBuilder(PhoneNumbersBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L51">		super(parent);</span>
+<span class="fc" id="L52">		this.buildContext = buildContext;</span>
+<span class="fc" id="L53">	}</span>
+
+	/**
+	 * Defines which standard conversions may be applied on the phone number to
+	 * convert it from a {@link PhoneNumber} to an {@link AddressedPhoneNumber}.
+	 * 
+	 * @return the builder to configure standard phone number conversions
+	 */
+	public SenderNumberFormatBuilder format() {
+<span class="fc bfc" id="L62" title="All 2 branches covered.">		if (formatBuilder == null) {</span>
+<span class="fc" id="L63">			formatBuilder = new SenderNumberFormatBuilder(this, buildContext);</span>
+		}
+<span class="fc" id="L65">		return formatBuilder;</span>
+	}
+
+	/**
+	 * Overrides the standard phone number conversions by the provided handler.
+	 * 
+	 * &lt;p&gt;
+	 * If you call this method several times, only the last custom handler is
+	 * used. If you need to apply several conversions, you can use
+	 * {@link CompositePhoneNumberTranslator} implementation that delegates to
+	 * {@link PhoneNumberHandler}s.
+	 * 
+	 * @param handler
+	 *            the handler to use
+	 * @return this instance for fluent chaining
+	 */
+	public SenderNumberBuilder convert(PhoneNumberTranslator handler) {
+<span class="nc" id="L82">		this.customTranslator = handler;</span>
+<span class="nc" id="L83">		return this;</span>
+	}
+
+	@Override
+	public PhoneNumberTranslator build() {
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">		if (customTranslator != null) {</span>
+<span class="nc" id="L89">			return customTranslator;</span>
+		}
+<span class="fc" id="L91">		return formatBuilder.build();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

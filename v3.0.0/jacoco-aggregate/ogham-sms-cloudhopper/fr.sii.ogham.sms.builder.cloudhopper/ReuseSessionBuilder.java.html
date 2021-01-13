@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ReuseSessionBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">ReuseSessionBuilder.java</span></div><h1>ReuseSessionBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import com.cloudhopper.smpp.pdu.EnquireLink;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.ReuseSessionOptions;
+
+/**
+ * Builder to configure how reuse session management should behave.
+ * 
+ * &lt;p&gt;
+ * When sending the first message, a new session is created. Later, when sending
+ * the next message, if the session is still alive, this session is reused. As
+ * the connection is not actively maintained, the session may be killed by the
+ * server. Therefore to check if the session is still alive, an
+ * {@link EnquireLink} request is sent. If a response is received from the
+ * server, then the session is still alive and the message can be sent using the
+ * same session. If a failure response or no response is received after some
+ * time from the server, then a new session must be created.
+ * 
+ * &lt;p&gt;
+ * To check if the session is still alive, the {@link EnquireLink} request is
+ * sent just before sending the real message. In order to prevent sending an
+ * {@link EnquireLink} request before &lt;strong&gt;every&lt;/strong&gt; message, the date
+ * of the last sent message or {@link EnquireLink} is kept. This date is
+ * compared to a delay to ensure that no {@link EnquireLink} is sent during this
+ * delay.
+ * 
+ * &lt;p&gt;
+ * This builder let you configure:
+ * &lt;ul&gt;
+ * &lt;li&gt;Enable/disable reuse session management&lt;/li&gt;
+ * &lt;li&gt;The maximum time to wait for a response from the server for
+ * {@link EnquireLink} request&lt;/li&gt;
+ * &lt;li&gt;The time to wait before sending a new {@link EnquireLink} request
+ * again&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ReuseSessionBuilder extends AbstractParent&lt;SessionBuilder&gt; implements Builder&lt;ReuseSessionOptions&gt; {
+	private final ConfigurationValueBuilderHelper&lt;ReuseSessionBuilder, Boolean&gt; enableValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;ReuseSessionBuilder, Long&gt; lastInteractionExpirationDelayValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;ReuseSessionBuilder, Long&gt; enquireLinkTimeoutValueBuilder;
+
+	public ReuseSessionBuilder(SessionBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L53">		super(parent);</span>
+<span class="fc" id="L54">		this.enableValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L55">		this.lastInteractionExpirationDelayValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L56">		this.enquireLinkTimeoutValueBuilder = buildContext.newConfigurationValueBuilder(this, Long.class);</span>
+<span class="fc" id="L57">	}</span>
+
+	/**
+	 * Enable or disable the reuse the same session (if possible) for sending
+	 * messages.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #enable()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code enable(true)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable reuse of same session
+	 * @return this instance for fluent chaining
+	 */
+	public ReuseSessionBuilder enable(Boolean enable) {
+<span class="fc" id="L95">		enableValueBuilder.setValue(enable);</span>
+<span class="fc" id="L96">		return this;</span>
+	}
+
+	/**
+	 * Enable or disable the reuse the same session (if possible) for sending
+	 * messages.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #enable(Boolean)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .enable(true)
+	 * .enable()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code true} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;ReuseSessionBuilder, Boolean&gt; enable() {
+<span class="fc" id="L137">		return enableValueBuilder;</span>
+	}
+
+	/**
+	 * To check if the session is still alive, an {@link EnquireLink} request is
+	 * sent. This request may fail since the session may be killed by the
+	 * server. The timeout ensures that the client doesn't wait too long for a
+	 * response that may never come.
+	 * 
+	 * The maximum amount of time (in milliseconds) to wait for receiving a
+	 * response from the server to an {@link EnquireLink} request.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #responseTimeout()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(10000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(10000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code responseTimeout(10000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param timeout
+	 *            the maximum amount of time (in milliseconds) to wait for the
+	 *            response
+	 * @return this instance for fluent chaining
+	 */
+	public ReuseSessionBuilder responseTimeout(Long timeout) {
+<span class="fc" id="L182">		enquireLinkTimeoutValueBuilder.setValue(timeout);</span>
+<span class="fc" id="L183">		return this;</span>
+	}
+
+	/**
+	 * To check if the session is still alive, an {@link EnquireLink} request is
+	 * sent. This request may fail since the session may be killed by the
+	 * server. The timeout ensures that the client doesn't wait too long for a
+	 * response that may never come.
+	 * 
+	 * The maximum amount of time (in milliseconds) to wait for receiving a
+	 * response from the server to an {@link EnquireLink} request.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #responseTimeout(Long)} takes precedence
+	 * over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .responseTimeout(10000L)
+	 * .responseTimeout()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(5000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 10000L} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;ReuseSessionBuilder, Long&gt; responseTimeout() {
+<span class="fc" id="L229">		return enquireLinkTimeoutValueBuilder;</span>
+	}
+
+	/**
+	 * To check if the session is still alive, an {@link EnquireLink} request is
+	 * sent. The request is sent just before sending the message.
+	 * 
+	 * This is the time (in milliseconds) to wait before considering last
+	 * {@link EnquireLink} response as expired (need to send a new
+	 * {@link EnquireLink} request to check if session is still alive).
+	 * 
+	 * &lt;p&gt;
+	 * This is needed to prevent sending {@link EnquireLink} request every time
+	 * a message has to be sent. Instead it considers that the time elapsed
+	 * between now and the last {@link EnquireLink} response (or the last sent
+	 * message) is not enough so a new {@link EnquireLink} is not necessary to
+	 * check if session is still alive.
+	 *
+	 * &lt;p&gt;
+	 * Set to 0 to always check session before sending message.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #lastInteractionExpiration()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .delay(60000L)
+	 * .delay()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(60000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .delay(60000L)
+	 * .delay()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(60000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code delay(60000L)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param delay
+	 *            The time to wait (in milliseconds) to wait before sending a
+	 *            new {@link EnquireLink} request to check if session is still
+	 *            alive.
+	 * @return this instance for fluent chaining
+	 */
+	public ReuseSessionBuilder lastInteractionExpiration(Long delay) {
+<span class="fc" id="L284">		lastInteractionExpirationDelayValueBuilder.setValue(delay);</span>
+<span class="fc" id="L285">		return this;</span>
+	}
+
+	/**
+	 * To check if the session is still alive, an {@link EnquireLink} request is
+	 * sent. The request is sent just before sending the message.
+	 * 
+	 * This is the time (in milliseconds) to wait before considering last
+	 * {@link EnquireLink} response as expired (need to send a new
+	 * {@link EnquireLink} request to check if session is still alive).
+	 * 
+	 * &lt;p&gt;
+	 * This is needed to prevent sending {@link EnquireLink} request every time
+	 * a message has to be sent. Instead it considers that the time elapsed
+	 * between now and the last {@link EnquireLink} response (or the last sent
+	 * message) is not enough so a new {@link EnquireLink} is not necessary to
+	 * check if session is still alive.
+	 *
+	 * &lt;p&gt;
+	 * Set to 0 to always check session before sending message.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .delay()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(60000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #lastInteractionExpiration(Long)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .delay(60000L)
+	 * .delay()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(60000L)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code 60000L} is used regardless of the value of the
+	 * properties and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;ReuseSessionBuilder, Long&gt; lastInteractionExpiration() {
+<span class="fc" id="L340">		return lastInteractionExpirationDelayValueBuilder;</span>
+	}
+
+	@Override
+	public ReuseSessionOptions build() {
+<span class="fc" id="L345">		ReuseSessionOptions reuseSessionOptions = new ReuseSessionOptions();</span>
+<span class="fc" id="L346">		reuseSessionOptions.setEnable(enableValueBuilder.getValue(false));</span>
+<span class="fc" id="L347">		reuseSessionOptions.setLastInteractionExpirationDelay(lastInteractionExpirationDelayValueBuilder.getValue(0L));</span>
+<span class="fc" id="L348">		reuseSessionOptions.setEnquireLinkTimeout(enquireLinkTimeoutValueBuilder.getValue(0L));</span>
+<span class="fc" id="L349">		return reuseSessionOptions;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

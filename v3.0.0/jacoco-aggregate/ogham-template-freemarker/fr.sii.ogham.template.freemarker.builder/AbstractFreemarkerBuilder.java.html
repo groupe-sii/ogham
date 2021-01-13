@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFreemarkerBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-freemarker</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.freemarker.builder</a> &gt; <span class="el_source">AbstractFreemarkerBuilder.java</span></div><h1>AbstractFreemarkerBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.freemarker.builder;
+
+import static freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
+import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
+import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
+import fr.sii.ogham.core.builder.template.DetectorBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.template.detector.FixedEngineDetector;
+import fr.sii.ogham.core.template.detector.OrTemplateDetector;
+import fr.sii.ogham.core.template.detector.SimpleResourceEngineDetector;
+import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.freemarker.FreeMarkerFirstSupportingTemplateLoader;
+import fr.sii.ogham.template.freemarker.FreeMarkerParser;
+import fr.sii.ogham.template.freemarker.FreeMarkerTemplateDetector;
+import fr.sii.ogham.template.freemarker.SkipLocaleForStringContentTemplateLookupStrategy;
+import fr.sii.ogham.template.freemarker.TemplateLoaderOptions;
+import fr.sii.ogham.template.freemarker.adapter.ClassPathResolverAdapter;
+import fr.sii.ogham.template.freemarker.adapter.FileResolverAdapter;
+import fr.sii.ogham.template.freemarker.adapter.FirstSupportingResolverAdapter;
+import fr.sii.ogham.template.freemarker.adapter.StringResolverAdapter;
+import fr.sii.ogham.template.freemarker.adapter.TemplateLoaderAdapter;
+import freemarker.cache.TemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
+
+@SuppressWarnings(&quot;squid:S00119&quot;)
+public abstract class AbstractFreemarkerBuilder&lt;MYSELF extends AbstractFreemarkerBuilder&lt;MYSELF, P&gt;, P&gt; extends AbstractParent&lt;P&gt;
+		implements DetectorBuilder&lt;MYSELF&gt;, ResourceResolutionBuilder&lt;MYSELF&gt;, Builder&lt;TemplateParser&gt; {
+<span class="fc" id="L45">	private static final Logger LOG = LoggerFactory.getLogger(AbstractFreemarkerBuilder.class);</span>
+
+	protected final MYSELF myself;
+	protected final BuildContext buildContext;
+	private TemplateEngineDetector detector;
+	private ResourceResolutionBuilderHelper&lt;MYSELF&gt; resourceResolutionBuilderHelper;
+	private Configuration configuration;
+	private List&lt;TemplateLoaderAdapter&gt; customAdapters;
+	private FreemarkerConfigurationBuilder&lt;MYSELF&gt; configurationBuilder;
+	private ClassLoader classLoader;
+
+	protected AbstractFreemarkerBuilder(Class&lt;?&gt; selfType) {
+<span class="fc" id="L57">		this(selfType, null, new DefaultBuildContext());</span>
+<span class="fc" id="L58">	}</span>
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected AbstractFreemarkerBuilder(Class&lt;?&gt; selfType, P parent, BuildContext buildContext) {
+<span class="fc" id="L62">		super(parent);</span>
+<span class="fc" id="L63">		myself = (MYSELF) selfType.cast(this);</span>
+<span class="fc" id="L64">		this.buildContext = buildContext;</span>
+<span class="fc" id="L65">		customAdapters = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L66">	}</span>
+
+	@Override
+	public MYSELF detector(TemplateEngineDetector detector) {
+<span class="nc" id="L70">		this.detector = detector;</span>
+<span class="nc" id="L71">		return myself;</span>
+	}
+
+	@Override
+	public ClassPathResolutionBuilder&lt;MYSELF&gt; classpath() {
+<span class="fc" id="L76">		initResolutionBuilder();</span>
+<span class="fc" id="L77">		return resourceResolutionBuilderHelper.classpath();</span>
+	}
+
+	@Override
+	public FileResolutionBuilder&lt;MYSELF&gt; file() {
+<span class="fc" id="L82">		initResolutionBuilder();</span>
+<span class="fc" id="L83">		return resourceResolutionBuilderHelper.file();</span>
+	}
+
+	@Override
+	public StringResolutionBuilder&lt;MYSELF&gt; string() {
+<span class="fc" id="L88">		initResolutionBuilder();</span>
+<span class="fc" id="L89">		return resourceResolutionBuilderHelper.string();</span>
+	}
+
+	@Override
+	public MYSELF resolver(ResourceResolver resolver) {
+<span class="nc" id="L94">		initResolutionBuilder();</span>
+<span class="nc" id="L95">		return resourceResolutionBuilderHelper.resolver(resolver);</span>
+	}
+
+	/**
+	 * Ogham provides a generic resource resolution mechanism
+	 * ({@link ResourceResolver}). Freemarker uses its own template resolution
+	 * mechanism ({@link TemplateLoader}). A resolver adapter
+	 * ({@link TemplateLoaderAdapter}) is the way to transform a
+	 * {@link ResourceResolver} into a {@link TemplateLoader}.
+	 * 
+	 * &lt;p&gt;
+	 * Ogham provides and registers default resolver adapters but you may need
+	 * to use a custom {@link ResourceResolver}. So you also need to provide the
+	 * corresponding {@link TemplateLoaderAdapter}.
+	 * 
+	 * @param adapter
+	 *            the resolver adapter
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF resolverAdapter(TemplateLoaderAdapter adapter) {
+<span class="nc" id="L115">		customAdapters.add(adapter);</span>
+<span class="nc" id="L116">		return myself;</span>
+	}
+
+	/**
+	 * Fluent configurer for Freemarker configuration.
+	 * 
+	 * @return the fluent builder for Freemarker configuration object
+	 */
+	public FreemarkerConfigurationBuilder&lt;MYSELF&gt; configuration() {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">		if (configurationBuilder == null) {</span>
+<span class="fc" id="L126">			configurationBuilder = new FreemarkerConfigurationBuilder&lt;&gt;(myself, buildContext);</span>
+		}
+<span class="fc" id="L128">		return configurationBuilder;</span>
+	}
+
+	/**
+	 * Sets a Freemarker configuration.
+	 * 
+	 * This value preempts any other value defined by calling
+	 * {@link #configuration()} method. It means that the provided configuration
+	 * is used as-is and any call to {@link #configuration()} builder methods
+	 * has no effect on the provided configuration. You have to manually
+	 * configure it.
+	 * 
+	 * If this method is called several times, only the last provided
+	 * configuration is used.
+	 * 
+	 * @param configuration
+	 *            the Freemarker configuration
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF configuration(Configuration configuration) {
+<span class="nc" id="L148">		this.configuration = configuration;</span>
+<span class="nc" id="L149">		return myself;</span>
+	}
+
+	/**
+	 * Merge an existing Freemarker configuration with previously provided
+	 * configuration.
+	 * 
+	 * &lt;p&gt;
+	 * The provided configuration is used and any call to
+	 * {@link #configuration()} builder methods are applied to the provided
+	 * configuration.
+	 * 
+	 * 
+	 * @param configuration
+	 *            The Freemarker configuration to apply
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF mergeConfiguration(Configuration configuration) {
+<span class="fc" id="L167">		configuration().base(configuration);</span>
+<span class="fc" id="L168">		return myself;</span>
+	}
+
+	/**
+	 * Set the {@link ClassLoader} to use for loading classpath resources.
+	 * 
+	 * &lt;p&gt;
+	 * Loading resources from classpath requires a {@link ClassLoader}. Several
+	 * class loaders may be defined in an application to isolate parts of the
+	 * application. FreeMarker requires you to provide a {@link ClassLoader} for
+	 * finding resources in the classpath. This is done for security reasons.
+	 * 
+	 * &lt;p&gt;
+	 * By default, Ogham uses the current thread class loader.
+	 * 
+	 * @param classLoader
+	 *            the class loader to use
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF classLoader(ClassLoader classLoader) {
+<span class="nc" id="L188">		this.classLoader = classLoader;</span>
+<span class="nc" id="L189">		return myself;</span>
+	}
+
+	@Override
+	public TemplateParser build() {
+<span class="fc" id="L194">		LOG.info(&quot;Freemarker parser is registered&quot;);</span>
+<span class="fc" id="L195">		return buildContext.register(new FreeMarkerParser(buildConfiguration(), buildResolver()));</span>
+	}
+
+	@Override
+	public TemplateEngineDetector buildDetector() {
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">		return detector == null ? buildDefaultDetector() : detector;</span>
+	}
+
+	private TemplateEngineDetector buildDefaultDetector() {
+<span class="fc" id="L204">		FirstSupportingResourceResolver resolver = buildResolver();</span>
+<span class="fc" id="L205">		OrTemplateDetector or = buildContext.register(new OrTemplateDetector());</span>
+<span class="fc" id="L206">		or.addDetector(buildContext.register(new FreeMarkerTemplateDetector(resolver, &quot;.ftl&quot;, &quot;.ftlh&quot;)));</span>
+<span class="fc" id="L207">		or.addDetector(buildContext.register(new SimpleResourceEngineDetector(resolver, buildContext.register(new FixedEngineDetector(true)))));</span>
+<span class="fc" id="L208">		return or;</span>
+	}
+
+	/**
+	 * Builds the resolver used by Freemarker to resolve resources
+	 * 
+	 * @return the resource resolver
+	 */
+	public FirstSupportingResourceResolver buildResolver() {
+<span class="fc" id="L217">		return buildContext.register(new FirstSupportingResourceResolver(buildResolvers()));</span>
+	}
+
+	private Configuration buildConfiguration() {
+		Configuration builtConfiguration;
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">		if (this.configuration != null) {</span>
+<span class="nc" id="L223">			builtConfiguration = this.configuration;</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">		} else if (configurationBuilder != null) {</span>
+<span class="fc" id="L225">			builtConfiguration = configurationBuilder.build();</span>
+		} else {
+<span class="fc" id="L227">			builtConfiguration = new Configuration(DEFAULT_INCOMPATIBLE_IMPROVEMENTS);</span>
+<span class="fc" id="L228">			builtConfiguration.setDefaultEncoding(&quot;UTF-8&quot;);</span>
+<span class="fc" id="L229">			builtConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);</span>
+		}
+<span class="fc" id="L231">		FirstSupportingResourceResolver builtResolver = buildResolver();</span>
+<span class="fc" id="L232">		FirstSupportingResolverAdapter builtAdapter = buildAdapter();</span>
+<span class="fc" id="L233">		builtConfiguration.setTemplateLoader(buildContext.register(new FreeMarkerFirstSupportingTemplateLoader(builtResolver, builtAdapter)));</span>
+<span class="fc" id="L234">		builtConfiguration.setTemplateLookupStrategy(buildContext.register(new SkipLocaleForStringContentTemplateLookupStrategy(builtConfiguration.getTemplateLookupStrategy(), builtResolver, builtAdapter)));</span>
+<span class="fc" id="L235">		return builtConfiguration;</span>
+	}
+
+	protected List&lt;ResourceResolver&gt; buildResolvers() {
+<span class="fc" id="L239">		initResolutionBuilder();</span>
+<span class="fc" id="L240">		return resourceResolutionBuilderHelper.buildResolvers();</span>
+	}
+
+	protected FirstSupportingResolverAdapter buildAdapter() {
+<span class="fc" id="L244">		FirstSupportingResolverAdapter adapter = new FirstSupportingResolverAdapter();</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">		for (TemplateLoaderAdapter custom : customAdapters) {</span>
+<span class="nc" id="L246">			adapter.addAdapter(custom);</span>
+<span class="nc" id="L247">		}</span>
+<span class="fc" id="L248">		adapter.addAdapter(buildContext.register(new ClassPathResolverAdapter(classLoader)));</span>
+<span class="fc" id="L249">		adapter.addAdapter(buildContext.register(new FileResolverAdapter()));</span>
+<span class="fc" id="L250">		adapter.addAdapter(buildContext.register(new StringResolverAdapter()));</span>
+<span class="fc" id="L251">		adapter.setOptions(buildContext.register(new TemplateLoaderOptions()));</span>
+<span class="fc" id="L252">		return adapter;</span>
+	}
+
+	private void initResolutionBuilder() {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">		if (resourceResolutionBuilderHelper == null) {</span>
+<span class="fc" id="L257">			resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper&lt;&gt;(myself, buildContext);</span>
+		}
+<span class="fc" id="L259">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

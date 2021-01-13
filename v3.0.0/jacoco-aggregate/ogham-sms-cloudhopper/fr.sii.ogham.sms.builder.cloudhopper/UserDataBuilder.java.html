@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>UserDataBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-cloudhopper</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.builder.cloudhopper</a> &gt; <span class="el_source">UserDataBuilder.java</span></div><h1>UserDataBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.builder.cloudhopper;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.sms.builder.cloudhopper.UserDataBuilder.UserDataPropValues;
+import fr.sii.ogham.sms.sender.impl.cloudhopper.preparator.MessagePreparator;
+
+/**
+ * &quot;User Data&quot; represents the text message or data to be transmitted the
+ * end-user.
+ * 
+ * &lt;p&gt;
+ * The length of the short message text (or user data) is defined in the
+ * {@code sm_length} field of the {@code submit_sm}, {@code submit_multi},
+ * {@code deliver_sm} and {@code replace_sm} SMPP PDUs. The maximum message
+ * length which can be specified in {@code sm_length} field is 254 octets. If an
+ * ESME wishes to submit a message of length greater than 254 octets, the
+ * {@code sm_length} field must be set to {@code NULL} and the
+ * {@code message_payload} optional parameter must be populated with the message
+ * length value and user data. SMPP supports extended message lengths in the
+ * {@code submit_sm}, {@code submit_multi}, {@code data_sm} and
+ * {@code deliver_sm} PDUs. Note: The actual short message length which can be
+ * transmitted to a MS may vary according to the underlying network.
+ * 
+ * &lt;p&gt;
+ * This builder allows to select which field to use:
+ * &lt;ul&gt;
+ * &lt;li&gt;either {@code short_message} fields&lt;/li&gt;
+ * &lt;li&gt;or {@code message_payload} optional TLV (Tag-Length-Value) parameter&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class UserDataBuilder extends AbstractParent&lt;CloudhopperBuilder&gt; implements Builder&lt;UserDataPropValues&gt; {
+	private final ConfigurationValueBuilderHelper&lt;UserDataBuilder, Boolean&gt; useShortMessageValueBuilder;
+	private final ConfigurationValueBuilderHelper&lt;UserDataBuilder, Boolean&gt; useTlvMessagePayloadValueBuilder;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public UserDataBuilder(CloudhopperBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L55">		super(parent);</span>
+<span class="fc" id="L56">		useShortMessageValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L57">		useTlvMessagePayloadValueBuilder = buildContext.newConfigurationValueBuilder(this, Boolean.class);</span>
+<span class="fc" id="L58">	}</span>
+
+	/**
+	 * Enable/disable use of {@code short_message} field.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #useShortMessage()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .useShortMessage(true)
+	 * .useShortMessage()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .useShortMessage(true)
+	 * .useShortMessage()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(false)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code useShortMessage(true)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param useShortMessage
+	 *            enable (true) or disable (false) use of {@code short_message}
+	 *            field
+	 * @return this instance for fluent chaining
+	 */
+	public UserDataBuilder useShortMessage(Boolean useShortMessage) {
+<span class="fc" id="L96">		useShortMessageValueBuilder.setValue(useShortMessage);</span>
+<span class="fc" id="L97">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable use of {@code short_message} field to carry text message
+	 * (named User Data).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .useShortMessage()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #useShortMessage(Boolean)} takes
+	 * precedence over property values and default value:
+	 * 
+	 * &lt;pre&gt;
+	 * .useShortMessage(false)
+	 * .useShortMessage()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;UserDataBuilder, Boolean&gt; useShortMessage() {
+<span class="fc" id="L138">		return useShortMessageValueBuilder;</span>
+	}
+
+	/**
+	 * Enable/disable use of {@code message_payload} optional TLV
+	 * (Tag-Value-Length) parameter to carry text message (named User Data).
+	 * 
+	 * &lt;strong&gt;NOTE:&lt;/strong&gt; The TLV optional parameters are available since
+	 * SMPP version 3.4.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #useTlvMessagePayload()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .useTlvMessagePayload(false)
+	 * .useTlvMessagePayload()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .useTlvMessagePayload(false)
+	 * .useTlvMessagePayload()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code useTlvMessagePayload(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param useTlvMessagePayload
+	 *            enable (true) or disable (false) use of
+	 *            {@code message_payload} optional parameter to carry text
+	 *            message
+	 * @return this instance for fluent chaining
+	 */
+	public UserDataBuilder useTlvMessagePayload(Boolean useTlvMessagePayload) {
+<span class="fc" id="L182">		useTlvMessagePayloadValueBuilder.setValue(useTlvMessagePayload);</span>
+<span class="fc" id="L183">		return this;</span>
+	}
+
+	/**
+	 * Enable/disable use of {@code message_payload} optional TLV
+	 * (Tag-Value-Length) parameter to carry text message (named User Data).
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .useTlvMessagePayload()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #useTlvMessagePayload(Boolean)} takes
+	 * precedence over property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .useTlvMessagePayload(false)
+	 * .useTlvMessagePayload()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;UserDataBuilder, Boolean&gt; useTlvMessagePayload() {
+<span class="fc" id="L224">		return useTlvMessagePayloadValueBuilder;</span>
+	}
+
+	@Override
+	public UserDataPropValues build() {
+<span class="fc" id="L229">		boolean useShort = useShortMessageValueBuilder.getValue(false);</span>
+<span class="fc" id="L230">		boolean useTlv = useTlvMessagePayloadValueBuilder.getValue(false);</span>
+<span class="fc" id="L231">		return new UserDataPropValues(useShort, useTlv);</span>
+	}
+
+	/**
+	 * Simple data class to provide configured values. This is used by parent
+	 * builder to affect {@link MessagePreparator} strategy.
+	 * 
+	 * @author Aurélien Baudet
+	 */
+	public static class UserDataPropValues {
+		private final boolean useShortMessage;
+		private final boolean useTlvMessagePayload;
+
+		/**
+		 * Initializes with configured values.
+		 * 
+		 * @param useShortMessage
+		 *            true if {@code short_message} field should be used
+		 * @param useTlvMessagePayload
+		 *            true {@code message_payload} optional parameter should be
+		 *            used
+		 */
+		public UserDataPropValues(boolean useShortMessage, boolean useTlvMessagePayload) {
+<span class="fc" id="L254">			super();</span>
+<span class="fc" id="L255">			this.useShortMessage = useShortMessage;</span>
+<span class="fc" id="L256">			this.useTlvMessagePayload = useTlvMessagePayload;</span>
+<span class="fc" id="L257">		}</span>
+
+		/**
+		 * @return is the {@code short_message} field should be used
+		 */
+		public boolean isUseShortMessage() {
+<span class="fc" id="L263">			return useShortMessage;</span>
+		}
+
+		/**
+		 * @return is the {@code message_payload} optional parameter should be
+		 *         used
+		 */
+		public boolean isUseTlvMessagePayload() {
+<span class="fc" id="L271">			return useTlvMessagePayload;</span>
+		}
+
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

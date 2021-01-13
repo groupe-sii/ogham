@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Conditions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.fluent</a> &gt; <span class="el_source">Conditions.java</span></div><h1>Conditions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.fluent;
+
+import java.util.List;
+import java.util.regex.Pattern;
+
+import fr.sii.ogham.core.condition.AndCondition;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.FixedCondition;
+import fr.sii.ogham.core.condition.NotCondition;
+import fr.sii.ogham.core.condition.OrCondition;
+import fr.sii.ogham.core.condition.PropertyPatternCondition;
+import fr.sii.ogham.core.condition.PropertyValueCondition;
+import fr.sii.ogham.core.condition.RequiredClassCondition;
+import fr.sii.ogham.core.condition.RequiredPropertyCondition;
+import fr.sii.ogham.core.env.PropertyResolver;
+
+/**
+ * Helper to write fluent conditions like:
+ * 
+ * &lt;pre&gt;
+ * requiredClass(&quot;javax.mail.Transport&quot;).and(not(requiredClass(&quot;foo.Bar&quot;)));
+ * &lt;/pre&gt;
+ * 
+ * To do this, you need to add the following static import:
+ * 
+ * &lt;pre&gt;
+ * import static fr.sii.ogham.core.condition.fluent.Conditions.*;
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * If you are using Java 7, you may need to use {@link MessageConditions}
+ * instead because Java 7 doesn't resolve correctly generics chaining.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class Conditions {
+	/**
+	 * Parenthesis operator to handle priorities:
+	 * 
+	 * &lt;pre&gt;
+	 * $(requiredProperty(propertyResolver, &quot;mail.host&quot;).or(requiredProperty(propertyResolver, &quot;mail.smtp.host&quot;)))
+	 * 		.and(requiredProperty(propertyResolver, &quot;mail.port&quot;).or(requiredProperty(propertyResolver, &quot;mail.smtp.port&quot;)))
+	 * &lt;/pre&gt;
+	 * 
+	 * Meaning &quot;(mail.host is defined OR mail.smtp.host is defined) AND
+	 * (mail.port is defined OR mail.smtp.port is defined)&quot;.
+	 * 
+	 * &lt;p&gt;
+	 * Without this operator, you had to write this:
+	 * 
+	 * &lt;pre&gt;
+	 * requiredProperty(propertyResolver, &quot;mail.host&quot;).or(requiredProperty(propertyResolver, &quot;mail.smtp.host&quot;))
+	 * .and(requiredProperty(propertyResolver, &quot;mail.port&quot;).or(requiredProperty(propertyResolver, &quot;mail.smtp.port&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Meaning &quot;mail.host is defined OR mail.smtp.host is defined AND (mail.port
+	 * is defined OR mail.smtp.port is defined)&quot;.
+	 * 
+	 * So the behavior won't be the same.
+	 * 
+	 * @param condition
+	 *            the condition to surround
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	@SuppressWarnings(&quot;squid:S00100&quot;)
+	public static &lt;T&gt; FluentCondition&lt;T&gt; $(Condition&lt;T&gt; condition) {
+<span class="fc" id="L70">		return new FluentCondition&lt;&gt;(condition);</span>
+	}
+
+	/**
+	 * And operator between the provided conditions:
+	 * 
+	 * &lt;pre&gt;
+	 * and(requiredClass(&quot;javax.mail.Transport&quot;), requiredClass(&quot;foo.Bar&quot;));
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true only if
+	 * &lt;code&gt;javax.mail.Transport&lt;/code&gt; and &lt;code&gt;foo.Bar&lt;/code&gt; classes are
+	 * present in the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * If one of the condition result is false, then other conditions are not
+	 * evaluated.
+	 * &lt;/p&gt;
+	 * 
+	 * @param conditions
+	 *            one or several conditions
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	@SafeVarargs
+	public static &lt;T&gt; FluentCondition&lt;T&gt; and(Condition&lt;T&gt;... conditions) {
+<span class="fc" id="L97">		return new FluentCondition&lt;&gt;(new AndCondition&lt;&gt;(conditions));</span>
+	}
+
+	/**
+	 * And operator between the provided conditions. It is a helper method that
+	 * is useful when you need to construct conditions separately:
+	 * 
+	 * &lt;pre&gt;
+	 * List&amp;lt;Condition&amp;lt;Message&amp;gt;&amp;gt; conditions = new ArrayList&amp;lt;&amp;gt;();
+	 * conditions.add(requiredClass(&quot;javax.mail.Transport&quot;));
+	 * conditions.add(requiredClass(&quot;foo.Bar&quot;));
+	 * 
+	 * and(conditions);
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true only if
+	 * &lt;code&gt;javax.mail.Transport&lt;/code&gt; and &lt;code&gt;foo.Bar&lt;/code&gt; classes are
+	 * present in the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * If one of the condition result is false, then other conditions are not
+	 * evaluated.
+	 * &lt;/p&gt;
+	 * 
+	 * @param conditions
+	 *            one or several conditions
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; and(List&lt;Condition&lt;T&gt;&gt; conditions) {
+<span class="fc" id="L128">		return new FluentCondition&lt;&gt;(new AndCondition&lt;&gt;(conditions));</span>
+	}
+
+	/**
+	 * Or operator between the provided conditions:
+	 * 
+	 * &lt;pre&gt;
+	 * or(requiredClass(&quot;javax.mail.Transport&quot;), requiredClass(&quot;foo.Bar&quot;));
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true if either
+	 * &lt;code&gt;javax.mail.Transport&lt;/code&gt; or &lt;code&gt;foo.Bar&lt;/code&gt; class is
+	 * present in the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * If one of the condition result is true, then other conditions are not
+	 * evaluated.
+	 * &lt;/p&gt;
+	 * 
+	 * @param conditions
+	 *            one or several conditions
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	@SafeVarargs
+	public static &lt;T&gt; FluentCondition&lt;T&gt; or(Condition&lt;T&gt;... conditions) {
+<span class="fc" id="L155">		return new FluentCondition&lt;&gt;(new OrCondition&lt;&gt;(conditions));</span>
+	}
+
+	/**
+	 * Or operator between the provided conditions. It is a helper method that
+	 * is useful when you need to construct conditions separately:
+	 * 
+	 * &lt;pre&gt;
+	 * List&amp;lt;Condition&amp;lt;Message&amp;gt;&amp;gt; conditions = new ArrayList&amp;lt;&amp;gt;();
+	 * conditions.add(requiredClass(&quot;javax.mail.Transport&quot;));
+	 * conditions.add(requiredClass(&quot;foo.Bar&quot;));
+	 * 
+	 * or(conditions);
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true if either
+	 * &lt;code&gt;javax.mail.Transport&lt;/code&gt; or &lt;code&gt;foo.Bar&lt;/code&gt; class is
+	 * present in the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * If one of the condition result is true, then other conditions are not
+	 * evaluated.
+	 * &lt;/p&gt;
+	 * 
+	 * @param conditions
+	 *            one or several conditions
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; or(List&lt;Condition&lt;T&gt;&gt; conditions) {
+<span class="fc" id="L186">		return new FluentCondition&lt;&gt;(new OrCondition&lt;&gt;(conditions));</span>
+	}
+
+	/**
+	 * Not operator to reverse provided condition:
+	 * 
+	 * &lt;pre&gt;
+	 * not(requiredClass(&quot;javax.mail.Transport));
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true if the class
+	 * &lt;code&gt;javax.mail.Transport&lt;/code&gt; is not present in the classpath.
+	 * 
+	 * @param condition
+	 *            the condition to reverse
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; not(Condition&lt;T&gt; condition) {
+<span class="fc" id="L206">		return new FluentCondition&lt;&gt;(new NotCondition&lt;&gt;(condition));</span>
+	}
+
+	/**
+	 * Check if a property is present in the configuration properties. The
+	 * configuration properties are available through the property resolver.
+	 * 
+	 * &lt;pre&gt;
+	 * requiredProperty(propertyResolver, &quot;mail.host&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true only if the property
+	 * &lt;code&gt;mail.host&lt;/code&gt; is present in the property resolver.
+	 * 
+	 * @param propertyResolver
+	 *            the resolver that is used to access property values
+	 * @param property
+	 *            the property name
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; requiredProperty(PropertyResolver propertyResolver, String property) {
+<span class="fc" id="L229">		return new FluentCondition&lt;&gt;(new RequiredPropertyCondition&lt;&gt;(property, propertyResolver));</span>
+	}
+
+	/**
+	 * Check if a property has a particular value in the configuration
+	 * properties. The configuration properties are available through the
+	 * property resolver.
+	 * 
+	 * &lt;pre&gt;
+	 * requiredPropertyValue(propertyResolver, &quot;mail.host&quot;, &quot;localhost&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true only if the property
+	 * &lt;code&gt;mail.host&lt;/code&gt; is present in the property resolver and its value
+	 * is exactly &lt;code&gt;localhost&lt;/code&gt;.
+	 * 
+	 * @param propertyResolver
+	 *            the resolver that is used to access property values
+	 * @param property
+	 *            the property name
+	 * @param value
+	 *            the exact value to match
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; requiredPropertyValue(PropertyResolver propertyResolver, String property, String value) {
+<span class="fc" id="L256">		return new FluentCondition&lt;&gt;(new PropertyValueCondition&lt;&gt;(property, value, propertyResolver));</span>
+	}
+
+	/**
+	 * Check if a property value matches the pattern in the configuration
+	 * properties. The configuration properties are available through the
+	 * property resolver.
+	 * 
+	 * &lt;pre&gt;
+	 * requiredPropertyValue(propertyResolver, &quot;mail.host&quot;, Pattern.compile(&quot;local.*&quot;));
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true only if the property
+	 * &lt;code&gt;mail.host&lt;/code&gt; is present in the property resolver and its value
+	 * matches the pattern &lt;code&gt;local.*&lt;/code&gt;.
+	 * 
+	 * @param propertyResolver
+	 *            the resolver that is used to access property values
+	 * @param property
+	 *            the property name
+	 * @param pattern
+	 *            the pattern used to check if the value matches
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; requiredPropertyValue(PropertyResolver propertyResolver, String property, Pattern pattern) {
+<span class="fc" id="L283">		return new FluentCondition&lt;&gt;(new PropertyPatternCondition&lt;&gt;(property, pattern, propertyResolver));</span>
+	}
+
+	/**
+	 * Check if a class is present in the classpath.
+	 * 
+	 * &lt;pre&gt;
+	 * requiredClass(&quot;javax.mail.Transport&quot;);
+	 * &lt;/pre&gt;
+	 * 
+	 * Means that the result will be true only if the class
+	 * &lt;code&gt;javax.mail.Transport&lt;/code&gt; is present in the classpath.
+	 * 
+	 * @param className
+	 *            the class to check
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; requiredClass(String className) {
+<span class="fc" id="L303">		return new FluentCondition&lt;&gt;(new RequiredClassCondition&lt;&gt;(className));</span>
+	}
+
+	/**
+	 * A condition that always returns true.
+	 * 
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; alwaysTrue() {
+<span class="fc" id="L314">		return new FluentCondition&lt;&gt;(new FixedCondition&lt;&gt;(true));</span>
+	}
+
+	/**
+	 * A condition that always returns false.
+	 * 
+	 * @param &lt;T&gt;
+	 *            the type of the object that is under condition
+	 * @return the fluent condition
+	 */
+	public static &lt;T&gt; FluentCondition&lt;T&gt; alwaysFalse() {
+<span class="fc" id="L325">		return new FluentCondition&lt;&gt;(new FixedCondition&lt;&gt;(false));</span>
+	}
+
+	private Conditions() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ShortCodeNumberFormatHandler.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.message.addressing.translator</a> &gt; <span class="el_source">ShortCodeNumberFormatHandler.java</span></div><h1>ShortCodeNumberFormatHandler.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.message.addressing.translator;
+
+import fr.sii.ogham.sms.message.PhoneNumber;
+import fr.sii.ogham.sms.message.addressing.NumberingPlanIndicator;
+import fr.sii.ogham.sms.message.addressing.TypeOfNumber;
+
+/**
+ * Phone number handler for short codes. If the sender address is a short code,
+ * TON is set to 3, and NPI is set to 0. A number is considered to be a short
+ * code if the length of the number is 5 digits or less.
+ * 
+ * @author cdejonghe
+ * 
+ */
+public class ShortCodeNumberFormatHandler extends AbstractFixedPhoneNumberHandler {
+
+	private static final int SHORTCODE_LENGTH = 5;
+
+	public ShortCodeNumberFormatHandler() {
+<span class="fc" id="L20">		super(TypeOfNumber.NETWORK_SPECIFIC, NumberingPlanIndicator.UNKNOWN);</span>
+<span class="fc" id="L21">	}</span>
+
+	@Override
+	public boolean supports(PhoneNumber phoneNumber) {
+<span class="fc bfc" id="L25" title="All 6 branches covered.">		return phoneNumber != null &amp;&amp; phoneNumber.getNumber() != null &amp;&amp; phoneNumber.getNumber().length() &lt;= SHORTCODE_LENGTH;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

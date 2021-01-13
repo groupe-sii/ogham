@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CleanableMessagingService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.service</a> &gt; <span class="el_source">CleanableMessagingService.java</span></div><h1>CleanableMessagingService.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.service;
+
+import java.io.Closeable;
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.registry.CleanableRegistry;
+import fr.sii.ogham.core.clean.Cleanable;
+import fr.sii.ogham.core.exception.MessagingException;
+import fr.sii.ogham.core.exception.clean.CleanException;
+import fr.sii.ogham.core.exception.clean.CloseException;
+import fr.sii.ogham.core.message.Message;
+
+/**
+ * Service that decorated the regular service to also provide the possibility to
+ * clean resources.
+ * 
+ * &lt;p&gt;
+ * Usually, the {@link MessagingService} in instantiated once per application
+ * and is closed when the application exists. But for any reason, a developer
+ * may want to create a new service several times. For example, he may create a
+ * new service everytime a message has to be sent (even if it is less efficient,
+ * we are not here to make judgments). In this case, the previously created
+ * service may need to be destroyed and all associated resources should be
+ * cleaned up.
+ * 
+ * This service provides three ways to do some cleanup: manually, using
+ * auto-close behavior using try-with-resource or automatically before garbage
+ * collection (&lt;strong&gt;/!\ Read information below to understand the
+ * risks&lt;/strong&gt;).
+ * 
+ * &lt;p&gt;
+ * This service implements {@link Cleanable} interface to provide a way to
+ * manually clean resources (by explicitly calling {@link #clean()} method).
+ * 
+ * &lt;p&gt;
+ * This service also implements {@link Closeable} interface to automatically
+ * cleanup resources using the try-with-resource capabilities:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *  try (CleanableMessagingService service = (CleanableMessagingService) builder.build()) {
+ *  	service.send(new Email());
+ *  } 
+ * }
+ * &lt;/pre&gt;
+ * 
+ * In Spring environment, the {@link #close()} is automatically called when the
+ * enclosing ApplicationContext is closed.
+ * 
+ * &lt;p&gt;
+ * This service also overrides the {@code finalize()} method so that if the
+ * service is garbage collected (no more references on the service instance),
+ * all resources are automatically cleaned. The purpose is to provide an easy to
+ * use service that tries to do some cleanup even if the developer forgets to do
+ * so.
+ * 
+ * &lt;strong&gt;However, be careful as stated by Sonar: The {@code Object.finalize()}
+ * method is called on an object by the garbage collector when it determines
+ * that there are no more references to the object. But there is absolutely no
+ * warranty that this method will be called AS SOON AS the last references to
+ * the object are removed. It can be few microseconds to few minutes later. So
+ * when system resources need to be disposed by an object, it's better to not
+ * rely on this asynchronous mechanism to dispose them.&lt;/strong&gt;
+ * 
+ * &lt;p&gt;
+ * The cleanup of resources happens only once per {@link Cleanable}. It means
+ * that if the developer explicitly calls {@link #clean()}, all resources are
+ * cleaned up and then if service is garbage collected, the resources are not
+ * cleaned a second time.
+ * 
+ * 
+ * @author Aurélien Baudet
+ * @see Cleanable
+ * @see CleanableRegistry
+ * @see AutoCloseable
+ * @see &quot;https://www.javaworld.com/article/2076697/object-finalization-and-cleanup.html&quot;
+ *
+ */
+public class CleanableMessagingService implements MessagingService, Cleanable, Closeable {
+<span class="fc" id="L83">	private static final Logger LOG = LoggerFactory.getLogger(CleanableMessagingService.class);</span>
+
+	private final MessagingService delegate;
+	private final Cleanable cleaner;
+
+	/**
+	 * Wraps the service and delegates cleaning operations to a dedicated
+	 * implementation.
+	 * 
+	 * @param delegate
+	 *            the wrapped service
+	 * @param cleaner
+	 *            the implementation that will really do some cleanup
+	 */
+	public CleanableMessagingService(MessagingService delegate, Cleanable cleaner) {
+<span class="fc" id="L98">		super();</span>
+<span class="fc" id="L99">		this.delegate = delegate;</span>
+<span class="fc" id="L100">		this.cleaner = cleaner;</span>
+<span class="fc" id="L101">	}</span>
+
+	@Override
+	public void send(Message message) throws MessagingException {
+<span class="fc" id="L105">		delegate.send(message);</span>
+<span class="fc" id="L106">	}</span>
+
+	@Override
+	public void clean() throws CleanException {
+<span class="fc" id="L110">		LOG.info(&quot;Manually cleaning all resources...&quot;);</span>
+<span class="fc" id="L111">		cleaner.clean();</span>
+<span class="fc" id="L112">		LOG.info(&quot;Manually cleaned&quot;);</span>
+<span class="fc" id="L113">	}</span>
+
+	@Override
+	public void close() throws IOException {
+		try {
+<span class="fc" id="L118">			LOG.info(&quot;Automatically closing all resources...&quot;);</span>
+<span class="fc" id="L119">			cleaner.clean();</span>
+<span class="fc" id="L120">			LOG.info(&quot;Automatically closed&quot;);</span>
+<span class="nc" id="L121">		} catch (CleanException e) {</span>
+<span class="nc" id="L122">			throw new CloseException(&quot;Failed to close resources&quot;, e);</span>
+<span class="fc" id="L123">		}</span>
+<span class="fc" id="L124">	}</span>
+
+	@Override
+	@SuppressWarnings(&quot;squid:ObjectFinalizeOverridenCheck&quot;) // This is
+															// intentional for
+															// automatic cleanup
+															// if developer
+															// forgets it
+	protected void finalize() throws Throwable {
+		try {
+<span class="fc" id="L134">			LOG.info(&quot;Automatically cleaning all resources...&quot;);</span>
+<span class="fc" id="L135">			cleaner.clean();</span>
+<span class="fc" id="L136">			LOG.info(&quot;Automatically cleaned&quot;);</span>
+		} finally {
+<span class="fc" id="L138">			super.finalize();</span>
+		}
+<span class="fc" id="L140">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

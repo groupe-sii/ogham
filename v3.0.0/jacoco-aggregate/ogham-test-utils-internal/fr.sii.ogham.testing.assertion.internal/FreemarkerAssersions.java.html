@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FreemarkerAssersions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils-internal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.internal</a> &gt; <span class="el_source">FreemarkerAssersions.java</span></div><h1>FreemarkerAssersions.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.internal;
+
+import static fr.sii.ogham.testing.assertion.internal.helper.ImplementationFinder.findParsers;
+import static java.util.stream.Collectors.toSet;
+
+import java.util.Set;
+
+import fr.sii.ogham.core.service.MessagingService;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.sms.message.Sms;
+import fr.sii.ogham.template.freemarker.FreeMarkerParser;
+import fr.sii.ogham.testing.assertion.internal.helper.FoundParser;
+import fr.sii.ogham.testing.util.HasParent;
+import freemarker.template.Configuration;
+
+/**
+ * Helper class to make assertions on FreeMarker instances created by Ogham.
+ * 
+ * For example, to ensure that particular configuration is used for emails:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ * email()
+ *   .configuration()
+ *     .defaultEncoding(equalTo(&quot;UTF-8&quot;))
+ * }
+ * &lt;/pre&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class FreemarkerAssersions extends HasParent&lt;MessagingServiceAssertions&gt; {
+	private final Set&lt;FoundParser&lt;FreeMarkerParser&gt;&gt; freeMarkerParsers;
+
+	public FreemarkerAssersions(MessagingServiceAssertions parent, Set&lt;FoundParser&lt;FreeMarkerParser&gt;&gt; freeMarkerParsers) {
+<span class="fc" id="L36">		super(parent);</span>
+<span class="fc" id="L37">		this.freeMarkerParsers = freeMarkerParsers;</span>
+<span class="fc" id="L38">	}</span>
+
+	/**
+	 * Make assertions on {@link FreeMarkerParser} for both email and sms.
+	 * 
+	 * For example, to ensure that all FreeMarker {@link Configuration} uses the
+	 * right default encoding:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * all()
+	 *   .configuration()
+	 *     .defaultEncoding(equalTo(&quot;UTF-8&quot;))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return builder for fluent chaining
+	 */
+	public FreemarkerParserAssertions all() {
+<span class="fc" id="L57">		return new FreemarkerParserAssertions(this, freeMarkerParsers.stream()</span>
+<span class="fc" id="L58">				.map(FoundParser::getParser)</span>
+<span class="fc" id="L59">				.collect(toSet()));</span>
+	}
+
+	/**
+	 * Make assertions on {@link FreeMarkerParser} instantiated for sending
+	 * emails only.
+	 * 
+	 * For example, to ensure that FreeMarker {@link Configuration} used by
+	 * email uses the right default encoding:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * email()
+	 *   .configuration()
+	 *     .defaultEncoding(equalTo(&quot;UTF-8&quot;))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return builder for fluent chaining
+	 */
+	public FreemarkerParserAssertions email() {
+		// @formatter:off
+<span class="nc" id="L81">		return new FreemarkerParserAssertions(this, freeMarkerParsers.stream()</span>
+<span class="nc" id="L82">				.filter(f -&gt; f.getMessageType().equals(Email.class))</span>
+<span class="nc" id="L83">				.map(FoundParser::getParser)</span>
+<span class="nc" id="L84">				.collect(toSet()));</span>
+		// @formatter:on
+	}
+
+	/**
+	 * Make assertions on {@link FreeMarkerParser} instantiated for sending sms
+	 * only.
+	 * 
+	 * For example, to ensure that FreeMarker {@link Configuration} used by sms
+	 * uses the right default encoding:
+	 * 
+	 * &lt;pre&gt;
+	 * {@code
+	 * sms()
+	 *   .configuration()
+	 *     .defaultEncoding(equalTo(&quot;UTF-8&quot;))
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * @return builder for fluent chaining
+	 */
+	public FreemarkerParserAssertions sms() {
+		// @formatter:off
+<span class="nc" id="L107">		return new FreemarkerParserAssertions(this, freeMarkerParsers.stream()</span>
+<span class="nc" id="L108">				.filter(f -&gt; f.getMessageType().equals(Sms.class))</span>
+<span class="nc" id="L109">				.map(FoundParser::getParser)</span>
+<span class="nc" id="L110">				.collect(toSet()));</span>
+		// @formatter:on
+	}
+
+	/**
+	 * Find instances of {@link FreeMarkerParser}
+	 * 
+	 * @param messagingService
+	 *            the messaging service
+	 * @return the found instances
+	 */
+	public static Set&lt;FoundParser&lt;FreeMarkerParser&gt;&gt; getFreemarkerParsers(MessagingService messagingService) {
+<span class="fc" id="L122">		return findParsers(messagingService, FreeMarkerParser.class);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

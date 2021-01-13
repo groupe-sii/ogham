@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ServerDelays.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.sms.simulator.config</a> &gt; <span class="el_source">ServerDelays.java</span></div><h1>ServerDelays.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.sms.simulator.config;
+
+/**
+ * Control delays to simulate a slow server.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+<span class="fc" id="L9">public class ServerDelays {</span>
+	/**
+	 * Simulate slow server by executing {@code sendAlertNotificationWaiting}
+	 * function before sending &quot;AlertNotification&quot; data
+	 */
+	private Awaiter sendAlertNotificationWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendBindWaiting} function before
+	 * sending &quot;Bind&quot; data
+	 */
+	private Awaiter sendBindWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendBindRespWaiting} function
+	 * before sending &quot;BindResp&quot; data
+	 */
+	private Awaiter sendBindRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendCancelSmWaiting} function
+	 * before sending &quot;CancelSm&quot; data
+	 */
+	private Awaiter sendCancelSmWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendCancelSmRespWaiting}
+	 * function before sending &quot;CancelSmResp&quot; data
+	 */
+	private Awaiter sendCancelSmRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendDataSmWaiting} function
+	 * before sending &quot;DataSm&quot; data
+	 */
+	private Awaiter sendDataSmWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendDataSmRespWaiting} function
+	 * before sending &quot;DataSmResp&quot; data
+	 */
+	private Awaiter sendDataSmRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendDeliverSmWaiting} function
+	 * before sending &quot;DeliverSm&quot; data
+	 */
+	private Awaiter sendDeliverSmWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendDeliverSmRespWaiting}
+	 * function before sending &quot;DeliverSmResp&quot; data
+	 */
+	private Awaiter sendDeliverSmRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendEnquireLinkWaiting} function
+	 * before sending &quot;EnquireLink&quot; data
+	 */
+	private Awaiter sendEnquireLinkWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendEnquireLinkRespWaiting}
+	 * function before sending &quot;EnquireLinkResp&quot; data
+	 */
+	private Awaiter sendEnquireLinkRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendGenericNackWaiting} function
+	 * before sending &quot;GenericNack&quot; data
+	 */
+	private Awaiter sendGenericNackWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendHeaderWaiting} function
+	 * before sending &quot;Header&quot; data
+	 */
+	private Awaiter sendHeaderWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendOutbindWaiting} function
+	 * before sending &quot;Outbind&quot; data
+	 */
+	private Awaiter sendOutbindWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendQuerySmWaiting} function
+	 * before sending &quot;QuerySm&quot; data
+	 */
+	private Awaiter sendQuerySmWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendQuerySmRespWaiting} function
+	 * before sending &quot;QuerySmResp&quot; data
+	 */
+	private Awaiter sendQuerySmRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendReplaceSmWaiting} function
+	 * before sending &quot;ReplaceSm&quot; data
+	 */
+	private Awaiter sendReplaceSmWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendReplaceSmRespWaiting}
+	 * function before sending &quot;ReplaceSmResp&quot; data
+	 */
+	private Awaiter sendReplaceSmRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendSubmitMultiWaiting} function
+	 * before sending &quot;SubmitMulti&quot; data
+	 */
+	private Awaiter sendSubmitMultiWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendSubmitMultiRespWaiting}
+	 * function before sending &quot;SubmitMultiResp&quot; data
+	 */
+	private Awaiter sendSubmitMultiRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendSubmitSmWaiting} function
+	 * before sending &quot;SubmitSm&quot; data
+	 */
+	private Awaiter sendSubmitSmWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendSubmitSmRespWaiting}
+	 * function before sending &quot;SubmitSmResp&quot; data
+	 */
+	private Awaiter sendSubmitSmRespWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendUnbindWaiting} function
+	 * before sending &quot;Unbind&quot; data
+	 */
+	private Awaiter sendUnbindWaiting;
+	/**
+	 * Simulate slow server by executing {@code sendUnbindRespWaiting} function
+	 * before sending &quot;UnbindResp&quot; data
+	 */
+	private Awaiter sendUnbindRespWaiting;
+
+	public Awaiter getSendAlertNotificationWaiting() {
+<span class="nc" id="L132">		return sendAlertNotificationWaiting;</span>
+	}
+
+	public void setSendAlertNotificationWaiting(Awaiter sendAlertNotificationWaiting) {
+<span class="fc" id="L136">		this.sendAlertNotificationWaiting = sendAlertNotificationWaiting;</span>
+<span class="fc" id="L137">	}</span>
+
+	public Awaiter getSendBindWaiting() {
+<span class="nc" id="L140">		return sendBindWaiting;</span>
+	}
+
+	public void setSendBindWaiting(Awaiter sendBindWaiting) {
+<span class="fc" id="L144">		this.sendBindWaiting = sendBindWaiting;</span>
+<span class="fc" id="L145">	}</span>
+
+	public Awaiter getSendBindRespWaiting() {
+<span class="fc" id="L148">		return sendBindRespWaiting;</span>
+	}
+
+	public void setSendBindRespWaiting(Awaiter sendBindRespWaiting) {
+<span class="fc" id="L152">		this.sendBindRespWaiting = sendBindRespWaiting;</span>
+<span class="fc" id="L153">	}</span>
+
+	public Awaiter getSendCancelSmWaiting() {
+<span class="nc" id="L156">		return sendCancelSmWaiting;</span>
+	}
+
+	public void setSendCancelSmWaiting(Awaiter sendCancelSmWaiting) {
+<span class="fc" id="L160">		this.sendCancelSmWaiting = sendCancelSmWaiting;</span>
+<span class="fc" id="L161">	}</span>
+
+	public Awaiter getSendCancelSmRespWaiting() {
+<span class="nc" id="L164">		return sendCancelSmRespWaiting;</span>
+	}
+
+	public void setSendCancelSmRespWaiting(Awaiter sendCancelSmRespWaiting) {
+<span class="fc" id="L168">		this.sendCancelSmRespWaiting = sendCancelSmRespWaiting;</span>
+<span class="fc" id="L169">	}</span>
+
+	public Awaiter getSendDataSmWaiting() {
+<span class="nc" id="L172">		return sendDataSmWaiting;</span>
+	}
+
+	public void setSendDataSmWaiting(Awaiter sendDataSmWaiting) {
+<span class="fc" id="L176">		this.sendDataSmWaiting = sendDataSmWaiting;</span>
+<span class="fc" id="L177">	}</span>
+
+	public Awaiter getSendDataSmRespWaiting() {
+<span class="nc" id="L180">		return sendDataSmRespWaiting;</span>
+	}
+
+	public void setSendDataSmRespWaiting(Awaiter sendDataSmRespWaiting) {
+<span class="fc" id="L184">		this.sendDataSmRespWaiting = sendDataSmRespWaiting;</span>
+<span class="fc" id="L185">	}</span>
+
+	public Awaiter getSendDeliverSmWaiting() {
+<span class="nc" id="L188">		return sendDeliverSmWaiting;</span>
+	}
+
+	public void setSendDeliverSmWaiting(Awaiter sendDeliverSmWaiting) {
+<span class="fc" id="L192">		this.sendDeliverSmWaiting = sendDeliverSmWaiting;</span>
+<span class="fc" id="L193">	}</span>
+
+	public Awaiter getSendDeliverSmRespWaiting() {
+<span class="nc" id="L196">		return sendDeliverSmRespWaiting;</span>
+	}
+
+	public void setSendDeliverSmRespWaiting(Awaiter sendDeliverSmRespWaiting) {
+<span class="fc" id="L200">		this.sendDeliverSmRespWaiting = sendDeliverSmRespWaiting;</span>
+<span class="fc" id="L201">	}</span>
+
+	public Awaiter getSendEnquireLinkWaiting() {
+<span class="nc" id="L204">		return sendEnquireLinkWaiting;</span>
+	}
+
+	public void setSendEnquireLinkWaiting(Awaiter sendEnquireLinkWaiting) {
+<span class="fc" id="L208">		this.sendEnquireLinkWaiting = sendEnquireLinkWaiting;</span>
+<span class="fc" id="L209">	}</span>
+
+	public Awaiter getSendEnquireLinkRespWaiting() {
+<span class="fc" id="L212">		return sendEnquireLinkRespWaiting;</span>
+	}
+
+	public void setSendEnquireLinkRespWaiting(Awaiter sendEnquireLinkRespWaiting) {
+<span class="fc" id="L216">		this.sendEnquireLinkRespWaiting = sendEnquireLinkRespWaiting;</span>
+<span class="fc" id="L217">	}</span>
+
+	public Awaiter getSendGenericNackWaiting() {
+<span class="nc" id="L220">		return sendGenericNackWaiting;</span>
+	}
+
+	public void setSendGenericNackWaiting(Awaiter sendGenericNackWaiting) {
+<span class="fc" id="L224">		this.sendGenericNackWaiting = sendGenericNackWaiting;</span>
+<span class="fc" id="L225">	}</span>
+
+	public Awaiter getSendHeaderWaiting() {
+<span class="nc" id="L228">		return sendHeaderWaiting;</span>
+	}
+
+	public void setSendHeaderWaiting(Awaiter sendHeaderWaiting) {
+<span class="fc" id="L232">		this.sendHeaderWaiting = sendHeaderWaiting;</span>
+<span class="fc" id="L233">	}</span>
+
+	public Awaiter getSendOutbindWaiting() {
+<span class="nc" id="L236">		return sendOutbindWaiting;</span>
+	}
+
+	public void setSendOutbindWaiting(Awaiter sendOutbindWaiting) {
+<span class="fc" id="L240">		this.sendOutbindWaiting = sendOutbindWaiting;</span>
+<span class="fc" id="L241">	}</span>
+
+	public Awaiter getSendQuerySmWaiting() {
+<span class="nc" id="L244">		return sendQuerySmWaiting;</span>
+	}
+
+	public void setSendQuerySmWaiting(Awaiter sendQuerySmWaiting) {
+<span class="fc" id="L248">		this.sendQuerySmWaiting = sendQuerySmWaiting;</span>
+<span class="fc" id="L249">	}</span>
+
+	public Awaiter getSendQuerySmRespWaiting() {
+<span class="nc" id="L252">		return sendQuerySmRespWaiting;</span>
+	}
+
+	public void setSendQuerySmRespWaiting(Awaiter sendQuerySmRespWaiting) {
+<span class="fc" id="L256">		this.sendQuerySmRespWaiting = sendQuerySmRespWaiting;</span>
+<span class="fc" id="L257">	}</span>
+
+	public Awaiter getSendReplaceSmWaiting() {
+<span class="nc" id="L260">		return sendReplaceSmWaiting;</span>
+	}
+
+	public void setSendReplaceSmWaiting(Awaiter sendReplaceSmWaiting) {
+<span class="fc" id="L264">		this.sendReplaceSmWaiting = sendReplaceSmWaiting;</span>
+<span class="fc" id="L265">	}</span>
+
+	public Awaiter getSendReplaceSmRespWaiting() {
+<span class="nc" id="L268">		return sendReplaceSmRespWaiting;</span>
+	}
+
+	public void setSendReplaceSmRespWaiting(Awaiter sendReplaceSmRespWaiting) {
+<span class="fc" id="L272">		this.sendReplaceSmRespWaiting = sendReplaceSmRespWaiting;</span>
+<span class="fc" id="L273">	}</span>
+
+	public Awaiter getSendSubmitMultiWaiting() {
+<span class="nc" id="L276">		return sendSubmitMultiWaiting;</span>
+	}
+
+	public void setSendSubmitMultiWaiting(Awaiter sendSubmitMultiWaiting) {
+<span class="fc" id="L280">		this.sendSubmitMultiWaiting = sendSubmitMultiWaiting;</span>
+<span class="fc" id="L281">	}</span>
+
+	public Awaiter getSendSubmitMultiRespWaiting() {
+<span class="nc" id="L284">		return sendSubmitMultiRespWaiting;</span>
+	}
+
+	public void setSendSubmitMultiRespWaiting(Awaiter sendSubmitMultiRespWaiting) {
+<span class="fc" id="L288">		this.sendSubmitMultiRespWaiting = sendSubmitMultiRespWaiting;</span>
+<span class="fc" id="L289">	}</span>
+
+	public Awaiter getSendSubmitSmWaiting() {
+<span class="nc" id="L292">		return sendSubmitSmWaiting;</span>
+	}
+
+	public void setSendSubmitSmWaiting(Awaiter sendSubmitSmWaiting) {
+<span class="fc" id="L296">		this.sendSubmitSmWaiting = sendSubmitSmWaiting;</span>
+<span class="fc" id="L297">	}</span>
+
+	public Awaiter getSendSubmitSmRespWaiting() {
+<span class="fc" id="L300">		return sendSubmitSmRespWaiting;</span>
+	}
+
+	public void setSendSubmitSmRespWaiting(Awaiter sendSubmitSmRespWaiting) {
+<span class="fc" id="L304">		this.sendSubmitSmRespWaiting = sendSubmitSmRespWaiting;</span>
+<span class="fc" id="L305">	}</span>
+
+	public Awaiter getSendUnbindWaiting() {
+<span class="nc" id="L308">		return sendUnbindWaiting;</span>
+	}
+
+	public void setSendUnbindWaiting(Awaiter sendUnbindWaiting) {
+<span class="fc" id="L312">		this.sendUnbindWaiting = sendUnbindWaiting;</span>
+<span class="fc" id="L313">	}</span>
+
+	public Awaiter getSendUnbindRespWaiting() {
+<span class="fc" id="L316">		return sendUnbindRespWaiting;</span>
+	}
+
+	public void setSendUnbindRespWaiting(Awaiter sendUnbindRespWaiting) {
+<span class="fc" id="L320">		this.sendUnbindRespWaiting = sendUnbindRespWaiting;</span>
+<span class="fc" id="L321">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

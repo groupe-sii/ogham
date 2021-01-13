@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>RequiredClassesAnnotationProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.condition.provider</a> &gt; <span class="el_source">RequiredClassesAnnotationProvider.java</span></div><h1>RequiredClassesAnnotationProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.condition.provider;
+
+import fr.sii.ogham.core.builder.condition.RequiredClass;
+import fr.sii.ogham.core.builder.condition.RequiredClasses;
+import fr.sii.ogham.core.condition.AndCondition;
+import fr.sii.ogham.core.condition.Condition;
+import fr.sii.ogham.core.condition.FixedCondition;
+import fr.sii.ogham.core.condition.fluent.Conditions;
+
+/**
+ * Provider that handle {@link RequiredClasses} annotation to provide a
+ * condition.
+ * 
+ * It delegates handling of {@link RequiredClass} to
+ * {@link RequiredClassAnnotationProvider}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;T&gt;
+ *            the kind of the object under conditions
+ */
+public class RequiredClassesAnnotationProvider&lt;T&gt; implements ConditionProvider&lt;RequiredClasses, T&gt; {
+	private final RequiredClassAnnotationProvider&lt;T&gt; delegate;
+
+	public RequiredClassesAnnotationProvider() {
+<span class="fc" id="L26">		super();</span>
+<span class="fc" id="L27">		this.delegate = new RequiredClassAnnotationProvider&lt;&gt;();</span>
+<span class="fc" id="L28">	}</span>
+
+	@Override
+	public Condition&lt;T&gt; provide(RequiredClasses annotation) {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">		if (annotation == null) {</span>
+<span class="fc" id="L33">			return new FixedCondition&lt;&gt;(true);</span>
+		} else {
+<span class="fc" id="L35">			AndCondition&lt;T&gt; mainCondition = new AndCondition&lt;&gt;();</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">			for (String requiredClassName : annotation.value()) {</span>
+<span class="fc" id="L37">				mainCondition = mainCondition.and(Conditions.&lt;T&gt; requiredClass(requiredClassName));</span>
+			}
+<span class="fc bfc" id="L39" title="All 2 branches covered.">			for (RequiredClass subAnnotation : annotation.classes()) {</span>
+<span class="fc" id="L40">				mainCondition = mainCondition.and(delegate.provide(subAnnotation));</span>
+			}
+<span class="fc" id="L42">			return mainCondition;</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

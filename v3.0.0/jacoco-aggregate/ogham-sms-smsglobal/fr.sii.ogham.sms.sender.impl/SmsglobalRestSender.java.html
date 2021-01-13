@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SmsglobalRestSender.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-sms-smsglobal</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.sms.sender.impl</a> &gt; <span class="el_source">SmsglobalRestSender.java</span></div><h1>SmsglobalRestSender.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.sms.sender.impl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.exception.MessageException;
+import fr.sii.ogham.core.sender.AbstractSpecializedSender;
+import fr.sii.ogham.sms.message.Sms;
+
+/**
+ * Implementation that sends a HTTP REST request on the &lt;a
+ * href=&quot;http://www.smsglobal.com/rest-api/&quot;&gt;smsglobal REST API&lt;/a&gt; .
+ * 
+ * @author Aurélien Baudet
+ */
+//@Priority(properties=&quot;${ogham.sms.implementation-priority.smsglobal-rest}&quot;, defaultValue = SmsGlobalConstants.)
+<span class="nc" id="L17">public class SmsglobalRestSender extends AbstractSpecializedSender&lt;Sms&gt; {</span>
+<span class="nc" id="L18">	private static final Logger LOG = LoggerFactory.getLogger(SmsglobalRestSender.class);</span>
+
+	@Override
+	public void send(Sms message) throws MessageException {
+		// TODO: implement Smsglobal using HTTP API
+<span class="nc" id="L23">	}</span>
+
+	@Override
+	public String toString() {
+<span class="nc" id="L27">		return &quot;SmsglobalRestSender&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

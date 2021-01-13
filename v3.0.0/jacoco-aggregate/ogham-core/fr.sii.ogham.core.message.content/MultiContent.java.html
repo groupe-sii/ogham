@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MultiContent.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.message.content</a> &gt; <span class="el_source">MultiContent.java</span></div><h1>MultiContent.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.message.content;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import fr.sii.ogham.core.util.ArrayUtils;
+import fr.sii.ogham.core.util.EqualsBuilder;
+import fr.sii.ogham.core.util.HashCodeBuilder;
+
+/**
+ * Decorator content that provide ability to handle several sub contents. The
+ * aim is to be able to handle messages with several distinct contents like
+ * email for example that can contain at the same time an HTML message and a
+ * text message. The email client implementation is free to display the content
+ * it is able to handle.
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class MultiContent implements Content {
+	/**
+	 * The list of sub contents
+	 */
+	private final List&lt;Content&gt; contents;
+
+	/**
+	 * Initialize the content with one or several sub contents directly as strings.
+	 * 
+	 * @param content
+	 *            the mandatory content
+	 * @param contents
+	 *            the contents either as array or multiple arguments
+	 */
+	public MultiContent(String content, String... contents) {
+<span class="fc" id="L36">		this(toContent(ArrayUtils.concat(content, contents)));</span>
+<span class="fc" id="L37">	}</span>
+
+	/**
+	 * Initialize the content with none, one or several sub contents.
+	 * 
+	 * @param contents
+	 *            the contents either as array or multiple arguments
+	 */
+	public MultiContent(Content... contents) {
+<span class="fc" id="L46">		this(new ArrayList&lt;&gt;(Arrays.asList(contents)));</span>
+<span class="fc" id="L47">	}</span>
+
+	/**
+	 * Initialize the content with a list of sub contents
+	 * 
+	 * @param contents
+	 *            the list of sub contents
+	 */
+	public MultiContent(List&lt;Content&gt; contents) {
+<span class="fc" id="L56">		super();</span>
+<span class="fc" id="L57">		this.contents = contents;</span>
+<span class="fc" id="L58">	}</span>
+
+	public List&lt;Content&gt; getContents() {
+<span class="fc" id="L61">		return contents;</span>
+	}
+
+	/**
+	 * Add a sub content to the list of sub contents.
+	 * 
+	 * @param content
+	 *            the content to add
+	 */
+	public void addContent(Content content) {
+<span class="fc" id="L71">		contents.add(content);</span>
+<span class="fc" id="L72">	}</span>
+
+	@Override
+	public String toString() {
+<span class="nc" id="L76">		StringBuilder builder = new StringBuilder();</span>
+<span class="nc" id="L77">		builder.append(&quot;MultiContent [contents=&quot;).append(contents).append(&quot;]&quot;);</span>
+<span class="nc" id="L78">		return builder.toString();</span>
+	}
+	
+	@Override
+	public int hashCode() {
+<span class="fc" id="L83">		return new HashCodeBuilder().append(contents).hashCode();</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc" id="L88">		return new EqualsBuilder(this, obj).appendFields(&quot;contents&quot;).isEqual();</span>
+	}
+	
+	private static Content[] toContent(String[] strs) {
+<span class="fc" id="L92">		Content[] contents = new Content[strs.length];</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">		for(int i=0 ; i&lt;strs.length ; i++) {</span>
+<span class="fc" id="L94">			contents[i] = new StringContent(strs[i]);</span>
+		}
+<span class="fc" id="L96">		return contents;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

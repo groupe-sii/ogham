@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ThymeleafV3SmsBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-v3</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.v3.buider</a> &gt; <span class="el_source">ThymeleafV3SmsBuilder.java</span></div><h1>ThymeleafV3SmsBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.v3.buider;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
+import fr.sii.ogham.sms.builder.SmsBuilder;
+import fr.sii.ogham.template.thymeleaf.common.adapter.ClassPathResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.FileResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.buider.AbstractThymeleafBuilder;
+import fr.sii.ogham.template.thymeleaf.v3.ThymeLeafV3FirstSupportingTemplateResolver;
+import fr.sii.ogham.template.thymeleaf.v3.ThymeleafV3TemplateDetector;
+import fr.sii.ogham.template.thymeleaf.v3.adapter.StringResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.v3.adapter.ThymeleafV3TemplateOptionsApplier;
+
+/**
+ * Configures parsing of templates using Thymeleaf.
+ * 
+ * Specific resource resolution can be configured to use template prefix/suffix
+ * paths:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .classpath()
+ *   .pathPrefix(&quot;email/&quot;)
+ *   .pathSuffix(&quot;.html&quot;)
+ *   .and()
+ * .file()
+ *   .pathPrefix(&quot;/data/myapplication/templates/email&quot;)
+ *   .pathSuffix(&quot;.html&quot;)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * You can customize default Thymeleaf {@link TemplateEngine}:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .engine()
+ *   .addDialect(&quot;foo&quot;, myDialect)
+ *   .addMessageResolver(myMessageResolver)
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or you can use a particular Thymeleaf {@link TemplateEngine}:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ * .engine(new MyTemplateEngine())
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class ThymeleafV3SmsBuilder extends AbstractThymeleafBuilder&lt;ThymeleafV3SmsBuilder, SmsBuilder, ThymeleafV3EngineConfigBuilder&lt;ThymeleafV3SmsBuilder&gt;&gt; {
+	/**
+	 * Default constructor when using Thymeleaf without all Ogham work.
+	 * 
+	 * &lt;strong&gt;WARNING: use is only if you know what you are doing !&lt;/strong&gt;
+	 */
+	public ThymeleafV3SmsBuilder() {
+<span class="fc" id="L66">		super(ThymeleafV3SmsBuilder.class);</span>
+<span class="fc" id="L67">	}</span>
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public ThymeleafV3SmsBuilder(SmsBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L80">		super(ThymeleafV3SmsBuilder.class, parent, buildContext);</span>
+<span class="fc" id="L81">	}</span>
+
+	@Override
+	protected TemplateEngineDetector createTemplateDetector() {
+<span class="fc" id="L85">		return buildContext.register(new ThymeleafV3TemplateDetector(buildResolver()));</span>
+	}
+
+	@Override
+	protected ITemplateResolver buildTemplateResolver(TemplateEngine builtEngine) {
+<span class="fc" id="L90">		return buildContext.register(new ThymeLeafV3FirstSupportingTemplateResolver(buildResolver(), buildAdapters()));</span>
+	}
+
+	@Override
+	protected ThymeleafV3EngineConfigBuilder&lt;ThymeleafV3SmsBuilder&gt; getThymeleafEngineConfigBuilder() {
+<span class="nc" id="L95">		return buildContext.register(new ThymeleafV3EngineConfigBuilder&lt;&gt;(myself, buildContext));</span>
+	}
+
+	@Override
+	protected FirstSupportingResolverAdapter buildAdapters() {
+<span class="fc" id="L100">		FirstSupportingResolverAdapter adapter = buildContext.register(new FirstSupportingResolverAdapter());</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">		for (TemplateResolverAdapter custom : customAdapters) {</span>
+<span class="nc" id="L102">			adapter.addAdapter(custom);</span>
+<span class="nc" id="L103">		}</span>
+<span class="fc" id="L104">		ThymeleafV3TemplateOptionsApplier applier = buildContext.register(new ThymeleafV3TemplateOptionsApplier());</span>
+<span class="fc" id="L105">		adapter.addAdapter(buildContext.register(new ClassPathResolverAdapter(applier)));</span>
+<span class="fc" id="L106">		adapter.addAdapter(buildContext.register(new FileResolverAdapter(applier)));</span>
+<span class="fc" id="L107">		adapter.addAdapter(buildContext.register(new StringResolverAdapter(applier)));</span>
+<span class="fc" id="L108">		adapter.setOptions(buildTemplateResolverOptions());</span>
+<span class="fc" id="L109">		return adapter;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

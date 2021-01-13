@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PriorizedList.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">PriorizedList.java</span></div><h1>PriorizedList.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Helper class that registers objects with associated priority. Each registered
+ * object is then returned as list ordered by priority. The higher priority
+ * value comes first in the list.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of priorized objects
+ */
+public class PriorizedList&lt;P&gt; {
+	private final List&lt;WithPriority&lt;P&gt;&gt; priorities;
+
+	/**
+	 * Initializes with an empty list
+	 */
+	public PriorizedList() {
+<span class="fc" id="L25">		this(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L26">	}</span>
+
+	/**
+	 * Initializes with some priorized objects
+	 * 
+	 * @param priorities
+	 *            the priorized objects
+	 */
+	public PriorizedList(List&lt;WithPriority&lt;P&gt;&gt; priorities) {
+<span class="fc" id="L35">		super();</span>
+<span class="fc" id="L36">		this.priorities = priorities;</span>
+<span class="fc" id="L37">	}</span>
+
+	/**
+	 * Registers a new priorized object
+	 * 
+	 * @param priorized
+	 *            the wrapped object with its priority
+	 * @return this instance for fluent chaining
+	 */
+	public PriorizedList&lt;P&gt; register(WithPriority&lt;P&gt; priorized) {
+<span class="nc" id="L47">		priorities.add(priorized);</span>
+<span class="nc" id="L48">		return this;</span>
+	}
+
+	/**
+	 * Registers an object with its priority
+	 * 
+	 * @param priorized
+	 *            the object to register
+	 * @param priority
+	 *            the associated priority
+	 * @return this instance for fluent chaining
+	 */
+	public PriorizedList&lt;P&gt; register(P priorized, int priority) {
+<span class="fc" id="L61">		priorities.add(new WithPriority&lt;&gt;(priorized, priority));</span>
+<span class="fc" id="L62">		return this;</span>
+	}
+
+	/**
+	 * Merge all priorities of another {@link PriorizedList} into this one.
+	 * 
+	 * @param other
+	 *            the priority list
+	 * @return this isntance for fluent chaining
+	 */
+	public PriorizedList&lt;P&gt; register(PriorizedList&lt;P&gt; other) {
+<span class="fc" id="L73">		priorities.addAll(other.getPriorities());</span>
+<span class="fc" id="L74">		return this;</span>
+	}
+
+	/**
+	 * Returns true if this list contains no elements.
+	 * 
+	 * @return if this list contains no elements
+	 */
+	public boolean isEmpty() {
+<span class="fc" id="L83">		return priorities.isEmpty();</span>
+	}
+
+	/**
+	 * Get the list of priorities ordered by priority
+	 * 
+	 * @return ordered list of priorities
+	 */
+	public List&lt;WithPriority&lt;P&gt;&gt; getPriorities() {
+<span class="fc" id="L92">		return sort();</span>
+	}
+
+	/**
+	 * Get the list of priorized objects ordered by highest priority.
+	 * 
+	 * @return list of objects ordered by highet priority
+	 */
+	public List&lt;P&gt; getOrdered() {
+<span class="fc" id="L101">		return sort().stream().map(WithPriority::getPriorized).collect(toList());</span>
+	}
+
+	private List&lt;WithPriority&lt;P&gt;&gt; sort() {
+<span class="fc" id="L105">		priorities.sort(WithPriority.comparator());</span>
+<span class="fc" id="L106">		return priorities;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

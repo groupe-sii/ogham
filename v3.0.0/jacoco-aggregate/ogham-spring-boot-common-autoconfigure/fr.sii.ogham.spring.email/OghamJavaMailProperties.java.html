@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OghamJavaMailProperties.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-spring-boot-common-autoconfigure</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.spring.email</a> &gt; <span class="el_source">OghamJavaMailProperties.java</span></div><h1>OghamJavaMailProperties.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.spring.email;
+
+import java.nio.charset.Charset;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+@ConfigurationProperties(&quot;ogham.email.javamail&quot;)
+<span class="fc" id="L9">public class OghamJavaMailProperties {</span>
+	/**
+	 * The mail server address host (IP or hostname).&lt;br /&gt;&lt;br /&gt;
+	 * 
+	 * This value takes precedence over `spring.mail.host` and `mail.smtp.host`
+	 */
+	private String host;
+	/**
+	 * The mail server port.&lt;br /&gt;&lt;br /&gt;
+	 * 
+	 * This value takes precedence over `spring.mail.port` and `mail.smtp.port`
+	 */
+	private Integer port;
+<span class="fc" id="L22">	@NestedConfigurationProperty</span>
+	private AuthenticationProperties authenticator = new AuthenticationProperties();
+<span class="fc" id="L24">	@NestedConfigurationProperty</span>
+	private BodyProperties body = new BodyProperties();
+
+	public String getHost() {
+<span class="fc" id="L28">		return host;</span>
+	}
+
+	public void setHost(String host) {
+<span class="fc" id="L32">		this.host = host;</span>
+<span class="fc" id="L33">	}</span>
+
+	public Integer getPort() {
+<span class="fc" id="L36">		return port;</span>
+	}
+
+	public void setPort(Integer port) {
+<span class="fc" id="L40">		this.port = port;</span>
+<span class="fc" id="L41">	}</span>
+
+	public AuthenticationProperties getAuthenticator() {
+<span class="fc" id="L44">		return authenticator;</span>
+	}
+
+	public void setAuthenticator(AuthenticationProperties authenticator) {
+<span class="fc" id="L48">		this.authenticator = authenticator;</span>
+<span class="fc" id="L49">	}</span>
+
+	public BodyProperties getBody() {
+<span class="fc" id="L52">		return body;</span>
+	}
+
+	public void setBody(BodyProperties body) {
+<span class="fc" id="L56">		this.body = body;</span>
+<span class="fc" id="L57">	}</span>
+
+<span class="fc" id="L59">	public static class AuthenticationProperties {</span>
+		/**
+		 * SMTP server username
+		 */
+		private String username;
+		/**
+		 * SMTP server password
+		 */
+		private String password;
+
+		public String getUsername() {
+<span class="fc" id="L70">			return username;</span>
+		}
+
+		public void setUsername(String username) {
+<span class="fc" id="L74">			this.username = username;</span>
+<span class="fc" id="L75">		}</span>
+
+		public String getPassword() {
+<span class="fc" id="L78">			return password;</span>
+		}
+
+		public void setPassword(String password) {
+<span class="fc" id="L82">			this.password = password;</span>
+<span class="fc" id="L83">		}</span>
+	}
+
+<span class="fc" id="L86">	public static class BodyProperties {</span>
+		/**
+		 * Encoding for body. Default to UTF-8
+		 */
+		private Charset charset;
+
+		public Charset getCharset() {
+<span class="fc" id="L93">			return charset;</span>
+		}
+
+		public void setCharset(Charset charset) {
+<span class="fc" id="L97">			this.charset = charset;</span>
+<span class="fc" id="L98">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

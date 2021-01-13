@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AttachmentHandlingBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">AttachmentHandlingBuilder.java</span></div><h1>AttachmentHandlingBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
+import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.translator.resource.AttachmentResourceTranslator;
+import fr.sii.ogham.core.translator.resource.EveryResourceTranslator;
+import fr.sii.ogham.core.translator.resource.LookupResourceTranslator;
+import fr.sii.ogham.core.translator.resource.OverrideNameWrapperResourceTranslator;
+import fr.sii.ogham.email.attachment.Attachment;
+
+/**
+ * Configures how {@link Attachment}s are handled.
+ * 
+ * Attachment resolution consists of finding a file:
+ * &lt;ul&gt;
+ * &lt;li&gt;either on filesystem&lt;/li&gt;
+ * &lt;li&gt;or in the classpath&lt;/li&gt;
+ * &lt;li&gt;or anywhere else&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class AttachmentHandlingBuilder extends AbstractParent&lt;EmailBuilder&gt; implements ResourceResolutionBuilder&lt;AttachmentHandlingBuilder&gt;, Builder&lt;AttachmentResourceTranslator&gt; {
+<span class="fc" id="L40">	private static final Logger LOG = LoggerFactory.getLogger(AttachmentHandlingBuilder.class);</span>
+
+	private final BuildContext buildContext;
+	private ResourceResolutionBuilderHelper&lt;AttachmentHandlingBuilder&gt; resourceResolutionBuilderHelper;
+
+	/**
+	 * Initializes the builder with a parent builder. The parent builder is used
+	 * when calling {@link #and()} method. The {@link EnvironmentBuilder} is
+	 * used to evaluate properties when {@link #build()} method is called.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public AttachmentHandlingBuilder(EmailBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L56">		super(parent);</span>
+<span class="fc" id="L57">		this.buildContext = buildContext;</span>
+<span class="fc" id="L58">		resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L59">	}</span>
+
+	@Override
+	public ClassPathResolutionBuilder&lt;AttachmentHandlingBuilder&gt; classpath() {
+<span class="fc" id="L63">		return resourceResolutionBuilderHelper.classpath();</span>
+	}
+
+	@Override
+	public FileResolutionBuilder&lt;AttachmentHandlingBuilder&gt; file() {
+<span class="fc" id="L68">		return resourceResolutionBuilderHelper.file();</span>
+	}
+
+	@Override
+	public StringResolutionBuilder&lt;AttachmentHandlingBuilder&gt; string() {
+<span class="fc" id="L73">		return resourceResolutionBuilderHelper.string();</span>
+	}
+
+	@Override
+	public AttachmentHandlingBuilder resolver(ResourceResolver resolver) {
+<span class="nc" id="L78">		return resourceResolutionBuilderHelper.resolver(resolver);</span>
+	}
+
+	@Override
+	public AttachmentResourceTranslator build() {
+<span class="fc" id="L83">		EveryResourceTranslator translator = buildContext.register(new EveryResourceTranslator());</span>
+<span class="fc" id="L84">		LOG.info(&quot;Using translator that calls all registered translators&quot;);</span>
+<span class="fc" id="L85">		translator.addTranslator(buildContext.register(new OverrideNameWrapperResourceTranslator(translator)));</span>
+<span class="fc" id="L86">		translator.addTranslator(buildContext.register(new LookupResourceTranslator(buildResolver())));</span>
+<span class="fc" id="L87">		LOG.debug(&quot;Registered translators: {}&quot;, translator.getTranslators());</span>
+<span class="fc" id="L88">		return translator;</span>
+	}
+
+	private ResourceResolver buildResolver() {
+<span class="fc" id="L92">		List&lt;ResourceResolver&gt; resolvers = resourceResolutionBuilderHelper.buildResolvers();</span>
+<span class="fc" id="L93">		return buildContext.register(new FirstSupportingResourceResolver(resolvers));</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MayOverride.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.configuration</a> &gt; <span class="el_source">MayOverride.java</span></div><h1>MayOverride.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.configuration;
+
+/**
+ * If the new value should override the current value, the new value is
+ * returned. If the new value should not override, the current value is
+ * returned.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;V&gt;
+ *            the type of the value
+ */
+public interface MayOverride&lt;V&gt; {
+
+	/**
+	 * If the new value should override the current value, the new value is
+	 * returned. If the new value should not override, the current value is
+	 * returned.
+	 * 
+	 * @param currentValue
+	 *            the current value that may be overridden
+	 * @return the new value
+	 */
+	V override(V currentValue);
+
+	/**
+	 * Override current value only if the value parameter is not {@code null}.
+	 * 
+	 * @param &lt;V&gt;
+	 *            the type of the value
+	 * @param value
+	 *            the new value to set if not {@code null}
+	 * @return the override control
+	 */
+	static &lt;V&gt; MayOverride&lt;V&gt; overrideIfNonNull(V value) {
+<span class="fc" id="L36">		return new NonNullOverride&lt;&gt;(value);</span>
+	}
+
+	/**
+	 * Always override current value.
+	 * 
+	 * @param &lt;V&gt;
+	 *            the type of the value
+	 * @param value
+	 *            the new value to set
+	 * @return the override control
+	 */
+	static &lt;V&gt; MayOverride&lt;V&gt; alwaysOverride(V value) {
+<span class="fc" id="L49">		return new AlwaysOverride&lt;&gt;(value);</span>
+	}
+
+	/**
+	 * Override current value only if the current value is not set
+	 * ({@code null}). If current value is set, the new value is not applied.
+	 * 
+	 * @param &lt;V&gt;
+	 *            the type of the value
+	 * @param value
+	 *            the new value to set if current value is {@code null}
+	 * @return the override control
+	 */
+	static &lt;V&gt; MayOverride&lt;V&gt; overrideIfNotSet(V value) {
+<span class="fc" id="L63">		return new CurrentValueNotSetOverride&lt;&gt;(value);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

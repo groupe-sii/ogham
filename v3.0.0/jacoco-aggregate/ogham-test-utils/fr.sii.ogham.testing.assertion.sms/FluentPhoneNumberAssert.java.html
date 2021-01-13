@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FluentPhoneNumberAssert.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-test-utils</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.testing.assertion.sms</a> &gt; <span class="el_source">FluentPhoneNumberAssert.java</span></div><h1>FluentPhoneNumberAssert.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.testing.assertion.sms;
+
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.assertThat;
+import static fr.sii.ogham.testing.assertion.util.AssertionHelper.usingContext;
+
+import java.util.List;
+
+import org.hamcrest.Matcher;
+
+import fr.sii.ogham.testing.assertion.util.AssertionRegistry;
+import fr.sii.ogham.testing.sms.simulator.bean.NumberingPlanIndicator;
+import fr.sii.ogham.testing.sms.simulator.bean.TypeOfNumber;
+import fr.sii.ogham.testing.util.HasParent;
+
+/**
+ * Make assertions on phone number of received messages.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the parent type
+ */
+public class FluentPhoneNumberAssert&lt;P&gt; extends HasParent&lt;P&gt; {
+	/**
+	 * The list of phone numbers that will be used for assertions
+	 */
+	private final List&lt;PhoneNumberWithContext&gt; actual;
+	private final AssertionRegistry registry;
+
+	/**
+	 * 
+	 * @param actual
+	 *            the received messages
+	 * @param parent
+	 *            the parent
+	 * @param registry
+	 *            used to register assertions
+	 */
+	public FluentPhoneNumberAssert(List&lt;PhoneNumberWithContext&gt; actual, P parent, AssertionRegistry registry) {
+<span class="fc" id="L40">		super(parent);</span>
+<span class="fc" id="L41">		this.actual = actual;</span>
+<span class="fc" id="L42">		this.registry = registry;</span>
+<span class="fc" id="L43">	}</span>
+
+	/**
+	 * Make assertions on a phone number.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .number(is(&quot;+33102030405&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the recipient phone number of the first message is exactly
+	 * &quot;+33102030405&quot;.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .number(is(&quot;+33102030405&quot;))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the recipient phone number of every message is exactly
+	 * &quot;+33102030405&quot;.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the phone number
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPhoneNumberAssert&lt;P&gt; number(Matcher&lt;String&gt; matcher) {
+<span class="fc" id="L69">		String message = &quot;number of ${numberName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		for (PhoneNumberWithContext numberWithContext : actual) {</span>
+<span class="fc" id="L71">			PhoneNumberInfo number = numberWithContext.getNumber();</span>
+<span class="fc" id="L72">			registry.register(() -&gt; assertThat(number.getAddress(), usingContext(message, numberWithContext, matcher)));</span>
+<span class="fc" id="L73">		}</span>
+<span class="fc" id="L74">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on a phone number.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the recipient phone number type of the first message is an
+	 * international number.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .typeOfNumber(is(TypeOfNumber.INTERNATIONAL))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the recipient phone number type of every message is an
+	 * international number.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the type of number
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPhoneNumberAssert&lt;P&gt; typeOfNumber(Matcher&lt;TypeOfNumber&gt; matcher) {
+<span class="fc" id="L101">		String message = &quot;TypeOfNumber of ${numberName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">		for (PhoneNumberWithContext numberWithContext : actual) {</span>
+<span class="fc" id="L103">			PhoneNumberInfo number = numberWithContext.getNumber();</span>
+<span class="fc" id="L104">			registry.register(() -&gt; assertThat(TypeOfNumber.valueOf(number.getTon()), usingContext(message, numberWithContext, matcher)));</span>
+<span class="fc" id="L105">		}</span>
+<span class="fc" id="L106">		return this;</span>
+	}
+
+	/**
+	 * Make assertions on a phone number.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().message(0).to()
+	 *    .numberingPlanIndicator(is(NumberingPlanIndicator.ISDN))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the numbering plan indicator of the recipient phone number
+	 * of the first message is NumberingPlanIndicator.ISDN.
+	 * 
+	 * &lt;pre&gt;
+	 * .receivedMessages().every().to()
+	 *    .numberingPlanIndicator(is(NumberingPlanIndicator.ISDN))
+	 * &lt;/pre&gt;
+	 * 
+	 * Will check if the numbering plan indicator of the recipient phone number
+	 * of every message is NumberingPlanIndicator.ISDN.
+	 * 
+	 * @param matcher
+	 *            the assertion to apply on the numbering plan indicator
+	 * @return the fluent API for chaining assertions on received message(s)
+	 */
+	public FluentPhoneNumberAssert&lt;P&gt; numberingPlanIndicator(Matcher&lt;NumberingPlanIndicator&gt; matcher) {
+<span class="fc" id="L133">		String message = &quot;NumberPlanIndicator of ${numberName} of message ${messageIndex}&quot;;</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">		for (PhoneNumberWithContext numberWithContext : actual) {</span>
+<span class="fc" id="L135">			PhoneNumberInfo number = numberWithContext.getNumber();</span>
+<span class="fc" id="L136">			registry.register(() -&gt; assertThat(NumberingPlanIndicator.valueOf(number.getNpi()), usingContext(message, numberWithContext, matcher)));</span>
+<span class="fc" id="L137">		}</span>
+<span class="fc" id="L138">		return this;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

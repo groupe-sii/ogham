@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>StandaloneResourceResolutionBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.resolution</a> &gt; <span class="el_source">StandaloneResourceResolutionBuilder.java</span></div><h1>StandaloneResourceResolutionBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.resolution;
+
+import fr.sii.ogham.core.builder.MessagingBuilder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.env.EnvironmentBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+
+/**
+ * Builder that configures resource resolution.
+ * 
+ * &lt;p&gt;
+ * Resource resolution consists of finding a file:
+ * &lt;ul&gt;
+ * &lt;li&gt;either on filesystem&lt;/li&gt;
+ * &lt;li&gt;or in the classpath&lt;/li&gt;
+ * &lt;li&gt;or anywhere else&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * This implementation is used by {@link MessagingBuilder} for general
+ * configuration. That configuration may be inherited (applied to other resource
+ * resolution builders).
+ * 
+ * This implementation simply delegates to the
+ * {@link ResourceResolutionBuilderHelper}.
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class StandaloneResourceResolutionBuilder&lt;P&gt; extends AbstractParent&lt;P&gt; implements ResourceResolutionBuilder&lt;StandaloneResourceResolutionBuilder&lt;P&gt;&gt; {
+	private ResourceResolutionBuilderHelper&lt;StandaloneResourceResolutionBuilder&lt;P&gt;&gt; helper;
+
+	/**
+	 * The builder is used alone (not in a context of a parent). In this case,
+	 * parent is set to {@code null} meaning that {@link #and()} will return
+	 * {@code null}.
+	 * 
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public StandaloneResourceResolutionBuilder(BuildContext buildContext) {
+<span class="nc" id="L45">		this(null, buildContext);</span>
+<span class="nc" id="L46">	}</span>
+
+	/**
+	 * The builder is used by a parent builder. The parent is used when calling
+	 * {@link #and()} method for chaining calls. The {@link EnvironmentBuilder}
+	 * is used to evaluate properties at build time.
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public StandaloneResourceResolutionBuilder(P parent, BuildContext buildContext) {
+<span class="fc" id="L59">		super(parent);</span>
+<span class="fc" id="L60">		helper = new ResourceResolutionBuilderHelper&lt;&gt;(this, buildContext);</span>
+<span class="fc" id="L61">	}</span>
+
+	@Override
+	public ClassPathResolutionBuilder&lt;StandaloneResourceResolutionBuilder&lt;P&gt;&gt; classpath() {
+<span class="fc" id="L65">		return helper.classpath();</span>
+	}
+
+	@Override
+	public FileResolutionBuilder&lt;StandaloneResourceResolutionBuilder&lt;P&gt;&gt; file() {
+<span class="fc" id="L70">		return helper.file();</span>
+	}
+
+	@Override
+	public StringResolutionBuilder&lt;StandaloneResourceResolutionBuilder&lt;P&gt;&gt; string() {
+<span class="fc" id="L75">		return helper.string();</span>
+	}
+
+	@Override
+	public StandaloneResourceResolutionBuilder&lt;P&gt; resolver(ResourceResolver resolver) {
+<span class="nc" id="L80">		return helper.resolver(resolver);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

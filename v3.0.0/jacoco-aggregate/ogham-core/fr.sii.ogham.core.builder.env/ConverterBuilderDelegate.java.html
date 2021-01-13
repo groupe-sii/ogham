@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ConverterBuilderDelegate.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.env</a> &gt; <span class="el_source">ConverterBuilderDelegate.java</span></div><h1>ConverterBuilderDelegate.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.env;
+
+import fr.sii.ogham.core.builder.configuration.MayOverride;
+import fr.sii.ogham.core.convert.Converter;
+import fr.sii.ogham.core.convert.SupportingConverter;
+import fr.sii.ogham.core.fluent.AbstractParent;
+
+/**
+ * Implementation that just delegates all operations to another builder.
+ * 
+ * &lt;p&gt;
+ * This is useful when a {@link ConverterBuilder} is used for a particular
+ * parent and it must be inherited. As the parent types are not the same, you
+ * can't directly use the same reference. So this implementation wraps the
+ * original reference but as it is a new instance, it can have a different
+ * parent builder.
+ * &lt;/p&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ * @param &lt;P&gt;
+ *            the type of the parent builder (when calling {@link #and()}
+ *            method)
+ */
+public class ConverterBuilderDelegate&lt;P&gt; extends AbstractParent&lt;P&gt; implements ConverterBuilder&lt;P&gt; {
+	private ConverterBuilder&lt;?&gt; delegate;
+
+	/**
+	 * Wraps the delegate builder. The delegated builder parent is not used.
+	 * This instance uses the provided parent instead for chaining.
+	 * 
+	 * @param parent
+	 *            the new parent used for chaining
+	 * @param delegate
+	 *            the instance that will really be updated
+	 */
+	public ConverterBuilderDelegate(P parent, ConverterBuilder&lt;?&gt; delegate) {
+<span class="nc" id="L38">		super(parent);</span>
+<span class="nc" id="L39">		this.delegate = delegate;</span>
+<span class="nc" id="L40">	}</span>
+
+	@Override
+	public ConverterBuilderDelegate&lt;P&gt; override(Converter converter) {
+<span class="nc" id="L44">		delegate.override(converter);</span>
+<span class="nc" id="L45">		return this;</span>
+	}
+
+	@Override
+	public ConverterBuilderDelegate&lt;P&gt; register(SupportingConverter converter) {
+<span class="nc" id="L50">		delegate.register(converter);</span>
+<span class="nc" id="L51">		return this;</span>
+	}
+
+	@Override
+	public ConverterBuilder&lt;P&gt; defaultConverter(MayOverride&lt;Converter&gt; converter) {
+<span class="nc" id="L56">		delegate.defaultConverter(converter);</span>
+<span class="nc" id="L57">		return this;</span>
+	}
+
+	@Override
+	public Converter build() {
+<span class="nc" id="L62">		return delegate.build();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

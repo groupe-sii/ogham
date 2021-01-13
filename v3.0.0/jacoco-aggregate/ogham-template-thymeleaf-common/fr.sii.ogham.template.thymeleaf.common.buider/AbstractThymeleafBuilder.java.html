@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractThymeleafBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-template-thymeleaf-common</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.template.thymeleaf.common.buider</a> &gt; <span class="el_source">AbstractThymeleafBuilder.java</span></div><h1>AbstractThymeleafBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.template.thymeleaf.common.buider;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilder;
+import fr.sii.ogham.core.builder.configuration.ConfigurationValueBuilderHelper;
+import fr.sii.ogham.core.builder.configurer.Configurer;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.builder.context.DefaultBuildContext;
+import fr.sii.ogham.core.builder.resolution.ClassPathResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.FileResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilder;
+import fr.sii.ogham.core.builder.resolution.ResourceResolutionBuilderHelper;
+import fr.sii.ogham.core.builder.resolution.StringResolutionBuilder;
+import fr.sii.ogham.core.builder.template.DetectorBuilder;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.core.resource.resolver.FirstSupportingResourceResolver;
+import fr.sii.ogham.core.resource.resolver.ResourceResolver;
+import fr.sii.ogham.core.template.detector.TemplateEngineDetector;
+import fr.sii.ogham.core.template.parser.TemplateParser;
+import fr.sii.ogham.template.thymeleaf.common.SimpleThymeleafContextConverter;
+import fr.sii.ogham.template.thymeleaf.common.TemplateResolverOptions;
+import fr.sii.ogham.template.thymeleaf.common.ThymeleafContextConverter;
+import fr.sii.ogham.template.thymeleaf.common.ThymeleafParser;
+import fr.sii.ogham.template.thymeleaf.common.adapter.FirstSupportingResolverAdapter;
+import fr.sii.ogham.template.thymeleaf.common.adapter.TemplateResolverAdapter;
+
+@SuppressWarnings(&quot;squid:S00119&quot;)
+public abstract class AbstractThymeleafBuilder&lt;MYSELF extends AbstractThymeleafBuilder&lt;MYSELF, P, E&gt;, P, E extends AbstractThymeleafEngineConfigBuilder&lt;E, MYSELF&gt;&gt; extends AbstractParent&lt;P&gt;
+		implements DetectorBuilder&lt;MYSELF&gt;, ResourceResolutionBuilder&lt;MYSELF&gt;, Builder&lt;TemplateParser&gt; {
+<span class="fc" id="L38">	private static final Logger LOG = LoggerFactory.getLogger(AbstractThymeleafBuilder.class);</span>
+
+	protected final MYSELF myself;
+	protected final BuildContext buildContext;
+	protected TemplateEngineDetector detector;
+	protected ResourceResolutionBuilderHelper&lt;MYSELF&gt; resourceResolutionBuilderHelper;
+	protected TemplateEngine engine;
+	protected ThymeleafContextConverter contextConverter;
+	protected E engineBuilder;
+	protected final List&lt;TemplateResolverAdapter&gt; customAdapters;
+	protected final ConfigurationValueBuilderHelper&lt;MYSELF, Boolean&gt; enableCacheValueBuilder;
+
+	protected AbstractThymeleafBuilder(Class&lt;?&gt; selfType) {
+<span class="fc" id="L51">		this(selfType, null, new DefaultBuildContext());</span>
+<span class="fc" id="L52">	}</span>
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected AbstractThymeleafBuilder(Class&lt;?&gt; selfType, P parent, BuildContext buildContext) {
+<span class="fc" id="L56">		super(parent);</span>
+<span class="fc" id="L57">		myself = (MYSELF) selfType.cast(this);</span>
+<span class="fc" id="L58">		this.buildContext = buildContext;</span>
+<span class="fc" id="L59">		customAdapters = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L60">		enableCacheValueBuilder = buildContext.newConfigurationValueBuilder(myself, Boolean.class);</span>
+<span class="fc" id="L61">	}</span>
+
+	protected AbstractThymeleafBuilder(P parent, BuildContext buildContext) {
+<span class="nc" id="L64">		this(AbstractThymeleafBuilder.class, parent, buildContext);</span>
+<span class="nc" id="L65">	}</span>
+
+	/**
+	 * Enable/disable cache for templates.
+	 * 
+	 * &lt;p&gt;
+	 * The value set using this method takes precedence over any property and
+	 * default value configured using {@link #cache()}.
+	 * 
+	 * &lt;pre&gt;
+	 * .cache(false)
+	 * .cache()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;pre&gt;
+	 * .cache(false)
+	 * .cache()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * In both cases, {@code cache(false)} is used.
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last value is used.
+	 * 
+	 * &lt;p&gt;
+	 * If {@code null} value is set, it is like not setting a value at all. The
+	 * property/default value configuration is applied.
+	 * 
+	 * @param enable
+	 *            enable or disable cache
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF cache(Boolean enable) {
+<span class="fc" id="L102">		enableCacheValueBuilder.setValue(enable);</span>
+<span class="fc" id="L103">		return myself;</span>
+	}
+
+	/**
+	 * Enable/disable cache for templates.
+	 * 
+	 * &lt;p&gt;
+	 * This method is mainly used by {@link Configurer}s to register some
+	 * property keys and/or a default value. The aim is to let developer be able
+	 * to externalize its configuration (using system properties, configuration
+	 * file or anything else). If the developer doesn't configure any value for
+	 * the registered properties, the default value is used (if set).
+	 * 
+	 * &lt;pre&gt;
+	 * .cache()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * &lt;p&gt;
+	 * Non-null value set using {@link #cache(Boolean)} takes precedence over
+	 * property values and default value.
+	 * 
+	 * &lt;pre&gt;
+	 * .cache(false)
+	 * .cache()
+	 *   .properties(&quot;${custom.property.high-priority}&quot;, &quot;${custom.property.low-priority}&quot;)
+	 *   .defaultValue(true)
+	 * &lt;/pre&gt;
+	 * 
+	 * The value {@code false} is used regardless of the value of the properties
+	 * and default value.
+	 * 
+	 * &lt;p&gt;
+	 * See {@link ConfigurationValueBuilder} for more information.
+	 * 
+	 * 
+	 * @return the builder to configure property keys/default value
+	 */
+	public ConfigurationValueBuilder&lt;MYSELF, Boolean&gt; cache() {
+<span class="fc" id="L143">		return enableCacheValueBuilder;</span>
+	}
+
+	/**
+	 * Fluent configurer for Thymeleaf engine configuration.
+	 * 
+	 * @return the fluent builder for Thymeleaf engine
+	 */
+	public E engine() {
+<span class="nc bnc" id="L152" title="All 2 branches missed.">		if (engineBuilder == null) {</span>
+<span class="nc" id="L153">			engineBuilder = getThymeleafEngineConfigBuilder();</span>
+		}
+<span class="nc" id="L155">		return engineBuilder;</span>
+	}
+
+	/**
+	 * Sets a Thymeleaf engine.
+	 * 
+	 * This value preempts any other value defined by calling {@link #engine()}
+	 * method.
+	 * 
+	 * If this method is called several times, only the last provider is used.
+	 * 
+	 * @param engine
+	 *            the Thymeleaf engine
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF engine(TemplateEngine engine) {
+<span class="fc" id="L171">		this.engine = engine;</span>
+<span class="fc" id="L172">		return myself;</span>
+	}
+
+	/**
+	 * Ogham provides a generic context concept for template parsing. Thymeleaf
+	 * uses also a context concept. A context converter
+	 * ({@link ThymeleafContextConverter}) is the way to transform an Ogham
+	 * context into a Thymeleaf context.
+	 * 
+	 * &lt;p&gt;
+	 * Ogham provides and registers the default converter
+	 * 
+	 * &lt;p&gt;
+	 * If this method is called several times, only the last provider is used.
+	 * 
+	 * @param converter
+	 *            the context converter
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF contextConverter(ThymeleafContextConverter converter) {
+<span class="fc" id="L192">		this.contextConverter = converter;</span>
+<span class="fc" id="L193">		return myself;</span>
+	}
+
+	@Override
+	public MYSELF detector(TemplateEngineDetector detector) {
+<span class="nc" id="L198">		this.detector = detector;</span>
+<span class="nc" id="L199">		return myself;</span>
+	}
+
+	@Override
+	public ClassPathResolutionBuilder&lt;MYSELF&gt; classpath() {
+<span class="fc" id="L204">		initResolutionBuilder();</span>
+<span class="fc" id="L205">		return resourceResolutionBuilderHelper.classpath();</span>
+	}
+
+	@Override
+	public FileResolutionBuilder&lt;MYSELF&gt; file() {
+<span class="fc" id="L210">		initResolutionBuilder();</span>
+<span class="fc" id="L211">		return resourceResolutionBuilderHelper.file();</span>
+	}
+
+	@Override
+	public StringResolutionBuilder&lt;MYSELF&gt; string() {
+<span class="fc" id="L216">		initResolutionBuilder();</span>
+<span class="fc" id="L217">		return resourceResolutionBuilderHelper.string();</span>
+	}
+
+	@Override
+	public MYSELF resolver(ResourceResolver resolver) {
+<span class="nc" id="L222">		initResolutionBuilder();</span>
+<span class="nc" id="L223">		return resourceResolutionBuilderHelper.resolver(resolver);</span>
+	}
+
+	/**
+	 * Ogham provides a generic resource resolution mechanism
+	 * ({@link ResourceResolver}). Thymeleaf uses its own template resolution
+	 * mechanism ({@link ITemplateResolver}). A resolver adapter
+	 * ({@link TemplateResolverAdapter}) is the way to transform a
+	 * {@link ResourceResolver} into a {@link ITemplateResolver}.
+	 * 
+	 * &lt;p&gt;
+	 * Ogham provides and registers default resolver adapters but you may need
+	 * to use a custom {@link ResourceResolver}. So you also need to provide the
+	 * corresponding {@link TemplateResolverAdapter}.
+	 * 
+	 * @param adapter
+	 *            the resolver adapter
+	 * @return this instance for fluent chaining
+	 */
+	public MYSELF resolverAdapter(TemplateResolverAdapter adapter) {
+<span class="nc" id="L243">		customAdapters.add(adapter);</span>
+<span class="nc" id="L244">		return myself;</span>
+	}
+
+	@Override
+	public TemplateParser build() {
+<span class="fc" id="L249">		LOG.info(&quot;Thymeleaf parser is registered&quot;);</span>
+<span class="fc" id="L250">		return buildContext.register(new ThymeleafParser(buildEngine(), buildResolver(), buildContext()));</span>
+	}
+
+	@Override
+	public TemplateEngineDetector buildDetector() {
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">		return detector == null ? createTemplateDetector() : detector;</span>
+	}
+
+	/**
+	 * Builds the resolver used by Thymeleaf to resolve resources
+	 * 
+	 * @return the resource resolver
+	 */
+	public FirstSupportingResourceResolver buildResolver() {
+<span class="fc" id="L264">		return buildContext.register(new FirstSupportingResourceResolver(buildResolvers()));</span>
+	}
+
+	protected TemplateEngine buildEngine() {
+		TemplateEngine builtEngine;
+<span class="fc bfc" id="L269" title="All 2 branches covered.">		if (engine != null) {</span>
+<span class="fc" id="L270">			LOG.debug(&quot;Using custom Thymeleaf engine&quot;);</span>
+<span class="fc" id="L271">			builtEngine = engine;</span>
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">		} else if (engineBuilder != null) {</span>
+<span class="nc" id="L273">			LOG.debug(&quot;Using custom Thymeleaf engine built using engine()&quot;);</span>
+<span class="nc" id="L274">			builtEngine = engineBuilder.build();</span>
+		} else {
+<span class="fc" id="L276">			LOG.debug(&quot;Using default Thymeleaf engine&quot;);</span>
+<span class="fc" id="L277">			builtEngine = buildContext.register(new TemplateEngine());</span>
+		}
+<span class="fc" id="L279">		builtEngine.addTemplateResolver(buildTemplateResolver(builtEngine));</span>
+<span class="fc" id="L280">		return builtEngine;</span>
+	}
+
+	protected abstract TemplateEngineDetector createTemplateDetector();
+
+	protected abstract ITemplateResolver buildTemplateResolver(TemplateEngine builtEngine);
+
+	protected abstract E getThymeleafEngineConfigBuilder();
+
+	protected ThymeleafContextConverter buildContext() {
+<span class="fc bfc" id="L290" title="All 2 branches covered.">		return contextConverter == null ? buildContext.register(new SimpleThymeleafContextConverter()) : contextConverter;</span>
+	}
+
+	private List&lt;ResourceResolver&gt; buildResolvers() {
+<span class="fc" id="L294">		initResolutionBuilder();</span>
+<span class="fc" id="L295">		return resourceResolutionBuilderHelper.buildResolvers();</span>
+	}
+
+	protected abstract FirstSupportingResolverAdapter buildAdapters();
+
+	protected TemplateResolverOptions buildTemplateResolverOptions() {
+<span class="fc" id="L301">		TemplateResolverOptions options = buildContext.register(new TemplateResolverOptions());</span>
+<span class="fc" id="L302">		options.setCacheable(enableCacheValueBuilder.getValue());</span>
+		// TODO: handle other options
+<span class="fc" id="L304">		return options;</span>
+	}
+
+	private void initResolutionBuilder() {
+<span class="fc bfc" id="L308" title="All 2 branches covered.">		if (resourceResolutionBuilderHelper == null) {</span>
+<span class="fc" id="L309">			resourceResolutionBuilderHelper = new ResourceResolutionBuilderHelper&lt;&gt;(myself, buildContext);</span>
+		}
+<span class="fc" id="L311">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

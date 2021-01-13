@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LogUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.util</a> &gt; <span class="el_source">LogUtils.java</span></div><h1>LogUtils.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.util;
+
+import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.sii.ogham.core.message.Message;
+import fr.sii.ogham.email.message.Email;
+import fr.sii.ogham.sms.message.Sms;
+
+/**
+ * Utility class used by loggers to log only useful information.
+ * 
+ * According to the log level and the message, logged information is adapted:
+ * &lt;ul&gt;
+ * &lt;li&gt;If log level is configured to INFO, uses default {@link Email#toString()}
+ * and {@link Sms#toString()} behavior i.e. log useful information about the
+ * message (content is not displayed).&lt;/li&gt;
+ * &lt;li&gt;If log level is configured to TRACE or DEBUG, {@link Email#toLogString()}
+ * and {@link Sms#toLogString()}, more information is displayed such as the
+ * content&lt;/li&gt;
+ * &lt;li&gt;If log level is configured to WARN or ERROR, only an identifier is
+ * logged.&lt;/li&gt;
+ * &lt;/ul&gt;
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public final class LogUtils {
+<span class="fc" id="L31">	private static final Logger LOG = LoggerFactory.getLogger(LogUtils.class);</span>
+
+	/**
+	 * Generate a string to be logged for the provided message.
+	 * 
+	 * According to the log level and the message, logged information is
+	 * adapted:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;If log level is configured to INFO, uses default
+	 * {@link Email#toString()} and {@link Sms#toString()} behavior i.e. log
+	 * useful information about the message (content is not displayed).&lt;/li&gt;
+	 * &lt;li&gt;If log level is configured to TRACE or DEBUG,
+	 * {@link Email#toLogString()} and {@link Sms#toLogString()}, more
+	 * information is displayed such as the content&lt;/li&gt;
+	 * &lt;li&gt;If log level is configured to WARN or ERROR, only an identifier is
+	 * logged.&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * 
+	 * &lt;p&gt;
+	 * The {@link Lazy} proxy is used in order to avoid early string
+	 * construction while the log may be skipped.
+	 * 
+	 * @param message
+	 *            the message to log
+	 * @return an intermediate object that will be evaluated when log is written
+	 *         only
+	 */
+	public static Lazy logString(Message message) {
+<span class="pc bpc" id="L59" title="1 of 4 branches missed.">		if (LOG.isDebugEnabled() || LOG.isTraceEnabled()) {</span>
+<span class="fc" id="L60">			return new Lazy(message::toString);</span>
+		}
+<span class="pc bpc" id="L62" title="2 of 4 branches missed.">		if (LOG.isInfoEnabled() &amp;&amp; message instanceof Loggable) {</span>
+<span class="fc" id="L63">			return new Lazy(((Loggable) message)::toLogString);</span>
+		}
+		// TODO: each message should have a unique identifier (useful for
+		// debugging, logs, ...)? or use a hash
+<span class="nc" id="L67">		return new Lazy(&quot;&lt;hidden&gt;&quot;);</span>
+	}
+
+	/**
+	 * Utility class that delegates {@link #toString()} call to a supplier that
+	 * provides the real string.
+	 * 
+	 * &lt;p&gt;
+	 * The aim is to construct tge string only when necessary.
+	 * 
+	 * @author Aurélien Baudet
+	 *
+	 */
+	public static class Lazy {
+		private final Supplier&lt;String&gt; supplier;
+
+		public Lazy(String str) {
+<span class="nc" id="L84">			this(() -&gt; str);</span>
+<span class="nc" id="L85">		}</span>
+
+		public Lazy(Supplier&lt;String&gt; supplier) {
+<span class="fc" id="L88">			super();</span>
+<span class="fc" id="L89">			this.supplier = supplier;</span>
+<span class="fc" id="L90">		}</span>
+
+		@Override
+		public String toString() {
+<span class="fc" id="L94">			return supplier.get();</span>
+		}
+	}
+
+	private LogUtils() {
+		super();
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

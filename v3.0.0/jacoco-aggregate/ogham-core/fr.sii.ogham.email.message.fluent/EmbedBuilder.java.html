@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EmbedBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.message.fluent</a> &gt; <span class="el_source">EmbedBuilder.java</span></div><h1>EmbedBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.message.fluent;
+
+import static fr.sii.ogham.email.attachment.ContentDisposition.INLINE;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.sii.ogham.core.resource.path.ResourcePath;
+import fr.sii.ogham.core.resource.path.UnresolvedPath;
+import fr.sii.ogham.email.attachment.Attachment;
+import fr.sii.ogham.email.attachment.ContentDisposition;
+import fr.sii.ogham.email.message.Email;
+
+/**
+ * Fluent API to embed a file to the email (mainly used for images). The file
+ * must be referenced in the email body using a
+ * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID (or
+ * CID)&lt;/a&gt;.
+ * 
+ * @author Aurélien Baudet
+ * @since 3.0.0
+ */
+public class EmbedBuilder {
+	private final Email parent;
+	private final List&lt;Attachment&gt; attachments;
+
+	/**
+	 * Initializes with the parent to go back to.
+	 * 
+	 * @param parent
+	 *            the parent instance
+	 */
+	public EmbedBuilder(Email parent) {
+<span class="fc" id="L38">		super();</span>
+<span class="fc" id="L39">		this.parent = parent;</span>
+<span class="fc" id="L40">		this.attachments = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L41">	}</span>
+
+	/**
+	 * Embed a file to the email. The file must be referenced in the email body
+	 * using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param file
+	 *            the file to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(String contentId, File file) {
+<span class="fc" id="L64">		return file(contentId, file, null);</span>
+	}
+
+	/**
+	 * Embed a file to the email. The file must be referenced in the email body
+	 * using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param file
+	 *            the file to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(String contentId, File file, String contentType) {
+<span class="fc" id="L90">		embed(new Attachment(file), contentId, contentType);</span>
+<span class="fc" id="L91">		return parent;</span>
+	}
+
+	/**
+	 * Embed a file to the email. The file must be referenced in the email body
+	 * using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param path
+	 *            the path to the file to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(String contentId, Path path) {
+<span class="nc" id="L115">		return file(contentId, path, null);</span>
+	}
+
+	/**
+	 * Embed a file to the email. The file must be referenced in the email body
+	 * using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param path
+	 *            the path to the file to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email file(String contentId, Path path, String contentType) {
+<span class="nc" id="L141">		return file(contentId, path.toFile(), contentType);</span>
+	}
+
+	/**
+	 * Embed a resource loaded from a path to the email. The resource must be
+	 * referenced in the email body using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param path
+	 *            the path to the resource to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String contentId, String path) {
+<span class="fc" id="L177">		return resource(contentId, path, null);</span>
+	}
+
+	/**
+	 * Embed a resource loaded from a path to the email. The resource must be
+	 * referenced in the email body using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param path
+	 *            the path to the resource to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String contentId, String path, String contentType) {
+<span class="fc" id="L215">		return resource(contentId, new UnresolvedPath(path), contentType);</span>
+	}
+
+	/**
+	 * Embed a resource loaded from a path to the email. The resource must be
+	 * referenced in the email body using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param path
+	 *            the path to the resource to attach
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String contentId, ResourcePath path) {
+<span class="nc" id="L251">		return resource(contentId, path, null);</span>
+	}
+
+	/**
+	 * Embed a resource loaded from a path to the email. The resource must be
+	 * referenced in the email body using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The path may contain the lookup prefix (a prefix that indicates where to
+	 * find the resource). For example:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;classpath:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that
+	 * is located at &quot;path/to/file.pdf&quot; in the classpath (from the root)&lt;/li&gt;
+	 * &lt;li&gt;&lt;code&gt;&quot;file:/path/to/file.pdf&quot;&lt;/code&gt; references a resource that is
+	 * located at &quot;/path/to/file.pdf&quot; in the file system&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * By default, if the path doesn't contain any lookup prefix then the
+	 * resource is loaded from the root of the classpath.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param path
+	 *            the path to the resource to attach
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email resource(String contentId, ResourcePath path, String contentType) {
+<span class="fc" id="L289">		embed(new Attachment(path), contentId, contentType);</span>
+<span class="fc" id="L290">		return parent;</span>
+	}
+
+	/**
+	 * Embed a resource to the email directly using the bytes. The embedded
+	 * resource must be referenced in the email body using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param bytes
+	 *            the content of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email bytes(String contentId, byte[] bytes) {
+<span class="fc" id="L314">		return bytes(contentId, bytes, null);</span>
+	}
+
+	/**
+	 * Embed a resource to the email directly using the bytes. The embedded
+	 * resource must be referenced in the email body using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param bytes
+	 *            the content of the attachment
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 */
+	public Email bytes(String contentId, byte[] bytes, String contentType) {
+<span class="fc" id="L340">		embed(new Attachment(contentId, bytes), contentId, contentType);</span>
+<span class="fc" id="L341">		return parent;</span>
+	}
+
+	/**
+	 * Attach a resource to the email directly using the bytes read from the
+	 * {@link InputStream}. The {@link InputStream} is immediately read and
+	 * converted to a byte array.  The embedded
+	 * resource must be referenced in the email body using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;IMPORTANT:&lt;/strong&gt; You need to manually close the stream.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is automatically determined.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param stream
+	 *            the content of the attachment
+	 * @return the email instance for fluent chaining
+	 * @throws IOException
+	 *             when the {@link InputStream} can't be read
+	 */
+	public Email stream(String contentId, InputStream stream) throws IOException {
+<span class="fc" id="L372">		return stream(contentId, stream, null);</span>
+	}
+
+	/**
+	 * Attach a resource to the email directly using the bytes read from the
+	 * {@link InputStream}. The {@link InputStream} is immediately read and
+	 * converted to a byte array.  The embedded
+	 * resource must be referenced in the email body using a
+	 * &lt;a href=&quot;https://tools.ietf.org/html/rfc4021#section-2.2.2&quot;&gt;Content-ID
+	 * (or CID)&lt;/a&gt;.
+	 * 
+	 * &lt;p&gt;
+	 * &lt;strong&gt;IMPORTANT:&lt;/strong&gt; You need to manually close the stream.
+	 * 
+	 * &lt;p&gt;
+	 * The disposition of the attachment is set to
+	 * {@link ContentDisposition#INLINE}.
+	 * 
+	 * &lt;p&gt;
+	 * The Content-Type of the attachment is explicitly set.
+	 * 
+	 * @param contentId
+	 *            the Content-ID used to reference the embedded attachment in
+	 *            the email body
+	 * @param stream
+	 *            the content of the attachment
+	 * @param contentType
+	 *            the Content-Type of the attachment
+	 * @return the email instance for fluent chaining
+	 * @throws IOException
+	 *             when the {@link InputStream} can't be read
+	 */
+	public Email stream(String contentId, InputStream stream, String contentType) throws IOException {
+<span class="fc" id="L405">		embed(new Attachment(contentId, stream), contentId, contentType);</span>
+<span class="fc" id="L406">		return parent;</span>
+	}
+
+	/**
+	 * Provides the list of attachments.
+	 * 
+	 * @return the list of attachments
+	 */
+	public List&lt;Attachment&gt; build() {
+<span class="fc" id="L415">		return attachments;</span>
+	}
+
+	private void embed(Attachment attachment, String contentId, String contentType) {
+<span class="fc" id="L419">		attachment.setContentId(contentId);</span>
+<span class="fc" id="L420">		attachment.setContentType(contentType);</span>
+<span class="fc" id="L421">		attachment.setDisposition(INLINE);</span>
+<span class="fc" id="L422">		attachments.add(attachment);</span>
+<span class="fc" id="L423">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

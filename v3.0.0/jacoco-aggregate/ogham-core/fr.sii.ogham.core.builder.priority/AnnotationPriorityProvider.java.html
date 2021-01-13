@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AnnotationPriorityProvider.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.core.builder.priority</a> &gt; <span class="el_source">AnnotationPriorityProvider.java</span></div><h1>AnnotationPriorityProvider.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.core.builder.priority;
+
+import static java.util.Arrays.asList;
+
+import fr.sii.ogham.core.builder.context.BuildContext;
+
+/**
+ * Provide the priority of an implementation based on {@link Priority}
+ * annotation that is present on the class (if any).
+ * 
+ * &lt;p&gt;
+ * If no annotation or no priority is configured, then a default priority is
+ * provided (delegating to another {@link PriorityProvider} implementation).
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class AnnotationPriorityProvider implements PriorityProvider&lt;Class&lt;?&gt;&gt; {
+	private final BuildContext buildContext;
+	private final PriorityProvider&lt;Class&lt;?&gt;&gt; defaultProvider;
+
+	/**
+	 * Initializes with the build context and a default provider if the priority
+	 * is not provided through the annotation.
+	 * 
+	 * @param buildContext
+	 *            for property evaluation
+	 * @param defaultProvider
+	 *            in case that there is no priority provided using the
+	 *            annotation
+	 */
+	public AnnotationPriorityProvider(BuildContext buildContext, PriorityProvider&lt;Class&lt;?&gt;&gt; defaultProvider) {
+<span class="fc" id="L33">		super();</span>
+<span class="fc" id="L34">		this.buildContext = buildContext;</span>
+<span class="fc" id="L35">		this.defaultProvider = defaultProvider;</span>
+<span class="fc" id="L36">	}</span>
+
+	@Override
+	public int provide(Class&lt;?&gt; source) {
+<span class="fc" id="L40">		Priority priority = source.getAnnotation(Priority.class);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">		if (priority == null) {</span>
+<span class="fc" id="L42">			return defaultProvider.provide(source);</span>
+		}
+<span class="fc" id="L44">		int value = computePriority(priority.properties(), priority.defaultValue());</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">		if (value &gt; 0) {</span>
+<span class="fc" id="L46">			return value;</span>
+		}
+<span class="nc" id="L48">		return defaultProvider.provide(source);</span>
+	}
+
+	private int computePriority(String[] properties, int defaultValue) {
+<span class="fc" id="L52">		Integer value = buildContext.evaluate(asList(properties), Integer.class);</span>
+<span class="pc bpc" id="L53" title="1 of 4 branches missed.">		if (value != null &amp;&amp; value &gt; 0) {</span>
+<span class="nc" id="L54">			return value;</span>
+		}
+<span class="fc" id="L56">		return defaultValue;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

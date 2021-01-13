@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>Base64InliningBuilder.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">reporting</a> &gt; <a href="../index.html" class="el_bundle">ogham-core</a> &gt; <a href="index.source.html" class="el_package">fr.sii.ogham.email.builder</a> &gt; <span class="el_source">Base64InliningBuilder.java</span></div><h1>Base64InliningBuilder.java</h1><pre class="source lang-java linenums">package fr.sii.ogham.email.builder;
+
+import fr.sii.ogham.core.builder.Builder;
+import fr.sii.ogham.core.builder.context.BuildContext;
+import fr.sii.ogham.core.fluent.AbstractParent;
+import fr.sii.ogham.html.inliner.EveryImageInliner;
+import fr.sii.ogham.html.inliner.ImageInliner;
+import fr.sii.ogham.html.inliner.impl.jsoup.JsoupBase64ImageInliner;
+import fr.sii.ogham.html.inliner.impl.regexp.RegexBase64BackgroundImageInliner;
+
+/**
+ * Configures how images defined in the HTML template are inlined (converted to
+ * base64).
+ * 
+ * For example, if your template contains the following HTML code:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ *    &lt;img src=&quot;classpath:/foo.png&quot; data-inline-image=&quot;base64&quot; /&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image will be loaded from the classpath and encoded into a base64
+ * string. This base64 string is used in the src attribute of the {@code &lt;img&gt;}.
+ * 
+ * &lt;p&gt;
+ * In the same way, if your template contains the following code:
+ * 
+ * &lt;pre&gt;
+ * &lt;code&gt;
+ *  &amp;lt;style&amp;gt;
+ *     .some-class {
+ *       background: url('classpath:/foo.png');
+ *       --inline-image: base64;
+ *     }
+ *  &amp;lt;/style&amp;gt;
+ * &lt;/code&gt;
+ * &lt;/pre&gt;
+ * 
+ * Or directly on {@code style} attribute:
+ * 
+ * &lt;pre&gt;
+ * {@code
+ * 	&lt;div style=&quot;background: url('classpath:/foo.png'); --inline-image: base64;&quot;&gt;&lt;/div&gt;
+ * }
+ * &lt;/pre&gt;
+ * 
+ * Then the image will be loaded from the classpath and encoded into a base64
+ * string. The url is updated with the base64 string.
+ * 
+ * 
+ * @author Aurélien Baudet
+ *
+ */
+public class Base64InliningBuilder extends AbstractParent&lt;ImageInliningBuilder&gt; implements Builder&lt;ImageInliner&gt; {
+	private final BuildContext buildContext;
+
+	/**
+	 * Initializes with the parent (used when calling {@link #and()} method for
+	 * fluent chaining).
+	 * 
+	 * @param parent
+	 *            the parent builder
+	 * @param buildContext
+	 *            for registering instances and property evaluation
+	 */
+	public Base64InliningBuilder(ImageInliningBuilder parent, BuildContext buildContext) {
+<span class="fc" id="L68">		super(parent);</span>
+<span class="fc" id="L69">		this.buildContext = buildContext;</span>
+<span class="fc" id="L70">	}</span>
+
+	@Override
+	public ImageInliner build() {
+<span class="fc" id="L74">		EveryImageInliner inliner = buildContext.register(new EveryImageInliner());</span>
+<span class="fc" id="L75">		inliner.addInliner(buildContext.register(new JsoupBase64ImageInliner()));</span>
+<span class="fc" id="L76">		inliner.addInliner(buildContext.register(new RegexBase64BackgroundImageInliner()));</span>
+<span class="fc" id="L77">		return inliner;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
