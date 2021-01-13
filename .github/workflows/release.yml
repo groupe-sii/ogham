@@ -1,5 +1,6 @@
 name: Release
 
+# FIXME: maven-release-plugin can't be used due to issue: https://issues.apache.org/jira/browse/MRELEASE-920
 # Process
 # -------
 #
@@ -52,28 +53,6 @@ on:
         default: '3.0.1-SNAPSHOT'
         
 jobs:
-# FIXME: maven-release-plugin can't be used due to issue: https://issues.apache.org/jira/browse/MRELEASE-920
-#  release:
-#    runs-on: ubuntu-18.04
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions/setup-java@v1
-#        with:
-#          java-version: 8
-#      - name: Cache Maven packages
-#        uses: actions/cache@v2
-#        with:
-#          path: |
-#            ~/.m2/repository
-#            !~/.m2/repository/fr/sii/
-#          key: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-#          restore-keys: ${{ runner.os }}-m2-${{ secrets.CACHE_VERSION }}
-#      - name: "Release"
-#        run:
-#          ./mvnw release:prepare
-#              -DreleaseVersion=${{ github.event.inputs.release-version }}
-#              -DdevelopmentVersion=${{ github.event.inputs.next-dev-version }}
-#              -B
   release:
     runs-on: ubuntu-18.04
     steps:
@@ -281,7 +260,6 @@ jobs:
             }
           wait-for-completion: false
 
-      
   slack:
     if: always()
     needs: [set-next-version, update-site, create-or-update-fix-branch]
@@ -297,7 +275,17 @@ jobs:
             ([ "${{env.WORKFLOW_CONCLUSION}}" = "cancelled" ] && echo ":heavy_multiplication_x:") || 
             echo ":interrobang:"
            )
-           echo "STATUS_ICON=$ICON" >> $GITHUB_ENV
+          echo "STATUS_ICON=$ICON" >> $GITHUB_ENV
+      - run: >
+          echo "MESSAGE=" >> $GITHUB_ENV
+      - run: |
+          echo 'MESSAGE<<EOF' >> $GITHUB_ENV
+          echo '>v${{ github.event.inputs.release-version }} released on <https://oss.sonatype.org/#stagingRepositories|staging repository>. ' >> $GITHUB_ENV
+          echo '> ' >> $GITHUB_ENV
+          echo '>You need to check that everything is fine and then promote to publish the release on Maven Central' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+        if: ${{ env.WORKFLOW_CONCLUSION == 'success' }}
+      - run: echo "${{ env.MESSAGE }}"
       - uses: 8398a7/action-slack@v3
         with:
           status: ${{ env.WORKFLOW_CONCLUSION }}
@@ -307,7 +295,8 @@ jobs:
           icon_url: https://github.com/groupe-sii/ogham/raw/master/src/site/resources/img/ogham-blue-256x256.png
           text: |
             ${{ env.STATUS_ICON }} _${{ github.event.inputs.release-version }}_
-            ${{ github.event.head_commit.message }}
+            
+            ${{ env.MESSAGE }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
